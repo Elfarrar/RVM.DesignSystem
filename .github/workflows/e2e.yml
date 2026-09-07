@@ -5,6 +5,12 @@
 # Este projeto nao tem container, nem API, nem /health, e o E2E e .NET — nenhuma das
 # premissas do reusable vale aqui. O 10-infra lista o e2e como caller; esta e a
 # correcao, registrada em vez de silenciada.
+#
+# ⚠️ `workflow_run`, `schedule` e `workflow_dispatch` so disparam a partir do BRANCH PADRAO
+# (`master`). Enquanto o `master` nao receber este arquivo, este workflow fica inerte — o
+# `gh workflow run e2e.yml` devolve `404: workflow not found on the default branch`. Rodar a mao
+# nesse meio-tempo:
+#   E2E_BASE_URL=https://design.dev.rvmtech.com.br dotnet test test/playwright/RVM.DesignSystem.E2E
 name: E2E
 
 on:
