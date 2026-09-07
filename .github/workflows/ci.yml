@@ -1,0 +1,19 @@
+# Caller fino do reusable do ecossistema (padrao-rvm §5). Nao escrever build do zero aqui.
+#
+# O reusable roda em `runs-on: self-hosted` e Elfarrar e conta de usuario, nao organizacao:
+# o runner e POR REPOSITORIO. Sem runner registrado no BagEnd para RVM.DesignSystem, este job
+# fica `queued` para sempre, sem erro nenhum.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  ci:
+    uses: Elfarrar/RVM.Actions/.github/workflows/ci.yml@v1
+    with:
+      # O repo tem .slnx (nao .sln). Informar explicitamente evita o MSB1011 do auto-resolve.
+      solution: RVM.DesignSystem.slnx
