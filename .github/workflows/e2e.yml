@@ -1,0 +1,54 @@
+# Playwright + axe sobre o site JA PUBLICADO em design.dev.rvmtech.com.br.
+#
+# Workflow PROPRIO, nao caller do e2e.yml@v1: o reusable sobe uma stack local com
+# `docker compose`, espera um /health de API instrumentada e roda Playwright por npm.
+# Este projeto nao tem container, nem API, nem /health, e o E2E e .NET — nenhuma das
+# premissas do reusable vale aqui. O 10-infra lista o e2e como caller; esta e a
+# correcao, registrada em vez de silenciada.
+name: E2E
+
+on:
+  workflow_run:
+    workflows: ['Deploy Development']
+    types: [completed]
+  schedule:
+    - cron: '0 6 * * *'   # 03h BRT — regressao noturna
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: design-e2e
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: Playwright + axe
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Nao adianta auditar um site que o deploy nao conseguiu publicar.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Build
+        run: dotnet build test/playwright/RVM.DesignSystem.E2E/RVM.DesignSystem.E2E.csproj -c Release
+
+      - name: Instala browsers do Playwright
+        run: |
+          PS="$(find test/playwright/RVM.DesignSystem.E2E/bin/Release -name 'playwright.ps1' | head -1)"
+          test -n "$PS" || { echo "::error::playwright.ps1 nao encontrado — o build gerou o projeto?"; exit 1; }
+          pwsh "$PS" install --with-deps chromium
+
+      - name: Roda o E2E
+        env:
+          # Sem esta variavel os testes se PULAM em vez de passar em silencio (SkippableFact).
+          E2E_BASE_URL: https://design.dev.rvmtech.com.br
+        run: |
+          dotnet test test/playwright/RVM.DesignSystem.E2E/RVM.DesignSystem.E2E.csproj \
+            --no-build --configuration Release --logger "console;verbosity=normal"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!--
+            DSGN-001: cobertura da biblioteca.
+            Exclui o que nao e codigo da biblioteca:
+            - o site de documentacao (.Docs) — coberto pelo E2E Playwright + axe
+            - Program.cs / setup de framework
+          -->
+          <Format>cobertura</Format>
+          <Exclude>[*]RVM.DesignSystem.Docs.*,[*]Program*</Exclude>
+          <ExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <ExcludeByFile>**/obj/**/*.cs</ExcludeByFile>
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

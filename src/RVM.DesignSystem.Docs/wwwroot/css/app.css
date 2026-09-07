@@ -1,0 +1,110 @@
+/*
+  Casca minima do site, em CSS puro.
+  Nao ha framework CSS aqui de proposito (03-arquitetura § CSS): a partir da onda 1
+  o site passa a se vestir com os proprios tokens do pacote, e o que estiver escrito
+  aqui vai embora. Nao acrescentar Bootstrap/Tailwind — o template do Blazor traz
+  Bootstrap por padrao e ele foi removido no bootstrap (DSGN-001).
+*/
+
+:root {
+    color-scheme: light dark;
+    --site-fg: #16161a;
+    --site-bg: #ffffff;
+    --site-muted: #5b5b66;
+    --site-line: #e3e3e8;
+    --site-link: #1b4dd1;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --site-fg: #ececf1;
+        --site-bg: #131316;
+        --site-muted: #a0a0ad;
+        --site-line: #2c2c33;
+        --site-link: #8fb0ff;
+    }
+}
+
+html, body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+    color: var(--site-fg);
+    background: var(--site-bg);
+}
+
+a { color: var(--site-link); }
+
+.page { display: flex; flex-direction: column; min-height: 100vh; }
+
+.site-header {
+    border-bottom: 1px solid var(--site-line);
+    padding: 1rem 1.5rem;
+}
+
+.site-brand { font-weight: 600; text-decoration: none; color: inherit; }
+
+.site-main { flex: 1; padding: 2rem 1.5rem; max-width: 46rem; margin: 0 auto; width: 100%; box-sizing: border-box; }
+
+.site-footer {
+    border-top: 1px solid var(--site-line);
+    padding: 1rem 1.5rem;
+    color: var(--site-muted);
+    font-size: .875rem;
+}
+
+.aviso { color: var(--site-muted); }
+
+/* Indicador de carregamento do WASM — vem do template, mantido. */
+.loading-progress {
+    position: relative;
+    display: block;
+    width: 8rem;
+    height: 8rem;
+    margin: 20vh auto 1rem auto;
+}
+
+.loading-progress circle {
+    fill: none;
+    stroke: var(--site-line);
+    stroke-width: 0.6rem;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+}
+
+.loading-progress circle:last-child {
+    stroke: var(--site-link);
+    stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+    transition: stroke-dasharray 0.05s ease-in-out;
+}
+
+.loading-progress-text {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    inset: calc(20vh + 3.25rem) 0 auto 0;
+}
+
+.loading-progress-text:after {
+    content: var(--blazor-load-percentage-text, "Carregando");
+}
+
+#blazor-error-ui {
+    background: #ffe9a8;
+    color: #16161a;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

@@ -1,0 +1,111 @@
+# Publica o site de documentacao em design.dev.rvmtech.com.br (Rivendell, Nginx estatico).
+#
+# Workflow PROPRIO, nao caller: o deploy.yml@v1 do RVM.Actions pressupoe `docker compose`,
+# container e /health, e este projeto nao tem nenhum dos tres (desvio declarado em 10-infra).
+# Se um segundo projeto estatico aparecer, promover isto a static-deploy.yml@v1 no RVM.Actions.
+name: Deploy Development
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'src/**'
+      - 'Directory.Build.props'
+      - 'Directory.Packages.props'
+      - 'global.json'
+      - '.github/workflows/deploy-development.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: design-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publish + rsync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Publish
+        run: dotnet publish src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj -c Release -o publish
+
+      - name: Guards do host estatico
+        run: |
+          test -f publish/wwwroot/.nojekyll || { echo "::error::.nojekyll ausente."; exit 1; }
+          test -f publish/wwwroot/404.html  || { echo "::error::404.html ausente — o try_files do Nginx cobre, mas o Pages depende dele; manter os dois iguais."; exit 1; }
+          test -d publish/wwwroot/_framework || { echo "::error::_framework/ ausente."; exit 1; }
+          echo "guards ok"
+
+      - name: Configure SSH
+        env:
+          VPS_SSH_KEY_B64: ${{ secrets.DEV_VPS_SSH_KEY_B64 }}
+          VPS_HOST: ${{ secrets.DEV_VPS_HOST }}
+          VPS_PORT: ${{ secrets.DEV_VPS_PORT }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s' "$VPS_SSH_KEY_B64" | tr -d '\r\n' | base64 -d > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
+          # mktemp, nunca caminho fixo em /tmp — armadilha registrada no RVM.Actions (11/08).
+          OUT="$(mktemp)"; ERR="$(mktemp)"
+          trap 'rm -f "$OUT" "$ERR"' EXIT
+          for i in 1 2 3; do
+            if ssh-keyscan -T 10 -p "${VPS_PORT:-22}" -H "$VPS_HOST" > "$OUT" 2>"$ERR" && [ -s "$OUT" ]; then
+              cat "$OUT" >> ~/.ssh/known_hosts
+              echo "known_hosts populado na tentativa $i"
+              exit 0
+            fi
+            echo "::warning::ssh-keyscan sem resposta (tentativa $i/3)"
+            sed -n '1,3p' "$ERR" || true
+            if [ "$i" -lt 3 ]; then sleep 5; fi
+          done
+          echo "::error::ssh-keyscan falhou 3x. Verificar VPS no ar, porta SSH e rede."
+          exit 1
+
+      - name: Backup do que esta publicado
+        env:
+          VPS_HOST: ${{ secrets.DEV_VPS_HOST }}
+          VPS_PORT: ${{ secrets.DEV_VPS_PORT }}
+          VPS_USER: ${{ secrets.DEV_VPS_USER }}
+          DEPLOY_PATH: ${{ secrets.DEV_DEPLOY_PATH }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "${VPS_PORT:-22}" -o StrictHostKeyChecking=yes \
+            "${VPS_USER}@${VPS_HOST}" \
+            "mkdir -p '${DEPLOY_PATH}' && tar -czf '${DEPLOY_PATH}.bak.tgz' -C \"\$(dirname '${DEPLOY_PATH}')\" \"\$(basename '${DEPLOY_PATH}')\" && ls -lh '${DEPLOY_PATH}.bak.tgz'"
+
+      - name: Publish (rsync --delete)
+        env:
+          VPS_HOST: ${{ secrets.DEV_VPS_HOST }}
+          VPS_PORT: ${{ secrets.DEV_VPS_PORT }}
+          VPS_USER: ${{ secrets.DEV_VPS_USER }}
+          DEPLOY_PATH: ${{ secrets.DEV_DEPLOY_PATH }}
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -p ${VPS_PORT:-22} -o StrictHostKeyChecking=yes" \
+            publish/wwwroot/ "${VPS_USER}@${VPS_HOST}:${DEPLOY_PATH}/"
+
+      - name: Verify
+        env:
+          DEPLOY_PATH: ${{ secrets.DEV_DEPLOY_PATH }}
+        run: |
+          # Conteudo, nao status code: o try_files do Nginx devolve 200 no index para
+          # qualquer caminho, entao HTTP 200 nao prova que o build certo esta no ar.
+          for i in 1 2 3; do
+            body="$(curl -sS --max-time 15 -L https://design.dev.rvmtech.com.br || true)"
+            if echo "$body" | grep -q "RVM Design System"; then
+              echo "design.dev.rvmtech.com.br conferido por conteudo (tentativa $i)"
+              exit 0
+            fi
+            echo "::warning::sem o conteudo esperado (tentativa $i/3)"
+            if [ "$i" -lt 3 ]; then sleep 10; fi
+          done
+          echo "::error::Verificacao falhou. Reverter: ssh na Rivendell e 'tar -xzf ${DEPLOY_PATH}.bak.tgz -C \$(dirname ${DEPLOY_PATH})'"
+          exit 1

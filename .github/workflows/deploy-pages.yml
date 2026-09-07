@@ -1,0 +1,83 @@
+# Publica o site de documentacao em design.rvmit.com.br (GitHub Pages).
+#
+# Workflow PROPRIO, nao caller: o deploy.yml@v1 do RVM.Actions pressupoe `docker compose` e
+# container, e este projeto nao tem nenhum dos dois (desvio declarado em 10-infra).
+#
+# Os tres detalhes que quebram Blazor WASM em host estatico (.nojekyll, 404.html, base href)
+# sao resolvidos no publish pelo target PagesStaticHostFixups do .Docs.csproj, e conferidos
+# aqui — se o target sumir num refactor, o guard reprova antes de publicar.
+name: Deploy Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'Directory.Build.props'
+      - 'Directory.Packages.props'
+      - 'global.json'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: design-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Publish site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Publish
+        run: dotnet publish src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj -c Release -o publish
+
+      - name: Guards do host estatico
+        run: |
+          test -f publish/wwwroot/.nojekyll || { echo "::error::.nojekyll ausente — o Jekyll do Pages vai descartar _framework/."; exit 1; }
+          test -f publish/wwwroot/404.html  || { echo "::error::404.html ausente — recarregar uma rota client-side vai devolver 404."; exit 1; }
+          grep -q '<base href="/"' publish/wwwroot/index.html || { echo "::error::base href diferente de \"/\" — o site esta na raiz de dominio proprio."; exit 1; }
+          test -d publish/wwwroot/_framework || { echo "::error::_framework/ ausente — o publish do WASM nao gerou o runtime."; exit 1; }
+          echo "guards ok"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: publish/wwwroot
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify
+        run: |
+          # Verificar CONTEUDO, nao so o codigo HTTP: host estatico com fallback devolve 200
+          # para url inexistente e o status daria verde com a pagina errada no ar.
+          for i in 1 2 3 4 5; do
+            body="$(curl -sS --max-time 20 -L https://design.rvmit.com.br || true)"
+            if echo "$body" | grep -q "RVM Design System"; then
+              echo "design.rvmit.com.br no ar e com o conteudo esperado (tentativa $i)"
+              exit 0
+            fi
+            echo "::warning::design.rvmit.com.br ainda sem o conteudo esperado (tentativa $i/5)"
+            sleep 20
+          done
+          echo "::error::Verificacao falhou. Conferir DNS (CNAME -> elfarrar.github.io) e 'Enforce HTTPS' nas settings de Pages."
+          exit 1

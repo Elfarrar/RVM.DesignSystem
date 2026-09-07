@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj" />
+    <Project Path="src/RVM.DesignSystem/RVM.DesignSystem.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/RVM.DesignSystem.Tests/RVM.DesignSystem.Tests.csproj" />
+  </Folder>
+  <Folder Name="/test/playwright/">
+    <Project Path="test/playwright/RVM.DesignSystem.E2E/RVM.DesignSystem.E2E.csproj" />
+  </Folder>
+</Solution>
