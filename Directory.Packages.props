@@ -1,0 +1,30 @@
+<Project>
+  <!--
+    DSGN-001: central package management (padrao do ecossistema).
+    Cada .csproj usa <PackageReference Include="..." /> sem Version.
+    Subir versao mexe so aqui.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Blazor — a biblioteca so referencia o que vem do proprio framework.
+         Regra do CLAUDE.md: zero dependencia NuGet de terceiros na RCL. -->
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.11" />
+    <!-- O proprio pacote, consumido pelo site quando UseLocalDesignSystem=false -->
+    <PackageVersion Include="RVM.DesignSystem" Version="0.1.0-alpha.0" />
+    <!-- Teste de unidade — bUnit por componente -->
+    <PackageVersion Include="bunit" Version="2.9.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <!-- E2E — Playwright + auditoria de acessibilidade (portao 3 do CLAUDE.md) -->
+    <PackageVersion Include="Microsoft.Playwright" Version="1.62.0" />
+    <PackageVersion Include="Deque.AxeCore.Playwright" Version="4.13.0" />
+    <!-- Permite PULAR o E2E quando E2E_BASE_URL nao esta definida, em vez de passar em silencio -->
+    <PackageVersion Include="Xunit.SkippableFact" Version="1.5.85" />
+  </ItemGroup>
+</Project>
