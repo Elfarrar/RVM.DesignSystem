@@ -75,6 +75,35 @@ O template `blazorwasm` gera o site vestido em Bootstrap CSS. Manter seria contr
 `03-arquitetura` ("sem framework CSS") logo no repositorio que existe para ser o design system.
 Removido no esqueleto, com o CSS minimo escrito a mao e um comentario dizendo por que.
 
+## Armadilhas que so apareceram rodando
+
+Nenhuma das tres estava na spec nem na skill. Todas foram registradas fora do repo tambem
+(`padrao-rvm` §5 e `ACESSOS-E-SENHAS.md`), porque nao sao especificas deste projeto.
+
+1. **`gh secret set --body '/caminho/unix'` no Git Bash grava o valor errado.** O MSYS converte o
+   argumento e `/var/www/design-dev` vira `C:/Program Files/Git/var/www/design-dev` **dentro do
+   secret**. O deploy quebrou com `tar (child): Cannot connect to C: resolve failed` — um erro que
+   nao aponta para a causa. **Gravar por stdin.** Ja tinha mordido o GestorDeObras em 30/08/2026,
+   que deixou `/root/C:/Program Files/Git/srv/...` na Rivendell (ainda la; nao e meu, nao removi).
+2. **`dotnet nuget push` contra `http://187.77.48.215:5555` trava sem erro** no runner do GitHub —
+   5 minutos `in_progress`, nenhum log, ate ser cancelado. Pelo dominio
+   `https://packages.rvmtech.com.br` resolve em segundos.
+3. **`workflow_run`, `schedule` e `workflow_dispatch` so disparam do branch padrao.** Como o
+   `master` ainda nao tem os workflows, o `e2e.yml` fica inerte ate a promocao. Rodado a mao neste
+   bootstrap: 2/2 verde, **axe sem violacao seria**.
+
+## Fora do escopo, mas encontrado
+
+⚠️ **O volume do BaGet nao esta em backup nenhum.** O `10-infra` § Backup mandava verificar isso no
+bootstrap; verificado, e o resultado e negativo. O `/opt/puxar-backups-remotos.sh` puxa de
+MinasTirith e Rivendell **para** o BagEnd — o BagEnd e o destino, e nada copia os volumes dele para
+fora. Perder o BagEnd perde o feed inteiro (`baget_baget-data`, 148K em 07/09/2026).
+
+Nao mexi: e servico compartilhado (serve tambem o `RVM.Common`) e alterar o backup do ecossistema
+nao e efeito colateral de bootstrap de design system. **Decisao do Rafael.** Uma saida legitima e
+declarar que pacote e reconstruivel do git e nao precisa de backup — mas isso e escolha, nao
+esquecimento, e hoje nao esta escrita em lugar nenhum.
+
 ## Pendencias que continuam abertas
 
 As seis do `09-roadmap` § Pendencias seguem abertas, menos a **5** (visibilidade/licenca), que o
