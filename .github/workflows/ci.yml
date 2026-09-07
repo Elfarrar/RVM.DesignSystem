@@ -1,8 +1,16 @@
-# Caller fino do reusable do ecossistema (padrao-rvm §5). Nao escrever build do zero aqui.
+# Build + teste + cobertura.
 #
-# O reusable roda em `runs-on: self-hosted` e Elfarrar e conta de usuario, nao organizacao:
-# o runner e POR REPOSITORIO. Sem runner registrado no BagEnd para RVM.DesignSystem, este job
-# fica `queued` para sempre, sem erro nenhum.
+# ⚠️ Este workflow NAO e caller do RVM.Actions@v1, e o desvio e deliberado (ADR-011).
+# Repositorio PUBLICO nao consegue chamar reusable workflow de repositorio PRIVADO, e o
+# RVM.Actions e privado: o caller morria em 0s, com zero jobs e sem mensagem util.
+# Verificado em 07/09/2026 alternando a visibilidade deste repo — privado enfileira,
+# publico falha na hora.
+#
+# Efeito colateral bom: repo publico tem runner do GitHub de graca, entao este projeto
+# NAO precisa de runner self-hosted registrado no BagEnd — some a armadilha do job que
+# fica `queued` para sempre sem erro (padrao-rvm §5).
+#
+# Nao "corrigir" isto de volta para caller sem antes resolver a visibilidade do RVM.Actions.
 name: CI
 
 on:
@@ -11,9 +19,68 @@ on:
   pull_request:
     branches: [master, dev]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: design-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  ci:
-    uses: Elfarrar/RVM.Actions/.github/workflows/ci.yml@v1
-    with:
-      # O repo tem .slnx (nao .sln). Informar explicitamente evita o MSB1011 do auto-resolve.
-      solution: RVM.DesignSystem.slnx
+  build-and-test:
+    name: Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Verify .NET SDK
+        run: dotnet --info
+
+      - name: Restore
+        run: dotnet restore RVM.DesignSystem.slnx
+
+      - name: Build
+        # Release liga TreatWarningsAsErrors na biblioteca — portao 4 do CLAUDE.md.
+        run: dotnet build RVM.DesignSystem.slnx --no-restore --configuration Release
+
+      - name: Test (com cobertura)
+        run: |
+          rm -rf ./coverage-results
+          # O E2E (test/playwright/**) exige o site publicado no ar e nao roda aqui.
+          dotnet test test/RVM.DesignSystem.Tests/RVM.DesignSystem.Tests.csproj \
+            --no-build --configuration Release \
+            --logger "console;verbosity=minimal" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage-results \
+            --settings coverlet.runsettings
+
+      - name: Portao de cobertura (>= 80%)
+        run: |
+          XML=$(find ./coverage-results -name 'coverage.cobertura.xml' | head -1)
+          if [ -z "$XML" ]; then
+            echo "::error::Cobertura nao gerada — nenhum teste rodou?"
+            exit 1
+          fi
+          python3 - "$XML" <<'PY' >> $GITHUB_STEP_SUMMARY
+          import sys, xml.etree.ElementTree as ET
+          root = ET.parse(sys.argv[1]).getroot()
+          line = float(root.attrib.get("line-rate", 0)) * 100
+          branch = float(root.attrib.get("branch-rate", 0)) * 100
+          covered = int(root.attrib.get("lines-covered", 0))
+          valid = int(root.attrib.get("lines-valid", 0))
+          print("## 📊 Cobertura de testes\n")
+          print("| Metrica | Valor |")
+          print("|---------|-------|")
+          print(f"| Line coverage | **{line:.2f}%** ({covered}/{valid} linhas) |")
+          print(f"| Branch coverage | **{branch:.2f}%** |")
+          if line < 80:
+              print(f"\n❌ Abaixo do portao de 80%.")
+              # stderr tambem, senao a mensagem so aparece no summary e o log fica mudo.
+              print(f"::error::Cobertura {line:.2f}% abaixo do portao de 80%.", file=sys.stderr)
+              sys.exit(1)
+          print(f"\n✅ Acima do portao de 80%.")
+          PY
