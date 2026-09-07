@@ -22,6 +22,8 @@ coverage-e2e/
 ## Playwright
 node_modules/
 .playwright/
+.playwright-mcp/
+/design-dev-home.png
 
 ## OS
 .DS_Store
