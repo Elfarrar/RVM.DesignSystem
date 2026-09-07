@@ -1,0 +1,16 @@
+* text=auto
+
+# Scripts e workflows precisam de LF — CRLF quebra shebang e o parser do Actions
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.sh    text eol=lf
+
+# Windows
+*.ps1   text eol=crlf
+*.cmd   text eol=crlf
+
+# Binarios
+*.png   binary
+*.jpg   binary
+*.woff2 binary
+*.ico   binary

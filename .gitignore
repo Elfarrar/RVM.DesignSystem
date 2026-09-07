@@ -1,0 +1,46 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+*.dll
+*.pdb
+
+## Test results
+TestResults/
+test-results/
+playwright-report/
+coverage-results/
+coverage-html/
+coverage-tmp/
+coverage-e2e/
+.tools/
+
+## Playwright
+node_modules/
+.playwright/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+## Build / publish
+build/
+publish/
+
+## Segredos — NUNCA versionar (padrao-rvm §4)
+docs/ACESSOS.md
+.env
+.env.local
+
+## Editor
+*.swp
