@@ -1,0 +1,143 @@
+@page "/fundamentos/cor"
+@implements IDisposable
+@inject IRvmThemeService Tema
+
+<PageTitle>Cor · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Cor</h1>
+        <p class="doc__frase">
+            Papéis semânticos, não cores. Um botão consome <code>--rvm-color-primary</code>, jamais
+            <code>--rvm-blue-500</code> — é isso que permite trocar a paleta de um produto sem tocar
+            em nenhum componente.
+        </p>
+    </header>
+
+    <section aria-labelledby="cor-contraste">
+        <h2 id="cor-contraste">Contraste medido</h2>
+        <p class="doc__nota">
+            Os números abaixo são calculados <strong>agora, no seu navegador</strong>, pela mesma
+            função que roda no teste unitário e reprova o build. Não é uma tabela copiada: se a
+            paleta mudar, o número muda junto. Troque o tema no topo e veja.
+        </p>
+
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Par</th>
+                        <th scope="col">Amostra</th>
+                        <th scope="col">Contraste</th>
+                        <th scope="col">Mínimo</th>
+                        <th scope="col">Veredito</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var (nome, frente, fundo, minimo) in Paleta.PairsToVerify())
+                    {
+                        var razao = RvmColor.Contrast(RvmColor.Parse(frente), RvmColor.Parse(fundo));
+                        var passa = razao >= minimo;
+                        <tr>
+                            <td><code>@nome</code></td>
+                            <td>
+                                @*
+                                    "Aa" so em par de TEXTO. Papel de UI (borda, anel de foco) e
+                                    medido a 3:1 e nunca e usado como texto — desenhar letras ali
+                                    seria ilustrar um uso que nao existe, e ainda faria o axe
+                                    reprovar um par correto, porque ele cobra 4.5 de todo texto.
+                                *@
+                                @if (minimo >= RvmContrast.NormalText)
+                                {
+                                    <span class="amostra" style="@($"background:{fundo};color:{frente}")">Aa</span>
+                                }
+                                else
+                                {
+                                    <span class="amostra" aria-hidden="true"
+                                          style="@($"background:{fundo};border-color:{frente};border-width:3px")"></span>
+                                }
+                            </td>
+                            <td class="doc__num">@razao.ToString("F2", System.Globalization.CultureInfo.InvariantCulture):1</td>
+                            <td class="doc__num">@minimo.ToString("F1", System.Globalization.CultureInfo.InvariantCulture):1</td>
+                            <td>
+                                <span class="@(passa ? "veredito veredito--ok" : "veredito veredito--falha")">
+                                    <RvmIcon Name="@(passa ? "check" : "warning")" Weight="RvmIconWeight.Fill" />
+                                    @(passa ? "Passa" : "Reprova")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="cor-papeis">
+        <h2 id="cor-papeis">Papéis do tema @Tema.Theme.Name</h2>
+        <div class="paleta">
+            @foreach (var (nome, valor) in Papeis())
+            {
+                <div class="paleta__item">
+                    <div class="paleta__amostra" style="@($"background:{valor}")"></div>
+                    <code class="paleta__nome">--rvm-color-@nome</code>
+                    <code class="paleta__valor">@valor</code>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section aria-labelledby="cor-regra">
+        <h2 id="cor-regra">A regra que sustenta a camada</h2>
+        <p>
+            <strong>Componente nunca referencia cor literal nem token que não existe.</strong> Não é
+            recomendação: há um teste que varre todo <code>.razor.css</code> da biblioteca e reprova
+            o build se encontrar um <code>#0288d1</code> escrito à mão — ou um
+            <code>var(--rvm-color-primry)</code> com erro de digitação, que falharia em silêncio,
+            porque CSS simplesmente ignora custom property inexistente e a cor some sem erro nenhum.
+        </p>
+        <BlocoDeCodigo Linguagem="css" Codigo="@_exemploCss" />
+    </section>
+</article>
+
+@code {
+    private RvmPalette Paleta => Tema.Theme.Light;
+
+    private const string _exemploCss = """
+        /* certo — papel semântico */
+        .rvm-button--primary {
+            background-color: var(--rvm-color-primary);
+            color: var(--rvm-color-on-primary);
+        }
+
+        /* errado — o teste reprova os dois */
+        .rvm-button--primary { background-color: #641974; }
+        .rvm-button--primary { background-color: var(--rvm-blue-500); }
+        """;
+
+    private IEnumerable<(string, string)> Papeis()
+    {
+        var p = Paleta;
+        yield return ("primary", p.Primary);
+        yield return ("on-primary", p.OnPrimary);
+        yield return ("primary-container", p.PrimaryContainer);
+        yield return ("secondary", p.Secondary);
+        yield return ("surface", p.Surface);
+        yield return ("surface-raised", p.SurfaceRaised);
+        yield return ("surface-sunken", p.SurfaceSunken);
+        yield return ("background", p.Background);
+        yield return ("on-surface", p.OnSurface);
+        yield return ("border", p.Border);
+        yield return ("border-strong", p.BorderStrong);
+        yield return ("success", p.Success);
+        yield return ("warning", p.Warning);
+        yield return ("danger", p.Danger);
+        yield return ("info", p.Info);
+        yield return ("focus-ring", p.FocusRing);
+    }
+
+    protected override void OnInitialized() => Tema.Changed += AoMudar;
+
+    private void AoMudar() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Tema.Changed -= AoMudar;
+}

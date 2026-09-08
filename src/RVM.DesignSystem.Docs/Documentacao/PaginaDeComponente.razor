@@ -1,0 +1,144 @@
+@inject ApiDoc Api
+
+@*
+    A anatomia fixa de toda página de componente (`07` § Anatomia).
+
+    Existe como componente e não como convenção escrita porque convenção escrita não é
+    cumprida: a terceira página inventaria uma seção nova e a décima estaria irreconhecível.
+    Previsibilidade é o que faz documentação ser CONSULTADA em vez de lida — quem procura a
+    seção de acessibilidade sabe que ela está sempre no mesmo lugar.
+*@
+
+<PageTitle>@Nome · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>@Nome</h1>
+        <p class="doc__frase">@Frase</p>
+    </header>
+
+    <section aria-labelledby="doc-exemplo">
+        <h2 id="doc-exemplo">Exemplo</h2>
+        @Exemplo
+    </section>
+
+    @if (Variantes is not null)
+    {
+        <section aria-labelledby="doc-variantes">
+            <h2 id="doc-variantes">Variantes</h2>
+            @Variantes
+        </section>
+    }
+
+    @if (Estados is not null)
+    {
+        <section aria-labelledby="doc-estados">
+            <h2 id="doc-estados">Estados</h2>
+            @Estados
+        </section>
+    }
+
+    <section aria-labelledby="doc-api">
+        <h2 id="doc-api">API</h2>
+        <p class="doc__nota">
+            Gerada da documentação XML do código — não escrita à mão, para não desatualizar
+            no primeiro parâmetro novo.
+        </p>
+
+        @if (_parametros is null)
+        {
+            <p class="doc__nota">Carregando…</p>
+        }
+        else
+        {
+            <div class="doc__tabela-scroll">
+                <table class="doc__tabela">
+                    <thead>
+                        <tr>
+                            <th scope="col">Parâmetro</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Padrão</th>
+                            <th scope="col">Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in _parametros)
+                        {
+                            <tr>
+                                <td>
+                                    <code>@p.Nome</code>
+                                    @if (p.Obrigatorio)
+                                    {
+                                        <span class="doc__obrigatorio">obrigatório</span>
+                                    }
+                                </td>
+                                <td><code class="doc__tipo">@p.Tipo</code></td>
+                                <td>@(p.Padrao is null ? "—" : p.Padrao)</td>
+                                <td>@p.Descricao</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section aria-labelledby="doc-a11y">
+        <h2 id="doc-a11y">Acessibilidade</h2>
+        @Acessibilidade
+    </section>
+
+    <section aria-labelledby="doc-quando-nao" class="doc__quando-nao">
+        <h2 id="doc-quando-nao">Quando não usar</h2>
+        @*
+            A seção que impede o design system de virar catálogo (`07`). Um catálogo diz o que
+            existe; documentação boa diz também o que NÃO usar, e é isso que evita o
+            componente errado na tela errada.
+        *@
+        @QuandoNaoUsar
+    </section>
+</article>
+
+@code {
+    private IReadOnlyList<ParametroDoc>? _parametros;
+
+    /// <summary>Nome do componente.</summary>
+    [Parameter, EditorRequired]
+    public string Nome { get; set; } = string.Empty;
+
+    /// <summary>Uma frase: quando usar.</summary>
+    [Parameter, EditorRequired]
+    public string Frase { get; set; } = string.Empty;
+
+    /// <summary>O tipo do componente, para gerar a tabela de API.</summary>
+    [Parameter, EditorRequired]
+    public Type? Tipo { get; set; }
+
+    /// <summary>Exemplo principal, ao vivo, com o código ao lado.</summary>
+    [Parameter, EditorRequired]
+    public RenderFragment? Exemplo { get; set; }
+
+    /// <summary>Uma linha por variante, todas visíveis de uma vez.</summary>
+    [Parameter]
+    public RenderFragment? Variantes { get; set; }
+
+    /// <summary>Normal, foco, desabilitado, carregando, erro.</summary>
+    [Parameter]
+    public RenderFragment? Estados { get; set; }
+
+    /// <summary>Teclas, papéis ARIA e o que o leitor de tela anuncia.</summary>
+    [Parameter, EditorRequired]
+    public RenderFragment? Acessibilidade { get; set; }
+
+    /// <summary>O contra-exemplo. Obrigatório de propósito.</summary>
+    [Parameter, EditorRequired]
+    public RenderFragment? QuandoNaoUsar { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Tipo is not null)
+        {
+            _parametros = await Api.ParametrosAsync(Tipo);
+        }
+    }
+}

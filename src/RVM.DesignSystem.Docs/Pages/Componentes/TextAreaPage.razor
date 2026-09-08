@@ -1,0 +1,86 @@
+@page "/componentes/text-area"
+
+<PaginaDeComponente Nome="RvmTextArea"
+                    Tipo="typeof(RvmTextArea)"
+                    Frase="Texto de várias linhas, com contador opcional. Use quando o conteúdo não cabe numa linha — observação, descrição, justificativa.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmTextArea @bind-Value="_valor"
+                             Label="Observações"
+                             Rows="_linhas"
+                             MaxLength="@(_comLimite ? 200 : null)"
+                             ShowCounter="_contador"
+                             Placeholder="O que precisar registrar" />
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="int" @bind-Value="_linhas" Label="Rows" Size="RvmSize.Small">
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_comLimite" Label="MaxLength (200)" />
+                <RvmCheckbox @bind-Value="_contador" Label="ShowCounter" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Estados>
+        <div class="demo-grade">
+            <RvmTextArea Label="Normal" Rows="3" />
+            <RvmTextArea Label="Com contador" Rows="3" MaxLength="120" Value="Texto de exemplo." />
+            <RvmTextArea Label="Com erro" Rows="3" Error="Descreva o motivo." />
+            <RvmTextArea Label="Desabilitado" Rows="3" Disabled="true" />
+        </div>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>O contador usa <code>aria-live="polite"</code>, não <code>"assertive"</code>.</strong>
+                Ele muda a cada tecla, e <code>assertive</code> interromperia o leitor de tela a cada
+                caractere digitado — inutilizável. Com <code>polite</code>, ele é lido numa pausa
+                natural.
+            </li>
+            <li>
+                <strong>Redimensiona só na vertical.</strong> <code>resize: both</code> deixaria o
+                usuário arrastar o campo para fora do layout, quebrando o que está em volta.
+            </li>
+            <li>Mesmas garantias de rótulo, ajuda e erro do <a href="componentes/text-field">RvmTextField</a>.</li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para texto de uma linha.</strong> Use
+                <a href="componentes/text-field">RvmTextField</a> — uma área de texto sinaliza
+                "escreva bastante", e o usuário obedece ao sinal.
+            </li>
+            <li>
+                <strong>Para conteúdo formatado.</strong> Editor rico não está na v1 e não está
+                previsto (`09` § Fora da v1).
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _valor = string.Empty;
+    private int _linhas = 4;
+    private bool _comLimite = true;
+    private bool _contador = true;
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { "Label=\"Observações\"", $"Rows=\"{_linhas}\"" };
+
+        if (_comLimite) atributos.Add("MaxLength=\"200\"");
+        if (_comLimite && !_contador) atributos.Add("ShowCounter=\"false\"");
+
+        return "<RvmTextArea @bind-Value=\"modelo.Observacoes\"\n             "
+            + string.Join("\n             ", atributos) + " />";
+    }
+}

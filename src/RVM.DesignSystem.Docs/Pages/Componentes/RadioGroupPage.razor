@@ -1,0 +1,106 @@
+@page "/componentes/radio-group"
+
+<PaginaDeComponente Nome="RvmRadioGroup&lt;TValue&gt;"
+                    Tipo="typeof(RvmRadioGroup<string>)"
+                    Frase="Escolha única entre poucas opções, todas visíveis ao mesmo tempo. O usuário compara sem abrir nada.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmRadioGroup TValue="string" @bind-Value="_valor"
+                               Label="Forma de pagamento"
+                               Options="_opcoes"
+                               Horizontal="_horizontal"
+                               Required="_obrigatorio"
+                               Disabled="_desabilitado"
+                               Error="@(_comErro ? "Escolha uma forma de pagamento." : null)" />
+            </div>
+            <div class="playground__controles">
+                <RvmCheckbox @bind-Value="_horizontal" Label="Horizontal" />
+                <RvmCheckbox @bind-Value="_obrigatorio" Label="Required" />
+                <RvmCheckbox @bind-Value="_comErro" Label="Error" />
+                <RvmCheckbox @bind-Value="_desabilitado" Label="Disabled" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Estados>
+        <div class="demo-grade">
+            <RvmRadioGroup TValue="string" Label="Vertical" Options="_opcoes" />
+            <RvmRadioGroup TValue="string" Label="Horizontal" Options="_opcoes" Horizontal="true" />
+            <RvmRadioGroup TValue="string" Label="Com erro" Options="_opcoes" Error="Escolha uma opção." />
+            <RvmRadioGroup TValue="string" Label="Desabilitado" Options="_opcoes" Disabled="true" />
+        </div>
+        <p class="doc__nota">
+            Repare que "Boleto" está desabilitado só ele — <code>Option</code> aceita
+            <code>Disabled</code> por opção, para o caso comum de uma alternativa
+            temporariamente indisponível sem esconder que ela existe.
+        </p>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong><code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code> não é enfeite
+                semântico:</strong> é o que faz o leitor de tela anunciar a <em>pergunta</em> antes
+                de cada opção. Sem eles, o usuário ouve "à vista", "parcelado" soltos, sem saber do
+                que se trata.
+            </li>
+            <li>
+                <strong>Todos os rádios compartilham o mesmo <code>name</code></strong> — é isso que
+                faz o navegador tratar como escolha única e mover entre as opções com as setas do
+                teclado. Sem isso, viram checkboxes redondos.
+            </li>
+            <li>
+                <strong>O grupo ocupa uma parada de <kbd>Tab</kbd> só</strong>, e as setas navegam
+                dentro dele. É o comportamento nativo, e é o que o usuário de teclado espera.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Com muitas opções.</strong> Acima de ~7, a lista domina a tela: use
+                <a href="componentes/select">RvmSelect</a>.
+            </li>
+            <li>
+                <strong>Para escolha múltipla.</strong> Rádio é único por definição — use vários
+                <a href="componentes/checkbox">RvmCheckbox</a>.
+            </li>
+            <li>
+                <strong>Com duas opções opostas e óbvias.</strong> "Sim/Não" costuma ser melhor como
+                <a href="componentes/switch">RvmSwitch</a> ou checkbox, que ocupam uma linha.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string _valor = string.Empty;
+    private bool _horizontal;
+    private bool _obrigatorio;
+    private bool _comErro;
+    private bool _desabilitado;
+
+    private readonly RvmRadioGroup<string>.Option[] _opcoes =
+    [
+        new("avista", "À vista"),
+        new("parcelado", "Parcelado"),
+        new("boleto", "Boleto", Disabled: true),
+    ];
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { "Label=\"Forma de pagamento\"", "Options=\"opcoes\"" };
+
+        if (_horizontal) atributos.Add("Horizontal=\"true\"");
+        if (_obrigatorio) atributos.Add("Required=\"true\"");
+        if (_comErro) atributos.Add("Error=\"Escolha uma forma de pagamento.\"");
+        if (_desabilitado) atributos.Add("Disabled=\"true\"");
+
+        return "<RvmRadioGroup TValue=\"string\" @bind-Value=\"modelo.Pagamento\"\n               "
+            + string.Join("\n               ", atributos) + " />";
+    }
+}

@@ -1,0 +1,126 @@
+@page "/componentes/button"
+
+<PaginaDeComponente Nome="RvmButton"
+                    Tipo="typeof(RvmButton)"
+                    Frase="Dispara uma ação. Use para o que o usuário FAZ; para o que ele NAVEGA, use um link.">
+
+    <Exemplo>
+        @*
+            O playground gera três coisas de uma fonte só (`07` § O playground): os controles, o
+            componente renderizado e o snippet — com os valores atuais, omitindo o que estiver no
+            padrão. Snippet com Variant="Primary" explícito ensinaria o hábito errado.
+        *@
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmButton Variant="_variante"
+                           Size="_tamanho"
+                           Disabled="_desabilitado"
+                           Loading="_carregando"
+                           FullWidth="_larguraTotal">
+                    @_texto
+                </RvmButton>
+            </div>
+
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmButtonVariant" @bind-Value="_variante" Label="Variant" Size="RvmSize.Small">
+                    @foreach (var v in Enum.GetValues<RvmButtonVariant>())
+                    {
+                        <option value="@v">@v</option>
+                    }
+                </RvmSelect>
+
+                <RvmSelect TValue="RvmSize" @bind-Value="_tamanho" Label="Size" Size="RvmSize.Small">
+                    @foreach (var s in Enum.GetValues<RvmSize>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+
+                <RvmTextField @bind-Value="_texto" Label="Conteúdo" Size="RvmSize.Small" />
+
+                <RvmCheckbox @bind-Value="_desabilitado" Label="Disabled" />
+                <RvmCheckbox @bind-Value="_carregando" Label="Loading" />
+                <RvmCheckbox @bind-Value="_larguraTotal" Label="FullWidth" />
+            </div>
+        </div>
+
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <p class="doc__nota">
+            <strong>Primary é uma por tela.</strong> Duas ações primárias lado a lado não destacam
+            nada — só transferem para o usuário a decisão de qual é a principal.
+        </p>
+        <div class="demo-linha">
+            <RvmButton Variant="RvmButtonVariant.Primary">Primary</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Secondary">Secondary</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Ghost">Ghost</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Danger">Danger</RvmButton>
+        </div>
+        <div class="demo-linha">
+            <RvmButton Size="RvmSize.Small">Small</RvmButton>
+            <RvmButton Size="RvmSize.Medium">Medium</RvmButton>
+            <RvmButton Size="RvmSize.Large">Large</RvmButton>
+        </div>
+    </Variantes>
+
+    <Estados>
+        <div class="demo-linha">
+            <RvmButton>Normal</RvmButton>
+            <RvmButton Disabled="true">Desabilitado</RvmButton>
+            <RvmButton Loading="true">Carregando</RvmButton>
+            <RvmButton Loading="true" LoadingText="Salvando...">Salvar</RvmButton>
+        </div>
+        <p class="doc__nota">
+            <code>Loading</code> <strong>bloqueia o clique</strong>, não só mostra o indicador.
+            Sem isso o duplo-clique impaciente num "Salvar" vira dois registros — e esse é o tipo
+            de defeito que só aparece em produção, com dado real.
+        </p>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li><strong>Teclado:</strong> <kbd>Tab</kbd> alcança, <kbd>Espaço</kbd> e <kbd>Enter</kbd> acionam — comportamento nativo do <code>&lt;button&gt;</code>, não reimplementado.</li>
+            <li><strong>Foco:</strong> anel de 2px em <code>--rvm-color-focus-ring</code>, aplicado com <code>:focus-visible</code> — aparece no teclado, não no clique de mouse.</li>
+            <li><strong>Carregando:</strong> marca <code>aria-busy="true"</code> e desabilita. O spinner é <code>aria-hidden</code>, porque o texto visível já comunica o estado; anunciar os dois faz o leitor de tela repetir.</li>
+            <li><strong>Tipo padrão é <code>button</code>, não <code>submit</code>.</strong> O HTML puro assume <code>submit</code> quando o tipo é omitido, e essa é uma das causas mais comuns de "a página recarregou sozinha".</li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li><strong>Para navegar.</strong> Se a ação leva a outra URL, use um link — botão não abre em nova aba, não aparece no histórico e não pode ser copiado.</li>
+            <li><strong>Só com ícone.</strong> Use <a href="componentes/icon-button">RvmIconButton</a>, que exige o nome acessível em vez de deixar você esquecer dele.</li>
+            <li><strong>Como rótulo de estado.</strong> Um botão comunica "clique aqui". Para mostrar situação sem ação, o componente é chip ou badge (onda 2).</li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmButtonVariant _variante = RvmButtonVariant.Primary;
+    private RvmSize _tamanho = RvmSize.Medium;
+    private string? _texto = "Salvar";
+    private bool _desabilitado;
+    private bool _carregando;
+    private bool _larguraTotal;
+
+    // Omite o que está no padrão de propósito: código de exemplo com todos os parâmetros
+    // explícitos ensina a escrever verboso, e o leitor copia o que vê.
+    private string Snippet()
+    {
+        var atributos = new List<string>();
+
+        if (_variante != RvmButtonVariant.Primary) atributos.Add($"Variant=\"RvmButtonVariant.{_variante}\"");
+        if (_tamanho != RvmSize.Medium) atributos.Add($"Size=\"RvmSize.{_tamanho}\"");
+        if (_desabilitado) atributos.Add("Disabled=\"true\"");
+        if (_carregando) atributos.Add("Loading=\"true\"");
+        if (_larguraTotal) atributos.Add("FullWidth=\"true\"");
+
+        var abertura = atributos.Count == 0
+            ? "<RvmButton>"
+            : $"<RvmButton {string.Join(' ', atributos)}>";
+
+        return $"{abertura}{_texto}</RvmButton>";
+    }
+}

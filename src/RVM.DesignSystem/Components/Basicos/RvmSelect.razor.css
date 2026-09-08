@@ -1,0 +1,48 @@
+.rvm-select__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.rvm-select {
+    width: 100%;
+    box-sizing: border-box;
+    appearance: none;
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body);
+    line-height: var(--rvm-line-height-body);
+    color: var(--rvm-color-on-surface);
+    background-color: var(--rvm-color-surface-sunken);
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    /* Espaço à direita para a seta desenhada não cobrir o texto da opção. */
+    padding: var(--rvm-space-2) var(--rvm-space-10) var(--rvm-space-2) var(--rvm-space-3);
+    cursor: pointer;
+}
+
+.rvm-select--small { padding-top: var(--rvm-space-1); padding-bottom: var(--rvm-space-1); font-size: var(--rvm-font-size-body-sm); }
+.rvm-select--large { padding-top: var(--rvm-space-3); padding-bottom: var(--rvm-space-3); font-size: var(--rvm-font-size-body-lg); }
+
+/* ::deep — mesmo motivo: a seta é um RvmIcon. */
+::deep .rvm-select__caret {
+    position: absolute;
+    right: var(--rvm-space-3);
+    color: var(--rvm-color-on-surface);
+    opacity: 0.6;
+    /* pointer-events none para o clique na seta abrir o select, e não ser engolido pelo ícone. */
+    pointer-events: none;
+}
+
+.rvm-select:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+    border-color: var(--rvm-color-focus-ring);
+}
+
+.rvm-select--invalid { border-color: var(--rvm-color-danger); }
+
+.rvm-select:disabled {
+    background-color: var(--rvm-color-disabled);
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}

@@ -6,10 +6,10 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 **Prefixo de task:** `DSGN-NNN` · contador próprio · card em `docs/Vault/02_Tasks/`,
 índice em `docs/Vault/03_Kanban/KANBAN.md`.
 
-> **Estado em 07/09/2026, após o bootstrap (`DSGN-001`):** repositório **público** em
-> `Elfarrar/RVM.DesignSystem` (MIT), esqueleto .NET 10 com os quatro projetos, cinco workflows,
-> CI verde e o site no ar em `design.dev.rvmtech.com.br`. **Produção não foi promovida** — falta
-> o sinal verde do Rafael. Componentes: zero, começam na onda 1 do `09-roadmap.md`.
+> **Estado em 08/09/2026:** repositório **público** em `Elfarrar/RVM.DesignSystem` (MIT),
+> esqueleto .NET 10, cinco workflows, camada de tokens e motor de tema (`DSGN-002`).
+> **No ar nos dois ambientes**: `design.dev.rvmtech.com.br` e `design.rvmit.com.br`.
+> Pacote estável `0.1.0` no BaGet. Componentes: zero — começam na onda 1 do `09-roadmap.md`.
 
 ## Escopo
 
@@ -115,8 +115,13 @@ Rafael pelo **screenshot** → `master` só com sinal verde explícito dele.
 
 Não há `demo`: o fluxo vai de `dev` direto para `master`.
 
-Publicação de pacote acompanha a branch: pré-release (`0.x.y-alpha.N`) a partir de `dev`, versão
-estável só de `master`.
+Publicação de pacote: pré-release (`0.x.y-alpha.N`, numerado pelo run) a cada push em `dev`;
+**versão estável só de TAG `vX.Y.Z`** — push em `master` não publica.
+
+> Mudou em 08/09/2026 (`DSGN-009`). A versão estável saía do `VersionPrefix` do csproj a cada push
+> em `master`, e isso fazia dela um **alvo móvel**: perdido o feed, o republish entregaria o mesmo
+> número com código diferente. A tag prende a versão ao commit — e é **a condição que sustenta a
+> decisão de não fazer backup do BaGet** (`Vault/05_References/baget-sem-backup.md`).
 
 ## Modo de trabalho
 
@@ -129,20 +134,33 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 
 - Spec `01`–`11` escrita em 07/09/2026; bootstrap (`DSGN-001`) executado no mesmo dia.
 - No ar: `https://design.dev.rvmtech.com.br` (casca do site, sem componentes ainda).
-- Produção (`master` → Pages → `design.rvmit.com.br`) **preparada mas não disparada**: falta DNS
-  `design` na zona `rvmit.com.br`, ligar o Pages nas settings e o monitor no Uptime-Kuma. Tudo
-  espera o sinal verde do Rafael.
+- **Produção no ar desde 08/09/2026**: `https://design.rvmit.com.br`, autorizada por ele.
+  Certificado do Pages emitido, `Enforce HTTPS` ligado, verificação por conteúdo.
+- ✅ **Monitor no Uptime-Kuma**: `DesignSystem - prod`, tipo `keyword` procurando
+  `RVM Design System` (não código HTTP — host estático com fallback devolve 200 com a página
+  errada), com alerta de expiração de certificado. O canal de e-mail via Resend foi criado no
+  mesmo passo: até 08/09/2026 o Kuma tinha 17 monitores e **zero** canais.
 - Próximo passo: onda 1 do `09-roadmap.md` — tokens, tematização e os nove componentes básicos.
 
 ## Pendências que bloqueiam
 
-Detalhe e suposição vigente de cada uma em `09-roadmap.md` § Pendências. As três primeiras precisam
-ser respondidas **antes de fechar a onda 1** — depois da 1.0, mudá-las quebra todo consumidor.
+Detalhe de cada uma em `09-roadmap.md` § Pendências. Depois da 1.0, mudá-las quebra todo consumidor.
 
-- ⏳ Idioma dos nomes de token e API (suposição: inglês)
-- ⏳ Conjunto de ícones (suposição: Lucide, MIT)
-- ⏳ Escala tipográfica: `rem` fixo ou `clamp()` (suposição: `rem` fixo)
-- ⏳ Localização: `.resx` ou pt-BR fixo (suposição: pt-BR fixo)
+**Nenhuma continua aberta.** Todas fechadas até 08/09/2026:
+
+| Pendência | Decisão |
+|---|---|
+| Idioma de token/API | inglês |
+| Escala tipográfica | `rem` fixo, `clamp()` só no `display` |
+| Localização | pt-BR fixo, texto sobrescrevível por parâmetro |
+| Visibilidade | público, MIT |
+| Referência do site | os dois modos, via `UseLocalDesignSystem` |
+| **Ícones** | **Phosphor** (MIT), pesos `Regular` e `Fill` na v1 |
+| Paleta da marca | roxo VS + azul VS Code, **modo escuro aprovado** |
+
+⚠️ **Sobra uma decisão de contrato para a onda 2: quais ícones entram no sprite.** Cada um é um
+nome público e bytes que todo consumidor baixa. A lista é curada junto dos componentes que os
+usam — ícone não entra "porque pode ser útil".
 - ✅ **Repositório público sob MIT** — respondido pelo Rafael em 07/09/2026. Consequência não
   óbvia: foi essa decisão que inviabilizou o caller do `RVM.Actions` (**ADR-011**) e, de quebra,
   dispensou o runner self-hosted.

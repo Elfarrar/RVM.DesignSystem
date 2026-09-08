@@ -1,0 +1,94 @@
+@page "/componentes/checkbox"
+
+<PaginaDeComponente Nome="RvmCheckbox"
+                    Tipo="typeof(RvmCheckbox)"
+                    Frase="Escolha que só vale quando o formulário é enviado — aceitar termos, marcar itens de uma lista.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmCheckbox @bind-Value="_marcado"
+                             Label="Li e aceito os termos"
+                             Help="@(_comAjuda ? "Você pode revogar depois." : null)"
+                             Error="@(_comErro ? "É preciso aceitar para continuar." : null)"
+                             Disabled="_desabilitado" />
+            </div>
+            <div class="playground__controles">
+                <RvmCheckbox @bind-Value="_comAjuda" Label="Help" />
+                <RvmCheckbox @bind-Value="_comErro" Label="Error" />
+                <RvmCheckbox @bind-Value="_desabilitado" Label="Disabled" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Estados>
+        <div class="demo-grade">
+            <RvmCheckbox Label="Desmarcado" />
+            <RvmCheckbox Label="Marcado" Value="true" />
+            <RvmCheckbox Label="Com erro" Error="Campo obrigatório." />
+            <RvmCheckbox Label="Desabilitado" Disabled="true" />
+        </div>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É um <code>&lt;input type="checkbox"&gt;</code> de verdade</strong>, não uma
+                <code>&lt;div&gt;</code> estilizada. Reimplementar com div exigiria recriar à mão
+                foco por <kbd>Tab</kbd>, alternar com <kbd>Espaço</kbd>, o estado para leitor de
+                tela, a integração com <code>&lt;label&gt;</code>, o autofill e o comportamento em
+                formulário — e todo componente que faz isso erra pelo menos um.
+            </li>
+            <li>
+                <strong>O input fica invisível mas presente</strong> — <code>opacity: 0</code>, nunca
+                <code>display: none</code>, que o tiraria da ordem de tabulação e o esconderia do
+                leitor de tela. É a diferença entre esconder o desenho e destruir o controle.
+            </li>
+            <li>
+                <strong>O anel de foco vai na caixa desenhada</strong>, não no input invisível —
+                senão o foco de teclado ficaria sem indicação visível, que é falha direta de
+                WCAG 2.4.7.
+            </li>
+            <li>
+                <strong>O desenho não captura clique</strong> (<code>pointer-events: none</code>).
+                Sem isso ele fica na frente do input e engole o ponteiro — o usuário clica e nada
+                acontece.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para efeito imediato.</strong> Use <a href="componentes/switch">RvmSwitch</a>.
+                A diferença não é visual: switch aplica na hora ("notificações ligadas"), checkbox só
+                vale no envio ("aceito os termos"). Usar o errado quebra a expectativa de quem usa.
+            </li>
+            <li>
+                <strong>Para escolha única entre opções.</strong> Use
+                <a href="componentes/radio-group">RvmRadioGroup</a> — vários checkboxes onde só um
+                pode valer é um contrato que a interface não consegue cumprir sozinha.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private bool _marcado;
+    private bool _comAjuda;
+    private bool _comErro;
+    private bool _desabilitado;
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { "Label=\"Li e aceito os termos\"" };
+
+        if (_comAjuda) atributos.Add("Help=\"Você pode revogar depois.\"");
+        if (_comErro) atributos.Add("Error=\"É preciso aceitar para continuar.\"");
+        if (_desabilitado) atributos.Add("Disabled=\"true\"");
+
+        return "<RvmCheckbox @bind-Value=\"modelo.Aceite\"\n             "
+            + string.Join("\n             ", atributos) + " />";
+    }
+}

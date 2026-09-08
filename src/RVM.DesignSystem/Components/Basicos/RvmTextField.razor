@@ -1,0 +1,113 @@
+@namespace RVM.DesignSystem.Components
+@inherits RvmInputBase<string?>
+
+@*
+    Herda de InputBase<string?> de propósito (`03` § Formulários): assim DataAnnotations,
+    EditForm e ValidationMessage funcionam sem adaptação nenhuma. Quem já escreve Blazor não
+    precisa aprender um motor de validação novo — não existe motor novo.
+*@
+
+<RvmFormField FieldId="@Id" Label="@Label" Help="@Help" Error="@MensagemDeErro" Required="@Required" Class="@Class">
+    <div class="rvm-input__wrapper">
+        @if (!string.IsNullOrWhiteSpace(IconStart))
+        {
+            <RvmIcon Name="@IconStart" Class="rvm-input__icon rvm-input__icon--start" />
+        }
+        <input id="@Id"
+               class="@ClasseInput"
+               type="@TipoHtml"
+               value="@CurrentValue"
+               placeholder="@Placeholder"
+               disabled="@Disabled"
+               readonly="@ReadOnly"
+               required="@Required"
+               aria-invalid="@(TemErro ? "true" : null)"
+               aria-describedby="@DescricaoPara(Id)"
+               @oninput="AoDigitar"
+               @attributes="AdditionalAttributes" />
+    </div>
+</RvmFormField>
+
+@code {
+    /// <summary>Identificador do campo. Gerado quando não informado.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-input-{Guid.NewGuid():N}";
+
+    /// <summary>Rótulo visível.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Texto de exemplo dentro do campo.</summary>
+    /// <remarks>
+    /// Não substitui o <see cref="Label"/>: placeholder some ao digitar, some no autofill e
+    /// tem contraste baixo por design. Campo só com placeholder deixa o usuário sem saber o
+    /// que preencheu assim que começa a preencher.
+    /// </remarks>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>Tipo do input HTML.</summary>
+    [Parameter]
+    public RvmTextFieldType Type { get; set; } = RvmTextFieldType.Text;
+
+    /// <summary>Ícone exibido no início do campo.</summary>
+    [Parameter]
+    public string? IconStart { get; set; }
+
+    /// <summary>Desabilita o campo.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Torna o campo somente leitura.</summary>
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    /// <summary>Marca como obrigatório.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Tamanho do campo.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string TipoHtml => Type switch
+    {
+        RvmTextFieldType.Email => "email",
+        RvmTextFieldType.Password => "password",
+        RvmTextFieldType.Tel => "tel",
+        RvmTextFieldType.Url => "url",
+        RvmTextFieldType.Search => "search",
+        _ => "text",
+    };
+
+    // O erro explícito vence o do EditContext: quem passou Error na mão sabe de algo que a
+    // validação de anotação não sabe (erro vindo do servidor, por exemplo).
+    private string ClasseInput => string.Join(' ', new[]
+    {
+        "rvm-input",
+        $"rvm-input--{Size.ToString().ToLowerInvariant()}",
+        TemErro ? "rvm-input--invalid" : null,
+        !string.IsNullOrWhiteSpace(IconStart) ? "rvm-input--with-icon" : null,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoDigitar(ChangeEventArgs e)
+    {
+        CurrentValueAsString = e.Value?.ToString();
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(
+        string? value,
+        out string? result,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null;
+        return true;
+    }
+}

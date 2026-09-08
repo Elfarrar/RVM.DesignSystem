@@ -1,15 +1,91 @@
 @inherits LayoutComponentBase
+@inject IRvmThemeService Tema
 
-<div class="page">
-    <header class="site-header">
-        <a class="site-brand" href="">RVM Design System</a>
-    </header>
+<RvmThemeProvider>
+    <div class="page">
+        @*
+            "Pular para o conteúdo" é o primeiro elemento tabulável da página, e fica escondido
+            até receber foco. Sem ele, quem navega por teclado atravessa a navegação lateral
+            inteira em TODA página antes de chegar ao texto (`07` § Requisitos próprios).
+        *@
+        <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
-    <main class="site-main">
-        @Body
-    </main>
+        <header class="site-header">
+            <a class="site-brand" href="">RVM Design System</a>
 
-    <footer class="site-footer">
-        <p>Biblioteca de componentes Blazor do ecossistema RVM · MIT</p>
-    </footer>
-</div>
+            <div class="site-controls">
+                <label class="site-controls__label" for="seletor-tema">Tema</label>
+                <select id="seletor-tema" class="site-controls__select" @onchange="TrocarTema">
+                    @foreach (var t in RvmThemes.All)
+                    {
+                        <option value="@t.Name" selected="@(t.Name == Tema.Theme.Name)">@t.Name</option>
+                    }
+                </select>
+
+                <RvmIconButton Icon="@(_escuro ? "eye" : "eye-slash")"
+                               Label="@(_escuro ? "Mudar para o tema claro" : "Mudar para o tema escuro")"
+                               OnClick="AlternarModo" />
+            </div>
+        </header>
+
+        <div class="site-corpo">
+            <nav class="site-nav" aria-label="Navegação da documentação">
+                @foreach (var grupo in Navegacao.Grupos)
+                {
+                    <div class="site-nav__grupo">
+                        <h2 class="site-nav__titulo">@grupo.Titulo</h2>
+                        <ul class="site-nav__lista">
+                            @foreach (var item in grupo.Itens)
+                            {
+                                <li>
+                                    <NavLink class="site-nav__link" href="@item.Rota" Match="NavLinkMatch.All">
+                                        @item.Texto
+                                    </NavLink>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </nav>
+
+            <main class="site-main" id="conteudo" tabindex="-1">
+                @Body
+            </main>
+        </div>
+
+        <footer class="site-footer">
+            <p>Biblioteca de componentes Blazor do ecossistema RVM · MIT</p>
+        </footer>
+    </div>
+</RvmThemeProvider>
+
+@code {
+    private bool _escuro;
+
+    private async Task TrocarTema(ChangeEventArgs e)
+    {
+        var nome = e.Value?.ToString();
+        var tema = RvmThemes.All.FirstOrDefault(t => t.Name == nome);
+
+        if (tema is not null)
+        {
+            await Tema.SetThemeAsync(tema);
+        }
+    }
+
+    private async Task AlternarModo()
+    {
+        _escuro = !_escuro;
+        await Tema.SetPreferenceAsync(_escuro ? RvmThemePreference.Dark : RvmThemePreference.Light);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primeiraVez)
+    {
+        if (primeiraVez && Tema is RvmThemeService servico)
+        {
+            var preferencia = await servico.LoadPreferenceAsync();
+            _escuro = preferencia == RvmThemePreference.Dark;
+            StateHasChanged();
+        }
+    }
+}

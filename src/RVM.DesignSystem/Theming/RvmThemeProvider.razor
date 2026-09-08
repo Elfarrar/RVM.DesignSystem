@@ -1,0 +1,29 @@
+@using Microsoft.AspNetCore.Components.Web
+@implements IDisposable
+@inject IRvmThemeService ThemeService
+
+@*
+    Emite as custom properties do tema corrente e cascateia o servico para a arvore abaixo.
+
+    O <style> e renderizado no HTML, nao aplicado por JS: e o que faz o tema estar certo no
+    PRIMEIRO paint, inclusive em pre-render de Blazor Server, onde JS ainda nao existe.
+    Trocar de modo depois e uma escrita de atributo no <html> — sem re-render do Blazor.
+*@
+
+<style>@((MarkupString)ThemeService.Theme.ToCss())</style>
+
+<CascadingValue Value="ThemeService" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    /// <summary>Conteudo que recebe o tema.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void OnInitialized() => ThemeService.Changed += AoMudar;
+
+    private void AoMudar() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => ThemeService.Changed -= AoMudar;
+}

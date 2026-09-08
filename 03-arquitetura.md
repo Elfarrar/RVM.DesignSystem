@@ -123,10 +123,37 @@ quem já escreve Blazor.
 
 Sprite SVG único, auto-hospedado, consumido por `<RvmIcon Name="check" />`. Sem Material Icons por
 CDN (requisito de privacidade do `02`), sem font-icon.
-⏳ **PENDENTE — decisão do Rafael:** qual conjunto de ícones? *Pergunta exata: adotamos um conjunto
-livre existente (Lucide ou Phosphor, licença MIT, ~1500 ícones) ou desenhamos um conjunto próprio?*
-Suposição vigente: **Lucide**, importado e re-empacotado no build — desenhar ícone à mão é trabalho
-de designer, não de biblioteca, e a licença MIT permite a redistribuição.
+✅ **Phosphor** — decidido pelo Rafael em 08/09/2026. 1512 ícones, **MIT**, importados e
+re-empacotados no build. Desenhar ícone à mão é trabalho de designer, não de biblioteca.
+
+**O que decidiu foram os pesos.** O Phosphor publica cada ícone em seis: `thin`, `light`,
+`regular`, `bold`, `fill` e `duotone`. Os dois que resolvem um problema real são `regular` e
+`fill` — é o par que expressa estado selecionado de forma natural (item de menu ativo, favorito
+marcado), e isso volta na onda 2 (`RvmNavItem`, `RvmChip`) e na 3 (`RvmAlert` por severidade). O
+Lucide, a suposição anterior, é traço único: o preenchido teria que ser improvisado com cor de
+fundo.
+
+> **Correção de duas coisas que esta seção afirmava.** O Lucide **não é MIT, é ISC** — e nem ISC
+> puro: os ~110 ícones herdados do Feather (`check`, `search`, `x`, `plus`, `chevron-*`, `trash`,
+> `lock` — justamente os mais usados) seguem MIT com copyright de Cole Bemis. Embutir Lucide
+> exigiria dois blocos de aviso e a expressão de licença do pacote passaria a `MIT AND ISC`. O
+> Phosphor é MIT puro: um bloco de aviso, e o `PackageLicenseExpression` continua `MIT`.
+> Não foi o motivo da escolha — o peso preenchido foi —, mas é a única diferença que sai do papel
+> e chega no build.
+
+### A API dos pesos — decisão de implementação, ainda revisável
+
+`<RvmIcon Name="check" />` continua sendo o uso normal, com `Regular` implícito. O peso entra
+como parâmetro opcional: `<RvmIcon Name="star" Weight="RvmIconWeight.Fill" />`.
+
+**A v1 expõe só `Regular` e `Fill`.** Os outros quatro pesos existem no conjunto de origem mas não
+entram no enum: peso publicado é nome público, e acrescentar membro de enum depois é aditivo — não
+quebra ninguém —, enquanto remover quebra. Começar pelos dois que resolvem um problema concreto e
+crescer sob demanda é o caminho que não custa nada desfazer.
+
+⚠️ **O sprite leva um subconjunto curado, não os 1512.** Cada ícone embutido é um nome na API
+pública e bytes que todo consumidor baixa. A lista entra na onda 2, junto dos componentes que os
+usam. Um ícone que ninguém usa não entra "porque pode ser útil".
 
 ## Multi-tenant, auth e soft-delete
 

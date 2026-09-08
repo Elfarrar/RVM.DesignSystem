@@ -3,7 +3,7 @@ id: DSGN-001
 titulo: Bootstrap — repo, esqueleto .NET, CI/CD, DNS/SSL e deploy dev
 repo: RVM.DesignSystem
 tipo: chore
-status: em-revisao
+status: concluido
 criada: 2026-09-07
 ---
 
@@ -31,7 +31,8 @@ workflow — nao so HTTP 200, que host estatico com fallback devolve para qualqu
 - [x] 7 secrets no repositorio
 - [x] DNS `design.dev` -> Rivendell; certificado LE `design-dev`; vhost estatico
 - [x] Deploy em `design.dev.rvmtech.com.br`
-- [ ] Producao (Pages + DNS `design.rvmit.com.br` + monitor no Uptime-Kuma) — **aguarda o Rafael**
+- [x] Producao: `https://design.rvmit.com.br` no ar, autorizado por ele em 08/09/2026
+- [ ] Monitor no Uptime-Kuma — **bloqueado**, ver abaixo
 
 ## Decisoes
 
@@ -119,12 +120,68 @@ Duas coisas medidas, nao assumidas:
   e reprovaria no portao AA; o renderizado da 4.62. O site esta certo — o nome escrito la e que
   esta desatualizado.
 - **O modo escuro nao existe no site** (`color-scheme: light`). Derivei mantendo matiz e croma,
-  invertendo luminosidade, e verifiquei: os cinco pares passam. ⏳ **Mas e derivacao minha, nao
-  escolha dele** — confirmar antes da 1.0.
+  invertendo luminosidade, e verifiquei: os cinco pares passam. ✅ **Aprovado por ele em 08/09/2026**,
+  depois de ver a marca no escuro no site de dev.
 
 Tres tokens do site (`text-subtle` 3.42, `accent-warm` 4.42, `border-strong` 1.67) nao sobrevivem
 como token semantico da biblioteca; o porque e o ajuste estao no `06`. Nao e defeito do site: la
 eles vivem em texto grande e divisoria decorativa, onde 3.0 basta.
+
+## Producao — subiu em 08/09/2026
+
+`https://design.rvmit.com.br` no ar. Verificado por conteudo, nao por status code:
+`.nojekyll`, `404.html`, `CNAME`, o bundle de CSS isolado e o `rvm-tokens.css` respondendo 200;
+`http` redirecionando 301 para `https`; certificado do Let's Encrypt emitido pelo Pages e
+`Enforce HTTPS` ligado; zero erro de console.
+
+### O primeiro deploy terminou vermelho, e o site estava certo
+
+O `actions/deploy-pages@v4` passou; falhou so o meu passo de `Verify`. Duas suposicoes minhas:
+
+1. **O arquivo `CNAME` no artefato NAO registra o dominio** quando o deploy e via
+   `actions/deploy-pages`. Isso vale para publicacao por branch; aqui o dominio e configuracao
+   do repositorio, e so entra por settings ou API.
+2. **Ovo-e-galinha:** o dominio so pode ser registrado DEPOIS que existe um deployment. Entao o
+   primeiro `Verify` falha por construcao, com o site publicado e funcionando.
+
+Corrigido na `DSGN-004`: a mensagem de erro agora nomeia esse caso e da os comandos, e a janela
+subiu para 10x30s — o certificado leva minutos para propagar entre as bordas do Pages, e nesse
+intervalo o mesmo endereco alterna entre 200 e erro de TLS conforme o no que atende.
+
+### Duas coisas consertadas antes de subir
+
+- **A borda em volta do titulo** (o Rafael reclamou): era o anel de foco do `<FocusOnNavigate>`.
+  Removido so onde nao orienta ninguem (`tabindex="-1"`, fora da ordem de tabulacao); o anuncio
+  para leitor de tela e o foco de teclado nos links seguem intactos.
+- **404 do bundle de CSS isolado**: nao existia porque nao havia nenhum `.razor.css`. Na dev o
+  defeito era invisivel, porque o `try_files` do Nginx devolvia `index.html` com 200 no lugar do
+  CSS. No Pages apareceria.
+
+### O que fica pendente de producao
+
+✅ **Monitor criado em 08/09/2026** — `DesignSystem - prod` (id 25), tipo `keyword` procurando
+`RVM Design System`, com alerta de expiracao de certificado.
+
+Tipo `keyword` e nao codigo HTTP pelo mesmo motivo que os workflows deste repo verificam conteudo:
+host estatico com fallback devolve 200 com a pagina errada, e monitor que aceita qualquer 200 fica
+verde com o site quebrado.
+
+**O que estava travando nao era o monitor, era o canal.** O Uptime-Kuma tinha **17 monitores e
+ZERO canais de notificacao** — nenhum avisava ninguem, incluindo as producoes de ERPAgro, Gypsy e
+Payments. O Rafael escolheu e-mail em 08/09/2026, e o canal (SMTP via Resend, remetente
+`alertas@rvmtech.com.br`) foi criado e vinculado aos 18 monitores. Detalhe em
+`RVM.Infra/docs/ACESSOS.md` § Resend e na skill `padrao-rvm` §11.
+
+⚠️ **Rota profunda devolve HTTP 404 no Pages** — o `404.html` renderiza a pagina certa e a URL e
+preservada, entao para o usuario funciona; mas o status e 404. Diferente do Nginx da dev, que
+devolve 200 via `try_files`. Sem impacto hoje (nao ha pagina de componente ainda); vira questao
+de SEO na onda 1, quando as paginas existirem.
+
+✅ **O `0.1.0` acabou NAO sendo consumido.** A promocao disparou um publish estavel de `0.1.0`,
+mas ele falhou por intermitencia de rede — e eu nao re-rodei de proposito, porque o `09-roadmap`
+reserva esse numero para o fim da onda 1 e versao publicada e imutavel na pratica. Em vez disso o
+`VersionPrefix` desceu para `0.0.1` e o estavel passou a sair **so de tag** (`DSGN-009`). O feed
+tem so `0.0.1-alpha.*`; o `0.1.0` continua livre.
 
 ## Pendencias que continuam abertas
 

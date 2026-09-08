@@ -9,8 +9,14 @@
     <!-- base href="/" porque o site fica na raiz de dominio proprio (10-infra § Deploy).
          Mudar para subcaminho exige mudar isto junto. -->
     <base href="/" />
+    <!-- Anti-flash: SINCRONO e antes do CSS, de proposito. Sem ele quem usa tema escuro ve a
+         pagina inteira em claro pelos segundos que o WASM leva para subir — nao um piscar,
+         um erro visivel. -->
+    <script src="_content/RVM.DesignSystem/js/rvm-theme-init.js"></script>
     <link rel="preload" id="webassembly" />
+    <link rel="stylesheet" href="_content/RVM.DesignSystem/rvm-tokens.css" />
     <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/doc.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="RVM.DesignSystem.Docs.styles.css" rel="stylesheet" />
     <script type="importmap"></script>

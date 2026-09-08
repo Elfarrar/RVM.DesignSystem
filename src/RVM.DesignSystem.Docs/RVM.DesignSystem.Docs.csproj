@@ -29,10 +29,46 @@
        .nojekyll impede o Jekyll do Pages de descartar _framework/;
        404.html faz o roteamento client-side sobreviver ao F5.
 
-       O CNAME fixa o dominio proprio. Poderia ser um toggle nas settings do repo, mas aqui
-       ele fica VERSIONADO: aparece em code review, sobrevive a quem mexer nas settings, e
-       e o que garante que o <base href="/"> esteja certo — sem dominio proprio o Pages serve
-       em /RVM.DesignSystem/ e todo caminho absoluto do WASM quebra. -->
+       O CNAME documenta o dominio proprio no artefato.
+
+       ⚠️ Correcao de uma suposicao minha (08/09/2026): eu achei que este arquivo REGISTRARIA
+       o dominio no Pages. NAO registra. Isso vale para publicacao por branch; com deploy via
+       `actions/deploy-pages`, o dominio e uma configuracao do repositorio e so entra por
+       settings ou API:
+           gh api -X PUT repos/OWNER/REPO/pages -f cname=design.rvmit.com.br
+       E ha um ovo-e-galinha no primeiro deploy: o dominio so pode ser registrado DEPOIS que
+       existe um deployment, entao o primeiro `Verify` do workflow falha mesmo com o site
+       publicado. A mensagem de erro do workflow explica esse caso.
+
+       O arquivo fica assim mesmo, por dois motivos: e servido em /CNAME, o que deixa o
+       dominio pretendido visivel e versionado; e o guard do workflow usa ele para provar que
+       o publish saiu com o dominio certo em mente. Sem dominio proprio o Pages serviria em
+       /RVM.DesignSystem/ e todo caminho absoluto do WASM quebraria. -->
+  <!--
+    Traz o XML de doc da biblioteca para dentro do site, alimentando a tabela de API
+    gerada do codigo (`07` § Anatomia).
+
+    ⚠️ A ORDEM E O PONTO. Copiar com AfterTargets="Build" chega TARDE DEMAIS: os static
+    web assets ja foram enumerados e o arquivo fica de fora do publish. Em maquina de
+    desenvolvimento isso nao aparece — o arquivo sobrou do build anterior e tudo parece
+    certo. So quebra em build LIMPO, ou seja, exatamente no CI.
+
+    AfterTargets="ResolveProjectReferences" garante que a RCL ja compilou (e o XML
+    existe); BeforeTargets="ResolveStaticWebAssetsInputs" garante que a copia acontece
+    antes da enumeracao.
+  -->
+  <Target Name="TrazerXmlDeDoc"
+          AfterTargets="ResolveProjectReferences"
+          BeforeTargets="ResolveStaticWebAssetsInputs">
+    <PropertyGroup>
+      <XmlDaBiblioteca>$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml</XmlDaBiblioteca>
+    </PropertyGroup>
+    <Copy SourceFiles="$(XmlDaBiblioteca)"
+          DestinationFolder="$(MSBuildThisFileDirectory)wwwroot/api"
+          Condition="Exists('$(XmlDaBiblioteca)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
   <Target Name="PagesStaticHostFixups" AfterTargets="Publish">
     <WriteLinesToFile File="$(PublishDir)wwwroot/.nojekyll" Lines="" Overwrite="true" />
     <Copy SourceFiles="$(PublishDir)wwwroot/index.html" DestinationFiles="$(PublishDir)wwwroot/404.html" />

@@ -107,20 +107,32 @@ custo próprio, não continuação automática deste roadmap.
 ## Pendências que travam o contrato
 
 O análogo, aqui, de "pendência que muda o modelo de dados": **depois da 1.0 publicada, mudar
-qualquer uma destas quebra todo consumidor.** As três primeiras devem ser resolvidas **antes de
-fechar a onda 1**.
+qualquer uma destas quebra todo consumidor.**
 
-1. ⏳ **Idioma dos nomes de token e de API** — inglês (`surface`, `on-surface`) ou português?
-   Suposição vigente: inglês (`04`, `05`). *Trava: nome publicado é contrato.*
-2. ⏳ **Conjunto de ícones** — Lucide/Phosphor re-empacotado, ou conjunto próprio?
-   Suposição vigente: Lucide, MIT (`03`). *Trava: nome de ícone é API pública.*
-3. ⏳ **Escala tipográfica** — `rem` fixo ou fluido com `clamp()`?
-   Suposição vigente: `rem` fixo, fluidez só no `display` (`04`). *Trava: muda toda tela existente.*
-4. ⏳ **Localização** — `.resx` com en-US, ou pt-BR fixo com textos sobrescrevíveis?
-   Suposição vigente: pt-BR fixo, sem `.resx` (`02`). *Trava: adicionar `.resx` depois muda a
-   assinatura de todo componente que tem texto.*
-5. ⏳ **Visibilidade do repositório e licença** — público sob MIT, ou privado?
-   Suposição vigente: público, MIT (`08`). *Trava: publicar código e depois fechar não desfaz nada.*
-6. ⏳ **Referência do site à biblioteca** — pacote do BaGet ou `ProjectReference`?
-   Suposição vigente: pacote, com alternância local por propriedade de build (`03`). *Não trava
-   contrato, mas trava o fluxo diário de desenvolvimento — decidir na onda 1.*
+> **Estado em 08/09/2026: as seis fechadas.** A paleta da marca — roxo do Visual Studio + azul
+> do VS Code, do `rvmtech.com.br` — entrou depois e também está fechada, **incluindo o modo
+> escuro** (`06` § A identidade da marca).
+>
+> Fica **uma decisão de contrato para a onda 2**, que não estava nesta lista: **quais ícones
+> entram no sprite**. Cada um é um nome público e bytes que todo consumidor baixa, então a lista
+> é curada junto dos componentes que os usam — não "por precaução".
+
+1. ✅ **Inglês.** Não por omissão — o `CLAUDE.md` do projeto já traz a regra ("nome de API
+   pública em inglês, texto ao usuário final em PT-BR"), e a `DSGN-002` implementou assim
+   (`RvmPalette.OnSurface`, `--rvm-color-on-surface`).
+2. ✅ **Phosphor** — decidido pelo Rafael em 08/09/2026. 1512 ícones, MIT puro, re-empacotados no
+   build. O que decidiu foi o **peso preenchido**: o Phosphor publica `regular` e `fill` (entre
+   outros quatro), e esse par é o que expressa estado selecionado sem improviso. A v1 expõe só
+   esses dois — acrescentar peso depois é aditivo, remover é que quebra (`03` § Ícones).
+3. ✅ **`rem` fixo, com `clamp()` só no `display`.** Implementado na `DSGN-002`
+   (`rvm-tokens.css`). Previsível vale mais que elegante numa v1; o `display` é a exceção porque
+   um título de 3rem estoura a linha no celular.
+4. ✅ **pt-BR fixo, sem `.resx`.** O `CLAUDE.md` do projeto já exige que todo texto padrão de
+   componente seja sobrescrevível por parâmetro, o que resolve o caso real (app que precisa de
+   outra palavra) sem o peso de um pipeline de recursos.
+5. ✅ **Público sob MIT** — decidido pelo Rafael em 07/09/2026. Consequência que ninguém previa:
+   foi essa decisão que inviabilizou o caller do `RVM.Actions` (repositório público não chama
+   reusable de repositório privado, **ADR-011**) e, de quebra, dispensou o runner self-hosted.
+6. ✅ **Implementado nos dois modos.** `UseLocalDesignSystem` no `Directory.Build.props` alterna
+   entre `ProjectReference` e pacote do BaGet. Hoje `true` por padrão, porque o site precisa
+   compilar contra o código local enquanto a biblioteca muda a cada task.

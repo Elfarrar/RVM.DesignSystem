@@ -1,0 +1,71 @@
+@page "/componentes/icon-button"
+
+<PaginaDeComponente Nome="RvmIconButton"
+                    Tipo="typeof(RvmIconButton)"
+                    Frase="Ação representada só por um ícone. Exige nome acessível — não dá para esquecer, porque não dá para omitir.">
+
+    <Exemplo>
+        <div class="demo-linha">
+            <RvmIconButton Icon="x" Label="Fechar" />
+            <RvmIconButton Icon="check" Label="Confirmar" Variant="RvmButtonVariant.Primary" />
+            <RvmIconButton Icon="magnifying-glass" Label="Buscar" Variant="RvmButtonVariant.Secondary" />
+        </div>
+        <BlocoDeCodigo Codigo="@("<RvmIconButton Icon=\"x\" Label=\"Fechar\" />")" />
+    </Exemplo>
+
+    <Variantes>
+        <div class="demo-linha">
+            <RvmIconButton Icon="check" Label="Ghost" />
+            <RvmIconButton Icon="check" Label="Primary" Variant="RvmButtonVariant.Primary" />
+            <RvmIconButton Icon="check" Label="Secondary" Variant="RvmButtonVariant.Secondary" />
+            <RvmIconButton Icon="x" Label="Danger" Variant="RvmButtonVariant.Danger" />
+        </div>
+        <div class="demo-linha">
+            <RvmIconButton Icon="check" Label="Pequeno" Size="RvmSize.Small" />
+            <RvmIconButton Icon="check" Label="Médio" Size="RvmSize.Medium" />
+            <RvmIconButton Icon="check" Label="Grande" Size="RvmSize.Large" />
+        </div>
+        <p class="doc__nota">
+            Os três tamanhos respeitam o alvo de toque mínimo de 44px da WCAG 2.2 (SC 2.5.8).
+            O ícone é pequeno; o botão não pode ser.
+        </p>
+    </Variantes>
+
+    <Estados>
+        <div class="demo-linha">
+            <RvmIconButton Icon="check" Label="Normal" />
+            <RvmIconButton Icon="check" Label="Desabilitado" Disabled="true" />
+        </div>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong><code>Label</code> é obrigatório e vira <code>aria-label</code>.</strong>
+                Um botão sem texto não tem nome acessível: o leitor de tela anuncia apenas "botão".
+                Omitir o <code>Label</code> lança exceção em vez de renderizar um botão mudo — porque
+                esse defeito passa em revisão visual, a tela fica bonita, e só aparece para quem usa
+                leitor de tela.
+            </li>
+            <li>
+                <strong><code>ShowTooltip</code> é separado do nome acessível.</strong> O
+                <code>title</code> nativo só aparece no hover do mouse e é inútil em toque e teclado.
+                Ele ajuda quem enxerga e usa mouse; não substitui o nome, que existe sempre.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Quando o ícone não é óbvio.</strong> Ícone sozinho só funciona quando o
+                significado é universal — fechar, buscar, editar. "Exportar em lote" não tem ícone
+                universal: use <a href="componentes/button">RvmButton</a> com texto.
+            </li>
+            <li>
+                <strong>Na ação principal da tela.</strong> A ação mais importante merece texto.
+                Economizar espaço ali custa cliques errados.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>

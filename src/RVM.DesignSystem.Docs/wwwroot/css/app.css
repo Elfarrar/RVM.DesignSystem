@@ -14,27 +14,20 @@
   Bootstrap por padrao e ele foi removido no bootstrap (DSGN-001).
 */
 
+/*
+  A partir da onda 1 o site NAO tem paleta propria: ele se veste com os tokens que a
+  biblioteca emite. Os --site-* viraram apelidos dos --rvm-*, e trocar o tema no seletor
+  troca o site inteiro junto — que e a demonstracao mais direta do que o motor faz.
+*/
 :root {
     color-scheme: light dark;
-    --site-fg: #1E1E26;
-    --site-bg: #EEEEF1;
-    --site-bg-elev: #FCFCFE;
-    --site-muted: #575760;
-    --site-line: #DEDEE4;
-    --site-link: #641974;
-    --site-accent-alt: #006DBD;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --site-fg: #E7E7ED;
-        --site-bg: #111117;
-        --site-bg-elev: #1A1A20;
-        --site-muted: #A3A4AC;
-        --site-line: #32323A;
-        --site-link: #CF8FDE;
-        --site-accent-alt: #65B2F1;
-    }
+    --site-fg: var(--rvm-color-on-surface);
+    --site-bg: var(--rvm-color-background);
+    --site-bg-elev: var(--rvm-color-surface-raised);
+    --site-muted: var(--rvm-color-on-surface);
+    --site-line: var(--rvm-color-border);
+    --site-link: var(--rvm-color-primary);
+    --site-accent-alt: var(--rvm-color-secondary);
 }
 
 html, body {
@@ -136,9 +129,112 @@ h1[tabindex="-1"]:focus-visible {
     z-index: 1000;
 }
 
+/* O banner de erro tem fundo amarelo FIXO nos dois modos, entao a cor do texto tambem
+   precisa ser fixa. Sem isto, no modo escuro o link herda a cor clara do tema e fica
+   ilegivel sobre o amarelo — justo na mensagem que aparece quando algo ja deu errado. */
+#blazor-error-ui a.reload {
+    color: #16161a;
+    font-weight: 600;
+}
+
 #blazor-error-ui .dismiss {
     cursor: pointer;
     position: absolute;
     right: 0.75rem;
     top: 0.5rem;
+}
+
+
+/* --- Demonstracao --- */
+
+/*
+  SEM opacity. Opacidade compõe a cor com o fundo e derruba o contraste de TUDO que está
+  dentro — inclusive de um <code> colorido, que herda o efeito e não a cor.
+  Foi assim que o axe reprovou aqui: o `Rvm*` azul caiu de 4.62 para 3.64.
+  Texto secundário se faz com COR, não com transparência.
+*/
+.intro, .secao-nota {
+    color: var(--rvm-color-on-surface);
+}
+
+h2 {
+    margin-top: var(--rvm-space-10);
+    font-size: var(--rvm-font-size-h3);
+    letter-spacing: var(--rvm-tracking-heading);
+}
+
+.demo-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-5);
+    max-width: 28rem;
+    padding: var(--rvm-space-6);
+    background: var(--rvm-color-surface);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-lg);
+}
+
+.demo-form__acoes {
+    display: flex;
+    gap: var(--rvm-space-3);
+    flex-wrap: wrap;
+    margin-top: var(--rvm-space-2);
+}
+
+.demo-form__ok {
+    margin: 0;
+    color: var(--rvm-color-success);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.demo-linha {
+    display: flex;
+    gap: var(--rvm-space-3);
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: var(--rvm-space-4);
+}
+
+.demo-icones {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--rvm-space-4);
+}
+
+.demo-icone {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    background: var(--rvm-color-surface);
+}
+
+.demo-icone code { font-size: var(--rvm-font-size-caption); }
+
+.site-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.site-controls__label {
+    font-size: var(--rvm-font-size-body-sm);
+    color: var(--rvm-color-on-surface);
+}
+
+.site-controls__select {
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    color: var(--rvm-color-on-surface);
+    background: var(--rvm-color-surface-sunken);
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+}
+
+.site-controls__select:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
 }

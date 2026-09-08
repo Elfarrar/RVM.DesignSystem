@@ -1,0 +1,39 @@
+.rvm-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-md);
+    background-color: transparent;
+    color: var(--rvm-color-on-surface);
+    cursor: pointer;
+    transition: background-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+/* Alvo de toque mínimo de 44px (WCAG 2.2, SC 2.5.8). O ícone é pequeno; o botão não pode ser. */
+.rvm-icon-button--small { width: var(--rvm-space-8); height: var(--rvm-space-8); font-size: var(--rvm-font-size-body-sm); }
+.rvm-icon-button--medium { width: var(--rvm-space-10); height: var(--rvm-space-10); font-size: var(--rvm-font-size-body); }
+.rvm-icon-button--large { width: var(--rvm-space-12); height: var(--rvm-space-12); font-size: var(--rvm-font-size-body-lg); }
+
+.rvm-icon-button--primary { background-color: var(--rvm-color-primary); color: var(--rvm-color-on-primary); }
+.rvm-icon-button--secondary { border-color: var(--rvm-color-border-strong); }
+.rvm-icon-button--danger { background-color: var(--rvm-color-danger); color: var(--rvm-color-on-danger); }
+
+@media (hover: hover) {
+    .rvm-icon-button--ghost:hover:not(:disabled),
+    .rvm-icon-button--secondary:hover:not(:disabled) {
+        background-color: var(--rvm-color-primary-container);
+        color: var(--rvm-color-on-primary-container);
+    }
+}
+
+.rvm-icon-button:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.rvm-icon-button:disabled {
+    color: var(--rvm-color-on-disabled);
+    background-color: transparent;
+    cursor: not-allowed;
+}

@@ -1,0 +1,61 @@
+.rvm-input__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.rvm-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body);
+    line-height: var(--rvm-line-height-body);
+    color: var(--rvm-color-on-surface);
+    background-color: var(--rvm-color-surface-sunken);
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    transition: border-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+.rvm-input--small { padding: var(--rvm-space-1) var(--rvm-space-2); font-size: var(--rvm-font-size-body-sm); }
+.rvm-input--large { padding: var(--rvm-space-3) var(--rvm-space-4); font-size: var(--rvm-font-size-body-lg); }
+
+.rvm-input--with-icon { padding-left: var(--rvm-space-10); }
+
+/* ::deep pelo mesmo motivo do checkbox: o ícone é um RvmIcon, com escopo próprio. Sem ele
+   o position:absolute não se aplica e o ícone cai fora do campo. */
+::deep .rvm-input__icon {
+    position: absolute;
+    left: var(--rvm-space-3);
+    color: var(--rvm-color-on-surface);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.rvm-input::placeholder {
+    color: var(--rvm-color-on-surface);
+    opacity: 0.55;
+}
+
+.rvm-input:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+    border-color: var(--rvm-color-focus-ring);
+}
+
+/* O estado de erro muda a BORDA, não só a cor do texto: cor sozinha não é meio de
+   comunicação acessível (WCAG 1.4.1), e a mensagem em texto é o outro meio. */
+.rvm-input--invalid {
+    border-color: var(--rvm-color-danger);
+}
+
+.rvm-input:disabled {
+    background-color: var(--rvm-color-disabled);
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-input:read-only:not(:disabled) {
+    background-color: var(--rvm-color-surface);
+}

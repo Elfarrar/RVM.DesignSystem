@@ -1,0 +1,54 @@
+@inject IJSRuntime JS
+
+@*
+    Código copiável (RF-23).
+
+    O botão de copiar é um RvmIconButton — dogfooding é regra, não estilo (`07`). Se o
+    componente for desagradável de usar, quem sofre primeiro sou eu, montando a página.
+*@
+
+<div class="bloco-codigo">
+    <div class="bloco-codigo__barra">
+        <span class="bloco-codigo__linguagem">@Linguagem</span>
+        <RvmIconButton Icon="@(_copiado ? "check" : "x")"
+                       Weight="@(_copiado ? RvmIconWeight.Fill : RvmIconWeight.Regular)"
+                       Label="@(_copiado ? "Copiado" : "Copiar código")"
+                       Size="RvmSize.Small"
+                       OnClick="Copiar" />
+    </div>
+    <pre class="bloco-codigo__pre"><code>@Codigo.Trim()</code></pre>
+</div>
+
+@code {
+    private bool _copiado;
+
+    /// <summary>O código exibido.</summary>
+    [Parameter, EditorRequired]
+    public string Codigo { get; set; } = string.Empty;
+
+    /// <summary>Rótulo da linguagem exibido na barra.</summary>
+    [Parameter]
+    public string Linguagem { get; set; } = "razor";
+
+    private async Task Copiar()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", Codigo.Trim());
+            _copiado = true;
+            StateHasChanged();
+
+            // Volta ao ícone normal depois de um tempo — confirmação permanente vira ruído,
+            // e o usuário perde a referência de qual bloco ele copiou por último.
+            await Task.Delay(1800);
+            _copiado = false;
+            StateHasChanged();
+        }
+        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        {
+            // Contexto sem permissão de área de transferência (http, iframe restrito). O
+            // código continua na tela e selecionável — a falha não tira nada de ninguém.
+            _copiado = false;
+        }
+    }
+}

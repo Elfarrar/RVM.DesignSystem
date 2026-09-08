@@ -2,15 +2,132 @@
 
 <PageTitle>RVM Design System</PageTitle>
 
-<h1>RVM Design System</h1>
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>RVM Design System</h1>
+        <p class="doc__frase">
+            Biblioteca de componentes Blazor do ecossistema RVM. Tokens, tematização por produto e
+            acessibilidade WCAG 2.1 AA como critério de aceite — não como meta.
+        </p>
+    </header>
 
-<p>
-    Biblioteca de componentes Blazor do ecossistema RVM — tokens, tematizacao
-    e acessibilidade WCAG 2.1 AA.
-</p>
+    <section aria-labelledby="home-tese">
+        <h2 id="home-tese">A tese, em um controle</h2>
+        <p>
+            Troque o <strong>tema</strong> no topo da página. O formulário abaixo é o mesmo em todas
+            as cinco identidades: nenhum componente foi tocado, nenhuma linha de CSS foi duplicada.
+            Cada produto escreve duas cores; o resto é derivado — e cada cor derivada já nasce
+            aprovada no contraste AA.
+        </p>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@_seed" />
+    </section>
 
-<p class="aviso">
-    O site esta no ar apenas com a casca: a fase 0 (bootstrap) entrega o repositorio,
-    o esqueleto, o CI/CD e o deploy. Os componentes e a documentacao chegam na onda 1
-    do <code>09-roadmap.md</code>.
-</p>
+    <section aria-labelledby="home-form">
+        <h2 id="home-form">Formulário</h2>
+        <p class="doc__nota">
+            Montado só com componentes <code>Rvm*</code>, operável apenas por teclado e com zero
+            violação séria na auditoria axe.
+        </p>
+
+        <EditForm Model="_modelo" OnValidSubmit="Enviar" class="demo-form">
+            <DataAnnotationsValidator />
+
+            <RvmTextField @bind-Value="_modelo.Nome" Label="Nome completo"
+                          Placeholder="Como aparece no documento" Required="true" />
+
+            <RvmTextField @bind-Value="_modelo.Email" Label="E-mail"
+                          Type="RvmTextFieldType.Email" Help="Usamos só para enviar a confirmação." />
+
+            <RvmSelect TValue="string" @bind-Value="_modelo.Estado" Label="Estado" Placeholder="Selecione">
+                <option value="SP">São Paulo</option>
+                <option value="MG">Minas Gerais</option>
+                <option value="RJ">Rio de Janeiro</option>
+            </RvmSelect>
+
+            <RvmRadioGroup TValue="string" @bind-Value="_modelo.Pagamento"
+                           Label="Forma de pagamento" Horizontal="true" Options="_pagamentos" />
+
+            <RvmTextArea @bind-Value="_modelo.Observacoes" Label="Observações" MaxLength="200" Rows="3" />
+
+            <RvmSwitch @bind-Value="_modelo.Novidades" Label="Quero receber novidades"
+                       Help="Aplica na hora — não precisa salvar." />
+
+            <RvmCheckbox @bind-Value="_modelo.Aceite" Label="Li e aceito os termos" />
+
+            <div class="demo-form__acoes">
+                <RvmButton Type="RvmButtonType.Submit" Loading="_enviando" LoadingText="Enviando...">Salvar</RvmButton>
+                <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="Limpar">Limpar</RvmButton>
+                <RvmButton Variant="RvmButtonVariant.Ghost">Cancelar</RvmButton>
+            </div>
+
+            @if (_enviado)
+            {
+                @* role="status" e não "alert": é confirmação, não urgência. *@
+                <p class="doc__ok" role="status">Formulário enviado.</p>
+            }
+        </EditForm>
+    </section>
+
+    <section aria-labelledby="home-onde">
+        <h2 id="home-onde">Por onde começar</h2>
+        <ul class="doc__lista">
+            <li><a href="instalacao"><strong>Instalação</strong></a> — quatro passos, do pacote ao provider.</li>
+            <li><a href="fundamentos/cor"><strong>Cor</strong></a> — papéis semânticos e o contraste medido ao vivo.</li>
+            <li><a href="componentes/button"><strong>Componentes</strong></a> — um por página, com playground e tabela de API.</li>
+            <li><a href="acessibilidade"><strong>Acessibilidade</strong></a> — o que é garantido, como, e o que ainda não é.</li>
+        </ul>
+    </section>
+</article>
+
+@code {
+    private readonly Modelo _modelo = new();
+    private bool _enviando;
+    private bool _enviado;
+
+    private const string _seed = """
+        RvmTheme.FromSeed("MeuProduto", primary: "#2A6E49", secondary: "#B07D2A")
+        """;
+
+    private readonly RvmRadioGroup<string>.Option[] _pagamentos =
+    [
+        new("avista", "À vista"),
+        new("parcelado", "Parcelado"),
+        new("boleto", "Boleto", Disabled: true),
+    ];
+
+    private async Task Enviar()
+    {
+        _enviando = true;
+        _enviado = false;
+        await Task.Delay(600);
+        _enviando = false;
+        _enviado = true;
+    }
+
+    private void Limpar()
+    {
+        _modelo.Nome = string.Empty;
+        _modelo.Email = string.Empty;
+        _modelo.Estado = null;
+        _modelo.Pagamento = null;
+        _modelo.Observacoes = string.Empty;
+        _modelo.Novidades = false;
+        _modelo.Aceite = false;
+        _enviado = false;
+    }
+
+    private sealed class Modelo
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Informe o nome.")]
+        public string Nome { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "E-mail inválido.")]
+        public string Email { get; set; } = string.Empty;
+
+        public string? Estado { get; set; }
+        public string? Pagamento { get; set; }
+        public string Observacoes { get; set; } = string.Empty;
+        public bool Novidades { get; set; }
+        public bool Aceite { get; set; }
+    }
+}

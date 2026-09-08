@@ -1,17 +1,25 @@
 # Publica o pacote RVM.DesignSystem no BaGet interno (10-infra § Distribuicao).
 #
 # Politica de versao (05 § Politica de versao):
-#   - push em dev    -> pre-release 0.x.y-alpha.<run_number>
-#   - push em master -> versao estavel, exatamente o que esta no .csproj
+#   - push em dev  -> pre-release <VersionPrefix>-alpha.<run_number>, descartavel
+#   - tag vX.Y.Z   -> versao ESTAVEL X.Y.Z, presa ao commit da tag
+#
+# Estavel NAO sai mais de push na `master`, e a mudanca e deliberada (08/09/2026). Antes a
+# versao estavel vinha do <VersionPrefix> do csproj a cada push na master, o que fazia dela um
+# ALVO MOVEL: perdido o feed, o republish entregaria um numero ja usado com codigo diferente,
+# sem nada avisar o consumidor. Mesmo defeito que o RVM.Common tinha e que a COMMON-002
+# consertou; aqui veio junto da decisao de NAO fazer backup do BaGet, que so se sustenta se
+# toda versao estavel for reconstruivel do git.
 name: Publish NuGet
 
 on:
   push:
-    branches: [master, dev]
+    branches: [dev]
     paths:
       - 'src/RVM.DesignSystem/**'
       - 'Directory.Packages.props'
       - '.github/workflows/publish-nuget.yml'
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -34,13 +42,19 @@ jobs:
 
       - name: Pack
         run: |
-          # Em dev o sufixo sai do numero do run: cada merge gera um alpha novo e
-          # ninguem e atualizado por acidente (o consumidor fixa versao exata).
-          if [ "${GITHUB_REF_NAME}" = "master" ]; then
-            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            # Estavel: a versao E a tag, e a tag aponta pro commit exato que gerou o pacote.
+            VERSION="${GITHUB_REF_NAME#v}"
+            if ! echo "$VERSION" | grep -qE '^[0-9]+[.][0-9]+[.][0-9]+(-[0-9A-Za-z.-]+)?$'; then
+              echo "::error::A tag '$GITHUB_REF_NAME' nao e vX.Y.Z (nem vX.Y.Z-sufixo)."
+              exit 1
+            fi
+            echo "Publicando ESTAVEL $VERSION a partir de $GITHUB_SHA"
+            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs -p:Version="$VERSION" -p:RepositoryCommit="$GITHUB_SHA"
           else
-            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs \
-              -p:VersionSuffix="alpha.${GITHUB_RUN_NUMBER}"
+            # Pre-release de dev: o sufixo sai do numero do run, que nunca se repete.
+            # Alpha e descartavel de proposito — nao precisa ser reconstruivel.
+            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs -p:VersionSuffix="alpha.${GITHUB_RUN_NUMBER}" -p:RepositoryCommit="$GITHUB_SHA"
           fi
           ls -lh nupkgs
 
@@ -53,7 +67,52 @@ jobs:
             echo "::error::BAGET_FEED_URL ou BAGET_API_KEY ausente nos secrets do repositorio."
             exit 1
           fi
-          # O BaGet responde em http; allowInsecureConnections e o padrao do ecossistema.
+          # A rede entre o runner do GitHub e o BagEnd e INTERMITENTE. Observado em
+          # 08/09/2026: o mesmo feed https respondeu em 277ms num run e, uma hora depois,
+          # deu "Unable to load the service index ... timed out after 100000ms" noutro —
+          # com o BagEnd saudavel (load 1.02, feed em 133ms de fora) o tempo todo.
+          # Por isso a tentativa e repetida em vez de o pipeline ficar vermelho por rede.
+          #
+          # Se o feed for http, e obrigatorio acrescentar --allow-insecure-connections:
+          # sem a flag o push nao da erro, ele pendura ate o timeout.
           for pkg in nupkgs/*.nupkg; do
-            dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate
+            ok=0
+            for tentativa in 1 2 3; do
+              if dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate; then
+                ok=1
+                break
+              fi
+              echo "::warning::push de $(basename "$pkg") falhou (tentativa $tentativa/3)"
+              sleep 30
+            done
+            if [ "$ok" != "1" ]; then
+              echo "::error::push de $(basename "$pkg") falhou 3x. Conferir o BagEnd: curl -sS -m 20 $FEED"
+              exit 1
+            fi
           done
+
+      - name: Confere que a versao chegou no feed
+        env:
+          FEED: ${{ secrets.BAGET_FEED_URL }}
+        run: |
+          # --skip-duplicate sai com sucesso mesmo sem publicar nada. Sem esta conferencia,
+          # um pack com versao ja existente daria verde sem ter publicado.
+          VERSAO=$(ls nupkgs/*.nupkg | head -1 | sed 's/.*RVM\.DesignSystem\.//; s/\.nupkg$//')
+          echo "Conferindo $VERSAO no feed..."
+          # UM dirname, nao dois: o flat container do BaGet fica em /v3/package/..., entao
+          # so o "index.json" sai da URL. Tirar o /v3 tambem devolve 404 e a conferencia
+          # acusa falha com o pacote publicado — falso negativo, que e o pior tipo de
+          # portao: reprova o build por um erro que nao existe.
+          BASE=$(dirname "$FEED")
+          URL="$BASE/package/rvm.designsystem/index.json"
+          echo "Consultando $URL"
+          for i in 1 2 3; do
+            if curl -fsS --max-time 20 "$URL" | grep -q "\"$VERSAO\""; then
+              echo "$VERSAO esta no feed."
+              exit 0
+            fi
+            echo "::warning::$VERSAO ainda nao aparece no feed (tentativa $i/3)"
+            [ "$i" -lt 3 ] && sleep 10
+          done
+          echo "::error::$VERSAO nao chegou ao feed."
+          exit 1
