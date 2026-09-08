@@ -126,10 +126,15 @@ A única "integração" é a de saída: outros projetos RVM consomem o pacote do
 
 ## Backup
 
-Não há dado para backupear. O que precisa sobreviver é **o repositório** (código e histórico) e as
-**versões publicadas no BaGet**. O primeiro está coberto pelo GitHub a partir do bootstrap; o
-segundo entra no backup do BagEnd que já roda — verificar, no bootstrap, se o volume do BaGet está
-na lista de origens do pull de backup.
+Não há dado para backupear. O que precisa sobreviver é **o repositório** (código e histórico), e
+isso o GitHub cobre desde o bootstrap.
 
-> Vale a lição já registrada no ecossistema: **origem nova de backup precisa entrar na lista do pull
-> no mesmo dia**, senão a falha fica invisível dos dois lados.
+> ✅ **Verificado em 08/09/2026, e o resultado foi negativo — de propósito.** O volume do BaGet
+> **não está** em backup nenhum, e não vai entrar: pacote NuGet é artefato de build, reconstruível
+> do repositório de origem. Perder o volume é indisponibilidade, não perda. Decisão do Rafael,
+> com motivo, condições e custos em `Vault/05_References/baget-sem-backup.md`.
+>
+> ⚠️ **A decisão tem uma condição:** só vale enquanto toda versão estável estiver presa a uma tag
+> git. Foi por isso que o `publish-nuget.yml` deste repositório passou a publicar estável **só em
+> tag** (`DSGN-009`) — antes a versão saía do `VersionPrefix` a cada push na `master`, e um
+> republish depois de perder o feed entregaria o mesmo número com código diferente.

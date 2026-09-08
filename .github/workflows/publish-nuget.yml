@@ -1,17 +1,25 @@
 # Publica o pacote RVM.DesignSystem no BaGet interno (10-infra § Distribuicao).
 #
 # Politica de versao (05 § Politica de versao):
-#   - push em dev    -> pre-release 0.x.y-alpha.<run_number>
-#   - push em master -> versao estavel, exatamente o que esta no .csproj
+#   - push em dev  -> pre-release <VersionPrefix>-alpha.<run_number>, descartavel
+#   - tag vX.Y.Z   -> versao ESTAVEL X.Y.Z, presa ao commit da tag
+#
+# Estavel NAO sai mais de push na `master`, e a mudanca e deliberada (08/09/2026). Antes a
+# versao estavel vinha do <VersionPrefix> do csproj a cada push na master, o que fazia dela um
+# ALVO MOVEL: perdido o feed, o republish entregaria um numero ja usado com codigo diferente,
+# sem nada avisar o consumidor. Mesmo defeito que o RVM.Common tinha e que a COMMON-002
+# consertou; aqui veio junto da decisao de NAO fazer backup do BaGet, que so se sustenta se
+# toda versao estavel for reconstruivel do git.
 name: Publish NuGet
 
 on:
   push:
-    branches: [master, dev]
+    branches: [dev]
     paths:
       - 'src/RVM.DesignSystem/**'
       - 'Directory.Packages.props'
       - '.github/workflows/publish-nuget.yml'
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -34,13 +42,19 @@ jobs:
 
       - name: Pack
         run: |
-          # Em dev o sufixo sai do numero do run: cada merge gera um alpha novo e
-          # ninguem e atualizado por acidente (o consumidor fixa versao exata).
-          if [ "${GITHUB_REF_NAME}" = "master" ]; then
-            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            # Estavel: a versao E a tag, e a tag aponta pro commit exato que gerou o pacote.
+            VERSION="${GITHUB_REF_NAME#v}"
+            if ! echo "$VERSION" | grep -qE '^[0-9]+[.][0-9]+[.][0-9]+(-[0-9A-Za-z.-]+)?$'; then
+              echo "::error::A tag '$GITHUB_REF_NAME' nao e vX.Y.Z (nem vX.Y.Z-sufixo)."
+              exit 1
+            fi
+            echo "Publicando ESTAVEL $VERSION a partir de $GITHUB_SHA"
+            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs -p:Version="$VERSION" -p:RepositoryCommit="$GITHUB_SHA"
           else
-            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs \
-              -p:VersionSuffix="alpha.${GITHUB_RUN_NUMBER}"
+            # Pre-release de dev: o sufixo sai do numero do run, que nunca se repete.
+            # Alpha e descartavel de proposito — nao precisa ser reconstruivel.
+            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs -p:VersionSuffix="alpha.${GITHUB_RUN_NUMBER}" -p:RepositoryCommit="$GITHUB_SHA"
           fi
           ls -lh nupkgs
 
