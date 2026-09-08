@@ -1,0 +1,91 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    ⚠️ Três coisas que separam isto do atributo `title` nativo, e são as três que fazem tooltip
+    ser acessível ou não:
+
+    1. **Aparece no FOCO, não só no hover.** O `title` nativo só responde ao ponteiro — quem
+       navega por teclado nunca o vê. É a falha mais comum de tooltip na web.
+    2. **`ESC` fecha** sem tirar o foco de onde está (WCAG 1.4.13). Sem isso, uma dica que cobre
+       o campo seguinte prende quem depende de ampliação.
+    3. **`aria-describedby`, não `aria-label`.** A dica COMPLEMENTA o nome do controle; ela não
+       o substitui. Com `aria-label`, o botão "Salvar" com dica "Salva e volta à lista" passaria
+       a se chamar "Salva e volta à lista", e some da busca por voz por "Salvar".
+
+    Por isso a dica fica SEMPRE no DOM, escondida por CSS: `aria-describedby` precisa apontar
+    para um elemento que exista. Renderizá-la só no hover faria a referência apontar para o
+    vazio na maior parte do tempo — e leitores de tela leem a descrição no momento em que o
+    controle recebe foco, não quando o mouse passa.
+*@
+
+<span class="@ClasseFinal"
+      @onmouseenter="Mostrar"
+      @onmouseleave="Esconder"
+      @onfocusin="Mostrar"
+      @onfocusout="Esconder"
+      @onkeydown="AoTeclar"
+      @attributes="AdditionalAttributes">
+
+    @* O conteúdo do consumidor precisa receber o aria-describedby. Como não dá para injetar
+       atributo em marcação arbitrária, quem usa aponta o próprio controle para este id — e o
+       parâmetro TargetId existe para deixar isso explícito na API em vez de mágico. *@
+    @ChildContent
+
+    <span class="rvm-tooltip__balao" id="@Id" role="tooltip" data-visivel="@(_visivel ? "true" : null)">
+        @Text
+    </span>
+</span>
+
+@code {
+    private bool _visivel;
+
+    /// <summary>
+    /// O <c>id</c> do balão. Aponte o <c>aria-describedby</c> do seu controle para ele.
+    /// </summary>
+    /// <remarks>
+    /// Gerado quando não informado. É a única parte que quem usa precisa ligar à mão, e é
+    /// deliberado: a alternativa seria a biblioteca reescrever atributos de marcação que não é
+    /// dela, e isso falha em silêncio no dia em que o conteúdo do slot for um componente.
+    /// </remarks>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-tooltip-{Guid.NewGuid():N}";
+
+    /// <summary>O texto da dica. Curto — uma frase.</summary>
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = string.Empty;
+
+    /// <summary>De que lado o balão aparece.</summary>
+    [Parameter]
+    public RvmOrientation Orientation { get; set; } = RvmOrientation.Vertical;
+
+    /// <summary>O controle que recebe a dica.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-tooltip",
+        $"rvm-tooltip--{RvmClasse.Sufixo(Orientation)}",
+        Class);
+
+    private void Mostrar() => _visivel = true;
+
+    private void Esconder() => _visivel = false;
+
+    // ESC esconde a dica SEM mexer no foco: quem estava preenchendo o campo continua nele.
+    // Tirar o foco junto seria "resolver" a obstrução perdendo o lugar na tela.
+    private void AoTeclar(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            _visivel = false;
+        }
+    }
+}

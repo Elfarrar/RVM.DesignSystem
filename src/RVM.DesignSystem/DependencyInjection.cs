@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using RVM.DesignSystem.Components;
 using RVM.DesignSystem.Theming;
 
 namespace RVM.DesignSystem;
@@ -36,6 +37,12 @@ public static class DependencyInjection
 
         services.AddScoped<IRvmThemeService>(sp =>
             new RvmThemeService(sp.GetRequiredService<IJSRuntime>(), options.Theme));
+
+        // As outras duas excecoes a "componente sem estado global" (`03` § Estado e servicos).
+        // Ambas Scoped pelo mesmo motivo do tema: em Blazor Server, Scoped e "por circuito".
+        // Com Singleton, um toast disparado por uma pessoa apareceria na tela de outra.
+        services.AddScoped<IRvmToastService, RvmToastService>();
+        services.AddScoped<IRvmDialogService, RvmDialogService>();
 
         return services;
     }

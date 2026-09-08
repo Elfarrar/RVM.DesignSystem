@@ -1,0 +1,132 @@
+@inject Busca Indice
+@inject NavigationManager Nav
+
+@*
+    A busca do site (`RF-27`).
+
+    É uma `combobox` do padrão ARIA APG, e não um campo com uma lista embaixo: sem o
+    `aria-expanded`, o `aria-controls` e o `aria-activedescendant`, quem usa leitor de tela
+    digita, ouve silêncio, e não fica sabendo que apareceram oito resultados logo abaixo.
+
+    O foco NÃO se move para a lista com as setas — ele fica no campo, e o item "ativo" é
+    apontado por `aria-activedescendant`. É o que permite continuar digitando para refinar sem
+    perder a seleção, e é o padrão que as pessoas já conhecem da barra de endereços.
+*@
+
+<div class="busca" @onfocusout="AoPerderFoco">
+    @* Value + ValueChanged em vez de @bind: a busca precisa RODAR a cada tecla, e o bind
+       sozinho só atualiza o campo. O evento oninput é o que faz a lista acompanhar a digitação
+       em vez de esperar o blur. *@
+    @* O @ em Value NAO e opcional: num parametro `string`, `Value="_termo"` passa o texto
+       literal "_termo" em vez do campo. O sintoma e o valor aparecer com o nome da variavel
+       grudado no que a pessoa digitou. *@
+    <RvmTextField Value="@_termo"
+                  ValueChanged="AoDigitar"
+                  ValueExpression="() => _termo"
+                  Label="Buscar"
+                  Placeholder="componente ou token…"
+                  IconStart="magnifying-glass"
+                  Size="RvmSize.Small"
+                  Type="RvmTextFieldType.Search"
+                  autocomplete="off"
+                  role="combobox"
+                  aria-expanded="@(Aberto ? "true" : "false")"
+                  aria-controls="busca-resultados"
+                  aria-autocomplete="list"
+                  aria-activedescendant="@(Aberto && _ativo >= 0 ? IdDoItem(_ativo) : null)"
+                  @onkeydown="AoTeclar" />
+
+    @* A lista existe no DOM só quando há o que mostrar; o aria-expanded acima é que informa
+       o estado, e ele está no campo, que é quem o leitor de tela está lendo. *@
+    @if (Aberto)
+    {
+        <ul class="busca__lista" id="busca-resultados" role="listbox" aria-label="Resultados">
+            @for (var i = 0; i < _resultados.Count; i++)
+            {
+                var indice = i;
+                var r = _resultados[i];
+
+                <li id="@IdDoItem(indice)"
+                    class="@(indice == _ativo ? "busca__item busca__item--ativo" : "busca__item")"
+                    role="option"
+                    aria-selected="@(indice == _ativo ? "true" : "false")"
+                    @onmousedown:preventDefault="true"
+                    @onmousedown="() => Ir(r)">
+                    <span class="busca__titulo">@r.Titulo</span>
+                    <span class="busca__grupo">@r.Grupo</span>
+                </li>
+            }
+        </ul>
+    }
+    else if (_termo is { Length: >= 2 })
+    {
+        @* "Nada encontrado" precisa ser ANUNCIADO, senão quem não vê a tela continua esperando
+           uma lista que não vem. *@
+        <p class="busca__vazio" role="status">Nada com esse nome.</p>
+    }
+</div>
+
+@code {
+    private string? _termo = string.Empty;
+    private IReadOnlyList<ResultadoDeBusca> _resultados = [];
+    private int _ativo = -1;
+
+    private bool Aberto => _resultados.Count > 0;
+
+    private static string IdDoItem(int i) => $"busca-item-{i}";
+
+    private async Task AoDigitar(string? termo)
+    {
+        _termo = termo;
+        _resultados = await Indice.FiltrarAsync(_termo);
+
+        // O item ativo volta para o primeiro a cada digitada: manter o índice antigo apontaria
+        // para um resultado que já não é o mesmo.
+        _ativo = _resultados.Count > 0 ? 0 : -1;
+    }
+
+    private void AoTeclar(KeyboardEventArgs e)
+    {
+        if (_resultados.Count == 0)
+        {
+            return;
+        }
+
+        switch (e.Key)
+        {
+            case "ArrowDown":
+                _ativo = (_ativo + 1) % _resultados.Count;
+                break;
+
+            case "ArrowUp":
+                _ativo = (_ativo - 1 + _resultados.Count) % _resultados.Count;
+                break;
+
+            case "Enter" when _ativo >= 0:
+                Ir(_resultados[_ativo]);
+                break;
+
+            // ESC fecha a lista sem tirar o foco do campo — a mesma regra do RvmTooltip.
+            case "Escape":
+                _resultados = [];
+                _ativo = -1;
+                break;
+        }
+    }
+
+    private void Ir(ResultadoDeBusca r)
+    {
+        _termo = string.Empty;
+        _resultados = [];
+        _ativo = -1;
+        Nav.NavigateTo(r.Rota);
+    }
+
+    // Fecha ao sair o foco do conjunto inteiro (campo + lista), e não do campo: sem isso, clicar
+    // num resultado fecharia a lista antes do clique chegar.
+    private void AoPerderFoco()
+    {
+        _resultados = [];
+        _ativo = -1;
+    }
+}

@@ -21,6 +21,9 @@
                 <Start>
                     <a class="site-brand" href="">RVM Design System</a>
                 </Start>
+                <Center>
+                    <CampoDeBusca />
+                </Center>
                 <End>
                     <label class="site-controls__label" for="seletor-tema">Tema</label>
                     <select id="seletor-tema" class="site-controls__select" @onchange="TrocarTema">
@@ -70,6 +73,17 @@
             </div>
         </ChildContent>
     </RvmAppShell>
+
+    @*
+        Os dois hosts vão UMA vez, aqui, e não em cada página.
+
+        No RvmToastHost isso é requisito, não organização: as regiões `aria-live` dele precisam
+        existir no DOM ANTES da primeira mensagem, senão o leitor de tela não tem o que observar
+        e a notificação passa em silêncio. Montá-los por tela recriaria as regiões a cada
+        navegação, e a mensagem disparada logo depois de navegar seria justamente a perdida.
+    *@
+    <RvmToastHost />
+    <RvmDialogHost />
 </RvmThemeProvider>
 
 @code {

@@ -1,0 +1,105 @@
+@page "/componentes/progress"
+
+<PaginaDeComponente Nome="RvmProgress"
+                    Tipo="typeof(RvmProgress)"
+                    Frase="Barra de progresso. Determinada informa a porcentagem; indeterminada OMITE o valor — e a omissão é o significado.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmProgress Value="@(_indeterminado ? null : _valor)"
+                             Label="@(_comRotulo ? "Importando a planilha" : null)"
+                             ShowValue="_mostraValor"
+                             Severity="_severidade" />
+            </div>
+            <div class="playground__controles">
+                <RvmCheckbox @bind-Value="_indeterminado" Label="Indeterminado" />
+                <RvmSelect TValue="double" @bind-Value="_valor" Label="Value">
+                    @foreach (var v in new double[] { 0, 12, 35, 68, 100 })
+                    {
+                        <option value="@v">@v</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_comRotulo" Label="Label" />
+                <RvmCheckbox @bind-Value="_mostraValor" Label="ShowValue" />
+                <RvmSelect TValue="RvmSeverity" @bind-Value="_severidade" Label="Severity">
+                    @foreach (var s in Enum.GetValues<RvmSeverity>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <RvmStack Gap="RvmSpacing.Lg">
+            <RvmProgress Value="35" Label="Determinada — sei quanto falta" />
+            <RvmProgress Label="Indeterminada — não sei quanto falta" />
+        </RvmStack>
+        <p class="doc__nota">
+            <code>Value</code> nulo é o padrão de propósito: uma barra que finge saber a
+            porcentagem e trava em 90% é pior que uma que admite não saber.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>A indeterminada OMITE <code>aria-valuenow</code></strong>, e a omissão é
+                o que significa "não sei quanto falta". Preencher com 0 faria o leitor de tela
+                anunciar "zero por cento" para sempre.
+            </li>
+            <li>
+                <strong>A determinada traz <code>aria-valuetext</code></strong> além do número: é
+                ele que faz o leitor dizer "35 por cento" em vez de "35".
+            </li>
+            <li>
+                <strong>Valor fora da faixa é limitado, não estourado.</strong> Um dado ruim vira
+                uma barra em 100%, não uma exceção que derruba a tela.
+            </li>
+            <li>
+                <strong>Com <code>prefers-reduced-motion</code>, a barra indeterminada para de
+                atravessar.</strong> Movimento infinito é exatamente o que essa preferência
+                existe para evitar — e a informação não se perde, porque quem a carrega é o
+                <code>role="progressbar"</code> sem valor.
+            </li>
+            <li>
+                <strong>O número usa fonte tabular</strong>, para não dançar de largura ao passar
+                de 9% para 10%.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para operação rápida.</strong> Uma barra que aparece e some em 300ms é um
+                piscar. Abaixo de um segundo, não mostre nada.
+            </li>
+            <li>
+                <strong>Como medidor.</strong> "80% da cota usada" não é progresso — nada está
+                acontecendo. <code>role="progressbar"</code> ali faz o leitor de tela anunciar uma
+                tarefa em curso que não existe.
+            </li>
+            <li>
+                <strong>Indeterminada quando dá para saber.</strong> Se o servidor sabe quantos
+                itens faltam, informe: a diferença entre "aguarde" e "faltam 12 de 300" é a
+                diferença entre esperar e desistir.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private bool _indeterminado;
+    private double _valor = 35;
+    private bool _comRotulo = true;
+    private bool _mostraValor = true;
+    private RvmSeverity _severidade = RvmSeverity.Info;
+
+    private string Snippet() => _indeterminado
+        ? "<RvmProgress Label=\"Importando a planilha\" />"
+        : $"<RvmProgress Value=\"{_valor}\" Label=\"Importando a planilha\" />";
+}

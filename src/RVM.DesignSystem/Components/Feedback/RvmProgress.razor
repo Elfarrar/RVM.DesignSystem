@@ -1,0 +1,89 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Barra de progresso, determinada ou indeterminada.
+
+    A diferença entre as duas não é visual, é de contrato ARIA: a determinada informa
+    `aria-valuenow` e o leitor de tela anuncia "35 por cento"; a indeterminada OMITE o atributo,
+    e é a omissão que significa "não sei quanto falta". Preencher `aria-valuenow` com 0 numa
+    barra indeterminada faria o leitor anunciar "zero por cento" para sempre.
+*@
+
+<div class="@ClasseFinal" @attributes="AdditionalAttributes">
+    @if (Label is not null)
+    {
+        <div class="rvm-progress__cabecalho">
+            <span class="rvm-progress__rotulo" id="@_id">@Label</span>
+            @if (Value is not null && ShowValue)
+            {
+                <span class="rvm-progress__valor">@Percentual.ToString("0", Cultura)%</span>
+            }
+        </div>
+    }
+
+    <div class="rvm-progress__trilho"
+         role="progressbar"
+         aria-labelledby="@(Label is not null ? _id : null)"
+         aria-label="@(Label is null ? AccessibleLabel : null)"
+         aria-valuemin="@(Value is not null ? "0" : null)"
+         aria-valuemax="@(Value is not null ? "100" : null)"
+         aria-valuenow="@(Value is not null ? Percentual.ToString("0", Cultura) : null)"
+         aria-valuetext="@(Value is not null ? $"{Percentual.ToString("0", Cultura)}%" : null)">
+        <div class="rvm-progress__barra" style="@EstiloDaBarra"></div>
+    </div>
+</div>
+
+@code {
+    private readonly string _id = $"rvm-progress-{Guid.NewGuid():N}";
+
+    private static readonly System.Globalization.CultureInfo Cultura =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    /// <summary>
+    /// Quanto já foi feito, de 0 a 100. Nulo torna a barra indeterminada.
+    /// </summary>
+    /// <remarks>
+    /// Nulo é o padrão de propósito: uma barra que finge saber a porcentagem e trava em 90% é
+    /// pior que uma que admite não saber.
+    /// </remarks>
+    [Parameter]
+    public double? Value { get; set; }
+
+    /// <summary>Rótulo visível acima da barra.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Nome acessível quando não há rótulo visível.</summary>
+    [Parameter]
+    public string AccessibleLabel { get; set; } = "Progresso";
+
+    /// <summary>Mostra a porcentagem ao lado do rótulo. Vale só na barra determinada.</summary>
+    [Parameter]
+    public bool ShowValue { get; set; } = true;
+
+    /// <summary>Severidade, para barra que também comunica estado.</summary>
+    [Parameter]
+    public RvmSeverity? Severity { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // Limitado em vez de estourar: um valor fora da faixa é um dado ruim, não um motivo para
+    // derrubar a tela — e uma barra em 100% comunica melhor que uma exceção.
+    private double Percentual => Math.Clamp(Value ?? 0, 0, 100);
+
+    private string? EstiloDaBarra => Value is null
+        ? null
+        : string.Create(Cultura, $"width:{Percentual:0.##}%");
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-progress",
+        Value is null ? "rvm-progress--indeterminada" : null,
+        Severity is not null ? $"rvm-progress--{RvmClasse.Sufixo(Severity.Value)}" : null,
+        Class);
+}

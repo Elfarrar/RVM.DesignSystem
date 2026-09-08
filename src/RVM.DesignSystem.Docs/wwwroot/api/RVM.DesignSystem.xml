@@ -60,6 +60,287 @@
         <member name="M:RVM.DesignSystem.Components.RvmInputBase`1.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)">
             <inheritdoc />
         </member>
+        <member name="T:RVM.DesignSystem.Components.RvmConfirmOptions">
+            <summary>
+            O texto e a aparencia de uma confirmacao.
+            </summary>
+            <param name="Title">Titulo — vira o nome acessivel do dialogo.</param>
+            <param name="Message">A pergunta, em PT-BR explicativo.</param>
+            <param name="ConfirmLabel">
+            Rotulo do botao que confirma. <b>Diga o verbo</b>: "Excluir" e "Publicar" informam o que vai
+            acontecer; "OK" e "Sim" obrigam a reler a pergunta para saber o que se esta confirmando.
+            </param>
+            <param name="CancelLabel">Rotulo do botao que cancela.</param>
+            <param name="Severity">
+            Severidade. <see cref="F:RVM.DesignSystem.Components.RvmSeverity.Danger"/> pinta a acao de confirmar como destrutiva.
+            </param>
+            <param name="Size">Tamanho da caixa.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmConfirmOptions.#ctor(System.String,System.String,System.String,System.String,RVM.DesignSystem.Components.RvmSeverity,RVM.DesignSystem.Components.RvmDialogSize)">
+            <summary>
+            O texto e a aparencia de uma confirmacao.
+            </summary>
+            <param name="Title">Titulo — vira o nome acessivel do dialogo.</param>
+            <param name="Message">A pergunta, em PT-BR explicativo.</param>
+            <param name="ConfirmLabel">
+            Rotulo do botao que confirma. <b>Diga o verbo</b>: "Excluir" e "Publicar" informam o que vai
+            acontecer; "OK" e "Sim" obrigam a reler a pergunta para saber o que se esta confirmando.
+            </param>
+            <param name="CancelLabel">Rotulo do botao que cancela.</param>
+            <param name="Severity">
+            Severidade. <see cref="F:RVM.DesignSystem.Components.RvmSeverity.Danger"/> pinta a acao de confirmar como destrutiva.
+            </param>
+            <param name="Size">Tamanho da caixa.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmConfirmOptions.Title">
+            <summary>Titulo — vira o nome acessivel do dialogo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmConfirmOptions.Message">
+            <summary>A pergunta, em PT-BR explicativo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmConfirmOptions.ConfirmLabel">
+            <summary>
+            Rotulo do botao que confirma. <b>Diga o verbo</b>: "Excluir" e "Publicar" informam o que vai
+            acontecer; "OK" e "Sim" obrigam a reler a pergunta para saber o que se esta confirmando.
+            </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmConfirmOptions.CancelLabel">
+            <summary>Rotulo do botao que cancela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmConfirmOptions.Severity">
+            <summary>
+            Severidade. <see cref="F:RVM.DesignSystem.Components.RvmSeverity.Danger"/> pinta a acao de confirmar como destrutiva.
+            </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmConfirmOptions.Size">
+            <summary>Tamanho da caixa.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.IRvmDialogService">
+             <summary>
+             Confirmacao imperativa, chamavel de qualquer lugar.
+             </summary>
+             <remarks>
+             <b>O que este servico faz e o que ele NAO faz.</b> Ele resolve o caso que se repete em toda
+             tela — "tem certeza?" — sem obrigar cada uma a carregar um `bool` de estado, um
+             <c>RvmDialog</c> na marcacao e dois handlers.
+            
+             <para>
+             Ele <b>nao</b> abre um dialogo com conteudo arbitrario. Para isso existe o
+             <see cref="T:RVM.DesignSystem.Components.RvmDialog"/> declarativo com <c>@bind-Open</c>: o resultado tipado ali e o proprio
+             campo de quem usa, com o tipo que ele quiser, sem passar por uma API generica que teria de
+             renderizar componente dinamico e devolver <c>object</c>. Um formulario dentro de um dialogo e
+             marcacao, e marcacao se escreve na tela — nao se monta por chamada de metodo.
+             </para>
+            
+             <para>
+             <c>Scoped</c> no DI, como o de toast e o de tema.
+             </para>
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.IRvmDialogService.Current">
+            <summary>A confirmacao que esta na tela agora, ou <c>null</c>.</summary>
+        </member>
+        <member name="E:RVM.DesignSystem.Components.IRvmDialogService.Changed">
+            <summary>Disparado quando a confirmacao corrente muda, para o host re-renderizar.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmDialogService.ConfirmAsync(RVM.DesignSystem.Components.RvmConfirmOptions)">
+            <summary>
+            Pergunta e espera a resposta.
+            </summary>
+            <param name="options">Texto e aparencia.</param>
+            <returns>
+            <c>true</c> se confirmou; <c>false</c> se cancelou, fechou no "x" ou apertou
+            <kbd>ESC</kbd>. <b>Toda forma de sair sem decidir devolve <c>false</c></b> — quem chama
+            nunca fica esperando para sempre, e o caminho seguro e o padrao.
+            </returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmDialogService.ConfirmAsync(System.String,System.String,System.String)">
+            <summary>Atalho para a confirmacao mais comum.</summary>
+            <param name="title">Titulo.</param>
+            <param name="message">A pergunta.</param>
+            <param name="confirmLabel">Rotulo do botao que confirma. Diga o verbo.</param>
+            <returns>O mesmo contrato do <see cref="M:RVM.DesignSystem.Components.IRvmDialogService.ConfirmAsync(RVM.DesignSystem.Components.RvmConfirmOptions)"/>.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmDialogService.Responder(System.Boolean)">
+            <summary>
+            Fecha a confirmacao corrente respondendo <paramref name="resultado"/>.
+            </summary>
+            <param name="resultado">O que devolver a quem chamou.</param>
+            <remarks>Chamado pelo <see cref="T:RVM.DesignSystem.Components.RvmDialogHost"/>; raramente por quem consome.</remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmToastMessage">
+            <summary>
+            Uma notificacao na fila.
+            </summary>
+            <param name="Id">Identificador, gerado pelo servico.</param>
+            <param name="Text">A mensagem. PT-BR explicativo, sem codigo interno.</param>
+            <param name="Severity">Severidade.</param>
+            <param name="Title">Titulo curto opcional.</param>
+            <param name="Duration">Quanto tempo fica na tela.</param>
+            <param name="ActionLabel">Rotulo da acao — tipicamente "Desfazer".</param>
+            <param name="OnAction">O que a acao faz. Fechar o toast fica por conta do host.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmToastMessage.#ctor(System.Guid,System.String,RVM.DesignSystem.Components.RvmSeverity,System.String,System.TimeSpan,System.String,System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Uma notificacao na fila.
+            </summary>
+            <param name="Id">Identificador, gerado pelo servico.</param>
+            <param name="Text">A mensagem. PT-BR explicativo, sem codigo interno.</param>
+            <param name="Severity">Severidade.</param>
+            <param name="Title">Titulo curto opcional.</param>
+            <param name="Duration">Quanto tempo fica na tela.</param>
+            <param name="ActionLabel">Rotulo da acao — tipicamente "Desfazer".</param>
+            <param name="OnAction">O que a acao faz. Fechar o toast fica por conta do host.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastMessage.Id">
+            <summary>Identificador, gerado pelo servico.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastMessage.Text">
+            <summary>A mensagem. PT-BR explicativo, sem codigo interno.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastMessage.Severity">
+            <summary>Severidade.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastMessage.Title">
+            <summary>Titulo curto opcional.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastMessage.Duration">
+            <summary>Quanto tempo fica na tela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastMessage.ActionLabel">
+            <summary>Rotulo da acao — tipicamente "Desfazer".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastMessage.OnAction">
+            <summary>O que a acao faz. Fechar o toast fica por conta do host.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.IRvmToastService">
+             <summary>
+             Fila de notificacoes, chamavel de qualquer lugar (<c>RF-10</c>).
+             </summary>
+             <remarks>
+             Uma das duas excecoes a regra "componente sem estado global" (`03` § Estado e servicos). A
+             outra e o <see cref="T:RVM.DesignSystem.Theming.IRvmThemeService"/>.
+            
+             <para>
+             Existe porque quem dispara a notificacao quase nunca e quem a exibe: o metodo que salvou o
+             pedido esta tres componentes abaixo do layout onde o toast aparece. Passar um
+             <c>EventCallback</c> por essa cadeia inteira e o codigo que este servico elimina.
+             </para>
+            
+             <para>
+             <c>Scoped</c> no DI, ou seja, por circuito em Blazor Server: um toast disparado numa aba nao
+             pode aparecer na aba de outra pessoa.
+             </para>
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.IRvmToastService.Current">
+            <summary>Os toasts vivos, do mais antigo para o mais novo.</summary>
+        </member>
+        <member name="E:RVM.DesignSystem.Components.IRvmToastService.Changed">
+            <summary>Disparado quando a fila muda, para o host re-renderizar.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmToastService.Show(System.String,RVM.DesignSystem.Components.RvmSeverity,System.String,System.Nullable{System.TimeSpan},System.String,System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Enfileira uma notificacao.
+            </summary>
+            <param name="text">A mensagem, em PT-BR explicativo.</param>
+            <param name="severity">Severidade.</param>
+            <param name="title">Titulo curto opcional.</param>
+            <param name="duration">
+            Tempo na tela. <b>Valores abaixo de 5 segundos sao elevados para 5</b> — ver
+            <see cref="P:RVM.DesignSystem.Components.IRvmToastService.MinimoNaTela"/>.
+            </param>
+            <param name="actionLabel">Rotulo da acao, tipicamente "Desfazer".</param>
+            <param name="onAction">O que a acao faz.</param>
+            <returns>O id do toast, para dispensa-lo antes da hora.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmToastService.Success(System.String,System.String)">
+            <summary>Atalho para <see cref="F:RVM.DesignSystem.Components.RvmSeverity.Success"/>.</summary>
+            <param name="text">A mensagem.</param>
+            <param name="title">Titulo curto opcional.</param>
+            <returns>O id do toast.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmToastService.Error(System.String,System.String)">
+            <summary>Atalho para <see cref="F:RVM.DesignSystem.Components.RvmSeverity.Danger"/>.</summary>
+            <param name="text">A mensagem.</param>
+            <param name="title">Titulo curto opcional.</param>
+            <returns>O id do toast.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmToastService.Dismiss(System.Guid)">
+            <summary>Remove um toast da fila.</summary>
+            <param name="id">O id devolvido por <see cref="M:RVM.DesignSystem.Components.IRvmToastService.Show(System.String,RVM.DesignSystem.Components.RvmSeverity,System.String,System.Nullable{System.TimeSpan},System.String,System.Func{System.Threading.Tasks.Task})"/>.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.IRvmToastService.Clear">
+            <summary>Esvazia a fila. Util ao trocar de tela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.IRvmToastService.MinimoNaTela">
+            <summary>
+            O minimo que um toast fica na tela.
+            </summary>
+            <remarks>
+            Cinco segundos e o piso do `11` § Onda 3, e ele nao e estetico: e o tempo que alguem
+            precisa para <b>notar</b> que apareceu algo, mover os olhos ate la e ler. Quem le devagar,
+            quem usa ampliacao ou quem depende de leitor de tela precisa de mais — e por isso o
+            numero e um PISO que o servico impoe, e nao um padrao que quem chama pode reduzir.
+            </remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmDialogService">
+            <inheritdoc cref="T:RVM.DesignSystem.Components.IRvmDialogService" />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialogService.Current">
+            <inheritdoc />
+        </member>
+        <member name="E:RVM.DesignSystem.Components.RvmDialogService.Changed">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDialogService.ConfirmAsync(RVM.DesignSystem.Components.RvmConfirmOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDialogService.ConfirmAsync(System.String,System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDialogService.Responder(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmSeveridade">
+            <summary>
+            O que cada severidade significa em icone e em sufixo de classe.
+            </summary>
+            <remarks>
+            Existe para que <see cref="T:RVM.DesignSystem.Components.RvmAlert"/> e o toast concordem. Duas tabelas equivalentes em
+            arquivos diferentes divergem na primeira severidade nova — e o sintoma seria um alerta de
+            erro com o icone de sucesso, que e pior que icone nenhum.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmSeveridade.Icone(RVM.DesignSystem.Components.RvmSeverity)">
+            <summary>O icone do conjunto Phosphor que representa a severidade.</summary>
+            <param name="severidade">A severidade.</param>
+            <returns>Nome do icone, sempre existente no conjunto curado.</returns>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmToastService">
+            <inheritdoc cref="T:RVM.DesignSystem.Components.IRvmToastService" />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastService.Current">
+            <inheritdoc />
+        </member>
+        <member name="E:RVM.DesignSystem.Components.RvmToastService.Changed">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmToastService.Show(System.String,RVM.DesignSystem.Components.RvmSeverity,System.String,System.Nullable{System.TimeSpan},System.String,System.Func{System.Threading.Tasks.Task})">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmToastService.Success(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmToastService.Error(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmToastService.Dismiss(System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmToastService.Clear">
+            <inheritdoc />
+        </member>
         <member name="T:RVM.DesignSystem.Components.RvmIconData">
             <summary>Os desenhos dos icones, por nome e peso.</summary>
         </member>
@@ -402,6 +683,97 @@
         <member name="F:RVM.DesignSystem.Components.RvmChipVariant.Info">
             <summary>Informação neutra em destaque.</summary>
         </member>
+        <member name="T:RVM.DesignSystem.Components.RvmSeverity">
+            <summary>
+            Severidade de uma mensagem.
+            </summary>
+            <remarks>
+            A cor <b>reforça</b> a severidade; o texto a carrega. Um alerta vermelho sem palavra que diga
+            "erro" não informa nada a quem não distingue vermelho de verde — e é por isso que todo
+            componente que usa esta escala também traz um ícone e um texto.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSeverity.Info">
+            <summary>Informação neutra. O padrão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSeverity.Success">
+            <summary>Deu certo.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSeverity.Warning">
+            <summary>Atenção — algo pode dar errado.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSeverity.Danger">
+            <summary>Erro — algo deu errado.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmDialogSize">
+            <summary>Tamanho de um diálogo.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmDialogSize.Small">
+            <summary>Confirmação curta.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmDialogSize.Medium">
+            <summary>Padrão — formulário de uma coluna.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmDialogSize.Large">
+            <summary>Conteúdo denso, tabela.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmDialogSize.Fullscreen">
+            <summary>Ocupa a tela toda. Último recurso.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmToastPosition">
+            <summary>Onde os toasts aparecem na tela.</summary>
+            <remarks>
+            É configuração do <b>host</b>, não de cada toast: dois toasts em cantos diferentes na mesma
+            tela dividem a atenção e nenhum é lido.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmToastPosition.TopEnd">
+            <summary>Canto superior direito. O padrão em desktop.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmToastPosition.TopCenter">
+            <summary>Topo, centralizado.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmToastPosition.BottomEnd">
+            <summary>Canto inferior direito.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmToastPosition.BottomCenter">
+            <summary>Rodapé, centralizado. Perto do polegar no celular.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmSkeletonShape">
+            <summary>Forma de um esqueleto de carregamento.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSkeletonShape.Text">
+            <summary>Linha de texto, com altura de uma linha.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSkeletonShape.Rect">
+            <summary>Bloco retangular — imagem, cartão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSkeletonShape.Circle">
+            <summary>Círculo — avatar.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmEmptyStateVariant">
+            <summary>
+            Por que a tela está vazia.
+            </summary>
+            <remarks>
+            A distinção não é decorativa: "não há nada aqui ainda" pede um botão de criar, "nada casou com
+            o filtro" pede limpar o filtro, e "você não tem permissão" não pede ação nenhuma. Tratar os
+            três como o mesmo estado vazio é o que produz aquele "Nenhum resultado encontrado" que não
+            ajuda ninguém.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmEmptyStateVariant.Empty">
+            <summary>Ainda não há registros. Cabe uma ação de criar.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmEmptyStateVariant.NoResults">
+            <summary>Há registros, mas nenhum casou com o filtro ou a busca.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmEmptyStateVariant.Error">
+            <summary>Falhou ao carregar. Cabe uma ação de tentar de novo.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmEmptyStateVariant.Forbidden">
+            <summary>Sem permissão para ver isto.</summary>
+        </member>
         <member name="P:RVM.DesignSystem.Components.RvmTab.Id">
             <summary>
             Identificador da aba, único dentro do grupo.
@@ -721,6 +1093,271 @@
         </member>
         <member name="M:RVM.DesignSystem.Components.RvmTextField.TryParseValueFromString(System.String,System.String@,System.String@)">
             <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.Severity">
+            <summary>Severidade. O ícone e a cor acompanham; o texto continua carregando o sentido.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.Title">
+            <summary>Título curto, em negrito.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.Live">
+             <summary>
+             Anuncia o alerta assim que ele aparece.
+             </summary>
+             <remarks>
+             Ligue apenas quando o alerta <b>surge em resposta a uma ação</b> — o resultado de um
+             envio, um erro de rede. Num alerta que já está na tela desde o carregamento, isto faz o
+             leitor interromper o que estava dizendo a cada render.
+            
+             <para>
+             Com <c>Severity.Danger</c> vira <c>role="alert"</c> (interrompe); nas demais,
+             <c>role="status"</c> (espera a pausa). Erro merece a interrupção; confirmação não.
+             </para>
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.OnDismiss">
+            <summary>Disparado ao dispensar. Informá-lo faz aparecer o botão de fechar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.DismissLabel">
+            <summary>Nome acessível do botão de dispensar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.Actions">
+            <summary>Ações inline — "Tentar de novo", "Ver detalhes".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.ChildContent">
+            <summary>A mensagem.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAlert.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.Title">
+            <summary>Título. Vira o nome acessível do diálogo.</summary>
+            <remarks>
+            Obrigatório: um diálogo sem nome é anunciado como "diálogo" e nada mais, e quem não vê a
+            tela não sabe o que acabou de abrir na frente dela.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.Open">
+            <summary>Aberto ou fechado. Use com <c>@bind-Open</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.OpenChanged">
+            <summary>Disparado quando o diálogo abre ou fecha, inclusive por <kbd>ESC</kbd>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.Size">
+            <summary>Tamanho da caixa.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.Dismissible">
+            <summary>
+            Permite fechar por <kbd>ESC</kbd> e pelo botão de fechar.
+            </summary>
+            <remarks>
+            <c>false</c> só para operação que não pode ser interrompida no meio (um upload em curso,
+            um passo obrigatório). <b>Não use para forçar uma decisão</b>: um diálogo sem saída é o
+            padrão escuro mais comum que existe, e a WCAG 2.1.2 trata prender o teclado como falha.
+            Mesmo com <c>false</c>, quem usa deve oferecer uma saída no rodapé.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.ShowCloseButton">
+            <summary>Mostra o "×" no cabeçalho. Vale só quando <see cref="P:RVM.DesignSystem.Components.RvmDialog.Dismissible"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.CloseLabel">
+            <summary>Nome acessível do botão de fechar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.ChildContent">
+            <summary>O conteúdo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.Footer">
+            <summary>Rodapé — onde ficam as ações.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDialog.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDialog.AoCancelarPeloNavegador">
+            <summary>
+            Chamado pelo JS quando o navegador tenta fechar por <kbd>ESC</kbd>.
+            </summary>
+            <remarks>
+            O <c>&lt;dialog&gt;</c> nativo fecha no ESC <b>sem passar por aqui</b>, e isso quebraria
+            um diálogo de confirmação: ele sumiria da tela sem devolver "cancelado", deixando quem
+            chamou esperando para sempre. O JS cancela o evento e devolve a decisão para cá.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDialog.DisposeAsync">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDialogHost.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.Variant">
+            <summary>Por que a tela está vazia. Define o texto e o ícone padrão.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.Title">
+            <summary>Título. Quando nulo, usa o padrão da variante.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.Description">
+            <summary>Descrição. Quando nula, usa o padrão da variante.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.Icon">
+            <summary>Ícone do conjunto Phosphor. Quando nulo, usa o padrão da variante.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.Illustration">
+            <summary>Ilustração própria, no lugar do ícone. É decorativa.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.Actions">
+            <summary>A ação que tira a pessoa deste estado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.ChildContent">
+            <summary>Descrição como marcação, quando texto simples não basta.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmEmptyState.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmProgress.Value">
+            <summary>
+            Quanto já foi feito, de 0 a 100. Nulo torna a barra indeterminada.
+            </summary>
+            <remarks>
+            Nulo é o padrão de propósito: uma barra que finge saber a porcentagem e trava em 90% é
+            pior que uma que admite não saber.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmProgress.Label">
+            <summary>Rótulo visível acima da barra.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmProgress.AccessibleLabel">
+            <summary>Nome acessível quando não há rótulo visível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmProgress.ShowValue">
+            <summary>Mostra a porcentagem ao lado do rótulo. Vale só na barra determinada.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmProgress.Severity">
+            <summary>Severidade, para barra que também comunica estado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmProgress.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmProgress.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSkeleton.Shape">
+            <summary>Forma do esqueleto.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSkeleton.Width">
+            <summary>Largura em CSS. Aceita qualquer unidade.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSkeleton.Height">
+            <summary>Altura em CSS. Ignorada na forma <c>Text</c>, que segue a altura da linha.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSkeleton.Lines">
+            <summary>Quantas linhas, na forma <c>Text</c>. A última sai mais curta.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSkeleton.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSkeleton.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSpinner.Size">
+            <summary>Tamanho da roda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSpinner.Label">
+            <summary>
+            O que está acontecendo. Sempre existe — visível ou só para leitor de tela.
+            </summary>
+            <remarks>
+            Padrão sobrescrevível, como todo texto da biblioteca. Prefira dizer o que está sendo
+            carregado ("Carregando os pedidos…") em vez do genérico: numa tela com três regiões
+            carregando, "Carregando…" três vezes não orienta ninguém.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSpinner.ShowLabel">
+            <summary>Mostra o rótulo ao lado da roda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSpinner.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSpinner.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToast.Message">
+            <summary>A mensagem exibida.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToast.DismissLabel">
+            <summary>Nome acessível do botão de fechar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToast.OnDismiss">
+            <summary>Disparado ao fechar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToast.OnAction">
+            <summary>Disparado ao acionar a ação — tipicamente "Desfazer".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToast.OnPause">
+            <summary>
+            Disparado ao entrar o ponteiro ou o foco. O host congela o relógio.
+            </summary>
+            <remarks>
+            <c>focusin</c> além de <c>mouseenter</c> porque quem navega por teclado também precisa
+            que o toast espere: tabular até o botão "Desfazer" e vê-lo sumir no meio do caminho é a
+            versão de teclado do mesmo defeito.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToast.OnResume">
+            <summary>Disparado ao sair o ponteiro ou o foco. O host volta a contar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToast.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastHost.Position">
+            <summary>Onde a pilha aparece na tela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastHost.Max">
+            <summary>
+            Quantos toasts aparecem ao mesmo tempo.
+            </summary>
+            <remarks>
+            Os mais recentes ganham. Sem limite, uma falha em laço enche a tela de avisos idênticos e
+            cobre justamente a interface que a pessoa precisaria usar para sair do problema.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmToastHost.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmToastHost.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTooltip.Id">
+            <summary>
+            O <c>id</c> do balão. Aponte o <c>aria-describedby</c> do seu controle para ele.
+            </summary>
+            <remarks>
+            Gerado quando não informado. É a única parte que quem usa precisa ligar à mão, e é
+            deliberado: a alternativa seria a biblioteca reescrever atributos de marcação que não é
+            dela, e isso falha em silêncio no dia em que o conteúdo do slot for um componente.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTooltip.Text">
+            <summary>O texto da dica. Curto — uma frase.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTooltip.Orientation">
+            <summary>De que lado o balão aparece.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTooltip.ChildContent">
+            <summary>O controle que recebe a dica.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTooltip.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTooltip.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
         </member>
         <member name="P:RVM.DesignSystem.Components.RvmIcon.Name">
             <summary>Nome do ícone no conjunto Phosphor, em kebab-case (<c>caret-down</c>).</summary>
@@ -1464,6 +2101,22 @@
         </member>
         <member name="P:RVM.DesignSystem.Theming.RvmPalette.FocusRing">
             <summary>Anel de foco de teclado. Precisa de 3:1 contra a superficie adjacente.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Scrim">
+             <summary>
+             O veu que escurece a pagina atras de um dialogo modal.
+             </summary>
+             <remarks>
+             <b>E o unico papel com transparencia</b>, e o unico que nao entra no teste de contraste:
+             ele nao recebe texto, e a funcao dele e justamente reduzir o contraste do que esta
+             atras — medi-lo contra alguma coisa nao faria sentido.
+            
+             <para>
+             Tambem e o unico papel que NAO e derivado da marca. Veu e preto nos dois modos: qualquer
+             matiz aqui tinge a tela inteira e briga com a cor do produto. O que muda entre claro e
+             escuro e a opacidade — sobre superficie ja escura, 50% quase nao se nota.
+             </para>
+             </remarks>
         </member>
         <member name="M:RVM.DesignSystem.Theming.RvmPalette.EnsureContrast">
              <summary>

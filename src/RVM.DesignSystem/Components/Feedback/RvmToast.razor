@@ -1,0 +1,86 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Um toast. Ele NÃO se anuncia sozinho: quem tem a região `aria-live` é o host, criada uma vez
+    e para sempre.
+
+    A diferença importa. Uma região `aria-live` só é observada a partir do momento em que existe
+    no DOM — se ela nascer junto com o toast, o leitor de tela não tem o que observar e a
+    mensagem não é anunciada. É o defeito clássico de notificação acessível, e o sintoma é
+    "funciona no meu teste manual, ninguém ouve na vida real".
+*@
+
+<div class="@ClasseFinal"
+     @onmouseenter="OnPause"
+     @onmouseleave="OnResume"
+     @onfocusin="OnPause"
+     @onfocusout="OnResume">
+
+    <RvmIcon Name="@Icone" Weight="RvmIconWeight.Fill" Class="rvm-toast__icone" Size="1.25rem" />
+
+    <div class="rvm-toast__corpo">
+        @if (Message.Title is not null)
+        {
+            <p class="rvm-toast__titulo">@Message.Title</p>
+        }
+        <p class="rvm-toast__texto">@Message.Text</p>
+    </div>
+
+    @if (Message.ActionLabel is not null)
+    {
+        <button type="button" class="rvm-toast__acao" @onclick="OnAction">
+            @Message.ActionLabel
+        </button>
+    }
+
+    <button type="button"
+            class="rvm-toast__fechar"
+            aria-label="@DismissLabel"
+            @onclick="OnDismiss">
+        <RvmIcon Name="x" Size="1rem" />
+    </button>
+</div>
+
+@code {
+    /// <summary>A mensagem exibida.</summary>
+    [Parameter, EditorRequired]
+    public RvmToastMessage Message { get; set; } = default!;
+
+    /// <summary>Nome acessível do botão de fechar.</summary>
+    [Parameter]
+    public string DismissLabel { get; set; } = "Fechar a notificação";
+
+    /// <summary>Disparado ao fechar.</summary>
+    [Parameter]
+    public EventCallback OnDismiss { get; set; }
+
+    /// <summary>Disparado ao acionar a ação — tipicamente "Desfazer".</summary>
+    [Parameter]
+    public EventCallback OnAction { get; set; }
+
+    /// <summary>
+    /// Disparado ao entrar o ponteiro ou o foco. O host congela o relógio.
+    /// </summary>
+    /// <remarks>
+    /// <c>focusin</c> além de <c>mouseenter</c> porque quem navega por teclado também precisa
+    /// que o toast espere: tabular até o botão "Desfazer" e vê-lo sumir no meio do caminho é a
+    /// versão de teclado do mesmo defeito.
+    /// </remarks>
+    [Parameter]
+    public EventCallback OnPause { get; set; }
+
+    /// <summary>Disparado ao sair o ponteiro ou o foco. O host volta a contar.</summary>
+    [Parameter]
+    public EventCallback OnResume { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string Icone => RvmSeveridade.Icone(Message.Severity);
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-toast",
+        $"rvm-toast--{RvmClasse.Sufixo(Message.Severity)}",
+        Class);
+}

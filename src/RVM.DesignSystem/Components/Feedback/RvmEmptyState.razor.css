@@ -1,0 +1,52 @@
+.rvm-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-12) var(--rvm-space-6);
+    font-family: var(--rvm-font-family-sans);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-empty-state__icone {
+    color: var(--rvm-color-on-surface-variant);
+}
+
+/* Só o erro colore o ícone: é o único dos quatro em que algo deu errado de fato. */
+.rvm-empty-state--error .rvm-empty-state__icone {
+    color: var(--rvm-color-warning);
+}
+
+.rvm-empty-state__titulo {
+    margin: 0;
+    /* O elemento é h2, e o TAMANHO é o de h4. Os dois são decisões separadas: o nível diz
+       onde isto entra na estrutura do documento, o tamanho diz quanto peso visual ele tem.
+       h1 seria errado — o estado vazio ocupa uma região da tela, não a tela, e o h1 pertence
+       à página. Disputar com ele bagunça a lista de títulos do leitor de tela. */
+    font-size: var(--rvm-font-size-h4);
+    font-weight: var(--rvm-font-weight-semibold);
+    line-height: var(--rvm-line-height-heading);
+}
+
+.rvm-empty-state__descricao {
+    max-width: 34rem;
+    color: var(--rvm-color-on-surface-variant);
+    font-size: var(--rvm-font-size-body-sm);
+    line-height: var(--rvm-line-height-body);
+}
+
+.rvm-empty-state__descricao :first-child { margin-top: 0; }
+.rvm-empty-state__descricao :last-child { margin-bottom: 0; }
+
+.rvm-empty-state__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--rvm-space-3);
+    margin-top: var(--rvm-space-2);
+}
+
+.rvm-empty-state__arte {
+    max-width: 12rem;
+}

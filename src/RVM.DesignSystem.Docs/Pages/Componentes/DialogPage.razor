@@ -1,0 +1,193 @@
+@page "/componentes/dialog"
+@inject IRvmDialogService Dialogos
+
+<PaginaDeComponente Nome="RvmDialog"
+                    Tipo="typeof(RvmDialog)"
+                    Frase="Caixa modal sobre o <dialog> nativo. Foco preso, ESC e retorno de foco vêm do navegador — não são reimplementados.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Wrap="true">
+                    <RvmButton OnClick="() => _aberto = true">Abrir o diálogo</RvmButton>
+                    <RvmButton Variant="RvmButtonVariant.Danger" OnClick="Perguntar">Excluir (ConfirmAsync)</RvmButton>
+                </RvmStack>
+
+                @if (_resposta is not null)
+                {
+                    <p class="doc__ok" role="status">Resposta: <strong>@_resposta</strong></p>
+                }
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmDialogSize" @bind-Value="_tamanho" Label="Size">
+                    @foreach (var s in Enum.GetValues<RvmDialogSize>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+                <p class="doc__nota">
+                    Com o diálogo aberto: dê <kbd>Tab</kbd> várias vezes — o foco não sai de
+                    dentro. Aperte <kbd>ESC</kbd> — ele fecha e o foco volta para o botão que o
+                    abriu.
+                </p>
+            </div>
+        </div>
+
+        <RvmDialog @bind-Open="_aberto" Title="Detalhes do pedido" Size="_tamanho">
+            <ChildContent>
+                <p>
+                    O conteúdo é seu. Este parágrafo, um formulário inteiro, uma tabela — o
+                    diálogo só garante a moldura e o comportamento.
+                </p>
+                <RvmTextField @bind-Value="_observacao" Label="Observação" />
+            </ChildContent>
+            <Footer>
+                <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="() => _aberto = false">Cancelar</RvmButton>
+                <RvmButton OnClick="Salvar">Salvar</RvmButton>
+            </Footer>
+        </RvmDialog>
+
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Dois jeitos de usar, e eles não competem</h3>
+        <p>
+            <strong>Declarativo</strong> — <code>&lt;RvmDialog @@bind-Open&gt;</code> — para
+            conteúdo próprio: formulário, detalhes, qualquer coisa que seja marcação. O resultado
+            tipado aqui é o <em>seu</em> campo, com o tipo que você quiser.
+        </p>
+        <p>
+            <strong>Imperativo</strong> — <code>await Dialogos.ConfirmAsync(...)</code> — para o
+            caso que se repete em toda tela: "tem certeza?". Devolve <code>bool</code> e dispensa
+            carregar um estado, um componente na marcação e dois handlers só para perguntar.
+        </p>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@_confirm" />
+        <p class="doc__nota">
+            <strong>Não existe um <code>ShowAsync&lt;T&gt;</code> genérico</strong>, e é decisão,
+            não pendência: ele teria que renderizar componente dinâmico e devolver
+            <code>object</code>. Um formulário dentro de um diálogo é marcação, e marcação se
+            escreve na tela — não se monta por chamada de método.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É o <code>&lt;dialog&gt;</code> nativo com <code>showModal()</code></strong>,
+                pela mesma razão do <code>&lt;select&gt;</code> nativo no
+                <a href="componentes/select">RvmSelect</a>: o navegador faz melhor. Vêm de graça o
+                foco preso (incluindo <kbd>Shift+Tab</kbd> e conteúdo que aparece depois), o
+                <kbd>ESC</kbd>, a inertização do resto do documento, a camada de topo acima de
+                qualquer <code>z-index</code>, o <code>::backdrop</code> sem elemento de véu no
+                DOM, e o <strong>retorno do foco</strong> ao elemento que estava ativo quando o
+                diálogo abriu.
+            </li>
+            <li>
+                <strong><code>role</code> e <code>aria-modal</code> não são escritos.</strong> Os
+                dois são implícitos no elemento, e atributo ARIA redundante com a semântica nativa
+                é uma das causas mais comuns de leitor de tela anunciar errado.
+            </li>
+            <li>
+                <strong><code>Title</code> é obrigatório</strong> — vira o
+                <code>aria-labelledby</code>. Um diálogo sem nome é anunciado como "diálogo" e
+                nada mais.
+            </li>
+            <li>
+                <strong>Sair sem decidir devolve <code>false</code>.</strong> <kbd>ESC</kbd>, o
+                "×" e o botão de cancelar são todos "não". O caminho destrutivo nunca pode ser o
+                que acontece por acidente.
+            </li>
+            <li>
+                <strong>O <kbd>ESC</kbd> é interceptado.</strong> O <code>&lt;dialog&gt;</code>
+                nativo fecha no ESC <em>sem avisar o componente</em>, o que faria um
+                <code>ConfirmAsync</code> sumir da tela deixando quem chamou esperando para
+                sempre. O JS cancela o evento nativo e devolve a decisão para o C#.
+            </li>
+            <li>
+                <strong>Cancelar vem antes de confirmar no DOM</strong>, para ser o primeiro a
+                receber foco. Numa confirmação destrutiva, o caminho seguro é o que deve estar
+                debaixo do dedo.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para avisar.</strong> Diálogo interrompe e exige uma decisão. "Salvo com
+                sucesso" é <a href="componentes/toast">RvmToast</a>; um aviso que fica na tela é
+                <a href="componentes/alert">RvmAlert</a>.
+            </li>
+            <li>
+                <strong>Para um formulário longo.</strong> Se rola dentro do diálogo, é uma
+                página. Modal esconde o contexto justamente quando a pessoa mais precisa dele.
+            </li>
+            <li>
+                <strong>Empilhado.</strong> Um diálogo que abre outro deixa o de baixo inerte
+                atrás do de cima. O <code>IRvmDialogService</code> enfileira em vez de empilhar,
+                de propósito.
+            </li>
+            <li>
+                <strong>Com <code>Dismissible="false"</code> para forçar uma decisão.</strong>
+                Diálogo sem saída é o padrão escuro mais comum que existe, e a WCAG 2.1.2 trata
+                prender o teclado como falha. Use só para operação que não pode ser interrompida
+                no meio — e ainda assim ofereça uma saída no rodapé.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private bool _aberto;
+    private RvmDialogSize _tamanho = RvmDialogSize.Medium;
+    private string? _observacao = string.Empty;
+    private string? _resposta;
+
+    private void Salvar()
+    {
+        _aberto = false;
+        _resposta = "salvou pelo diálogo declarativo";
+    }
+
+    private async Task Perguntar()
+    {
+        var confirmou = await Dialogos.ConfirmAsync(new RvmConfirmOptions(
+            "Excluir o pedido?",
+            "O pedido e os itens dele saem do sistema. Isto não pode ser desfeito.",
+            ConfirmLabel: "Excluir",
+            CancelLabel: "Manter",
+            Severity: RvmSeverity.Danger));
+
+        _resposta = confirmou ? "confirmou a exclusão" : "cancelou (ou saiu com ESC)";
+    }
+
+    private const string _exemplo = """
+        <RvmDialog @bind-Open="_aberto" Title="Detalhes do pedido">
+            <ChildContent>
+                <RvmTextField @bind-Value="modelo.Observacao" Label="Observação" />
+            </ChildContent>
+            <Footer>
+                <RvmButton Variant="RvmButtonVariant.Secondary"
+                           OnClick="() => _aberto = false">Cancelar</RvmButton>
+                <RvmButton OnClick="Salvar">Salvar</RvmButton>
+            </Footer>
+        </RvmDialog>
+        """;
+
+    private const string _confirm = """
+        @inject IRvmDialogService Dialogos
+
+        var confirmou = await Dialogos.ConfirmAsync(new RvmConfirmOptions(
+            "Excluir o pedido?",
+            "O pedido e os itens dele saem do sistema. Isto não pode ser desfeito.",
+            ConfirmLabel: "Excluir",      // diga o VERBO, não "OK"
+            CancelLabel: "Manter",
+            Severity: RvmSeverity.Danger));
+
+        if (confirmou)
+        {
+            await _servico.ExcluirAsync(pedido.Id);
+        }
+        """;
+}

@@ -11,6 +11,48 @@
         </p>
     </header>
 
+    <section aria-labelledby="cl-030">
+        <h2 id="cl-030">0.3.0 — Onda 3</h2>
+        <p class="doc__nota">Feedback. 08/09/2026.</p>
+        <ul class="doc__lista">
+            <li>
+                <strong>Diálogo:</strong> <code>RvmDialog</code>, <code>RvmDialogHost</code> e
+                <code>IRvmDialogService</code> com <code>ConfirmAsync</code>. É o
+                <code>&lt;dialog&gt;</code> <strong>nativo</strong> com <code>showModal()</code> —
+                foco preso, <kbd>ESC</kbd>, fundo inerte, camada de topo e retorno de foco vêm do
+                navegador.
+            </li>
+            <li>
+                <strong>Notificação:</strong> <code>RvmToast</code>, <code>RvmToastHost</code> e
+                <code>IRvmToastService</code>, com piso de 5 segundos e pausa no hover e no foco.
+            </li>
+            <li>
+                <strong>Estado:</strong> <code>RvmAlert</code>, <code>RvmEmptyState</code>,
+                <code>RvmSpinner</code>, <code>RvmProgress</code>, <code>RvmSkeleton</code>,
+                <code>RvmTooltip</code>.
+            </li>
+            <li>
+                <strong>Site:</strong> a seção <a href="padroes">Padrões</a> e a
+                <strong>busca</strong> por componente e por token (<code>RF-27</code>), na barra
+                do topo.
+            </li>
+            <li><strong>Quatro ícones novos</strong> — <code>check-circle</code>,
+                <code>x-circle</code>, <code>lock</code>, <code>tray</code>.</li>
+        </ul>
+
+        <p class="doc__nota">
+            <strong>Papel novo na paleta:</strong> <code>--rvm-color-scrim</code>, o véu do
+            diálogo. É o único papel com transparência e o único que não entra no teste de
+            contraste — ele não recebe texto, e a função dele é justamente reduzir o contraste do
+            que está atrás.
+        </p>
+        <p class="doc__nota">
+            <strong>Mudança que quebra quem monta paleta à mão:</strong>
+            <code>RvmPalette.Scrim</code> é <code>required</code>. Quem usa
+            <code>RvmTheme.FromSeed</code> não é afetado.
+        </p>
+    </section>
+
     <section aria-labelledby="cl-020">
         <h2 id="cl-020">0.2.0 — Onda 2</h2>
         <p class="doc__nota">Layout e navegação. 08/09/2026.</p>

@@ -214,4 +214,119 @@ public class SiteSmokeTests : IAsyncLifetime
             .GetByRole(AriaRole.Navigation, new() { Name = "Navegação da documentação" })
             .CountAsync());
     }
+
+    /// <summary>
+    /// O criterio de saida da onda 3 (`09-roadmap`), inteiro, num navegador de verdade.
+    /// </summary>
+    /// <remarks>
+    /// <b>Este teste nao tem equivalente unitario, e nao por falta de vontade.</b> Foco preso,
+    /// ESC e retorno de foco sao entregues pelo <c>&lt;dialog&gt;</c> nativo com
+    /// <c>showModal()</c> — o bUnit nao tem camada de topo, nem inertizacao, nem foco de
+    /// verdade. Um teste desses no bUnit provaria que o mock funciona.
+    ///
+    /// <para>
+    /// O retorno de foco e a parte que mais importa: e ela que faz quem navega por teclado nao
+    /// se perder. Fechar um dialogo e ver o foco voltar para o <c>&lt;body&gt;</c> significa
+    /// recomecar a tabulacao do topo da pagina.
+    /// </para>
+    /// </remarks>
+    [SkippableFact]
+    public async Task O_dialogo_prende_o_foco_fecha_no_ESC_e_DEVOLVE_o_foco()
+    {
+        Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
+
+        var page = await _browser!.NewPageAsync();
+        await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/componentes/dialog");
+        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync();
+
+        var abrir = page.GetByRole(AriaRole.Button, new() { Name = "Abrir o diálogo" });
+        await abrir.ClickAsync();
+
+        var dialogo = page.Locator("dialog.rvm-dialog");
+        await Assertions.Expect(dialogo).ToBeVisibleAsync();
+
+        // 1. O dialogo tem nome acessivel — sem ele o leitor anuncia so "diálogo".
+        await Assertions.Expect(page.GetByRole(AriaRole.Dialog, new() { Name = "Detalhes do pedido" }))
+            .ToBeVisibleAsync();
+
+        // 2. FOCO PRESO — e a asserção certa aqui NÃO é "o foco está sempre dentro do diálogo".
+        //
+        //    O Chromium, ao passar do último focável de um `<dialog>` modal, leva o foco ao
+        //    `<body>` por uma parada antes de voltar ao primeiro. Cobrar "sempre dentro"
+        //    REPROVA UMA IMPLEMENTACAO CORRETA — foi o que este teste fez na primeira versao.
+        //
+        //    O que `showModal()` garante, e o que importa, e que o foco nunca alcanca um
+        //    CONTROLE da pagina atras: o resto do documento fica inerte. O `<body>` e a
+        //    passagem neutra da volta, nao um escape.
+        const string ondeEstaOFoco =
+            "() => { const a = document.activeElement; "
+            + "if (!a || a === document.body) return 'passagem'; "
+            + "return a.closest('dialog.rvm-dialog') ? 'dialogo' : 'PAGINA'; }";
+
+        var voltouParaDentro = false;
+
+        for (var i = 1; i <= 12; i++)
+        {
+            await page.Keyboard.PressAsync("Tab");
+
+            var onde = await page.EvaluateAsync<string>(ondeEstaOFoco);
+
+            Assert.False(onde == "PAGINA",
+                $"O foco alcançou um controle da página atrás do diálogo no {i}º Tab.");
+
+            // Depois de passar do último focável, o foco TEM que voltar para dentro — senão
+            // ele ficou preso no body, que é uma armadilha de outro tipo.
+            if (i > 4 && onde == "dialogo")
+            {
+                voltouParaDentro = true;
+            }
+        }
+
+        Assert.True(voltouParaDentro,
+            "O foco saiu do diálogo e não voltou: o laço de tabulação não fecha.");
+
+        // 3. Shift+Tab, a outra ponta do mesmo laço.
+        for (var i = 1; i <= 6; i++)
+        {
+            await page.Keyboard.PressAsync("Shift+Tab");
+
+            Assert.False(await page.EvaluateAsync<string>(ondeEstaOFoco) == "PAGINA",
+                $"O foco alcançou a página no {i}º Shift+Tab.");
+        }
+
+        // 4. ESC fecha.
+        await page.Keyboard.PressAsync("Escape");
+        await Assertions.Expect(dialogo).ToBeHiddenAsync();
+
+        // 5. E o FOCO VOLTA para o botao que abriu.
+        await Assertions.Expect(abrir).ToBeFocusedAsync();
+    }
+
+    /// <summary>
+    /// Sair do <c>ConfirmAsync</c> sem decidir devolve "nao".
+    /// </summary>
+    /// <remarks>
+    /// O <c>&lt;dialog&gt;</c> nativo fecha no ESC <b>sem avisar o componente</b>. Sem a
+    /// interceptacao, a confirmacao sumiria da tela e quem chamou ficaria esperando para sempre
+    /// — e o pior: num codigo que so avanca quando a resposta chega, a tela simplesmente trava.
+    /// </remarks>
+    [SkippableFact]
+    public async Task ESC_no_ConfirmAsync_responde_NAO_em_vez_de_sumir()
+    {
+        Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
+
+        var page = await _browser!.NewPageAsync();
+        await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/componentes/dialog");
+        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync();
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Excluir (ConfirmAsync)" }).ClickAsync();
+        await Assertions.Expect(page.GetByRole(AriaRole.Dialog, new() { Name = "Excluir o pedido?" }))
+            .ToBeVisibleAsync();
+
+        await page.Keyboard.PressAsync("Escape");
+
+        // A pagina so escreve a resposta quando o await volta — entao ver este texto prova que
+        // quem chamou foi respondido, e nao apenas que a caixa sumiu.
+        await Assertions.Expect(page.GetByText("cancelou (ou saiu com ESC)")).ToBeVisibleAsync();
+    }
 }

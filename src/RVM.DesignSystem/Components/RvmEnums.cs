@@ -233,3 +233,99 @@ public enum RvmChipVariant
     /// <summary>Informação neutra em destaque.</summary>
     Info,
 }
+
+/// <summary>
+/// Severidade de uma mensagem.
+/// </summary>
+/// <remarks>
+/// A cor <b>reforça</b> a severidade; o texto a carrega. Um alerta vermelho sem palavra que diga
+/// "erro" não informa nada a quem não distingue vermelho de verde — e é por isso que todo
+/// componente que usa esta escala também traz um ícone e um texto.
+/// </remarks>
+public enum RvmSeverity
+{
+    /// <summary>Informação neutra. O padrão.</summary>
+    Info,
+
+    /// <summary>Deu certo.</summary>
+    Success,
+
+    /// <summary>Atenção — algo pode dar errado.</summary>
+    Warning,
+
+    /// <summary>Erro — algo deu errado.</summary>
+    Danger,
+}
+
+/// <summary>Tamanho de um diálogo.</summary>
+public enum RvmDialogSize
+{
+    /// <summary>Confirmação curta.</summary>
+    Small,
+
+    /// <summary>Padrão — formulário de uma coluna.</summary>
+    Medium,
+
+    /// <summary>Conteúdo denso, tabela.</summary>
+    Large,
+
+    /// <summary>Ocupa a tela toda. Último recurso.</summary>
+    Fullscreen,
+}
+
+/// <summary>Onde os toasts aparecem na tela.</summary>
+/// <remarks>
+/// É configuração do <b>host</b>, não de cada toast: dois toasts em cantos diferentes na mesma
+/// tela dividem a atenção e nenhum é lido.
+/// </remarks>
+public enum RvmToastPosition
+{
+    /// <summary>Canto superior direito. O padrão em desktop.</summary>
+    TopEnd,
+
+    /// <summary>Topo, centralizado.</summary>
+    TopCenter,
+
+    /// <summary>Canto inferior direito.</summary>
+    BottomEnd,
+
+    /// <summary>Rodapé, centralizado. Perto do polegar no celular.</summary>
+    BottomCenter,
+}
+
+/// <summary>Forma de um esqueleto de carregamento.</summary>
+public enum RvmSkeletonShape
+{
+    /// <summary>Linha de texto, com altura de uma linha.</summary>
+    Text,
+
+    /// <summary>Bloco retangular — imagem, cartão.</summary>
+    Rect,
+
+    /// <summary>Círculo — avatar.</summary>
+    Circle,
+}
+
+/// <summary>
+/// Por que a tela está vazia.
+/// </summary>
+/// <remarks>
+/// A distinção não é decorativa: "não há nada aqui ainda" pede um botão de criar, "nada casou com
+/// o filtro" pede limpar o filtro, e "você não tem permissão" não pede ação nenhuma. Tratar os
+/// três como o mesmo estado vazio é o que produz aquele "Nenhum resultado encontrado" que não
+/// ajuda ninguém.
+/// </remarks>
+public enum RvmEmptyStateVariant
+{
+    /// <summary>Ainda não há registros. Cabe uma ação de criar.</summary>
+    Empty,
+
+    /// <summary>Há registros, mas nenhum casou com o filtro ou a busca.</summary>
+    NoResults,
+
+    /// <summary>Falhou ao carregar. Cabe uma ação de tentar de novo.</summary>
+    Error,
+
+    /// <summary>Sem permissão para ver isto.</summary>
+    Forbidden,
+}
