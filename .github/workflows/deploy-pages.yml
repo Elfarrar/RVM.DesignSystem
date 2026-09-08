@@ -48,6 +48,7 @@ jobs:
           test -f publish/wwwroot/404.html  || { echo "::error::404.html ausente — recarregar uma rota client-side vai devolver 404."; exit 1; }
           grep -q '<base href="/"' publish/wwwroot/index.html || { echo "::error::base href diferente de \"/\" — o site esta na raiz de dominio proprio."; exit 1; }
           test -d publish/wwwroot/_framework || { echo "::error::_framework/ ausente — o publish do WASM nao gerou o runtime."; exit 1; }
+          grep -qx 'design.rvmit.com.br' publish/wwwroot/CNAME || { echo "::error::CNAME ausente ou errado — sem ele o Pages serve em /RVM.DesignSystem/ e o base href quebra."; exit 1; }
           echo "guards ok"
 
       - uses: actions/configure-pages@v5

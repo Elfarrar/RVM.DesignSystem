@@ -27,10 +27,16 @@
 
   <!-- 10-infra § Deploy: os tres detalhes que quebram Blazor WASM em host estatico.
        .nojekyll impede o Jekyll do Pages de descartar _framework/;
-       404.html faz o roteamento client-side sobreviver ao F5. -->
+       404.html faz o roteamento client-side sobreviver ao F5.
+
+       O CNAME fixa o dominio proprio. Poderia ser um toggle nas settings do repo, mas aqui
+       ele fica VERSIONADO: aparece em code review, sobrevive a quem mexer nas settings, e
+       e o que garante que o <base href="/"> esteja certo — sem dominio proprio o Pages serve
+       em /RVM.DesignSystem/ e todo caminho absoluto do WASM quebra. -->
   <Target Name="PagesStaticHostFixups" AfterTargets="Publish">
     <WriteLinesToFile File="$(PublishDir)wwwroot/.nojekyll" Lines="" Overwrite="true" />
     <Copy SourceFiles="$(PublishDir)wwwroot/index.html" DestinationFiles="$(PublishDir)wwwroot/404.html" />
+    <WriteLinesToFile File="$(PublishDir)wwwroot/CNAME" Lines="design.rvmit.com.br" Overwrite="true" />
   </Target>
 
 </Project>
