@@ -92,7 +92,9 @@ a armadilha mais frágil da fase 0 não existe neste projeto.
 `Vault/05_References/baget-nuget.md`; segredo na fonte global.
 
 - Versionamento por SemVer (`05` § Política de versão).
-- Pré-release (`0.1.0-alpha.N`) a cada merge em `dev`; versão estável só a partir de `master`.
+- Pré-release (`0.x.y-alpha.N`, numerado pelo run) a cada push em `dev` — descartável, ninguém
+  deve fixar um alpha. **Versão estável só de tag `vX.Y.Z`**; push em `master` não publica
+  (`DSGN-009`).
 - Consumidor fixa versão exata. Ninguém é atualizado por acidente.
 - `README` e símbolos embutidos no pacote; `PackageProjectUrl` aponta para `design.rvmit.com.br`.
 

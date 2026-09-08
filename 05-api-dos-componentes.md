@@ -155,6 +155,11 @@ Se a instalação exigir mais que isso, a API está errada.
 
 ## Política de versão (SemVer)
 
+**A versão estável vem da tag git**, não de um literal no `.csproj`: `v1.2.3` publica `1.2.3` e a
+tag aponta para o commit exato que gerou o pacote (`DSGN-009`, 08/09/2026). Push em `master` não
+publica; `dev` publica pré-release descartável numerado pelo run do CI.
+
+
 | Mudança | Versão | Como se faz |
 |---|---|---|
 | Componente novo, parâmetro novo **com padrão** | minor | Direto |
