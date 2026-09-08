@@ -140,15 +140,21 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 
 Detalhe de cada uma em `09-roadmap.md` § Pendências. Depois da 1.0, mudá-las quebra todo consumidor.
 
-**Só uma continua aberta:**
+**Nenhuma continua aberta.** Todas fechadas até 08/09/2026:
 
-- ⏳ **Conjunto de ícones** — Lucide, Phosphor ou próprio (suposição: Lucide, MIT). Trava porque
-  nome de ícone é API pública.
+| Pendência | Decisão |
+|---|---|
+| Idioma de token/API | inglês |
+| Escala tipográfica | `rem` fixo, `clamp()` só no `display` |
+| Localização | pt-BR fixo, texto sobrescrevível por parâmetro |
+| Visibilidade | público, MIT |
+| Referência do site | os dois modos, via `UseLocalDesignSystem` |
+| **Ícones** | **Phosphor** (MIT), pesos `Regular` e `Fill` na v1 |
+| Paleta da marca | roxo VS + azul VS Code, **modo escuro aprovado** |
 
-Fechadas: idioma **inglês**, escala **`rem` fixo** (`clamp()` só no `display`), localização
-**pt-BR fixo** com texto sobrescrevível — as três já eram regra deste `CLAUDE.md` e estão
-implementadas na `DSGN-002`. Mais a paleta da marca, **incluindo o modo escuro, aprovado pelo
-Rafael em 08/09/2026**.
+⚠️ **Sobra uma decisão de contrato para a onda 2: quais ícones entram no sprite.** Cada um é um
+nome público e bytes que todo consumidor baixa. A lista é curada junto dos componentes que os
+usam — ícone não entra "porque pode ser útil".
 - ✅ **Repositório público sob MIT** — respondido pelo Rafael em 07/09/2026. Consequência não
   óbvia: foi essa decisão que inviabilizou o caller do `RVM.Actions` (**ADR-011**) e, de quebra,
   dispensou o runner self-hosted.
