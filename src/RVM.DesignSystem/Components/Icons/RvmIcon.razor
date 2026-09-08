@@ -1,0 +1,89 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Desvio declarado do `03` § Ícones: a spec descreve um SPRITE SVG único consumido por
+    <use href="sprite.svg#nome">. Aqui o desenho é inserido INLINE, a partir de dados gerados
+    em C# (tools/gerar-icones.py).
+
+    Motivo: <use> apontando para arquivo externo custa uma requisição de rede por página, não
+    herda `currentColor` de forma confiável em todos os navegadores, e tem histórico de bug no
+    Safari. Inline resolve os três, funciona igual em Server e WASM, e o custo é irrelevante
+    porque o conjunto é curado — 11 ícones, não os 1512 do Phosphor.
+*@
+
+@if (_desenho is not null)
+{
+    <svg class="@ClasseFinal"
+         viewBox="0 0 256 256"
+         width="@Size"
+         height="@Size"
+         fill="currentColor"
+         aria-hidden="@(EhDecorativo ? "true" : null)"
+         role="@(EhDecorativo ? null : "img")"
+         aria-label="@(EhDecorativo ? null : Title)"
+         @attributes="AdditionalAttributes">
+        @if (!EhDecorativo)
+        {
+            <title>@Title</title>
+        }
+        @((MarkupString)_desenho)
+    </svg>
+}
+
+@code {
+    private string? _desenho;
+
+    /// <summary>Nome do ícone no conjunto Phosphor, em kebab-case (<c>caret-down</c>).</summary>
+    [Parameter, EditorRequired]
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>Peso do traço.</summary>
+    [Parameter]
+    public RvmIconWeight Weight { get; set; } = RvmIconWeight.Regular;
+
+    /// <summary>Tamanho em CSS. Aceita qualquer unidade; <c>1em</c> acompanha o texto.</summary>
+    [Parameter]
+    public string Size { get; set; } = "1em";
+
+    /// <summary>
+    /// Descrição para leitor de tela. Sem ela, o ícone é tratado como decorativo.
+    /// </summary>
+    /// <remarks>
+    /// Esse padrão é deliberado e é o inverso do intuitivo. A maioria dos ícones numa interface
+    /// acompanha um texto que já diz a mesma coisa, e anunciá-los faz o leitor de tela repetir —
+    /// "salvar salvar". Então o padrão seguro é <b>silêncio</b>, e quem tem um ícone que carrega
+    /// significado sozinho (um botão só de ícone) informa o <c>Title</c>.
+    /// </remarks>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private bool EhDecorativo => string.IsNullOrWhiteSpace(Title);
+
+    private string ClasseFinal =>
+        string.Join(' ', new[] { "rvm-icon", Class }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    protected override void OnParametersSet()
+    {
+        var chave = $"{Name}:{Weight.ToString().ToLowerInvariant()}";
+
+        if (!RvmIconData.Todos.TryGetValue(chave, out _desenho))
+        {
+            // Falhar ALTO, não em silêncio. Um ícone que não existe renderizaria um espaço
+            // vazio que ninguém nota em desenvolvimento e o usuário final vê como buraco na
+            // tela. A exceção nomeia o conjunto disponível para o erro se resolver sozinho.
+            throw new ArgumentException(
+                $"Ícone '{Name}' (peso {Weight}) não existe no conjunto. Disponíveis: " +
+                string.Join(", ", RvmIconData.Nomes) +
+                ". Ícone novo entra pelo tools/gerar-icones.py.",
+                nameof(Name));
+        }
+    }
+}

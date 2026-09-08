@@ -1,0 +1,118 @@
+@namespace RVM.DesignSystem.Components
+
+<button type="@TipoHtml"
+        class="@ClasseFinal"
+        disabled="@(Disabled || Loading)"
+        aria-busy="@(Loading ? "true" : null)"
+        aria-disabled="@((Disabled || Loading) ? "true" : null)"
+        @onclick="AoClicar"
+        @attributes="AdditionalAttributes">
+    @if (Loading)
+    {
+        @* aria-hidden porque a mensagem de carregando ja vai no texto visivel abaixo;
+           anunciar o spinner tambem faria o leitor de tela repetir. *@
+        <span class="rvm-button__spinner" aria-hidden="true"></span>
+    }
+    <span class="rvm-button__label">
+        @* Nao usar ternario aqui: string e RenderFragment nao tem tipo comum, o Razor cai em
+           object e renderiza "Microsoft.AspNetCore.Components.RenderFragment" como texto. *@
+        @if (Loading && LoadingText is not null)
+        {
+            @LoadingText
+        }
+        else
+        {
+            @ChildContent
+        }
+    </span>
+</button>
+
+@code {
+    /// <summary>Peso visual do botao.</summary>
+    [Parameter]
+    public RvmButtonVariant Variant { get; set; } = RvmButtonVariant.Primary;
+
+    /// <summary>Tamanho do botao.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Ocupa toda a largura disponivel.</summary>
+    [Parameter]
+    public bool FullWidth { get; set; }
+
+    /// <summary>Desabilita o botao.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Mostra o indicador de carregamento e bloqueia o clique.
+    /// </summary>
+    /// <remarks>
+    /// Bloquear e parte do contrato, nao um detalhe: sem isso o duplo-clique impaciente dispara
+    /// a acao duas vezes, que num "Salvar" vira dois registros.
+    /// </remarks>
+    [Parameter]
+    public bool Loading { get; set; }
+
+    /// <summary>
+    /// Texto exibido durante o carregamento. Quando nulo, mantem o conteudo normal.
+    /// </summary>
+    /// <remarks>
+    /// Parametro e nao literal fixo porque todo texto padrao de componente e sobrescrevivel
+    /// (`CLAUDE.md` § Convencoes). Aqui nem ha padrao: trocar "Salvar" por "Salvando..." e
+    /// decisao de quem usa, nao da biblioteca.
+    /// </remarks>
+    [Parameter]
+    public string? LoadingText { get; set; }
+
+    /// <summary>Tipo do elemento HTML (<c>button</c>, <c>submit</c>, <c>reset</c>).</summary>
+    [Parameter]
+    public RvmButtonType Type { get; set; } = RvmButtonType.Button;
+
+    /// <summary>Classes do consumidor. Somam com as internas, nunca as substituem.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Conteudo do botao.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Disparado no clique. Nao dispara quando desabilitado ou carregando.</summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /// <summary>Qualquer atributo extra vai para o elemento.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string TipoHtml => Type switch
+    {
+        RvmButtonType.Submit => "submit",
+        RvmButtonType.Reset => "reset",
+        _ => "button",
+    };
+
+    // A classe do consumidor entra POR ULTIMO de proposito: com especificidade igual, o CSS
+    // dele vence o nosso, que e o que "Class soma, nao substitui" significa na pratica.
+    private string ClasseFinal => string.Join(' ', new[]
+    {
+        "rvm-button",
+        $"rvm-button--{Variant.ToString().ToLowerInvariant()}",
+        $"rvm-button--{Size.ToString().ToLowerInvariant()}",
+        FullWidth ? "rvm-button--full" : null,
+        Loading ? "rvm-button--loading" : null,
+        Class,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoClicar(MouseEventArgs e)
+    {
+        // O atributo `disabled` ja impede o clique no navegador, mas o bUnit e o JS conseguem
+        // disparar o handler mesmo assim. A guarda aqui e o que faz o contrato valer sempre.
+        if (Disabled || Loading)
+        {
+            return Task.CompletedTask;
+        }
+
+        return OnClick.InvokeAsync(e);
+    }
+}

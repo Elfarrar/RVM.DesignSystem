@@ -1,0 +1,7 @@
+/* O ícone acompanha o texto: mesma cor (currentColor no SVG) e alinhado à linha de base
+   ótica, não à caixa — sem o vertical-align ele "sobe" ao lado de texto. */
+.rvm-icon {
+    display: inline-block;
+    vertical-align: -0.125em;
+    flex-shrink: 0;
+}

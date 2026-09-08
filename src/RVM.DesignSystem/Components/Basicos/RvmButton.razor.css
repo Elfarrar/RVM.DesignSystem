@@ -1,0 +1,129 @@
+/*
+  Só token semântico e de escala aqui. Nenhuma cor literal, nenhum valor de espaçamento fora
+  da escala — o portão CssDeComponenteTests reprova o build se escapar.
+*/
+
+.rvm-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-2);
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-md);
+    font-family: var(--rvm-font-family-sans);
+    font-weight: var(--rvm-font-weight-medium);
+    line-height: var(--rvm-line-height-body);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+        background-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
+        border-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
+        color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+/* Alvo de toque de 44px na WCAG 2.2 (2.5.8) vem do padding + line-height nos tamanhos abaixo. */
+.rvm-button--small {
+    padding: var(--rvm-space-1) var(--rvm-space-3);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.rvm-button--medium {
+    padding: var(--rvm-space-2) var(--rvm-space-4);
+    font-size: var(--rvm-font-size-body);
+}
+
+.rvm-button--large {
+    padding: var(--rvm-space-3) var(--rvm-space-6);
+    font-size: var(--rvm-font-size-body-lg);
+}
+
+.rvm-button--full {
+    display: flex;
+    width: 100%;
+}
+
+/* --- Variantes --- */
+
+.rvm-button--primary {
+    background-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+}
+
+.rvm-button--secondary {
+    background-color: transparent;
+    border-color: var(--rvm-color-border-strong);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-button--ghost {
+    background-color: transparent;
+    color: var(--rvm-color-primary);
+}
+
+.rvm-button--danger {
+    background-color: var(--rvm-color-danger);
+    color: var(--rvm-color-on-danger);
+}
+
+/*
+  :hover só sob (hover: hover) — em touch o navegador "gruda" o estado de hover depois do
+  toque, e o botão fica parecendo ativo até o próximo toque em outro lugar.
+*/
+@media (hover: hover) {
+    .rvm-button--primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-container); color: var(--rvm-color-on-primary-container); }
+    .rvm-button--secondary:hover:not(:disabled) { background-color: var(--rvm-color-surface-sunken); }
+    .rvm-button--ghost:hover:not(:disabled) { background-color: var(--rvm-color-primary-container); color: var(--rvm-color-on-primary-container); }
+    .rvm-button--danger:hover:not(:disabled) { background-color: var(--rvm-color-danger); filter: brightness(0.92); }
+}
+
+/*
+  :focus-visible e não :focus — com :focus o anel aparece também no clique de mouse, que é
+  ruído para quem não navega por teclado. O anel usa o token próprio, medido a 3:1 contra a
+  superfície pelo teste de contraste.
+*/
+.rvm-button:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.rvm-button:disabled {
+    background-color: var(--rvm-color-disabled);
+    border-color: transparent;
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}
+
+/* --- Carregando --- */
+
+.rvm-button__spinner {
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: var(--rvm-radius-full);
+    animation: rvm-button-girar var(--rvm-motion-duration-slow) linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes rvm-button-girar {
+    to { transform: rotate(360deg); }
+}
+
+/*
+  prefers-reduced-motion: a duração já é zerada nos tokens, mas animação infinita com duração
+  0 continua repintando sem parar. Aqui ela precisa PARAR, não acelerar.
+*/
+@media (prefers-reduced-motion: reduce) {
+    .rvm-button__spinner {
+        animation: none;
+        border-top-color: currentColor;
+        opacity: 0.5;
+    }
+}
+
+.rvm-button__label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}

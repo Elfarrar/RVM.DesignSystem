@@ -4,13 +4,163 @@
 
 <h1>RVM Design System</h1>
 
-<p>
-    Biblioteca de componentes Blazor do ecossistema RVM — tokens, tematizacao
-    e acessibilidade WCAG 2.1 AA.
+<p class="intro">
+    Biblioteca de componentes Blazor do ecossistema RVM — tokens, tematização e acessibilidade
+    WCAG 2.1 AA. Troque o tema no seletor acima: o formulário abaixo é o mesmo em todas as cinco
+    identidades, e nenhum componente foi tocado para isso.
 </p>
 
-<p class="aviso">
-    O site esta no ar apenas com a casca: a fase 0 (bootstrap) entrega o repositorio,
-    o esqueleto, o CI/CD e o deploy. Os componentes e a documentacao chegam na onda 1
-    do <code>09-roadmap.md</code>.
-</p>
+<section aria-labelledby="titulo-form">
+    <h2 id="titulo-form">Formulário</h2>
+    <p class="secao-nota">
+        Montado só com componentes <code>Rvm*</code>. É o critério de saída da onda 1: operável
+        apenas por teclado e aprovado na auditoria de acessibilidade.
+    </p>
+
+    <EditForm Model="_modelo" OnValidSubmit="Enviar" class="demo-form">
+        <DataAnnotationsValidator />
+
+        <RvmTextField @bind-Value="_modelo.Nome"
+                      Label="Nome completo"
+                      Placeholder="Como aparece no documento"
+                      Required="true" />
+
+        <RvmTextField @bind-Value="_modelo.Email"
+                      Label="E-mail"
+                      Type="RvmTextFieldType.Email"
+                      Help="Usamos só para enviar a confirmação."
+                      IconStart="magnifying-glass" />
+
+        <RvmSelect TValue="string" @bind-Value="_modelo.Estado" Label="Estado" Placeholder="Selecione">
+            <option value="SP">São Paulo</option>
+            <option value="MG">Minas Gerais</option>
+            <option value="RJ">Rio de Janeiro</option>
+        </RvmSelect>
+
+        <RvmRadioGroup TValue="string" @bind-Value="_modelo.Pagamento"
+                       Label="Forma de pagamento"
+                       Horizontal="true"
+                       Options="_formasDePagamento" />
+
+        <RvmTextArea @bind-Value="_modelo.Observacoes"
+                     Label="Observações"
+                     MaxLength="200"
+                     Rows="3" />
+
+        <RvmSwitch @bind-Value="_modelo.Novidades"
+                   Label="Quero receber novidades"
+                   Help="Aplica na hora — não precisa salvar." />
+
+        <RvmCheckbox @bind-Value="_modelo.Aceite" Label="Li e aceito os termos" />
+
+        <div class="demo-form__acoes">
+            <RvmButton Type="RvmButtonType.Submit" Loading="_enviando" LoadingText="Enviando...">
+                Salvar
+            </RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="Limpar">Limpar</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Ghost">Cancelar</RvmButton>
+        </div>
+
+        @if (_enviado)
+        {
+            @* role="status" e não "alert": é confirmação, não urgência. "alert" interromperia
+               o leitor de tela; "status" espera uma pausa natural. *@
+            <p class="demo-form__ok" role="status">Formulário enviado.</p>
+        }
+    </EditForm>
+</section>
+
+<section aria-labelledby="titulo-botoes">
+    <h2 id="titulo-botoes">Botões</h2>
+    <div class="demo-linha">
+        <RvmButton>Primary</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Secondary">Secondary</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Ghost">Ghost</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Danger">Danger</RvmButton>
+        <RvmButton Disabled="true">Desabilitado</RvmButton>
+        <RvmButton Loading="true">Carregando</RvmButton>
+    </div>
+    <div class="demo-linha">
+        <RvmButton Size="RvmSize.Small">Small</RvmButton>
+        <RvmButton Size="RvmSize.Medium">Medium</RvmButton>
+        <RvmButton Size="RvmSize.Large">Large</RvmButton>
+    </div>
+</section>
+
+<section aria-labelledby="titulo-icones">
+    <h2 id="titulo-icones">Ícones</h2>
+    <p class="secao-nota">
+        Phosphor, nos dois pesos que a v1 expõe. O preenchido é o que expressa estado
+        selecionado sem improviso.
+    </p>
+    <div class="demo-icones">
+        @foreach (var nome in _icones)
+        {
+            <div class="demo-icone">
+                <RvmIcon Name="@nome" Size="1.5rem" />
+                <RvmIcon Name="@nome" Weight="RvmIconWeight.Fill" Size="1.5rem" />
+                <code>@nome</code>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private readonly Modelo _modelo = new();
+    private bool _enviando;
+    private bool _enviado;
+
+    private readonly RvmRadioGroup<string>.Option[] _formasDePagamento =
+    [
+        new("avista", "À vista"),
+        new("parcelado", "Parcelado"),
+        new("boleto", "Boleto", Disabled: true),
+    ];
+
+    private readonly string[] _icones =
+    [
+        "check", "x", "caret-down", "caret-up", "eye", "eye-slash",
+        "warning", "info", "magnifying-glass", "calendar-blank",
+    ];
+
+    private async Task Enviar()
+    {
+        _enviando = true;
+        _enviado = false;
+        // Espera curta só para o estado de carregamento ser visível na demonstração.
+        await Task.Delay(600);
+        _enviando = false;
+        _enviado = true;
+    }
+
+    private void Limpar()
+    {
+        _modelo.Nome = string.Empty;
+        _modelo.Email = string.Empty;
+        _modelo.Estado = null;
+        _modelo.Pagamento = null;
+        _modelo.Observacoes = string.Empty;
+        _modelo.Novidades = false;
+        _modelo.Aceite = false;
+        _enviado = false;
+    }
+
+    private sealed class Modelo
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Informe o nome.")]
+        public string Nome { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "E-mail inválido.")]
+        public string Email { get; set; } = string.Empty;
+
+        public string? Estado { get; set; }
+
+        public string? Pagamento { get; set; }
+
+        public string Observacoes { get; set; } = string.Empty;
+
+        public bool Novidades { get; set; }
+
+        public bool Aceite { get; set; }
+    }
+}

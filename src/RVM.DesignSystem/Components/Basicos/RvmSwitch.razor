@@ -1,0 +1,79 @@
+@namespace RVM.DesignSystem.Components
+@inherits RvmInputBase<bool>
+
+@*
+    Interruptor.
+
+    É um <input type="checkbox"> com role="switch" — não um controle desenhado do zero. A
+    diferença entre switch e checkbox não é visual: switch aplica efeito IMEDIATO ("notificações
+    ligadas"), checkbox é uma escolha que só vale quando o formulário é enviado ("aceito os
+    termos"). Usar o errado confunde a expectativa de quem usa.
+*@
+
+<div class="@ClasseFinal">
+    <label class="rvm-switch__wrapper">
+        <input type="checkbox"
+               role="switch"
+               id="@Id"
+               class="rvm-switch__input"
+               checked="@CurrentValue"
+               disabled="@Disabled"
+               aria-describedby="@(string.IsNullOrWhiteSpace(Help) ? null : $"{Id}-help")"
+               @onchange="AoMudar"
+               @attributes="AdditionalAttributes" />
+        <span class="rvm-switch__track" aria-hidden="true">
+            <span class="rvm-switch__thumb"></span>
+        </span>
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <span class="rvm-switch__label">@Label</span>
+        }
+    </label>
+
+    @if (!string.IsNullOrWhiteSpace(Help))
+    {
+        <p class="rvm-switch__help" id="@($"{Id}-help")">@Help</p>
+    }
+</div>
+
+@code {
+    /// <summary>Identificador. Gerado quando não informado.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-switch-{Guid.NewGuid():N}";
+
+    /// <summary>Texto ao lado do interruptor.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Desabilita o controle.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string ClasseFinal => string.Join(' ', new[]
+    {
+        "rvm-switch",
+        Disabled ? "rvm-switch--disabled" : null,
+        Class,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoMudar(ChangeEventArgs e)
+    {
+        CurrentValue = e.Value is bool b && b;
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(
+        string? value,
+        out bool result,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        result = bool.TryParse(value, out var b) && b;
+        validationErrorMessage = null;
+        return true;
+    }
+}

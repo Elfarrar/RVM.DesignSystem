@@ -24,6 +24,10 @@ node_modules/
 .playwright/
 .playwright-mcp/
 /design-dev-*.png
+/onda1-*.png
+/prod-*.png
+/titulo-*.png
+/foco-*.png
 
 ## OS
 .DS_Store

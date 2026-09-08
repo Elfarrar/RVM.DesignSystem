@@ -1,0 +1,90 @@
+@namespace RVM.DesignSystem.Components
+@inherits RvmInputBase<bool>
+
+@*
+    Usa <input type="checkbox"> de verdade, não uma <div> estilizada.
+
+    Reimplementar o controle com div exigiria recriar à mão: foco por Tab, alternar com Espaço,
+    o estado para leitor de tela, a integração com <label>, o autofill e o comportamento em
+    formulário. Todo componente que faz isso erra pelo menos um. O nativo já acerta os seis; o
+    CSS só o esconde visualmente e desenha por cima.
+*@
+
+<div class="@ClasseFinal">
+    <label class="rvm-checkbox__wrapper">
+        <input type="checkbox"
+               id="@Id"
+               class="rvm-checkbox__input"
+               checked="@CurrentValue"
+               disabled="@Disabled"
+               aria-describedby="@DescricaoPara(Id)"
+               aria-invalid="@(TemErro ? "true" : null)"
+               @onchange="AoMudar"
+               @attributes="AdditionalAttributes" />
+        <span class="rvm-checkbox__box" aria-hidden="true">
+            <RvmIcon Name="check" Class="rvm-checkbox__check" />
+        </span>
+        @if (!string.IsNullOrWhiteSpace(Label) || ChildContent is not null)
+        {
+            <span class="rvm-checkbox__label">@(ChildContent is not null ? ChildContent : (RenderFragment)(b => b.AddContent(0, Label)))</span>
+        }
+    </label>
+
+    @if (TemErro)
+    {
+        <p class="rvm-checkbox__error" id="@($"{Id}-error")" role="alert">@MensagemDeErro</p>
+    }
+    else if (!string.IsNullOrWhiteSpace(Help))
+    {
+        <p class="rvm-checkbox__help" id="@($"{Id}-help")">@Help</p>
+    }
+</div>
+
+@code {
+    /// <summary>Identificador. Gerado quando não informado.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-check-{Guid.NewGuid():N}";
+
+    /// <summary>Texto ao lado da caixa.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Conteúdo rico ao lado da caixa. Vence o <see cref="Label"/>.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Desabilita o controle.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string ClasseFinal => string.Join(' ', new[]
+    {
+        "rvm-checkbox",
+        Disabled ? "rvm-checkbox--disabled" : null,
+        TemErro ? "rvm-checkbox--invalid" : null,
+        Class,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoMudar(ChangeEventArgs e)
+    {
+        CurrentValue = e.Value is bool b && b;
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(
+        string? value,
+        out bool result,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        // Checkbox não recebe texto do navegador — o valor vem do evento como bool. Este
+        // override existe porque InputBase exige, não porque haja parsing a fazer.
+        result = bool.TryParse(value, out var b) && b;
+        validationErrorMessage = null;
+        return true;
+    }
+}
