@@ -13,8 +13,18 @@
   <PropertyGroup>
     <PackageId>RVM.DesignSystem</PackageId>
     <!-- VersionPrefix (nao Version): e o que permite ao publish-nuget.yml acrescentar
-         -p:VersionSuffix=alpha.N nos builds de dev. Com <Version> fixo, o sufixo e ignorado. -->
-    <VersionPrefix>0.1.0</VersionPrefix>
+         -p:VersionSuffix=alpha.N nos builds de dev. Com <Version> fixo, o sufixo e ignorado.
+
+         0.0.x, e nao 0.1.0, de proposito. O `09-roadmap.md` mapeia versao a onda:
+         0.1.0 = onda 1 (tokens + 9 componentes basicos), 0.2.0 = onda 2, 0.3.0 = onda 3,
+         1.0.0 = onda 4. A promocao para producao em 08/09/2026 aconteceu no meio da onda 1,
+         e o master publica versao ESTAVEL — se ficasse em 0.1.0, o numero seria queimado
+         por um pacote que tem so tokens e tematizacao, e a onda 1 teria que fechar em 0.2.0,
+         desalinhando o mapa inteiro.
+
+         Versao publicada e imutavel na pratica (o feed recusa sobrescrever), entao o numero
+         errado nao se conserta depois. Sobe para 0.1.0 quando a onda 1 fechar. -->
+    <VersionPrefix>0.0.1</VersionPrefix>
     <Authors>Rafael Venerosa Morici</Authors>
     <Description>Biblioteca de componentes Blazor do ecossistema RVM: tokens, tematizacao e acessibilidade WCAG 2.1 AA.</Description>
     <PackageProjectUrl>https://design.rvmit.com.br</PackageProjectUrl>
