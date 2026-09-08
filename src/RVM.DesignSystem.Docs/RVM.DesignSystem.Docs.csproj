@@ -45,23 +45,27 @@
        o publish saiu com o dominio certo em mente. Sem dominio proprio o Pages serviria em
        /RVM.DesignSystem/ e todo caminho absoluto do WASM quebraria. -->
   <!--
-    Leva o XML de documentacao da biblioteca para dentro do site.
+    Traz o XML de doc da biblioteca para dentro do site, alimentando a tabela de API
+    gerada do codigo (`07` § Anatomia).
 
-    E o que permite a tabela de API de cada pagina ser GERADA do codigo em vez de escrita a
-    mao (`07` § Anatomia). Doc escrita a mao desatualiza no primeiro parametro novo, e o pior
-    e que ela desatualiza em SILENCIO — ninguem percebe ate alguem seguir a doc e nao
-    funcionar.
+    ⚠️ A ORDEM E O PONTO. Copiar com AfterTargets="Build" chega TARDE DEMAIS: os static
+    web assets ja foram enumerados e o arquivo fica de fora do publish. Em maquina de
+    desenvolvimento isso nao aparece — o arquivo sobrou do build anterior e tudo parece
+    certo. So quebra em build LIMPO, ou seja, exatamente no CI.
+
+    AfterTargets="ResolveProjectReferences" garante que a RCL ja compilou (e o XML
+    existe); BeforeTargets="ResolveStaticWebAssetsInputs" garante que a copia acontece
+    antes da enumeracao.
   -->
-  <Target Name="CopiarXmlDeDoc" BeforeTargets="BeforeBuild;BeforeBuild">
-    <ItemGroup>
-      <XmlDeDoc Include="$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="PublicarXmlDeDoc" AfterTargets="Build">
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml"
+  <Target Name="TrazerXmlDeDoc"
+          AfterTargets="ResolveProjectReferences"
+          BeforeTargets="ResolveStaticWebAssetsInputs">
+    <PropertyGroup>
+      <XmlDaBiblioteca>$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml</XmlDaBiblioteca>
+    </PropertyGroup>
+    <Copy SourceFiles="$(XmlDaBiblioteca)"
           DestinationFolder="$(MSBuildThisFileDirectory)wwwroot/api"
-          Condition="Exists('$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml')"
+          Condition="Exists('$(XmlDaBiblioteca)')"
           SkipUnchangedFiles="true" />
   </Target>
 

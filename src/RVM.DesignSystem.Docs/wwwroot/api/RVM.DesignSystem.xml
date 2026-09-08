@@ -1,0 +1,952 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RVM.DesignSystem</name>
+    </assembly>
+    <members>
+        <member name="T:RVM.DesignSystem.Components.RvmInputBase`1">
+             <summary>
+             Base dos campos de formulário da biblioteca.
+             </summary>
+             <typeparam name="TValue">Tipo do valor do campo.</typeparam>
+             <remarks>
+             Herda de <see cref="T:Microsoft.AspNetCore.Components.Forms.InputBase`1"/> — é o que faz <c>DataAnnotations</c>, <c>EditForm</c>
+             e <c>ValidationMessage</c> funcionarem sem adaptação (`03` § Formulários).
+            
+             <para>
+             <b>E resolve o defeito que vem junto.</b> O <see cref="T:Microsoft.AspNetCore.Components.Forms.InputBase`1"/> do próprio Blazor
+             <b>lança exceção</b> quando é usado fora de um <c>EditForm</c>, porque exige
+             <c>ValueExpression</c> — que só o <c>@bind-Value</c> dentro do formulário fornece. Os
+             <c>InputText</c> e companhia do framework têm a mesma limitação.
+             </para>
+             <para>
+             Para uma biblioteca de componentes isso é inaceitável: um campo de busca numa barra de
+             ferramentas, um filtro numa listagem, um campo num diálogo simples — nenhum deles vive num
+             <c>EditForm</c>, e todos quebrariam com exceção em tempo de execução. Aqui, quando a
+             expressão não vem, ela é sintetizada. Dentro de um <c>EditForm</c> nada muda; fora dele, o
+             campo simplesmente funciona, sem validação de anotação — que é o esperado, já que não há
+             modelo para validar.
+             </para>
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmInputBase`1.Error">
+            <summary>Mensagem de erro explícita, definida pelo consumidor.</summary>
+            <remarks>
+            Vence a validação do <c>EditContext</c>: quem passa <c>Error</c> na mão sabe de algo que
+            a anotação não sabe — tipicamente um erro devolvido pelo servidor.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmInputBase`1.Help">
+            <summary>Texto de ajuda exibido abaixo do campo, quando não há erro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmInputBase`1.MensagemDeErro">
+            <summary>A mensagem que deve aparecer: a explícita, ou a primeira da validação.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmInputBase`1.TemErro">
+            <summary>Verdadeiro quando há mensagem de erro.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmInputBase`1.DescricaoPara(System.String)">
+            <summary>
+            O <c>aria-describedby</c> do controle: aponta para o erro OU para a ajuda.
+            </summary>
+            <param name="id">Identificador do campo.</param>
+            <returns>O id da mensagem, ou <c>null</c> quando não há nenhuma.</returns>
+            <remarks>
+            Nunca os dois: só um dos dois é renderizado, e apontar para um id inexistente faz parte
+            dos leitores de tela simplesmente não ler nada — o usuário perde a mensagem sem que
+            ninguém perceba.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmInputBase`1.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)">
+            <inheritdoc />
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmIconData">
+            <summary>Os desenhos dos icones, por nome e peso.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmIconData.Todos">
+            <summary>Todos os icones do conjunto, chaveados por <c>nome:peso</c>.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmIconData.Nomes">
+            <summary>Os nomes disponiveis, para a pagina de icones do site e para a mensagem de erro.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmSize">
+            <summary>
+            Tamanho de um controle.
+            </summary>
+            <remarks>
+            Escala fechada e compartilhada por todos os componentes de propósito: é o que faz um botão
+            e um campo lado a lado terem a mesma altura sem ninguém ajustar pixel.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSize.Small">
+            <summary>Compacto — tabela, barra de ferramentas.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSize.Medium">
+            <summary>Padrão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSize.Large">
+            <summary>Destaque — ação principal de uma tela vazia.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmButtonVariant">
+            <summary>Peso visual de um botão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmButtonVariant.Primary">
+            <summary>Ação principal. Uma por tela.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmButtonVariant.Secondary">
+            <summary>Ação de apoio, com contorno.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmButtonVariant.Ghost">
+            <summary>Sem preenchimento nem contorno — ação terciária.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmButtonVariant.Danger">
+            <summary>Ação destrutiva.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmButtonType">
+            <summary>Tipo HTML do botão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmButtonType.Button">
+            <summary>Não submete formulário. É o padrão, e é o padrão certo.</summary>
+            <remarks>
+            O HTML puro usa <c>submit</c> quando o tipo é omitido, e isso é uma das causas mais
+            comuns de "a página recarregou sozinha": um botão de ação dentro de um formulário
+            submete sem ninguém pedir. Aqui o padrão é o seguro; quem quer submeter, diz.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmButtonType.Submit">
+            <summary>Submete o formulário.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmButtonType.Reset">
+            <summary>Limpa o formulário.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmIconWeight">
+            <summary>Peso do traço de um ícone (Phosphor).</summary>
+            <remarks>
+            A v1 expõe só estes dois — o par que expressa estado selecionado. O conjunto de origem tem
+            seis; acrescentar membro depois é aditivo e não quebra ninguém, remover é que quebra
+            (`03` § Ícones).
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmIconWeight.Regular">
+            <summary>Traço. O padrão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmIconWeight.Fill">
+            <summary>Preenchido — estado selecionado, ativo, marcado.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmTextFieldType">
+            <summary>Tipo de um campo de texto.</summary>
+            <remarks>
+            A escolha muda o teclado que o celular abre e o autofill que o navegador oferece — não é
+            só validação. Um campo de telefone marcado como <c>Text</c> obriga o usuário a procurar os
+            números no teclado alfabético.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmTextFieldType.Text">
+            <summary>Texto livre.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmTextFieldType.Email">
+            <summary>E-mail.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmTextFieldType.Password">
+            <summary>Senha — o conteúdo é mascarado.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmTextFieldType.Tel">
+            <summary>Telefone.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmTextFieldType.Url">
+            <summary>Endereço web.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmTextFieldType.Search">
+            <summary>Busca.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.Variant">
+            <summary>Peso visual do botao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.Size">
+            <summary>Tamanho do botao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.FullWidth">
+            <summary>Ocupa toda a largura disponivel.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.Disabled">
+            <summary>Desabilita o botao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.Loading">
+            <summary>
+            Mostra o indicador de carregamento e bloqueia o clique.
+            </summary>
+            <remarks>
+            Bloquear e parte do contrato, nao um detalhe: sem isso o duplo-clique impaciente dispara
+            a acao duas vezes, que num "Salvar" vira dois registros.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.LoadingText">
+            <summary>
+            Texto exibido durante o carregamento. Quando nulo, mantem o conteudo normal.
+            </summary>
+            <remarks>
+            Parametro e nao literal fixo porque todo texto padrao de componente e sobrescrevivel
+            (`CLAUDE.md` § Convencoes). Aqui nem ha padrao: trocar "Salvar" por "Salvando..." e
+            decisao de quem usa, nao da biblioteca.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.Type">
+            <summary>Tipo do elemento HTML (<c>button</c>, <c>submit</c>, <c>reset</c>).</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.Class">
+            <summary>Classes do consumidor. Somam com as internas, nunca as substituem.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.ChildContent">
+            <summary>Conteudo do botao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.OnClick">
+            <summary>Disparado no clique. Nao dispara quando desabilitado ou carregando.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmButton.AdditionalAttributes">
+            <summary>Qualquer atributo extra vai para o elemento.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCheckbox.Id">
+            <summary>Identificador. Gerado quando não informado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCheckbox.Label">
+            <summary>Texto ao lado da caixa.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCheckbox.ChildContent">
+            <summary>Conteúdo rico ao lado da caixa. Vence o <see cref="P:RVM.DesignSystem.Components.RvmCheckbox.Label"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCheckbox.Disabled">
+            <summary>Desabilita o controle.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCheckbox.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmCheckbox.TryParseValueFromString(System.String,System.Boolean@,System.String@)">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.FieldId">
+            <summary>Identificador do controle. Liga o rótulo e as mensagens a ele.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.Label">
+            <summary>Rótulo visível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.Help">
+            <summary>Texto de ajuda, exibido quando não há erro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.Error">
+            <summary>Mensagem de erro. Quando presente, substitui a ajuda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.Required">
+            <summary>Marca o campo como obrigatório.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.ChildContent">
+            <summary>O controle em si.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.TemErro">
+            <summary>Verdadeiro quando há mensagem de erro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.ErrorId">
+            <summary>Id da mensagem de erro, para o <c>aria-describedby</c> do controle.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFormField.HelpId">
+            <summary>Id da mensagem de ajuda, para o <c>aria-describedby</c> do controle.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.Icon">
+            <summary>Nome do ícone.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.Label">
+            <summary>
+            Nome acessível do botão. Obrigatório.
+            </summary>
+            <remarks>
+            É o texto que o leitor de tela anuncia. Sem ele o usuário ouve só "botão" e não tem
+            como saber o que a ação faz — por isso o parâmetro não é opcional.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.Weight">
+            <summary>Peso do ícone.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.Variant">
+            <summary>Peso visual.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.Size">
+            <summary>Tamanho.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.Disabled">
+            <summary>Desabilita o botão.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.ShowTooltip">
+            <summary>
+            Mostra o <see cref="P:RVM.DesignSystem.Components.RvmIconButton.Label"/> também como <c>title</c> nativo.
+            </summary>
+            <remarks>
+            Separado do <c>aria-label</c> de propósito: o <c>title</c> só aparece no hover do mouse
+            e é inútil em toque e teclado. Ele ajuda quem enxerga e usa mouse; não substitui o nome
+            acessível, que existe sempre.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.OnClick">
+            <summary>Disparado no clique.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIconButton.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmRadioGroup`1.Option">
+            <summary>Uma opção do grupo.</summary>
+            <param name="Value">Valor enviado quando selecionada.</param>
+            <param name="Label">Texto exibido.</param>
+            <param name="Disabled">Desabilita só esta opção.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmRadioGroup`1.Option.#ctor(System.String,System.String,System.Boolean)">
+            <summary>Uma opção do grupo.</summary>
+            <param name="Value">Valor enviado quando selecionada.</param>
+            <param name="Label">Texto exibido.</param>
+            <param name="Disabled">Desabilita só esta opção.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Option.Value">
+            <summary>Valor enviado quando selecionada.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Option.Label">
+            <summary>Texto exibido.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Option.Disabled">
+            <summary>Desabilita só esta opção.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Id">
+            <summary>Identificador do grupo. Vira o <c>name</c> dos rádios.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Label">
+            <summary>A pergunta do grupo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Options">
+            <summary>As opções.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Horizontal">
+            <summary>Dispõe as opções lado a lado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Disabled">
+            <summary>Desabilita o grupo inteiro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Required">
+            <summary>Marca como obrigatório.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmRadioGroup`1.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmRadioGroup`1.TryParseValueFromString(System.String,`0@,System.String@)">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.Id">
+            <summary>Identificador. Gerado quando não informado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.Label">
+            <summary>Rótulo visível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.Placeholder">
+            <summary>Opção vazia inicial. Nulo remove a opção.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.ChildContent">
+            <summary>As <c>&lt;option&gt;</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.Disabled">
+            <summary>Desabilita o campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.Required">
+            <summary>Marca como obrigatório.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.Size">
+            <summary>Tamanho.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSelect`1.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmSelect`1.TryParseValueFromString(System.String,`0@,System.String@)">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSwitch.Id">
+            <summary>Identificador. Gerado quando não informado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSwitch.Label">
+            <summary>Texto ao lado do interruptor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSwitch.Disabled">
+            <summary>Desabilita o controle.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSwitch.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmSwitch.TryParseValueFromString(System.String,System.Boolean@,System.String@)">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.Id">
+            <summary>Identificador. Gerado quando não informado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.Label">
+            <summary>Rótulo visível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.Placeholder">
+            <summary>Texto de exemplo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.Rows">
+            <summary>Altura em linhas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.MaxLength">
+            <summary>Limite de caracteres. Zero ou nulo remove o limite.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.ShowCounter">
+            <summary>Mostra o contador quando há <see cref="P:RVM.DesignSystem.Components.RvmTextArea.MaxLength"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.Disabled">
+            <summary>Desabilita o campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.ReadOnly">
+            <summary>Somente leitura.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.Required">
+            <summary>Marca como obrigatório.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextArea.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmTextArea.TryParseValueFromString(System.String,System.String@,System.String@)">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Id">
+            <summary>Identificador do campo. Gerado quando não informado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Label">
+            <summary>Rótulo visível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Placeholder">
+            <summary>Texto de exemplo dentro do campo.</summary>
+            <remarks>
+            Não substitui o <see cref="P:RVM.DesignSystem.Components.RvmTextField.Label"/>: placeholder some ao digitar, some no autofill e
+            tem contraste baixo por design. Campo só com placeholder deixa o usuário sem saber o
+            que preencheu assim que começa a preencher.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Type">
+            <summary>Tipo do input HTML.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.IconStart">
+            <summary>Ícone exibido no início do campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Disabled">
+            <summary>Desabilita o campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.ReadOnly">
+            <summary>Torna o campo somente leitura.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Required">
+            <summary>Marca como obrigatório.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Size">
+            <summary>Tamanho do campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTextField.Class">
+            <summary>Classes do consumidor.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmTextField.TryParseValueFromString(System.String,System.String@,System.String@)">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIcon.Name">
+            <summary>Nome do ícone no conjunto Phosphor, em kebab-case (<c>caret-down</c>).</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIcon.Weight">
+            <summary>Peso do traço.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIcon.Size">
+            <summary>Tamanho em CSS. Aceita qualquer unidade; <c>1em</c> acompanha o texto.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIcon.Title">
+            <summary>
+            Descrição para leitor de tela. Sem ela, o ícone é tratado como decorativo.
+            </summary>
+            <remarks>
+            Esse padrão é deliberado e é o inverso do intuitivo. A maioria dos ícones numa interface
+            acompanha um texto que já diz a mesma coisa, e anunciá-los faz o leitor de tela repetir —
+            "salvar salvar". Então o padrão seguro é <b>silêncio</b>, e quem tem um ícone que carrega
+            significado sozinho (um botão só de ícone) informa o <c>Title</c>.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIcon.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmIcon.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.RvmDesignSystemOptions">
+            <summary>Opcoes de registro da biblioteca.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.RvmDesignSystemOptions.Theme">
+            <summary>Tema inicial. Quando nulo, usa <see cref="P:RVM.DesignSystem.Theming.RvmThemes.Rvm"/>.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.DependencyInjection">
+            <summary>Registro da biblioteca no contêiner de DI.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.DependencyInjection.AddRvmDesignSystem(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{RVM.DesignSystem.RvmDesignSystemOptions})">
+            <summary>
+            Registra tudo que a biblioteca precisa. Uma chamada, nao uma por componente.
+            </summary>
+            <param name="services">O contêiner do app consumidor.</param>
+            <param name="configure">Ajustes opcionais — hoje, o tema inicial.</param>
+            <returns>O mesmo contêiner, para encadear.</returns>
+            <remarks>
+            <c>Scoped</c> e nao <c>Singleton</c>: em Blazor Server, <c>Scoped</c> equivale a "por
+            circuito", ou seja, por aba aberta. Com <c>Singleton</c>, trocar o tema numa aba trocaria
+            na de todo mundo — inclusive de outros usuarios do mesmo servidor.
+            </remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Formatting.BrlFormatter">
+            <summary>
+            Formata valores monetarios em real brasileiro.
+            </summary>
+            <remarks>
+            Existe para que nenhum componente formate moeda por interpolacao manual
+            (regra do CLAUDE.md § Convencoes): a cultura e explicita e nao depende da
+            cultura do processo, que varia entre Blazor Server e WebAssembly.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Formatting.BrlFormatter.Format(System.Decimal)">
+            <summary>Formata o valor como moeda, com simbolo: <c>R$ 1.234,56</c>.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Formatting.BrlFormatter.FormatWithoutSymbol(System.Decimal)">
+            <summary>Formata o valor sem o simbolo da moeda: <c>1.234,56</c>.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Formatting.BrlFormatter.Format(System.Nullable{System.Decimal},System.String)">
+            <summary>
+            Formata um valor opcional, devolvendo <paramref name="emptyText"/> quando nulo.
+            </summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmThemePreference">
+            <summary>Como o modo de cor e escolhido.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Theming.RvmThemePreference.System">
+            <summary>Segue o <c>prefers-color-scheme</c> do sistema.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Theming.RvmThemePreference.Light">
+            <summary>Claro, independente do sistema.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Theming.RvmThemePreference.Dark">
+            <summary>Escuro, independente do sistema.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.IRvmThemeService">
+            <summary>
+            Tema corrente e a preferencia de modo do visitante.
+            </summary>
+            <remarks>
+            Uma das duas unicas excecoes a regra "componente sem estado global" (`03` § Estado e
+            servicos). Existe porque a preferencia de modo e do <b>usuario</b>, nao de uma tela: ela
+            atravessa a arvore inteira e sobrevive a navegacao.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.IRvmThemeService.Theme">
+            <summary>Tema corrente. Muda com <see cref="M:RVM.DesignSystem.Theming.IRvmThemeService.SetThemeAsync(RVM.DesignSystem.Theming.RvmTheme)"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.IRvmThemeService.Preference">
+            <summary>Preferencia de modo corrente.</summary>
+        </member>
+        <member name="E:RVM.DesignSystem.Theming.IRvmThemeService.Changed">
+            <summary>Disparado quando tema ou preferencia mudam, para o provider re-renderizar.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.IRvmThemeService.SetThemeAsync(RVM.DesignSystem.Theming.RvmTheme)">
+            <summary>Troca o tema em tempo de execucao (o seletor do site de documentacao usa isto).</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.IRvmThemeService.SetPreferenceAsync(RVM.DesignSystem.Theming.RvmThemePreference)">
+            <summary>
+            Troca a preferencia de modo e persiste no navegador.
+            </summary>
+            <remarks>
+            A persistencia e a escrita do atributo acontecem no JS, porque dependem de
+            <c>localStorage</c> e do elemento raiz. Em pre-render (Blazor Server antes do circuito,
+            ou WASM antes do runtime) o JS ainda nao existe: a chamada e ignorada em silencio e o
+            script anti-flash resolve no primeiro paint. Nenhum estado visual depende disto.
+            </remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmColor">
+             <summary>
+             Uma cor sRGB, com as conversoes e o calculo de contraste que o motor de tema precisa.
+             </summary>
+             <remarks>
+             E publico de proposito: a mesma funcao que reprova o build tambem alimenta a pagina de cor
+             do site de documentacao (RF-24). Uma implementacao, dois usos — se fossem duas, uma delas
+             ficaria errada sem ninguem perceber.
+            
+             A manipulacao acontece em OKLCH, nao em HSL: em HSL, dois tons com o mesmo "L" tem brilho
+             percebido muito diferente conforme o matiz (um amarelo 50% parece muito mais claro que um
+             azul 50%), e uma paleta derivada assim fica visivelmente desequilibrada.
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmColor.R">
+            <summary>Componente vermelho, 0-255.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmColor.G">
+            <summary>Componente verde, 0-255.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmColor.B">
+            <summary>Componente azul, 0-255.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.#ctor(System.Byte,System.Byte,System.Byte)">
+            <summary>Cria a cor a partir dos tres componentes sRGB.</summary>
+            <param name="r">Vermelho, 0-255.</param>
+            <param name="g">Verde, 0-255.</param>
+            <param name="b">Azul, 0-255.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.Parse(System.String)">
+            <summary>Le uma cor em <c>#RGB</c> ou <c>#RRGGBB</c>.</summary>
+            <exception cref="T:System.FormatException">Quando o texto nao e um hexadecimal de cor valido.</exception>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.ToHex">
+            <summary>Devolve a cor como <c>#RRGGBB</c>, sempre em maiuscula.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmColor.RelativeLuminance">
+            <summary>Luminancia relativa segundo a WCAG 2.1.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.Contrast(RVM.DesignSystem.Theming.RvmColor,RVM.DesignSystem.Theming.RvmColor)">
+            <summary>
+            Razao de contraste entre duas cores, de 1 (identicas) a 21 (preto contra branco).
+            </summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.ToOklch">
+            <summary>Converte para OKLCH: luminosidade 0-1, croma e matiz em graus.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.FromOklch(System.Double,System.Double,System.Double)">
+            <summary>Constroi a cor a partir de OKLCH, recortando no gamut sRGB.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.WithLightness(System.Double)">
+            <summary>Mesma cor com outra luminosidade OKLCH (0-1), preservando matiz e croma.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.ScaleChroma(System.Double)">
+            <summary>Mesma cor com o croma multiplicado por <paramref name="factor"/>.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmColor.MixWith(RVM.DesignSystem.Theming.RvmColor,System.Double)">
+            <summary>Mistura linear em OKLab. <paramref name="amount"/> 0 devolve esta cor, 1 devolve a outra.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmContrast">
+            <summary>
+            Os limiares da WCAG 2.1 nivel AA e o ajuste que garante que uma cor os atinja.
+            </summary>
+            <remarks>
+            Existe separado do <see cref="T:RVM.DesignSystem.Theming.RvmColor"/> porque e usado por tres lugares com intencoes
+            diferentes: o <c>FromSeed</c> usa para DERIVAR cor que ja nasce aprovada, o teste unitario
+            usa para REPROVAR o build, e a pagina de cor do site usa para MOSTRAR o numero ao visitante.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Theming.RvmContrast.NormalText">
+            <summary>Texto normal: 4.5:1 (WCAG 2.1 SC 1.4.3).</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Theming.RvmContrast.LargeTextOrUi">
+            <summary>Texto grande e limites de controle: 3:1 (SC 1.4.3 e 1.4.11).</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmContrast.Ensure(RVM.DesignSystem.Theming.RvmColor,RVM.DesignSystem.Theming.RvmColor,System.Double)">
+             <summary>
+             Devolve <paramref name="color"/> escurecida ou clareada o minimo necessario para atingir
+             <paramref name="target"/> contra <paramref name="against"/>, preservando matiz e croma.
+             </summary>
+             <remarks>
+             Anda a luminosidade OKLCH em passos pequenos a partir do valor atual, na direcao que
+             afasta do fundo, e para no primeiro valor que atinge o alvo — por isso o resultado e a
+             cor mais proxima da original que ainda passa, e nao um preto ou branco chapado.
+            
+             E o que faz o portao de contraste ser barato: em vez de derivar uma paleta e torcer para
+             ela passar no teste, a paleta **nasce** aprovada. O teste continua existindo para pegar
+             paleta escrita a mao e regressao de derivacao.
+             </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmContrast.BestForegroundOn(RVM.DesignSystem.Theming.RvmColor)">
+            <summary>
+            Escolhe entre preto e branco o texto mais legivel sobre <paramref name="background"/>.
+            </summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmPalette">
+             <summary>
+             Os papeis semanticos de cor de um modo (claro ou escuro) de um tema.
+             </summary>
+             <remarks>
+             ⚠️ <b>A lista e FECHADA de proposito</b> (`04-modelo-de-dados.md` § Papeis semanticos).
+             Cada papel que pinta um fundo tem o seu <c>On*</c>, e o par inteiro e medido pelo teste de
+             contraste. Acrescentar um papel de fundo sem o <c>On*</c> correspondente cria um par que
+             ninguem verifica — que e exatamente o buraco que este projeto existe para fechar.
+            
+             Nome em ingles por decisao registrada (`04` § Pendencias, item 1): e o vocabulario universal
+             de design token. O PT-BR do ecossistema vale para texto de usuario final, nao para nome de API.
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Primary">
+            <summary>Cor principal da marca: acao primaria, link, estado selecionado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnPrimary">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Primary"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.PrimaryContainer">
+            <summary>Fundo suave derivado da marca: chip, badge, destaque discreto.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnPrimaryContainer">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.PrimaryContainer"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Secondary">
+            <summary>Cor de apoio da marca: acao secundaria, enfase alternativa.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnSecondary">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Secondary"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Success">
+            <summary>Estado de sucesso: confirmacao, operacao concluida.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnSuccess">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Success"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Warning">
+            <summary>Estado de atencao: risco reversivel, pendencia.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnWarning">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Warning"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Danger">
+            <summary>Estado de erro: falha, acao destrutiva.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnDanger">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Danger"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Info">
+            <summary>Estado informativo: aviso neutro, dica.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnInfo">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Info"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Surface">
+            <summary>Superficie de conteudo — o fundo padrao de painel e dialogo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnSurface">
+            <summary>
+            Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Surface"/>, e tambem sobre
+            <see cref="P:RVM.DesignSystem.Theming.RvmPalette.SurfaceRaised"/> e <see cref="P:RVM.DesignSystem.Theming.RvmPalette.SurfaceSunken"/>.
+            </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.SurfaceRaised">
+            <summary>Superficie elevada (card, menu flutuante). Compartilha o <see cref="P:RVM.DesignSystem.Theming.RvmPalette.OnSurface"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.SurfaceSunken">
+            <summary>Superficie rebaixada (poco, campo de entrada). Compartilha o <see cref="P:RVM.DesignSystem.Theming.RvmPalette.OnSurface"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Background">
+            <summary>Fundo da pagina, atras das superficies.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnBackground">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Background"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Border">
+            <summary>
+            Divisoria decorativa. Nao precisa de 3:1 — nao comunica estado nem delimita controle.
+            </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.BorderStrong">
+            <summary>
+            Limite de controle interativo (contorno de input, de checkbox). Precisa de 3:1
+            contra a superficie adjacente (WCAG 2.1 SC 1.4.11).
+            </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.Disabled">
+            <summary>Fundo de controle desabilitado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnDisabled">
+            <summary>Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Disabled"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.FocusRing">
+            <summary>Anel de foco de teclado. Precisa de 3:1 contra a superficie adjacente.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmPalette.EnsureContrast">
+             <summary>
+             Devolve esta paleta com os papeis de marca e de estado escurecidos (ou clareados) o
+             suficiente para atenderem AA contra a superficie mais exigente dela propria.
+             </summary>
+             <returns>Uma paleta equivalente, com os papeis de texto ajustados.</returns>
+             <remarks>
+             <b>Existe para quem sobrescreve superficie.</b> O <c>FromSeed</c> deriva as cores
+             garantindo contraste contra as superficies que ele mesmo calculou; trocar
+             <c>Background</c> ou <c>SurfaceSunken</c> por <c>with</c> depois disso <b>quebra a
+             garantia em silencio</b> — a paleta continua compilando e o texto fica ilegivel.
+            
+             <para>
+             Foi o que aconteceu com o proprio tema RVM em 08/09/2026: sobrescrever os cinzas pelos do
+             site deixou quatro papeis abaixo de AA. Chamar este metodo depois do <c>with</c> conserta,
+             e conserta de novo se os cinzas mudarem — diferente de escolher a cor certa a mao, que
+             desatualiza na primeira mudanca.
+             </para>
+             </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmPalette.PairsToVerify">
+             <summary>
+             Os pares <c>x</c> / <c>on-x</c> com o contraste minimo que cada um deve atingir.
+             </summary>
+             <returns>
+             Tuplas de nome do par, cor de frente, cor de fundo e razao minima exigida.
+             </returns>
+             <remarks>
+             E a fonte unica que o teste de contraste percorre. Papel novo entra aqui, ou nao e medido.
+            
+             Repare que <c>Disabled</c> pede 3:1 e nao 4.5:1: a WCAG 2.1 isenta explicitamente
+             componente desabilitado (SC 1.4.3, "Incidental"), e forcar 4.5 faria o desabilitado ficar
+             tao legivel quanto o habilitado — ou seja, deixaria de comunicar que esta desabilitado.
+             A regra existe para acessibilidade; aplica-la aqui trabalharia contra ela.
+             </remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmThemeMode">
+            <summary>Modo de cor corrente.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Theming.RvmThemeMode.Light">
+            <summary>Modo claro.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Theming.RvmThemeMode.Dark">
+            <summary>Modo escuro.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmTheme">
+            <summary>
+            Um tema completo: nome, paleta clara e paleta escura.
+            </summary>
+            <remarks>
+            O C# e a fonte da verdade do tema; o CSS emitido por <see cref="M:RVM.DesignSystem.Theming.RvmTheme.ToCss"/> e a superficie que
+            os componentes consomem (`04-modelo-de-dados.md` § O espelho tipado).
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmTheme.Name">
+            <summary>Nome do tema, exibido no seletor do site de documentacao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmTheme.Light">
+            <summary>Paleta do modo claro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmTheme.Dark">
+            <summary>Paleta do modo escuro.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmTheme.FromSeed(System.String,System.String,System.String)">
+             <summary>
+             Deriva um tema completo — os dois modos, todos os papeis — a partir de duas cores.
+             </summary>
+             <param name="name">Nome do tema, usado no seletor do site de documentacao.</param>
+             <param name="primary">Cor principal da marca, em hexadecimal.</param>
+             <param name="secondary">Cor de apoio, em hexadecimal.</param>
+             <remarks>
+             <b>Derivar por padrao, sobrescrever por excecao</b> (`06` § Como o tema e aplicado): um
+             produto novo escreve duas linhas em vez das ~200 que cada app do ecossistema duplicou.
+            
+             Toda cor derivada passa por <see cref="M:RVM.DesignSystem.Theming.RvmContrast.Ensure(RVM.DesignSystem.Theming.RvmColor,RVM.DesignSystem.Theming.RvmColor,System.Double)"/> contra o fundo em que vai
+             ser usada. E o que faz a paleta <b>nascer</b> aprovada, em vez de ser derivada e depois
+             torcer para passar no teste. O teste continua existindo — para pegar paleta escrita a mao
+             e regressao desta funcao.
+             </remarks>
+             <returns>Tema com as duas paletas derivadas e ja verificadas contra os limiares AA.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmTheme.ToCss">
+             <summary>
+             Emite o bloco CSS com as custom properties dos dois modos.
+             </summary>
+             <remarks>
+             Metodo puro, e nao componente, de proposito: assim o que o navegador recebe pode ser
+             verificado em teste unitario, sem renderizar nada. O provider so escreve esta string
+             dentro de uma tag <c>style</c>.
+            
+             O modo escuro sai sob <c>[data-rvm-theme="dark"]</c> — trocar de modo e uma escrita de
+             atributo no elemento raiz, sem re-render do Blazor e sem flash (`06` § 2).
+             </remarks>
+             <returns>Blocos <c>:root</c> prontos para ir dentro de uma tag <c>style</c>.</returns>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmThemes">
+            <summary>
+            Os temas que a biblioteca traz prontos.
+            </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemes.Rvm">
+             <summary>
+             O tema padrao: a identidade do ecossistema RVM.
+             </summary>
+             <remarks>
+             Roxo do Visual Studio como principal, azul do VS Code como apoio — a mesma identidade do
+             <c>rvmtech.com.br</c> (RVM.Curriculo). Decisao do Rafael, detalhada em
+             `06-tokens-e-tematizacao.md` § A identidade da marca.
+            
+             ⚠️ <b>Sao os valores RENDERIZADOS do site, nao os nominais.</b> O `CLAUDE.md` do
+             RVM.Curriculo cita <c>#68217A</c> e <c>#007ACC</c>, mas o CSS de la declara em OKLCH e
+             renderiza mais escuro. O azul <b>nominal</b> <c>#007ACC</c> da 3.90 de contraste contra o
+             fundo claro e <b>reprovaria</b> no teste; o renderizado <c>#006DBD</c> da 4.62.
+             <b>Nao "corrigir" para os nominais.</b>
+             </remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmThemes.Samples">
+             <summary>
+             Os quatro apps do ecossistema, como temas de exemplo.
+             </summary>
+             <remarks>
+             Existem para tres coisas (`06` § Migrando as paletas que ja existem): provar que
+             <c>FromSeed</c> aguenta cores reais e nao so as bonitas do exemplo; alimentar o seletor de
+             tema do site, onde o visitante ve o mesmo componente nas quatro identidades; e submeter as
+             cores atuais ao teste de contraste.
+            
+             Nao sao migracao: os apps seguem no MudBlazor, sem prazo (`01` § Escopo).
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemes.Samples.ErpAgro">
+            <summary>ERPAgro — verde de lavoura.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemes.Samples.ObraEmDia">
+            <summary>ObraEmDia — verde-terra e ocre.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemes.Samples.Fiscal">
+            <summary>Fiscal — teal sobrio.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemes.Samples.Propostinha">
+            <summary>Propostinha — indigo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemes.Samples.All">
+            <summary>Todos os temas de exemplo, para o seletor do site e para o teste.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemes.All">
+            <summary>
+            Todo tema registrado na biblioteca — o que o teste de contraste percorre.
+            </summary>
+            <remarks>
+            Tema novo entra aqui, ou nasce sem ser medido. E a mesma logica da lista fechada de papeis
+            em <see cref="M:RVM.DesignSystem.Theming.RvmPalette.PairsToVerify"/>: o que nao esta na lista nao e verificado.
+            </remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmThemeService">
+            <inheritdoc cref="T:RVM.DesignSystem.Theming.IRvmThemeService" />
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmThemeService.#ctor(Microsoft.JSInterop.IJSRuntime,RVM.DesignSystem.Theming.RvmTheme)">
+            <summary>Cria o servico com o tema inicial.</summary>
+            <param name="js">Runtime de interop, usado so para persistir a preferencia.</param>
+            <param name="initial">Tema inicial; quando nulo, usa <see cref="P:RVM.DesignSystem.Theming.RvmThemes.Rvm"/>.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemeService.Theme">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemeService.Preference">
+            <inheritdoc />
+        </member>
+        <member name="E:RVM.DesignSystem.Theming.RvmThemeService.Changed">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmThemeService.SetThemeAsync(RVM.DesignSystem.Theming.RvmTheme)">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmThemeService.SetPreferenceAsync(RVM.DesignSystem.Theming.RvmThemePreference)">
+            <inheritdoc />
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmThemeService.LoadPreferenceAsync">
+            <summary>
+            Le a preferencia gravada no navegador. Chamar de <c>OnAfterRenderAsync</c>, nunca antes.
+            </summary>
+            <returns>A preferencia lida, ou <see cref="F:RVM.DesignSystem.Theming.RvmThemePreference.System"/> se nao houver.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmThemeService.DisposeAsync">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmThemeProvider.ChildContent">
+            <summary>Conteudo que recebe o tema.</summary>
+        </member>
+    </members>
+</doc>

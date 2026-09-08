@@ -105,6 +105,12 @@ public sealed class ApiDoc(HttpClient http)
             var chave = $"P:{NomeXml(declarante)}.{p.Name}";
             resumos.TryGetValue(chave, out var descricao);
 
+            // Os parametros herdados do InputBase<T> do Blazor nao estao no NOSSO XML — a doc
+            // deles vive na assembly da Microsoft, que o site nao carrega. Deixa-los como "—"
+            // seria pior que inutil: `Value` e `ValueChanged` sao os parametros mais
+            // importantes de um campo, e apareceriam justamente como os sem explicacao.
+            descricao ??= DescricaoHerdada(p.Name);
+
             parametros.Add(new ParametroDoc(
                 p.Name,
                 NomeLegivel(p.PropertyType),
@@ -118,6 +124,17 @@ public sealed class ApiDoc(HttpClient http)
             .ThenBy(x => x.Nome, StringComparer.Ordinal)
             .ToList();
     }
+
+    /// <summary>Descricao dos parametros que vem do <c>InputBase</c> do Blazor.</summary>
+    private static string? DescricaoHerdada(string nome) => nome switch
+    {
+        "Value" => "O valor do campo. Use com @bind-Value.",
+        "ValueChanged" => "Disparado quando o valor muda. O @bind-Value liga sozinho.",
+        "ValueExpression" => "Expressao do valor, usada pela validacao. O @bind-Value fornece; fora de um EditForm ela e sintetizada.",
+        "DisplayName" => "Nome do campo nas mensagens de validacao.",
+        "AdditionalAttributes" => "Qualquer atributo extra vai para o elemento.",
+        _ => null,
+    };
 
     private static string? ValorPadrao(object? instancia, System.Reflection.PropertyInfo p)
     {
