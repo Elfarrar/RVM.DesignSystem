@@ -1,0 +1,85 @@
+@page "/acessibilidade"
+
+<PageTitle>Acessibilidade · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Acessibilidade</h1>
+        <p class="doc__frase">
+            WCAG 2.1 nível AA é critério de aceite de cada componente, não uma meta. O que garante
+            isso não é boa intenção — são portões que reprovam o build.
+        </p>
+    </header>
+
+    <section aria-labelledby="a11y-portoes">
+        <h2 id="a11y-portoes">O que é verificado automaticamente</h2>
+        <ul class="doc__lista">
+            <li>
+                <strong>Contraste de toda paleta.</strong> Um teste unitário percorre todo par
+                <code>x</code>/<code>on-x</code> de todo tema registrado, nos dois modos, e reprova
+                abaixo do mínimo. Os números estão visíveis em
+                <a href="fundamentos/cor">Fundamentos › Cor</a>, calculados pela mesma função.
+            </li>
+            <li>
+                <strong>Cor literal em componente.</strong> Um teste varre todo
+                <code>.razor.css</code> da biblioteca e reprova se encontrar cor escrita à mão ou
+                token que não existe — inclusive erro de digitação, que falharia em silêncio.
+            </li>
+            <li>
+                <strong>axe no site publicado.</strong> Auditoria por página no E2E; violação séria
+                reprova. Um site de design system com problema de acessibilidade destrói a própria
+                credibilidade.
+            </li>
+        </ul>
+    </section>
+
+    <section aria-labelledby="a11y-decisoes">
+        <h2 id="a11y-decisoes">Decisões que parecem detalhe e não são</h2>
+        <ul class="doc__lista">
+            <li>
+                <strong>Controle nativo, sempre.</strong> Checkbox, rádio e select são os elementos
+                do HTML, não <code>&lt;div&gt;</code> estilizada. Reimplementar exigiria recriar
+                foco, teclado, estado para leitor de tela, integração com <code>&lt;label&gt;</code>,
+                autofill e comportamento em formulário — e todo componente que faz isso erra pelo
+                menos um.
+            </li>
+            <li>
+                <strong>Ícone é decorativo por padrão.</strong> Sem <code>Title</code>, sai do leitor
+                de tela. A maioria acompanha um texto que já diz a mesma coisa, e anunciá-los faz o
+                leitor repetir.
+            </li>
+            <li>
+                <strong>Botão só de ícone exige nome.</strong> <code>RvmIconButton</code> sem
+                <code>Label</code> lança exceção. Botão mudo passa em revisão visual — a tela fica
+                bonita — e só aparece para quem usa leitor de tela.
+            </li>
+            <li>
+                <strong>Desabilitado mede 3:1, não 4.5:1.</strong> A WCAG isenta componente
+                desabilitado (SC 1.4.3). Forçar 4.5 deixaria o desabilitado tão legível quanto o
+                habilitado — ou seja, faria ele parar de comunicar que está desabilitado.
+            </li>
+            <li>
+                <strong>Erro não é só cor.</strong> A borda muda <em>e</em> há mensagem em texto —
+                cor sozinha não é meio de comunicação acessível (WCAG 1.4.1).
+            </li>
+            <li>
+                <strong>Opacidade não faz texto secundário.</strong> Ela compõe a cor com o fundo e
+                derruba o contraste de tudo que está dentro. Texto secundário se faz com cor.
+            </li>
+            <li>
+                <strong><code>prefers-reduced-motion</code> zera a duração na origem</strong>, nos
+                tokens — então um componente que esqueça de tratar continua correto.
+            </li>
+        </ul>
+    </section>
+
+    <section aria-labelledby="a11y-limites">
+        <h2 id="a11y-limites">O que ainda não é garantido</h2>
+        <p class="doc__nota">
+            Honestidade vale mais que selo. Hoje o E2E audita a página inicial do site; a auditoria
+            por página de componente entra junto com a onda 2. E nenhum teste automático substitui
+            teste com leitor de tela de verdade — axe pega talvez metade dos problemas reais de
+            acessibilidade.
+        </p>
+    </section>
+</article>

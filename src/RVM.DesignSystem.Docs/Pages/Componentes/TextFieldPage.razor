@@ -1,0 +1,117 @@
+@page "/componentes/text-field"
+
+<PaginaDeComponente Nome="RvmTextField"
+                    Tipo="typeof(RvmTextField)"
+                    Frase="Entrada de texto de uma linha. Integra com EditForm e DataAnnotations sem adaptação nenhuma.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmTextField @bind-Value="_valor"
+                              Label="@_rotulo"
+                              Placeholder="@_placeholder"
+                              Help="@(_comAjuda ? "Como aparece no documento." : null)"
+                              Error="@(_comErro ? "Campo obrigatório." : null)"
+                              Required="_obrigatorio"
+                              Disabled="_desabilitado" />
+            </div>
+            <div class="playground__controles">
+                <RvmTextField @bind-Value="_rotulo" Label="Label" Size="RvmSize.Small" />
+                <RvmTextField @bind-Value="_placeholder" Label="Placeholder" Size="RvmSize.Small" />
+                <RvmCheckbox @bind-Value="_comAjuda" Label="Help" />
+                <RvmCheckbox @bind-Value="_comErro" Label="Error" />
+                <RvmCheckbox @bind-Value="_obrigatorio" Label="Required" />
+                <RvmCheckbox @bind-Value="_desabilitado" Label="Disabled" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <p class="doc__nota">
+            O <code>Type</code> muda o teclado que o celular abre e o autofill que o navegador
+            oferece — não é só validação. Um campo de telefone marcado como <code>Text</code>
+            obriga o usuário a procurar os números no teclado alfabético.
+        </p>
+        <div class="demo-grade">
+            <RvmTextField Label="Texto" Type="RvmTextFieldType.Text" />
+            <RvmTextField Label="E-mail" Type="RvmTextFieldType.Email" />
+            <RvmTextField Label="Senha" Type="RvmTextFieldType.Password" />
+            <RvmTextField Label="Telefone" Type="RvmTextFieldType.Tel" />
+        </div>
+    </Variantes>
+
+    <Estados>
+        <div class="demo-grade">
+            <RvmTextField Label="Normal" />
+            <RvmTextField Label="Com ajuda" Help="Texto de apoio." />
+            <RvmTextField Label="Com erro" Error="Informe um valor." />
+            <RvmTextField Label="Desabilitado" Disabled="true" />
+            <RvmTextField Label="Somente leitura" ReadOnly="true" Value="Não editável" />
+            <RvmTextField Label="Com ícone" IconStart="magnifying-glass" Placeholder="Buscar" />
+        </div>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Rótulo ligado por <code>for</code>/<code>id</code></strong> — clicar no
+                rótulo foca o campo, e o leitor de tela anuncia o nome ao chegar nele.
+            </li>
+            <li>
+                <strong><code>aria-describedby</code> aponta para o erro OU para a ajuda, nunca os
+                dois.</strong> Só um é renderizado por vez, e apontar para um id inexistente faz
+                parte dos leitores de tela não ler nada — o usuário perderia a mensagem sem ninguém
+                perceber.
+            </li>
+            <li>
+                <strong>Erro marca <code>aria-invalid</code> e usa <code>role="alert"</code></strong>,
+                para ser anunciado assim que aparece, sem o usuário precisar navegar até ele.
+            </li>
+            <li>
+                <strong>O estado de erro muda a borda, não só a cor do texto.</strong> Cor sozinha
+                não é meio de comunicação acessível (WCAG 1.4.1); a mensagem em texto é o outro meio.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Placeholder no lugar do rótulo.</strong> Ele some ao digitar, some no
+                autofill e tem contraste baixo por design — o usuário fica sem saber o que preencheu
+                assim que começa a preencher.
+            </li>
+            <li><strong>Para texto longo.</strong> Use <a href="componentes/text-area">RvmTextArea</a>.</li>
+            <li>
+                <strong>Para escolher entre opções conhecidas.</strong> Use
+                <a href="componentes/select">RvmSelect</a> — digitar um estado que já está numa lista
+                só gera erro de digitação.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _valor = string.Empty;
+    private string? _rotulo = "Nome completo";
+    private string? _placeholder = "Como aparece no documento";
+    private bool _comAjuda = true;
+    private bool _comErro;
+    private bool _obrigatorio;
+    private bool _desabilitado;
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { $"Label=\"{_rotulo}\"" };
+
+        if (!string.IsNullOrWhiteSpace(_placeholder)) atributos.Add($"Placeholder=\"{_placeholder}\"");
+        if (_comAjuda) atributos.Add("Help=\"Como aparece no documento.\"");
+        if (_comErro) atributos.Add("Error=\"Campo obrigatório.\"");
+        if (_obrigatorio) atributos.Add("Required=\"true\"");
+        if (_desabilitado) atributos.Add("Disabled=\"true\"");
+
+        return "<RvmTextField @bind-Value=\"modelo.Nome\"\n              "
+            + string.Join("\n              ", atributos) + " />";
+    }
+}

@@ -81,14 +81,25 @@ public sealed record RvmTheme
         var onSurface = RvmContrast.Ensure(Neutral(dark ? 0.94 : 0.22), surface, RvmContrast.NormalText);
         var onBackground = RvmContrast.Ensure(onSurface, background, RvmContrast.NormalText);
 
+        // ⚠️ O contraste e garantido contra a superficie MAIS EXIGENTE da paleta, nao contra a
+        // `surface`. Papel de marca e de estado tambem aparecem como TEXTO sobre o `background`
+        // da pagina e sobre o `surface-sunken` de um campo — e no modo claro esses dois sao mais
+        // escuros que a `surface`, entao passar contra ela nao garante nada.
+        //
+        // Medir so contra `surface` deixava `success` em 4.45 sobre o background: reprova AA, e o
+        // teste unitario aprovava. Achado pelo axe no site em 08/09/2026.
+        var piorFundo = new[] { surface, surfaceRaised, surfaceSunken, background }
+            .OrderBy(c => Math.Abs(c.RelativeLuminance - 0.5))
+            .First();
+
         // A cor da marca no escuro nao pode ser a mesma do claro: um roxo de L=38% sobre fundo
         // L=19% e ilegivel. Clareia-se ate passar, mantendo matiz e croma.
         var primaryTone = dark ? seed.WithLightness(0.74) : seed;
-        var primary = RvmContrast.Ensure(primaryTone, surface, RvmContrast.NormalText);
+        var primary = RvmContrast.Ensure(primaryTone, piorFundo, RvmContrast.NormalText);
         var onPrimary = RvmContrast.Ensure(RvmContrast.BestForegroundOn(primary), primary, RvmContrast.NormalText);
 
         var secondaryTone = dark ? accent.WithLightness(0.74) : accent;
-        var secondary = RvmContrast.Ensure(secondaryTone, surface, RvmContrast.NormalText);
+        var secondary = RvmContrast.Ensure(secondaryTone, piorFundo, RvmContrast.NormalText);
         var onSecondary = RvmContrast.Ensure(RvmContrast.BestForegroundOn(secondary), secondary, RvmContrast.NormalText);
 
         // Container: a marca diluida na superficie, para chip, badge e destaque suave.
@@ -105,7 +116,7 @@ public sealed record RvmTheme
         RvmColor Status(double hue, double chroma)
         {
             var baseTone = RvmColor.FromOklch(dark ? 0.72 : 0.52, chroma, hue);
-            return RvmContrast.Ensure(baseTone, surface, RvmContrast.NormalText);
+            return RvmContrast.Ensure(baseTone, piorFundo, RvmContrast.NormalText);
         }
 
         var success = Status(148, 0.14);

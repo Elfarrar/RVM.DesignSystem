@@ -129,6 +129,14 @@ h1[tabindex="-1"]:focus-visible {
     z-index: 1000;
 }
 
+/* O banner de erro tem fundo amarelo FIXO nos dois modos, entao a cor do texto tambem
+   precisa ser fixa. Sem isto, no modo escuro o link herda a cor clara do tema e fica
+   ilegivel sobre o amarelo — justo na mensagem que aparece quando algo ja deu errado. */
+#blazor-error-ui a.reload {
+    color: #16161a;
+    font-weight: 600;
+}
+
 #blazor-error-ui .dismiss {
     cursor: pointer;
     position: absolute;
