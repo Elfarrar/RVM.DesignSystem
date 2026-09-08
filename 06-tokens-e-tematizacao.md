@@ -173,9 +173,10 @@ escura foi **derivada mantendo matiz e croma e invertendo a luminosidade**, e ve
 | `primary` | `#641974` | `#CF8FDE` | 7.73 ✅ |
 | `secondary` | `#006DBD` | `#65B2F1` | 8.25 ✅ |
 
-⏳ **Pendência nova:** a metade escura é derivação minha, não escolha do Rafael. Ele nunca viu a
-marca no escuro. Passa em AA, mas "passa em AA" e "é a cara que ele quer" são coisas diferentes —
-confirmar antes da 1.0.
+✅ **Aprovado pelo Rafael em 08/09/2026**, depois de ver a marca no escuro no site de dev. A
+metade escura era derivação minha e estava marcada como pendência justamente porque "passa em AA"
+e "é a cara que ele quer" são coisas diferentes. São os valores acima que valem — mudá-los depois
+da 1.0 quebra consumidor.
 
 ### Três tokens do site que não viram token semântico como estão
 

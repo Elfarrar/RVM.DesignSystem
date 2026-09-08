@@ -138,13 +138,17 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 
 ## Pendências que bloqueiam
 
-Detalhe e suposição vigente de cada uma em `09-roadmap.md` § Pendências. As três primeiras precisam
-ser respondidas **antes de fechar a onda 1** — depois da 1.0, mudá-las quebra todo consumidor.
+Detalhe de cada uma em `09-roadmap.md` § Pendências. Depois da 1.0, mudá-las quebra todo consumidor.
 
-- ⏳ Idioma dos nomes de token e API (suposição: inglês)
-- ⏳ Conjunto de ícones (suposição: Lucide, MIT)
-- ⏳ Escala tipográfica: `rem` fixo ou `clamp()` (suposição: `rem` fixo)
-- ⏳ Localização: `.resx` ou pt-BR fixo (suposição: pt-BR fixo)
+**Só uma continua aberta:**
+
+- ⏳ **Conjunto de ícones** — Lucide, Phosphor ou próprio (suposição: Lucide, MIT). Trava porque
+  nome de ícone é API pública.
+
+Fechadas: idioma **inglês**, escala **`rem` fixo** (`clamp()` só no `display`), localização
+**pt-BR fixo** com texto sobrescrevível — as três já eram regra deste `CLAUDE.md` e estão
+implementadas na `DSGN-002`. Mais a paleta da marca, **incluindo o modo escuro, aprovado pelo
+Rafael em 08/09/2026**.
 - ✅ **Repositório público sob MIT** — respondido pelo Rafael em 07/09/2026. Consequência não
   óbvia: foi essa decisão que inviabilizou o caller do `RVM.Actions` (**ADR-011**) e, de quebra,
   dispensou o runner self-hosted.
