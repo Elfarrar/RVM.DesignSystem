@@ -39,9 +39,6 @@ Thumbs.db
 .nuget/
 packages/
 
-## XML de doc copiado da biblioteca no build — artefato, nao fonte
-src/RVM.DesignSystem.Docs/wwwroot/api/
-
 ## Build / publish
 build/
 publish/
