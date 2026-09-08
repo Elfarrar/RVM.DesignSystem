@@ -1,0 +1,109 @@
+.rvm-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    width: 100%;
+    max-width: 26rem;
+    box-sizing: border-box;
+    padding: var(--rvm-space-3) var(--rvm-space-4);
+    border: 1px solid var(--rvm-color-border);
+    border-left-width: 3px;
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface-raised);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    line-height: var(--rvm-line-height-body);
+    box-shadow: var(--rvm-shadow-4);
+    /* pointer-events volta a valer aqui: o HOST é transparente ao clique para não bloquear a
+       página atrás dele, e cada toast reativa o seu próprio. */
+    pointer-events: auto;
+    animation: rvm-toast-entrar var(--rvm-motion-duration-base) var(--rvm-motion-ease-decelerate);
+}
+
+.rvm-toast__icone { flex-shrink: 0; margin-top: 0.1em; }
+
+.rvm-toast--info { border-left-color: var(--rvm-color-info); }
+.rvm-toast--info .rvm-toast__icone { color: var(--rvm-color-info); }
+
+.rvm-toast--success { border-left-color: var(--rvm-color-success); }
+.rvm-toast--success .rvm-toast__icone { color: var(--rvm-color-success); }
+
+.rvm-toast--warning { border-left-color: var(--rvm-color-warning); }
+.rvm-toast--warning .rvm-toast__icone { color: var(--rvm-color-warning); }
+
+.rvm-toast--danger { border-left-color: var(--rvm-color-danger); }
+.rvm-toast--danger .rvm-toast__icone { color: var(--rvm-color-danger); }
+
+.rvm-toast__corpo {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-toast__titulo {
+    margin: 0;
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-toast__texto {
+    margin: 0;
+    /* overflow-wrap e não nowrap: a mensagem é o conteúdo, e cortá-la para caber derrota o
+       propósito de notificar. Ela quebra em quantas linhas precisar. */
+    overflow-wrap: anywhere;
+}
+
+.rvm-toast__acao {
+    flex-shrink: 0;
+    align-self: center;
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: var(--rvm-color-primary);
+    font: inherit;
+    font-weight: var(--rvm-font-weight-semibold);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-toast__acao:hover { background-color: var(--rvm-color-primary-container); }
+}
+
+.rvm-toast__fechar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: var(--rvm-color-on-surface-variant);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-toast__fechar:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-toast__acao:focus-visible,
+.rvm-toast__fechar:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}
+
+@keyframes rvm-toast-entrar {
+    from { opacity: 0; transform: translateY(-0.5rem); }
+    to { opacity: 1; transform: none; }
+}
+
+/*
+  Aqui a animação some inteira. Um elemento que aparece deslizando no canto da visão é
+  exatamente o gatilho que prefers-reduced-motion existe para evitar — e o toast não perde
+  nada: quem carrega a informação é o texto na região aria-live.
+*/
+@media (prefers-reduced-motion: reduce) {
+    .rvm-toast { animation: none; }
+}

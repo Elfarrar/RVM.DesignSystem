@@ -1,0 +1,169 @@
+@namespace RVM.DesignSystem.Components
+@implements IDisposable
+@inject IRvmToastService Toasts
+
+@*
+    Onde os toasts aparecem. Vai UMA vez no layout, e não por tela.
+
+    ⚠️ As duas regiões `aria-live` existem SEMPRE, mesmo vazias — e é isso que faz a
+    notificação ser anunciada. Uma região só é observada a partir do instante em que entra no
+    DOM: se ela nascesse junto com o primeiro toast, o leitor de tela não teria o que observar e
+    a mensagem passaria em silêncio. É o defeito mais comum de notificação acessível, e o pior,
+    porque no teste manual com os olhos tudo parece funcionar.
+
+    São DUAS porque `polite` e `assertive` não podem sair da mesma região: erro interrompe o que
+    o leitor estiver dizendo, o resto espera a pausa. Mudar o `aria-live` de uma região viva não
+    é confiável — a maioria dos leitores lê o valor no momento em que a região é registrada.
+*@
+
+<div class="@ClasseFinal">
+    <div class="rvm-toast-host__regiao" role="status" aria-live="polite" aria-atomic="false">
+        @foreach (var m in Visiveis.Where(m => m.Severity != RvmSeverity.Danger))
+        {
+            <RvmToast @key="m.Id"
+                      Message="m"
+                      OnDismiss="() => Fechar(m.Id)"
+                      OnAction="() => Acionar(m)"
+                      OnPause="() => Pausar(m.Id)"
+                      OnResume="() => Retomar(m)" />
+        }
+    </div>
+
+    <div class="rvm-toast-host__regiao" role="alert" aria-live="assertive" aria-atomic="false">
+        @foreach (var m in Visiveis.Where(m => m.Severity == RvmSeverity.Danger))
+        {
+            <RvmToast @key="m.Id"
+                      Message="m"
+                      OnDismiss="() => Fechar(m.Id)"
+                      OnAction="() => Acionar(m)"
+                      OnPause="() => Pausar(m.Id)"
+                      OnResume="() => Retomar(m)" />
+        }
+    </div>
+</div>
+
+@code {
+    private readonly Dictionary<Guid, CancellationTokenSource> _relogios = [];
+
+    /// <summary>Onde a pilha aparece na tela.</summary>
+    [Parameter]
+    public RvmToastPosition Position { get; set; } = RvmToastPosition.TopEnd;
+
+    /// <summary>
+    /// Quantos toasts aparecem ao mesmo tempo.
+    /// </summary>
+    /// <remarks>
+    /// Os mais recentes ganham. Sem limite, uma falha em laço enche a tela de avisos idênticos e
+    /// cobre justamente a interface que a pessoa precisaria usar para sair do problema.
+    /// </remarks>
+    [Parameter]
+    public int Max { get; set; } = 3;
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private IEnumerable<RvmToastMessage> Visiveis =>
+        Toasts.Current.TakeLast(Math.Max(1, Max));
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-toast-host",
+        $"rvm-toast-host--{RvmClasse.Sufixo(Position)}",
+        Class);
+
+    protected override void OnInitialized() => Toasts.Changed += AoMudar;
+
+    private void AoMudar() => InvokeAsync(async () =>
+    {
+        StateHasChanged();
+        await AgendarNovosAsync();
+    });
+
+    protected override Task OnAfterRenderAsync(bool primeiraVez) => AgendarNovosAsync();
+
+    private async Task AgendarNovosAsync()
+    {
+        foreach (var m in Toasts.Current.ToList())
+        {
+            if (!_relogios.ContainsKey(m.Id))
+            {
+                await IniciarRelogioAsync(m);
+            }
+        }
+    }
+
+    private Task IniciarRelogioAsync(RvmToastMessage m)
+    {
+        var cts = new CancellationTokenSource();
+        _relogios[m.Id] = cts;
+
+        // Fire-and-forget de propósito: o relógio não pode bloquear a renderização. O
+        // cancelamento cobre o descarte, e toda continuação volta pelo InvokeAsync.
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(m.Duration, cts.Token);
+                await InvokeAsync(() => Fechar(m.Id));
+            }
+            catch (OperationCanceledException)
+            {
+                // Pausado pelo hover/foco, dispensado a mão, ou o host saiu de cena.
+            }
+        });
+
+        return Task.CompletedTask;
+    }
+
+    private void Pausar(Guid id)
+    {
+        if (_relogios.Remove(id, out var cts))
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+    }
+
+    // Ao sair o ponteiro, o relógio recomeça do zero em vez de retomar o tempo restante.
+    // É deliberadamente generoso: errar para MAIS tempo na tela é inofensivo; errar para menos
+    // faz a notificação sumir antes de ser lida, que é o defeito que o piso de 5s existe para
+    // impedir. Guardar o restante custaria um cronômetro por toast para economizar segundos que
+    // ninguém reclama de ter a mais.
+    private async Task Retomar(RvmToastMessage m)
+    {
+        if (!_relogios.ContainsKey(m.Id) && Toasts.Current.Any(x => x.Id == m.Id))
+        {
+            await IniciarRelogioAsync(m);
+        }
+    }
+
+    private void Fechar(Guid id)
+    {
+        Pausar(id);
+        Toasts.Dismiss(id);
+    }
+
+    private async Task Acionar(RvmToastMessage m)
+    {
+        Fechar(m.Id);
+
+        if (m.OnAction is not null)
+        {
+            await m.OnAction();
+        }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Toasts.Changed -= AoMudar;
+
+        foreach (var cts in _relogios.Values)
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+
+        _relogios.Clear();
+    }
+}

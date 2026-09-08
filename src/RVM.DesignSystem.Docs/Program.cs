@@ -16,4 +16,8 @@ builder.Services.AddRvmDesignSystem();
 // Le a doc XML da biblioteca uma vez e alimenta a tabela de API de cada pagina.
 builder.Services.AddScoped<ApiDoc>();
 
+// Indice da busca (RF-27). Montado do que ja existe — navegacao, tema e rvm-tokens.css —,
+// nunca de uma lista paralela que desatualizaria no primeiro componente novo.
+builder.Services.AddScoped<Busca>();
+
 await builder.Build().RunAsync();

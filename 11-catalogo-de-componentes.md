@@ -47,7 +47,7 @@ Entrou também o **`RvmNavGroup`**, que não estava na lista: é ele que torna r
 de outra `ul` seria marcação inválida — a seção nomeada precisa ser `li > h2 + ul[aria-labelledby]`.
 Documentado na página do Sidebar, sem página própria.
 
-## Onda 3 — Feedback (8)
+## Onda 3 — Feedback (8) ✅ entregue em 08/09/2026
 
 | Componente | Próprio dele | Acessibilidade |
 |---|---|---|

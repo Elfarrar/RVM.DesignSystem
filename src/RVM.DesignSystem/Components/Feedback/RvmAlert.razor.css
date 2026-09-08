@@ -1,0 +1,85 @@
+.rvm-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-4);
+    border: 1px solid var(--rvm-color-border);
+    border-left-width: 3px;
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    line-height: var(--rvm-line-height-body);
+}
+
+/*
+  A severidade aparece em TRÊS lugares que não são a cor do texto: o ícone (forma distinta por
+  severidade), a faixa da borda esquerda e o fundo. O texto continua na cor de leitura, com o
+  contraste do papel `on-surface` — colorir o texto inteiro de vermelho piora a legibilidade
+  para ganhar uma redundância que o ícone já dá.
+*/
+.rvm-alert__icone { flex-shrink: 0; margin-top: 0.1em; }
+
+.rvm-alert--info { border-left-color: var(--rvm-color-info); }
+.rvm-alert--info .rvm-alert__icone { color: var(--rvm-color-info); }
+
+.rvm-alert--success { border-left-color: var(--rvm-color-success); }
+.rvm-alert--success .rvm-alert__icone { color: var(--rvm-color-success); }
+
+.rvm-alert--warning { border-left-color: var(--rvm-color-warning); }
+.rvm-alert--warning .rvm-alert__icone { color: var(--rvm-color-warning); }
+
+.rvm-alert--danger { border-left-color: var(--rvm-color-danger); }
+.rvm-alert--danger .rvm-alert__icone { color: var(--rvm-color-danger); }
+
+.rvm-alert__corpo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+}
+
+.rvm-alert__titulo {
+    margin: 0;
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-alert__texto { margin: 0; }
+
+.rvm-alert__texto :first-child { margin-top: 0; }
+.rvm-alert__texto :last-child { margin-bottom: 0; }
+
+.rvm-alert__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2);
+    margin-top: var(--rvm-space-2);
+}
+
+.rvm-alert__dispensar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* 1.75rem: menor que o alvo de 44px, e aceitável porque dispensar é ação secundária e
+       reversível — o aviso volta a aparecer se a condição continuar. */
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: var(--rvm-color-on-surface-variant);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-alert__dispensar:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-alert__dispensar:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}

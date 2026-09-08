@@ -1,0 +1,87 @@
+@page "/componentes/spinner"
+
+<PaginaDeComponente Nome="RvmSpinner"
+                    Tipo="typeof(RvmSpinner)"
+                    Frase="O indicador de &quot;estou trabalhando&quot;. O desenho é decorativo; quem informa é o texto.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmSpinner Size="_tamanho" Label="@_rotulo" ShowLabel="_comRotulo" />
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmSize" @bind-Value="_tamanho" Label="Size">
+                    @foreach (var s in Enum.GetValues<RvmSize>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+                <RvmTextField @bind-Value="_rotulo" Label="Label" />
+                <RvmCheckbox @bind-Value="_comRotulo" Label="ShowLabel" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>A roda é <code>aria-hidden</code>; o texto vai num
+                <code>role="status"</code></strong> — nunca o contrário. Um desenho girando não
+                diz nada a quem não vê a tela.
+            </li>
+            <li>
+                <strong>O texto existe mesmo sem <code>ShowLabel</code></strong>, recortado a
+                1px. Um <code>role="status"</code> vazio é uma região que anuncia silêncio.
+            </li>
+            <li>
+                <strong>Diga o que está carregando.</strong> Numa tela com três regiões
+                carregando, "Carregando…" três vezes não orienta ninguém; "Carregando os
+                pedidos…" orienta.
+            </li>
+            <li>
+                <strong>Com <code>prefers-reduced-motion</code> a animação PARA</strong>, não
+                acelera: animação infinita com duração zero continua repintando sem parar. Fica
+                um anel incompleto e imóvel, que ainda comunica "algo em curso" pela forma.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para carregamento de conteúdo com forma conhecida.</strong> Uma lista, um
+                cartão, uma tabela — aí o <a href="componentes/skeleton">RvmSkeleton</a> mostra
+                onde as coisas vão aparecer, e a tela não pula quando elas chegam.
+            </li>
+            <li>
+                <strong>Quando dá para saber o progresso.</strong>
+                <a href="componentes/progress">RvmProgress</a> responde "quanto falta"; o spinner
+                só responde "ainda não".
+            </li>
+            <li>
+                <strong>Dentro de um botão que já carrega.</strong> O
+                <a href="componentes/button">RvmButton</a> tem <code>Loading</code>, e ele também
+                bloqueia o clique — o que um spinner solto ao lado não faz.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmSize _tamanho = RvmSize.Medium;
+    private string? _rotulo = "Carregando os pedidos…";
+    private bool _comRotulo = true;
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { $"Size=\"RvmSize.{_tamanho}\"", $"Label=\"{_rotulo}\"" };
+
+        if (_comRotulo)
+        {
+            atributos.Add("ShowLabel=\"true\"");
+        }
+
+        return "<RvmSpinner " + string.Join("\n             ", atributos) + " />";
+    }
+}

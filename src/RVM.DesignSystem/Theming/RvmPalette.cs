@@ -116,6 +116,22 @@ public sealed record RvmPalette
     public required string FocusRing { get; init; }
 
     /// <summary>
+    /// O veu que escurece a pagina atras de um dialogo modal.
+    /// </summary>
+    /// <remarks>
+    /// <b>E o unico papel com transparencia</b>, e o unico que nao entra no teste de contraste:
+    /// ele nao recebe texto, e a funcao dele e justamente reduzir o contraste do que esta
+    /// atras — medi-lo contra alguma coisa nao faria sentido.
+    ///
+    /// <para>
+    /// Tambem e o unico papel que NAO e derivado da marca. Veu e preto nos dois modos: qualquer
+    /// matiz aqui tinge a tela inteira e briga com a cor do produto. O que muda entre claro e
+    /// escuro e a opacidade — sobre superficie ja escura, 50% quase nao se nota.
+    /// </para>
+    /// </remarks>
+    public required string Scrim { get; init; }
+
+    /// <summary>
     /// Devolve esta paleta com os papeis de marca e de estado escurecidos (ou clareados) o
     /// suficiente para atenderem AA contra a superficie mais exigente dela propria.
     /// </summary>

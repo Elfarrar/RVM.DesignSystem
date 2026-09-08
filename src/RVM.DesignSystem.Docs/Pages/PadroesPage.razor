@@ -1,0 +1,284 @@
+@page "/padroes"
+@inject IRvmToastService Toasts
+@inject IRvmDialogService Dialogos
+
+<PageTitle>Padrões · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Padrões</h1>
+        <p class="doc__frase">
+            Componente é peça; padrão é como as peças se combinam para resolver uma situação que
+            aparece em toda tela. É aqui que as decisões que atravessam vários componentes ficam
+            escritas.
+        </p>
+    </header>
+
+    <section aria-labelledby="p-form">
+        <h2 id="p-form">Formulário que salva</h2>
+        <p>
+            O caso mais comum do ecossistema, e o que mais varia de app para app quando não há um
+            padrão: o que acontece entre apertar "Salvar" e a tela responder.
+        </p>
+
+        <RvmCard Variant="RvmCardVariant.Outlined">
+            <ChildContent>
+                <EditForm Model="_modelo" OnValidSubmit="Salvar">
+                    <DataAnnotationsValidator />
+
+                    <RvmStack Gap="RvmSpacing.Md">
+                        @if (_falhou)
+                        {
+                            @* Live: este alerta APARECEU por uma ação, então ele interrompe. Um
+                               alerta estático aqui seria anunciado a cada render. *@
+                            <RvmAlert Severity="RvmSeverity.Danger" Live="true" Title="Não foi possível salvar">
+                                <ChildContent>
+                                    Tivemos um problema técnico, por favor tente de novo em alguns minutos.
+                                </ChildContent>
+                                <Actions>
+                                    <RvmButton Size="RvmSize.Small" Variant="RvmButtonVariant.Secondary" Type="RvmButtonType.Submit">
+                                        Tentar de novo
+                                    </RvmButton>
+                                </Actions>
+                            </RvmAlert>
+                        }
+
+                        <RvmTextField @bind-Value="_modelo.Nome" Label="Nome do cliente" Required="true" />
+                        <RvmTextField @bind-Value="_modelo.Email" Label="E-mail" Type="RvmTextFieldType.Email" />
+
+                        <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm">
+                            <RvmButton Type="RvmButtonType.Submit" Loading="_salvando" LoadingText="Salvando...">
+                                Salvar
+                            </RvmButton>
+                            <RvmButton Variant="RvmButtonVariant.Ghost" OnClick="Descartar">Descartar</RvmButton>
+                        </RvmStack>
+                    </RvmStack>
+                </EditForm>
+            </ChildContent>
+        </RvmCard>
+
+        <h3 class="doc__subtitulo">As quatro regras</h3>
+        <ol class="doc__lista">
+            <li>
+                <strong>O botão carrega e bloqueia.</strong> <code>Loading</code> do
+                <a href="componentes/button">RvmButton</a> não é só o desenho girando — ele
+                impede o clique. Sem isso, o duplo-clique impaciente vira dois registros.
+            </li>
+            <li>
+                <strong>Deu certo: <a href="componentes/toast">toast</a>.</strong> A confirmação
+                é passageira e a pessoa já está olhando para outra coisa. Um alerta permanente
+                dizendo "salvo" ocupa espaço para sempre por um fato de dois segundos.
+            </li>
+            <li>
+                <strong>Deu errado: <a href="componentes/alert">alerta</a> no formulário</strong>,
+                com <code>Live</code> e uma ação de tentar de novo. Erro que exige ação não pode
+                sumir sozinho — que é exatamente o que um toast faz.
+            </li>
+            <li>
+                <strong>Erro de campo fica no campo.</strong> A mensagem pertence ao
+                <a href="componentes/form-field">RvmFormField</a>, ligada por
+                <code>aria-describedby</code>. Um alerta genérico no topo obriga a procurar qual
+                campo errou.
+            </li>
+        </ol>
+
+        <p class="doc__nota">
+            Experimente: o formulário acima falha uma vez a cada duas tentativas, de propósito,
+            para os dois caminhos ficarem visíveis.
+        </p>
+    </section>
+
+    <section aria-labelledby="p-destrutivo">
+        <h2 id="p-destrutivo">Ação destrutiva</h2>
+        <p>
+            Excluir, cancelar, publicar. Três decisões que este padrão fixa e que costumam sair
+            diferentes em cada tela:
+        </p>
+
+        <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Wrap="true">
+            <RvmButton Variant="RvmButtonVariant.Danger" OnClick="Excluir">Excluir o pedido</RvmButton>
+        </RvmStack>
+
+        <ul class="doc__lista">
+            <li>
+                <strong>O botão diz o verbo</strong> — "Excluir", nunca "OK". Quem lê só o botão
+                precisa saber o que vai acontecer.
+            </li>
+            <li>
+                <strong>Cancelar vem antes no DOM</strong>, para receber o foco primeiro. O
+                caminho seguro é o que fica debaixo do dedo.
+            </li>
+            <li>
+                <strong>Sair sem decidir é "não".</strong> <kbd>ESC</kbd> e o "×" cancelam. O
+                caminho destrutivo nunca pode ser o que acontece por acidente.
+            </li>
+            <li>
+                <strong>Desfazer, quando dá.</strong> Um toast com ação de desfazer resolve mais
+                que uma confirmação — ele não interrompe, e ainda protege o clique errado.
+            </li>
+        </ul>
+    </section>
+
+    <section aria-labelledby="p-vazio">
+        <h2 id="p-vazio">Carregando, vazio, com erro</h2>
+        <p>
+            Toda lista tem quatro estados, e três deles não são "a lista". Tratar os quatro como
+            um só é o que produz aquela tela que fica em branco sem explicar nada.
+        </p>
+
+        <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Wrap="true">
+            @foreach (var e in Enum.GetValues<EstadoDaLista>())
+            {
+                <RvmChip Selectable="true"
+                         Selected="_estado == e"
+                         SelectedChanged="@(_ => _estado = e)">
+                    @Rotulo(e)
+                </RvmChip>
+            }
+        </RvmStack>
+
+        <RvmCard Variant="RvmCardVariant.Outlined" Class="doc__espaco-acima">
+            <ChildContent>
+                <div aria-busy="@(_estado == EstadoDaLista.Carregando ? "true" : "false")">
+                    @switch (_estado)
+                    {
+                        case EstadoDaLista.Carregando:
+                            <RvmStack Gap="RvmSpacing.Md">
+                                @for (var i = 0; i < 3; i++)
+                                {
+                                    <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Md" Align="RvmAlign.Center">
+                                        <RvmSkeleton Shape="RvmSkeletonShape.Circle" />
+                                        <RvmStack Gap="RvmSpacing.Sm" Class="doc__cresce">
+                                            <RvmSkeleton Width="30%" />
+                                            <RvmSkeleton />
+                                        </RvmStack>
+                                    </RvmStack>
+                                }
+                            </RvmStack>
+                            break;
+
+                        case EstadoDaLista.Vazio:
+                            <RvmEmptyState Variant="RvmEmptyStateVariant.Empty">
+                                <Actions><RvmButton>Cadastrar o primeiro pedido</RvmButton></Actions>
+                            </RvmEmptyState>
+                            break;
+
+                        case EstadoDaLista.SemResultado:
+                            <RvmEmptyState Variant="RvmEmptyStateVariant.NoResults">
+                                <Actions><RvmButton Variant="RvmButtonVariant.Secondary">Limpar os filtros</RvmButton></Actions>
+                            </RvmEmptyState>
+                            break;
+
+                        case EstadoDaLista.Erro:
+                            <RvmEmptyState Variant="RvmEmptyStateVariant.Error">
+                                <Actions><RvmButton Variant="RvmButtonVariant.Secondary">Tentar de novo</RvmButton></Actions>
+                            </RvmEmptyState>
+                            break;
+
+                        default:
+                            <RvmStack Gap="RvmSpacing.Md">
+                                @foreach (var nome in _pessoas)
+                                {
+                                    <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Md" Align="RvmAlign.Center">
+                                        <RvmAvatar Name="@nome" />
+                                        <div>
+                                            <p><strong>@nome</strong></p>
+                                            <p>Pedido aprovado e liberado para entrega.</p>
+                                        </div>
+                                    </RvmStack>
+                                }
+                            </RvmStack>
+                            break;
+                    }
+                </div>
+            </ChildContent>
+        </RvmCard>
+
+        <p class="doc__nota">
+            <strong>"Carregando" não é "vazio".</strong> Mostrar "nada por aqui" e depois trocar
+            por dados é o pior dos dois mundos — a pessoa lê que não há nada e vai embora.
+            <strong>"Vazio" não é "sem resultado".</strong> Um pede criar; o outro pede limpar o
+            filtro. E <strong>"com erro" não é nenhum dos dois</strong>: pede tentar de novo.
+        </p>
+    </section>
+</article>
+
+@code {
+    private enum EstadoDaLista { Carregando, ComDados, Vazio, SemResultado, Erro }
+
+    private readonly Modelo _modelo = new();
+    private bool _salvando;
+    private bool _falhou;
+    private int _tentativas;
+
+    private EstadoDaLista _estado = EstadoDaLista.ComDados;
+
+    private readonly string[] _pessoas = ["Ana Silva", "Bruno Costa", "Carla Dias"];
+
+    private static string Rotulo(EstadoDaLista e) => e switch
+    {
+        EstadoDaLista.Carregando => "Carregando",
+        EstadoDaLista.ComDados => "Com dados",
+        EstadoDaLista.Vazio => "Vazio",
+        EstadoDaLista.SemResultado => "Sem resultado",
+        _ => "Com erro",
+    };
+
+    private async Task Salvar()
+    {
+        _salvando = true;
+        _falhou = false;
+
+        await Task.Delay(700);
+
+        _salvando = false;
+
+        // Falha alternada, para os dois caminhos do padrão ficarem visíveis nesta página.
+        if (++_tentativas % 2 == 0)
+        {
+            _falhou = true;
+            return;
+        }
+
+        Toasts.Success("Cliente salvo.");
+    }
+
+    private void Descartar()
+    {
+        _modelo.Nome = string.Empty;
+        _modelo.Email = string.Empty;
+        _falhou = false;
+    }
+
+    private async Task Excluir()
+    {
+        var confirmou = await Dialogos.ConfirmAsync(new RvmConfirmOptions(
+            "Excluir o pedido?",
+            "O pedido e os itens dele saem do sistema. Isto não pode ser desfeito.",
+            ConfirmLabel: "Excluir",
+            CancelLabel: "Manter",
+            Severity: RvmSeverity.Danger));
+
+        if (confirmou)
+        {
+            Toasts.Show(
+                "Pedido excluído.",
+                RvmSeverity.Info,
+                actionLabel: "Desfazer",
+                onAction: () =>
+                {
+                    Toasts.Success("Exclusão desfeita.");
+                    return Task.CompletedTask;
+                });
+        }
+    }
+
+    private sealed class Modelo
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Informe o nome do cliente.")]
+        public string Nome { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "E-mail inválido.")]
+        public string Email { get; set; } = string.Empty;
+    }
+}

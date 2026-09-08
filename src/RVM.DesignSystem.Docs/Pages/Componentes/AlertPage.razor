@@ -1,0 +1,135 @@
+@page "/componentes/alert"
+
+<PaginaDeComponente Nome="RvmAlert"
+                    Tipo="typeof(RvmAlert)"
+                    Frase="Aviso que FICA na tela. Diferente do toast, ele não some — e por isso o role=&quot;alert&quot; é opt-in, não padrão.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                @if (!_dispensado)
+                {
+                    <RvmAlert Severity="_severidade"
+                              Title="@(_comTitulo ? "Três itens ficaram de fora" : null)"
+                              Live="_vivo"
+                              OnDismiss="@(_dispensavel ? Dispensar : default(EventCallback<MouseEventArgs>))">
+                        <ChildContent>
+                            Os itens sem preço não entraram no total. Revise antes de fechar o pedido.
+                        </ChildContent>
+                        <Actions>
+                            @if (_comAcoes)
+                            {
+                                <RvmButton Size="RvmSize.Small" Variant="RvmButtonVariant.Secondary">Ver os itens</RvmButton>
+                            }
+                        </Actions>
+                    </RvmAlert>
+                }
+                else
+                {
+                    <RvmButton Variant="RvmButtonVariant.Ghost" OnClick="() => _dispensado = false">Mostrar de novo</RvmButton>
+                }
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmSeverity" @bind-Value="_severidade" Label="Severity">
+                    @foreach (var s in Enum.GetValues<RvmSeverity>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_comTitulo" Label="Title" />
+                <RvmCheckbox @bind-Value="_dispensavel" Label="Dispensável" />
+                <RvmCheckbox @bind-Value="_comAcoes" Label="Ações inline" />
+                <RvmCheckbox @bind-Value="_vivo" Label="Live" Help="Só quando o alerta APARECE por uma ação." />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <RvmStack Gap="RvmSpacing.Md">
+            <RvmAlert Severity="RvmSeverity.Info"><ChildContent>O prazo de envio muda a partir de segunda.</ChildContent></RvmAlert>
+            <RvmAlert Severity="RvmSeverity.Success"><ChildContent>O pedido foi aprovado pelo financeiro.</ChildContent></RvmAlert>
+            <RvmAlert Severity="RvmSeverity.Warning"><ChildContent>Faltam três dias para o vencimento.</ChildContent></RvmAlert>
+            <RvmAlert Severity="RvmSeverity.Danger"><ChildContent>Tivemos um problema técnico, por favor tente de novo em alguns minutos.</ChildContent></RvmAlert>
+        </RvmStack>
+
+        <p class="doc__nota">
+            Cada severidade tem uma <strong>forma</strong> própria — círculo com check, triângulo,
+            círculo com X, círculo com i. As quatro se distinguem em preto e branco, e é isso que
+            faz a severidade não depender da cor. Repare também que o <strong>texto</strong> fica
+            na cor de leitura: colorir o parágrafo inteiro de vermelho piora a legibilidade para
+            ganhar uma redundância que o ícone já dá.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong><code>role="alert"</code> NÃO é o padrão</strong>, e é a decisão que mais
+                dá errado neste componente. Um <code>role="alert"</code> interrompe o leitor de
+                tela na hora, seja lá o que ele estivesse falando. Isso é certo para "não foi
+                possível salvar" que apareceu agora — e é ruído puro num aviso que já estava na
+                tela quando ela abriu, que passa a ser gritado a cada renderização, atropelando o
+                título da página.
+            </li>
+            <li>
+                <strong>Com <code>Live</code>, a severidade escolhe o papel.</strong>
+                <code>Danger</code> vira <code>role="alert"</code> e interrompe; o resto vira
+                <code>role="status"</code> e espera a pausa. Anunciar "salvo com sucesso" por cima
+                do que o leitor estava dizendo custa mais do que informa.
+            </li>
+            <li>
+                <strong>O botão de dispensar tem nome próprio</strong>, e o padrão diz o que ele
+                dispensa.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para confirmação passageira.</strong> "Salvo" não precisa ocupar espaço
+                permanente na tela. <a href="componentes/toast">RvmToast</a>.
+            </li>
+            <li>
+                <strong>Para erro de um campo.</strong> A mensagem pertence ao campo, ligada por
+                <code>aria-describedby</code> — é o que o
+                <a href="componentes/form-field">RvmFormField</a> faz. Um alerta no topo obriga a
+                procurar qual campo errou.
+            </li>
+            <li>
+                <strong>Empilhado.</strong> Quatro alertas no topo da tela são um mural, e murais
+                não são lidos. Se há quatro coisas erradas, o problema é a tela.
+            </li>
+            <li>
+                <strong>Para exigir uma decisão.</strong> Alerta informa, não pergunta.
+                <a href="componentes/dialog">RvmDialog</a>.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmSeverity _severidade = RvmSeverity.Warning;
+    private bool _comTitulo = true;
+    private bool _dispensavel = true;
+    private bool _comAcoes = true;
+    private bool _vivo;
+    private bool _dispensado;
+
+    private EventCallback<MouseEventArgs> Dispensar =>
+        EventCallback.Factory.Create<MouseEventArgs>(this, () => _dispensado = true);
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { $"Severity=\"RvmSeverity.{_severidade}\"" };
+
+        if (_comTitulo) atributos.Add("Title=\"Três itens ficaram de fora\"");
+        if (_vivo) atributos.Add("Live=\"true\"");
+        if (_dispensavel) atributos.Add("OnDismiss=\"Dispensar\"");
+
+        return "<RvmAlert " + string.Join("\n           ", atributos) + ">\n"
+            + "    Os itens sem preço não entraram no total.\n"
+            + "</RvmAlert>";
+    }
+}

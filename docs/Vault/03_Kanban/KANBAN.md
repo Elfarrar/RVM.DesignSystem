@@ -9,7 +9,9 @@
 
 ## Em revisao
 
-_(vazio — a onda 2 foi promovida)_
+- [[DSGN-019]] — **Onda 3**: dialogo (`<dialog>` nativo), toast, alerta, estado vazio, spinner,
+  progresso, esqueleto e tooltip. Mais a secao Padroes e a busca do site (`RF-27`). 223 testes,
+  E2E com o criterio de saida da onda. Sai como `0.3.0`.
 
 ## Concluido
 
@@ -38,17 +40,20 @@ Nove componentes, camada de tokens, motor de tema, icones Phosphor e o site de d
 `design.rvmit.com.br` no ar. Cards: [[DSGN-002]], [[DSGN-012]], [[DSGN-013]], [[DSGN-014]],
 [[DSGN-015]].
 
-### Onda 3 — Feedback (proxima)
+### ✅ Onda 3 — fechada em 08/09/2026, sai como `0.3.0`
 
-`RvmDialog` + `IRvmDialogService`, `RvmToast` + `IRvmToastService`, `RvmAlert`, `RvmSkeleton`,
-`RvmSpinner`, `RvmProgress`, `RvmTooltip`, `RvmEmptyState`. Fecha em `0.3.0`.
+Card: [[DSGN-019]].
 
-> **Meta (`09-roadmap`):** o E2E abre o dialogo, navega so por teclado, fecha com `ESC` e
-> confirma que o foco voltou ao botao de origem.
+### Onda 4 — Dados (proxima)
 
-⚠️ **O que a onda 2 deixa para ela:** a densidade hoje alcanca os controles da onda 1 e o
-`RvmNavItem`. Componente de dado (onda 4) precisa entrar na conta dos tokens `--rvm-control-*`,
-ou nasce ignorando a densidade em silencio.
+`RvmDataGrid<T>` com colunas tipadas, ordenacao, paginacao e selecao, mais o resto de Dados.
+Fecha em `0.4.0`. **E a onda cara** — cada linha dela vale, em esforco, varias das anteriores.
+
+⚠️ **O que as ondas 2 e 3 deixam para ela:**
+- A densidade alcanca os controles da onda 1 e o `RvmNavItem`. O componente de dado precisa
+  entrar na conta dos tokens `--rvm-control-*`, ou nasce ignorando a densidade **em silencio**.
+- Tabela e o lugar onde `aria-busy` + `RvmSkeleton` e `RvmEmptyState` (as quatro variantes)
+  finalmente se combinam. O padrao ja esta escrito e demonstrado em `/padroes`.
 
 <details>
 <summary>Escopo original da onda 1, para referencia</summary>

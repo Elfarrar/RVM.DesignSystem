@@ -169,6 +169,9 @@ public sealed record RvmTheme
             Disabled = disabled.ToHex(),
             OnDisabled = onDisabled.ToHex(),
             FocusRing = focusRing.ToHex(),
+            // Preto com alfa, e nao um hex derivado: veu precisa de transparencia, e e o
+            // unico papel da paleta que nao e uma cor solida.
+            Scrim = dark ? "rgb(0 0 0 / 0.65)" : "rgb(0 0 0 / 0.5)",
         };
     }
 
@@ -237,5 +240,6 @@ public sealed record RvmTheme
         Var(sb, "disabled", p.Disabled);
         Var(sb, "on-disabled", p.OnDisabled);
         Var(sb, "focus-ring", p.FocusRing);
+        Var(sb, "scrim", p.Scrim);
     }
 }

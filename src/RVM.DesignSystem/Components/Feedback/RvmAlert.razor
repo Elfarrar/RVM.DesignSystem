@@ -1,0 +1,105 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    ⚠️ `role="alert"` NÃO é o padrão, e essa é a decisão que mais dá errado neste componente.
+
+    Um `role="alert"` interrompe o leitor de tela na hora, seja lá o que ele estivesse falando.
+    Isso é o certo para "não foi possível salvar" que apareceu agora — e é ruído puro para um
+    aviso que já estava na tela quando ela abriu, que passa a ser gritado a cada renderização,
+    atropelando o título da página.
+
+    Por isso `Live` é opt-in: quem faz o alerta APARECER em resposta a uma ação liga; quem
+    escreve um aviso estático na tela não liga. A regra está no `11` § Onda 3.
+*@
+
+<div class="@ClasseFinal"
+     role="@(Live ? PapelVivo : null)"
+     @attributes="AdditionalAttributes">
+
+    <RvmIcon Name="@Icone" Weight="RvmIconWeight.Fill" Class="rvm-alert__icone" Size="1.25rem" />
+
+    <div class="rvm-alert__corpo">
+        @if (Title is not null)
+        {
+            <p class="rvm-alert__titulo">@Title</p>
+        }
+
+        <div class="rvm-alert__texto">@ChildContent</div>
+
+        @if (Actions is not null)
+        {
+            <div class="rvm-alert__acoes">@Actions</div>
+        }
+    </div>
+
+    @if (OnDismiss.HasDelegate)
+    {
+        <button type="button"
+                class="rvm-alert__dispensar"
+                aria-label="@DismissLabel"
+                @onclick="OnDismiss">
+            <RvmIcon Name="x" Size="1rem" />
+        </button>
+    }
+</div>
+
+@code {
+    /// <summary>Severidade. O ícone e a cor acompanham; o texto continua carregando o sentido.</summary>
+    [Parameter]
+    public RvmSeverity Severity { get; set; } = RvmSeverity.Info;
+
+    /// <summary>Título curto, em negrito.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Anuncia o alerta assim que ele aparece.
+    /// </summary>
+    /// <remarks>
+    /// Ligue apenas quando o alerta <b>surge em resposta a uma ação</b> — o resultado de um
+    /// envio, um erro de rede. Num alerta que já está na tela desde o carregamento, isto faz o
+    /// leitor interromper o que estava dizendo a cada render.
+    ///
+    /// <para>
+    /// Com <c>Severity.Danger</c> vira <c>role="alert"</c> (interrompe); nas demais,
+    /// <c>role="status"</c> (espera a pausa). Erro merece a interrupção; confirmação não.
+    /// </para>
+    /// </remarks>
+    [Parameter]
+    public bool Live { get; set; }
+
+    /// <summary>Disparado ao dispensar. Informá-lo faz aparecer o botão de fechar.</summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnDismiss { get; set; }
+
+    /// <summary>Nome acessível do botão de dispensar.</summary>
+    [Parameter]
+    public string DismissLabel { get; set; } = "Dispensar o aviso";
+
+    /// <summary>Ações inline — "Tentar de novo", "Ver detalhes".</summary>
+    [Parameter]
+    public RenderFragment? Actions { get; set; }
+
+    /// <summary>A mensagem.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // Erro interrompe; o resto espera a pausa. Anunciar "salvo com sucesso" por cima do que o
+    // leitor estava dizendo custa mais do que informa.
+    private string PapelVivo => Severity == RvmSeverity.Danger ? "alert" : "status";
+
+    private string Icone => RvmSeveridade.Icone(Severity);
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-alert",
+        $"rvm-alert--{RvmClasse.Sufixo(Severity)}",
+        Class);
+}

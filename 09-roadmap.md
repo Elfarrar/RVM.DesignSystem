@@ -58,7 +58,7 @@ apareceu na hora de montar: o papel `on-surface-variant` na paleta (texto secund
 `opacity`), o slot de rodapé na casca (`footer` fora do `main`, senão perde o marco
 `contentinfo`) e a varredura axe por página no E2E — pendência que a onda 1 tinha deixado.
 
-## Onda 3 — Feedback
+## Onda 3 — Feedback ✅ 08/09/2026
 
 **Meta:** os estados que hoje cada app resolve à sua maneira.
 
@@ -70,6 +70,11 @@ apareceu na hora de montar: o papel `on-surface-variant` na paleta (texto secund
 
 **Verifica:** E2E abre o diálogo, navega só por teclado, fecha com `ESC` e confirma que o foco
 voltou ao botão de origem.
+
+✅ Feito (`DSGN-019`). O diálogo é o `<dialog>` **nativo** com `showModal()` — foco preso, ESC,
+fundo inerte, camada de topo e retorno de foco vêm do navegador, e não de ~150 linhas de JS
+nossas. Entrou junto o papel `scrim` na paleta (o véu precisa de alfa, e cor literal em CSS de
+componente é reprovada pelo portão, corretamente).
 
 ## Onda 4 — Dados
 

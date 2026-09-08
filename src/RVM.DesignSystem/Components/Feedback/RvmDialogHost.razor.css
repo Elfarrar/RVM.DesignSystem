@@ -1,0 +1,4 @@
+.rvm-dialog-host__mensagem {
+    margin: 0;
+    line-height: var(--rvm-line-height-body);
+}
