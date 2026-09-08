@@ -15,8 +15,22 @@
 
 <RvmFormField FieldId="@Id" Label="@Label" Help="@Help" Error="@MensagemDeErro" Required="@Required" Class="@Class">
     <div class="rvm-select__wrapper">
+        @*
+            `value` no <select> nao e redundante com o `selected` das <option>.
+
+            O Blazor trata este atributo como CASO ESPECIAL: ele escreve a propriedade `value`
+            do elemento DEPOIS de renderizar os filhos, que e a unica ordem em que o navegador
+            consegue casar o valor com uma <option> que ainda nao existia. Sem ele, o campo abre
+            mostrando a PRIMEIRA opcao, independente do valor ligado — e o formulario parece
+            preenchido com um dado que nao e o do modelo.
+
+            Passou despercebido na onda 1 porque todo uso de la tinha Placeholder e comecava sem
+            valor: a primeira opcao era mesmo a certa. Apareceu na onda 2, num select de enum
+            cujo padrao nao era o primeiro membro.
+        *@
         <select id="@Id"
                 class="@ClasseSelect"
+                value="@CurrentValueAsString"
                 disabled="@Disabled"
                 required="@Required"
                 aria-invalid="@(TemErro ? "true" : null)"
