@@ -6,9 +6,10 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 **Prefixo de task:** `DSGN-NNN` · contador próprio · card em `docs/Vault/02_Tasks/`,
 índice em `docs/Vault/03_Kanban/KANBAN.md`.
 
-> **Estado em 07/09/2026: só documentação.** Existem os MD `01`–`11`, o `README.md` e este arquivo.
-> Não há código, solution, git, repositório no GitHub, CI/CD nem deploy. Para construir, rodar a
-> skill `bootstrap-projeto` **dentro** desta pasta. Até lá, o projeto está **sem backup**.
+> **Estado em 07/09/2026, após o bootstrap (`DSGN-001`):** repositório **público** em
+> `Elfarrar/RVM.DesignSystem` (MIT), esqueleto .NET 10 com os quatro projetos, cinco workflows,
+> CI verde e o site no ar em `design.dev.rvmtech.com.br`. **Produção não foi promovida** — falta
+> o sinal verde do Rafael. Componentes: zero, começam na onda 1 do `09-roadmap.md`.
 
 ## Escopo
 
@@ -35,11 +36,16 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 ⚠️ **Este projeto NÃO segue VSA + MediatR**, e isso é decisão registrada, não esquecimento.
 VSA organiza casos de uso que atravessam camadas; aqui não há caso de uso, endpoint nem banco — o
 artefato é uma Razor Class Library e a unidade de organização é o componente. Justificativa completa
-em `03-arquitetura.md` § Desvio; registrar como **ADR-010** no Vault durante o bootstrap.
+em `03-arquitetura.md` § Desvio, e registrada em `docs/Vault/05_References/ADR-010-sem-vsa.md`.
 **Não "corrigir" a arquitetura para VSA.**
 
-- **Solution:** `src/RVM.DesignSystem` (RCL, o pacote) · `src/RVM.DesignSystem.Docs` (Blazor WASM,
-  o site) · `test/RVM.DesignSystem.Tests` (bUnit) · `test/RVM.DesignSystem.E2E` (Playwright + axe)
+- **Solution:** `RVM.DesignSystem.slnx` — `src/RVM.DesignSystem` (RCL, o pacote) ·
+  `src/RVM.DesignSystem.Docs` (Blazor WASM, o site) · `test/RVM.DesignSystem.Tests` (bUnit) ·
+  `test/playwright/RVM.DesignSystem.E2E` (Playwright + axe)
+- ⚠️ **O E2E mora sob `test/playwright/` de propósito, não por capricho de nome.** O `ci.yml` do
+  ecossistema roda todo `test/**/*.csproj` e pula só os caminhos que contêm `playwright`; o E2E
+  aqui exige o site publicado no ar. Mover para `test/RVM.DesignSystem.E2E` faz o CI tentar
+  rodá-lo sem site.
 - **Auth:** none — site público e anônimo, biblioteca não autentica
 - **Multi-tenant:** não se aplica (sem dado, sem tenant). Variação é de tema, em tempo de build
 - **Blazor Server E WebAssembly** — os dois, sempre. Nenhum componente pode depender de JS para
@@ -76,11 +82,17 @@ em `03-arquitetura.md` § Desvio; registrar como **ADR-010** no Vault durante o 
 
 - **Sem container, sem banco, sem rede `rvmtech`, sem `/health`.** Verificação de deploy é `curl -I`
   devolvendo 200.
-- CI/CD: `ci.yml` e `e2e.yml` são callers de `Elfarrar/RVM.Actions@v1`. `publish-nuget.yml`,
-  `deploy-development.yml` e `deploy-pages.yml` são próprios — o `deploy.yml@v1` pressupõe container
-  e aqui não há (desvio declarado em `10`).
-- ⚠️ **Runner self-hosted é por repositório.** Sem ele registrado no BagEnd, o job fica `queued`
-  para sempre, sem erro. Passo da fase 0.
+- CI/CD: **os cinco workflows são próprios**, nenhum é caller do `RVM.Actions@v1`, e cada um roda
+  em `ubuntu-latest`. Motivos, um por um:
+  - `ci.yml` — repositório **público** não chama reusable de repositório **privado**, e o
+    `RVM.Actions` é privado; o run morria em 0s, sem jobs e sem mensagem útil (**ADR-011**).
+  - `e2e.yml` — o `e2e.yml@v1` sobe stack local por `docker compose`, espera `/health` de API
+    instrumentada e roda Playwright por npm. Nenhuma das premissas existe aqui.
+  - `deploy-development.yml`, `deploy-pages.yml`, `publish-nuget.yml` — o `deploy.yml@v1`
+    pressupõe container e aqui não há.
+- ✅ **Este projeto NÃO precisa de runner self-hosted.** A regra do ecossistema (runner é por
+  repositório; sem ele o job fica `queued` para sempre, sem erro) continua valendo em geral, mas
+  não morde aqui: repositório público tem runner do GitHub de graça. **Nada a registrar no BagEnd.**
 - Pages exige `.nojekyll`, `404.html` copiado do `index.html` e `<base href="/">` — os três detalhes
   que quebram Blazor WASM em host estático (`10`).
 
@@ -115,8 +127,12 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 
 ## Estado atual
 
-- Spec `01`–`11` escrita em 07/09/2026. Código zero.
-- Próximo passo: `bootstrap-projeto` nesta pasta → fase 0 do `09-roadmap.md`.
+- Spec `01`–`11` escrita em 07/09/2026; bootstrap (`DSGN-001`) executado no mesmo dia.
+- No ar: `https://design.dev.rvmtech.com.br` (casca do site, sem componentes ainda).
+- Produção (`master` → Pages → `design.rvmit.com.br`) **preparada mas não disparada**: falta DNS
+  `design` na zona `rvmit.com.br`, ligar o Pages nas settings e o monitor no Uptime-Kuma. Tudo
+  espera o sinal verde do Rafael.
+- Próximo passo: onda 1 do `09-roadmap.md` — tokens, tematização e os nove componentes básicos.
 
 ## Pendências que bloqueiam
 
@@ -127,5 +143,9 @@ ser respondidas **antes de fechar a onda 1** — depois da 1.0, mudá-las quebra
 - ⏳ Conjunto de ícones (suposição: Lucide, MIT)
 - ⏳ Escala tipográfica: `rem` fixo ou `clamp()` (suposição: `rem` fixo)
 - ⏳ Localização: `.resx` ou pt-BR fixo (suposição: pt-BR fixo)
-- ⏳ Repositório público sob MIT ou privado (suposição: público, MIT)
-- ⏳ Site referencia o pacote do BaGet ou `ProjectReference` (suposição: pacote, com alternância local)
+- ✅ **Repositório público sob MIT** — respondido pelo Rafael em 07/09/2026. Consequência não
+  óbvia: foi essa decisão que inviabilizou o caller do `RVM.Actions` (**ADR-011**) e, de quebra,
+  dispensou o runner self-hosted.
+- 🔧 Site referencia o pacote do BaGet ou `ProjectReference` — **implementado nos dois modos**.
+  `UseLocalDesignSystem` no `Directory.Build.props` alterna; hoje `true` por padrão, porque o
+  `0.1.0-alpha` ainda não existe no feed. Vira `false` quando o pacote for publicado.

@@ -1,0 +1,21 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <!-- A biblioteca formata data/numero/moeda com CultureInfo explicito.
+         Globalizacao invariante quebraria pt-BR — ver CLAUDE.md § Convencoes. -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <!--
+    DSGN-001 — pendencia 6 do 09-roadmap.md.
+    O site de documentacao referencia o PACOTE do BaGet, para exercitar o caminho real
+    de instalacao do consumidor (03-arquitetura.md § Forma do artefato).
+    Enquanto o pacote nao existe (e no desenvolvimento local), UseLocalDesignSystem=true
+    troca para ProjectReference. Vira 'false' por padrao quando 0.1.0-alpha estiver no feed.
+  -->
+  <PropertyGroup Condition="'$(UseLocalDesignSystem)' == ''">
+    <UseLocalDesignSystem>true</UseLocalDesignSystem>
+  </PropertyGroup>
+
+</Project>

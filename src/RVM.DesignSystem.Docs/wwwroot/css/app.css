@@ -1,0 +1,144 @@
+/*
+  Casca minima do site, em CSS puro.
+
+  Cores: roxo do Visual Studio (#641974) + azul do VS Code (#006DBD), a mesma identidade
+  do rvmtech.com.br (RVM.Curriculo). Decisao do Rafael, registrada em
+  06-tokens-e-tematizacao.md § A identidade da marca — leia LA antes de mexer aqui:
+  os valores sao os RENDERIZADOS do site, nao os nominais, porque o azul nominal
+  (#007ACC) reprova no teste de contraste AA. A metade escura foi derivada e ainda
+  nao foi aprovada por ele.
+
+  Nao ha framework CSS aqui de proposito (03-arquitetura § CSS): a partir da onda 1
+  o site passa a se vestir com os proprios tokens do pacote, e o que estiver escrito
+  aqui vai embora. Nao acrescentar Bootstrap/Tailwind — o template do Blazor traz
+  Bootstrap por padrao e ele foi removido no bootstrap (DSGN-001).
+*/
+
+:root {
+    color-scheme: light dark;
+    --site-fg: #1E1E26;
+    --site-bg: #EEEEF1;
+    --site-bg-elev: #FCFCFE;
+    --site-muted: #575760;
+    --site-line: #DEDEE4;
+    --site-link: #641974;
+    --site-accent-alt: #006DBD;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --site-fg: #E7E7ED;
+        --site-bg: #111117;
+        --site-bg-elev: #1A1A20;
+        --site-muted: #A3A4AC;
+        --site-line: #32323A;
+        --site-link: #CF8FDE;
+        --site-accent-alt: #65B2F1;
+    }
+}
+
+html, body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+    color: var(--site-fg);
+    background: var(--site-bg);
+}
+
+a { color: var(--site-link); }
+
+/* A casca (.page, .site-header, .site-main, .site-footer) mora no CSS ISOLADO do
+   MainLayout, nao aqui. Motivo em Layout/MainLayout.razor.css. */
+
+.aviso { color: var(--site-muted); }
+
+/* Azul de apoio, o mesmo papel que ele tem no rvmtech.com.br: destaque secundario. */
+code {
+    font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+    font-size: .9em;
+    color: var(--site-accent-alt);
+}
+
+/* Foco visivel — 2px solidos no roxo da marca, como no rvmtech.com.br.
+   O site inteiro tem que ser operavel por teclado; e portao do proprio projeto. */
+:focus-visible {
+    outline: 2px solid var(--site-link);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/*
+  ...MENOS no titulo que o roteador foca sozinho.
+
+  O <FocusOnNavigate Selector="h1"> do Blazor move o foco para o h1 a cada navegacao,
+  para que leitor de tela anuncie que a pagina mudou. Para isso ele marca o h1 com
+  tabindex="-1" — e o resultado colateral e um retangulo em volta do titulo em TODO
+  carregamento, que ninguem pediu.
+
+  A saida NAO e remover o FocusOnNavigate: isso trocaria um incomodo visual por uma
+  regressao de acessibilidade, justamente no projeto cujo portao e acessibilidade.
+
+  A saida e separar as duas coisas que o anel de foco faz. Ele serve para dizer "voce
+  esta AQUI e chegou de teclado". Um elemento com tabindex="-1" esta fora da ordem de
+  tabulacao: nenhum usuario de teclado chega nele com Tab, entao o anel ali nao orienta
+  ninguem — so polui. O anuncio para leitor de tela continua intacto, porque ele depende
+  do foco, nao do contorno.
+*/
+h1[tabindex="-1"]:focus,
+h1[tabindex="-1"]:focus-visible {
+    outline: none;
+}
+
+/* Indicador de carregamento do WASM — vem do template, mantido. */
+.loading-progress {
+    position: relative;
+    display: block;
+    width: 8rem;
+    height: 8rem;
+    margin: 20vh auto 1rem auto;
+}
+
+.loading-progress circle {
+    fill: none;
+    stroke: var(--site-line);
+    stroke-width: 0.6rem;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+}
+
+.loading-progress circle:last-child {
+    stroke: var(--site-link);
+    stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+    transition: stroke-dasharray 0.05s ease-in-out;
+}
+
+.loading-progress-text {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    inset: calc(20vh + 3.25rem) 0 auto 0;
+}
+
+.loading-progress-text:after {
+    content: var(--blazor-load-percentage-text, "Carregando");
+}
+
+#blazor-error-ui {
+    background: #ffe9a8;
+    color: #16161a;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

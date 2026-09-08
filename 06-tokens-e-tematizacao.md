@@ -119,6 +119,83 @@ razão de a lista de papéis semânticos em `04` ser fechada — papel sem `on-*
 A mesma função de cálculo alimenta a página de cor do site (`RF-24`), que mostra o número e o
 veredito para o visitante. Uma implementação, dois usos.
 
+## A identidade da marca — decidida em 07/09/2026
+
+O design system **não define identidade de marca, consome uma** (`01` § Escopo). A que ele consome
+é a do site do Rafael (`rvmtech.com.br`, produzido pelo **RVM.Curriculo**): **roxo do Visual Studio
+como principal, azul do VS Code como apoio** — escolha dele em 01/09/2026, agora estendida a este
+projeto.
+
+Isso vale para **duas coisas diferentes**, e a distinção importa:
+
+1. **O tema padrão da biblioteca** (`RvmTheme.Rvm`) — o que um app novo herda sem escolher nada.
+2. **A cara do site de documentação** — que passa a parecer parte do mesmo conjunto que o currículo,
+   em vez de um site genérico.
+
+Não vale para os quatro temas de exemplo (ErpAgro, ObraEmDia, Fiscal, Propostinha): esses continuam
+com as cores dos apps de origem, que é justamente o que prova o motor.
+
+### As sementes
+
+```csharp
+public static readonly RvmTheme Rvm = RvmTheme.FromSeed(
+    name: "RVM",
+    primary:   "#641974",   // roxo do Visual Studio
+    secondary: "#006DBD");  // azul do VS Code
+```
+
+⚠️ **São os valores RENDERIZADOS do site, não os nominais — e a diferença não é cosmética.**
+O `CLAUDE.md` do RVM.Curriculo nomeia `#68217A` e `#007ACC`, mas o `global.css` os declara em OKLCH
+(`oklch(38% 0.155 320)` e `oklch(52% 0.16 245)`), que renderizam mais escuros. Medindo contra o
+fundo do site (`#EEEEF1`):
+
+| Cor | Contraste vs fundo | Veredito AA |
+|---|---|---|
+| `#68217A` roxo nominal | 8.69 | ✅ |
+| `#641974` roxo renderizado | 9.38 | ✅ |
+| `#007ACC` **azul nominal** | **3.90** | ❌ **reprova** (mínimo 4.5) |
+| `#006DBD` azul renderizado | 4.62 | ✅ |
+
+**Semear com o azul nominal deixaria o CI vermelho no primeiro teste de contraste.** O site já está
+correto — quem está desatualizado é o nome escrito no `CLAUDE.md` de lá. Registrado aqui para que
+ninguém "corrija" `#006DBD` para `#007ACC` achando que está consertando.
+
+### O modo escuro não existe no site — foi derivado
+
+O `rvmtech.com.br` é `color-scheme: light`, e só. A biblioteca exige os dois modos, então a metade
+escura foi **derivada mantendo matiz e croma e invertendo a luminosidade**, e verificada:
+
+| Papel | Claro | Escuro | Contraste no escuro |
+|---|---|---|---|
+| `surface` | `#EEEEF1` | `#111117` | — |
+| `on-surface` | `#1E1E26` | `#E7E7ED` | 15.30 ✅ |
+| `on-surface-muted` | `#575760` | `#A3A4AC` | 7.57 ✅ |
+| `primary` | `#641974` | `#CF8FDE` | 7.73 ✅ |
+| `secondary` | `#006DBD` | `#65B2F1` | 8.25 ✅ |
+
+⏳ **Pendência nova:** a metade escura é derivação minha, não escolha do Rafael. Ele nunca viu a
+marca no escuro. Passa em AA, mas "passa em AA" e "é a cara que ele quer" são coisas diferentes —
+confirmar antes da 1.0.
+
+### Três tokens do site que não viram token semântico como estão
+
+O portão desta biblioteca é mais rigoroso que o de um site de conteúdo, e três tokens do
+RVM.Curriculo reprovariam se copiados direto:
+
+| Token do site | Contraste vs fundo | Alvo | O que fazer aqui |
+|---|---|---|---|
+| `--color-text-subtle` | 3.42 | 4.5 | escurecer, ou usar **só** em texto grande (onde 3.0 basta) |
+| `--color-accent-warm` | 4.42 | 4.5 | escurecer 2-3% de luminosidade |
+| `--color-border-strong` | 1.67 | 3.0 | serve como borda **decorativa**; borda de controle precisa de token próprio |
+
+Para a borda de controle (WCAG 1.4.11, limite de componente que comunica estado), os valores que
+cruzam 3.0 mais perto do fundo são `oklch(63% 0.012 285)` = `#898991` no claro e
+`oklch(49% 0.014 285)` = `#606069` no escuro.
+
+**Isto não é defeito do site.** Um site de conteúdo usa essas cores em texto grande e em divisória
+decorativa, onde o mínimo é 3.0 e elas passam. O que muda aqui é que um design system publica esses
+nomes como contrato, e um consumidor vai usá-los em texto de 14px.
+
 ## Migrando as paletas que já existem
 
 Não há migração de app (`01` § Escopo), mas as quatro paletas atuais entram no repositório como

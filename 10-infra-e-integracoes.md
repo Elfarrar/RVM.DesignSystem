@@ -60,8 +60,8 @@ Como o domínio é próprio (não `usuario.github.io/repo`), não há prefixo de
 
 | Workflow | Base | Gatilho | O que faz |
 |---|---|---|---|
-| `ci.yml` | caller de `RVM.Actions/ci.yml@v1` | PR e push | Build, teste, cobertura ≥ 80% |
-| `e2e.yml` | caller de `RVM.Actions/e2e.yml@v1` | Após deploy de dev; nightly | Playwright + **axe** sobre `design.dev.rvmtech.com.br` |
+| `ci.yml` | **próprio** | PR e push | Build, teste, cobertura ≥ 80% (reprova abaixo disso) |
+| `e2e.yml` | **próprio** | Após deploy de dev; nightly | Playwright + **axe** sobre `design.dev.rvmtech.com.br` |
 | `publish-nuget.yml` | próprio | Push em `master` com mudança em `src/RVM.DesignSystem/**` | `dotnet pack` + push no BaGet |
 | `deploy-development.yml` | próprio | Push em `dev` | Publica e faz rsync para a Rivendell |
 | `deploy-pages.yml` | próprio | Push em `master` | Publica no GitHub Pages |
@@ -69,10 +69,22 @@ Como o domínio é próprio (não `usuario.github.io/repo`), não há prefixo de
 Os três workflows próprios usam `paths` para não republicar tudo a cada commit — a mesma disciplina
 que o ADR-009 exige das landings, pela mesma razão.
 
-⚠️ **Runner self-hosted:** o reusable do `RVM.Actions` roda em `runs-on: self-hosted`, e `Elfarrar`
-é conta de usuário, não organização — **runner é por repositório**. Repositório novo tem zero, e o
-job fica `queued` para sempre, sem erro. Registrar o runner no BagEnd é passo da fase 0
-(`09-roadmap.md`).
+> ✅ **Corrigido em 07/09/2026 (DSGN-001), durante o bootstrap.** A tabela acima dizia que `ci.yml`
+> e `e2e.yml` eram callers do `RVM.Actions@v1`. Nenhum dos dois pode ser:
+>
+> - **`ci.yml`** — repositório **público** não consegue chamar reusable workflow de repositório
+>   **privado**, e o `RVM.Actions` é privado. O run morre em 0s, com zero jobs e sem mensagem
+>   útil. Detalhe e alternativas descartadas em `Vault/05_References/ADR-011-ci-proprio.md`.
+> - **`e2e.yml`** — o `e2e.yml@v1` sobe uma stack local com `docker compose`, espera `/health` de
+>   uma API instrumentada e roda Playwright por **npm**. Aqui não há container, não há API, não há
+>   `/health`, e o E2E é .NET. Nenhuma das premissas do reusable vale.
+
+⚠️ **Runner self-hosted: este projeto não precisa de nenhum.** A regra do ecossistema continua
+valendo em geral — o reusable do `RVM.Actions` roda em `runs-on: self-hosted`, `Elfarrar` é conta
+de usuário e não organização, então **runner é por repositório**, e repositório novo nasce com zero,
+deixando o job `queued` para sempre sem erro. Só que aqui os cinco workflows rodam em
+`ubuntu-latest`: repositório público tem runner do GitHub de graça. **Nada a registrar no BagEnd** —
+a armadilha mais frágil da fase 0 não existe neste projeto.
 
 ## Distribuição do pacote
 

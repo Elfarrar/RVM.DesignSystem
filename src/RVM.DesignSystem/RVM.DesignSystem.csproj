@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Portao 4 do CLAUDE.md: zero warning no Release. Nao afrouxar. -->
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Metadata do pacote NuGet publicado no BaGet interno (10-infra § Distribuicao) -->
+  <PropertyGroup>
+    <PackageId>RVM.DesignSystem</PackageId>
+    <!-- VersionPrefix (nao Version): e o que permite ao publish-nuget.yml acrescentar
+         -p:VersionSuffix=alpha.N nos builds de dev. Com <Version> fixo, o sufixo e ignorado. -->
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Authors>Rafael Venerosa Morici</Authors>
+    <Description>Biblioteca de componentes Blazor do ecossistema RVM: tokens, tematizacao e acessibilidade WCAG 2.1 AA.</Description>
+    <PackageProjectUrl>https://design.rvmit.com.br</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Elfarrar/RVM.DesignSystem</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>blazor;design-system;components;acessibilidade;rvm</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+  </ItemGroup>
+
+</Project>

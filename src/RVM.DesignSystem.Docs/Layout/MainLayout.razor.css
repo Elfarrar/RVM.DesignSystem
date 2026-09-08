@@ -1,0 +1,51 @@
+/*
+  Casca do site, em CSS isolado do Blazor (gera os atributos b-*).
+
+  Por que aqui e nao no app.css global: alem de ser o lugar certo para estilo que so o
+  layout usa, isto e o que FAZ EXISTIR o bundle RVM.DesignSystem.Docs.styles.css.
+
+  O index.html referencia esse bundle — e o Blazor so o gera quando ha pelo menos um
+  .razor.css no projeto ou nas RCLs que ele consome. Enquanto nao havia nenhum, o
+  arquivo nao existia e o navegador registrava 404 no console.
+
+  Na dev o defeito ficava INVISIVEL: o `try_files ... /index.html` do Nginx devolve o
+  index com status 200 para qualquer caminho, entao o CSS faltando virava um 200 com
+  HTML dentro, que o navegador descarta em silencio. No GitHub Pages nao ha esse
+  fallback e o 404 aparece. E a mesma armadilha que os workflows deste repo comentam:
+  em host estatico, status 200 nao prova que o arquivo certo esta la.
+*/
+
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.site-header {
+    background: var(--site-bg-elev);
+    border-bottom: 1px solid var(--site-line);
+    padding: 1rem 1.5rem;
+}
+
+.site-brand {
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+}
+
+.site-main {
+    flex: 1;
+    padding: 2rem 1.5rem;
+    max-width: 46rem;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.site-footer {
+    background: var(--site-bg-elev);
+    border-top: 1px solid var(--site-line);
+    padding: 1rem 1.5rem;
+    color: var(--site-muted);
+    font-size: .875rem;
+}

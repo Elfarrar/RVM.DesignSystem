@@ -1,0 +1,59 @@
+# Publica o pacote RVM.DesignSystem no BaGet interno (10-infra § Distribuicao).
+#
+# Politica de versao (05 § Politica de versao):
+#   - push em dev    -> pre-release 0.x.y-alpha.<run_number>
+#   - push em master -> versao estavel, exatamente o que esta no .csproj
+name: Publish NuGet
+
+on:
+  push:
+    branches: [master, dev]
+    paths:
+      - 'src/RVM.DesignSystem/**'
+      - 'Directory.Packages.props'
+      - '.github/workflows/publish-nuget.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: design-nuget-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Pack + push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Pack
+        run: |
+          # Em dev o sufixo sai do numero do run: cada merge gera um alpha novo e
+          # ninguem e atualizado por acidente (o consumidor fixa versao exata).
+          if [ "${GITHUB_REF_NAME}" = "master" ]; then
+            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs
+          else
+            dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj -c Release -o nupkgs \
+              -p:VersionSuffix="alpha.${GITHUB_RUN_NUMBER}"
+          fi
+          ls -lh nupkgs
+
+      - name: Push no BaGet
+        env:
+          FEED: ${{ secrets.BAGET_FEED_URL }}
+          KEY: ${{ secrets.BAGET_API_KEY }}
+        run: |
+          if [ -z "$FEED" ] || [ -z "$KEY" ]; then
+            echo "::error::BAGET_FEED_URL ou BAGET_API_KEY ausente nos secrets do repositorio."
+            exit 1
+          fi
+          # O BaGet responde em http; allowInsecureConnections e o padrao do ecossistema.
+          for pkg in nupkgs/*.nupkg; do
+            dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate
+          done
