@@ -109,17 +109,21 @@ custo próprio, não continuação automática deste roadmap.
 O análogo, aqui, de "pendência que muda o modelo de dados": **depois da 1.0 publicada, mudar
 qualquer uma destas quebra todo consumidor.**
 
-> **Estado em 08/09/2026: cinco das seis fechadas.** Sobra o conjunto de ícones (item 2).
-> A paleta da marca — roxo do Visual Studio + azul do VS Code, do `rvmtech.com.br` — entrou
-> depois e também está fechada, **incluindo o modo escuro, aprovado pelo Rafael em 08/09/2026**
-> (`06` § A identidade da marca).
+> **Estado em 08/09/2026: as seis fechadas.** A paleta da marca — roxo do Visual Studio + azul
+> do VS Code, do `rvmtech.com.br` — entrou depois e também está fechada, **incluindo o modo
+> escuro** (`06` § A identidade da marca).
+>
+> Fica **uma decisão de contrato para a onda 2**, que não estava nesta lista: **quais ícones
+> entram no sprite**. Cada um é um nome público e bytes que todo consumidor baixa, então a lista
+> é curada junto dos componentes que os usam — não "por precaução".
 
 1. ✅ **Inglês.** Não por omissão — o `CLAUDE.md` do projeto já traz a regra ("nome de API
    pública em inglês, texto ao usuário final em PT-BR"), e a `DSGN-002` implementou assim
    (`RvmPalette.OnSurface`, `--rvm-color-on-surface`).
-2. ⏳ **Conjunto de ícones** — Lucide/Phosphor re-empacotado, ou conjunto próprio?
-   Suposição vigente: Lucide, MIT (`03`). *Trava: nome de ícone é API pública.*
-   **É a única pendência de contrato ainda aberta.**
+2. ✅ **Phosphor** — decidido pelo Rafael em 08/09/2026. 1512 ícones, MIT puro, re-empacotados no
+   build. O que decidiu foi o **peso preenchido**: o Phosphor publica `regular` e `fill` (entre
+   outros quatro), e esse par é o que expressa estado selecionado sem improviso. A v1 expõe só
+   esses dois — acrescentar peso depois é aditivo, remover é que quebra (`03` § Ícones).
 3. ✅ **`rem` fixo, com `clamp()` só no `display`.** Implementado na `DSGN-002`
    (`rvm-tokens.css`). Previsível vale mais que elegante numa v1; o `display` é a exceção porque
    um título de 3rem estoura a linha no celular.
