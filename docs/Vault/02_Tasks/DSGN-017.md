@@ -150,6 +150,23 @@ cliente. Nao e regressao, e nao tem conserto em host estatico — e a razao de a
 por CONTEUDO e de o monitor do Kuma ser do tipo `keyword`. A palavra-chave (`RVM Design System`,
 no `<title>` do `index.html`) continua no HTML cru, entao o monitor segue valendo.
 
+## A publicacao da 0.2.0 e um defeito no proprio workflow
+
+O push no BaGet **pendurou 25 minutos numa unica tentativa**. Cancelado a mao, o re-run do
+**mesmo commit** publicou em **40 segundos**. Confirma o diagnostico ja registrado: a rede entre
+o runner do GitHub e o BagEnd e intermitente, e o BagEnd estava saudavel o tempo todo (feed em
+200ms daqui, durante o travamento).
+
+O que nao estava registrado, e e o achado desta vez: **o laco de retry do workflow nao tinha
+timeout por tentativa.** O padrao do `dotnet nuget push` e alto o bastante para uma tentativa
+pendurada consumir o job inteiro — e as outras duas nunca chegam a rodar.
+
+> **Retry sem timeout por tentativa nao e retry: e uma espera longa com aparencia de retry.**
+
+Corrigido com `--timeout 120` (`DSGN-018`). Um pacote de 96 KB num feed que responde em 200ms
+nao tem por que levar mais que isso; com o timeout, as tres tentativas cabem em ~7 minutos e uma
+delas efetivamente acontece.
+
 ## O que fica para a onda 3
 
 - `RvmDialog`, `RvmToast`, `RvmAlert`, `RvmSkeleton`, `RvmSpinner`, `RvmProgress`,

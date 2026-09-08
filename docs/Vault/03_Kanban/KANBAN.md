@@ -13,6 +13,8 @@ _(vazio — a onda 2 foi promovida)_
 
 ## Concluido
 
+- [[DSGN-018]] — `--timeout` por tentativa no push do BaGet. Sem ele, uma tentativa pendurada
+  consumia o job inteiro e o retry nunca rodava — 25 min num push que o re-run fez em 40s.
 - [[DSGN-017]] — **Onda 2 EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): casca de
   aplicacao, layout, navegacao e densidade `Compact`. `design.rvmit.com.br` servindo o site
   montado com `RvmAppShell`. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos.

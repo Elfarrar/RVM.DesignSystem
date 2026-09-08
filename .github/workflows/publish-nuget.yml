@@ -75,10 +75,19 @@ jobs:
           #
           # Se o feed for http, e obrigatorio acrescentar --allow-insecure-connections:
           # sem a flag o push nao da erro, ele pendura ate o timeout.
+          #
+          # ⚠️ --timeout NAO E OPCIONAL AQUI, e a razao e sutil: sem ele o padrao do
+          # `dotnet nuget push` e alto o bastante para que UMA tentativa pendurada consuma o
+          # job inteiro, e o laco de retry logo abaixo nunca chega a rodar. Foi o que
+          # aconteceu ao publicar a 0.2.0 em 08/09/2026: 25 minutos numa unica tentativa, job
+          # cancelado a mao, e o re-run do MESMO commit publicou em 40 segundos.
+          #
+          # Retry sem timeout por tentativa nao e retry: e uma espera longa com aparencia de
+          # retry. 120s e folgado para um pacote de 96 KB num feed que responde em 200ms.
           for pkg in nupkgs/*.nupkg; do
             ok=0
             for tentativa in 1 2 3; do
-              if dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate; then
+              if dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate --timeout 120; then
                 ok=1
                 break
               fi
