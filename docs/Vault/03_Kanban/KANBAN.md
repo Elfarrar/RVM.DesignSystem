@@ -11,7 +11,8 @@
 
 - [[DSGN-021]] — **Criar sua paleta**: cores de estado escolhiveis (`RvmSeed`, aditivo) e a
   ferramenta em `/fundamentos/paleta` que gera **o CSS pronto**. Avisa quando a marca colide com
-  uma cor de estado — o caso em que "Salvar" e "Excluir" viram o mesmo botao. Sai como `1.1.0`.
+  uma cor de estado — o caso em que "Salvar" e "Excluir" viram o mesmo botao. No ar em dev,
+  `1.1.0-alpha.19` no BaGet. **Aguardando o Rafael para promover a `master` / `1.1.0`.**
 
 ## Concluido
 

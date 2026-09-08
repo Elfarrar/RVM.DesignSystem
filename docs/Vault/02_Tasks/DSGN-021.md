@@ -3,7 +3,7 @@ id: DSGN-021
 titulo: Criar sua paleta — cores de estado escolhiveis e gerador de CSS
 repo: RVM.DesignSystem
 tipo: feature
-status: em-andamento
+status: em-revisao
 criada: 2026-09-08
 ---
 
@@ -83,6 +83,8 @@ E o tipo de defeito que nenhum teste de contraste pega, porque contraste mede ca
 | Testes | 282 (eram 260), 0 aviso em `Release` |
 | Portao de contraste | 29 pares x 5 temas x 2 modos, mais 6 marcas x cores de estado extremas |
 | E2E | 7 testes, axe em 46 paginas x 2 modos |
+| Dev no ar | `design.dev.rvmtech.com.br/fundamentos/paleta` |
+| Pre-release | `1.1.0-alpha.19` no BaGet |
 
 ## O que fica fora, de proposito
 
