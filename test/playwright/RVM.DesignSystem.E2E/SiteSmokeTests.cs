@@ -554,4 +554,48 @@ public class SiteSmokeTests : IAsyncLifetime
         await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
         Assert.Equal(antes, await page.EvaluateAsync<string>(Primaria));
     }
+
+    /// <summary>
+    /// As duas aparencias do preview passam no axe.
+    /// </summary>
+    /// <remarks>
+    /// O preview e temporario (DSGN-025) e este teste sai junto com ele. Existe enquanto durar
+    /// porque <b>o "marcante" pinta a topbar com <c>primary-container</c></b>, e mudar a cor de
+    /// um fundo e exatamente o tipo de mudanca que quebra contraste sem ninguem notar.
+    ///
+    /// <para>
+    /// O portao de contraste da biblioteca <b>nao alcanca isto</b>: ele mede pares da paleta, e
+    /// aqui a questao e qual par foi aplicado em qual elemento. So o axe, no navegador, ve isso.
+    /// </para>
+    /// </remarks>
+    [SkippableFact]
+    public async Task As_duas_aparencias_do_preview_passam_no_axe()
+    {
+        Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
+
+        var page = await _browser!.NewPageAsync();
+        var problemas = new List<string>();
+
+        foreach (var aparencia in new[] { "sobrio", "marcante" })
+        {
+            foreach (var rota in new[] { "", "/padroes/listagem", "/componentes/button" })
+            {
+                await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}{rota}");
+                await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
+
+                await page.EvaluateAsync(
+                    "a => document.documentElement.setAttribute('data-rvm-aparencia', a)", aparencia);
+
+                var resultado = await page.RunAxe();
+
+                foreach (var v in resultado.Violations.Where(v => v.Impact is "serious" or "critical"))
+                {
+                    problemas.Add($"[{aparencia}] {(rota.Length == 0 ? "/" : rota)}: {v.Id} ({v.Impact}) — {v.Help}");
+                }
+            }
+        }
+
+        Assert.True(problemas.Count == 0,
+            $"{problemas.Count} problema(s) nas aparencias do preview:\n" + string.Join("\n", problemas));
+    }
 }

@@ -1,0 +1,127 @@
+/*
+  PREVIEW DE APARENCIA — temporario, e para ser APAGADO quando o Rafael escolher.
+
+  Existe para uma decisao de gosto (DSGN-025): a v1 ficou visualmente chapada, e ha duas
+  direcoes plausiveis para consertar. Em vez de eu escolher e ele revisar depois de pronto,
+  as duas ficam no ar ao mesmo tempo, na mesma tela de verdade.
+
+  ⚠️ NADA AQUI E A BIBLIOTECA. Este arquivo so redefine TOKENS e estiliza classes publicas
+  `rvm-*` a partir do site. Quando a direcao for escolhida, o que valer vira mudanca no pacote
+  (com o teste de contraste e o axe como portao) e este arquivo morre.
+
+  ⚠️ E POR ISSO QUE NENHUM PRESET MEXE EM COR DE SUPERFICIE. A paleta nasce verificada pelo
+  `RvmContrast.Ensure` e o teste mede 29 pares a cada build; um cinza redefinido a mao aqui
+  furaria essa garantia EM SILENCIO — a tela continuaria bonita e o portao nao teria como saber.
+  Tingir superficie e mudanca de motor de tema, nao de folha de estilo. Fica para depois da
+  escolha, com o portao junto.
+
+  O que os presets mexem: profundidade (sombra), tipografia, raio e movimento. Onde uso cor, uso
+  papel ja verificado (`primary-container` / `on-primary-container`), nunca valor literal.
+
+  A especificidade dobrada (`.rvm-card.rvm-card`) nao e capricho: o CSS isolado do componente sai
+  como `.rvm-card--elev-0[b-xxx]`, que empata com um seletor simples e vence pela ordem de
+  carregamento. Dobrar a classe ganha sem precisar de `!important`.
+*/
+
+/* ============================================================
+   SOBRIO — profundidade percebida, hierarquia clara, sem drama.
+   ============================================================ */
+
+:root[data-rvm-aparencia="sobrio"] {
+    /* As sombras da v1 sao pretas a 6%: existem no token e nao aparecem na tela. */
+    --rvm-shadow-1: 0 1px 3px rgb(0 0 0 / 0.10), 0 1px 2px rgb(0 0 0 / 0.06);
+    --rvm-shadow-2: 0 3px 6px rgb(0 0 0 / 0.11), 0 2px 4px rgb(0 0 0 / 0.07);
+    --rvm-shadow-3: 0 6px 12px rgb(0 0 0 / 0.12), 0 3px 6px rgb(0 0 0 / 0.08);
+    --rvm-shadow-4: 0 12px 24px rgb(0 0 0 / 0.14), 0 5px 10px rgb(0 0 0 / 0.08);
+    --rvm-shadow-5: 0 24px 48px rgb(0 0 0 / 0.16), 0 10px 18px rgb(0 0 0 / 0.10);
+
+    /* Salto maior entre niveis: 2.25 -> 1.875 lia como "dois tamanhos parecidos". */
+    --rvm-font-size-h1: 2.75rem;
+    --rvm-font-size-h2: 2rem;
+    --rvm-font-size-h3: 1.5rem;
+    --rvm-line-height-heading: 1.18;
+
+    --rvm-radius-md: 0.625rem;
+    --rvm-radius-lg: 0.875rem;
+}
+
+:root[data-rvm-aparencia="sobrio"] .rvm-card.rvm-card {
+    box-shadow: var(--rvm-shadow-1);
+    border-color: transparent;
+}
+
+:root[data-rvm-aparencia="sobrio"] .rvm-topbar.rvm-topbar {
+    box-shadow: var(--rvm-shadow-1);
+}
+
+/* ============================================================
+   MARCANTE — a casca tem presenca, o conteudo tem peso.
+   ============================================================ */
+
+:root[data-rvm-aparencia="marcante"] {
+    --rvm-shadow-1: 0 2px 4px rgb(0 0 0 / 0.12), 0 1px 2px rgb(0 0 0 / 0.08);
+    --rvm-shadow-2: 0 4px 10px rgb(0 0 0 / 0.14), 0 2px 4px rgb(0 0 0 / 0.09);
+    --rvm-shadow-3: 0 10px 20px rgb(0 0 0 / 0.16), 0 4px 8px rgb(0 0 0 / 0.10);
+    --rvm-shadow-4: 0 18px 36px rgb(0 0 0 / 0.18), 0 8px 14px rgb(0 0 0 / 0.11);
+    --rvm-shadow-5: 0 32px 64px rgb(0 0 0 / 0.22), 0 14px 24px rgb(0 0 0 / 0.13);
+
+    --rvm-font-size-h1: 3.25rem;
+    --rvm-font-size-h2: 2.25rem;
+    --rvm-font-size-h3: 1.625rem;
+    --rvm-line-height-heading: 1.08;
+
+    --rvm-radius-md: 0.75rem;
+    --rvm-radius-lg: 1rem;
+}
+
+:root[data-rvm-aparencia="marcante"] h1 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+:root[data-rvm-aparencia="marcante"] .rvm-card.rvm-card {
+    box-shadow: var(--rvm-shadow-2);
+    border-color: transparent;
+}
+
+/* A casca inteira ganha a cor da marca. Papel ja verificado contra o par dele — nunca um
+   valor literal, que passaria por fora do portao de contraste. */
+:root[data-rvm-aparencia="marcante"] .rvm-topbar.rvm-topbar {
+    background-color: var(--rvm-color-primary-container);
+    color: var(--rvm-color-on-primary-container);
+    box-shadow: var(--rvm-shadow-2);
+}
+
+:root[data-rvm-aparencia="marcante"] .rvm-sidebar.rvm-sidebar {
+    background-color: var(--rvm-color-surface-sunken);
+}
+
+/* ============================================================
+   MOVIMENTO — vale para os dois presets.
+   ============================================================ */
+
+:root[data-rvm-aparencia="sobrio"] .rvm-card.rvm-card,
+:root[data-rvm-aparencia="marcante"] .rvm-card.rvm-card,
+:root[data-rvm-aparencia="sobrio"] .rvm-button,
+:root[data-rvm-aparencia="marcante"] .rvm-button {
+    transition: box-shadow var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
+                transform var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+:root[data-rvm-aparencia="marcante"] .rvm-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--rvm-shadow-2);
+}
+
+/* `prefers-reduced-motion` respeitado em toda animacao (CLAUDE.md § Convencoes). Movimento
+   involuntario e gatilho de enxaqueca e de vertigem — nao e questao de gosto. */
+@media (prefers-reduced-motion: reduce) {
+    :root[data-rvm-aparencia] .rvm-card.rvm-card,
+    :root[data-rvm-aparencia] .rvm-button {
+        transition: none;
+    }
+
+    :root[data-rvm-aparencia="marcante"] .rvm-button:hover:not(:disabled) {
+        transform: none;
+    }
+}
