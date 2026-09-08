@@ -12,7 +12,8 @@
 - [[DSGN-017]] — **Onda 2**: casca de aplicacao (`RvmAppShell`/`Sidebar`/`Topbar`/`NavItem`),
   layout (`Stack`/`Grid`/`Card`/`Divider`), conteudo e navegacao (`Chip`/`Avatar`/`Tabs`/
   `Breadcrumb`) e densidade `Compact`. **O proprio site ja usa a casca** — criterio de saida
-  cumprido. 184 testes, 29 pares de contraste. Sai como `0.2.0`.
+  cumprido. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos. No ar em dev,
+  `0.2.0-alpha.12` no BaGet. **Aguardando o Rafael para promover a `master` / `0.2.0`.**
 
 ## Concluido
 
