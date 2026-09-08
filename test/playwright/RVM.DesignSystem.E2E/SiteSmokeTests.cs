@@ -462,6 +462,18 @@ public class SiteSmokeTests : IAsyncLifetime
     /// nunca fosse aplicado — seria um verde falso.
     /// </para>
     /// </remarks>
+    /// <summary>
+    /// Espera generosa para a casca aparecer depois de uma carga completa.
+    /// </summary>
+    /// <remarks>
+    /// O teste da paleta recarrega a pagina tres vezes, e cada recarga paga o boot do WASM
+    /// inteiro de novo. Os 5s padrao do Playwright dao conta de um site quente e reprovam um
+    /// frio — uma falha que fala do servidor ter acabado de subir, nunca do produto.
+    /// </remarks>
+    private static LocatorAssertionsToBeVisibleOptions Carregou => new() { Timeout = 30_000 };
+
+    private static LocatorAssertionsToContainTextOptions CarregouTexto => new() { Timeout = 30_000 };
+
     [SkippableFact]
     public async Task Mudar_a_cor_na_pagina_de_paleta_repinta_o_site_inteiro()
     {
@@ -472,7 +484,7 @@ public class SiteSmokeTests : IAsyncLifetime
 
         var page = await _browser!.NewPageAsync();
         await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/fundamentos/paleta");
-        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync();
+        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
 
         var antes = await page.EvaluateAsync<string>(Primaria);
         Assert.False(string.IsNullOrWhiteSpace(antes), "O site subiu sem --rvm-color-primary.");
@@ -510,10 +522,36 @@ public class SiteSmokeTests : IAsyncLifetime
         Assert.True(serias.Count == 0,
             "A paleta do visitante quebrou a acessibilidade da pagina:\n" + string.Join("\n", serias));
 
+        // ---- A paleta e GUARDADA. Foi o defeito que o Rafael achou usando: sair da pagina e
+        // voltar trazia o formulario nos valores iniciais, com o site ainda pintado. ----
+
+        var menu = page.GetByRole(AriaRole.Navigation, new() { Name = "Navegação da documentação" });
+
+        await menu.GetByRole(AriaRole.Link, new() { Name = "Button", Exact = true }).ClickAsync();
+        await Assertions.Expect(page.Locator("h1")).ToContainTextAsync("RvmButton", CarregouTexto);
+        Assert.Equal(depois, await page.EvaluateAsync<string>(Primaria));
+
+        await menu.GetByRole(AriaRole.Link, new() { Name = "Criar sua paleta" }).ClickAsync();
+        await Assertions.Expect(page.GetByLabel("Primária, em hexadecimal")).ToHaveValueAsync("#B3261E");
+        await Assertions.Expect(page.GetByText("O site inteiro está nas suas cores.")).ToBeVisibleAsync();
+
+        // E sobrevive ao F5 — o que a navegacao entre paginas sozinha nao provaria, porque o
+        // servico de tema vive no mesmo circuito.
+        await page.ReloadAsync();
+        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
+        Assert.Equal(depois, await page.EvaluateAsync<string>(Primaria));
+        await Assertions.Expect(page.GetByLabel("Primária, em hexadecimal")).ToHaveValueAsync("#B3261E");
+
         // E da para sair. Sem este caminho, quem experimentasse uma cor ficaria preso nela.
         await page.GetByRole(AriaRole.Button, new() { Name = "Restaurar o tema do site" }).ClickAsync();
         await Assertions.Expect(page.GetByText("O site inteiro está nas suas cores.")).ToBeHiddenAsync();
 
+        Assert.Equal(antes, await page.EvaluateAsync<string>(Primaria));
+
+        // Restaurar tem de APAGAR o que estava guardado. Se so repintasse a tela, o proximo F5
+        // traria a paleta de volta e o botao pareceria nao ter funcionado.
+        await page.ReloadAsync();
+        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
         Assert.Equal(antes, await page.EvaluateAsync<string>(Primaria));
     }
 }

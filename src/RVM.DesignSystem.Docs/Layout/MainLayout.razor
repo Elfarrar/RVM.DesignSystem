@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @inject IRvmThemeService Tema
+@inject PaletaDoVisitante Paleta
 
 @*
     ⚠️ Este arquivo É o critério de saída da onda 2 (`09-roadmap.md`).
@@ -118,9 +119,18 @@
     {
         var lista = TemasDoSeletor;
 
-        if (int.TryParse(e.Value?.ToString(), out var i) && i >= 0 && i < lista.Count)
+        if (!int.TryParse(e.Value?.ToString(), out var i) || i < 0 || i >= lista.Count)
         {
-            await Tema.SetThemeAsync(lista[i]);
+            return;
+        }
+
+        await Tema.SetThemeAsync(lista[i]);
+
+        // Escolher um tema embutido APAGA a paleta guardada. Sem isto o proximo F5 a traria de
+        // volta por cima da escolha que acabou de ser feita aqui.
+        if (i < RvmThemes.All.Count)
+        {
+            await Paleta.EsquecerAsync();
         }
     }
 
@@ -132,11 +142,22 @@
 
     protected override async Task OnAfterRenderAsync(bool primeiraVez)
     {
-        if (primeiraVez && Tema is RvmThemeService servico)
+        if (!primeiraVez)
+        {
+            return;
+        }
+
+        if (Tema is RvmThemeService servico)
         {
             var preferencia = await servico.LoadPreferenceAsync();
             _escuro = preferencia == RvmThemePreference.Dark;
-            StateHasChanged();
         }
+
+        // A paleta do visitante e lida pela CASCA, e nao so pela pagina que a monta: ela vale
+        // para o site inteiro, entao entrar direto em /componentes/button ja tem que chegar
+        // pintado. A leitura do localStorage acontece uma vez so — o servico e quem garante.
+        await Paleta.CarregarAsync();
+
+        StateHasChanged();
     }
 }
