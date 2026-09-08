@@ -3,7 +3,7 @@ id: DSGN-019
 titulo: Onda 3 — feedback
 repo: RVM.DesignSystem
 tipo: feature
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 
@@ -117,5 +117,17 @@ metodo.**
 | Dev no ar | `design.dev.rvmtech.com.br`, verificado por CONTEUDO |
 | Pre-release | `0.3.0-alpha.15` no BaGet |
 
-O publish desta onda foi o primeiro com o `--timeout 120` do `DSGN-018`, e passou em tempo
-normal.
+| Prod no ar | `design.rvmit.com.br`, verificado por CONTEUDO e no navegador |
+| Pacote | **`0.3.0`** no BaGet, pela tag `v0.3.0` |
+
+## Promocao para producao — 08/09/2026
+
+Autorizada pelo Rafael. `dev` -> `master` pelo PR #30, deploy do Pages verde, dialogo conferido
+no navegador em producao (`:modal` verdadeiro, foco no botao de fechar, `ESC` fecha).
+
+**O `--timeout 120` do `DSGN-018` valeu na pratica.** O publish da `0.2.0` pendurou 25 minutos
+numa unica tentativa; o desta tag levou **21 segundos**.
+
+⚠️ Um run rapido nao prova sozinho que o timeout resolveu — a rede podia estar boa. O que o
+`--timeout` garante e outra coisa, e e ela que importa: **uma tentativa ruim agora custa 2
+minutos em vez do job inteiro**, e as outras duas do laco chegam a rodar.

@@ -9,15 +9,15 @@
 
 ## Em revisao
 
-- [[DSGN-019]] — **Onda 3**: dialogo (`<dialog>` nativo), toast, alerta, estado vazio, spinner,
-  progresso, esqueleto e tooltip. Mais a secao Padroes e a busca do site (`RF-27`). 223 testes,
-  E2E com o criterio de saida da onda. No ar em dev, `0.3.0-alpha.15` no BaGet.
-  **Aguardando o Rafael para promover a `master` / `0.3.0`.**
+_(vazio — a onda 3 foi promovida)_
 
 ## Concluido
 
-- [[DSGN-018]] — `--timeout` por tentativa no push do BaGet. Sem ele, uma tentativa pendurada
-  consumia o job inteiro e o retry nunca rodava — 25 min num push que o re-run fez em 40s.
+- [[DSGN-019]] — **Onda 3 EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): dialogo, toast,
+  alerta, estado vazio, spinner, progresso, esqueleto e tooltip. Mais a secao Padroes e a busca
+  do site. **`0.3.0` no BaGet** pela tag `v0.3.0`. 223 testes.
+- [[DSGN-018]] — `--timeout` por tentativa no push do BaGet. Validado na pratica: o publish da
+  `0.3.0` levou 21s, contra 25 min de uma tentativa pendurada na `0.2.0`.
 - [[DSGN-017]] — **Onda 2 EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): casca de
   aplicacao, layout, navegacao e densidade `Compact`. `design.rvmit.com.br` servindo o site
   montado com `RvmAppShell`. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos.
