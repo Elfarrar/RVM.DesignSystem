@@ -16,6 +16,12 @@
 
 ## Em revisao
 
+- [[DSGN-023]] — **A paleta em construcao repinta o site inteiro**: mexeu numa cor em
+  `/fundamentos/paleta`, a documentacao toda passa a usar a paleta — que e o unico jeito de ver
+  que uma primaria vermelha faz "Salvar" parecer "Excluir". Zero mudanca na biblioteca: o
+  mecanismo ja existia. Revelou e corrigiu um seletor de tema que **mentia** com tema fora da
+  lista.
+
 - [[DSGN-021]] — **Criar sua paleta**: cores de estado escolhiveis (`RvmSeed`, aditivo) e a
   ferramenta em `/fundamentos/paleta` que gera **o CSS pronto**. Avisa quando a marca colide com
   uma cor de estado — o caso em que "Salvar" e "Excluir" viram o mesmo botao. No ar em dev,

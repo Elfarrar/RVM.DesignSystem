@@ -346,6 +346,35 @@
 
 .paleta__entradas--acima { margin-top: var(--rvm-space-4); }
 
+/* O aviso de que o site inteiro esta espelhando a paleta em construcao.
+
+   A borda esquerda usa a --rvm-color-primary de proposito: ela e a cor que a pessoa acabou de
+   escolher, entao o proprio aviso e uma amostra do que mudou. */
+.paleta__espelho {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-4);
+    margin-top: var(--rvm-space-6);
+    padding: var(--rvm-space-4);
+    border: 1px solid var(--rvm-color-border);
+    border-left: 4px solid var(--rvm-color-primary);
+    border-radius: var(--rvm-radius-md);
+    background: var(--rvm-color-surface-raised);
+}
+
+.paleta__espelho-titulo {
+    margin: 0;
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.paleta__espelho-texto {
+    margin: var(--rvm-space-1) 0 0;
+    max-width: 60ch;
+    color: var(--rvm-color-on-surface-variant);
+}
+
 .color-input {
     display: flex;
     flex-direction: column;

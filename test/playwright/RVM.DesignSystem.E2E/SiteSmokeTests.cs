@@ -447,4 +447,73 @@ public class SiteSmokeTests : IAsyncLifetime
         // quem chamou foi respondido, e nao apenas que a caixa sumiu.
         await Assertions.Expect(page.GetByText("cancelou (ou saiu com ESC)")).ToBeVisibleAsync();
     }
+
+    /// <summary>
+    /// Mudar uma cor em /fundamentos/paleta repinta o site inteiro, e da para voltar.
+    /// </summary>
+    /// <remarks>
+    /// Este teste mora no E2E, e nao no bUnit, porque o que ele verifica NAO cabe num
+    /// componente: a cor sai da pagina, passa pelo servico de tema, vira uma custom property no
+    /// elemento raiz e so entao chega a barra lateral. E o navegador que fecha esse circuito.
+    ///
+    /// <para>
+    /// Ele mede a variavel CSS <b>calculada</b>, nao o que a pagina desenhou em si mesma. As
+    /// amostras da propria pagina saem de estilo inline e continuariam certas mesmo se o tema
+    /// nunca fosse aplicado — seria um verde falso.
+    /// </para>
+    /// </remarks>
+    [SkippableFact]
+    public async Task Mudar_a_cor_na_pagina_de_paleta_repinta_o_site_inteiro()
+    {
+        Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
+
+        const string Primaria = "getComputedStyle(document.documentElement)"
+            + ".getPropertyValue('--rvm-color-primary').trim()";
+
+        var page = await _browser!.NewPageAsync();
+        await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/fundamentos/paleta");
+        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync();
+
+        var antes = await page.EvaluateAsync<string>(Primaria);
+        Assert.False(string.IsNullOrWhiteSpace(antes), "O site subiu sem --rvm-color-primary.");
+
+        // Pelo campo hexadecimal, nao pelo seletor de cor: o <input type="color"> abre um dialogo
+        // do sistema operacional, que o Playwright nao alcanca.
+        await page.GetByLabel("Primária, em hexadecimal").FillAsync("#B3261E");
+        await page.Keyboard.PressAsync("Tab");   // @onchange do Blazor dispara no blur
+
+        await Assertions.Expect(page.GetByText("O site inteiro está nas suas cores."))
+            .ToBeVisibleAsync();
+
+        var depois = await page.EvaluateAsync<string>(Primaria);
+        Assert.NotEqual(antes, depois);
+
+        // A cor aplicada e a DERIVADA, nao a digitada: o motor recalcula a luminosidade ate
+        // atender AA. Conferir contra a amostra "primary" da propria pagina prova que o site
+        // recebeu a paleta inteira, e nao um valor solto.
+        var amostra = await page.Locator(".paleta__hex").First.InnerTextAsync();
+        Assert.Equal(amostra.Trim(), depois, ignoreCase: true);
+
+        // O seletor da topbar precisa ADMITIR a paleta do visitante. Sem isto ele mostraria
+        // "RVM" com o site em vermelho.
+        var selecionado = await page.Locator("#seletor-tema option:checked").InnerTextAsync();
+        Assert.Contains("sua paleta", selecionado, StringComparison.Ordinal);
+
+        // Uma paleta de fora tambem precisa passar no axe — o portao nao vale so para as cores
+        // que nos escolhemos.
+        var auditoria = await page.RunAxe();
+        var serias = auditoria.Violations
+            .Where(v => v.Impact is "serious" or "critical")
+            .Select(v => $"{v.Id} ({v.Impact}) — {v.Help}")
+            .ToList();
+
+        Assert.True(serias.Count == 0,
+            "A paleta do visitante quebrou a acessibilidade da pagina:\n" + string.Join("\n", serias));
+
+        // E da para sair. Sem este caminho, quem experimentasse uma cor ficaria preso nela.
+        await page.GetByRole(AriaRole.Button, new() { Name = "Restaurar o tema do site" }).ClickAsync();
+        await Assertions.Expect(page.GetByText("O site inteiro está nas suas cores.")).ToBeHiddenAsync();
+
+        Assert.Equal(antes, await page.EvaluateAsync<string>(Primaria));
+    }
 }
