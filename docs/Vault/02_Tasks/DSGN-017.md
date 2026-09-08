@@ -3,7 +3,7 @@ id: DSGN-017
 titulo: Onda 2 — casca de aplicacao, layout e navegacao
 repo: RVM.DesignSystem
 tipo: feature
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 
@@ -136,7 +136,19 @@ Nenhum tem teste unitario capaz de pegar sozinho, e todos foram achados montando
 | Varredura de avatar | 360 matizes + 16 nomes |
 | axe no E2E | 29 paginas x 2 modos, zero violacao seria |
 | Dev no ar | `design.dev.rvmtech.com.br`, verificado por conteudo |
-| Pacote | `0.2.0-alpha.12` no BaGet |
+| Prod no ar | `design.rvmit.com.br`, verificado por CONTEUDO (o CSS da onda 2 no bundle da RCL) |
+| Pre-release | `0.2.0-alpha.12` no BaGet |
+
+## Promocao para producao — 08/09/2026
+
+Autorizada pelo Rafael. `dev` -> `master` pelo PR #25, deploy do Pages verde, prod conferida no
+navegador nos dois modos de cor.
+
+⚠️ **Rota profunda em producao devolve HTTP 404 com a pagina certa.** E o fallback do GitHub
+Pages: caminho desconhecido serve o `404.html`, que e copia do `index.html`, e o Blazor roteia no
+cliente. Nao e regressao, e nao tem conserto em host estatico — e a razao de a verificacao ser
+por CONTEUDO e de o monitor do Kuma ser do tipo `keyword`. A palavra-chave (`RVM Design System`,
+no `<title>` do `index.html`) continua no HTML cru, entao o monitor segue valendo.
 
 ## O que fica para a onda 3
 
