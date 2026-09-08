@@ -9,13 +9,13 @@
 
 ## Em revisao
 
-- [[DSGN-020]] — **Onda 4**: `RvmDataGrid`, `RvmPagination`, `RvmFilterBar`, `RvmDatePicker`,
-  `RvmAutocomplete` e a tela de Listagem com 487 linhas. 260 testes, E2E com o criterio de saida.
-  No ar em dev, `1.0.0-alpha.17` no BaGet. **Aguardando o Rafael para promover a `master` /
-  `1.0.0`** — e esta e a promocao que congela o contrato.
+_(vazio — a v1 esta entregue)_
 
 ## Concluido
 
+- [[DSGN-020]] — 🎉 **Onda 4 EM PRODUCAO e a `1.0.0` PUBLICADA** (08/09/2026, autorizada pelo
+  Rafael): grid, paginacao, filtro, data e busca assincrona, mais a tela de Listagem com 487
+  linhas. **Os 35 componentes da v1 estao entregues e o contrato esta congelado.** 260 testes.
 - [[DSGN-019]] — **Onda 3 EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): dialogo, toast,
   alerta, estado vazio, spinner, progresso, esqueleto e tooltip. Mais a secao Padroes e a busca
   do site. **`0.3.0` no BaGet** pela tag `v0.3.0`. 223 testes.

@@ -6,12 +6,13 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 **Prefixo de task:** `DSGN-NNN` · contador próprio · card em `docs/Vault/02_Tasks/`,
 índice em `docs/Vault/03_Kanban/KANBAN.md`.
 
-> **Estado em 08/09/2026 — onda 1 fechada e em produção.** Repositório **público**
-> (MIT), nove componentes básicos, camada de tokens, motor de tema com claro/escuro,
-> ícones Phosphor, e site de documentação com 16 páginas — no ar em
+> **Estado em 08/09/2026 — 🎉 a v1 está entregue.** Repositório **público** (MIT), os
+> **35 componentes** das quatro ondas, camada de tokens, motor de tema com claro/escuro,
+> ícones Phosphor curados e site de documentação com 45 páginas — no ar em
 > `design.rvmit.com.br` e `design.dev.rvmtech.com.br`.
-> **Pacote estável `0.1.0`** no BaGet, publicado pela tag `v0.1.0`.
-> Próximo: onda 2 (Layout) — `RvmAppShell`, `RvmSidebar`, `RvmCard`, `RvmTabs`.
+> **Pacote estável `1.0.0`** no BaGet, publicado pela tag `v1.0.0`.
+> **O contrato está congelado**: daqui em diante, mudança que quebra é major.
+> Não há onda 5 — o que vem é adoção, e ela é só em projeto novo (`09` § Adoção).
 
 ## Escopo
 
@@ -171,11 +172,13 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   spinner, progresso, esqueleto e tooltip — mais a seção Padrões e a busca do site (`RF-27`).
   O `RvmDialog` é o `<dialog>` **nativo** com `showModal()`; foco preso, ESC e retorno de foco
   vêm do navegador. **Não reimplementar isso à mão.**
-- ✅ **Onda 4 fechada, sai como `1.0.0`** (`DSGN-020`): `RvmDataGrid`, `RvmPagination`,
+- 🎉 **Onda 4 EM PRODUÇÃO e a `1.0.0` PUBLICADA** (`DSGN-020`, autorizada por ele em
+  08/09/2026): `RvmDataGrid`, `RvmPagination`,
   `RvmFilterBar`, `RvmDatePicker`, `RvmAutocomplete` e a tela de Listagem com 487 linhas.
   **Os 35 componentes da v1 estão entregues.**
-- ⚠️ **A `1.0.0` congela o contrato.** Daqui em diante, mudança que quebra é major — as ondas
-  anteriores puderam tornar papel de paleta `required` sem cerimônia; isso acabou.
+- ⚠️ **A `1.0.0` está no ar e o contrato ESTÁ congelado.** Daqui em diante, mudança que quebra
+  é major — as ondas anteriores puderam tornar papel de paleta `required` sem cerimônia; isso
+  acabou. A tag `v1.0.0` prende a versão ao commit `2366388`.
 - Próximo passo: **não há onda 5**. O que vem é adoção — e ela é só em projeto novo (`09` §
   Adoção). O próximo projeto RVM que precisar de UI nasce aqui, e é ele quem prova a biblioteca.
 
