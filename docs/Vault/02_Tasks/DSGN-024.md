@@ -3,7 +3,7 @@ id: DSGN-024
 titulo: A paleta do visitante fica guardada no navegador
 repo: RVM.DesignSystem
 tipo: bugfix
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 
