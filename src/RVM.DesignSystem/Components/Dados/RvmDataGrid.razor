@@ -1,0 +1,594 @@
+@namespace RVM.DesignSystem.Components
+@typeparam TItem
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@*
+    ⚠️ Desvio declarado do `11`, que pede "navegação por teclado entre células".
+
+    Isto é uma `<table>` SEMÂNTICA, sem `role="grid"` e sem tabindex móvel entre células — e a
+    razão é que `role="grid"` tornaria a tabela MENOS navegável, não mais.
+
+    Um leitor de tela já sabe percorrer tabela: NVDA e JAWS têm modo de tabela próprio, com
+    Ctrl+Alt+setas, anúncio de cabeçalho ao mudar de coluna e leitura de linha inteira. Pôr
+    `role="grid"` DESLIGA esse modo e obriga a pessoa a usar a navegação que nós escrevermos —
+    que será pior, porque o leitor dela foi feito para isso e nós não.
+
+    O APW é explícito: `grid` é para tabela INTERATIVA, onde a célula em si é um controle
+    (edição in-loco, planilha). Aqui a célula é dado. O que é interativo — ordenar, selecionar —
+    são botões e checkboxes de verdade, que entram na tabulação normal.
+
+    Fica então: `<table>` com `<caption>`, `scope` nos cabeçalhos e `aria-sort` na coluna
+    ordenada. Edição in-loco está fora da v1 (`09` § Fora da v1); no dia em que entrar, aí sim
+    a discussão de `role="grid"` faz sentido.
+*@
+
+<div class="@ClasseFinal" @attributes="AdditionalAttributes">
+    <CascadingValue Value="this" IsFixed="true">
+        @* As colunas se registram aqui e não renderizam nada — ver RvmColumn. *@
+        @Columns
+    </CascadingValue>
+
+    <div class="rvm-data-grid__rolagem" tabindex="0" role="region" aria-label="@Caption">
+        <table class="rvm-data-grid__tabela" aria-busy="@(Loading ? "true" : null)">
+            <caption class="rvm-sr-only">@LegendaCompleta</caption>
+
+            <thead class="rvm-data-grid__cabecalho">
+                <tr>
+                    @if (SelectionMode == RvmSelectionMode.Multiple)
+                    {
+                        <th scope="col" class="rvm-data-grid__selecao">
+                            <input type="checkbox"
+                                   class="rvm-data-grid__checkbox"
+                                   aria-label="@SelectAllLabel"
+                                   checked="@TodasDaPaginaSelecionadas"
+                                   @ref="_checkboxDeTodos"
+                                   @onchange="AlternarTodasDaPagina" />
+                        </th>
+                    }
+                    else if (SelectionMode == RvmSelectionMode.Single)
+                    {
+                        <th scope="col" class="rvm-data-grid__selecao">
+                            <span class="rvm-sr-only">@SelectColumnLabel</span>
+                        </th>
+                    }
+
+                    @foreach (var coluna in _colunas)
+                    {
+                        <th scope="col"
+                            class="@ClasseDaCelula(coluna)"
+                            style="@(coluna.Width is null ? null : $"width:{coluna.Width}")"
+                            aria-sort="@AriaSort(coluna)">
+                            @if (coluna.Sortable)
+                            {
+                                @* Botão de verdade dentro do th: Enter e Espaço funcionam sem
+                                   nenhum handler de teclado nosso. *@
+                                <button type="button"
+                                        class="rvm-data-grid__ordenar"
+                                        aria-label="@RotuloDeOrdenacao(coluna)"
+                                        @onclick="() => Ordenar(coluna)">
+                                    <span>@(coluna.HeaderTemplate is null ? coluna.Title : null)</span>
+                                    @if (coluna.HeaderTemplate is not null)
+                                    {
+                                        @coluna.HeaderTemplate
+                                    }
+                                    <RvmIcon Name="@IconeDeOrdenacao(coluna)"
+                                             Class="rvm-data-grid__seta"
+                                             Size="0.875rem" />
+                                </button>
+                            }
+                            else if (coluna.HeaderTemplate is not null)
+                            {
+                                @coluna.HeaderTemplate
+                            }
+                            else
+                            {
+                                @coluna.Title
+                            }
+                        </th>
+                    }
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Loading)
+                {
+                    @* Esqueleto NAS LINHAS, com o mesmo número de colunas: a tabela não muda de
+                       forma quando os dados chegam. O aria-busy da table é quem anuncia. *@
+                    @for (var i = 0; i < LinhasDeEsqueleto; i++)
+                    {
+                        <tr>
+                            @if (SelectionMode != RvmSelectionMode.None)
+                            {
+                                <td><RvmSkeleton Shape="RvmSkeletonShape.Rect" Width="1rem" Height="1rem" /></td>
+                            }
+                            @foreach (var coluna in _colunas)
+                            {
+                                <td><RvmSkeleton /></td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    @foreach (var item in LinhasVisiveis)
+                    {
+                        var linha = item;
+                        var selecionada = EstaSelecionada(linha);
+
+                        <tr class="@(selecionada ? "rvm-data-grid__linha rvm-data-grid__linha--selecionada" : "rvm-data-grid__linha")"
+                            aria-selected="@(SelectionMode == RvmSelectionMode.None ? null : selecionada.ToString().ToLowerInvariant())">
+
+                            @if (SelectionMode != RvmSelectionMode.None)
+                            {
+                                <td class="rvm-data-grid__selecao">
+                                    @* radio na seleção única, checkbox na múltipla: o controle
+                                       nativo já comunica "uma" ou "várias" ao leitor de tela. *@
+                                    <input type="@(SelectionMode == RvmSelectionMode.Single ? "radio" : "checkbox")"
+                                           name="@(SelectionMode == RvmSelectionMode.Single ? _nomeDaSelecao : null)"
+                                           class="rvm-data-grid__checkbox"
+                                           aria-label="@RotuloDaLinha(linha)"
+                                           checked="@selecionada"
+                                           @onchange="() => AlternarLinha(linha)" />
+                                </td>
+                            }
+
+                            @foreach (var coluna in _colunas)
+                            {
+                                <td class="@ClasseDaCelula(coluna)">
+                                    @if (coluna.CellTemplate is not null)
+                                    {
+                                        @coluna.CellTemplate(linha)
+                                    }
+                                    else
+                                    {
+                                        @coluna.TextoDe(linha)
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @* Os três estados que NÃO são "a lista" ficam fora da tabela, e cada um pede uma ação
+       diferente — é o padrão de `/padroes` § Carregando, vazio, com erro. *@
+    @if (!Loading && Error is not null)
+    {
+        <RvmEmptyState Variant="RvmEmptyStateVariant.Error" Description="@Error">
+            <Actions>
+                @if (OnRetry.HasDelegate)
+                {
+                    <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="OnRetry">@RetryLabel</RvmButton>
+                }
+            </Actions>
+        </RvmEmptyState>
+    }
+    else if (!Loading && LinhasVisiveis.Count == 0)
+    {
+        @if (EmptyTemplate is not null)
+        {
+            @EmptyTemplate
+        }
+        else
+        {
+            <RvmEmptyState Variant="EmptyVariant" />
+        }
+    }
+
+    @if (ShowPagination && !Loading && Error is null && TotalDeItens > 0)
+    {
+        <div class="rvm-data-grid__rodape">
+            <RvmPagination Page="Page"
+                           PageChanged="TrocarPagina"
+                           PageSize="PageSize"
+                           PageSizeChanged="TrocarTamanho"
+                           TotalItems="TotalDeItens" />
+        </div>
+    }
+</div>
+
+@code {
+    private const string ModulePath = "./_content/RVM.DesignSystem/js/rvm-grid.js";
+
+    /// <summary>Cultura de exibição da biblioteca. Usada na formatação de célula.</summary>
+    internal static readonly System.Globalization.CultureInfo Cultura =
+        System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+
+    private readonly List<RvmColumn<TItem>> _colunas = [];
+    private readonly string _nomeDaSelecao = $"rvm-grid-{Guid.NewGuid():N}";
+
+    private ElementReference _checkboxDeTodos;
+    private IJSObjectReference? _modulo;
+    private bool _indeterminadoAplicado;
+
+    private RvmColumn<TItem>? _colunaOrdenada;
+    private RvmSortDirection _direcao = RvmSortDirection.None;
+
+    /// <summary>As <see cref="RvmColumn{TItem}"/>.</summary>
+    [Parameter, EditorRequired]
+    public RenderFragment? Columns { get; set; }
+
+    /// <summary>
+    /// Os itens, no modo em memória. O grid ordena e pagina sozinho.
+    /// </summary>
+    /// <remarks>
+    /// Para volume grande ou dados que vivem no servidor, use <see cref="ItemsProvider"/>: com
+    /// <c>Items</c>, tudo passa pela memória do cliente.
+    /// </remarks>
+    [Parameter]
+    public IReadOnlyList<TItem>? Items { get; set; }
+
+    /// <summary>
+    /// Modo remoto: recebe a requisição e devolve a página e o total.
+    /// </summary>
+    /// <remarks>
+    /// Quando informado, o grid <b>não ordena nem pagina</b> — quem faz isso é quem responde,
+    /// que é o único que sabe consultar o banco. O grid só informa o que foi pedido.
+    /// </remarks>
+    [Parameter]
+    public Func<RvmDataGridRequest, Task<RvmDataGridResult<TItem>>>? ItemsProvider { get; set; }
+
+    /// <summary>Nome da tabela, para o leitor de tela.</summary>
+    [Parameter, EditorRequired]
+    public string Caption { get; set; } = string.Empty;
+
+    /// <summary>Página atual. Use com <c>@bind-Page</c>.</summary>
+    [Parameter]
+    public int Page { get; set; } = 1;
+
+    /// <summary>Disparado quando a página muda.</summary>
+    [Parameter]
+    public EventCallback<int> PageChanged { get; set; }
+
+    /// <summary>Itens por página. Use com <c>@bind-PageSize</c>.</summary>
+    [Parameter]
+    public int PageSize { get; set; } = 20;
+
+    /// <summary>Disparado quando o tamanho da página muda.</summary>
+    [Parameter]
+    public EventCallback<int> PageSizeChanged { get; set; }
+
+    /// <summary>Mostra a paginação no rodapé.</summary>
+    [Parameter]
+    public bool ShowPagination { get; set; } = true;
+
+    /// <summary>Como as linhas podem ser selecionadas.</summary>
+    [Parameter]
+    public RvmSelectionMode SelectionMode { get; set; } = RvmSelectionMode.None;
+
+    /// <summary>As linhas selecionadas. Use com <c>@bind-Selection</c>.</summary>
+    [Parameter]
+    public IReadOnlyList<TItem> Selection { get; set; } = [];
+
+    /// <summary>Disparado quando a seleção muda.</summary>
+    [Parameter]
+    public EventCallback<IReadOnlyList<TItem>> SelectionChanged { get; set; }
+
+    /// <summary>
+    /// Como uma linha é nomeada no checkbox de seleção.
+    /// </summary>
+    /// <remarks>
+    /// Sem isto, uma tabela de 20 linhas dá 20 caixas chamadas "Selecionar", e quem não vê a
+    /// tela não sabe o que está marcando. Aponte para a coluna que identifica a linha.
+    /// </remarks>
+    [Parameter]
+    public Func<TItem, string>? RowLabel { get; set; }
+
+    /// <summary>Está carregando. Mostra esqueleto nas linhas.</summary>
+    [Parameter]
+    public bool Loading { get; set; }
+
+    /// <summary>Quantas linhas de esqueleto durante o carregamento.</summary>
+    [Parameter]
+    public int LinhasDeEsqueleto { get; set; } = 5;
+
+    /// <summary>Mensagem de erro. Quando informada, substitui a lista.</summary>
+    [Parameter]
+    public string? Error { get; set; }
+
+    /// <summary>Disparado no "tentar de novo" do estado de erro.</summary>
+    [Parameter]
+    public EventCallback OnRetry { get; set; }
+
+    /// <summary>Rótulo do botão de tentar de novo.</summary>
+    [Parameter]
+    public string RetryLabel { get; set; } = "Tentar de novo";
+
+    /// <summary>
+    /// Por que a lista está vazia.
+    /// </summary>
+    /// <remarks>
+    /// <c>NoResults</c> quando há filtro aplicado, <c>Empty</c> quando não há. A distinção muda
+    /// a ação que cabe — limpar o filtro ou criar o primeiro.
+    /// </remarks>
+    [Parameter]
+    public RvmEmptyStateVariant EmptyVariant { get; set; } = RvmEmptyStateVariant.Empty;
+
+    /// <summary>Estado vazio próprio, no lugar do padrão.</summary>
+    [Parameter]
+    public RenderFragment? EmptyTemplate { get; set; }
+
+    /// <summary>Nome acessível da caixa "selecionar todas da página".</summary>
+    [Parameter]
+    public string SelectAllLabel { get; set; } = "Selecionar todas as linhas desta página";
+
+    /// <summary>Nome acessível da coluna de seleção, no modo único.</summary>
+    [Parameter]
+    public string SelectColumnLabel { get; set; } = "Seleção";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private bool Remoto => ItemsProvider is not null;
+
+    private IReadOnlyList<TItem> _remotos = [];
+    private int _totalRemoto;
+
+    private string ClasseFinal => RvmClasse.Juntar("rvm-data-grid", Class);
+
+    /// <summary>
+    /// A legenda que o leitor de tela ouve ao entrar na tabela.
+    /// </summary>
+    /// <remarks>
+    /// Inclui a ordenação corrente de propósito: quem não vê a seta do cabeçalho precisa saber
+    /// por que as linhas estão nessa ordem antes de começar a lê-las.
+    /// </remarks>
+    private string LegendaCompleta => _colunaOrdenada is null || _direcao == RvmSortDirection.None
+        ? Caption
+        : $"{Caption}, ordenada por {_colunaOrdenada.Title}, "
+          + (_direcao == RvmSortDirection.Ascending ? "crescente" : "decrescente");
+
+    private int TotalDeItens => Remoto ? _totalRemoto : Items?.Count ?? 0;
+
+    /// <summary>As linhas desta página, já ordenadas.</summary>
+    private IReadOnlyList<TItem> LinhasVisiveis
+    {
+        get
+        {
+            if (Remoto)
+            {
+                // No modo remoto quem ordena e pagina é quem responde. O grid nunca reordena o
+                // que recebeu — fazer isso embaralharia a página em cima da ordem do servidor.
+                return _remotos;
+            }
+
+            if (Items is null)
+            {
+                return [];
+            }
+
+            var consulta = Ordenar(Items);
+
+            return ShowPagination
+                ? consulta.Skip((Math.Max(1, Page) - 1) * PageSize).Take(PageSize).ToList()
+                : consulta.ToList();
+        }
+    }
+
+    private IEnumerable<TItem> Ordenar(IEnumerable<TItem> fonte)
+    {
+        if (_colunaOrdenada?.Valor is not { } chave || _direcao == RvmSortDirection.None)
+        {
+            return fonte;
+        }
+
+        // Comparer<object?>.Default usa o IComparable do valor dentro da caixa — funciona para
+        // int, decimal, DateTime e string, que é tudo que uma coluna de dado costuma ter. Nulos
+        // primeiro no crescente, por ser onde a pessoa espera achar "não preenchido".
+        return _direcao == RvmSortDirection.Ascending
+            ? fonte.OrderBy(chave, Comparer<object?>.Default)
+            : fonte.OrderByDescending(chave, Comparer<object?>.Default);
+    }
+
+    /// <summary>Registra uma coluna filha.</summary>
+    /// <param name="coluna">A coluna.</param>
+    internal void Registrar(RvmColumn<TItem> coluna)
+    {
+        _colunas.Add(coluna);
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>Remove uma coluna que saiu da tela.</summary>
+    /// <param name="coluna">A coluna.</param>
+    internal void Remover(RvmColumn<TItem> coluna)
+    {
+        _colunas.Remove(coluna);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string ClasseDaCelula(RvmColumn<TItem> coluna) =>
+        $"rvm-data-grid__celula rvm-data-grid__celula--{RvmClasse.Sufixo(coluna.Align)}";
+
+    private string? AriaSort(RvmColumn<TItem> coluna)
+    {
+        if (!coluna.Sortable)
+        {
+            return null;
+        }
+
+        // "none" na coluna ordenável ainda não ordenada, e não a ausência do atributo: é o que
+        // faz o leitor de tela anunciar que ela PODE ser ordenada.
+        if (coluna != _colunaOrdenada || _direcao == RvmSortDirection.None)
+        {
+            return "none";
+        }
+
+        return _direcao == RvmSortDirection.Ascending ? "ascending" : "descending";
+    }
+
+    private string IconeDeOrdenacao(RvmColumn<TItem> coluna)
+    {
+        if (coluna != _colunaOrdenada || _direcao == RvmSortDirection.None)
+        {
+            return "arrows-down-up";
+        }
+
+        return _direcao == RvmSortDirection.Ascending ? "caret-up" : "caret-down";
+    }
+
+    // O rótulo diz o que o clique VAI FAZER, não o estado atual: "Ordenar por Cliente,
+    // crescente". O estado já vem do aria-sort do th, e repeti-lo aqui faria o leitor dizer a
+    // mesma coisa duas vezes.
+    private string RotuloDeOrdenacao(RvmColumn<TItem> coluna)
+    {
+        var proxima = coluna == _colunaOrdenada && _direcao == RvmSortDirection.Ascending
+            ? "decrescente"
+            : "crescente";
+
+        return $"Ordenar por {coluna.Title}, {proxima}";
+    }
+
+    private async Task Ordenar(RvmColumn<TItem> coluna)
+    {
+        if (coluna == _colunaOrdenada)
+        {
+            // Ciclo de dois estados, não três: voltar ao "sem ordenação" no terceiro clique
+            // devolve a ordem de origem, que quase nunca é a que a pessoa quer, e ela precisa
+            // clicar mais uma vez para sair de lá.
+            _direcao = _direcao == RvmSortDirection.Ascending
+                ? RvmSortDirection.Descending
+                : RvmSortDirection.Ascending;
+        }
+        else
+        {
+            _colunaOrdenada = coluna;
+            _direcao = RvmSortDirection.Ascending;
+        }
+
+        // Reordenar muda quais itens estão na página 1; ficar na página 7 mostraria linhas de
+        // uma ordem que já não existe.
+        await TrocarPagina(1);
+        await CarregarSePreciso();
+    }
+
+    private bool EstaSelecionada(TItem item) => Selection.Contains(item);
+
+    private bool TodasDaPaginaSelecionadas =>
+        LinhasVisiveis.Count > 0 && LinhasVisiveis.All(EstaSelecionada);
+
+    private bool AlgumasDaPaginaSelecionadas =>
+        LinhasVisiveis.Any(EstaSelecionada) && !TodasDaPaginaSelecionadas;
+
+    private async Task AlternarLinha(TItem item)
+    {
+        var nova = SelectionMode switch
+        {
+            RvmSelectionMode.Single => EstaSelecionada(item) ? [] : new List<TItem> { item },
+            _ => EstaSelecionada(item)
+                ? Selection.Where(x => !Equals(x, item)).ToList()
+                : [.. Selection, item],
+        };
+
+        Selection = nova;
+        await SelectionChanged.InvokeAsync(nova);
+    }
+
+    private async Task AlternarTodasDaPagina()
+    {
+        // Age só sobre A PÁGINA, nunca sobre o conjunto todo. "Selecionar todos" que alcança
+        // 500 linhas invisíveis é como se apagam 500 registros por engano.
+        var nova = TodasDaPaginaSelecionadas
+            ? Selection.Where(x => !LinhasVisiveis.Contains(x)).ToList()
+            : [.. Selection, .. LinhasVisiveis.Where(x => !EstaSelecionada(x))];
+
+        Selection = nova;
+        await SelectionChanged.InvokeAsync(nova);
+    }
+
+    private string RotuloDaLinha(TItem item) =>
+        RowLabel is not null
+            ? $"Selecionar {RowLabel(item)}"
+            : "Selecionar esta linha";
+
+    private async Task TrocarPagina(int pagina)
+    {
+        if (pagina == Page)
+        {
+            return;
+        }
+
+        Page = pagina;
+        await PageChanged.InvokeAsync(pagina);
+        await CarregarSePreciso();
+    }
+
+    private async Task TrocarTamanho(int tamanho)
+    {
+        PageSize = tamanho;
+        await PageSizeChanged.InvokeAsync(tamanho);
+        await CarregarSePreciso();
+    }
+
+    protected override async Task OnParametersSetAsync() => await CarregarSePreciso();
+
+    private async Task CarregarSePreciso()
+    {
+        if (!Remoto)
+        {
+            return;
+        }
+
+        var resposta = await ItemsProvider!(new RvmDataGridRequest(
+            Math.Max(1, Page),
+            PageSize,
+            _colunaOrdenada?.Title,
+            _direcao));
+
+        _remotos = resposta.Items;
+        _totalRemoto = resposta.TotalItems;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primeiraVez)
+    {
+        if (SelectionMode != RvmSelectionMode.Multiple)
+        {
+            return;
+        }
+
+        var indeterminado = AlgumasDaPaginaSelecionadas;
+
+        if (indeterminado == _indeterminadoAplicado)
+        {
+            return;
+        }
+
+        try
+        {
+            _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", ModulePath);
+            await _modulo.InvokeVoidAsync("definirIndeterminado", _checkboxDeTodos, indeterminado);
+            _indeterminadoAplicado = indeterminado;
+        }
+        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException or ObjectDisposedException)
+        {
+            // Sem JS (pré-render, circuito caindo): a caixa fica com dois estados em vez de
+            // três. Degrada, não quebra.
+        }
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        if (_modulo is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _modulo.DisposeAsync();
+        }
+        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        {
+            // Circuito já caiu.
+        }
+    }
+}

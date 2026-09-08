@@ -63,7 +63,7 @@ Documentado na página do Sidebar, sem página própria.
 `RvmProgress` (barra determinada/indeterminada, `role="progressbar"` com `aria-valuenow`) e
 `RvmTooltip` (aparece no foco além do hover, `aria-describedby`, some com `ESC`) completam a onda.
 
-## Onda 4 — Dados (5)
+## Onda 4 — Dados (5) ✅ entregue em 08/09/2026
 
 A onda cara. Cada linha aqui vale, em esforço, várias linhas das tabelas acima.
 

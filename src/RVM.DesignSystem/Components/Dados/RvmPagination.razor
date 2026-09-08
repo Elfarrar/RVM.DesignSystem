@@ -1,0 +1,237 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Paginação. É um `nav` com nome — sem ele, o leitor de tela anuncia mais um "navegação" e a
+    lista de marcos da página deixa de orientar.
+
+    Os botões têm `aria-label` que diz o DESTINO, não o símbolo: "Página seguinte, 3 de 7", nunca
+    "›". Quem ouve "botão sinal de maior" não sabe para onde vai.
+*@
+
+<nav class="@ClasseFinal" aria-label="@Label" @attributes="AdditionalAttributes">
+    <p class="rvm-pagination__resumo" role="status">@Resumo</p>
+
+    <div class="rvm-pagination__controles">
+        @if (ShowPageSize)
+        {
+            <label class="rvm-pagination__tamanho">
+                <span class="rvm-pagination__tamanho-rotulo">@PageSizeLabel</span>
+                <select class="rvm-pagination__select"
+                        value="@PageSize"
+                        @onchange="TrocarTamanho">
+                    @foreach (var t in PageSizeOptions)
+                    {
+                        <option value="@t">@t</option>
+                    }
+                </select>
+            </label>
+        }
+
+        <div class="rvm-pagination__botoes">
+            <button type="button" class="rvm-pagination__botao"
+                    aria-label="@RotuloDaPagina(1, FirstLabel)"
+                    disabled="@(!TemAnterior)"
+                    @onclick="() => Ir(1)">
+                <RvmIcon Name="caret-double-left" Size="1rem" />
+            </button>
+
+            <button type="button" class="rvm-pagination__botao"
+                    aria-label="@RotuloDaPagina(Page - 1, PreviousLabel)"
+                    disabled="@(!TemAnterior)"
+                    @onclick="() => Ir(Page - 1)">
+                <RvmIcon Name="caret-left" Size="1rem" />
+            </button>
+
+            @* aria-current="page" no número atual: é o que faz o leitor de tela dizer "página
+               atual" em vez de ler mais um número na fileira. *@
+            @foreach (var p in Janela)
+            {
+                var pagina = p;
+
+                <button type="button"
+                        class="@(pagina == Page ? "rvm-pagination__botao rvm-pagination__botao--atual" : "rvm-pagination__botao")"
+                        aria-label="@RotuloDaPagina(pagina, PageLabel)"
+                        aria-current="@(pagina == Page ? "page" : null)"
+                        @onclick="() => Ir(pagina)">
+                    @pagina
+                </button>
+            }
+
+            <button type="button" class="rvm-pagination__botao"
+                    aria-label="@RotuloDaPagina(Page + 1, NextLabel)"
+                    disabled="@(!TemProxima)"
+                    @onclick="() => Ir(Page + 1)">
+                <RvmIcon Name="caret-right" Size="1rem" />
+            </button>
+
+            <button type="button" class="rvm-pagination__botao"
+                    aria-label="@RotuloDaPagina(TotalDePaginas, LastLabel)"
+                    disabled="@(!TemProxima)"
+                    @onclick="() => Ir(TotalDePaginas)">
+                <RvmIcon Name="caret-double-right" Size="1rem" />
+            </button>
+        </div>
+    </div>
+</nav>
+
+@code {
+    private static readonly System.Globalization.CultureInfo Cultura =
+        System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+
+    /// <summary>Página atual, começando em 1. Use com <c>@bind-Page</c>.</summary>
+    [Parameter]
+    public int Page { get; set; } = 1;
+
+    /// <summary>Disparado quando a página muda.</summary>
+    [Parameter]
+    public EventCallback<int> PageChanged { get; set; }
+
+    /// <summary>Itens por página. Use com <c>@bind-PageSize</c>.</summary>
+    [Parameter]
+    public int PageSize { get; set; } = 20;
+
+    /// <summary>Disparado quando o tamanho da página muda.</summary>
+    [Parameter]
+    public EventCallback<int> PageSizeChanged { get; set; }
+
+    /// <summary>Total de itens, de todas as páginas.</summary>
+    [Parameter, EditorRequired]
+    public int TotalItems { get; set; }
+
+    /// <summary>Tamanhos oferecidos no seletor.</summary>
+    [Parameter]
+    public IReadOnlyList<int> PageSizeOptions { get; set; } = [10, 20, 50, 100];
+
+    /// <summary>Mostra o seletor de itens por página.</summary>
+    [Parameter]
+    public bool ShowPageSize { get; set; } = true;
+
+    /// <summary>
+    /// Quantos números de página aparecem em volta do atual.
+    /// </summary>
+    /// <remarks>
+    /// Uma fileira com 40 números não é navegação, é uma parede. A janela mantém a fileira do
+    /// mesmo tamanho independente do total, e os saltos de primeira/última cobrem o resto.
+    /// </remarks>
+    [Parameter]
+    public int WindowSize { get; set; } = 5;
+
+    /// <summary>Nome da navegação para o leitor de tela.</summary>
+    [Parameter]
+    public string Label { get; set; } = "Paginação";
+
+    /// <summary>Rótulo do seletor de itens por página.</summary>
+    [Parameter]
+    public string PageSizeLabel { get; set; } = "Por página";
+
+    /// <summary>
+    /// Modelo do resumo. Recebe, nesta ordem: primeiro item, último item e total.
+    /// </summary>
+    /// <remarks>
+    /// "21–40 de 137" informa mais que "página 2 de 7": diz quantos itens existem e onde a
+    /// pessoa está dentro deles.
+    /// </remarks>
+    [Parameter]
+    public string SummaryFormat { get; set; } = "{0}–{1} de {2}";
+
+    /// <summary>Resumo quando não há nenhum item.</summary>
+    [Parameter]
+    public string EmptySummary { get; set; } = "Nenhum item";
+
+    /// <summary>Modelo do nome acessível de um número de página. Recebe a página.</summary>
+    [Parameter]
+    public string PageLabel { get; set; } = "Página {0}";
+
+    /// <summary>Modelo do nome acessível do botão "primeira".</summary>
+    [Parameter]
+    public string FirstLabel { get; set; } = "Primeira página";
+
+    /// <summary>Modelo do nome acessível do botão "anterior". Recebe a página de destino.</summary>
+    [Parameter]
+    public string PreviousLabel { get; set; } = "Página anterior, {0}";
+
+    /// <summary>Modelo do nome acessível do botão "seguinte". Recebe a página de destino.</summary>
+    [Parameter]
+    public string NextLabel { get; set; } = "Página seguinte, {0}";
+
+    /// <summary>Modelo do nome acessível do botão "última".</summary>
+    [Parameter]
+    public string LastLabel { get; set; } = "Última página";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar("rvm-pagination", Class);
+
+    /// <summary>Quantas páginas existem. Nunca menos que 1 — "página 0 de 0" não é uma tela.</summary>
+    private int TotalDePaginas => Math.Max(1, (int)Math.Ceiling(TotalItems / (double)Math.Max(1, PageSize)));
+
+    private int PaginaAtual => Math.Clamp(Page, 1, TotalDePaginas);
+
+    private bool TemAnterior => PaginaAtual > 1;
+
+    private bool TemProxima => PaginaAtual < TotalDePaginas;
+
+    private int PrimeiroDaPagina => TotalItems == 0 ? 0 : ((PaginaAtual - 1) * PageSize) + 1;
+
+    private int UltimoDaPagina => Math.Min(PaginaAtual * PageSize, TotalItems);
+
+    private string Resumo => TotalItems == 0
+        ? EmptySummary
+        : string.Format(Cultura, SummaryFormat, PrimeiroDaPagina, UltimoDaPagina, TotalItems);
+
+    private string RotuloDaPagina(int pagina, string modelo) =>
+        string.Format(Cultura, modelo, Math.Clamp(pagina, 1, TotalDePaginas));
+
+    // A janela desliza, mas nunca encolhe: perto das pontas ela se desloca para dentro em vez de
+    // mostrar menos números. Assim a fileira não muda de largura ao navegar, e os botões não
+    // dançam debaixo do cursor.
+    private IEnumerable<int> Janela
+    {
+        get
+        {
+            var tamanho = Math.Min(Math.Max(1, WindowSize), TotalDePaginas);
+            var inicio = Math.Clamp(PaginaAtual - (tamanho / 2), 1, Math.Max(1, TotalDePaginas - tamanho + 1));
+
+            return Enumerable.Range(inicio, tamanho);
+        }
+    }
+
+    private async Task Ir(int pagina)
+    {
+        var destino = Math.Clamp(pagina, 1, TotalDePaginas);
+
+        if (destino == PaginaAtual)
+        {
+            return;
+        }
+
+        Page = destino;
+        await PageChanged.InvokeAsync(destino);
+    }
+
+    private async Task TrocarTamanho(ChangeEventArgs e)
+    {
+        if (!int.TryParse(e.Value?.ToString(), out var tamanho) || tamanho == PageSize)
+        {
+            return;
+        }
+
+        PageSize = tamanho;
+        await PageSizeChanged.InvokeAsync(tamanho);
+
+        // Trocar o tamanho da página quase sempre invalida a posição: com 100 por página, a
+        // página 7 de 20-em-20 não existe mais. Voltar para a primeira é o único destino que
+        // sempre existe — e é onde a pessoa espera reencontrar o começo da lista.
+        if (PaginaAtual != 1)
+        {
+            Page = 1;
+            await PageChanged.InvokeAsync(1);
+        }
+    }
+}

@@ -329,3 +329,46 @@ public enum RvmEmptyStateVariant
     /// <summary>Sem permissão para ver isto.</summary>
     Forbidden,
 }
+
+/// <summary>Direção de uma ordenação.</summary>
+public enum RvmSortDirection
+{
+    /// <summary>Sem ordenação nesta coluna.</summary>
+    None,
+
+    /// <summary>Crescente — A→Z, menor→maior, mais antigo→mais recente.</summary>
+    Ascending,
+
+    /// <summary>Decrescente.</summary>
+    Descending,
+}
+
+/// <summary>Como as linhas de um grid podem ser selecionadas.</summary>
+public enum RvmSelectionMode
+{
+    /// <summary>Sem seleção. O padrão — seleção que ninguém usa é só uma coluna a menos de dado.</summary>
+    None,
+
+    /// <summary>Uma linha por vez.</summary>
+    Single,
+
+    /// <summary>Várias linhas, com "selecionar todas da página".</summary>
+    Multiple,
+}
+
+/// <summary>Alinhamento do conteúdo de uma coluna.</summary>
+/// <remarks>
+/// <c>End</c> existe para <b>número</b>: valores alinhados à direita comparam-se pela ordem de
+/// grandeza, que é a razão de a coluna de total existir. Texto alinhado à direita, não.
+/// </remarks>
+public enum RvmAlignment
+{
+    /// <summary>Início da linha. O padrão, e o certo para texto.</summary>
+    Start,
+
+    /// <summary>Centro.</summary>
+    Center,
+
+    /// <summary>Fim da linha. Para número e moeda.</summary>
+    End,
+}

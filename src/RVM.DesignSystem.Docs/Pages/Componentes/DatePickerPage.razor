@@ -1,0 +1,124 @@
+@page "/componentes/date-picker"
+
+<PaginaDeComponente Nome="RvmDatePicker"
+                    Tipo="typeof(RvmDatePicker)"
+                    Frase="Data em dd/MM/yyyy. A DIGITAÇÃO vem antes do calendário — quem sabe a data não quer abrir nada.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmDatePicker @bind-Value="_data"
+                               Label="Data de emissão"
+                               Help="Digite 15/03/2026 — não precisa abrir o calendário."
+                               Min="_comLimite ? new DateTime(2026, 3, 1) : null"
+                               Max="_comLimite ? new DateTime(2026, 3, 31) : null"
+                               IsDisabled="_semFimDeSemana ? EhFimDeSemana : null" />
+
+                <p class="doc__nota">
+                    Valor: <strong>@(_data?.ToString("dd/MM/yyyy") ?? "nenhum")</strong>
+                </p>
+            </div>
+            <div class="playground__controles">
+                <RvmCheckbox @bind-Value="_comLimite" Label="Min/Max (março de 2026)" />
+                <RvmCheckbox @bind-Value="_semFimDeSemana" Label="Bloquear fim de semana" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Por que não <code>&lt;input type="date"&gt;</code></h3>
+        <p>
+            O campo nativo <strong>impõe o formato do locale do navegador</strong>. Quem está com
+            o Windows em inglês vê <code>mm/dd/yyyy</code> num sistema inteiramente em português
+            — e digita <code>03/15</code> achando que é 15 de março.
+        </p>
+        <p>
+            O calendário nativo também não é estilizável de forma confiável entre navegadores, e
+            o formato de exibição não é controlável. Aqui o contrato é fixo:
+            <code>dd/MM/yyyy</code>, sempre, em qualquer máquina.
+        </p>
+
+        <h3 class="doc__subtitulo">O calendário é para quem está escolhendo</h3>
+        <p>
+            Quem preenche cadastro o dia inteiro digita "15/03/2026" em dois segundos; navegar
+            até março de 2026 com o mouse leva dez vezes mais. O calendário existe para quem
+            <em>não sabe</em> a data — está escolhendo, não informando. Por isso ele fica atrás
+            de um botão, e nunca abre sozinho.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Cada dia é nomeado por extenso</strong> — "15 de março de 2026". Um botão
+                chamado "15" numa grade de 42 botões não diz de que mês nem de que ano.
+            </li>
+            <li>
+                <strong>Setas movem o dia, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> o mês,
+                <kbd>Home</kbd>/<kbd>End</kbd> vão ao início e ao fim do mês, <kbd>ESC</kbd>
+                fecha.</strong> Só o dia focado é tabulável (tabindex móvel) — sem isso,
+                <kbd>Tab</kbd> pararia 42 vezes dentro do calendário.
+            </li>
+            <li>
+                <strong>O título do mês é <code>aria-live</code>.</strong> Mudar de mês com as
+                setas precisa ser anunciado, senão quem não vê a tela navega às cegas por uma
+                grade que mudou sem aviso.
+            </li>
+            <li>
+                <strong>Os dias da semana têm <code>abbr</code>:</strong> a tela mostra "dom", o
+                leitor de tela lê "domingo".
+            </li>
+            <li>
+                <strong>Hoje tem contorno; o dia escolhido tem preenchimento.</strong> Duas
+                formas diferentes, porque os dois podem coincidir — e se ambos fossem cor de
+                fundo, o dia de hoje escolhido não se distinguiria de um dia qualquer escolhido.
+            </li>
+            <li>
+                <strong>Texto ilegível não apaga o valor.</strong> A pessoa vê o que digitou e a
+                mensagem do que está errado. Limpar o campo esconderia o erro e o dado ao mesmo
+                tempo.
+            </li>
+            <li>
+                <strong>A grade tem sempre seis semanas.</strong> Com 5 ou 6 conforme o mês, o
+                calendário mudaria de altura ao navegar e os botões dançariam debaixo do cursor.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para data de nascimento.</strong> Navegar 40 anos de calendário é
+                absurdo — e ninguém precisa escolher: a pessoa sabe a data. Um campo de texto
+                com máscara basta.
+            </li>
+            <li>
+                <strong>Para intervalo.</strong> Dois campos separados funcionam, mas não
+                validam um contra o outro. O <code>RvmDateRangePicker</code> fica para a v2
+                (`09` § Fora da v1).
+            </li>
+            <li>
+                <strong>Para data e hora.</strong> Este componente é só data. Hora pede um campo
+                próprio, e juntar os dois num só controle costuma piorar os dois.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private DateTime? _data = new DateTime(2026, 3, 15);
+    private bool _comLimite;
+    private bool _semFimDeSemana;
+
+    private static bool EhFimDeSemana(DateTime d) =>
+        d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+
+    private const string _exemplo = """
+        <RvmDatePicker @bind-Value="pedido.Emissao"
+                       Label="Data de emissão"
+                       Min="new DateTime(2026, 1, 1)"
+                       Max="DateTime.Today"
+                       IsDisabled="EhFeriado" />
+        """;
+}
