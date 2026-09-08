@@ -11,16 +11,34 @@
         </p>
     </header>
 
-    <section aria-labelledby="cl-naopublicado">
-        <h2 id="cl-naopublicado">Não publicado</h2>
-        <p class="doc__nota">
-            Está em <code>dev</code> e sai como <code>0.x-alpha.N</code>. Alpha é descartável:
-            ninguém deve fixar um.
-        </p>
+    <section aria-labelledby="cl-010">
+        <h2 id="cl-010">0.1.0 — Onda 1</h2>
+        <p class="doc__nota">Primeira versão estável. 08/09/2026.</p>
         <ul class="doc__lista">
-            <li><strong>Onda 1 completa.</strong> Nove componentes básicos, motor de tema em runtime e ícones Phosphor.</li>
-            <li><strong>Site de documentação</strong> com página por componente, tabela de API gerada da doc XML, e o seletor das cinco identidades.</li>
+            <li>
+                <strong>Nove componentes básicos:</strong> <code>RvmButton</code>,
+                <code>RvmIconButton</code>, <code>RvmTextField</code>, <code>RvmTextArea</code>,
+                <code>RvmSelect</code>, <code>RvmCheckbox</code>, <code>RvmRadioGroup</code>,
+                <code>RvmSwitch</code>, <code>RvmFormField</code>. Todos sobre o controle nativo.
+            </li>
+            <li>
+                <strong>Camada de tokens</strong> — espaçamento, raio, tipografia, sombra, motion,
+                breakpoint e z-index — e o motor de tema (<code>RvmTheme.FromSeed</code>) com
+                claro/escuro e script anti-flash.
+            </li>
+            <li><strong>Ícones Phosphor</strong> nos pesos <code>Regular</code> e <code>Fill</code>.</li>
+            <li>
+                <strong>Portões:</strong> contraste de 26 pares por paleta em todo tema registrado,
+                e varredura que reprova cor literal ou token inexistente em CSS de componente.
+            </li>
+            <li><strong>Site de documentação</strong> com página por componente e tabela de API gerada da doc XML.</li>
         </ul>
+        <p class="doc__nota">
+            <strong>Nota de cor:</strong> o azul da marca é <code>#0068B8</code>, e não o
+            <code>#006DBD</code> nominal. A derivação escurece o mínimo necessário para o papel
+            atender AA também sobre as superfícies mais escuras da paleta — onde ele é usado como
+            texto. Detalhe em <a href="fundamentos/cor">Fundamentos › Cor</a>.
+        </p>
     </section>
 
     <section aria-labelledby="cl-politica">
@@ -68,7 +86,6 @@
     <section aria-labelledby="cl-mapa">
         <h2 id="cl-mapa">O que vem</h2>
         <ul class="doc__lista">
-            <li><strong>0.1.0 — onda 1.</strong> O que está acima, publicado como estável.</li>
             <li><strong>0.2.0 — onda 2 (Layout).</strong> <code>RvmAppShell</code>, <code>RvmSidebar</code>, <code>RvmCard</code>, <code>RvmTabs</code>, densidade compacta.</li>
             <li><strong>0.3.0 — onda 3 (Feedback).</strong> <code>RvmDialog</code>, <code>RvmToast</code>, <code>RvmAlert</code>, <code>RvmSkeleton</code>, <code>RvmEmptyState</code>.</li>
             <li><strong>1.0.0 — onda 4 (Dados).</strong> <code>RvmDataGrid&lt;T&gt;</code>, <code>RvmDatePicker</code>, <code>RvmAutocomplete</code>. Contrato congelado sob SemVer.</li>
