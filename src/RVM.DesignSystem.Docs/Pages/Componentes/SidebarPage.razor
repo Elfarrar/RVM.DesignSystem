@@ -73,6 +73,14 @@
                 aparece no foco por teclado e vários leitores de tela o ignoram.
             </li>
             <li>
+                <strong>Item sem <code>Icon</code> mostra a inicial do texto</strong> quando a
+                barra colapsa. Sem isso, um menu cujos itens não têm ícone vira uma coluna de
+                linhas em branco — cada uma clicável, nenhuma identificável. A biblioteca oferece
+                o botão de colapsar, então o estado colapsado é responsabilidade dela: não pode
+                depender de quem usa ter posto ícone em todos. A inicial é <code>aria-hidden</code>,
+                porque o texto completo continua no DOM.
+            </li>
+            <li>
                 <strong>O botão de colapsar muda de nome</strong> conforme o que vai fazer
                 ("Recolher" / "Expandir"), em vez de um "alternar a barra lateral" que obriga quem
                 não vê a tela a adivinhar.

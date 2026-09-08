@@ -77,3 +77,15 @@
     padding: 0 0 0 var(--rvm-space-6);
     list-style: none;
 }
+
+/*
+  A inicial so existe para a barra colapsada — quem a mostra e o RvmSidebar. Aqui ela nasce
+  escondida, para nao aparecer em nenhum outro uso do item.
+*/
+.rvm-nav-item__inicial {
+    display: none;
+    width: 1.25rem;
+    flex-shrink: 0;
+    text-align: center;
+    font-weight: var(--rvm-font-weight-semibold);
+}

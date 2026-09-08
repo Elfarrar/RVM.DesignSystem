@@ -523,6 +523,34 @@ public class Onda2Tests : BunitContext
     }
 
     [Fact]
+    public void Item_SEM_icone_ganha_a_inicial_para_nao_sumir_na_barra_colapsada()
+    {
+        // A biblioteca oferece o botao de colapsar, entao o estado colapsado e responsabilidade
+        // dela: sem a inicial, um menu cujos itens nao tem Icon vira uma coluna de linhas em
+        // branco, cada uma clicavel e nenhuma identificavel.
+        var cut = Render<RvmNavItem>(p => p
+            .Add(x => x.Text, "relatorios")
+            .Add(x => x.Href, "relatorios"));
+
+        var inicial = cut.Find("span.rvm-nav-item__inicial");
+        Assert.Equal("R", inicial.TextContent);
+
+        // aria-hidden: o texto completo continua no DOM, e uma letra solta nao identifica nada.
+        Assert.Equal("true", inicial.GetAttribute("aria-hidden"));
+    }
+
+    [Fact]
+    public void Item_COM_icone_nao_ganha_inicial()
+    {
+        var cut = Render<RvmNavItem>(p => p
+            .Add(x => x.Text, "Início")
+            .Add(x => x.Href, "")
+            .Add(x => x.Icon, "house"));
+
+        Assert.Empty(cut.FindAll("span.rvm-nav-item__inicial"));
+    }
+
+    [Fact]
     public void Item_com_sub_itens_vira_expansor_com_aria_expanded()
     {
         var cut = Render<RvmNavItem>(p => p

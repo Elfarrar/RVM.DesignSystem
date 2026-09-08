@@ -114,6 +114,11 @@
     padding-right: var(--rvm-space-2);
 }
 
+/* Item sem icone mostra a inicial. Sem isso ele vira uma linha em branco clicavel. */
+.rvm-sidebar--colapsada ::deep .rvm-nav-item__inicial {
+    display: block;
+}
+
 .rvm-sidebar--colapsada ::deep .rvm-nav-item__filhos {
     padding-left: 0;
 }
@@ -176,6 +181,10 @@
         justify-content: flex-start;
         padding-left: var(--rvm-space-3);
         padding-right: var(--rvm-space-3);
+    }
+
+    .rvm-sidebar--colapsada ::deep .rvm-nav-item__inicial {
+        display: none;
     }
 
     .rvm-sidebar--colapsada ::deep .rvm-nav-item__filhos {

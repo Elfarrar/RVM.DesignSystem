@@ -108,6 +108,21 @@
                      Class="rvm-nav-item__icone"
                      Size="1.25rem" />
         }
+        else
+        {
+            @*
+                A inicial do texto, para o item nunca ficar VAZIO na barra colapsada.
+
+                Sem isto, um menu cujos itens nao tem `Icon` colapsa numa coluna de linhas em
+                branco — cada uma clicavel, nenhuma identificavel. E a biblioteca nao pode
+                depender de quem usa ter posto icone em todos: ela oferece o botao de colapsar,
+                entao o estado colapsado e responsabilidade dela.
+
+                Fica escondida por padrao e so aparece quando a barra colapsa; e `aria-hidden`
+                porque o texto completo continua no DOM, e uma letra solta nao identifica nada.
+            *@
+            <span class="rvm-nav-item__inicial" aria-hidden="true">@Inicial</span>
+        }
         <span class="rvm-nav-item__texto">@Text</span>
         @if (Badge is not null)
         {
@@ -117,6 +132,10 @@
             </span>
         }
     </text>;
+
+    private string Inicial => string.IsNullOrWhiteSpace(Text)
+        ? "?"
+        : char.ToUpper(Text.TrimStart()[0], System.Globalization.CultureInfo.CurrentCulture).ToString();
 
     private string RotuloDoBadge =>
         string.Format(System.Globalization.CultureInfo.CurrentCulture, BadgeLabel, Badge);
