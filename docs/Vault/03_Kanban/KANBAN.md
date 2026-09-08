@@ -9,14 +9,13 @@
 
 ## Em revisao
 
-- [[DSGN-017]] — **Onda 2**: casca de aplicacao (`RvmAppShell`/`Sidebar`/`Topbar`/`NavItem`),
-  layout (`Stack`/`Grid`/`Card`/`Divider`), conteudo e navegacao (`Chip`/`Avatar`/`Tabs`/
-  `Breadcrumb`) e densidade `Compact`. **O proprio site ja usa a casca** — criterio de saida
-  cumprido. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos. No ar em dev,
-  `0.2.0-alpha.12` no BaGet. **Aguardando o Rafael para promover a `master` / `0.2.0`.**
+_(vazio — a onda 2 foi promovida)_
 
 ## Concluido
 
+- [[DSGN-017]] — **Onda 2 EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): casca de
+  aplicacao, layout, navegacao e densidade `Compact`. `design.rvmit.com.br` servindo o site
+  montado com `RvmAppShell`. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos.
 - [[DSGN-001]] — Bootstrap + **producao no ar** (08/09/2026): repo publico, esqueleto .NET 10,
   5 workflows, DNS/SSL nos dois ambientes, `design.dev.rvmtech.com.br` e `design.rvmit.com.br`.
   ⏳ So o monitor no Uptime-Kuma ficou de fora — o Kuma nao tem canal de notificacao nenhum.

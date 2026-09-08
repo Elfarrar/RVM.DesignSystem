@@ -150,9 +150,14 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   mesmo passo: até 08/09/2026 o Kuma tinha 17 monitores e **zero** canais.
 - ✅ **Onda 1 fechada e publicada como `0.1.0`** (`DSGN-012`): tokens, motor de tema, nove
   componentes básicos, ícones Phosphor e o site com página por componente.
-- ✅ **Onda 2 fechada, sai como `0.2.0`** (`DSGN-017`): casca de aplicação, layout, navegação e
-  densidade `Compact`. O critério de saída era o próprio site usar `RvmAppShell` — cumprido em
-  `Docs/Layout/MainLayout.razor`.
+- ✅ **Onda 2 fechada e EM PRODUÇÃO** (`DSGN-017`, autorizada por ele em 08/09/2026): casca de
+  aplicação, layout, navegação e densidade `Compact`. O critério de saída era o próprio site usar
+  `RvmAppShell` — cumprido em `Docs/Layout/MainLayout.razor`, e agora é o que serve
+  `design.rvmit.com.br`.
+- ⚠️ **Rota profunda em produção devolve HTTP 404 com a página certa.** É o fallback do GitHub
+  Pages: caminho desconhecido serve o `404.html`, que é cópia do `index.html`, e o Blazor roteia
+  no cliente. Não é regressão e não tem conserto em host estático — **verificação de deploy é por
+  CONTEÚDO, nunca por código HTTP**, e é por isso que o monitor do Kuma é do tipo `keyword`.
 - Próximo passo: onda 3 do `09-roadmap.md` — `RvmDialog`, `RvmToast` e o resto do feedback.
 
 ## Pendências que bloqueiam
