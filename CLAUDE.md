@@ -136,9 +136,10 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 - No ar: `https://design.dev.rvmtech.com.br` (casca do site, sem componentes ainda).
 - **Produção no ar desde 08/09/2026**: `https://design.rvmit.com.br`, autorizada por ele.
   Certificado do Pages emitido, `Enforce HTTPS` ligado, verificação por conteúdo.
-- ⏳ **Monitor no Uptime-Kuma não criado**, e de propósito: o Uptime-Kuma tem **17 monitores e
-  zero canais de notificação** — nenhum avisa ninguém hoje, incluindo as produções de ERPAgro,
-  Gypsy e Payments. Criar o 18º monitor mudo seria teatro. Espera o Rafael escolher o destino.
+- ✅ **Monitor no Uptime-Kuma**: `DesignSystem - prod`, tipo `keyword` procurando
+  `RVM Design System` (não código HTTP — host estático com fallback devolve 200 com a página
+  errada), com alerta de expiração de certificado. O canal de e-mail via Resend foi criado no
+  mesmo passo: até 08/09/2026 o Kuma tinha 17 monitores e **zero** canais.
 - Próximo passo: onda 1 do `09-roadmap.md` — tokens, tematização e os nove componentes básicos.
 
 ## Pendências que bloqueiam
