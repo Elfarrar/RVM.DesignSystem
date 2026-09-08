@@ -3,7 +3,7 @@ id: DSGN-017
 titulo: Onda 2 — casca de aplicacao, layout e navegacao
 repo: RVM.DesignSystem
 tipo: feature
-status: em-andamento
+status: em-revisao
 criada: 2026-09-08
 ---
 
@@ -104,14 +104,39 @@ A lista de rotas e descoberta do proprio menu, e nao escrita no teste: assim ela
 quando entra pagina nova, e a varredura passa a reprovar tambem item de menu apontando para
 lugar nenhum.
 
+## Tres defeitos que so apareceram no navegador
+
+Nenhum tem teste unitario capaz de pegar sozinho, e todos foram achados montando as telas.
+
+1. **`RvmSelect` abria na PRIMEIRA opcao, nao no valor ligado.** Faltava o atributo `value` no
+   `<select>` — o Blazor o trata como caso especial e escreve a propriedade DEPOIS de renderizar
+   os filhos, que e a unica ordem em que o navegador casa o valor com uma `<option>` que ainda
+   nao existia. **E defeito da onda 1**, e passou porque todo select de la tinha `Placeholder` e
+   comecava sem valor: a primeira opcao era mesmo a certa. Apareceu num select de enum cujo
+   padrao nao e o primeiro membro. O formulario parecia preenchido com dado que nao era do modelo.
+
+2. **A barra lateral colapsada virava uma coluna de linhas em branco** quando os itens nao tinham
+   `Icon` — cada uma clicavel, nenhuma identificavel. Foi visto colapsando a barra do proprio
+   site. A biblioteca oferece o botao de colapsar, entao o estado colapsado e responsabilidade
+   dela: entrou a inicial do texto como reserva.
+
+3. **A casca rolava inteira**, e com isso a barra lateral ficava tao alta quanto a pagina e o
+   botao de recolher — ultimo elemento dela — ia parar abaixo da dobra. Virou altura fixa com
+   coluna de rolagem propria. De quebra, `position: sticky` **nao se desloca com margem
+   negativa**, e a regiao em que ele pode parar ja desconta o padding do container: a solucao foi
+   tirar o padding de baixo do `nav`, nao compensar com margem.
+
 ## Verificado
 
 | | |
 |---|---|
-| Testes | 184 (eram 114), 0 aviso em `Release` |
+| Testes | 187 (eram 114), 0 aviso em `Release` |
 | Portao de contraste | 29 pares x 5 temas x 2 modos |
 | Portao de CSS | 22 arquivos de componente |
 | Varredura de avatar | 360 matizes + 16 nomes |
+| axe no E2E | 29 paginas x 2 modos, zero violacao seria |
+| Dev no ar | `design.dev.rvmtech.com.br`, verificado por conteudo |
+| Pacote | `0.2.0-alpha.12` no BaGet |
 
 ## O que fica para a onda 3
 
