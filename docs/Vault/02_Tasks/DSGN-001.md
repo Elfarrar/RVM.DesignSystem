@@ -159,19 +159,29 @@ intervalo o mesmo endereco alterna entre 200 e erro de TLS conforme o no que ate
 
 ### O que fica pendente de producao
 
-⏳ **Monitor no Uptime-Kuma.** Nao criei de proposito: o Uptime-Kuma tem **17 monitores e ZERO
-canais de notificacao** — nenhum deles avisa ninguem hoje, incluindo as producoes de ERPAgro,
-Gypsy e Payments. Criar o 18o monitor mudo seria teatro. Espera o Rafael escolher o destino do
-alerta (WhatsApp pela Evolution, e-mail ou Telegram).
+✅ **Monitor criado em 08/09/2026** — `DesignSystem - prod` (id 25), tipo `keyword` procurando
+`RVM Design System`, com alerta de expiracao de certificado.
+
+Tipo `keyword` e nao codigo HTTP pelo mesmo motivo que os workflows deste repo verificam conteudo:
+host estatico com fallback devolve 200 com a pagina errada, e monitor que aceita qualquer 200 fica
+verde com o site quebrado.
+
+**O que estava travando nao era o monitor, era o canal.** O Uptime-Kuma tinha **17 monitores e
+ZERO canais de notificacao** — nenhum avisava ninguem, incluindo as producoes de ERPAgro, Gypsy e
+Payments. O Rafael escolheu e-mail em 08/09/2026, e o canal (SMTP via Resend, remetente
+`alertas@rvmtech.com.br`) foi criado e vinculado aos 18 monitores. Detalhe em
+`RVM.Infra/docs/ACESSOS.md` § Resend e na skill `padrao-rvm` §11.
 
 ⚠️ **Rota profunda devolve HTTP 404 no Pages** — o `404.html` renderiza a pagina certa e a URL e
 preservada, entao para o usuario funciona; mas o status e 404. Diferente do Nginx da dev, que
 devolve 200 via `try_files`. Sem impacto hoje (nao ha pagina de componente ainda); vira questao
 de SEO na onda 1, quando as paginas existirem.
 
-⚠️ **A promocao publicou o pacote estavel `0.1.0`**, antes do previsto: o `09-roadmap` reservava
-o `0.1.0` para o fim da onda 1. Consequencia: a onda 1 fecha em `0.2.0`. Sem estrago, mas o
-numero foi consumido mais cedo.
+✅ **O `0.1.0` acabou NAO sendo consumido.** A promocao disparou um publish estavel de `0.1.0`,
+mas ele falhou por intermitencia de rede — e eu nao re-rodei de proposito, porque o `09-roadmap`
+reserva esse numero para o fim da onda 1 e versao publicada e imutavel na pratica. Em vez disso o
+`VersionPrefix` desceu para `0.0.1` e o estavel passou a sair **so de tag** (`DSGN-009`). O feed
+tem so `0.0.1-alpha.*`; o `0.1.0` continua livre.
 
 ## Pendencias que continuam abertas
 
