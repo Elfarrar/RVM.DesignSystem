@@ -1,0 +1,100 @@
+@page "/fundamentos/icones"
+@inject IJSRuntime JS
+
+<PageTitle>Ícones · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Ícones</h1>
+        <p class="doc__frase">
+            Phosphor (MIT), auto-hospedado. A v1 expõe dois pesos: <code>Regular</code> e
+            <code>Fill</code> — o par que expressa estado selecionado sem improviso.
+        </p>
+    </header>
+
+    <section aria-labelledby="icones-grade">
+        <h2 id="icones-grade">Grade</h2>
+        <RvmTextField @bind-Value="_busca"
+                      Label="Buscar ícone"
+                      Placeholder="check, caret, eye..."
+                      IconStart="magnifying-glass" />
+
+        <p class="doc__nota">Clique num ícone para copiar o nome.</p>
+
+        <div class="grade-icones">
+            @foreach (var nome in Filtrados)
+            {
+                <button type="button" class="grade-icones__item" @onclick="() => Copiar(nome)"
+                        aria-label="@($"Copiar o nome {nome}")">
+                    <RvmIcon Name="@nome" Size="1.75rem" />
+                    <RvmIcon Name="@nome" Weight="RvmIconWeight.Fill" Size="1.75rem" />
+                    <span class="grade-icones__nome">@nome</span>
+                </button>
+            }
+        </div>
+
+        @if (Filtrados.Count == 0)
+        {
+            <p class="doc__nota">
+                Nenhum ícone com esse nome. O conjunto é <strong>curado</strong>, não os 1512 do
+                Phosphor: cada ícone embutido é um nome na API pública e bytes que todo consumidor
+                baixa. Ícone novo entra pelo <code>tools/gerar-icones.py</code>.
+            </p>
+        }
+
+        @if (_copiado is not null)
+        {
+            <p class="doc__ok" role="status">Copiado: @_copiado</p>
+        }
+    </section>
+
+    <section aria-labelledby="icones-uso">
+        <h2 id="icones-uso">Uso</h2>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+        <p class="doc__nota">
+            <strong>Sem <code>Title</code>, o ícone é decorativo</strong> e some do leitor de tela.
+            Esse padrão é o inverso do intuitivo, e é deliberado: a maioria dos ícones acompanha um
+            texto que já diz a mesma coisa, e anunciá-los faz o leitor repetir — "salvar salvar".
+            Quem tem um ícone que carrega significado sozinho informa o <code>Title</code>.
+        </p>
+    </section>
+</article>
+
+@code {
+    private string? _busca = string.Empty;
+    private string? _copiado;
+
+    private const string _exemplo = """
+        <RvmIcon Name="check" />
+        <RvmIcon Name="check" Weight="RvmIconWeight.Fill" />
+        <RvmIcon Name="warning" Title="Atenção" />
+        """;
+
+    private static readonly string[] _todos =
+    [
+        "check", "x", "caret-down", "caret-up", "eye", "eye-slash",
+        "warning", "info", "circle-notch", "magnifying-glass", "calendar-blank",
+    ];
+
+    private IReadOnlyList<string> Filtrados => string.IsNullOrWhiteSpace(_busca)
+        ? _todos
+        : _todos.Where(n => n.Contains(_busca!.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private async Task Copiar(string nome)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", nome);
+            _copiado = nome;
+            StateHasChanged();
+            await Task.Delay(1800);
+            _copiado = null;
+            StateHasChanged();
+        }
+        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        {
+            // Sem permissão de área de transferência: o nome continua visível na tela.
+            _copiado = null;
+        }
+    }
+}

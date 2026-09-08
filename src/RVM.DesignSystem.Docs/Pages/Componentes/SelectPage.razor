@@ -1,0 +1,112 @@
+@page "/componentes/select"
+
+<PaginaDeComponente Nome="RvmSelect&lt;TValue&gt;"
+                    Tipo="typeof(RvmSelect<string>)"
+                    Frase="Escolha única entre poucas opções conhecidas. Usa o <select> nativo — e isso é uma decisão, não preguiça.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmSelect TValue="string" @bind-Value="_estado"
+                           Label="Estado"
+                           Placeholder="@(_comPlaceholder ? "Selecione" : null)"
+                           Required="_obrigatorio"
+                           Disabled="_desabilitado"
+                           Size="_tamanho">
+                    <option value="SP">São Paulo</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                </RvmSelect>
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmSize" @bind-Value="_tamanho" Label="Size" Size="RvmSize.Small">
+                    @foreach (var s in Enum.GetValues<RvmSize>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_comPlaceholder" Label="Placeholder" />
+                <RvmCheckbox @bind-Value="_obrigatorio" Label="Required" />
+                <RvmCheckbox @bind-Value="_desabilitado" Label="Disabled" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Estados>
+        <div class="demo-grade">
+            <RvmSelect TValue="string" Label="Normal" Placeholder="Selecione">
+                <option value="a">Opção A</option>
+            </RvmSelect>
+            <RvmSelect TValue="string" Label="Com erro" Error="Escolha uma opção." Placeholder="Selecione">
+                <option value="a">Opção A</option>
+            </RvmSelect>
+            <RvmSelect TValue="string" Label="Desabilitado" Disabled="true" Placeholder="Selecione">
+                <option value="a">Opção A</option>
+            </RvmSelect>
+        </div>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É o <code>&lt;select&gt;</code> nativo.</strong> Vem de graça: teclado
+                completo, busca por digitação, a roda de seleção do iOS e o menu do Android. Um
+                dropdown desenhado precisaria reimplementar tudo isso e, na prática, entrega pior
+                no celular.
+            </li>
+            <li>
+                <strong>O <code>Placeholder</code> gera uma opção com <code>value=""</code></strong> —
+                é o que faz o <code>required</code> nativo reconhecer "nada selecionado" e validar
+                sem código nosso.
+            </li>
+            <li>
+                <strong>A seta é decorativa:</strong> <code>aria-hidden</code> e
+                <code>pointer-events: none</code>, para não ser anunciada nem engolir o clique que
+                deveria abrir a lista.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Com muitas opções.</strong> Acima de ~15 itens, rolar uma lista nativa é
+                pior que digitar. O <code>RvmAutocomplete</code> — busca assíncrona, debounce — chega
+                na onda 4, e aí sim o nativo não resolve.
+            </li>
+            <li>
+                <strong>Com duas ou três opções visíveis de uma vez.</strong> Use
+                <a href="componentes/radio-group">RvmRadioGroup</a>: o usuário compara sem abrir nada.
+            </li>
+            <li>
+                <strong>Para ligar/desligar.</strong> Use <a href="componentes/switch">RvmSwitch</a>
+                ou <a href="componentes/checkbox">RvmCheckbox</a>.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _estado;
+    private RvmSize _tamanho = RvmSize.Medium;
+    private bool _comPlaceholder = true;
+    private bool _obrigatorio;
+    private bool _desabilitado;
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { "Label=\"Estado\"" };
+
+        if (_comPlaceholder) atributos.Add("Placeholder=\"Selecione\"");
+        if (_tamanho != RvmSize.Medium) atributos.Add($"Size=\"RvmSize.{_tamanho}\"");
+        if (_obrigatorio) atributos.Add("Required=\"true\"");
+        if (_desabilitado) atributos.Add("Disabled=\"true\"");
+
+        return "<RvmSelect TValue=\"string\" @bind-Value=\"modelo.Estado\"\n           "
+            + string.Join("\n           ", atributos) + ">\n"
+            + "    <option value=\"SP\">São Paulo</option>\n"
+            + "    <option value=\"MG\">Minas Gerais</option>\n"
+            + "</RvmSelect>";
+    }
+}

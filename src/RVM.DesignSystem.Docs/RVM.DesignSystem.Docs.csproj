@@ -44,6 +44,27 @@
        dominio pretendido visivel e versionado; e o guard do workflow usa ele para provar que
        o publish saiu com o dominio certo em mente. Sem dominio proprio o Pages serviria em
        /RVM.DesignSystem/ e todo caminho absoluto do WASM quebraria. -->
+  <!--
+    Leva o XML de documentacao da biblioteca para dentro do site.
+
+    E o que permite a tabela de API de cada pagina ser GERADA do codigo em vez de escrita a
+    mao (`07` § Anatomia). Doc escrita a mao desatualiza no primeiro parametro novo, e o pior
+    e que ela desatualiza em SILENCIO — ninguem percebe ate alguem seguir a doc e nao
+    funcionar.
+  -->
+  <Target Name="CopiarXmlDeDoc" BeforeTargets="BeforeBuild;BeforeBuild">
+    <ItemGroup>
+      <XmlDeDoc Include="$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PublicarXmlDeDoc" AfterTargets="Build">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml"
+          DestinationFolder="$(MSBuildThisFileDirectory)wwwroot/api"
+          Condition="Exists('$(MSBuildThisFileDirectory)../RVM.DesignSystem/bin/$(Configuration)/net10.0/RVM.DesignSystem.xml')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
   <Target Name="PagesStaticHostFixups" AfterTargets="Publish">
     <WriteLinesToFile File="$(PublishDir)wwwroot/.nojekyll" Lines="" Overwrite="true" />
     <Copy SourceFiles="$(PublishDir)wwwroot/index.html" DestinationFiles="$(PublishDir)wwwroot/404.html" />

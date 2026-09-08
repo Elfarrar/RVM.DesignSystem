@@ -1,12 +1,15 @@
 @inherits LayoutComponentBase
 @inject IRvmThemeService Tema
 
-@*
-    O RvmThemeProvider envolve TUDO: é ele que emite as custom properties, então nada abaixo
-    dele consegue renderizar com cor errada.
-*@
 <RvmThemeProvider>
     <div class="page">
+        @*
+            "Pular para o conteúdo" é o primeiro elemento tabulável da página, e fica escondido
+            até receber foco. Sem ele, quem navega por teclado atravessa a navegação lateral
+            inteira em TODA página antes de chegar ao texto (`07` § Requisitos próprios).
+        *@
+        <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
         <header class="site-header">
             <a class="site-brand" href="">RVM Design System</a>
 
@@ -25,9 +28,30 @@
             </div>
         </header>
 
-        <main class="site-main">
-            @Body
-        </main>
+        <div class="site-corpo">
+            <nav class="site-nav" aria-label="Navegação da documentação">
+                @foreach (var grupo in Navegacao.Grupos)
+                {
+                    <div class="site-nav__grupo">
+                        <h2 class="site-nav__titulo">@grupo.Titulo</h2>
+                        <ul class="site-nav__lista">
+                            @foreach (var item in grupo.Itens)
+                            {
+                                <li>
+                                    <NavLink class="site-nav__link" href="@item.Rota" Match="NavLinkMatch.All">
+                                        @item.Texto
+                                    </NavLink>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </nav>
+
+            <main class="site-main" id="conteudo" tabindex="-1">
+                @Body
+            </main>
+        </div>
 
         <footer class="site-footer">
             <p>Biblioteca de componentes Blazor do ecossistema RVM · MIT</p>
@@ -57,9 +81,6 @@
 
     protected override async Task OnAfterRenderAsync(bool primeiraVez)
     {
-        // Só depois do primeiro render: antes disso não há JS e o localStorage não existe.
-        // O script anti-flash já aplicou o visual correto; aqui só sincronizamos o estado do
-        // botão com o que ele decidiu.
         if (primeiraVez && Tema is RvmThemeService servico)
         {
             var preferencia = await servico.LoadPreferenceAsync();

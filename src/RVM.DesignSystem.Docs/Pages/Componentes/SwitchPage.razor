@@ -1,0 +1,91 @@
+@page "/componentes/switch"
+
+<PaginaDeComponente Nome="RvmSwitch"
+                    Tipo="typeof(RvmSwitch)"
+                    Frase="Liga e desliga com efeito IMEDIATO. Se a mudança só vale depois de salvar, o componente é outro.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmSwitch @bind-Value="_ligado"
+                           Label="Receber notificações"
+                           Help="@(_comAjuda ? "Aplica na hora — não precisa salvar." : null)"
+                           Disabled="_desabilitado" />
+            </div>
+            <div class="playground__controles">
+                <RvmCheckbox @bind-Value="_comAjuda" Label="Help" />
+                <RvmCheckbox @bind-Value="_desabilitado" Label="Disabled" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Estados>
+        <div class="demo-grade">
+            <RvmSwitch Label="Desligado" />
+            <RvmSwitch Label="Ligado" Value="true" />
+            <RvmSwitch Label="Desabilitado" Disabled="true" />
+            <RvmSwitch Label="Com ajuda" Help="Explica o efeito." />
+        </div>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É um <code>&lt;input type="checkbox"&gt;</code> com
+                <code>role="switch"</code></strong>. O <code>role</code> não é cosmético: é o que faz
+                o leitor de tela anunciar "ligado/desligado" em vez de "marcado/desmarcado", que é
+                a expectativa correta para um controle de efeito imediato.
+            </li>
+            <li>
+                <strong><kbd>Tab</kbd> alcança, <kbd>Espaço</kbd> alterna</strong> — comportamento
+                nativo, não reimplementado.
+            </li>
+            <li>
+                <strong>O trilho e o botão não capturam clique</strong>
+                (<code>pointer-events: none</code>), para o ponteiro chegar ao input.
+            </li>
+            <li>
+                <strong>A animação do botão respeita <code>prefers-reduced-motion</code></strong>,
+                porque a duração vem dos tokens de motion, que já são zerados nessa preferência.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Dentro de formulário que precisa de "Salvar".</strong> Switch promete efeito
+                imediato. Se a mudança só vale no envio, use
+                <a href="componentes/checkbox">RvmCheckbox</a> — senão o usuário liga, sai da tela e
+                acha que salvou.
+            </li>
+            <li>
+                <strong>Para escolher entre duas coisas diferentes.</strong> Switch é ligado/desligado
+                da <em>mesma</em> coisa. "Pessoa física / Pessoa jurídica" é
+                <a href="componentes/radio-group">RvmRadioGroup</a>.
+            </li>
+            <li>
+                <strong>Para ação destrutiva.</strong> Desligar algo importante merece confirmação —
+                o <code>RvmDialog</code> chega na onda 3.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private bool _ligado = true;
+    private bool _comAjuda = true;
+    private bool _desabilitado;
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { "Label=\"Receber notificações\"" };
+
+        if (_comAjuda) atributos.Add("Help=\"Aplica na hora — não precisa salvar.\"");
+        if (_desabilitado) atributos.Add("Disabled=\"true\"");
+
+        return "<RvmSwitch @bind-Value=\"modelo.Notificacoes\"\n           "
+            + string.Join("\n           ", atributos) + " />";
+    }
+}

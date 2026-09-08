@@ -1,0 +1,78 @@
+@page "/fundamentos/espacamento"
+
+<PageTitle>Espaçamento · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Espaçamento</h1>
+        <p class="doc__frase">
+            Escala fechada de base 4px. Componente não usa valor fora dela — é o que faz telas de
+            autores diferentes parecerem a mesma tela.
+        </p>
+    </header>
+
+    <section aria-labelledby="esp-escala">
+        <h2 id="esp-escala">Escala</h2>
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Token</th>
+                        <th scope="col">rem</th>
+                        <th scope="col">px</th>
+                        <th scope="col">Amostra</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var (passo, rem, px) in _escala)
+                    {
+                        <tr>
+                            <td><code>--rvm-space-@passo</code></td>
+                            <td class="doc__num">@rem</td>
+                            <td class="doc__num">@px</td>
+                            <td><div class="barra-espaco" style="@($"width:{rem}")"></div></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="esp-regra">
+        <h2 id="esp-regra">Por que fechada</h2>
+        <p>
+            Escala aberta vira, na prática, "cada um escolhe um número". Dois desenvolvedores usam
+            13px e 14px na mesma tela, ninguém percebe olhando isolado, e o conjunto fica
+            desalinhado sem que se saiba onde. Fechar a escala não limita: <strong>remove uma
+            decisão que não precisava ser tomada</strong> e que ninguém acerta por acaso duas vezes.
+        </p>
+        <BlocoDeCodigo Linguagem="css" Codigo="@_exemplo" />
+    </section>
+</article>
+
+@code {
+    private const string _exemplo = """
+        /* certo */
+        .minha-secao { padding: var(--rvm-space-4); gap: var(--rvm-space-2); }
+
+        /* errado — fora da escala, e ninguém nota até a tela ficar torta */
+        .minha-secao { padding: 13px; gap: 7px; }
+        """;
+
+    private readonly (string Passo, string Rem, string Px)[] _escala =
+    [
+        ("0", "0", "0"),
+        ("1", "0.25rem", "4"),
+        ("2", "0.5rem", "8"),
+        ("3", "0.75rem", "12"),
+        ("4", "1rem", "16"),
+        ("5", "1.25rem", "20"),
+        ("6", "1.5rem", "24"),
+        ("8", "2rem", "32"),
+        ("10", "2.5rem", "40"),
+        ("12", "3rem", "48"),
+        ("16", "4rem", "64"),
+        ("20", "5rem", "80"),
+        ("24", "6rem", "96"),
+    ];
+}

@@ -34,19 +34,25 @@ public static class RvmThemes
         // So os neutros do modo CLARO sao sobrescritos; o escuro segue derivado, porque o site
         // nao tem modo escuro para copiar. Todo valor aqui passa pelo mesmo teste de contraste
         // que os derivados — sobrescrever nao isenta ninguem do portao.
-        return derivado with
+        var claroComOsCinzasDoSite = derivado.Light with
         {
-            Light = derivado.Light with
-            {
-                Background = "#EEEEF1",      // fundo da pagina, o cinza do site
-                Surface = "#FCFCFE",         // superficie elevada do site (bg-elev)
-                SurfaceRaised = "#FFFFFF",
-                SurfaceSunken = "#E4E4EA",
-                OnSurface = "#1E1E26",       // o texto do site
-                OnBackground = "#1E1E26",
-                Border = "#DEDEE4",
-            },
+            Background = "#EEEEF1",      // fundo da pagina, o cinza do site
+            Surface = "#FCFCFE",         // superficie elevada do site (bg-elev)
+            SurfaceRaised = "#FFFFFF",
+            SurfaceSunken = "#E4E4EA",
+            OnSurface = "#1E1E26",       // o texto do site
+            OnBackground = "#1E1E26",
+            Border = "#DEDEE4",
         };
+
+        // ⚠️ OBRIGATORIO depois de sobrescrever superficie. O FromSeed derivou as cores contra
+        // as superficies que ELE calculou; trocar os cinzas por baixo quebra a garantia EM
+        // SILENCIO — a paleta continua compilando e o texto fica ilegivel.
+        //
+        // Sem esta chamada, quatro papeis ficam abaixo de AA sobre o surface-sunken deste tema
+        // (secondary 4.23, success 4.18, warning 4.45, info 4.23). Foi assim que o axe reprovou
+        // 14 paginas do site em 08/09/2026, com o teste unitario aprovando.
+        return derivado with { Light = claroComOsCinzasDoSite.EnsureContrast() };
     }
 
     /// <summary>

@@ -1,0 +1,332 @@
+/*
+  Estilos do site de documentação — a casca e as páginas, não os componentes.
+
+  Tudo aqui consome tokens da própria biblioteca. O site se veste com o design system que
+  documenta: se um token ficar feio, a primeira pessoa a sofrer sou eu, montando a página.
+*/
+
+/* Skip link: primeiro tabulável, escondido até receber foco. Sem ele, quem navega por
+   teclado atravessa a navegação lateral inteira em TODA página antes de chegar ao texto. */
+.skip-link {
+    position: absolute;
+    left: var(--rvm-space-2);
+    top: -10rem;
+    z-index: var(--rvm-z-sticky);
+    padding: var(--rvm-space-2) var(--rvm-space-4);
+    background: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    border-radius: var(--rvm-radius-md);
+    text-decoration: none;
+    transition: top var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+.skip-link:focus {
+    top: var(--rvm-space-2);
+}
+
+.site-corpo {
+    display: flex;
+    gap: var(--rvm-space-8);
+    flex: 1;
+    align-items: flex-start;
+    max-width: 76rem;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--rvm-space-6) var(--rvm-space-6) var(--rvm-space-12);
+}
+
+.site-nav {
+    flex: 0 0 13rem;
+    position: sticky;
+    top: var(--rvm-space-4);
+}
+
+.site-nav__grupo {
+    margin-bottom: var(--rvm-space-6);
+}
+
+.site-nav__titulo {
+    margin: 0 0 var(--rvm-space-2);
+    font-size: var(--rvm-font-size-caption);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rvm-color-on-surface);
+}
+
+.site-nav__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.site-nav__link {
+    display: block;
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+    color: var(--rvm-color-on-surface);
+    text-decoration: none;
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.site-nav__link:hover {
+    background: var(--rvm-color-surface-sunken);
+}
+
+.site-nav__link.active {
+    background: var(--rvm-color-primary-container);
+    color: var(--rvm-color-on-primary-container);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.site-nav__link:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.site-main {
+    flex: 1;
+    min-width: 0;
+    max-width: 52rem;
+    padding: 0;
+}
+
+/* O main recebe foco pelo skip link, mas tem tabindex="-1" e ninguém chega nele com Tab —
+   o anel ali não orientaria ninguém. Mesma lógica do h1 do roteador. */
+.site-main:focus {
+    outline: none;
+}
+
+/* --- Anatomia da página --- */
+
+.doc__cabecalho { margin-bottom: var(--rvm-space-8); }
+.doc h1 { margin: 0 0 var(--rvm-space-3); letter-spacing: var(--rvm-tracking-display); }
+.doc__frase { margin: 0; font-size: var(--rvm-font-size-body-lg); }
+.doc section { margin-bottom: var(--rvm-space-10); }
+.doc__nota { font-size: var(--rvm-font-size-body-sm); }
+.doc__ok { color: var(--rvm-color-success); font-weight: var(--rvm-font-weight-medium); }
+
+.doc__lista {
+    padding-left: var(--rvm-space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+.doc__num { font-variant-numeric: tabular-nums; text-align: right; }
+
+.doc__tabela-scroll { overflow-x: auto; }
+
+.doc__tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.doc__tabela th,
+.doc__tabela td {
+    text-align: left;
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    border-bottom: 1px solid var(--rvm-color-border);
+    vertical-align: top;
+}
+
+.doc__tabela th {
+    font-weight: var(--rvm-font-weight-semibold);
+    border-bottom-color: var(--rvm-color-border-strong);
+}
+
+.doc__tipo { color: var(--rvm-color-secondary); }
+
+/*
+  Larguras explícitas na tabela de API.
+
+  Sem elas o navegador dá espaço proporcional ao conteúdo, e o tipo — que pode ser um
+  `IReadOnlyDictionary<string, object>` — rouba a largura da DESCRIÇÃO, que é a coluna
+  que a pessoa veio ler. O resultado é a informação mais útil escondida atrás do scroll.
+*/
+.doc__tabela th:nth-child(1), .doc__tabela td:nth-child(1) { width: 22%; }
+.doc__tabela th:nth-child(2), .doc__tabela td:nth-child(2) { width: 20%; }
+.doc__tabela th:nth-child(3), .doc__tabela td:nth-child(3) { width: 10%; }
+.doc__tabela th:nth-child(4), .doc__tabela td:nth-child(4) { width: 48%; }
+
+.doc__tabela code { word-break: break-word; }
+
+.doc__obrigatorio {
+    display: inline-block;
+    margin-left: var(--rvm-space-2);
+    padding: 0 var(--rvm-space-1);
+    font-size: var(--rvm-font-size-caption);
+    border-radius: var(--rvm-radius-sm);
+    background: var(--rvm-color-primary-container);
+    color: var(--rvm-color-on-primary-container);
+}
+
+/* A seção que impede o design system de virar catálogo ganha destaque visual próprio. */
+.doc__quando-nao {
+    padding: var(--rvm-space-5);
+    border-left: 3px solid var(--rvm-color-warning);
+    background: var(--rvm-color-surface);
+    border-radius: var(--rvm-radius-md);
+}
+
+/* --- Playground --- */
+
+.playground {
+    display: flex;
+    gap: var(--rvm-space-6);
+    flex-wrap: wrap;
+    padding: var(--rvm-space-5);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-lg);
+    background: var(--rvm-color-surface);
+    margin-bottom: var(--rvm-space-4);
+}
+
+.playground__palco {
+    flex: 1 1 18rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 8rem;
+    padding: var(--rvm-space-4);
+    border-radius: var(--rvm-radius-md);
+    background: var(--rvm-color-surface-sunken);
+}
+
+.playground__controles {
+    flex: 0 1 15rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+}
+
+/* --- Bloco de código --- */
+
+.bloco-codigo {
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    overflow: hidden;
+    background: var(--rvm-color-surface-sunken);
+}
+
+.bloco-codigo__barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-bottom: 1px solid var(--rvm-color-border);
+}
+
+.bloco-codigo__linguagem {
+    font-family: var(--rvm-font-family-mono);
+    font-size: var(--rvm-font-size-caption);
+}
+
+/* O bloco inteiro usa a cor de texto normal. `code` solto na prosa pode ser destacado; um
+   bloco inteiro em cor de destaque e ruim de ler — e foi um dos pontos que o axe reprovou. */
+.bloco-codigo__pre,
+.bloco-codigo__pre code {
+    color: var(--rvm-color-on-surface);
+}
+
+.bloco-codigo__pre {
+    margin: 0;
+    padding: var(--rvm-space-4);
+    overflow-x: auto;
+    font-family: var(--rvm-font-family-mono);
+    font-size: var(--rvm-font-size-code);
+    line-height: var(--rvm-line-height-body);
+}
+
+/* --- Fundamentos: cor --- */
+
+.amostra {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 1.75rem;
+    border-radius: var(--rvm-radius-sm);
+    border: 1px solid var(--rvm-color-border);
+    font-size: var(--rvm-font-size-caption);
+}
+
+.veredito { display: inline-flex; align-items: center; gap: var(--rvm-space-1); white-space: nowrap; }
+.veredito--ok { color: var(--rvm-color-success); }
+.veredito--falha { color: var(--rvm-color-danger); }
+
+.paleta {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--rvm-space-3);
+}
+
+.paleta__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    padding: var(--rvm-space-2);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+}
+
+.paleta__amostra {
+    height: 2.5rem;
+    border-radius: var(--rvm-radius-sm);
+    border: 1px solid var(--rvm-color-border);
+}
+
+.paleta__nome,
+.paleta__valor { font-size: var(--rvm-font-size-caption); }
+
+.barra-espaco {
+    height: 0.75rem;
+    background: var(--rvm-color-primary);
+    border-radius: var(--rvm-radius-sm);
+}
+
+/* --- Grade de ícones --- */
+
+.grade-icones {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: var(--rvm-space-3);
+    margin-top: var(--rvm-space-4);
+}
+
+.grade-icones__item {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    background: var(--rvm-color-surface);
+    color: var(--rvm-color-on-surface);
+    cursor: pointer;
+    font-family: var(--rvm-font-family-sans);
+}
+
+.grade-icones__item:hover { background: var(--rvm-color-surface-sunken); }
+
+.grade-icones__item:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.grade-icones__nome {
+    font-family: var(--rvm-font-family-mono);
+    font-size: var(--rvm-font-size-caption);
+}
+
+.demo-grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--rvm-space-4);
+}
+
+@media (max-width: 60rem) {
+    .site-corpo { flex-direction: column; }
+    .site-nav { position: static; flex: 1 1 auto; width: 100%; }
+}

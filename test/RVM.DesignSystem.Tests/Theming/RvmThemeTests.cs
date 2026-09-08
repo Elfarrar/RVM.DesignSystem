@@ -5,12 +5,31 @@ namespace RVM.DesignSystem.Tests.Theming;
 public class RvmThemeTests
 {
     [Fact]
-    public void FromSeed_preserva_a_semente_no_modo_claro_quando_ela_ja_passa()
+    public void FromSeed_preserva_a_semente_quando_ela_passa_contra_a_pior_superficie()
     {
-        // O roxo da marca da 9.38 contra o fundo claro: nao precisa de ajuste, e a
-        // derivacao nao deve "melhorar" o que ja esta certo.
+        // O roxo da marca passa folgado contra qualquer superficie da paleta, entao sai
+        // intacto — a derivacao nao deve "melhorar" o que ja esta certo.
         Assert.Equal("#641974", RvmThemes.Rvm.Light.Primary);
-        Assert.Equal("#006DBD", RvmThemes.Rvm.Light.Secondary);
+    }
+
+    [Fact]
+    public void FromSeed_escurece_o_MINIMO_quando_a_semente_nao_passa_no_pior_fundo()
+    {
+        // O azul do VS Code (#006DBD) passa contra a `surface` (quase branca) mas da 4.23
+        // contra o `surface-sunken` deste tema — e papel de marca tambem e usado como TEXTO
+        // sobre superficie rebaixada. A derivacao escurece o suficiente para passar, e so isso.
+        var secondary = RvmColor.Parse(RvmThemes.Rvm.Light.Secondary);
+        var semente = RvmColor.Parse("#006DBD");
+
+        var (lSecondary, _, hueSecondary) = secondary.ToOklch();
+        var (lSemente, _, hueSemente) = semente.ToOklch();
+
+        Assert.True(lSecondary < lSemente, "Deveria ter escurecido.");
+        Assert.InRange(Math.Abs(hueSecondary - hueSemente), 0, 3);
+
+        // "Minimo necessario": o ajuste nao passa longe do alvo.
+        var razao = RvmColor.Contrast(secondary, RvmColor.Parse(RvmThemes.Rvm.Light.SurfaceSunken));
+        Assert.InRange(razao, RvmContrast.NormalText, RvmContrast.NormalText + 0.6);
     }
 
     [Fact]

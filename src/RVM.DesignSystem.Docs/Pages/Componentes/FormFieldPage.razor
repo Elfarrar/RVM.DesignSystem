@@ -1,0 +1,93 @@
+@page "/componentes/form-field"
+
+<PaginaDeComponente Nome="RvmFormField"
+                    Tipo="typeof(RvmFormField)"
+                    Frase="A moldura de um campo: rótulo, controle, ajuda e erro. Os campos da biblioteca já usam — você só precisa dela para envolver um controle SEU.">
+
+    <Exemplo>
+        <p class="doc__nota">
+            Existe separado porque é onde mora a parte chata e fácil de errar da acessibilidade de
+            formulário: associar rótulo ao controle, apontar <code>aria-describedby</code> para a
+            ajuda <em>e</em> para o erro, marcar <code>aria-invalid</code>. Cada campo que
+            reimplementasse isso erraria de um jeito diferente; aqui erra ou acerta uma vez só.
+        </p>
+
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmFormField FieldId="exemplo-campo"
+                              Label="@_rotulo"
+                              Help="@(_comAjuda ? "Texto de apoio do campo." : null)"
+                              Error="@(_comErro ? "Mensagem de erro." : null)"
+                              Required="_obrigatorio">
+                    @* Um controle qualquer — a moldura não sabe nem se importa com qual é. *@
+                    <input id="exemplo-campo" class="rvm-input rvm-input--medium" type="text" />
+                </RvmFormField>
+            </div>
+            <div class="playground__controles">
+                <RvmTextField @bind-Value="_rotulo" Label="Label" Size="RvmSize.Small" />
+                <RvmCheckbox @bind-Value="_comAjuda" Label="Help" />
+                <RvmCheckbox @bind-Value="_comErro" Label="Error" />
+                <RvmCheckbox @bind-Value="_obrigatorio" Label="Required" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Estados>
+        <p class="doc__nota">
+            <strong>O erro substitui a ajuda, não se soma a ela.</strong> Os dois ao mesmo tempo
+            competem pela atenção exatamente no momento em que ela mais importa.
+        </p>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li><strong><code>&lt;label for&gt;</code> ligado ao <code>FieldId</code></strong> — clicar no rótulo foca o controle.</li>
+            <li><strong>A mensagem de erro usa <code>role="alert"</code></strong>, para ser anunciada assim que aparece.</li>
+            <li>
+                <strong>O asterisco de obrigatório é <code>aria-hidden</code>.</strong> A
+                obrigatoriedade chega ao leitor de tela pelo <code>required</code> do próprio
+                controle, não por um caractere solto — anunciar "asterisco" não informa nada.
+            </li>
+            <li>
+                <strong>Expõe <code>ErrorId</code> e <code>HelpId</code></strong> para o controle
+                apontar o <code>aria-describedby</code> ao id certo.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Com os campos da biblioteca.</strong> <code>RvmTextField</code>,
+                <code>RvmTextArea</code> e <code>RvmSelect</code> já usam a moldura por dentro —
+                envolvê-los de novo duplicaria rótulo e mensagens.
+            </li>
+            <li>
+                <strong>Para agrupar campos relacionados.</strong> Isso é
+                <code>&lt;fieldset&gt;</code>, e é o que o
+                <a href="componentes/radio-group">RvmRadioGroup</a> faz.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _rotulo = "Campo personalizado";
+    private bool _comAjuda = true;
+    private bool _comErro;
+    private bool _obrigatorio;
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { "FieldId=\"meu-campo\"", $"Label=\"{_rotulo}\"" };
+
+        if (_comAjuda) atributos.Add("Help=\"Texto de apoio do campo.\"");
+        if (_comErro) atributos.Add("Error=\"Mensagem de erro.\"");
+        if (_obrigatorio) atributos.Add("Required=\"true\"");
+
+        return "<RvmFormField " + string.Join("\n              ", atributos) + ">\n"
+            + "    <input id=\"meu-campo\" class=\"rvm-input rvm-input--medium\" type=\"text\" />\n"
+            + "</RvmFormField>";
+    }
+}

@@ -1,0 +1,107 @@
+@page "/instalacao"
+
+<PageTitle>Instalação · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Instalação</h1>
+        <p class="doc__frase">
+            Quatro passos. Se exigir mais que isso, a API está errada.
+        </p>
+    </header>
+
+    <section aria-labelledby="inst-1">
+        <h2 id="inst-1">1. O pacote</h2>
+        <p>
+            O feed é o BaGet interno do ecossistema. O consumidor <strong>fixa versão exata</strong> —
+            ninguém é atualizado por acidente.
+        </p>
+        <BlocoDeCodigo Linguagem="xml" Codigo="@_nuget" />
+        <BlocoDeCodigo Linguagem="xml" Codigo="@_csproj" />
+    </section>
+
+    <section aria-labelledby="inst-2">
+        <h2 id="inst-2">2. Registro</h2>
+        <p>Uma chamada registra a biblioteca inteira — não há <code>AddRvmButton()</code>.</p>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@_di" />
+    </section>
+
+    <section aria-labelledby="inst-3">
+        <h2 id="inst-3">3. CSS e o script anti-flash</h2>
+        <p>
+            O <code>rvm-tokens.css</code> traz as escalas (espaçamento, raio, tipografia, sombra,
+            motion, z-index). As <strong>cores</strong> não estão nele: são emitidas em runtime pelo
+            provider, porque mudam por tema e por modo.
+        </p>
+        <BlocoDeCodigo Linguagem="html" Codigo="@_head" />
+        <p class="doc__nota">
+            <strong>O script anti-flash é síncrono e vem antes do CSS de propósito.</strong> Ele lê a
+            preferência salva e aplica no elemento raiz <em>antes do primeiro paint</em>. Sem ele,
+            quem usa tema escuro vê a página inteira em claro pelos segundos que o WASM leva para
+            subir — não um piscar, um erro visível.
+        </p>
+    </section>
+
+    <section aria-labelledby="inst-4">
+        <h2 id="inst-4">4. O provider</h2>
+        <p>
+            Envolve a aplicação. É ele que emite as custom properties do tema corrente — no HTML,
+            não por JavaScript, então o primeiro paint já sai certo.
+        </p>
+        <BlocoDeCodigo Codigo="@_provider" />
+    </section>
+
+    <section aria-labelledby="inst-tema">
+        <h2 id="inst-tema">Tema do seu produto</h2>
+        <p>
+            Duas linhas. <code>FromSeed</code> deriva os dois modos e todos os papéis, e cada cor
+            derivada já nasce aprovada no contraste AA — a paleta não é derivada e depois testada,
+            ela é construída atendendo o mínimo.
+        </p>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@_tema" />
+    </section>
+</article>
+
+@code {
+    private const string _nuget = """
+        <!-- nuget.config -->
+        <packageSources>
+          <add key="rvm-packages" value="https://packages.rvmtech.com.br/v3/index.json" />
+        </packageSources>
+        """;
+
+    private const string _csproj = """
+        <PackageReference Include="RVM.DesignSystem" Version="0.1.0" />
+        """;
+
+    private const string _di = """
+        using RVM.DesignSystem;
+
+        builder.Services.AddRvmDesignSystem();
+
+        // ou com um tema próprio:
+        builder.Services.AddRvmDesignSystem(o => o.Theme = TemaDoMeuProduto.Theme);
+        """;
+
+    private const string _head = """
+        <head>
+          <script src="_content/RVM.DesignSystem/js/rvm-theme-init.js"></script>
+          <link rel="stylesheet" href="_content/RVM.DesignSystem/rvm-tokens.css" />
+        </head>
+        """;
+
+    private const string _provider = """
+        @* MainLayout.razor *@
+        <RvmThemeProvider>
+            @Body
+        </RvmThemeProvider>
+        """;
+
+    private const string _tema = """
+        public static class TemaDoMeuProduto
+        {
+            public static readonly RvmTheme Theme =
+                RvmTheme.FromSeed("MeuProduto", primary: "#2A6E49", secondary: "#B07D2A");
+        }
+        """;
+}

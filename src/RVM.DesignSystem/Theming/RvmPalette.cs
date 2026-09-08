@@ -98,6 +98,48 @@ public sealed record RvmPalette
     public required string FocusRing { get; init; }
 
     /// <summary>
+    /// Devolve esta paleta com os papeis de marca e de estado escurecidos (ou clareados) o
+    /// suficiente para atenderem AA contra a superficie mais exigente dela propria.
+    /// </summary>
+    /// <returns>Uma paleta equivalente, com os papeis de texto ajustados.</returns>
+    /// <remarks>
+    /// <b>Existe para quem sobrescreve superficie.</b> O <c>FromSeed</c> deriva as cores
+    /// garantindo contraste contra as superficies que ele mesmo calculou; trocar
+    /// <c>Background</c> ou <c>SurfaceSunken</c> por <c>with</c> depois disso <b>quebra a
+    /// garantia em silencio</b> — a paleta continua compilando e o texto fica ilegivel.
+    ///
+    /// <para>
+    /// Foi o que aconteceu com o proprio tema RVM em 08/09/2026: sobrescrever os cinzas pelos do
+    /// site deixou quatro papeis abaixo de AA. Chamar este metodo depois do <c>with</c> conserta,
+    /// e conserta de novo se os cinzas mudarem — diferente de escolher a cor certa a mao, que
+    /// desatualiza na primeira mudanca.
+    /// </para>
+    /// </remarks>
+    public RvmPalette EnsureContrast()
+    {
+        var superficies = new[] { Surface, SurfaceRaised, SurfaceSunken, Background }
+            .Select(RvmColor.Parse)
+            .ToArray();
+
+        // A superficie mais exigente e a de luminancia mais proxima do meio: e contra ela que
+        // qualquer cor tem a menor folga.
+        var pior = superficies.OrderBy(c => Math.Abs(c.RelativeLuminance - 0.5)).First();
+
+        string Ajustar(string cor) =>
+            RvmContrast.Ensure(RvmColor.Parse(cor), pior, RvmContrast.NormalText).ToHex();
+
+        return this with
+        {
+            Primary = Ajustar(Primary),
+            Secondary = Ajustar(Secondary),
+            Success = Ajustar(Success),
+            Warning = Ajustar(Warning),
+            Danger = Ajustar(Danger),
+            Info = Ajustar(Info),
+        };
+    }
+
+    /// <summary>
     /// Os pares <c>x</c> / <c>on-x</c> com o contraste minimo que cada um deve atingir.
     /// </summary>
     /// <returns>
@@ -131,6 +173,27 @@ public sealed record RvmPalette
         // Limite de controle e anel de foco: 3:1 contra a superficie adjacente.
         yield return ("border-strong/surface", BorderStrong, Surface, RvmContrast.LargeTextOrUi);
         yield return ("focus-ring/surface", FocusRing, Surface, RvmContrast.LargeTextOrUi);
+
+        // ⚠️ Os papeis de MARCA e de ESTADO tambem sao usados como TEXTO sobre os fundos mais
+        // escuros da propria paleta — o `background` da pagina e o `surface-sunken` de um campo
+        // ou bloco de codigo. Medi-los so contra `surface` (que e quase branco no modo claro)
+        // deixava passar o caso real.
+        //
+        // Descoberto em 08/09/2026 pelo axe no site: `success` dava 4.45 sobre o background e
+        // um texto secundario dava 4.23 sobre surface-sunken. Os dois reprovam AA, e o teste
+        // unitario aprovava — porque media contra a superficie errada.
+        yield return ("primary/background", Primary, Background, RvmContrast.NormalText);
+        yield return ("primary/surface-sunken", Primary, SurfaceSunken, RvmContrast.NormalText);
+        yield return ("secondary/background", Secondary, Background, RvmContrast.NormalText);
+        yield return ("secondary/surface-sunken", Secondary, SurfaceSunken, RvmContrast.NormalText);
+        yield return ("success/background", Success, Background, RvmContrast.NormalText);
+        yield return ("success/surface-sunken", Success, SurfaceSunken, RvmContrast.NormalText);
+        yield return ("warning/background", Warning, Background, RvmContrast.NormalText);
+        yield return ("warning/surface-sunken", Warning, SurfaceSunken, RvmContrast.NormalText);
+        yield return ("danger/background", Danger, Background, RvmContrast.NormalText);
+        yield return ("danger/surface-sunken", Danger, SurfaceSunken, RvmContrast.NormalText);
+        yield return ("info/background", Info, Background, RvmContrast.NormalText);
+        yield return ("info/surface-sunken", Info, SurfaceSunken, RvmContrast.NormalText);
 
         // Desabilitado: 3:1. Ver o comentario acima — nao e afrouxamento, e a regra correta.
         yield return ("disabled/on-disabled", OnDisabled, Disabled, RvmContrast.LargeTextOrUi);
