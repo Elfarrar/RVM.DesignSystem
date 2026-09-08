@@ -1,0 +1,101 @@
+.rvm-autocomplete {
+    position: relative;
+}
+
+.rvm-autocomplete__caixa {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.rvm-autocomplete__campo {
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-10) var(--rvm-control-padding-y-md) var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body);
+}
+
+.rvm-autocomplete__campo:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.rvm-autocomplete__campo--invalido {
+    border-color: var(--rvm-color-danger);
+}
+
+.rvm-autocomplete__campo:disabled {
+    background-color: var(--rvm-color-disabled);
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}
+
+/*
+  O spinner fica DENTRO do campo, à direita. Fora dele, a lista pularia para baixo toda vez que
+  a busca começasse e terminasse — e a pessoa perderia a linha que estava prestes a clicar.
+*/
+.rvm-autocomplete__spinner {
+    position: absolute;
+    right: var(--rvm-space-3);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.rvm-autocomplete__lista {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: var(--rvm-z-dropdown);
+    margin: var(--rvm-space-1) 0 0;
+    padding: var(--rvm-space-1);
+    max-height: 18rem;
+    overflow-y: auto;
+    list-style: none;
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface-raised);
+    box-shadow: var(--rvm-shadow-4);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-autocomplete__item {
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    border-radius: var(--rvm-radius-sm);
+    cursor: pointer;
+}
+
+/*
+  O item "ativo" é o apontado por aria-activedescendant — o foco continua no campo. Ele precisa
+  de destaque VISUAL próprio, porque não recebe o anel de foco do navegador.
+*/
+.rvm-autocomplete__item--ativo {
+    background-color: var(--rvm-color-primary-container);
+    color: var(--rvm-color-on-primary-container);
+}
+
+.rvm-autocomplete__vazio {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: var(--rvm-z-dropdown);
+    margin: var(--rvm-space-1) 0 0;
+    padding: var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface-raised);
+    color: var(--rvm-color-on-surface-variant);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    box-shadow: var(--rvm-shadow-4);
+}

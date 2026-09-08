@@ -1,0 +1,124 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    A casca dos filtros. Ela NÃO decide quais filtros existem — recebe-os como conteúdo.
+
+    Não é gerador de filtro: é o lugar onde eles ficam, com o contador de ativos, o botão de
+    limpar e o colapso. Um componente que gerasse os campos a partir de metadados precisaria
+    saber de tipo, de domínio e de regra de negócio — e aí não seria mais um componente de
+    design system.
+*@
+
+<section class="@ClasseFinal" aria-label="@Label" @attributes="AdditionalAttributes">
+    <div class="rvm-filter-bar__topo">
+        <button type="button"
+                class="rvm-filter-bar__gatilho"
+                aria-expanded="@(Aberto ? "true" : "false")"
+                aria-controls="@_idDosCampos"
+                @onclick="Alternar">
+            <RvmIcon Name="funnel"
+                     Weight="@(ActiveCount > 0 ? RvmIconWeight.Fill : RvmIconWeight.Regular)"
+                     Size="1.125rem" />
+            <span>@Label</span>
+
+            @if (ActiveCount > 0)
+            {
+                @* O número é aria-hidden e o texto completo vai ao lado: "3" solto não diz três
+                   do quê, e é o mesmo cuidado do badge do RvmNavItem. *@
+                <span class="rvm-filter-bar__contador">
+                    <span aria-hidden="true">@ActiveCount</span>
+                    <span class="rvm-sr-only">@ContadorPorExtenso</span>
+                </span>
+            }
+        </button>
+
+        @if (ActiveCount > 0 && OnClear.HasDelegate)
+        {
+            <RvmButton Variant="RvmButtonVariant.Ghost" Size="RvmSize.Small" OnClick="OnClear">
+                @ClearLabel
+            </RvmButton>
+        }
+    </div>
+
+    @* Os campos ficam SEMPRE no DOM: escondê-los com `hidden` mantém o aria-controls apontando
+       para algo que existe, e um campo preenchido não perde o valor ao colapsar a barra. *@
+    <div class="rvm-filter-bar__campos" id="@_idDosCampos" hidden="@(!Aberto)">
+        @ChildContent
+    </div>
+</section>
+
+@code {
+    private readonly string _idDosCampos = $"rvm-filter-bar-{Guid.NewGuid():N}";
+
+    private bool? _abertoManual;
+
+    /// <summary>Nome da região e rótulo do botão que a abre.</summary>
+    [Parameter]
+    public string Label { get; set; } = "Filtros";
+
+    /// <summary>
+    /// Quantos filtros estão aplicados agora.
+    /// </summary>
+    /// <remarks>
+    /// Quem conta é quem usa — só ele sabe o que conta como "aplicado" no domínio dele. O que a
+    /// barra faz é <b>mostrar</b>, e é isso que evita a tela que devolve 3 resultados sem
+    /// ninguém entender por quê.
+    /// </remarks>
+    [Parameter]
+    public int ActiveCount { get; set; }
+
+    /// <summary>Disparado no "limpar". Informá-lo faz o botão aparecer quando há filtro ativo.</summary>
+    [Parameter]
+    public EventCallback OnClear { get; set; }
+
+    /// <summary>Rótulo do botão de limpar.</summary>
+    [Parameter]
+    public string ClearLabel { get; set; } = "Limpar filtros";
+
+    /// <summary>Modelo do texto do contador para leitor de tela. Recebe a quantidade.</summary>
+    [Parameter]
+    public string ActiveCountLabel { get; set; } = "{0} filtro(s) aplicado(s)";
+
+    /// <summary>
+    /// Começa aberta. O padrão é sim.
+    /// </summary>
+    /// <remarks>
+    /// Em tela estreita costuma valer <c>false</c>: filtros abertos empurram a lista inteira
+    /// para fora da tela antes de a pessoa ver um resultado, e o que ela veio ver é o resultado.
+    ///
+    /// <para>
+    /// A biblioteca <b>não</b> decide isso por largura de tela, e não é omissão: fechar por CSS
+    /// deixaria o <c>aria-expanded</c> dizendo "true" com o conteúdo invisível — o ARIA mentindo
+    /// para quem depende dele. Estado só pode morar num lugar.
+    /// </para>
+    /// </remarks>
+    [Parameter]
+    public bool? Expanded { get; set; }
+
+    /// <summary>Os campos de filtro.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // O clique vence o parâmetro, e o parâmetro vence o padrão. Uma vez que a pessoa mexeu no
+    // botão, é a escolha dela que manda — inclusive se o consumidor re-renderizar com outro
+    // Expanded.
+    private bool Aberto => _abertoManual ?? Expanded ?? true;
+
+    private string ContadorPorExtenso =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, ActiveCountLabel, ActiveCount);
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-filter-bar",
+        Aberto ? "rvm-filter-bar--aberta" : null,
+        Class);
+
+    private void Alternar() => _abertoManual = !Aberto;
+}

@@ -76,7 +76,7 @@ fundo inerte, camada de topo e retorno de foco vêm do navegador, e não de ~150
 nossas. Entrou junto o papel `scrim` na paleta (o véu precisa de alfa, e cor literal em CSS de
 componente é reprovada pelo portão, corretamente).
 
-## Onda 4 — Dados
+## Onda 4 — Dados ✅ 08/09/2026
 
 **Meta:** a listagem completa. É a onda mais cara do projeto — três dos componentes mais difíceis de
 qualquer biblioteca de UI estão aqui (ver `01` § ideia 2).
@@ -91,6 +91,11 @@ qualquer biblioteca de UI estão aqui (ver `01` § ideia 2).
 
 **Verifica:** uma tela de listagem real (dados de exemplo, ~500 linhas) com filtro, ordenação e
 paginação, operável só por teclado, aprovada na auditoria axe.
+
+✅ Feito (`DSGN-020`): `/padroes/listagem`, com 487 pedidos, verificada por E2E em navegador de
+verdade. O `RvmDataGrid` é uma `<table>` **semântica sem `role="grid"`** — o terceiro desvio
+declarado seguido pelo mesmo critério (`<select>` na onda 1, `<dialog>` na 3): a plataforma
+primeiro, código nosso só onde ela não resolve.
 
 ## Adoção — o que acontece depois da 1.0
 

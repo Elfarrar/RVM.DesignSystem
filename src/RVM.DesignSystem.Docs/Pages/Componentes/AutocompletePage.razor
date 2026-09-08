@@ -1,0 +1,153 @@
+@page "/componentes/autocomplete"
+
+<PaginaDeComponente Nome="RvmAutocomplete"
+                    Tipo="typeof(RvmAutocomplete<object>)"
+                    Frase="Combobox com busca assíncrona. A busca anterior é CANCELADA quando a pessoa digita de novo.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmAutocomplete TItem="string"
+                                 @bind-Value="_cliente"
+                                 Label="Cliente"
+                                 Placeholder="Digite pelo menos 2 letras"
+                                 Help="Simula uma busca de 400ms no servidor."
+                                 SearchAsync="Buscar" />
+
+                <p class="doc__nota">
+                    Escolhido: <strong>@(_cliente ?? "nenhum")</strong>
+                </p>
+            </div>
+            <div class="playground__controles">
+                <p class="doc__nota">
+                    Digite <code>ma</code> e use <kbd>↓</kbd> <kbd>↑</kbd> <kbd>Enter</kbd>. O
+                    foco <strong>não sai do campo</strong> — dá para continuar digitando para
+                    refinar sem perder a seleção.
+                </p>
+                <p class="doc__nota">Buscas disparadas: @_buscas · canceladas: @_canceladas</p>
+            </div>
+        </div>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">O cancelamento não é otimização — é correção</h3>
+        <p>
+            Digitar "sao paulo" dispara várias buscas. Sem cancelamento, <strong>a que responder
+            por último vence</strong> — e ela pode ser a de "sao", não a de "sao paulo". O
+            sintoma é a lista mostrando resultados de um termo que já não está no campo, e ele é
+            intermitente, o que o torna quase impossível de reproduzir sob demanda.
+        </p>
+        <p>
+            O <code>SearchAsync</code> recebe um <code>CancellationToken</code>.
+            <strong>Respeite-o</strong>: passe adiante para o <code>HttpClient</code> ou para a
+            consulta. O componente também descarta respostas de buscas já canceladas, como
+            segunda barreira.
+        </p>
+
+        <h3 class="doc__subtitulo">Debounce e mínimo de caracteres</h3>
+        <p>
+            <code>DebounceMs</code> é 300 por padrão — o intervalo em que a maioria das pessoas
+            ainda está digitando a mesma palavra. Muito baixo dispara uma busca por letra; muito
+            alto faz a lista parecer travada. <code>MinLength</code> é 2: com uma letra, a busca
+            devolveria meio banco.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Padrão ARIA combobox completo</strong>: <code>role="combobox"</code>,
+                <code>aria-expanded</code>, <code>aria-controls</code>,
+                <code>aria-autocomplete="list"</code> e <code>aria-activedescendant</code>.
+            </li>
+            <li>
+                <strong>O foco NÃO se move para a lista.</strong> Ele fica no campo e o item
+                "ativo" é apontado por <code>aria-activedescendant</code> — é o que permite
+                continuar digitando para refinar sem perder a seleção, e é o padrão que as
+                pessoas já conhecem da barra de endereços.
+            </li>
+            <li>
+                <strong>A contagem é anunciada</strong> por uma região <code>aria-live</code> que
+                existe SEMPRE, mesmo vazia. Criada junto com o resultado, ela não seria observada
+                — o mesmo requisito do <a href="componentes/toast">RvmToastHost</a>.
+            </li>
+            <li>
+                <strong>O item ativo tem destaque visual próprio</strong>, porque ele não recebe
+                o anel de foco do navegador — o foco está no campo.
+            </li>
+            <li>
+                <strong>O spinner fica dentro do campo.</strong> Fora dele, a lista pularia para
+                baixo toda vez que a busca começasse e terminasse, e a pessoa perderia a linha
+                que estava prestes a clicar.
+            </li>
+            <li>
+                <strong>Digitar invalida a escolha anterior.</strong> Deixar o <code>Value</code>
+                antigo faria o formulário guardar um dado que a tela não está mostrando.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para poucas opções conhecidas.</strong> Até uns 15 itens, o
+                <a href="componentes/select">RvmSelect</a> nativo é melhor: ele já traz busca por
+                digitação, a roda do iOS e o menu do Android, sem JavaScript.
+            </li>
+            <li>
+                <strong>Para busca livre de texto.</strong> Se não há uma lista fechada de
+                resultados para escolher, é um campo de busca — e a lista de sugestões é outra
+                coisa.
+            </li>
+            <li>
+                <strong>Para múltipla seleção.</strong> Fica para a v2 (`11` § RvmAutocomplete).
+                Hoje é um valor por campo.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _cliente;
+    private int _buscas;
+    private int _canceladas;
+
+    private async Task<IReadOnlyList<string>> Buscar(string termo, CancellationToken ct)
+    {
+        _buscas++;
+
+        try
+        {
+            // Simula a latência de um servidor. O token é passado adiante — é ele que faz a
+            // busca anterior morrer quando a pessoa digita de novo.
+            await Task.Delay(400, ct);
+        }
+        catch (OperationCanceledException)
+        {
+            _canceladas++;
+            throw;
+        }
+
+        return Pedidos.Todos
+            .Select(p => p.Cliente)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Where(c => c.Contains(termo, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(c => c, StringComparer.OrdinalIgnoreCase)
+            .Take(8)
+            .ToList();
+    }
+
+    private const string _exemplo = """
+        <RvmAutocomplete TItem="Cliente"
+                         @bind-Value="pedido.Cliente"
+                         Label="Cliente"
+                         TextSelector="c => c.Nome"
+                         SearchAsync="Buscar" />
+
+        // RESPEITE o token: é ele que impede a resposta de uma busca velha
+        // sobrescrever a da atual.
+        async Task<IReadOnlyList<Cliente>> Buscar(string termo, CancellationToken ct)
+            => await _api.BuscarClientesAsync(termo, ct);
+        """;
+}

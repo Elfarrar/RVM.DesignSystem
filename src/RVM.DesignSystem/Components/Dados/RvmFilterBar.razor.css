@@ -1,0 +1,84 @@
+.rvm-filter-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-3) var(--rvm-space-4);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface);
+    font-family: var(--rvm-font-family-sans);
+}
+
+.rvm-filter-bar__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    flex-wrap: wrap;
+}
+
+.rvm-filter-bar__gatilho {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-control-padding-y-sm) var(--rvm-space-2);
+    margin-left: calc(-1 * var(--rvm-space-2));
+    border: 0;
+    border-radius: var(--rvm-radius-md);
+    background: none;
+    color: var(--rvm-color-on-surface);
+    font: inherit;
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-semibold);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-filter-bar__gatilho:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-filter-bar__gatilho:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}
+
+.rvm-filter-bar__contador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 var(--rvm-space-1);
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    font-size: var(--rvm-font-size-caption);
+}
+
+/*
+  Os campos ficam em grid, e não em flex: assim eles se alinham em colunas iguais e a barra não
+  vira uma fileira de campos de larguras diferentes.
+*/
+.rvm-filter-bar__campos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--rvm-space-3);
+    align-items: end;
+}
+
+@media (min-width: 640px) {
+    .rvm-filter-bar__campos {
+        grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    }
+}
+
+/*
+  ⚠️ NÃO existe aqui uma regra que feche a barra no celular, e isso é decisão.
+
+  Seria fácil escrever `@media (max-width: 639px) { .campos { display: none } }` — e estaria
+  errado: o `aria-expanded` do botão continuaria dizendo "true" com o conteúdo invisível, ou
+  seja, o ARIA mentindo para quem depende dele. Estado só pode estar num lugar, e aqui ele
+  está no C#.
+
+  Quem quer a barra fechada no celular passa `Expanded="false"`. É uma linha, e é honesta.
+*/

@@ -23,7 +23,7 @@
          release, os alphas sairiam 0.1.0-alpha.N — que o NuGet ordena ABAIXO do 0.1.0 ja
          publicado, e um consumidor que aceitasse pre-release receberia codigo mais novo com
          numero menor. -->
-    <VersionPrefix>0.3.0</VersionPrefix>
+    <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>Rafael Venerosa Morici</Authors>
     <Description>Biblioteca de componentes Blazor do ecossistema RVM: tokens, tematizacao e acessibilidade WCAG 2.1 AA.</Description>
     <PackageProjectUrl>https://design.rvmit.com.br</PackageProjectUrl>

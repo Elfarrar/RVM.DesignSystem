@@ -1,0 +1,119 @@
+@page "/componentes/filter-bar"
+
+<PaginaDeComponente Nome="RvmFilterBar"
+                    Tipo="typeof(RvmFilterBar)"
+                    Frase="A casca dos filtros. Ela NÃO decide quais filtros existem — recebe-os como conteúdo.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmFilterBar ActiveCount="Ativos" OnClear="Limpar" Expanded="_aberta">
+                    <RvmTextField Value="@_cliente" ValueChanged="v => _cliente = v"
+                                  ValueExpression="() => _cliente"
+                                  Label="Cliente" IconStart="magnifying-glass" />
+
+                    <RvmSelect TValue="string" Value="@_situacao" ValueChanged="v => _situacao = v"
+                               ValueExpression="() => _situacao"
+                               Label="Situação" Placeholder="Todas">
+                        <option value="Aprovado">Aprovado</option>
+                        <option value="Pendente">Pendente</option>
+                    </RvmSelect>
+                </RvmFilterBar>
+            </div>
+            <div class="playground__controles">
+                <RvmCheckbox @bind-Value="_aberta" Label="Expanded" />
+                <p class="doc__nota">
+                    Preencha um campo: o contador aparece e o botão de limpar entra junto.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Quem conta os filtros é quem usa</h3>
+        <p>
+            <code>ActiveCount</code> é um número que você passa — só você sabe o que conta como
+            "aplicado" no seu domínio. Uma data em branco conta? Um select em "Todas" conta? A
+            barra não tem como saber.
+        </p>
+        <p>
+            O que ela faz é <strong>mostrar</strong>, e é isso que evita a tela que devolve 3
+            resultados sem ninguém entender por quê.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É uma <code>&lt;section&gt;</code> com nome</strong>, e o botão que a
+                abre tem <code>aria-expanded</code> + <code>aria-controls</code>.
+            </li>
+            <li>
+                <strong>Os campos ficam SEMPRE no DOM</strong>, escondidos por <code>hidden</code>.
+                O <code>aria-controls</code> continua apontando para algo que existe, e um campo
+                preenchido não perde o valor ao colapsar a barra.
+            </li>
+            <li>
+                <strong>O contador diz do quê.</strong> O número visível é
+                <code>aria-hidden</code> e um texto completo vai junto: "3" solto não diz três do
+                quê — o mesmo cuidado do badge do <a href="componentes/nav-item">RvmNavItem</a>.
+            </li>
+            <li>
+                ⚠️ <strong>A barra não fecha sozinha no celular, e é decisão.</strong> Fechar por
+                CSS deixaria o <code>aria-expanded</code> dizendo "true" com o conteúdo invisível
+                — o ARIA mentindo para quem depende dele. Estado só pode morar num lugar. Quem
+                quer isso passa <code>Expanded="false"</code>.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para um filtro só.</strong> Um campo de busca solto acima da lista
+                resolve, sem a casca em volta.
+            </li>
+            <li>
+                <strong>Como formulário.</strong> Filtro aplica ao vivo e não tem "salvar".
+                Se há um botão de enviar, é um <code>EditForm</code>.
+            </li>
+            <li>
+                <strong>Esperando que ela gere os campos.</strong> Não gera. Um componente que
+                montasse filtros a partir de metadados precisaria saber de tipo, de domínio e de
+                regra de negócio — e aí não seria mais um componente de design system.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _cliente = string.Empty;
+    private string? _situacao;
+    private bool _aberta = true;
+
+    private int Ativos =>
+        (string.IsNullOrWhiteSpace(_cliente) ? 0 : 1) + (_situacao is null ? 0 : 1);
+
+    private void Limpar()
+    {
+        _cliente = string.Empty;
+        _situacao = null;
+    }
+
+    private const string _exemplo = """
+        <RvmFilterBar ActiveCount="@FiltrosAtivos" OnClear="LimparFiltros">
+            <RvmTextField @bind-Value="_cliente" Label="Cliente"
+                          IconStart="magnifying-glass" />
+
+            <RvmSelect TValue="string" @bind-Value="_situacao"
+                       Label="Situação" Placeholder="Todas">
+                <option value="Aprovado">Aprovado</option>
+            </RvmSelect>
+        </RvmFilterBar>
+
+        @* Quem conta é você — só você sabe o que conta como "aplicado". *@
+        private int FiltrosAtivos =>
+            (string.IsNullOrWhiteSpace(_cliente) ? 0 : 1) + (_situacao is null ? 0 : 1);
+        """;
+}

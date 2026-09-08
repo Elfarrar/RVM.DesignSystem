@@ -31,6 +31,11 @@ ICONES = [
     'x-circle',              # severidade Danger (o `warning` triangular fica com Warning)
     'lock',                  # RvmEmptyState, variante "sem permissao"
     'tray',                  # RvmEmptyState, variante "vazio"
+    # Onda 4 — dados
+    'caret-double-left',     # RvmPagination: primeira pagina
+    'caret-double-right',    # RvmPagination: ultima pagina
+    'arrows-down-up',        # RvmDataGrid: coluna ordenavel ainda NAO ordenada
+    'funnel',                # RvmFilterBar
 ]
 
 origem = pathlib.Path(sys.argv[1])

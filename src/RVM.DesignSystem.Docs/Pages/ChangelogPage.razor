@@ -11,6 +11,52 @@
         </p>
     </header>
 
+    <section aria-labelledby="cl-100">
+        <h2 id="cl-100">1.0.0 — Onda 4</h2>
+        <p class="doc__nota">Dados. A primeira versão estável — <strong>o contrato congela aqui</strong>.</p>
+        <ul class="doc__lista">
+            <li>
+                <strong><code>RvmDataGrid&lt;T&gt;</code></strong> com colunas tipadas por
+                expressão, ordenação por clique e teclado, seleção única ou múltipla, template de
+                célula, modos em memória e remoto, e os três estados que não são "a lista".
+            </li>
+            <li>
+                <strong><code>RvmPagination</code></strong> — resumo por item ("21–40 de 137"),
+                seletor de tamanho, saltos de primeira e última.
+            </li>
+            <li>
+                <strong><code>RvmFilterBar</code></strong> — casca de filtros com contador de
+                ativos. Não decide quais filtros existem.
+            </li>
+            <li>
+                <strong><code>RvmDatePicker</code></strong> — digitação em <code>dd/MM/yyyy</code>
+                antes do calendário, grade pt-BR com semana no domingo.
+            </li>
+            <li>
+                <strong><code>RvmAutocomplete&lt;T&gt;</code></strong> — busca assíncrona com
+                debounce e <strong>cancelamento</strong> da busca anterior.
+            </li>
+            <li>
+                <strong>Site:</strong> <a href="padroes/listagem">Padrões › Listagem</a> — uma
+                tela de verdade com 487 pedidos, filtro, ordenação, seleção e paginação,
+                operável só por teclado.
+            </li>
+        </ul>
+
+        <p class="doc__nota">
+            <strong>O <code>RvmDataGrid</code> não tem <code>role="grid"</code>, e é decisão.</strong>
+            Um leitor de tela já sabe percorrer tabela — <code>role="grid"</code>
+            <em>desligaria</em> esse modo para pôr no lugar uma navegação escrita pela
+            biblioteca, que seria pior. Detalhe na
+            <a href="componentes/data-grid">página do componente</a>.
+        </p>
+        <p class="doc__nota">
+            <strong>A partir daqui, mudança que quebra é major.</strong> As três ondas anteriores
+            puderam tornar um papel de paleta <code>required</code> sem cerimônia; a 1.0 fecha
+            isso. <strong>35 componentes.</strong>
+        </p>
+    </section>
+
     <section aria-labelledby="cl-030">
         <h2 id="cl-030">0.3.0 — Onda 3</h2>
         <p class="doc__nota">Feedback. 08/09/2026.</p>

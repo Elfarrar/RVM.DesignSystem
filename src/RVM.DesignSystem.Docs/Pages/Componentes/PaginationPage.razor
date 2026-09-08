@@ -1,0 +1,107 @@
+@page "/componentes/pagination"
+
+<PaginaDeComponente Nome="RvmPagination"
+                    Tipo="typeof(RvmPagination)"
+                    Frase="Paginação com resumo por ITEM. Os botões dizem o destino, não o símbolo.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmPagination @bind-Page="_pagina"
+                               @bind-PageSize="_tamanho"
+                               TotalItems="_total"
+                               ShowPageSize="_comTamanho" />
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="int" @bind-Value="_total" Label="TotalItems">
+                    @foreach (var t in new[] { 0, 7, 137, 487, 10000 })
+                    {
+                        <option value="@t">@t</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_comTamanho" Label="ShowPageSize" />
+                <p class="doc__nota">Página @_pagina, @_tamanho por página.</p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">O resumo é por item, não por página</h3>
+        <p>
+            <strong>"21–40 de 137"</strong> informa mais que "página 2 de 7": diz quantos itens
+            existem e onde a pessoa está dentro deles. Ele está num
+            <code>role="status"</code> — mudar de página <em>anuncia</em> a nova faixa, e sem
+            isso quem não vê a tela clica em "seguinte" e não sabe se foi.
+        </p>
+
+        <h3 class="doc__subtitulo">A janela desliza, mas não encolhe</h3>
+        <p>
+            Perto das pontas ela se desloca para dentro em vez de mostrar menos números. Assim a
+            fileira não muda de largura ao navegar — e os botões não dançam debaixo do cursor,
+            que é como se clica na página errada.
+        </p>
+        <RvmStack Gap="RvmSpacing.Md">
+            <RvmPagination Page="1" PageSize="10" TotalItems="100" ShowPageSize="false" />
+            <RvmPagination Page="5" PageSize="10" TotalItems="100" ShowPageSize="false" />
+            <RvmPagination Page="10" PageSize="10" TotalItems="100" ShowPageSize="false" />
+        </RvmStack>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É um <code>&lt;nav&gt;</code> com nome.</strong> Sem ele, o leitor de
+                tela anuncia mais um "navegação" e a lista de marcos deixa de orientar.
+            </li>
+            <li>
+                <strong>Os botões dizem o DESTINO</strong> — "Página seguinte, 3", nunca "›".
+                Quem ouve "botão sinal de maior" não sabe para onde vai.
+            </li>
+            <li>
+                <strong>A página atual tem <code>aria-current="page"</code></strong>, além do
+                preenchimento e do peso. Três sinais: nenhum depende de distinguir cores.
+            </li>
+            <li>
+                <strong>Trocar o tamanho da página volta para a primeira.</strong> Com 100 por
+                página, a página 7 de 20-em-20 não existe mais — e a primeira é o único destino
+                que sempre existe.
+            </li>
+            <li>
+                <strong>Números tabulares.</strong> A fileira não muda de largura ao passar de
+                "9" para "10", e o resumo não pula ao passar de "9–20" para "21–40".
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Com uma página só.</strong> Uma fileira de controles que não leva a lugar
+                nenhum é ruído — e paradas de tabulação a mais para quem usa teclado.
+            </li>
+            <li>
+                <strong>Para rolagem infinita.</strong> São modelos opostos: paginação dá
+                posição e permite voltar; rolagem infinita não. Escolha um.
+            </li>
+            <li>
+                <strong>Dentro de um <a href="componentes/data-grid">RvmDataGrid</a>.</strong>
+                O grid já traz esta paginação no rodapé; use-a solta só para listas que não são
+                tabela.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private int _pagina = 2;
+    private int _tamanho = 20;
+    private int _total = 137;
+    private bool _comTamanho = true;
+
+    private const string _exemplo = """
+        <RvmPagination @bind-Page="_pagina"
+                       @bind-PageSize="_tamanho"
+                       TotalItems="_total" />
+        """;
+}

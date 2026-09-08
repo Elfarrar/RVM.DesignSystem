@@ -1,0 +1,241 @@
+@page "/padroes/listagem"
+
+<PageTitle>Listagem · RVM Design System</PageTitle>
+
+@*
+    ⚠️ Esta página É o critério de saída da onda 4 (`09-roadmap.md`):
+
+    > uma tela de listagem real (dados de exemplo, ~500 linhas) com filtro, ordenação e
+    > paginação, operável só por teclado, aprovada na auditoria axe.
+
+    Não é uma demonstração de componente: é uma TELA, montada como um app do ecossistema montaria.
+    O que ela prova não é que cada peça funciona — as páginas de componente já provam isso —, e sim
+    que elas funcionam JUNTAS, com volume de verdade.
+*@
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Listagem</h1>
+        <p class="doc__frase">
+            Filtro, ordenação, seleção e paginação sobre <strong>@Pedidos.Todos.Count pedidos</strong>.
+            Tudo operável só por teclado.
+        </p>
+    </header>
+
+    <section aria-labelledby="lst-tela">
+        <h2 id="lst-tela">A tela</h2>
+
+        <RvmStack Gap="RvmSpacing.Md">
+            <RvmFilterBar ActiveCount="FiltrosAtivos" OnClear="LimparFiltros">
+                <RvmTextField Value="@_busca"
+                              ValueChanged="AoBuscar"
+                              ValueExpression="() => _busca"
+                              Label="Cliente"
+                              Placeholder="Parte do nome"
+                              IconStart="magnifying-glass" />
+
+                <RvmSelect TValue="string" Value="@_situacao" ValueChanged="AoTrocarSituacao"
+                           ValueExpression="() => _situacao"
+                           Label="Situação" Placeholder="Todas">
+                    @foreach (var s in Pedidos.TodasAsSituacoes)
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+
+                <RvmDatePicker Value="_de" ValueChanged="AoTrocarDe" ValueExpression="() => _de"
+                               Label="Emitido a partir de" />
+
+                <RvmDatePicker Value="_ate" ValueChanged="AoTrocarAte" ValueExpression="() => _ate"
+                               Label="Emitido até" />
+            </RvmFilterBar>
+
+            @if (_selecionados.Count > 0)
+            {
+                @* Live: a barra de ações APARECE por uma ação, então ela interrompe. É o mesmo
+                   critério do RvmAlert — alerta estático não interrompe; este surge. *@
+                <RvmAlert Severity="RvmSeverity.Info" Live="true">
+                    <ChildContent>
+                        <strong>@_selecionados.Count</strong>
+                        @(_selecionados.Count == 1 ? " pedido selecionado" : " pedidos selecionados")
+                        · total @Pedidos.EmReais(_selecionados.Sum(p => p.Total))
+                    </ChildContent>
+                    <Actions>
+                        <RvmButton Size="RvmSize.Small" Variant="RvmButtonVariant.Secondary"
+                                   OnClick="() => _selecionados = []">
+                            Limpar seleção
+                        </RvmButton>
+                    </Actions>
+                </RvmAlert>
+            }
+
+            <RvmDataGrid TItem="Pedido"
+                         Caption="Pedidos"
+                         Items="Filtrados"
+                         @bind-Page="_pagina"
+                         @bind-PageSize="_tamanho"
+                         SelectionMode="RvmSelectionMode.Multiple"
+                         Selection="_selecionados"
+                         SelectionChanged="s => _selecionados = s"
+                         RowLabel="NomeDaLinha"
+                         EmptyVariant="@(FiltrosAtivos > 0 ? RvmEmptyStateVariant.NoResults : RvmEmptyStateVariant.Empty)">
+                <Columns>
+                    <RvmColumn TItem="Pedido" Title="Número" Field="p => p.Numero" Sortable="true" Width="7rem" />
+                    <RvmColumn TItem="Pedido" Title="Cliente" Field="p => p.Cliente" Sortable="true" />
+                    <RvmColumn TItem="Pedido" Title="Emissão" Field="p => p.Emissao" Format="dd/MM/yyyy" Sortable="true" Width="8rem" />
+                    <RvmColumn TItem="Pedido" Title="Situação" Width="9rem">
+                        <CellTemplate Context="p">
+                            <RvmChip Size="RvmSize.Small" Variant="@VarianteDe(p.Situacao)">@p.Situacao</RvmChip>
+                        </CellTemplate>
+                    </RvmColumn>
+                    <RvmColumn TItem="Pedido" Title="Total" Field="p => p.Total" Format="C2"
+                               Align="RvmAlignment.End" Sortable="true" Width="10rem" />
+                </Columns>
+            </RvmDataGrid>
+        </RvmStack>
+    </section>
+
+    <section aria-labelledby="lst-teclado">
+        <h2 id="lst-teclado">Só por teclado</h2>
+        <p>Dê <kbd>Tab</kbd> a partir daqui e percorra a tela inteira sem tocar no mouse:</p>
+        <ol class="doc__lista">
+            <li>Os quatro campos de filtro. No de data, <strong>digite</strong> <code>15/03/2026</code> — não precisa abrir o calendário.</li>
+            <li>O botão de limpar, quando há filtro.</li>
+            <li>A caixa de "selecionar todas desta página".</li>
+            <li>Cada cabeçalho ordenável — <kbd>Enter</kbd> ordena, <kbd>Enter</kbd> de novo inverte.</li>
+            <li>A caixa de cada linha.</li>
+            <li>A paginação, com os saltos de primeira e última.</li>
+        </ol>
+        <p class="doc__nota">
+            <strong>Não há navegação célula a célula, e é de propósito.</strong> O leitor de tela
+            já tem a dele: NVDA e JAWS entram em modo de tabela com <kbd>Ctrl+Alt+setas</kbd>,
+            anunciam o cabeçalho ao mudar de coluna e leem a linha inteira.
+            <code>role="grid"</code> <em>desligaria</em> isso para pôr no lugar uma navegação
+            escrita por nós — pior, porque o leitor foi feito para isso e a biblioteca não.
+        </p>
+    </section>
+
+    <section aria-labelledby="lst-decisoes">
+        <h2 id="lst-decisoes">O que esta tela decide</h2>
+        <ul class="doc__lista">
+            <li>
+                <strong>Filtrar volta para a página 1.</strong> Continuar na página 7 de um
+                resultado que agora tem 2 páginas mostra uma tela vazia sem explicação.
+            </li>
+            <li>
+                <strong>Vazio com filtro é <code>NoResults</code>; sem filtro é
+                <code>Empty</code>.</strong> Um pede limpar o filtro, o outro pede cadastrar —
+                e o <code>EmptyVariant</code> do grid recebe qual é.
+            </li>
+            <li>
+                <strong>"Selecionar todas" alcança só a página.</strong> Marcar 487 linhas
+                invisíveis é como se apagam 487 registros por engano.
+            </li>
+            <li>
+                <strong>A barra de seleção mostra o total somado.</strong> Quem seleciona 12
+                pedidos quer saber quanto dá — e o número aparece sem precisar de outra tela.
+            </li>
+            <li>
+                <strong>A situação é <a href="componentes/chip">chip</a>, não texto colorido.</strong>
+                O texto carrega o sentido e a cor reforça; "Cancelado" continua legível em preto
+                e branco.
+            </li>
+        </ul>
+    </section>
+</article>
+
+@code {
+    private string? _busca = string.Empty;
+    private string? _situacao;
+    private DateTime? _de;
+    private DateTime? _ate;
+
+    private int _pagina = 1;
+    private int _tamanho = 20;
+    private IReadOnlyList<Pedido> _selecionados = [];
+
+    // Método, e não lambda no atributo: string interpolada dentro de atributo Razor não
+    // compila — as aspas de dentro fecham o atributo.
+    private static string NomeDaLinha(Pedido p) => $"pedido {p.Numero} de {p.Cliente}";
+
+    private int FiltrosAtivos =>
+        (string.IsNullOrWhiteSpace(_busca) ? 0 : 1)
+        + (_situacao is null ? 0 : 1)
+        + (_de is null ? 0 : 1)
+        + (_ate is null ? 0 : 1);
+
+    private IReadOnlyList<Pedido> Filtrados
+    {
+        get
+        {
+            IEnumerable<Pedido> consulta = Pedidos.Todos;
+
+            if (!string.IsNullOrWhiteSpace(_busca))
+            {
+                consulta = consulta.Where(p =>
+                    p.Cliente.Contains(_busca.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (_situacao is not null)
+            {
+                consulta = consulta.Where(p => p.Situacao == _situacao);
+            }
+
+            if (_de is { } de)
+            {
+                consulta = consulta.Where(p => p.Emissao.Date >= de.Date);
+            }
+
+            if (_ate is { } ate)
+            {
+                consulta = consulta.Where(p => p.Emissao.Date <= ate.Date);
+            }
+
+            return consulta.ToList();
+        }
+    }
+
+    private static RvmChipVariant VarianteDe(string situacao) => situacao switch
+    {
+        "Aprovado" or "Entregue" => RvmChipVariant.Success,
+        "Em análise" or "Em analise" => RvmChipVariant.Info,
+        "Pendente" => RvmChipVariant.Warning,
+        "Cancelado" => RvmChipVariant.Danger,
+        _ => RvmChipVariant.Neutral,
+    };
+
+    // Todo filtro volta para a página 1: continuar na página 7 de um resultado que agora tem 2
+    // páginas mostra uma tela vazia sem explicação nenhuma.
+    private void AoBuscar(string? valor)
+    {
+        _busca = valor;
+        _pagina = 1;
+    }
+
+    private void AoTrocarSituacao(string? valor)
+    {
+        _situacao = string.IsNullOrWhiteSpace(valor) ? null : valor;
+        _pagina = 1;
+    }
+
+    private void AoTrocarDe(DateTime? valor)
+    {
+        _de = valor;
+        _pagina = 1;
+    }
+
+    private void AoTrocarAte(DateTime? valor)
+    {
+        _ate = valor;
+        _pagina = 1;
+    }
+
+    private void LimparFiltros()
+    {
+        _busca = string.Empty;
+        _situacao = null;
+        _de = null;
+        _ate = null;
+        _pagina = 1;
+    }
+}

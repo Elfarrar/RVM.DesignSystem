@@ -1,0 +1,162 @@
+.rvm-data-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-4);
+    font-family: var(--rvm-font-family-sans);
+    color: var(--rvm-color-on-surface);
+    min-width: 0;
+}
+
+/*
+  A rolagem horizontal é do CONTÊINER, não da página. Uma tabela larga que empurra o body
+  inteiro para a direita é a falha de refluxo da WCAG 1.4.10 — e some o menu junto.
+
+  tabindex="0" + role="region" com nome: uma região que rola precisa ser alcançável por
+  teclado, senão quem não usa mouse não consegue ver as colunas da direita. É requisito, não
+  refinamento.
+*/
+.rvm-data-grid__rolagem {
+    overflow-x: auto;
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface);
+}
+
+.rvm-data-grid__rolagem:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: -2px;
+}
+
+.rvm-data-grid__tabela {
+    width: 100%;
+    /* collapse e não separate: com separate o cabeçalho fixo deixa passar uma fresta de
+       conteúdo por baixo da borda enquanto rola. */
+    border-collapse: collapse;
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+/*
+  Cabeçalho fixo na rolagem VERTICAL do contêiner. `position: sticky` no `th`, e não no
+  `thead`: até recentemente `thead` sticky não funcionava com border-collapse.
+*/
+.rvm-data-grid__cabecalho th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--rvm-color-surface-sunken);
+    border-bottom: 1px solid var(--rvm-color-border);
+    font-weight: var(--rvm-font-weight-semibold);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.rvm-data-grid__celula {
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-4);
+    border-bottom: 1px solid var(--rvm-color-border);
+    vertical-align: middle;
+}
+
+.rvm-data-grid__celula--start { text-align: left; }
+.rvm-data-grid__celula--center { text-align: center; }
+
+/*
+  Número alinhado à direita E tabular. Os dois juntos são o que faz a coluna de total ser
+  comparável de relance: as casas decimais ficam na mesma coluna vertical.
+*/
+.rvm-data-grid__celula--end {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.rvm-data-grid__linha:last-child .rvm-data-grid__celula {
+    border-bottom: 0;
+}
+
+@media (hover: hover) {
+    .rvm-data-grid__linha:hover .rvm-data-grid__celula {
+        background-color: var(--rvm-color-surface-sunken);
+    }
+}
+
+/*
+  A linha selecionada tem FUNDO próprio além do aria-selected. Não é decoração: numa tabela de
+  20 linhas com 3 marcadas, a caixa marcada sozinha é pequena demais para a pessoa achar o que
+  selecionou.
+*/
+.rvm-data-grid__linha--selecionada .rvm-data-grid__celula {
+    background-color: var(--rvm-color-primary-container);
+    color: var(--rvm-color-on-primary-container);
+}
+
+.rvm-data-grid__selecao {
+    width: 1px;
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-3);
+    white-space: nowrap;
+}
+
+.rvm-data-grid__checkbox {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    accent-color: var(--rvm-color-primary);
+    cursor: pointer;
+}
+
+.rvm-data-grid__checkbox:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+/* --- Ordenação --- */
+
+.rvm-data-grid__ordenar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    width: 100%;
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-4);
+    margin: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    text-align: inherit;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-data-grid__ordenar:hover { color: var(--rvm-color-primary); }
+}
+
+.rvm-data-grid__ordenar:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: -2px;
+}
+
+/*
+  A seta da coluna NÃO ordenada fica esmaecida, mas VISÍVEL: é ela que diz "esta coluna pode
+  ser ordenada". Só aparecer no hover esconde a informação de quem usa teclado ou toque.
+*/
+.rvm-data-grid__seta {
+    flex-shrink: 0;
+    color: var(--rvm-color-on-surface-variant);
+}
+
+[aria-sort="ascending"] .rvm-data-grid__seta,
+[aria-sort="descending"] .rvm-data-grid__seta {
+    color: var(--rvm-color-primary);
+}
+
+/* O cabeçalho sem botão precisa do mesmo padding que o botão tem por dentro. */
+.rvm-data-grid__cabecalho th.rvm-data-grid__celula {
+    padding: 0;
+}
+
+.rvm-data-grid__cabecalho th.rvm-data-grid__celula:not(:has(.rvm-data-grid__ordenar)) {
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-4);
+}
+
+.rvm-data-grid__rodape {
+    padding: 0 var(--rvm-space-1);
+}
