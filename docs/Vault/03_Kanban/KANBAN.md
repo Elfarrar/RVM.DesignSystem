@@ -7,6 +7,13 @@
 >
 > Modo de trabalho: **Claude implementa, o Rafael revisa** (`CLAUDE.md § Modo de trabalho`).
 
+## A decidir
+
+- [[DSGN-022]] — **Graficos** (obras). A condicao do `09` foi satisfeita: um app RVM precisa.
+  ⚠️ **Card aberto sem codigo**: o roadmap diz "embrulhar biblioteca existente" e o `CLAUDE.md`
+  diz "sem dependencia NuGet de terceiros" e "nada depende de JS para renderizar" — as tres
+  frases nao cabem juntas. Quatro saidas descritas no card; a decisao e do Rafael.
+
 ## Em revisao
 
 - [[DSGN-021]] — **Criar sua paleta**: cores de estado escolhiveis (`RvmSeed`, aditivo) e a
