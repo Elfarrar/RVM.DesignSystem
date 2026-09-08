@@ -3,7 +3,7 @@ id: DSGN-019
 titulo: Onda 3 — feedback
 repo: RVM.DesignSystem
 tipo: feature
-status: em-andamento
+status: em-revisao
 criada: 2026-09-08
 ---
 
@@ -114,3 +114,8 @@ metodo.**
 | Portao de contraste | 29 pares x 5 temas x 2 modos |
 | E2E | 6 testes, incluindo o criterio de saida da onda |
 | axe | toda rota do menu x 2 modos de cor |
+| Dev no ar | `design.dev.rvmtech.com.br`, verificado por CONTEUDO |
+| Pre-release | `0.3.0-alpha.15` no BaGet |
+
+O publish desta onda foi o primeiro com o `--timeout 120` do `DSGN-018`, e passou em tempo
+normal.

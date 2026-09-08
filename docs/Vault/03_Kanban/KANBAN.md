@@ -11,7 +11,8 @@
 
 - [[DSGN-019]] — **Onda 3**: dialogo (`<dialog>` nativo), toast, alerta, estado vazio, spinner,
   progresso, esqueleto e tooltip. Mais a secao Padroes e a busca do site (`RF-27`). 223 testes,
-  E2E com o criterio de saida da onda. Sai como `0.3.0`.
+  E2E com o criterio de saida da onda. No ar em dev, `0.3.0-alpha.15` no BaGet.
+  **Aguardando o Rafael para promover a `master` / `0.3.0`.**
 
 ## Concluido
 
