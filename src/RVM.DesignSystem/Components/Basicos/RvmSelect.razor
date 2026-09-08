@@ -1,0 +1,104 @@
+@namespace RVM.DesignSystem.Components
+@typeparam TValue
+@inherits RvmInputBase<TValue>
+
+@*
+    Usa <select> NATIVO, não um dropdown desenhado.
+
+    É uma escolha, não preguiça. O select nativo entrega de graça: teclado completo, busca por
+    digitação, a roda de seleção do iOS, o menu do Android, e funciona sem JavaScript. Um
+    dropdown custom precisa reimplementar tudo isso e, na prática, entrega pior no celular.
+
+    Quando a onda 4 trouxer o RvmAutocomplete — busca assíncrona, muitos itens — aí sim haverá
+    um custom, porque aí o nativo não resolve. Aqui resolve.
+*@
+
+<RvmFormField FieldId="@Id" Label="@Label" Help="@Help" Error="@MensagemDeErro" Required="@Required" Class="@Class">
+    <div class="rvm-select__wrapper">
+        <select id="@Id"
+                class="@ClasseSelect"
+                disabled="@Disabled"
+                required="@Required"
+                aria-invalid="@(TemErro ? "true" : null)"
+                aria-describedby="@DescricaoPara(Id)"
+                @onchange="AoMudar"
+                @attributes="AdditionalAttributes">
+            @if (Placeholder is not null)
+            {
+                @* value="" e não um valor sentinela: assim o `required` do HTML reconhece
+                   "nada selecionado" e a validação nativa funciona sem código nosso. *@
+                <option value="" selected="@(CurrentValue is null)" disabled="@Required">@Placeholder</option>
+            }
+            @ChildContent
+        </select>
+        <RvmIcon Name="caret-down" Class="rvm-select__caret" />
+    </div>
+</RvmFormField>
+
+@code {
+    /// <summary>Identificador. Gerado quando não informado.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-select-{Guid.NewGuid():N}";
+
+    /// <summary>Rótulo visível.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Opção vazia inicial. Nulo remove a opção.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>As <c>&lt;option&gt;</c>.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Desabilita o campo.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Marca como obrigatório.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Tamanho.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string ClasseSelect => string.Join(' ', new[]
+    {
+        "rvm-select",
+        $"rvm-select--{Size.ToString().ToLowerInvariant()}",
+        TemErro ? "rvm-select--invalid" : null,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoMudar(ChangeEventArgs e)
+    {
+        CurrentValueAsString = e.Value?.ToString();
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(
+        string? value,
+        out TValue result,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        // BindConverter cobre string, enum, numérico e Guid — que é o que aparece num select.
+        // Falhar aqui devolve mensagem de validação em vez de exceção, para o formulário
+        // mostrar o erro em vez de quebrar a tela.
+        if (BindConverter.TryConvertTo<TValue>(value, System.Globalization.CultureInfo.InvariantCulture, out var convertido))
+        {
+            result = convertido!;
+            validationErrorMessage = null;
+            return true;
+        }
+
+        result = default!;
+        validationErrorMessage = $"O valor '{value}' não é válido para {DisplayName ?? FieldIdentifier.FieldName}.";
+        return false;
+    }
+}

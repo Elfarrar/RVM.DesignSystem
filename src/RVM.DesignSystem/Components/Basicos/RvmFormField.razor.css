@@ -1,0 +1,33 @@
+.rvm-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family-sans);
+}
+
+.rvm-field__label {
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-medium);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-field__required {
+    color: var(--rvm-color-danger);
+    margin-left: var(--rvm-space-1);
+}
+
+.rvm-field__help {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-on-surface);
+    opacity: 0.75;
+}
+
+/* O erro NÃO usa opacidade: reduzir contraste da mensagem mais importante da tela é
+   exatamente o contrário do que ela precisa. */
+.rvm-field__error {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-danger);
+    font-weight: var(--rvm-font-weight-medium);
+}

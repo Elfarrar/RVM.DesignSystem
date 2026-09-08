@@ -1,0 +1,94 @@
+@namespace RVM.DesignSystem.Components
+@inherits RvmInputBase<string?>
+
+<RvmFormField FieldId="@Id" Label="@Label" Help="@Help" Error="@MensagemDeErro" Required="@Required" Class="@Class">
+    <textarea id="@Id"
+              class="@ClasseTextArea"
+              rows="@Rows"
+              maxlength="@MaxLength"
+              placeholder="@Placeholder"
+              disabled="@Disabled"
+              readonly="@ReadOnly"
+              required="@Required"
+              aria-invalid="@(TemErro ? "true" : null)"
+              aria-describedby="@DescricaoPara(Id)"
+              @oninput="AoDigitar"
+              @attributes="AdditionalAttributes">@CurrentValue</textarea>
+
+    @if (MaxLength is > 0 && ShowCounter)
+    {
+        @*
+            aria-live="polite" e não "assertive": o contador muda a cada tecla, e "assertive"
+            interromperia o leitor de tela a cada caractere digitado — inutilizável.
+            Com "polite" ele só é lido numa pausa natural.
+        *@
+        <p class="rvm-textarea__counter" aria-live="polite">
+            @(CurrentValue?.Length ?? 0) / @MaxLength
+        </p>
+    }
+</RvmFormField>
+
+@code {
+    /// <summary>Identificador. Gerado quando não informado.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-textarea-{Guid.NewGuid():N}";
+
+    /// <summary>Rótulo visível.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Texto de exemplo.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>Altura em linhas.</summary>
+    [Parameter]
+    public int Rows { get; set; } = 4;
+
+    /// <summary>Limite de caracteres. Zero ou nulo remove o limite.</summary>
+    [Parameter]
+    public int? MaxLength { get; set; }
+
+    /// <summary>Mostra o contador quando há <see cref="MaxLength"/>.</summary>
+    [Parameter]
+    public bool ShowCounter { get; set; } = true;
+
+    /// <summary>Desabilita o campo.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Somente leitura.</summary>
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    /// <summary>Marca como obrigatório.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string ClasseTextArea => string.Join(' ', new[]
+    {
+        "rvm-textarea",
+        TemErro ? "rvm-textarea--invalid" : null,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoDigitar(ChangeEventArgs e)
+    {
+        CurrentValueAsString = e.Value?.ToString();
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(
+        string? value,
+        out string? result,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null;
+        return true;
+    }
+}

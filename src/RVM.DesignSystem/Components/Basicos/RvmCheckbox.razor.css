@@ -1,0 +1,109 @@
+.rvm-checkbox {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family-sans);
+}
+
+.rvm-checkbox__wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    cursor: pointer;
+    /* Alvo de toque: a caixa tem 1.25em, o resto vem do padding vertical. */
+    padding: var(--rvm-space-1) 0;
+}
+
+/*
+  O input nativo fica invisível mas PRESENTE e no fluxo — não `display: none`, que o tiraria
+  da ordem de tabulação e o esconderia do leitor de tela. É a diferença entre esconder o
+  desenho e destruir o controle.
+*/
+.rvm-checkbox__input {
+    position: absolute;
+    opacity: 0;
+    width: 1.25em;
+    height: 1.25em;
+    margin: 0;
+    cursor: pointer;
+}
+
+.rvm-checkbox__box {
+    pointer-events: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25em;
+    height: 1.25em;
+    flex-shrink: 0;
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-surface-sunken);
+    transition:
+        background-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
+        border-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+/*
+  ::deep porque o ícone é um RvmIcon — outro componente, outro escopo de CSS isolation.
+  Sem ::deep esta regra recebe o atributo b-* do checkbox e NUNCA casa com o elemento do
+  ícone: o resultado é uma caixa desmarcada exibindo o check. Foi o que o screenshot pegou.
+*/
+::deep .rvm-checkbox__check {
+    pointer-events: none;
+    opacity: 0;
+    color: var(--rvm-color-on-primary);
+    transition: opacity var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+.rvm-checkbox__input:checked + .rvm-checkbox__box {
+    background-color: var(--rvm-color-primary);
+    border-color: var(--rvm-color-primary);
+}
+
+.rvm-checkbox__input:checked + .rvm-checkbox__box ::deep .rvm-checkbox__check {
+    opacity: 1;
+}
+
+/* O anel vai na CAIXA, não no input invisível — senão o foco de teclado fica sem indicação
+   visível, que é falha direta de WCAG 2.4.7. */
+.rvm-checkbox__input:focus-visible + .rvm-checkbox__box {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.rvm-checkbox--invalid .rvm-checkbox__box {
+    border-color: var(--rvm-color-danger);
+}
+
+.rvm-checkbox--disabled .rvm-checkbox__wrapper {
+    cursor: not-allowed;
+}
+
+.rvm-checkbox__input:disabled + .rvm-checkbox__box {
+    background-color: var(--rvm-color-disabled);
+    border-color: var(--rvm-color-disabled);
+}
+
+.rvm-checkbox--disabled .rvm-checkbox__label {
+    color: var(--rvm-color-on-disabled);
+}
+
+.rvm-checkbox__label {
+    font-size: var(--rvm-font-size-body);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-checkbox__help {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-on-surface);
+    opacity: 0.75;
+}
+
+.rvm-checkbox__error {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-danger);
+    font-weight: var(--rvm-font-weight-medium);
+}

@@ -1,0 +1,98 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Botão só de ícone.
+
+    Existe separado do RvmButton por um motivo de acessibilidade, não de estilo: um botão sem
+    texto NÃO tem nome acessível, e o leitor de tela anuncia apenas "botão". Aqui o `Label` é
+    obrigatório e vira `aria-label` — não dá para esquecer, porque não dá para omitir.
+*@
+
+<button type="button"
+        class="@ClasseFinal"
+        disabled="@Disabled"
+        aria-label="@Label"
+        title="@(ShowTooltip ? Label : null)"
+        @onclick="AoClicar"
+        @attributes="AdditionalAttributes">
+    <RvmIcon Name="@Icon" Weight="@Weight" />
+</button>
+
+@code {
+    /// <summary>Nome do ícone.</summary>
+    [Parameter, EditorRequired]
+    public string Icon { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Nome acessível do botão. Obrigatório.
+    /// </summary>
+    /// <remarks>
+    /// É o texto que o leitor de tela anuncia. Sem ele o usuário ouve só "botão" e não tem
+    /// como saber o que a ação faz — por isso o parâmetro não é opcional.
+    /// </remarks>
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>Peso do ícone.</summary>
+    [Parameter]
+    public RvmIconWeight Weight { get; set; } = RvmIconWeight.Regular;
+
+    /// <summary>Peso visual.</summary>
+    [Parameter]
+    public RvmButtonVariant Variant { get; set; } = RvmButtonVariant.Ghost;
+
+    /// <summary>Tamanho.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Desabilita o botão.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Mostra o <see cref="Label"/> também como <c>title</c> nativo.
+    /// </summary>
+    /// <remarks>
+    /// Separado do <c>aria-label</c> de propósito: o <c>title</c> só aparece no hover do mouse
+    /// e é inútil em toque e teclado. Ele ajuda quem enxerga e usa mouse; não substitui o nome
+    /// acessível, que existe sempre.
+    /// </remarks>
+    [Parameter]
+    public bool ShowTooltip { get; set; } = true;
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Disparado no clique.</summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => string.Join(' ', new[]
+    {
+        "rvm-icon-button",
+        $"rvm-icon-button--{Variant.ToString().ToLowerInvariant()}",
+        $"rvm-icon-button--{Size.ToString().ToLowerInvariant()}",
+        Class,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoClicar(MouseEventArgs e) =>
+        Disabled ? Task.CompletedTask : OnClick.InvokeAsync(e);
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrWhiteSpace(Label))
+        {
+            // Falhar alto: um botão de ícone sem nome acessível é um defeito que passa em
+            // revisão visual (a tela fica bonita) e só aparece para quem usa leitor de tela.
+            throw new ArgumentException(
+                "RvmIconButton exige Label — é o nome que o leitor de tela anuncia. " +
+                "Sem ele o usuário ouve apenas 'botão'.",
+                nameof(Label));
+        }
+    }
+}

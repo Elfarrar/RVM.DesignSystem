@@ -1,0 +1,120 @@
+@namespace RVM.DesignSystem.Components
+@typeparam TValue
+@inherits RvmInputBase<TValue>
+
+@*
+    Grupo de escolha única.
+
+    O <fieldset> + <legend> não é enfeite semântico: é o que faz o leitor de tela anunciar a
+    PERGUNTA ("Forma de pagamento") antes de cada opção. Sem ele, o usuário ouve "à vista",
+    "parcelado" soltos, sem saber do que se trata.
+*@
+
+<fieldset class="@ClasseFinal" disabled="@Disabled">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <legend class="rvm-radio-group__legend">
+            @Label
+            @if (Required)
+            {
+                <span class="rvm-radio-group__required" aria-hidden="true">*</span>
+            }
+        </legend>
+    }
+
+    <div class="rvm-radio-group__options">
+        @foreach (var opcao in Options)
+        {
+            var id = $"{Id}-{opcao.Value}";
+            <label class="rvm-radio" for="@id">
+                <input type="radio"
+                       id="@id"
+                       class="rvm-radio__input"
+                       name="@Id"
+                       value="@opcao.Value"
+                       checked="@(Equals(CurrentValue?.ToString(), opcao.Value))"
+                       disabled="@(Disabled || opcao.Disabled)"
+                       @onchange="() => AoSelecionar(opcao.Value)" />
+                <span class="rvm-radio__dot" aria-hidden="true"></span>
+                <span class="rvm-radio__label">@opcao.Label</span>
+            </label>
+        }
+    </div>
+
+    @if (TemErro)
+    {
+        <p class="rvm-radio-group__error" id="@($"{Id}-error")" role="alert">@MensagemDeErro</p>
+    }
+    else if (!string.IsNullOrWhiteSpace(Help))
+    {
+        <p class="rvm-radio-group__help" id="@($"{Id}-help")">@Help</p>
+    }
+</fieldset>
+
+@code {
+    /// <summary>Uma opção do grupo.</summary>
+    /// <param name="Value">Valor enviado quando selecionada.</param>
+    /// <param name="Label">Texto exibido.</param>
+    /// <param name="Disabled">Desabilita só esta opção.</param>
+    public sealed record Option(string Value, string Label, bool Disabled = false);
+
+    /// <summary>Identificador do grupo. Vira o <c>name</c> dos rádios.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-radio-{Guid.NewGuid():N}";
+
+    /// <summary>A pergunta do grupo.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>As opções.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<Option> Options { get; set; } = [];
+
+    /// <summary>Dispõe as opções lado a lado.</summary>
+    [Parameter]
+    public bool Horizontal { get; set; }
+
+    /// <summary>Desabilita o grupo inteiro.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Marca como obrigatório.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string ClasseFinal => string.Join(' ', new[]
+    {
+        "rvm-radio-group",
+        Horizontal ? "rvm-radio-group--horizontal" : null,
+        TemErro ? "rvm-radio-group--invalid" : null,
+        Class,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+
+    private Task AoSelecionar(string value)
+    {
+        CurrentValueAsString = value;
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(
+        string? value,
+        out TValue result,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        if (BindConverter.TryConvertTo<TValue>(value, System.Globalization.CultureInfo.InvariantCulture, out var convertido))
+        {
+            result = convertido!;
+            validationErrorMessage = null;
+            return true;
+        }
+
+        result = default!;
+        validationErrorMessage = $"O valor '{value}' não é válido para {DisplayName ?? FieldIdentifier.FieldName}.";
+        return false;
+    }
+}

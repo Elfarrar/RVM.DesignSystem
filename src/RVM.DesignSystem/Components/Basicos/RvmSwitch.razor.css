@@ -1,0 +1,80 @@
+.rvm-switch {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family-sans);
+}
+
+.rvm-switch__wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    cursor: pointer;
+    padding: var(--rvm-space-1) 0;
+}
+
+/* Invisível mas presente — mesma razão do checkbox: display:none destruiria o controle. */
+.rvm-switch__input {
+    position: absolute;
+    opacity: 0;
+    width: 2.5em;
+    height: 1.5em;
+    margin: 0;
+    cursor: pointer;
+}
+
+.rvm-switch__track {
+    pointer-events: none;
+    position: relative;
+    display: inline-block;
+    width: 2.5em;
+    height: 1.5em;
+    flex-shrink: 0;
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-border-strong);
+    transition: background-color var(--rvm-motion-duration-base) var(--rvm-motion-ease-standard);
+}
+
+.rvm-switch__thumb {
+    position: absolute;
+    top: 0.1875em;
+    left: 0.1875em;
+    width: 1.125em;
+    height: 1.125em;
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-surface-raised);
+    box-shadow: var(--rvm-shadow-1);
+    transition: transform var(--rvm-motion-duration-base) var(--rvm-motion-ease-standard);
+}
+
+.rvm-switch__input:checked + .rvm-switch__track {
+    background-color: var(--rvm-color-primary);
+}
+
+.rvm-switch__input:checked + .rvm-switch__track .rvm-switch__thumb {
+    transform: translateX(1em);
+}
+
+.rvm-switch__input:focus-visible + .rvm-switch__track {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.rvm-switch__input:disabled + .rvm-switch__track {
+    background-color: var(--rvm-color-disabled);
+}
+
+.rvm-switch--disabled .rvm-switch__wrapper { cursor: not-allowed; }
+.rvm-switch--disabled .rvm-switch__label { color: var(--rvm-color-on-disabled); }
+
+.rvm-switch__label {
+    font-size: var(--rvm-font-size-body);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-switch__help {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-on-surface);
+    opacity: 0.75;
+}

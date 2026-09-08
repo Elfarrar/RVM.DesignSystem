@@ -1,0 +1,84 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    A moldura de um campo: rótulo, o controle, mensagem de ajuda e mensagem de erro.
+
+    Existe separado porque é onde mora a parte chata e fácil de errar da acessibilidade de
+    formulário — associar rótulo ao controle, apontar aria-describedby para a ajuda E para o
+    erro, marcar aria-invalid. Cada campo que reimplementasse isso erraria de um jeito
+    diferente; aqui erra ou acerta uma vez só.
+*@
+
+<div class="@ClasseFinal">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="rvm-field__label" for="@FieldId">
+            @Label
+            @if (Required)
+            {
+                @* O asterisco é decorativo: quem usa leitor de tela recebe a obrigatoriedade
+                   pelo `required` do próprio controle, não por um caractere solto. *@
+                <span class="rvm-field__required" aria-hidden="true">*</span>
+            }
+        </label>
+    }
+
+    @ChildContent
+
+    @if (TemErro)
+    {
+        @* role="alert" para o erro ser anunciado assim que aparece, sem o usuário precisar
+           navegar até ele. *@
+        <p class="rvm-field__error" id="@ErrorId" role="alert">@Error</p>
+    }
+    else if (!string.IsNullOrWhiteSpace(Help))
+    {
+        <p class="rvm-field__help" id="@HelpId">@Help</p>
+    }
+</div>
+
+@code {
+    /// <summary>Identificador do controle. Liga o rótulo e as mensagens a ele.</summary>
+    [Parameter, EditorRequired]
+    public string FieldId { get; set; } = string.Empty;
+
+    /// <summary>Rótulo visível.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Texto de ajuda, exibido quando não há erro.</summary>
+    [Parameter]
+    public string? Help { get; set; }
+
+    /// <summary>Mensagem de erro. Quando presente, substitui a ajuda.</summary>
+    [Parameter]
+    public string? Error { get; set; }
+
+    /// <summary>Marca o campo como obrigatório.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Classes do consumidor.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>O controle em si.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Verdadeiro quando há mensagem de erro.</summary>
+    public bool TemErro => !string.IsNullOrWhiteSpace(Error);
+
+    /// <summary>Id da mensagem de erro, para o <c>aria-describedby</c> do controle.</summary>
+    public string ErrorId => $"{FieldId}-error";
+
+    /// <summary>Id da mensagem de ajuda, para o <c>aria-describedby</c> do controle.</summary>
+    public string HelpId => $"{FieldId}-help";
+
+    private string ClasseFinal => string.Join(' ', new[]
+    {
+        "rvm-field",
+        TemErro ? "rvm-field--invalid" : null,
+        Class,
+    }.Where(c => !string.IsNullOrWhiteSpace(c)));
+}

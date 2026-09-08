@@ -1,0 +1,103 @@
+/* fieldset traz borda, margem e padding do agente de usuário — zerados aqui porque a
+   semântica é que interessa, não o desenho padrão dele. */
+.rvm-radio-group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    font-family: var(--rvm-font-family-sans);
+}
+
+.rvm-radio-group__legend {
+    padding: 0;
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-medium);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-radio-group__required { color: var(--rvm-color-danger); margin-left: var(--rvm-space-1); }
+
+.rvm-radio-group__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-radio-group--horizontal .rvm-radio-group__options {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-4);
+}
+
+.rvm-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    cursor: pointer;
+    padding: var(--rvm-space-1) 0;
+}
+
+.rvm-radio__input {
+    position: absolute;
+    opacity: 0;
+    width: 1.25em;
+    height: 1.25em;
+    margin: 0;
+    cursor: pointer;
+}
+
+.rvm-radio__dot {
+    pointer-events: none;
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    flex-shrink: 0;
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-surface-sunken);
+    position: relative;
+    transition: border-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+.rvm-radio__input:checked + .rvm-radio__dot {
+    border-color: var(--rvm-color-primary);
+    border-width: 2px;
+}
+
+/* O ponto interno é desenhado com ::after e não com um elemento — é puramente decorativo,
+   e um elemento a mais no DOM seria ruído para o leitor de tela. */
+.rvm-radio__input:checked + .rvm-radio__dot::after {
+    content: "";
+    position: absolute;
+    inset: 0.25em;
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-primary);
+}
+
+.rvm-radio__input:focus-visible + .rvm-radio__dot {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.rvm-radio__input:disabled + .rvm-radio__dot {
+    background-color: var(--rvm-color-disabled);
+    border-color: var(--rvm-color-disabled);
+}
+
+.rvm-radio__label { font-size: var(--rvm-font-size-body); color: var(--rvm-color-on-surface); }
+
+.rvm-radio-group__help {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-on-surface);
+    opacity: 0.75;
+}
+
+.rvm-radio-group__error {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-danger);
+    font-weight: var(--rvm-font-weight-medium);
+}

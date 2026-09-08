@@ -1,15 +1,70 @@
 @inherits LayoutComponentBase
+@inject IRvmThemeService Tema
 
-<div class="page">
-    <header class="site-header">
-        <a class="site-brand" href="">RVM Design System</a>
-    </header>
+@*
+    O RvmThemeProvider envolve TUDO: é ele que emite as custom properties, então nada abaixo
+    dele consegue renderizar com cor errada.
+*@
+<RvmThemeProvider>
+    <div class="page">
+        <header class="site-header">
+            <a class="site-brand" href="">RVM Design System</a>
 
-    <main class="site-main">
-        @Body
-    </main>
+            <div class="site-controls">
+                <label class="site-controls__label" for="seletor-tema">Tema</label>
+                <select id="seletor-tema" class="site-controls__select" @onchange="TrocarTema">
+                    @foreach (var t in RvmThemes.All)
+                    {
+                        <option value="@t.Name" selected="@(t.Name == Tema.Theme.Name)">@t.Name</option>
+                    }
+                </select>
 
-    <footer class="site-footer">
-        <p>Biblioteca de componentes Blazor do ecossistema RVM · MIT</p>
-    </footer>
-</div>
+                <RvmIconButton Icon="@(_escuro ? "eye" : "eye-slash")"
+                               Label="@(_escuro ? "Mudar para o tema claro" : "Mudar para o tema escuro")"
+                               OnClick="AlternarModo" />
+            </div>
+        </header>
+
+        <main class="site-main">
+            @Body
+        </main>
+
+        <footer class="site-footer">
+            <p>Biblioteca de componentes Blazor do ecossistema RVM · MIT</p>
+        </footer>
+    </div>
+</RvmThemeProvider>
+
+@code {
+    private bool _escuro;
+
+    private async Task TrocarTema(ChangeEventArgs e)
+    {
+        var nome = e.Value?.ToString();
+        var tema = RvmThemes.All.FirstOrDefault(t => t.Name == nome);
+
+        if (tema is not null)
+        {
+            await Tema.SetThemeAsync(tema);
+        }
+    }
+
+    private async Task AlternarModo()
+    {
+        _escuro = !_escuro;
+        await Tema.SetPreferenceAsync(_escuro ? RvmThemePreference.Dark : RvmThemePreference.Light);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primeiraVez)
+    {
+        // Só depois do primeiro render: antes disso não há JS e o localStorage não existe.
+        // O script anti-flash já aplicou o visual correto; aqui só sincronizamos o estado do
+        // botão com o que ele decidiu.
+        if (primeiraVez && Tema is RvmThemeService servico)
+        {
+            var preferencia = await servico.LoadPreferenceAsync();
+            _escuro = preferencia == RvmThemePreference.Dark;
+            StateHasChanged();
+        }
+    }
+}
