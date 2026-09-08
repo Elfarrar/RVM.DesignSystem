@@ -53,7 +53,46 @@ jobs:
             echo "::error::BAGET_FEED_URL ou BAGET_API_KEY ausente nos secrets do repositorio."
             exit 1
           fi
-          # O BaGet responde em http; allowInsecureConnections e o padrao do ecossistema.
+          # A rede entre o runner do GitHub e o BagEnd e INTERMITENTE. Observado em
+          # 08/09/2026: o mesmo feed https respondeu em 277ms num run e, uma hora depois,
+          # deu "Unable to load the service index ... timed out after 100000ms" noutro —
+          # com o BagEnd saudavel (load 1.02, feed em 133ms de fora) o tempo todo.
+          # Por isso a tentativa e repetida em vez de o pipeline ficar vermelho por rede.
+          #
+          # Se o feed for http, e obrigatorio acrescentar --allow-insecure-connections:
+          # sem a flag o push nao da erro, ele pendura ate o timeout.
           for pkg in nupkgs/*.nupkg; do
-            dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate
+            ok=0
+            for tentativa in 1 2 3; do
+              if dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate; then
+                ok=1
+                break
+              fi
+              echo "::warning::push de $(basename "$pkg") falhou (tentativa $tentativa/3)"
+              sleep 30
+            done
+            if [ "$ok" != "1" ]; then
+              echo "::error::push de $(basename "$pkg") falhou 3x. Conferir o BagEnd: curl -sS -m 20 $FEED"
+              exit 1
+            fi
           done
+
+      - name: Confere que a versao chegou no feed
+        env:
+          FEED: ${{ secrets.BAGET_FEED_URL }}
+        run: |
+          # --skip-duplicate sai com sucesso mesmo sem publicar nada. Sem esta conferencia,
+          # um pack com versao ja existente daria verde sem ter publicado.
+          VERSAO=$(ls nupkgs/*.nupkg | head -1 | sed 's/.*RVM\.DesignSystem\.//; s/\.nupkg$//')
+          echo "Conferindo $VERSAO no feed..."
+          BASE=$(dirname "$(dirname "$FEED")")
+          for i in 1 2 3; do
+            if curl -fsS --max-time 20 "$BASE/package/rvm.designsystem/index.json" | grep -q "\"$VERSAO\""; then
+              echo "$VERSAO esta no feed."
+              exit 0
+            fi
+            echo "::warning::$VERSAO ainda nao aparece no feed (tentativa $i/3)"
+            sleep 10
+          done
+          echo "::error::$VERSAO nao chegou ao feed."
+          exit 1
