@@ -162,7 +162,8 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   Pages: caminho desconhecido serve o `404.html`, que é cópia do `index.html`, e o Blazor roteia
   no cliente. Não é regressão e não tem conserto em host estático — **verificação de deploy é por
   CONTEÚDO, nunca por código HTTP**, e é por isso que o monitor do Kuma é do tipo `keyword`.
-- ✅ **Onda 3 fechada, sai como `0.3.0`** (`DSGN-019`): diálogo, toast, alerta, estado vazio,
+- ✅ **Onda 3 fechada e EM PRODUÇÃO, publicada como `0.3.0`** (`DSGN-019`, autorizada por ele
+  em 08/09/2026): diálogo, toast, alerta, estado vazio,
   spinner, progresso, esqueleto e tooltip — mais a seção Padrões e a busca do site (`RF-27`).
   O `RvmDialog` é o `<dialog>` **nativo** com `showModal()`; foco preso, ESC e retorno de foco
   vêm do navegador. **Não reimplementar isso à mão.**
