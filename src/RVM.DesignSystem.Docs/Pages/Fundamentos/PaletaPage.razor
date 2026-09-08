@@ -1,0 +1,436 @@
+@page "/fundamentos/paleta"
+@inject IJSRuntime JS
+
+<PageTitle>Criar sua paleta · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Criar sua paleta</h1>
+        <p class="doc__frase">
+            Escolha duas cores. A ferramenta deriva os 27 papéis, mede o contraste de todos os
+            pares e devolve <strong>o CSS pronto</strong> — que funciona com ou sem Blazor.
+        </p>
+    </header>
+
+    <section aria-labelledby="pal-ferramenta">
+        <h2 id="pal-ferramenta">A ferramenta</h2>
+
+        <RvmCard Variant="RvmCardVariant.Outlined">
+            <ChildContent>
+                <RvmStack Gap="RvmSpacing.Lg">
+                    <div>
+                        <h3 class="doc__subtitulo">1. As duas cores da marca</h3>
+                        <div class="paleta__entradas">
+                            <ColorInput Rotulo="Primária" Valor="@_primaria" ValorChanged="v => Definir(ref _primaria, v)"
+                                        Ajuda="Botão de ação, link, item ativo." />
+                            <ColorInput Rotulo="Secundária" Valor="@_secundaria" ValorChanged="v => Definir(ref _secundaria, v)"
+                                        Ajuda="Apoio, variações de componente." />
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="doc__subtitulo">2. As cores de feedback <span class="doc__opcional">opcional</span></h3>
+                        <p class="doc__nota">
+                            Verde, âmbar, vermelho e azul são o padrão porque é a leitura mais
+                            comum no Brasil — não porque é lei. Um produto de saúde, de
+                            sinalização, ou cuja marca já é vermelha tem motivo real para
+                            discordar. <strong>Deixe em branco para usar o padrão.</strong>
+                        </p>
+
+                        <RvmSwitch @bind-Value="_customizarEstados" Label="Escolher as cores de feedback" />
+
+                        @if (_customizarEstados)
+                        {
+                            <div class="paleta__entradas paleta__entradas--acima">
+                                <ColorInput Rotulo="Sucesso" Valor="@_sucesso" ValorChanged="v => Definir(ref _sucesso, v)" />
+                                <ColorInput Rotulo="Aviso" Valor="@_aviso" ValorChanged="v => Definir(ref _aviso, v)" />
+                                <ColorInput Rotulo="Erro" Valor="@_erro" ValorChanged="v => Definir(ref _erro, v)" />
+                                <ColorInput Rotulo="Informação" Valor="@_info" ValorChanged="v => Definir(ref _info, v)" />
+                            </div>
+                        }
+                    </div>
+
+                    <RvmTextField @bind-Value="_nome" Label="Nome do tema" Help="Só identifica o tema no código." />
+                </RvmStack>
+            </ChildContent>
+        </RvmCard>
+    </section>
+
+    @if (Colisoes.Count > 0)
+    {
+        @* Live: este alerta APARECE em resposta a uma escolha, entao ele interrompe. *@
+        <RvmAlert Severity="RvmSeverity.Warning" Live="true" Title="Sua marca colide com uma cor de estado">
+            <ChildContent>
+                <p>
+                    A cor primária ficou perto demais de
+                    <strong>@string.Join(", ", Colisoes)</strong>. Isso não reprova contraste —
+                    o problema é outro: <strong>um botão de ação e um botão destrutivo passam a
+                    parecer a mesma coisa.</strong> Quem confere pela cor antes de clicar perde a
+                    única pista que tinha.
+                </p>
+                <p>
+                    Ligue "escolher as cores de feedback" e afaste a que colidiu, ou reveja a
+                    primária.
+                </p>
+            </ChildContent>
+        </RvmAlert>
+    }
+
+    <section aria-labelledby="pal-resultado">
+        <h2 id="pal-resultado">O CSS</h2>
+        <p>
+            Cole depois do <code>rvm-tokens.css</code>. Ele traz as escalas não-cromáticas
+            (espaçamento, raio, tipografia, sombra); este bloco traz as cores.
+        </p>
+        <p class="doc__nota">
+            <strong>Não depende de Blazor.</strong> São custom properties CSS — servem para
+            qualquer coisa que renderize no navegador. Quem usa a biblioteca em .NET pode, em vez
+            disso, chamar o <code>FromSeed</code> mostrado logo abaixo e deixar o provider emitir
+            o mesmo bloco em runtime.
+        </p>
+
+        <BlocoDeCodigo Linguagem="css" Codigo="@CssGerado" />
+
+        <h3 class="doc__subtitulo">Ou, em C#</h3>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@CSharpGerado" />
+    </section>
+
+    <section aria-labelledby="pal-papeis">
+        <h2 id="pal-papeis">Os papéis derivados</h2>
+        <p>
+            De duas cores saem 27. Cada superfície abaixo mostra o par <code>x</code> /
+            <code>on-x</code> como ele vai aparecer na tela.
+        </p>
+
+        <div class="paleta__modos">
+            @foreach (var (rotulo, paleta) in new[] { ("Claro", Tema.Light), ("Escuro", Tema.Dark) })
+            {
+                <div>
+                    <h3 class="doc__subtitulo">@rotulo</h3>
+                    <div class="paleta__amostras">
+                        @foreach (var (papel, fundo, texto) in Pares(paleta))
+                        {
+                            <div class="paleta__amostra" style="@($"background:{fundo};color:{texto}")">
+                                <span class="paleta__papel">@papel</span>
+                                <span class="paleta__hex">@fundo</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section aria-labelledby="pal-contraste">
+        <h2 id="pal-contraste">Contraste — medido, não estimado</h2>
+        <p>
+            A regra 5 pede conferir no WebAIM. Aqui a conferência é <strong>parte da
+            derivação</strong>: cada cor nasce clareada ou escurecida até atender AA contra a
+            superfície mais exigente da paleta. A tabela abaixo mede o resultado agora, nesta
+            página, com a mesma função que reprova o build.
+        </p>
+
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Par</th>
+                        <th scope="col">Modo</th>
+                        <th scope="col">Mínimo</th>
+                        <th scope="col">Medido</th>
+                        <th scope="col">Situação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var linha in Contrastes)
+                    {
+                        <tr>
+                            <td><code>@linha.Par</code></td>
+                            <td>@linha.Modo</td>
+                            <td>@linha.Minimo.ToString("0.0", Invariante):1</td>
+                            <td>@linha.Medido.ToString("0.00", Invariante):1</td>
+                            <td>
+                                <RvmChip Size="RvmSize.Small"
+                                         Variant="@(linha.Passa ? RvmChipVariant.Success : RvmChipVariant.Danger)">
+                                    @(linha.Passa ? "passa" : "reprova")
+                                </RvmChip>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Contrastes.All(c => c.Passa))
+        {
+            <p class="doc__ok" role="status">
+                Os @Contrastes.Count pares passam nos dois modos.
+            </p>
+        }
+    </section>
+
+    <section aria-labelledby="pal-proporcao">
+        <h2 id="pal-proporcao">A proporção 60-30-10</h2>
+
+        <p>
+            <strong>Esta é a única das cinco regras que a biblioteca não consegue garantir</strong>,
+            e vale dizer por quê: ela é de <em>composição</em>, não de paleta. Fala de quanto de
+            cada cor aparece numa tela montada — a mesma paleta obedece a regra numa tela e a
+            viola noutra. Um portão que dissesse verificar isso estaria medindo outra coisa.
+        </p>
+
+        <div class="paleta__proporcao" role="img" aria-label="Barra de proporção: 60% neutro, 30% estrutura, 10% destaque">
+            <span class="paleta__faixa paleta__faixa--60"><span>60% neutro</span></span>
+            <span class="paleta__faixa paleta__faixa--30"><span>30% estrutura</span></span>
+            <span class="paleta__faixa paleta__faixa--10"><span>10%</span></span>
+        </div>
+
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Fatia</th>
+                        <th scope="col">O que é</th>
+                        <th scope="col">Que papéis usar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>60%</strong></td>
+                        <td>Fundo e espaço vazio</td>
+                        <td><code>background</code>, <code>surface</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>30%</strong></td>
+                        <td>Texto, borda, cartão</td>
+                        <td><code>on-surface</code>, <code>on-surface-variant</code>, <code>border</code>, <code>surface-raised</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>10%</strong></td>
+                        <td>Ação e chamada</td>
+                        <td><code>primary</code>, <code>on-primary</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="doc__nota">
+            Um jeito prático de conferir: <strong>se dá para contar mais de dois ou três
+            elementos na cor primária numa tela, ela passou dos 10%</strong> — e o botão que
+            realmente importa deixou de se destacar, porque tudo em volta compete com ele.
+            É o mesmo motivo pelo qual o <a href="componentes/button">RvmButton</a> documenta
+            "uma ação primária por tela".
+        </p>
+    </section>
+
+    <section aria-labelledby="pal-regras">
+        <h2 id="pal-regras">As cinco regras, e quem garante cada uma</h2>
+
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Regra</th>
+                        <th scope="col">Quem garante</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1.</strong> Primária e secundária</td>
+                        <td>Você escolhe; o <code>FromSeed</code> deriva o resto.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2.</strong> Neutros, sem preto puro</td>
+                        <td>
+                            A biblioteca. O texto sai em <code>L=0.22</code> no claro e
+                            <code>L=0.94</code> no escuro — nunca <code>#000000</code>. Há teste.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>3.</strong> Cores de feedback</td>
+                        <td>Padrão da convenção, sobrescrevível por você. Há teste.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4.</strong> Proporção 60-30-10</td>
+                        <td><strong>Você, ao montar a tela.</strong> Não é verificável na paleta.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5.</strong> Contraste WCAG</td>
+                        <td>
+                            A biblioteca, na derivação — e um teste mede 29 pares × 5 temas × 2
+                            modos a cada build.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</article>
+
+@code {
+    private static readonly System.Globalization.CultureInfo Invariante =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    private string _nome = "MeuProduto";
+    private string _primaria = "#2A6E49";
+    private string _secundaria = "#B07D2A";
+
+    private bool _customizarEstados;
+    private string _sucesso = "#2E7D32";
+    private string _aviso = "#F9A825";
+    private string _erro = "#C62828";
+    private string _info = "#0277BD";
+
+    private RvmTheme Tema => RvmTheme.FromSeed(
+        string.IsNullOrWhiteSpace(_nome) ? "MeuProduto" : _nome,
+        new RvmSeed
+        {
+            Primary = _primaria,
+            Secondary = _secundaria,
+            Success = _customizarEstados ? _sucesso : null,
+            Warning = _customizarEstados ? _aviso : null,
+            Danger = _customizarEstados ? _erro : null,
+            Info = _customizarEstados ? _info : null,
+        });
+
+    private void Definir(ref string campo, string? valor)
+    {
+        if (!string.IsNullOrWhiteSpace(valor))
+        {
+            campo = valor;
+        }
+    }
+
+    private static IEnumerable<(string Papel, string Fundo, string Texto)> Pares(RvmPalette p) =>
+    [
+        ("primary", p.Primary, p.OnPrimary),
+        ("primary-container", p.PrimaryContainer, p.OnPrimaryContainer),
+        ("secondary", p.Secondary, p.OnSecondary),
+        ("success", p.Success, p.OnSuccess),
+        ("warning", p.Warning, p.OnWarning),
+        ("danger", p.Danger, p.OnDanger),
+        ("info", p.Info, p.OnInfo),
+        ("surface", p.Surface, p.OnSurface),
+        ("surface-raised", p.SurfaceRaised, p.OnSurface),
+        ("surface-sunken", p.SurfaceSunken, p.OnSurface),
+        ("background", p.Background, p.OnBackground),
+        ("disabled", p.Disabled, p.OnDisabled),
+    ];
+
+    /// <summary>
+    /// As cores de estado perto demais da primaria, pela matiz.
+    /// </summary>
+    /// <remarks>
+    /// <b>Nao e uma questao de contraste</b> — as duas podem passar folgado em AA e ainda assim
+    /// serem indistinguiveis entre si. O risco e outro: com a primaria e o `danger` na mesma
+    /// matiz, "Salvar" e "Excluir" viram o mesmo botao, e quem confere pela cor antes de clicar
+    /// perde a unica pista que tinha.
+    ///
+    /// <para>
+    /// 25 graus e o limite. E generoso de proposito: o objetivo e apontar o caso obvio, nao
+    /// reclamar de toda paleta quente.
+    /// </para>
+    /// </remarks>
+    private IReadOnlyList<string> Colisoes
+    {
+        get
+        {
+            var p = Tema.Light;
+            var matizDaMarca = RvmColor.Parse(p.Primary).ToOklch().H;
+
+            var candidatos = new (string Nome, string Cor)[]
+            {
+                ("erro", p.Danger),
+                ("sucesso", p.Success),
+                ("aviso", p.Warning),
+            };
+
+            return candidatos
+                .Where(c => DistanciaDeMatiz(matizDaMarca, RvmColor.Parse(c.Cor).ToOklch().H) < 25)
+                .Select(c => c.Nome)
+                .ToList();
+        }
+    }
+
+    // A matiz e circular: 350 e 10 distam 20 graus, nao 340.
+    private static double DistanciaDeMatiz(double a, double b)
+    {
+        var d = Math.Abs(a - b) % 360;
+        return d > 180 ? 360 - d : d;
+    }
+
+    private sealed record LinhaDeContraste(string Par, string Modo, double Minimo, double Medido, bool Passa);
+
+    private IReadOnlyList<LinhaDeContraste> Contrastes
+    {
+        get
+        {
+            var linhas = new List<LinhaDeContraste>();
+
+            foreach (var (modo, paleta) in new[] { ("Claro", Tema.Light), ("Escuro", Tema.Dark) })
+            {
+                foreach (var (nome, frente, fundo, minimo) in paleta.PairsToVerify())
+                {
+                    var medido = RvmColor.Contrast(RvmColor.Parse(frente), RvmColor.Parse(fundo));
+                    linhas.Add(new LinhaDeContraste(nome, modo, minimo, medido, medido >= minimo));
+                }
+            }
+
+            return linhas;
+        }
+    }
+
+    /// <summary>O CSS pronto para colar, com os blocos quebrados em uma propriedade por linha.</summary>
+    private string CssGerado
+    {
+        get
+        {
+            // O ToCss() emite compacto, porque o destino normal dele e uma tag <style> em
+            // runtime. Aqui o destino e um arquivo que alguem vai LER e versionar, entao vale
+            // quebrar — e a quebra e feita aqui, na apresentacao, em vez de virar um parametro
+            // na biblioteca que so esta pagina usaria.
+            var bruto = Tema.ToCss()
+                .Replace("{", "{\n    ", StringComparison.Ordinal)
+                .Replace(";", ";\n    ", StringComparison.Ordinal)
+                .Replace("    }", "}", StringComparison.Ordinal)
+                .Replace("\n    \n", "\n", StringComparison.Ordinal);
+
+            return $"""
+                /* Paleta "{Tema.Name}" — gerada em design.rvmit.com.br/fundamentos/paleta
+                   Cole DEPOIS do rvm-tokens.css, que traz as escalas não-cromáticas. */
+
+                {bruto.TrimEnd()}
+                """;
+        }
+    }
+
+    private string CSharpGerado
+    {
+        get
+        {
+            if (!_customizarEstados)
+            {
+                return $"""
+                    // Duas linhas. O resto é derivado — e já nasce aprovado no contraste AA.
+                    public static readonly RvmTheme Tema =
+                        RvmTheme.FromSeed("{Tema.Name}", primary: "{_primaria}", secondary: "{_secundaria}");
+                    """;
+            }
+
+            return $$"""
+                public static readonly RvmTheme Tema = RvmTheme.FromSeed("{{Tema.Name}}", new RvmSeed
+                {
+                    Primary = "{{_primaria}}",
+                    Secondary = "{{_secundaria}}",
+
+                    // Das cores de estado, o motor aproveita a matiz e o croma; a luminosidade
+                    // é recalculada até atender AA.
+                    Success = "{{_sucesso}}",
+                    Warning = "{{_aviso}}",
+                    Danger = "{{_erro}}",
+                    Info = "{{_info}}",
+                });
+                """;
+        }
+    }
+}

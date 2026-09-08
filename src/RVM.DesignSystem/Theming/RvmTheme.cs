@@ -47,22 +47,44 @@ public sealed record RvmTheme
     /// e regressao desta funcao.
     /// </remarks>
     /// <returns>Tema com as duas paletas derivadas e ja verificadas contra os limiares AA.</returns>
-    public static RvmTheme FromSeed(string name, string primary, string secondary)
+    public static RvmTheme FromSeed(string name, string primary, string secondary) =>
+        FromSeed(name, new RvmSeed { Primary = primary, Secondary = secondary });
+
+    /// <summary>
+    /// Deriva um tema completo a partir das cores que o produto escolheu.
+    /// </summary>
+    /// <param name="name">Nome do tema.</param>
+    /// <param name="seed">As duas cores obrigatorias e, opcionalmente, as quatro de estado.</param>
+    /// <returns>Tema com as duas paletas derivadas e ja verificadas contra os limiares AA.</returns>
+    /// <remarks>
+    /// Sobrecarga aditiva, de <c>1.1.0</c>: a de tres argumentos continua valendo e delega para
+    /// esta. Ela existe para o caso que a de tres nao cobre — trocar as cores de <b>estado</b>,
+    /// que ate a 1.0 eram fixas.
+    ///
+    /// <para>
+    /// Do que voce informa, o motor aproveita a <b>matiz e o croma</b>; a luminosidade e
+    /// recalculada contra a superficie mais exigente da paleta ate atender AA. E o que permite
+    /// aceitar a cor da marca sem aceitar um par ilegivel.
+    /// </para>
+    /// </remarks>
+    public static RvmTheme FromSeed(string name, RvmSeed seed)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentNullException.ThrowIfNull(seed);
 
-        var seed = RvmColor.Parse(primary);
-        var accent = RvmColor.Parse(secondary);
+        var primaria = RvmColor.Parse(seed.Primary);
+        var apoio = RvmColor.Parse(seed.Secondary);
 
         return new RvmTheme
         {
             Name = name,
-            Light = BuildPalette(seed, accent, RvmThemeMode.Light),
-            Dark = BuildPalette(seed, accent, RvmThemeMode.Dark),
+            Light = BuildPalette(primaria, apoio, RvmThemeMode.Light, seed),
+            Dark = BuildPalette(primaria, apoio, RvmThemeMode.Dark, seed),
         };
     }
 
-    private static RvmPalette BuildPalette(RvmColor seed, RvmColor accent, RvmThemeMode mode)
+    private static RvmPalette BuildPalette(
+        RvmColor seed, RvmColor accent, RvmThemeMode mode, RvmSeed? escolhas = null)
     {
         var dark = mode == RvmThemeMode.Dark;
         var (_, seedChroma, seedHue) = seed.ToOklch();
@@ -116,18 +138,27 @@ public sealed record RvmTheme
             primaryContainer,
             RvmContrast.NormalText);
 
-        // Estados: matiz fixo (verde, ambar, vermelho, azul) — sao convencao cultural, nao marca.
-        // O que varia por tema e a luminosidade, ajustada ao fundo do modo.
-        RvmColor Status(double hue, double chroma)
+        // Estados: verde, ambar, vermelho e azul por PADRAO — sao convencao cultural, nao marca.
+        // Quem tem motivo para discordar informa a cor no RvmSeed.
+        //
+        // ⚠️ Do que e informado, aproveita-se a MATIZ e o CROMA; a luminosidade e sempre
+        // recalculada contra a superficie mais exigente e passa pelo Ensure. E o que permite
+        // aceitar a cor da marca sem aceitar um par ilegivel — a escolha e de identidade, o
+        // contraste nao e negociavel.
+        RvmColor Status(double huePadrao, double chromaPadrao, string? escolhida)
         {
+            var (hue, chroma) = escolhida is null
+                ? (huePadrao, chromaPadrao)
+                : Matiz(escolhida);
+
             var baseTone = RvmColor.FromOklch(dark ? 0.72 : 0.52, chroma, hue);
             return RvmContrast.Ensure(baseTone, piorFundo, RvmContrast.NormalText);
         }
 
-        var success = Status(148, 0.14);
-        var warning = Status(75, 0.14);
-        var danger = Status(25, 0.19);
-        var info = Status(245, 0.16);
+        var success = Status(148, 0.14, escolhas?.Success);
+        var warning = Status(75, 0.14, escolhas?.Warning);
+        var danger = Status(25, 0.19, escolhas?.Danger);
+        var info = Status(245, 0.16, escolhas?.Info);
 
         // Borda decorativa nao precisa de 3:1 (nao comunica estado); a de controle precisa.
         var border = dark ? Neutral(0.30) : Neutral(0.89);
@@ -173,6 +204,28 @@ public sealed record RvmTheme
             // unico papel da paleta que nao e uma cor solida.
             Scrim = dark ? "rgb(0 0 0 / 0.65)" : "rgb(0 0 0 / 0.5)",
         };
+    }
+
+    /// <summary>
+    /// A matiz e o croma de uma cor informada, com o croma limitado ao que a tela alcanca.
+    /// </summary>
+    /// <param name="hex">A cor, em hexadecimal.</param>
+    /// <returns>Matiz em graus e croma.</returns>
+    /// <remarks>
+    /// O limite de croma nao e capricho: OKLCH e um espaco maior que o sRGB, e um croma alto
+    /// demais gera uma cor que o monitor nao consegue mostrar — o resultado seria recortado na
+    /// conversao, saindo diferente do que a pessoa escolheu e, pior, com luminosidade diferente
+    /// da calculada. 0.20 e o teto que a maioria das matizes alcanca em sRGB.
+    ///
+    /// <para>
+    /// Um cinza informado (croma ~0) fica cinza: o motor nao inventa saturacao que nao foi
+    /// pedida.
+    /// </para>
+    /// </remarks>
+    private static (double Hue, double Chroma) Matiz(string hex)
+    {
+        var (_, chroma, hue) = RvmColor.Parse(hex).ToOklch();
+        return (hue, Math.Min(chroma, 0.20));
     }
 
     /// <summary>

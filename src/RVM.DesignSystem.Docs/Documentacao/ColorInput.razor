@@ -1,0 +1,81 @@
+@*
+    Um seletor de cor. `<input type="color">` NATIVO — mesma escolha do `<select>` no RvmSelect.
+
+    O nativo entrega o seletor do sistema operacional, que a pessoa já sabe usar, funciona no
+    celular e não precisa de JavaScript nenhum. Um seletor desenhado à mão custaria roda de
+    matiz, campo de opacidade e navegação por teclado — para entregar pior.
+
+    Ao lado dele vai um campo de TEXTO com o hexadecimal, e ele não é redundante: quem tem o
+    valor da marca anotado quer colar "#2A6E49", não caçá-lo numa roda de cores. É a mesma lógica
+    do RvmDatePicker, onde digitar vem antes do calendário.
+*@
+
+<div class="color-input">
+    <label class="color-input__rotulo" for="@_id">@Rotulo</label>
+
+    <div class="color-input__controles">
+        <input type="color"
+               id="@_id"
+               class="color-input__amostra"
+               value="@Valor"
+               @onchange="AoTrocar" />
+
+        <input type="text"
+               class="color-input__hex"
+               inputmode="text"
+               spellcheck="false"
+               aria-label="@($"{Rotulo}, em hexadecimal")"
+               value="@Valor"
+               @onchange="AoDigitar" />
+    </div>
+
+    @if (Ajuda is not null)
+    {
+        <p class="color-input__ajuda">@Ajuda</p>
+    }
+</div>
+
+@code {
+    private readonly string _id = $"color-input-{Guid.NewGuid():N}";
+
+    /// <summary>Rótulo visível.</summary>
+    [Parameter, EditorRequired]
+    public string Rotulo { get; set; } = string.Empty;
+
+    /// <summary>A cor, em hexadecimal.</summary>
+    [Parameter]
+    public string Valor { get; set; } = "#000000";
+
+    /// <summary>Disparado quando a cor muda.</summary>
+    [Parameter]
+    public EventCallback<string> ValorChanged { get; set; }
+
+    /// <summary>Explicação curta abaixo do campo.</summary>
+    [Parameter]
+    public string? Ajuda { get; set; }
+
+    private Task AoTrocar(ChangeEventArgs e) =>
+        ValorChanged.InvokeAsync(e.Value?.ToString());
+
+    private async Task AoDigitar(ChangeEventArgs e)
+    {
+        var texto = e.Value?.ToString()?.Trim();
+
+        if (string.IsNullOrWhiteSpace(texto))
+        {
+            return;
+        }
+
+        if (!texto.StartsWith('#'))
+        {
+            texto = "#" + texto;
+        }
+
+        // Só avisa quando o texto É uma cor. Um hexadecimal pela metade ("#2A6") chegaria ao
+        // FromSeed no meio da digitação e estouraria a página inteira a cada tecla.
+        if (texto.Length == 7 && texto[1..].All(Uri.IsHexDigit))
+        {
+            await ValorChanged.InvokeAsync(texto.ToUpperInvariant());
+        }
+    }
+}
