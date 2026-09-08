@@ -11,7 +11,8 @@
 
 - [[DSGN-020]] — **Onda 4**: `RvmDataGrid`, `RvmPagination`, `RvmFilterBar`, `RvmDatePicker`,
   `RvmAutocomplete` e a tela de Listagem com 487 linhas. 260 testes, E2E com o criterio de saida.
-  Sai como **`1.0.0`** — a primeira versao estavel, contrato congelado.
+  No ar em dev, `1.0.0-alpha.17` no BaGet. **Aguardando o Rafael para promover a `master` /
+  `1.0.0`** — e esta e a promocao que congela o contrato.
 
 ## Concluido
 

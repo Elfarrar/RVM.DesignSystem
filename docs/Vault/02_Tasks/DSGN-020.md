@@ -3,7 +3,7 @@ id: DSGN-020
 titulo: Onda 4 — dados, e a 1.0
 repo: RVM.DesignSystem
 tipo: feature
-status: em-andamento
+status: em-revisao
 criada: 2026-09-08
 ---
 
@@ -90,6 +90,12 @@ resumo da paginacao.
 | Portao de contraste | 29 pares x 5 temas x 2 modos |
 | E2E | 7 testes, incluindo o criterio de saida |
 | axe | 45 paginas x 2 modos de cor |
+| Dev no ar | `design.dev.rvmtech.com.br`, verificado por CONTEUDO e no navegador |
+| Pre-release | `1.0.0-alpha.17` no BaGet |
+
+Conferido no dev, no modo escuro: ordenacao por clique, selecao de 3 linhas com o total somado
+na barra, e a caixa de "selecionar todas" no estado **indeterminado** — que e o unico dos tres
+estados que exige JS, porque `indeterminate` e propriedade do elemento e nao atributo.
 
 ## O que a 1.0 significa
 
