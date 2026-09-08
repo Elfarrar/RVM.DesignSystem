@@ -188,6 +188,16 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   limitou** — ver a correção no `DSGN-018`. O site não depende disso (compila por
   `ProjectReference`); o primeiro consumidor externo depende. **Não republicar movendo a tag
   sem decidir o conserto antes.**
+- ✅ **`DSGN-024` EM PRODUÇÃO** (08/09/2026): a paleta montada em `/fundamentos/paleta` fica
+  guardada no `localStorage` e sobrevive à navegação e ao F5. Guarda as **cores escolhidas**,
+  nunca o tema derivado — assim uma paleta antiga passa pelas regras de contraste de hoje, em
+  vez de virar cópia congelada que nenhuma correção do `FromSeed` alcança.
+- ⏳ **`DSGN-025` — preview de aparência, no ar em PRODUÇÃO e TEMPORÁRIO.** O seletor
+  "Aparência" na topbar troca entre `Atual`, `Sóbrio` e `Marcante`. ⚠️ **`aparencia.css`,
+  `aparencia.js`, o seletor no `MainLayout` e o teste `As_duas_aparencias_do_preview_passam_no_axe`
+  saem INTEIROS quando o Rafael escolher.** Nada disso é a biblioteca. E nenhum preset mexe em
+  cor de superfície de propósito: tingir superfície é motor de tema (`FromSeed` +
+  `EnsureContrast()`), não folha de estilo — a mão livre no CSS fura o portão em silêncio.
 - Próximo passo: **não há onda 5**. O que vem é adoção — e ela é só em projeto novo (`09` §
   Adoção). O próximo projeto RVM que precisar de UI nasce aqui, e é ele quem prova a biblioteca.
 
