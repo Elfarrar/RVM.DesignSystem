@@ -16,7 +16,7 @@
         <h2 id="icones-grade">Grade</h2>
         <RvmTextField @bind-Value="_busca"
                       Label="Buscar ícone"
-                      Placeholder="check, caret, eye..."
+                      Placeholder="check, caret, user..."
                       IconStart="magnifying-glass" />
 
         <p class="doc__nota">Clique num ícone para copiar o nome.</p>
@@ -70,10 +70,15 @@
         <RvmIcon Name="warning" Title="Atenção" />
         """;
 
+    // A ordem espelha o tools/gerar-icones.py: onda 1 primeiro, onda 2 depois. Manter as duas
+    // listas juntas e trabalho manual, e por isso o RvmIcon reprova nome inexistente com uma
+    // excecao que lista os disponiveis — o erro se resolve sozinho quando alguem esquecer.
     private static readonly string[] _todos =
     [
         "check", "x", "caret-down", "caret-up", "eye", "eye-slash",
         "warning", "info", "circle-notch", "magnifying-glass", "calendar-blank",
+        "list", "caret-right", "caret-left", "sidebar-simple", "user", "house",
+        "dots-three-vertical", "copy",
     ];
 
     private IReadOnlyList<string> Filtrados => string.IsNullOrWhiteSpace(_busca)

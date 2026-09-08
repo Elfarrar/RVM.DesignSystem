@@ -1,0 +1,33 @@
+/*
+  Empilhamento. É `display: flex` com `gap` — e a única coisa que ele acrescenta ao flex cru é
+  fechar a escala: `Gap` é enum, então `gap: 13px` não tem como acontecer.
+*/
+
+.rvm-stack {
+    display: flex;
+    min-width: 0; /* sem isso, um filho longo (texto ou tabela) estoura o flex pai */
+}
+
+.rvm-stack--vertical { flex-direction: column; }
+.rvm-stack--horizontal { flex-direction: row; }
+.rvm-stack--wrap { flex-wrap: wrap; }
+
+.rvm-stack--gap-none { gap: var(--rvm-space-0); }
+.rvm-stack--gap-xs { gap: var(--rvm-space-1); }
+.rvm-stack--gap-sm { gap: var(--rvm-space-2); }
+.rvm-stack--gap-md { gap: var(--rvm-space-4); }
+.rvm-stack--gap-lg { gap: var(--rvm-space-6); }
+.rvm-stack--gap-xl { gap: var(--rvm-space-8); }
+.rvm-stack--gap-xxl { gap: var(--rvm-space-12); }
+
+.rvm-stack--align-stretch { align-items: stretch; }
+.rvm-stack--align-start { align-items: flex-start; }
+.rvm-stack--align-center { align-items: center; }
+.rvm-stack--align-end { align-items: flex-end; }
+.rvm-stack--align-baseline { align-items: baseline; }
+
+.rvm-stack--justify-start { justify-content: flex-start; }
+.rvm-stack--justify-center { justify-content: center; }
+.rvm-stack--justify-end { justify-content: flex-end; }
+.rvm-stack--justify-space-between { justify-content: space-between; }
+.rvm-stack--justify-space-around { justify-content: space-around; }

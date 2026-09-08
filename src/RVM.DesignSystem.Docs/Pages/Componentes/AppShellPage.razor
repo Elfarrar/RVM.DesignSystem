@@ -1,0 +1,138 @@
+@page "/componentes/app-shell"
+
+<PaginaDeComponente Nome="RvmAppShell"
+                    Tipo="typeof(RvmAppShell)"
+                    Frase="A casca de aplicação inteira: marcos, link de pulo, gaveta responsiva e densidade. É o componente que esta onda existe para entregar.">
+
+    <Exemplo>
+        <p class="doc__nota">
+            <strong>Você está dentro de um.</strong> Esta página inteira — a barra do topo, a
+            navegação à esquerda, este conteúdo e o rodapé — é um <code>RvmAppShell</code>. Ele
+            substituiu as ~60 linhas de HTML que o <code>MainLayout</code> deste site tinha até a
+            onda 1, e que os quatro <code>MainLayout</code> do ecossistema duplicam, cada um com
+            um detalhe de acessibilidade a menos que o vizinho.
+        </p>
+
+        <p>
+            Para ver o que ele faz sem olhar o código: dê <kbd>Tab</kbd> agora, a partir da barra
+            de endereços. O <strong>primeiro</strong> elemento que recebe foco é "Pular para o
+            conteúdo" — um link que só aparece quando focado. Sem ele, quem navega por teclado
+            atravessa a navegação lateral inteira em <em>toda</em> página antes de chegar ao texto.
+        </p>
+
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">O que ele garante sem ninguém pedir</h3>
+        <ol class="doc__lista">
+            <li>
+                <strong>Os marcos.</strong> <code>header</code>, <code>nav</code>,
+                <code>main</code> e <code>footer</code> existem sempre, na ordem certa e no
+                aninhamento certo.
+            </li>
+            <li>
+                <strong>O link de pulo</strong> é o primeiro tabulável e aponta para o
+                <code>main</code>. O <code>id</code> do alvo é constante da biblioteca
+                (<code>RvmShellContext.ContentId</code>) e não é configurável: deixar isso por
+                conta de quem usa cria um jeito de a acessibilidade quebrar em silêncio — o link
+                continua parecendo certo e simplesmente não leva a lugar nenhum.
+            </li>
+            <li>
+                <strong>A gaveta e o botão que a abre concordam</strong>, porque os dois leem o
+                mesmo <code>RvmShellContext</code>. Eles vivem em componentes irmãos: sem um
+                estado em comum, quem usa teria que segurar um <code>bool</code> no próprio layout
+                e ligar os dois na mão.
+            </li>
+            <li>
+                <strong>A densidade</strong> desce para a árvore inteira por um atributo só.
+            </li>
+        </ol>
+
+        <h3 class="doc__subtitulo">O rodapé fica fora do <code>main</code></h3>
+        <p>
+            E isso decide se ele existe como marco. A regra de escopo do HTML é sutil: um
+            <code>footer</code> só vira <code>contentinfo</code> quando o ancestral de
+            secionamento mais próximo é o <code>body</code>. Dentro do <code>main</code> ele vira
+            um elemento genérico e a lista de marcos perde o rodapé — sem nenhum aviso, porque a
+            marcação continua válida.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>O <code>main</code> tem <code>tabindex="-1"</code></strong> para poder
+                receber o foco do link de pulo, mas o anel dele é suprimido: um contorno em volta
+                da página inteira, depois de um clique qualquer, é ruído sem significado. A
+                capacidade de receber foco continua — é ela que faz o leitor de tela anunciar o
+                começo do conteúdo.
+            </li>
+            <li>
+                <strong>O véu da gaveta é <code>aria-hidden</code> e não recebe foco.</strong> Ele
+                é decoração e atalho de mouse; quem usa teclado fecha pelo mesmo botão que abriu,
+                que continua visível na barra do topo.
+            </li>
+            <li>
+                <strong><code>min-height: 100dvh</code>, e não <code>100vh</code>.</strong> No
+                celular a barra de endereço entra e sai da conta, e com <code>vh</code> o rodapé
+                fica escondido atrás dela.
+            </li>
+            <li>
+                <strong>Um <code>RvmShellContext</code> por casca</strong>, cascateado para
+                baixo — não é estado global. Duas cascas na mesma página (raro, mas possível) têm
+                estados independentes.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Em tela de login, ou em qualquer página sem navegação.</strong> Uma casca
+                com a lateral vazia é uma coluna em branco. Login é uma página centrada, sem
+                marcos de aplicação.
+            </li>
+            <li>
+                <strong>Aninhada.</strong> Duas cascas geram dois <code>main</code>, e a página
+                passa a ter dois "conteúdos principais" — que é o mesmo que não ter nenhum.
+            </li>
+            <li>
+                <strong>Para um site de conteúdo.</strong> A casca é de <em>aplicação</em>: barra
+                fixa, navegação persistente, conteúdo que rola por dentro. Um blog quer o
+                documento rolando inteiro.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private const string _exemplo = """
+        @* MainLayout.razor — a casca inteira de uma aplicação. *@
+        <RvmThemeProvider>
+            <RvmAppShell Density="RvmDensity.Comfortable">
+                <Topbar>
+                    <RvmTopbar>
+                        <Start><strong>Meu Produto</strong></Start>
+                        <End><RvmAvatar Name="@usuario.Nome" Size="RvmSize.Small" /></End>
+                    </RvmTopbar>
+                </Topbar>
+
+                <Sidebar>
+                    <RvmSidebar Label="Navegação principal">
+                        <RvmNavItem Text="Início" Href="" Icon="house" Exact="true" />
+                        <RvmNavItem Text="Pedidos" Href="pedidos" Icon="list" />
+                    </RvmSidebar>
+                </Sidebar>
+
+                <Footer>
+                    <p>Meu Produto · versão 1.4.0</p>
+                </Footer>
+
+                <ChildContent>
+                    @Body
+                </ChildContent>
+            </RvmAppShell>
+        </RvmThemeProvider>
+        """;
+}

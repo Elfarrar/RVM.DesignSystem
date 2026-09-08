@@ -8,7 +8,7 @@
     background-color: var(--rvm-color-surface-sunken);
     border: 1px solid var(--rvm-color-border-strong);
     border-radius: var(--rvm-radius-md);
-    padding: var(--rvm-space-2) var(--rvm-space-3);
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-3);
     /* vertical e não `both`: redimensionar na horizontal quebra o layout em volta. */
     resize: vertical;
 }

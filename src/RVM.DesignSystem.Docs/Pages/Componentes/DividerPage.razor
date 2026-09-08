@@ -1,0 +1,92 @@
+@page "/componentes/divider"
+
+<PaginaDeComponente Nome="RvmDivider"
+                    Tipo="typeof(RvmDivider)"
+                    Frase="Separa. Com rótulo é um separador semântico; sem rótulo é decoração e some do leitor de tela.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <p>Conteúdo acima do traço.</p>
+                <RvmDivider Label="@(string.IsNullOrWhiteSpace(_rotulo) ? null : _rotulo)" />
+                <p>Conteúdo abaixo do traço.</p>
+            </div>
+            <div class="playground__controles">
+                <RvmTextField @bind-Value="_rotulo" Label="Label" Help="Vazio = decorativo." />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Horizontal</h3>
+        <RvmDivider />
+
+        <h3 class="doc__subtitulo">Horizontal com rótulo</h3>
+        <RvmDivider Label="ou" />
+
+        <h3 class="doc__subtitulo">Vertical</h3>
+        <p class="doc__nota">
+            Vertical só funciona dentro de um contêiner que tenha altura — dentro de um
+            <a href="componentes/stack">RvmStack</a> horizontal, por exemplo, onde o
+            <code>align-self: stretch</code> faz ele acompanhar a linha sem ninguém informar
+            altura nenhuma.
+        </p>
+        <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Md" Align="RvmAlign.Center">
+            <span>Rascunho</span>
+            <RvmDivider Orientation="RvmOrientation.Vertical" />
+            <span>Salvo há 2 minutos</span>
+            <RvmDivider Orientation="RvmOrientation.Vertical" />
+            <span>3 revisões</span>
+        </RvmStack>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Sem rótulo, é <code>&lt;hr aria-hidden="true"&gt;</code>.</strong> Uma
+                linha anunciada como "separador" a cada duas seções é ruído puro: quem lê a tela
+                já percebe a mudança pelos títulos.
+            </li>
+            <li>
+                <strong>Com rótulo, vira <code>role="separator"</code> com nome acessível</strong>
+                e <code>aria-orientation</code>. Aí o traço carrega informação — "ou", "Ontem",
+                "Arquivados" —, e quem não vê a linha ainda precisa saber que a lista mudou de
+                grupo.
+            </li>
+            <li>
+                <strong>A escolha é do conteúdo, não do estilo.</strong> Não há um parâmetro
+                "decorativo": ter ou não ter rótulo <em>é</em> a diferença semântica, e amarrar as
+                duas coisas remove o jeito de errar.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Entre todo par de itens de uma lista.</strong> Espaço branco separa tão bem
+                quanto e não polui. Traço em toda linha vira grade sem ser grade.
+            </li>
+            <li>
+                <strong>Como borda de um bloco.</strong> Se o que se quer é delimitar uma região,
+                o certo é <a href="componentes/card">RvmCard</a> na variante
+                <code>Outlined</code> — ele já traz a superfície e o raio junto.
+            </li>
+            <li>
+                <strong>Para dar hierarquia a títulos.</strong> Isso é trabalho da escala
+                tipográfica. Um traço embaixo de todo <code>h2</code> é o sintoma de que os
+                tamanhos não estão distinguindo os níveis.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _rotulo = "ou";
+
+    private string Snippet() =>
+        string.IsNullOrWhiteSpace(_rotulo)
+            ? "<RvmDivider />"
+            : $"<RvmDivider Label=\"{_rotulo}\" />";
+}

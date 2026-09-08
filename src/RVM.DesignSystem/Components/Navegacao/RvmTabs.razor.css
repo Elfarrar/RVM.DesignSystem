@@ -1,0 +1,80 @@
+.rvm-tabs {
+    display: block;
+    font-family: var(--rvm-font-family-sans);
+}
+
+.rvm-tabs__lista {
+    display: flex;
+    gap: var(--rvm-space-1);
+    border-bottom: 1px solid var(--rvm-color-border);
+    /* Muitas abas em tela estreita rolam na horizontal em vez de quebrar em duas linhas:
+       uma tablist de duas linhas quebra a relação entre a posição visual e as setas. */
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.rvm-tabs__aba {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    flex-shrink: 0;
+    min-height: var(--rvm-control-height-md);
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-4);
+    border: 0;
+    /* A faixa do estado ativo existe sempre, transparente: sem isso o texto sobe 2px na hora
+       em que a aba é selecionada, e a fileira inteira treme. */
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: none;
+    color: var(--rvm-color-on-surface-variant);
+    font-family: inherit;
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-medium);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
+        border-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+@media (hover: hover) {
+    .rvm-tabs__aba:hover:not(:disabled) { color: var(--rvm-color-on-surface); }
+}
+
+.rvm-tabs__aba:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: -2px;
+}
+
+/*
+  A aba ativa tem três sinais: a faixa embaixo, o peso da fonte e a cor. E, para o leitor de
+  tela, o aria-selected. Nunca só a cor.
+*/
+.rvm-tabs__aba--ativa {
+    border-bottom-color: var(--rvm-color-primary);
+    color: var(--rvm-color-primary);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-tabs__aba:disabled {
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}
+
+/*
+  ::deep porque o painel é renderizado pelo RvmTab, que tem outro escopo b-*.
+*/
+::deep .rvm-tab-panel {
+    padding-top: var(--rvm-space-5);
+}
+
+/*
+  O painel é focável (tabindex="0") por exigência do APG, mas ele não é um controle: o anel
+  de foco padrão em volta de um bloco inteiro de texto confunde mais do que ajuda. Fica um
+  anel discreto, e só no foco por teclado.
+*/
+::deep .rvm-tab-panel:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 4px;
+    border-radius: var(--rvm-radius-sm);
+}

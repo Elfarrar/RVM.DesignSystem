@@ -1,0 +1,24 @@
+.rvm-nav-group {
+    list-style: none;
+}
+
+.rvm-nav-group__titulo {
+    margin: var(--rvm-space-4) 0 var(--rvm-space-1);
+    padding: 0 var(--rvm-space-3);
+    color: var(--rvm-color-on-surface-variant);
+    /* caption é o menor tamanho da escala; o título de seção é rótulo, não texto de leitura.
+       O peso e o espaçamento entre letras é que o destacam — nunca a cor sozinha. */
+    font-size: var(--rvm-font-size-caption);
+    font-weight: var(--rvm-font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.rvm-nav-group__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}

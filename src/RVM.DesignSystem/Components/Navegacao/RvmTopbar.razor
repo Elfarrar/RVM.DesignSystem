@@ -1,0 +1,106 @@
+@namespace RVM.DesignSystem.Components
+@implements IDisposable
+
+@*
+    A barra superior. É um `header` de verdade — marco de página, achável pelo leitor de tela.
+
+    O botão de menu é renderizado só quando há uma casca em volta — sem ela não existe gaveta
+    para abrir — e em tela larga ele sai por `display: none`. Precisa ser `display: none` mesmo,
+    e não `opacity: 0` nem `visibility: hidden`: só o primeiro tira o botão da ordem de tabulação.
+    Com qualquer um dos outros, quem navega por teclado no desktop pararia num botão invisível.
+*@
+
+<header class="@ClasseFinal" @attributes="AdditionalAttributes">
+    @if (MostrarMenu)
+    {
+        <button type="button"
+                class="rvm-topbar__menu"
+                aria-label="@(Aberta ? CloseMenuLabel : OpenMenuLabel)"
+                aria-expanded="@(Aberta ? "true" : "false")"
+                @onclick="AlternarGaveta">
+            <RvmIcon Name="@(Aberta ? "x" : "list")" Size="1.5rem" />
+        </button>
+    }
+
+    @if (Start is not null)
+    {
+        <div class="rvm-topbar__inicio">@Start</div>
+    }
+
+    @if (Center is not null)
+    {
+        <div class="rvm-topbar__meio">@Center</div>
+    }
+
+    <div class="rvm-topbar__fim">@End</div>
+</header>
+
+@code {
+    /// <summary>Marca, título da tela.</summary>
+    [Parameter]
+    public RenderFragment? Start { get; set; }
+
+    /// <summary>Busca, trilha. Ocupa o espaço que sobra.</summary>
+    [Parameter]
+    public RenderFragment? Center { get; set; }
+
+    /// <summary>Ações, notificações, avatar.</summary>
+    [Parameter]
+    public RenderFragment? End { get; set; }
+
+    /// <summary>
+    /// Mostra o botão que abre a gaveta em tela estreita.
+    /// </summary>
+    /// <remarks>
+    /// Padrão <c>true</c>, mas ele só aparece se houver uma casca em volta: sem
+    /// <see cref="RvmAppShell"/> não existe gaveta para abrir, e um botão que não faz nada é
+    /// pior que botão nenhum.
+    /// </remarks>
+    [Parameter]
+    public bool ShowMenuButton { get; set; } = true;
+
+    /// <summary>Nome acessível do botão quando ele vai abrir o menu.</summary>
+    [Parameter]
+    public string OpenMenuLabel { get; set; } = "Abrir o menu";
+
+    /// <summary>Nome acessível do botão quando ele vai fechar o menu.</summary>
+    [Parameter]
+    public string CloseMenuLabel { get; set; } = "Fechar o menu";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [CascadingParameter]
+    private RvmShellContext? Casca { get; set; }
+
+    private bool MostrarMenu => ShowMenuButton && Casca is not null;
+
+    private bool Aberta => Casca?.SidebarOpen ?? false;
+
+    private string ClasseFinal => RvmClasse.Juntar("rvm-topbar", Class);
+
+    protected override void OnInitialized()
+    {
+        if (Casca is not null)
+        {
+            Casca.Changed += AoMudar;
+        }
+    }
+
+    private void AoMudar() => InvokeAsync(StateHasChanged);
+
+    private void AlternarGaveta() => Casca?.ToggleSidebar();
+
+    public void Dispose()
+    {
+        if (Casca is not null)
+        {
+            Casca.Changed -= AoMudar;
+        }
+    }
+}

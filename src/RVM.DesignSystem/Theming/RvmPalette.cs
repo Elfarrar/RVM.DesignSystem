@@ -65,6 +65,24 @@ public sealed record RvmPalette
     /// </summary>
     public required string OnSurface { get; init; }
 
+    /// <summary>
+    /// Texto secundario sobre superficie: ajuda de campo, legenda, item ja percorrido de uma
+    /// trilha. Mesmo tamanho, menos peso visual.
+    /// </summary>
+    /// <remarks>
+    /// <b>Existe para que ninguem faca isso com <c>opacity</c>.</b> Opacidade compoe a cor com o
+    /// fundo e afeta <b>tudo</b> que esta dentro do elemento — inclusive um <c>&lt;code&gt;</c>
+    /// colorido, que herda o efeito e nao a cor. Foi o defeito nº 4 da onda 1, e apareceu duas
+    /// vezes antes de virar regra. Hierarquia de texto se faz com <b>cor</b>, e a cor precisa ser
+    /// um papel medido — nao um cinza escolhido no olho.
+    ///
+    /// <para>
+    /// Exige os mesmos 4.5:1 do <c>on-surface</c>: e texto corrido em tamanho de corpo, e a WCAG
+    /// nao da desconto para texto que o designer considera menos importante.
+    /// </para>
+    /// </remarks>
+    public required string OnSurfaceVariant { get; init; }
+
     /// <summary>Superficie elevada (card, menu flutuante). Compartilha o <see cref="OnSurface"/>.</summary>
     public required string SurfaceRaised { get; init; }
 
@@ -136,6 +154,7 @@ public sealed record RvmPalette
             Warning = Ajustar(Warning),
             Danger = Ajustar(Danger),
             Info = Ajustar(Info),
+            OnSurfaceVariant = Ajustar(OnSurfaceVariant),
         };
     }
 
@@ -169,6 +188,11 @@ public sealed record RvmPalette
         // Por isso PRECISAM ser medidas contra ele — e onde um cinza mal escolhido some.
         yield return ("surface-raised/on-surface", OnSurface, SurfaceRaised, RvmContrast.NormalText);
         yield return ("surface-sunken/on-surface", OnSurface, SurfaceSunken, RvmContrast.NormalText);
+
+        // Texto secundario e texto: os mesmos 4.5:1, contra as tres superficies em que aparece.
+        yield return ("surface/on-surface-variant", OnSurfaceVariant, Surface, RvmContrast.NormalText);
+        yield return ("background/on-surface-variant", OnSurfaceVariant, Background, RvmContrast.NormalText);
+        yield return ("surface-sunken/on-surface-variant", OnSurfaceVariant, SurfaceSunken, RvmContrast.NormalText);
 
         // Limite de controle e anel de foco: 3:1 contra a superficie adjacente.
         yield return ("border-strong/surface", BorderStrong, Surface, RvmContrast.LargeTextOrUi);

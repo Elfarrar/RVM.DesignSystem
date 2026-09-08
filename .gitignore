@@ -23,11 +23,10 @@ coverage-e2e/
 node_modules/
 .playwright/
 .playwright-mcp/
-/design-dev-*.png
-/onda1-*.png
-/prod-*.png
-/titulo-*.png
-/foco-*.png
+# Screenshot de verificacao, sempre na RAIZ e sempre descartavel. Padrao unico em vez da
+# lista de prefixos que vinha crescendo a cada entrega — favicon.png e os assets ficam sob
+# wwwroot/ e nao sao alcancados por isto.
+/*.png
 
 ## OS
 .DS_Store

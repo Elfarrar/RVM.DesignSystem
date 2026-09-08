@@ -1,0 +1,176 @@
+@page "/fundamentos/densidade"
+
+<PageTitle>Densidade · RVM Design System</PageTitle>
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Densidade</h1>
+        <p class="doc__frase">
+            Duas densidades, aplicadas por um atributo. Elas mudam <strong>altura de controle e
+            espaçamento vertical</strong> — nunca tamanho de fonte.
+        </p>
+    </header>
+
+    <section aria-labelledby="dens-comparacao">
+        <h2 id="dens-comparacao">Lado a lado</h2>
+        <p>
+            O mesmo formulário, o mesmo código, sem um único componente sabendo que densidade
+            existe. O que muda é <code>data-rvm-density</code> no elemento em volta.
+        </p>
+
+        <RvmGrid Columns="1" ColumnsMd="2" Gap="RvmSpacing.Lg">
+            <RvmCard Variant="RvmCardVariant.Outlined">
+                <Header>Comfortable — 40px</Header>
+                <ChildContent>
+                    <RvmStack Gap="RvmSpacing.Md">
+                        <RvmTextField @bind-Value="_nome" Label="Nome" />
+                        <RvmSelect TValue="string" @bind-Value="_uf" Label="Estado" Placeholder="Selecione">
+                            <option value="SP">São Paulo</option>
+                            <option value="MG">Minas Gerais</option>
+                        </RvmSelect>
+                        <RvmButton>Salvar</RvmButton>
+                    </RvmStack>
+                </ChildContent>
+            </RvmCard>
+
+            <RvmCard Variant="RvmCardVariant.Outlined">
+                <Header>Compact — 32px</Header>
+                <ChildContent>
+                    <div data-rvm-density="compact">
+                        <RvmStack Gap="RvmSpacing.Md">
+                            <RvmTextField @bind-Value="_nome2" Label="Nome" />
+                            <RvmSelect TValue="string" @bind-Value="_uf2" Label="Estado" Placeholder="Selecione">
+                                <option value="SP">São Paulo</option>
+                                <option value="MG">Minas Gerais</option>
+                            </RvmSelect>
+                            <RvmButton>Salvar</RvmButton>
+                        </RvmStack>
+                    </div>
+                </ChildContent>
+            </RvmCard>
+        </RvmGrid>
+
+        <p class="doc__nota">
+            <strong>Se os dois estão iguais, está certo.</strong> Você está num aparelho de tela
+            estreita ou de toque, e aí a compacta é desfeita — ver a regra logo abaixo.
+        </p>
+    </section>
+
+    <section aria-labelledby="dens-como">
+        <h2 id="dens-como">Como se aplica</h2>
+        <p>
+            Por atributo, o que dá duas propriedades boas de graça: ele <strong>herda pela
+            árvore</strong> (uma tabela densa dentro de uma tela confortável funciona) e não exige
+            JavaScript nenhum.
+        </p>
+        <BlocoDeCodigo Codigo="@_comoAtributo" />
+        <p>
+            Dentro de uma casca de aplicação, o parâmetro faz a mesma coisa para a árvore inteira:
+        </p>
+        <BlocoDeCodigo Codigo="@_comoShell" />
+    </section>
+
+    <section aria-labelledby="dens-tokens">
+        <h2 id="dens-tokens">Os tokens que mudam</h2>
+        <p>
+            A densidade é uma troca na <strong>camada de token</strong>, e não um parâmetro que
+            cada componente precisa aceitar. Um componente escrito amanhã já nasce obedecendo,
+            desde que leia estes nomes em vez de escolher um padding próprio:
+        </p>
+
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Token</th>
+                        <th scope="col">Comfortable</th>
+                        <th scope="col">Compact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>--rvm-control-height-sm</code></td><td>2rem (32px)</td><td>1.75rem (28px)</td></tr>
+                    <tr><td><code>--rvm-control-height-md</code></td><td>2.5rem (40px)</td><td>2rem (32px)</td></tr>
+                    <tr><td><code>--rvm-control-height-lg</code></td><td>3rem (48px)</td><td>2.5rem (40px)</td></tr>
+                    <tr><td><code>--rvm-control-padding-y-sm</code></td><td>4px</td><td>0</td></tr>
+                    <tr><td><code>--rvm-control-padding-y-md</code></td><td>8px</td><td>4px</td></tr>
+                    <tr><td><code>--rvm-control-padding-y-lg</code></td><td>12px</td><td>8px</td></tr>
+                    <tr><td><code>--rvm-field-gap</code></td><td>16px</td><td>12px</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="doc__nota">
+            A escala de espaçamento de layout (<code>--rvm-space-*</code>) <strong>não muda</strong>,
+            e é de propósito: encolher a escala inteira não deixa a tela densa, deixa a tela
+            apertada. Densidade é sobre <em>controles</em>.
+        </p>
+    </section>
+
+    <section aria-labelledby="dens-regra">
+        <h2 id="dens-regra">A regra vence a configuração</h2>
+        <p>
+            Alvo de toque <strong>nunca desce de 40px onde se toca com o dedo</strong>,
+            independente da densidade que o desenvolvedor escolheu. Em ponteiro grosso
+            (<code>pointer: coarse</code>) ou em tela abaixo de 768px, a compacta é
+            <strong>desfeita</strong> — não amenizada. O alvo volta aos 40px inteiros.
+        </p>
+        <BlocoDeCodigo Linguagem="css" Codigo="@_regra" />
+        <p>
+            As duas condições, e não só a largura: um tablet de 900px em modo retrato tem tela
+            larga e dedo grosso, e é exatamente onde um alvo de 32px erra.
+        </p>
+        <p class="doc__nota">
+            Isso é o oposto de "configurável". A densidade compacta é uma preferência de quem
+            desenvolve; o alvo de toque é uma necessidade de quem usa. Quando as duas colidem,
+            quem cede é a preferência.
+        </p>
+    </section>
+
+    <section aria-labelledby="dens-quando">
+        <h2 id="dens-quando">Quando usar cada uma</h2>
+        <ul class="doc__lista">
+            <li>
+                <strong>Comfortable</strong> — formulário, tela de cadastro, qualquer coisa que o
+                usuário preenche uma vez. E sempre no celular.
+            </li>
+            <li>
+                <strong>Compact</strong> — grade de dados, listagem densa, tela de operação onde a
+                mesma pessoa passa o dia e quer ver mais linhas sem rolar.
+            </li>
+        </ul>
+        <p class="doc__nota">
+            Aplicar <code>Compact</code> na aplicação inteira costuma ser o uso errado: a tela de
+            cadastro que se preenche uma vez por mês não ganha nada com 8px a menos, e perde em
+            conforto. O atributo herda justamente para que a densidade possa ser <em>local</em>.
+        </p>
+    </section>
+</article>
+
+@code {
+    private string? _nome = string.Empty;
+    private string? _nome2 = string.Empty;
+    private string? _uf;
+    private string? _uf2;
+
+    private const string _comoAtributo = """
+        <div data-rvm-density="compact">
+            <RvmTextField @bind-Value="modelo.Nome" Label="Nome" />
+            <RvmButton>Salvar</RvmButton>
+        </div>
+        """;
+
+    private const string _comoShell = """
+        <RvmAppShell Density="RvmDensity.Compact">
+            ...
+        </RvmAppShell>
+        """;
+
+    private const string _regra = """
+        @media (pointer: coarse), (max-width: 767px) {
+            [data-rvm-density="compact"] {
+                --rvm-control-height-md: 2.5rem;          /* volta aos 40px */
+                --rvm-control-padding-y-md: var(--rvm-space-2);
+            }
+        }
+        """;
+}

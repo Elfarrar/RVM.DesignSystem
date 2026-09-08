@@ -9,8 +9,11 @@
 
 ## Em revisao
 
-- [[DSGN-002]] — Camada de tokens, `RvmTheme.FromSeed` e os dois portoes. 62 testes; o portao de
-  contraste cobre 5 temas x 2 modos x 14 pares e reprova entrada ruim de proposito.
+- [[DSGN-017]] — **Onda 2**: casca de aplicacao (`RvmAppShell`/`Sidebar`/`Topbar`/`NavItem`),
+  layout (`Stack`/`Grid`/`Card`/`Divider`), conteudo e navegacao (`Chip`/`Avatar`/`Tabs`/
+  `Breadcrumb`) e densidade `Compact`. **O proprio site ja usa a casca** — criterio de saida
+  cumprido. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos. No ar em dev,
+  `0.2.0-alpha.12` no BaGet. **Aguardando o Rafael para promover a `master` / `0.2.0`.**
 
 ## Concluido
 
@@ -21,6 +24,33 @@
 - [[DSGN-004]] — `Verify` do primeiro deploy de Pages: o site subia certo e o job ficava vermelho.
 
 ## A fazer
+
+### ✅ Onda 2 — fechada em 08/09/2026, sai como `0.2.0`
+
+Doze componentes de layout e navegacao, densidade `Compact`, 8 icones novos e 13 paginas de
+documentacao. O conjunto de icones — a decisao de contrato que sobrava da onda 1 — ficou
+**curado**: 19 icones, cada um entrando junto do componente que o usa. Card: [[DSGN-017]].
+
+### ✅ Onda 1 — fechada em 08/09/2026, publicada como `0.1.0`
+
+Nove componentes, camada de tokens, motor de tema, icones Phosphor e o site de documentacao.
+`design.rvmit.com.br` no ar. Cards: [[DSGN-002]], [[DSGN-012]], [[DSGN-013]], [[DSGN-014]],
+[[DSGN-015]].
+
+### Onda 3 — Feedback (proxima)
+
+`RvmDialog` + `IRvmDialogService`, `RvmToast` + `IRvmToastService`, `RvmAlert`, `RvmSkeleton`,
+`RvmSpinner`, `RvmProgress`, `RvmTooltip`, `RvmEmptyState`. Fecha em `0.3.0`.
+
+> **Meta (`09-roadmap`):** o E2E abre o dialogo, navega so por teclado, fecha com `ESC` e
+> confirma que o foco voltou ao botao de origem.
+
+⚠️ **O que a onda 2 deixa para ela:** a densidade hoje alcanca os controles da onda 1 e o
+`RvmNavItem`. Componente de dado (onda 4) precisa entrar na conta dos tokens `--rvm-control-*`,
+ou nasce ignorando a densidade em silencio.
+
+<details>
+<summary>Escopo original da onda 1, para referencia</summary>
 
 ### Onda 1 — Tokens e basicos
 
@@ -34,9 +64,9 @@ Fecha com o pacote `0.1.0` no BaGet e o site publicando os fundamentos.
   `RvmRadioGroup`, `RvmSwitch`, `RvmLabel`/`RvmFormField`
 - Site: casca, fundamentos, pagina por componente, codigo copiavel, instalacao, changelog
 
-> ⏳ **As tres primeiras pendencias do `09-roadmap` travam o fechamento da onda 1**: idioma de
-> token/API, conjunto de icones e escala tipografica. Depois da 1.0, mudar qualquer uma quebra
-> todo consumidor.
+✅ Todas as pendencias de contrato do `09-roadmap` foram fechadas antes da release.
+
+</details>
 
 ### Ondas 2 a 4
 

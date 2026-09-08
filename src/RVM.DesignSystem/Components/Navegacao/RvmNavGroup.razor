@@ -1,0 +1,31 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Uma seção nomeada da navegação ("Cadastros", "Relatórios").
+
+    A estrutura é `li > h2 + ul`, e não um `h2` solto seguido de outra `ul`: dentro de uma
+    lista, todo filho direto precisa ser `li`. A `ul` interna aponta para o título por
+    `aria-labelledby`, então o leitor de tela anuncia "lista Cadastros, 4 itens" em vez de
+    "lista, 4 itens" quatro vezes seguidas.
+*@
+
+<li class="rvm-nav-group">
+    <h2 class="rvm-nav-group__titulo" id="@_id">@Title</h2>
+    <ul class="rvm-nav-group__lista" aria-labelledby="@_id">
+        @ChildContent
+    </ul>
+</li>
+
+@code {
+    // Gerado uma vez no ciclo de vida do componente, e não a cada render: um id que muda a cada
+    // renderização quebra o aria-labelledby no exato instante em que a tela é atualizada.
+    private readonly string _id = $"rvm-nav-group-{Guid.NewGuid():N}";
+
+    /// <summary>Título da seção.</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>Os <see cref="RvmNavItem"/> da seção.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

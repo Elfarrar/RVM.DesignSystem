@@ -1,0 +1,103 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Card clicável é `<button>` ou `<a>` DE VERDADE — nunca uma `div` com `onclick` (`11`).
+
+    A `div` com onclick é o defeito de acessibilidade mais comum que existe em interface web, e
+    é caro porque parece funcionar: o mouse clica. O que ela não faz é receber foco por teclado,
+    responder a Enter e Espaço, aparecer na lista de links/botões do leitor de tela, abrir em
+    nova aba (no caso do link) e mostrar o destino na barra de status. São seis defeitos de uma
+    escolha só, e nenhum aparece em teste manual com mouse.
+*@
+
+@if (Href is not null)
+{
+    <a href="@Href" class="@ClasseFinal" @attributes="AdditionalAttributes">
+        @Interior
+    </a>
+}
+else if (OnClick.HasDelegate)
+{
+    <button type="button" class="@ClasseFinal" @onclick="OnClick" @attributes="AdditionalAttributes">
+        @Interior
+    </button>
+}
+else
+{
+    <div class="@ClasseFinal" @attributes="AdditionalAttributes">
+        @Interior
+    </div>
+}
+
+@code {
+    /// <summary>Aparência do cartão.</summary>
+    [Parameter]
+    public RvmCardVariant Variant { get; set; } = RvmCardVariant.Elevated;
+
+    /// <summary>
+    /// Elevação, de 0 a 5, mapeada nos tokens de sombra.
+    /// </summary>
+    /// <remarks>
+    /// Vale só na variante <c>Elevated</c>. Valor fora da faixa é limitado em vez de estourar:
+    /// um cartão com sombra errada é um detalhe, uma exceção em produção é uma tela em branco.
+    /// </remarks>
+    [Parameter]
+    public int Elevation { get; set; } = 1;
+
+    /// <summary>Destino do link. Informá-lo faz o cartão inteiro virar um link real.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>Disparado no clique. Informá-lo faz o cartão inteiro virar um botão real.</summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /// <summary>Faixa superior — título e ações.</summary>
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+
+    /// <summary>O conteúdo.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Faixa inferior — ações, metadados.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>Remove o preenchimento interno, para cartão que começa com imagem ou tabela.</summary>
+    [Parameter]
+    public bool NoPadding { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private bool EhInterativo => Href is not null || OnClick.HasDelegate;
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-card",
+        $"rvm-card--{RvmClasse.Sufixo(Variant)}",
+        Variant == RvmCardVariant.Elevated ? $"rvm-card--elev-{Math.Clamp(Elevation, 0, 5)}" : null,
+        EhInterativo ? "rvm-card--interativo" : null,
+        NoPadding ? "rvm-card--sem-padding" : null,
+        Class);
+
+    private RenderFragment Interior => @<text>
+        @if (Header is not null)
+        {
+            <div class="rvm-card__header">@Header</div>
+        }
+        @if (ChildContent is not null)
+        {
+            <div class="rvm-card__body">@ChildContent</div>
+        }
+        @if (Footer is not null)
+        {
+            <div class="rvm-card__footer">@Footer</div>
+        }
+    </text>;
+}

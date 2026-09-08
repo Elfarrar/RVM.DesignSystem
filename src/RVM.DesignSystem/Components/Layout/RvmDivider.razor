@@ -1,0 +1,70 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Duas formas, e a diferença entre elas é semântica, não visual.
+
+    Sem rótulo, o traço é DECORATIVO: `aria-hidden`, e o leitor de tela passa direto. Uma linha
+    anunciada como "separador" a cada duas seções é ruído puro.
+
+    Com rótulo ("ou", "Ontem"), o traço CARREGA informação — aí ele é um `separator` de verdade,
+    com nome acessível, porque quem não vê a linha ainda precisa saber que a lista mudou de
+    grupo.
+*@
+
+@if (Label is null && ChildContent is null)
+{
+    <hr class="@ClasseFinal" aria-hidden="true" @attributes="AdditionalAttributes" />
+}
+else
+{
+    <div class="@ClasseFinal rvm-divider--with-label"
+         role="separator"
+         aria-orientation="@(Orientation == RvmOrientation.Vertical ? "vertical" : "horizontal")"
+         @attributes="AdditionalAttributes">
+        <span class="rvm-divider__linha" aria-hidden="true"></span>
+        <span class="rvm-divider__rotulo">
+            @if (ChildContent is not null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                @Label
+            }
+        </span>
+        <span class="rvm-divider__linha" aria-hidden="true"></span>
+    </div>
+}
+
+@code {
+    /// <summary>Direção do traço.</summary>
+    [Parameter]
+    public RvmOrientation Orientation { get; set; } = RvmOrientation.Horizontal;
+
+    /// <summary>
+    /// Texto no meio do traço. Informá-lo torna o separador semântico.
+    /// </summary>
+    /// <remarks>
+    /// Sem rótulo o divisor é decorativo e some do leitor de tela; com rótulo ele vira
+    /// <c>role="separator"</c> com nome acessível. A escolha é do conteúdo, não do estilo.
+    /// </remarks>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Rótulo como marcação, quando texto simples não basta.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-divider",
+        $"rvm-divider--{RvmClasse.Sufixo(Orientation)}",
+        Class);
+}

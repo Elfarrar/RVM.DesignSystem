@@ -1,0 +1,154 @@
+@page "/componentes/card"
+
+<PaginaDeComponente Nome="RvmCard"
+                    Tipo="typeof(RvmCard)"
+                    Frase="Agrupa conteúdo numa superfície. Card clicável vira <button> ou <a> de verdade — nunca uma div com onclick.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmCard Variant="_variante"
+                         Elevation="_elevacao"
+                         OnClick="@(_clicavel ? AoClicar : default(EventCallback<MouseEventArgs>))">
+                    <Header>Pedido #4821</Header>
+                    <ChildContent>
+                        <p>Três itens · entrega prevista para sexta-feira.</p>
+                    </ChildContent>
+                    <Footer>Atualizado há 10 minutos</Footer>
+                </RvmCard>
+
+                @if (_cliques > 0)
+                {
+                    <p class="doc__ok" role="status">Cliques: @_cliques</p>
+                }
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmCardVariant" @bind-Value="_variante" Label="Variant">
+                    @foreach (var v in Enum.GetValues<RvmCardVariant>())
+                    {
+                        <option value="@v">@v</option>
+                    }
+                </RvmSelect>
+                <RvmSelect TValue="int" @bind-Value="_elevacao" Label="Elevation">
+                    @foreach (var n in new[] { 0, 1, 2, 3, 4, 5 })
+                    {
+                        <option value="@n">@n</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_clicavel" Label="Clicável" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <RvmGrid Columns="1" ColumnsMd="3" Gap="RvmSpacing.Md">
+            <RvmCard Variant="RvmCardVariant.Elevated">
+                <Header>Elevated</Header>
+                <ChildContent>Sombra. O padrão.</ChildContent>
+            </RvmCard>
+            <RvmCard Variant="RvmCardVariant.Outlined">
+                <Header>Outlined</Header>
+                <ChildContent>Contorno. Melhor com muitos cartões lado a lado.</ChildContent>
+            </RvmCard>
+            <RvmCard Variant="RvmCardVariant.Filled">
+                <Header>Filled</Header>
+                <ChildContent>Superfície rebaixada, sem sombra nem contorno.</ChildContent>
+            </RvmCard>
+        </RvmGrid>
+
+        <h3 class="doc__subtitulo">Elevação</h3>
+        <p class="doc__nota">
+            Troque para o tema escuro no topo da página: a sombra praticamente desaparece, e é
+            por isso que a variante <code>Elevated</code> muda também a <em>superfície</em>. Preto
+            sobre preto não comunica altura — a informação "isto está acima daquilo" precisa
+            sobreviver aos dois modos.
+        </p>
+        <RvmGrid Columns="2" ColumnsMd="6" Gap="RvmSpacing.Md">
+            @for (var n = 0; n <= 5; n++)
+            {
+                var nivel = n;
+                <RvmCard Elevation="nivel"><ChildContent><code>@nivel</code></ChildContent></RvmCard>
+            }
+        </RvmGrid>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Card clicável é <code>&lt;button&gt;</code>; card com destino é
+                <code>&lt;a&gt;</code>.</strong> Uma <code>div</code> com <code>onclick</code>
+                clica com o mouse e falha em tudo o mais: não recebe foco, não responde a
+                <kbd>Enter</kbd> nem a <kbd>Espaço</kbd>, não aparece na lista de botões e links
+                do leitor de tela, não abre em nova aba e não mostra o destino na barra de status.
+                São seis defeitos de uma escolha só, e nenhum aparece em teste com mouse.
+            </li>
+            <li>
+                <strong>Card não interativo é <code>div</code></strong> e fica fora da ordem de
+                tabulação. Nada de <code>tabindex="0"</code> em bloco que não faz nada.
+            </li>
+            <li>
+                <strong>O anel de foco é <code>:focus-visible</code></strong>, com
+                <code>outline-offset</code> para não encostar no contorno do próprio cartão.
+            </li>
+            <li>
+                <strong>Um card só pode ter uma ação.</strong> Botões dentro de um card clicável
+                seriam controles aninhados — marcação inválida, e o <kbd>Enter</kbd> dispararia as
+                duas coisas. Card com várias ações fica não-clicável, com os botões no
+                <code>Footer</code>.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para tudo.</strong> Cartão dentro de cartão dentro de cartão é o sintoma
+                clássico: quando toda região da tela tem borda e sombra, nenhuma se destaca.
+            </li>
+            <li>
+                <strong>Para lista longa e uniforme.</strong> Vinte cartões iguais são uma tabela
+                mal disfarçada — e uma tabela é mais rápida de varrer com os olhos e com o leitor
+                de tela.
+            </li>
+            <li>
+                <strong>Como caixa de diálogo.</strong> Um card sobreposto não prende o foco, não
+                fecha com <kbd>ESC</kbd> e não torna o resto da página inerte. O
+                <code>RvmDialog</code> chega na onda 3.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmCardVariant _variante = RvmCardVariant.Elevated;
+    private int _elevacao = 1;
+    private bool _clicavel;
+    private int _cliques;
+
+    private EventCallback<MouseEventArgs> AoClicar =>
+        EventCallback.Factory.Create<MouseEventArgs>(this, () => _cliques++);
+
+    private string Snippet()
+    {
+        var atributos = $"Variant=\"RvmCardVariant.{_variante}\"";
+
+        if (_variante == RvmCardVariant.Elevated)
+        {
+            atributos += $" Elevation=\"{_elevacao}\"";
+        }
+
+        if (_clicavel)
+        {
+            atributos += " OnClick=\"Abrir\"";
+        }
+
+        return $"""
+            <RvmCard {atributos}>
+                <Header>Pedido #4821</Header>
+                <ChildContent>Três itens · entrega prevista para sexta-feira.</ChildContent>
+                <Footer>Atualizado há 10 minutos</Footer>
+            </RvmCard>
+            """;
+    }
+}

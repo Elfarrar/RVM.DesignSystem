@@ -10,8 +10,23 @@ em vez de aparecer por magica no CI.
 """
 import re, sys, pathlib, collections
 
-ICONES = ['check', 'x', 'caret-down', 'caret-up', 'eye', 'eye-slash',
-          'warning', 'info', 'circle-notch', 'magnifying-glass', 'calendar-blank']
+# A lista e CURADA, nao o conjunto inteiro do Phosphor (1512 icones). Cada nome aqui vira
+# API publica e bytes que todo consumidor baixa. Icone entra quando um componente precisa,
+# nunca "porque pode ser util" — a regra esta no `03-arquitetura.md` § Icones.
+ICONES = [
+    # Onda 1 — formulario e estado
+    'check', 'x', 'caret-down', 'caret-up', 'eye', 'eye-slash',
+    'warning', 'info', 'circle-notch', 'magnifying-glass', 'calendar-blank',
+    # Onda 2 — layout e navegacao
+    'list',                  # menu hamburguer do RvmTopbar no mobile
+    'caret-right',           # separador do RvmBreadcrumb e seta do RvmNavItem com filhos
+    'caret-left',            # voltar
+    'sidebar-simple',        # colapsar/expandir o RvmSidebar
+    'user',                  # fallback do RvmAvatar sem imagem nem iniciais
+    'house',                 # item de navegacao mais comum
+    'dots-three-vertical',   # menu de acoes secundarias
+    'copy',                  # botao de copiar do bloco de codigo (site de documentacao)
+]
 
 origem = pathlib.Path(sys.argv[1])
 dados = collections.OrderedDict()

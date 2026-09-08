@@ -1,0 +1,114 @@
+@page "/componentes/topbar"
+
+<PaginaDeComponente Nome="RvmTopbar"
+                    Tipo="typeof(RvmTopbar)"
+                    Frase="A barra superior: três fatias (início, meio, fim) e o botão de menu que abre a gaveta no celular.">
+
+    <Exemplo>
+        <p class="doc__nota">
+            <strong>O topo desta página é uma.</strong> A marca à esquerda e o seletor de temas à
+            direita estão num <code>RvmTopbar</code> de verdade. Diminua a janela abaixo de 768px
+            para o botão de menu aparecer.
+        </p>
+
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmTopbar>
+                    <Start>
+                        <strong>Meu Produto</strong>
+                    </Start>
+                    <Center>
+                        <RvmTextField @bind-Value="_busca"
+                                      Label="Buscar"
+                                      Placeholder="Pedido, cliente, nota..."
+                                      IconStart="magnifying-glass"
+                                      Size="RvmSize.Small" />
+                    </Center>
+                    <End>
+                        <RvmIconButton Icon="dots-three-vertical" Label="Mais ações" />
+                        <RvmAvatar Name="Rafael Venerosi Morici" Size="RvmSize.Small" />
+                    </End>
+                </RvmTopbar>
+            </div>
+            <div class="playground__controles">
+                <p class="doc__nota">
+                    Este exemplo está fora de um <code>RvmAppShell</code>, então o botão de menu
+                    <strong>não aparece</strong> nem no celular: sem casca não existe gaveta para
+                    abrir, e um botão que não faz nada é pior que botão nenhum.
+                </p>
+                <p class="doc__nota">
+                    O campo de busca no topo é o caso que quebrava o <code>InputBase&lt;T&gt;</code>
+                    do Blazor — ele exige <code>ValueExpression</code> e estoura fora de um
+                    <code>EditForm</code>. O <code>RvmInputBase</code> sintetiza a expressão quando
+                    falta; é por isso que este campo funciona aqui.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É um <code>&lt;header&gt;</code></strong> — marco <code>banner</code>,
+                achável pelo leitor de tela na lista de regiões.
+            </li>
+            <li>
+                <strong>O botão de menu tem <code>aria-expanded</code></strong> ligado ao estado
+                real da gaveta, e o nome dele muda ("Abrir o menu" / "Fechar o menu"). O ícone
+                troca junto, de <code>list</code> para <code>x</code>.
+            </li>
+            <li>
+                <strong>Em tela larga o botão sai por <code>display: none</code></strong>, e
+                precisa ser <code>display: none</code> mesmo: <code>opacity: 0</code> e
+                <code>visibility: hidden</code> deixariam o botão invisível <em>e</em> tabulável,
+                e quem navega por teclado no desktop pararia num controle que não vê.
+            </li>
+            <li>
+                <strong>Altura fixa (<code>--rvm-topbar-height</code>).</strong> É token, e não
+                número solto, porque a aplicação precisa dela para posicionar coisa própria — um
+                botão flutuante que não pode cair atrás da barra, por exemplo.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Como barra de ferramentas de uma tela.</strong> A topbar é da
+                <em>aplicação</em>: ela não muda quando se navega. Ações de uma tela específica
+                ficam na própria tela, perto do que elas afetam.
+            </li>
+            <li>
+                <strong>Para o título da página.</strong> O <code>h1</code> pertence ao conteúdo.
+                Um título dentro do <code>header</code> fica fora do <code>main</code> e some para
+                quem usa o link de pulo.
+            </li>
+            <li>
+                <strong>Empilhada com outra barra.</strong> Duas faixas fixas comem metade da tela
+                do celular. Se não cabe numa, cabe menos.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _busca = string.Empty;
+
+    private const string _exemplo = """
+        @* Dentro de um RvmAppShell, no slot Topbar. *@
+        <RvmTopbar>
+            <Start><strong>Meu Produto</strong></Start>
+
+            <Center>
+                <RvmTextField @bind-Value="busca" Label="Buscar"
+                              IconStart="magnifying-glass" Size="RvmSize.Small" />
+            </Center>
+
+            <End>
+                <RvmIconButton Icon="dots-three-vertical" Label="Mais ações" />
+                <RvmAvatar Name="Rafael Venerosi Morici" Size="RvmSize.Small" />
+            </End>
+        </RvmTopbar>
+        """;
+}

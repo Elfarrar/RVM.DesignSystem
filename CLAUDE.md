@@ -6,10 +6,12 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 **Prefixo de task:** `DSGN-NNN` · contador próprio · card em `docs/Vault/02_Tasks/`,
 índice em `docs/Vault/03_Kanban/KANBAN.md`.
 
-> **Estado em 08/09/2026:** repositório **público** em `Elfarrar/RVM.DesignSystem` (MIT),
-> esqueleto .NET 10, cinco workflows, camada de tokens e motor de tema (`DSGN-002`).
-> **No ar nos dois ambientes**: `design.dev.rvmtech.com.br` e `design.rvmit.com.br`.
-> Pacote estável `0.1.0` no BaGet. Componentes: zero — começam na onda 1 do `09-roadmap.md`.
+> **Estado em 08/09/2026 — onda 1 fechada e em produção.** Repositório **público**
+> (MIT), nove componentes básicos, camada de tokens, motor de tema com claro/escuro,
+> ícones Phosphor, e site de documentação com 16 páginas — no ar em
+> `design.rvmit.com.br` e `design.dev.rvmtech.com.br`.
+> **Pacote estável `0.1.0`** no BaGet, publicado pela tag `v0.1.0`.
+> Próximo: onda 2 (Layout) — `RvmAppShell`, `RvmSidebar`, `RvmCard`, `RvmTabs`.
 
 ## Escopo
 
@@ -64,6 +66,12 @@ em `03-arquitetura.md` § Desvio, e registrada em `docs/Vault/05_References/ADR-
 - Data/número/moeda com `CultureInfo` explícito; BRL por `BrlFormatter`, nunca interpolação manual.
 - Todo texto padrão de componente é sobrescrevível por parâmetro — nenhum literal preso no meio.
 - `prefers-reduced-motion` respeitado em toda animação.
+- Altura e espaçamento vertical de controle saem de `--rvm-control-*`, nunca de `--rvm-space-*`
+  direto. É o que faz a densidade `Compact` valer sem o componente saber que ela existe — e um
+  componente que use a escala de espaçamento no eixo vertical a ignora **em silêncio**.
+- CSS de um componente não alcança elemento renderizado por outro sem `::deep` — escopos `b-*`
+  diferentes. Vale também para o conteúdo que o consumidor passa num slot, e aí `::deep` costuma
+  ser a resposta errada: a biblioteca garante o contêiner, o consumidor estiliza o que é dele.
 
 ## Portões que não se negociam
 
@@ -133,14 +141,19 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 ## Estado atual
 
 - Spec `01`–`11` escrita em 07/09/2026; bootstrap (`DSGN-001`) executado no mesmo dia.
-- No ar: `https://design.dev.rvmtech.com.br` (casca do site, sem componentes ainda).
+- No ar: `https://design.dev.rvmtech.com.br`.
 - **Produção no ar desde 08/09/2026**: `https://design.rvmit.com.br`, autorizada por ele.
   Certificado do Pages emitido, `Enforce HTTPS` ligado, verificação por conteúdo.
 - ✅ **Monitor no Uptime-Kuma**: `DesignSystem - prod`, tipo `keyword` procurando
   `RVM Design System` (não código HTTP — host estático com fallback devolve 200 com a página
   errada), com alerta de expiração de certificado. O canal de e-mail via Resend foi criado no
   mesmo passo: até 08/09/2026 o Kuma tinha 17 monitores e **zero** canais.
-- Próximo passo: onda 1 do `09-roadmap.md` — tokens, tematização e os nove componentes básicos.
+- ✅ **Onda 1 fechada e publicada como `0.1.0`** (`DSGN-012`): tokens, motor de tema, nove
+  componentes básicos, ícones Phosphor e o site com página por componente.
+- ✅ **Onda 2 fechada, sai como `0.2.0`** (`DSGN-017`): casca de aplicação, layout, navegação e
+  densidade `Compact`. O critério de saída era o próprio site usar `RvmAppShell` — cumprido em
+  `Docs/Layout/MainLayout.razor`.
+- Próximo passo: onda 3 do `09-roadmap.md` — `RvmDialog`, `RvmToast` e o resto do feedback.
 
 ## Pendências que bloqueiam
 
@@ -158,9 +171,10 @@ Detalhe de cada uma em `09-roadmap.md` § Pendências. Depois da 1.0, mudá-las 
 | **Ícones** | **Phosphor** (MIT), pesos `Regular` e `Fill` na v1 |
 | Paleta da marca | roxo VS + azul VS Code, **modo escuro aprovado** |
 
-⚠️ **Sobra uma decisão de contrato para a onda 2: quais ícones entram no sprite.** Cada um é um
-nome público e bytes que todo consumidor baixa. A lista é curada junto dos componentes que os
-usam — ícone não entra "porque pode ser útil".
+✅ **A decisão que sobrava — quais ícones entram — foi fechada na onda 2**: o conjunto é
+**curado**, hoje com 19 ícones, cada um entrando junto do componente que o usa. A política está
+escrita no topo do `tools/gerar-icones.py` e vale para sempre: ícone não entra "porque pode ser
+útil". Cada um é um nome público e bytes que todo consumidor baixa.
 - ✅ **Repositório público sob MIT** — respondido pelo Rafael em 07/09/2026. Consequência não
   óbvia: foi essa decisão que inviabilizou o caller do `RVM.Actions` (**ADR-011**) e, de quebra,
   dispensou o runner self-hosted.

@@ -16,12 +16,12 @@
     border: 1px solid var(--rvm-color-border-strong);
     border-radius: var(--rvm-radius-md);
     /* Espaço à direita para a seta desenhada não cobrir o texto da opção. */
-    padding: var(--rvm-space-2) var(--rvm-space-10) var(--rvm-space-2) var(--rvm-space-3);
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-10) var(--rvm-control-padding-y-md) var(--rvm-space-3);
     cursor: pointer;
 }
 
-.rvm-select--small { padding-top: var(--rvm-space-1); padding-bottom: var(--rvm-space-1); font-size: var(--rvm-font-size-body-sm); }
-.rvm-select--large { padding-top: var(--rvm-space-3); padding-bottom: var(--rvm-space-3); font-size: var(--rvm-font-size-body-lg); }
+.rvm-select--small { padding-top: var(--rvm-control-padding-y-sm); padding-bottom: var(--rvm-control-padding-y-sm); font-size: var(--rvm-font-size-body-sm); }
+.rvm-select--large { padding-top: var(--rvm-control-padding-y-lg); padding-bottom: var(--rvm-control-padding-y-lg); font-size: var(--rvm-font-size-body-lg); }
 
 /* ::deep — mesmo motivo: a seta é um RvmIcon. */
 ::deep .rvm-select__caret {
