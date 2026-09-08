@@ -9,6 +9,11 @@
 
 ## A decidir
 
+- [[DSGN-025]] — **Preview de aparencia**: as duas direcoes ("sobrio" e "marcante") no ar ao
+  mesmo tempo, trocaveis na topbar, porque gosto se decide olhando. Temporario — sai inteiro
+  quando a direcao for escolhida. ⚠️ Nao mexe em cor de superficie de proposito: isso e motor de
+  tema, nao folha de estilo, senao fura o portao de contraste em silencio.
+
 - [[DSGN-022]] — **Graficos** (obras). A condicao do `09` foi satisfeita: um app RVM precisa.
   ⚠️ **Card aberto sem codigo**: o roadmap diz "embrulhar biblioteca existente" e o `CLAUDE.md`
   diz "sem dependencia NuGet de terceiros" e "nada depende de JS para renderizar" — as tres
