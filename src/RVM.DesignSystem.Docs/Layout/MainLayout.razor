@@ -26,10 +26,19 @@
                 </Center>
                 <End>
                     <label class="site-controls__label" for="seletor-tema">Tema</label>
+                    @*
+                        O valor da opcao e o INDICE, nao o nome. A paleta montada em
+                        /fundamentos/paleta entra nesta lista, e nada impede alguem de batiza-la
+                        "RVM" — por nome, escolher a dela devolveria a embutida, descartando o
+                        trabalho em silencio.
+                    *@
                     <select id="seletor-tema" class="site-controls__select" @onchange="TrocarTema">
-                        @foreach (var t in RvmThemes.All)
+                        @for (var i = 0; i < TemasDoSeletor.Count; i++)
                         {
-                            <option value="@t.Name" selected="@(t.Name == Tema.Theme.Name)">@t.Name</option>
+                            var t = TemasDoSeletor[i];
+                            <option value="@i" selected="@(t == Tema.Theme)">
+                                @(i >= RvmThemes.All.Count ? $"{t.Name} (sua paleta)" : t.Name)
+                            </option>
                         }
                     </select>
 
@@ -89,14 +98,29 @@
 @code {
     private bool _escuro;
 
+    /// <summary>
+    /// Os temas que o seletor oferece: os embutidos e, quando ha uma, a paleta do visitante.
+    /// </summary>
+    /// <remarks>
+    /// Sem a segunda parte o seletor MENTIRIA: com um tema fora da lista aplicado, nenhuma opcao
+    /// casa e o navegador mostra a primeira — o menu diria "RVM" com o site em outras cores. E o
+    /// mesmo defeito que o RvmSelect teve na onda 1, e pela mesma causa.
+    ///
+    /// <para>
+    /// A comparacao e por VALOR: <see cref="RvmTheme"/> e record. Uma paleta identica a uma
+    /// embutida nao aparece duas vezes, porque nao e outro tema.
+    /// </para>
+    /// </remarks>
+    private IReadOnlyList<RvmTheme> TemasDoSeletor =>
+        RvmThemes.All.Contains(Tema.Theme) ? RvmThemes.All : [.. RvmThemes.All, Tema.Theme];
+
     private async Task TrocarTema(ChangeEventArgs e)
     {
-        var nome = e.Value?.ToString();
-        var tema = RvmThemes.All.FirstOrDefault(t => t.Name == nome);
+        var lista = TemasDoSeletor;
 
-        if (tema is not null)
+        if (int.TryParse(e.Value?.ToString(), out var i) && i >= 0 && i < lista.Count)
         {
-            await Tema.SetThemeAsync(tema);
+            await Tema.SetThemeAsync(lista[i]);
         }
     }
 
