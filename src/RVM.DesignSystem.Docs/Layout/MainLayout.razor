@@ -1,5 +1,7 @@
 @inherits LayoutComponentBase
 @inject IRvmThemeService Tema
+@inject PaletaDoVisitante Paleta
+@inject IJSRuntime JS
 
 @*
     ⚠️ Este arquivo É o critério de saída da onda 2 (`09-roadmap.md`).
@@ -40,6 +42,18 @@
                                 @(i >= RvmThemes.All.Count ? $"{t.Name} (sua paleta)" : t.Name)
                             </option>
                         }
+                    </select>
+
+                    @*
+                        PREVIEW temporario (DSGN-025): as duas direcoes de aparencia no ar ao
+                        mesmo tempo, para uma decisao de gosto ser tomada olhando, e nao lendo
+                        a minha descricao delas. Este bloco sai quando a direcao for escolhida.
+                    *@
+                    <label class="site-controls__label" for="seletor-aparencia">Aparência</label>
+                    <select id="seletor-aparencia" class="site-controls__select" @onchange="TrocarAparencia">
+                        <option value="atual" selected="@(_aparencia == "atual")">Atual (v1)</option>
+                        <option value="sobrio" selected="@(_aparencia == "sobrio")">Sóbrio</option>
+                        <option value="marcante" selected="@(_aparencia == "marcante")">Marcante</option>
                     </select>
 
                     <RvmIconButton Icon="@(_escuro ? "eye" : "eye-slash")"
@@ -98,6 +112,15 @@
 @code {
     private bool _escuro;
 
+    /// <summary>Aparencia escolhida no preview temporario (DSGN-025).</summary>
+    private string _aparencia = "atual";
+
+    private async Task TrocarAparencia(ChangeEventArgs e)
+    {
+        _aparencia = e.Value?.ToString() ?? "atual";
+        await JS.InvokeVoidAsync("rvmAparencia.definir", _aparencia);
+    }
+
     /// <summary>
     /// Os temas que o seletor oferece: os embutidos e, quando ha uma, a paleta do visitante.
     /// </summary>
@@ -118,9 +141,18 @@
     {
         var lista = TemasDoSeletor;
 
-        if (int.TryParse(e.Value?.ToString(), out var i) && i >= 0 && i < lista.Count)
+        if (!int.TryParse(e.Value?.ToString(), out var i) || i < 0 || i >= lista.Count)
         {
-            await Tema.SetThemeAsync(lista[i]);
+            return;
+        }
+
+        await Tema.SetThemeAsync(lista[i]);
+
+        // Escolher um tema embutido APAGA a paleta guardada. Sem isto o proximo F5 a traria de
+        // volta por cima da escolha que acabou de ser feita aqui.
+        if (i < RvmThemes.All.Count)
+        {
+            await Paleta.EsquecerAsync();
         }
     }
 
@@ -132,11 +164,26 @@
 
     protected override async Task OnAfterRenderAsync(bool primeiraVez)
     {
-        if (primeiraVez && Tema is RvmThemeService servico)
+        if (!primeiraVez)
+        {
+            return;
+        }
+
+        if (Tema is RvmThemeService servico)
         {
             var preferencia = await servico.LoadPreferenceAsync();
             _escuro = preferencia == RvmThemePreference.Dark;
-            StateHasChanged();
         }
+
+        // A paleta do visitante e lida pela CASCA, e nao so pela pagina que a monta: ela vale
+        // para o site inteiro, entao entrar direto em /componentes/button ja tem que chegar
+        // pintado. A leitura do localStorage acontece uma vez so — o servico e quem garante.
+        await Paleta.CarregarAsync();
+
+        // O atributo ja foi aplicado pelo script, antes do primeiro paint; aqui o C# so descobre
+        // qual e, para o seletor nao mostrar "Atual" com a pagina em outra aparencia.
+        _aparencia = await JS.InvokeAsync<string>("rvmAparencia.atual");
+
+        StateHasChanged();
     }
 }

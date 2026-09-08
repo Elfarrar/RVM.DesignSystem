@@ -9,6 +9,11 @@
 
 ## A decidir
 
+- [[DSGN-025]] — **Preview de aparencia**: as duas direcoes ("sobrio" e "marcante") no ar ao
+  mesmo tempo, trocaveis na topbar, porque gosto se decide olhando. Temporario — sai inteiro
+  quando a direcao for escolhida. ⚠️ Nao mexe em cor de superficie de proposito: isso e motor de
+  tema, nao folha de estilo, senao fura o portao de contraste em silencio.
+
 - [[DSGN-022]] — **Graficos** (obras). A condicao do `09` foi satisfeita: um app RVM precisa.
   ⚠️ **Card aberto sem codigo**: o roadmap diz "embrulhar biblioteca existente" e o `CLAUDE.md`
   diz "sem dependencia NuGet de terceiros" e "nada depende de JS para renderizar" — as tres
@@ -16,18 +21,23 @@
 
 ## Em revisao
 
-- [[DSGN-023]] — **A paleta em construcao repinta o site inteiro**: mexeu numa cor em
-  `/fundamentos/paleta`, a documentacao toda passa a usar a paleta — que e o unico jeito de ver
-  que uma primaria vermelha faz "Salvar" parecer "Excluir". Zero mudanca na biblioteca: o
-  mecanismo ja existia. Revelou e corrigiu um seletor de tema que **mentia** com tema fora da
-  lista.
-
-- [[DSGN-021]] — **Criar sua paleta**: cores de estado escolhiveis (`RvmSeed`, aditivo) e a
-  ferramenta em `/fundamentos/paleta` que gera **o CSS pronto**. Avisa quando a marca colide com
-  uma cor de estado — o caso em que "Salvar" e "Excluir" viram o mesmo botao. No ar em dev,
-  `1.1.0-alpha.19` no BaGet. **Aguardando o Rafael para promover a `master` / `1.1.0`.**
+- [[DSGN-024]] — **A paleta do visitante fica guardada no navegador**. Achado pelo Rafael usando
+  a `DSGN-023`: navegar e voltar deixava o site pintado e o formulario nos valores iniciais —
+  dois lugares discordando sobre a mesma escolha. Guarda as cores **escolhidas**, nunca o tema
+  derivado, para que uma paleta antiga passe pelas regras de contraste de hoje.
 
 ## Concluido
+
+- [[DSGN-023]] — ✅ **EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): a paleta em construcao
+  repinta o site inteiro. E o unico jeito de ver que uma primaria vermelha faz "Salvar" parecer
+  "Excluir" — as amostras de cor nao mostram isso. **Zero mudanca na biblioteca**: o mecanismo
+  ja existia. Revelou e corrigiu um seletor de tema que **mentia** com tema fora da lista.
+
+- [[DSGN-021]] — ✅ **EM PRODUCAO** (08/09/2026): cores de estado escolhiveis (`RvmSeed`,
+  aditivo) e a ferramenta em `/fundamentos/paleta` que gera **o CSS pronto**.
+  ⚠️ **A tag `v1.1.0` existe e aponta para `7013b46`, mas o pacote NAO esta no feed** — duas
+  execucoes do push no BaGet falharam por rede. O site nao depende disso (compila por
+  `ProjectReference`); quem depende e o primeiro consumidor. Ver [[DSGN-018]].
 
 - [[DSGN-020]] — 🎉 **Onda 4 EM PRODUCAO e a `1.0.0` PUBLICADA** (08/09/2026, autorizada pelo
   Rafael): grid, paginacao, filtro, data e busca assincrona, mais a tela de Listagem com 487

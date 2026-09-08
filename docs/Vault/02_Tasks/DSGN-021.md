@@ -3,7 +3,7 @@ id: DSGN-021
 titulo: Criar sua paleta — cores de estado escolhiveis e gerador de CSS
 repo: RVM.DesignSystem
 tipo: feature
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 

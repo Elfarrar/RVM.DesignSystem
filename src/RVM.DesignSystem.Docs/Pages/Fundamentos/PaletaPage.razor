@@ -1,5 +1,6 @@
 @page "/fundamentos/paleta"
 @inject IRvmThemeService Site
+@inject PaletaDoVisitante Paleta
 @implements IDisposable
 
 <PageTitle>Criar sua paleta · RVM Design System</PageTitle>
@@ -58,7 +59,7 @@
         </RvmCard>
     </section>
 
-    @if (_seguirNoSite)
+    @if (_espelhando)
     {
         @*
             role="status" e nao "alert": e informacao sobre o que ACABOU de acontecer por
@@ -73,6 +74,10 @@
                     É o único jeito de descobrir que uma paleta não funciona <em>antes</em> de
                     adotá-la: aqui ela é doze quadradinhos; lá é a tela que alguém vai usar o
                     dia inteiro. O modo escuro também segue.
+                </p>
+                <p class="paleta__espelho-texto">
+                    <strong>Fica guardada neste navegador</strong> — sair da página e voltar, ou
+                    dar F5, não perde o que você montou.
                 </p>
             </div>
 
@@ -307,28 +312,31 @@
     private string _erro = "#C62828";
     private string _info = "#0277BD";
 
-    private RvmTheme Tema => RvmTheme.FromSeed(
-        string.IsNullOrWhiteSpace(_nome) ? "MeuProduto" : _nome,
-        new RvmSeed
-        {
-            Primary = _primaria,
-            Secondary = _secundaria,
-            Success = _customizarEstados ? _sucesso : null,
-            Warning = _customizarEstados ? _aviso : null,
-            Danger = _customizarEstados ? _erro : null,
-            Info = _customizarEstados ? _info : null,
-        });
+    /// <summary>As cores escolhidas agora no formulario.</summary>
+    private PaletaSalva Estado => new()
+    {
+        Nome = _nome,
+        Primaria = _primaria,
+        Secundaria = _secundaria,
+        Estados = _customizarEstados,
+        Sucesso = _sucesso,
+        Aviso = _aviso,
+        Erro = _erro,
+        Info = _info,
+    };
+
+    private RvmTheme Tema => Estado.ParaTema();
 
     /// <summary>
-    /// Se o site inteiro esta espelhando a paleta que esta sendo montada aqui.
+    /// Se o site inteiro esta espelhando a paleta montada aqui.
     /// </summary>
     /// <remarks>
-    /// Comeca <b>desligado</b>, e isso e a decisao central desta tela. As cores iniciais do
-    /// formulario nao sao as do site — quem apenas ABRE esta pagina veria a documentacao inteira
-    /// trocar de cor sozinha, sem ter pedido nada. O espelho liga na primeira vez que a pessoa
-    /// mexe numa cor, que e exatamente quando ela quer ver o efeito.
+    /// Comeca <b>desligado</b> quando nao ha paleta guardada, e isso e a decisao central desta
+    /// tela. As cores iniciais do formulario nao sao as do site — quem apenas ABRE esta pagina
+    /// veria a documentacao inteira trocar de cor sozinha, sem ter pedido nada. Liga na primeira
+    /// vez que a pessoa mexe numa cor, ou ja vem ligado se ela montou uma paleta antes.
     /// </remarks>
-    private bool _seguirNoSite;
+    private bool _espelhando;
 
     private void Definir(ref string campo, string? valor)
     {
@@ -341,7 +349,7 @@
         Armar();
     }
 
-    private void Armar() => _seguirNoSite = true;
+    private void Armar() => _espelhando = true;
 
     /// <summary>
     /// Desarma o espelho quando o tema do site muda por OUTRO caminho.
@@ -350,13 +358,13 @@
     /// Sem isto os dois controles brigariam: o visitante escolheria "RVM" no seletor da topbar,
     /// o <c>OnAfterRenderAsync</c> daqui reaplicaria a paleta dele no render seguinte, e o
     /// seletor pareceria quebrado. Quem manda e o ultimo comando dado — se veio de fora, esta
-    /// pagina para de espelhar.
+    /// pagina para de espelhar. Apagar o que estava guardado e responsabilidade de quem mudou.
     /// </remarks>
     private void AoMudarTemaPorFora()
     {
-        if (_seguirNoSite && Site.Theme != Tema)
+        if (_espelhando && Site.Theme != Tema)
         {
-            _seguirNoSite = false;
+            _espelhando = false;
             InvokeAsync(StateHasChanged);
         }
     }
@@ -367,37 +375,52 @@
 
     private async Task Restaurar()
     {
-        _seguirNoSite = false;
-        await Site.SetThemeAsync(RvmThemes.Rvm);
+        _espelhando = false;
+        await Paleta.RestaurarAsync();
     }
 
-    /// <summary>Manda o tema montado aqui para o site inteiro.</summary>
+    /// <summary>Le a paleta guardada na entrada, e guarda a paleta montada a cada mudanca.</summary>
     /// <remarks>
+    /// <b>A leitura acontece aqui, e nao no <c>OnInitialized</c>, porque depende de JS</b> — em
+    /// pre-render o <c>localStorage</c> nao existe.
+    ///
+    /// <para>
     /// Aplicar depois do render, e nao dentro do manipulador de cada campo, resolve tres coisas
-    /// de uma vez:
-    ///
-    /// <para>
-    /// <b>Nao ha fogo-e-esquece.</b> O <c>Definir</c> recebe o campo por <c>ref</c>, e C# proibe
-    /// <c>ref</c> em metodo <c>async</c> — chamar de la exigiria descartar a Task.
-    /// </para>
-    ///
-    /// <para>
-    /// <b>Nao ha laco.</b> <see cref="RvmTheme"/> e record: a comparacao e por valor, campo a
-    /// campo. O <c>SetThemeAsync</c> dispara o <c>Changed</c>, o provider re-renderiza, esta
-    /// pagina re-renderiza junto — e na segunda passada os dois temas ja sao iguais e nada
-    /// acontece. Com igualdade por referencia isso giraria para sempre.
-    /// </para>
-    ///
-    /// <para>
-    /// <b>Uma escrita so por rajada.</b> Arrastar o seletor de cor dispara varias mudancas; o
-    /// que chega ao site e o estado final de cada render, nao cada passo intermediario.
+    /// de uma vez. <b>Nao ha fogo-e-esquece</b>: o <c>Definir</c> recebe o campo por <c>ref</c>,
+    /// e C# proibe <c>ref</c> em metodo <c>async</c>. <b>Nao ha laco</b>: <see cref="PaletaSalva"/>
+    /// e <see cref="RvmTheme"/> sao records, entao a comparacao e por valor e na segunda passada
+    /// os dois ja sao iguais — com igualdade por referencia isso giraria para sempre. E ha
+    /// <b>uma escrita so por rajada</b>: arrastar o seletor de cor dispara varias mudancas, e o
+    /// que chega ao navegador e o estado final de cada render.
     /// </para>
     /// </remarks>
     protected override async Task OnAfterRenderAsync(bool primeiraVez)
     {
-        if (_seguirNoSite && Site.Theme != Tema)
+        if (primeiraVez)
         {
-            await Site.SetThemeAsync(Tema);
+            var salva = await Paleta.CarregarAsync();
+
+            if (salva is not null)
+            {
+                _nome = salva.Nome;
+                _primaria = salva.Primaria;
+                _secundaria = salva.Secundaria;
+                _customizarEstados = salva.Estados;
+                _sucesso = salva.Sucesso;
+                _aviso = salva.Aviso;
+                _erro = salva.Erro;
+                _info = salva.Info;
+                _espelhando = true;
+
+                StateHasChanged();
+            }
+
+            return;
+        }
+
+        if (_espelhando && Paleta.Atual != Estado)
+        {
+            await Paleta.SalvarAsync(Estado);
         }
     }
 
