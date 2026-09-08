@@ -120,8 +120,8 @@ Duas coisas medidas, nao assumidas:
   e reprovaria no portao AA; o renderizado da 4.62. O site esta certo — o nome escrito la e que
   esta desatualizado.
 - **O modo escuro nao existe no site** (`color-scheme: light`). Derivei mantendo matiz e croma,
-  invertendo luminosidade, e verifiquei: os cinco pares passam. ⏳ **Mas e derivacao minha, nao
-  escolha dele** — confirmar antes da 1.0.
+  invertendo luminosidade, e verifiquei: os cinco pares passam. ✅ **Aprovado por ele em 08/09/2026**,
+  depois de ver a marca no escuro no site de dev.
 
 Tres tokens do site (`text-subtle` 3.42, `accent-warm` 4.42, `border-strong` 1.67) nao sobrevivem
 como token semantico da biblioteca; o porque e o ajuste estao no `06`. Nao e defeito do site: la
