@@ -85,14 +85,20 @@ jobs:
           # um pack com versao ja existente daria verde sem ter publicado.
           VERSAO=$(ls nupkgs/*.nupkg | head -1 | sed 's/.*RVM\.DesignSystem\.//; s/\.nupkg$//')
           echo "Conferindo $VERSAO no feed..."
-          BASE=$(dirname "$(dirname "$FEED")")
+          # UM dirname, nao dois: o flat container do BaGet fica em /v3/package/..., entao
+          # so o "index.json" sai da URL. Tirar o /v3 tambem devolve 404 e a conferencia
+          # acusa falha com o pacote publicado — falso negativo, que e o pior tipo de
+          # portao: reprova o build por um erro que nao existe.
+          BASE=$(dirname "$FEED")
+          URL="$BASE/package/rvm.designsystem/index.json"
+          echo "Consultando $URL"
           for i in 1 2 3; do
-            if curl -fsS --max-time 20 "$BASE/package/rvm.designsystem/index.json" | grep -q "\"$VERSAO\""; then
+            if curl -fsS --max-time 20 "$URL" | grep -q "\"$VERSAO\""; then
               echo "$VERSAO esta no feed."
               exit 0
             fi
             echo "::warning::$VERSAO ainda nao aparece no feed (tentativa $i/3)"
-            sleep 10
+            [ "$i" -lt 3 ] && sleep 10
           done
           echo "::error::$VERSAO nao chegou ao feed."
           exit 1
