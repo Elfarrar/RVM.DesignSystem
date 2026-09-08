@@ -6,10 +6,12 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 **Prefixo de task:** `DSGN-NNN` · contador próprio · card em `docs/Vault/02_Tasks/`,
 índice em `docs/Vault/03_Kanban/KANBAN.md`.
 
-> **Estado em 08/09/2026:** repositório **público** em `Elfarrar/RVM.DesignSystem` (MIT),
-> esqueleto .NET 10, cinco workflows, camada de tokens e motor de tema (`DSGN-002`).
-> **No ar nos dois ambientes**: `design.dev.rvmtech.com.br` e `design.rvmit.com.br`.
-> Pacote estável `0.1.0` no BaGet. Componentes: zero — começam na onda 1 do `09-roadmap.md`.
+> **Estado em 08/09/2026 — onda 1 fechada e em produção.** Repositório **público**
+> (MIT), nove componentes básicos, camada de tokens, motor de tema com claro/escuro,
+> ícones Phosphor, e site de documentação com 16 páginas — no ar em
+> `design.rvmit.com.br` e `design.dev.rvmtech.com.br`.
+> **Pacote estável `0.1.0`** no BaGet, publicado pela tag `v0.1.0`.
+> Próximo: onda 2 (Layout) — `RvmAppShell`, `RvmSidebar`, `RvmCard`, `RvmTabs`.
 
 ## Escopo
 

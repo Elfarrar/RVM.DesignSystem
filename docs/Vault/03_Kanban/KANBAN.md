@@ -9,8 +9,7 @@
 
 ## Em revisao
 
-- [[DSGN-002]] — Camada de tokens, `RvmTheme.FromSeed` e os dois portoes. 62 testes; o portao de
-  contraste cobre 5 temas x 2 modos x 14 pares e reprova entrada ruim de proposito.
+_(vazio — a onda 1 fechou)_
 
 ## Concluido
 
@@ -21,6 +20,27 @@
 - [[DSGN-004]] — `Verify` do primeiro deploy de Pages: o site subia certo e o job ficava vermelho.
 
 ## A fazer
+
+### ✅ Onda 1 — fechada em 08/09/2026, publicada como `0.1.0`
+
+Nove componentes, camada de tokens, motor de tema, icones Phosphor e o site de documentacao.
+`design.rvmit.com.br` no ar. Cards: [[DSGN-002]], [[DSGN-012]], [[DSGN-013]], [[DSGN-014]],
+[[DSGN-015]].
+
+### Onda 2 — Layout (proxima)
+
+`RvmAppShell`, `RvmSidebar` (colapsavel, drawer no mobile), `RvmTopbar`, `RvmNavItem`,
+`RvmCard`, `RvmGrid`/`RvmStack`, `RvmTabs`, `RvmBreadcrumb`, `RvmDivider`, `RvmChip`,
+`RvmAvatar`, densidade `Compact`. Fecha em `0.2.0`.
+
+⚠️ **Decisao de contrato que sobra da onda 1:** quais icones entram no sprite. Cada um e nome
+publico e bytes que todo consumidor baixa — a lista e curada junto dos componentes que os usam.
+
+> **Meta da onda 2 (`09-roadmap`):** o proprio site passa a usar `RvmAppShell` — a casca deixa
+> de ser codigo de exemplo e vira codigo em producao.
+
+<details>
+<summary>Escopo original da onda 1, para referencia</summary>
 
 ### Onda 1 — Tokens e basicos
 
@@ -34,9 +54,9 @@ Fecha com o pacote `0.1.0` no BaGet e o site publicando os fundamentos.
   `RvmRadioGroup`, `RvmSwitch`, `RvmLabel`/`RvmFormField`
 - Site: casca, fundamentos, pagina por componente, codigo copiavel, instalacao, changelog
 
-> ⏳ **As tres primeiras pendencias do `09-roadmap` travam o fechamento da onda 1**: idioma de
-> token/API, conjunto de icones e escala tipografica. Depois da 1.0, mudar qualquer uma quebra
-> todo consumidor.
+✅ Todas as pendencias de contrato do `09-roadmap` foram fechadas antes da release.
+
+</details>
 
 ### Ondas 2 a 4
 
