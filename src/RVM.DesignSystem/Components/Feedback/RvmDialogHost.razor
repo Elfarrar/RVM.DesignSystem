@@ -1,0 +1,63 @@
+@namespace RVM.DesignSystem.Components
+@implements IDisposable
+@inject IRvmDialogService Dialogs
+
+@*
+    Onde as confirmações do IRvmDialogService aparecem. Vai UMA vez no layout.
+
+    Renderiza uma por vez — a fila do serviço garante isso. Duas caixas modais empilhadas
+    fariam a de baixo ficar inerte por trás da de cima, com a pessoa respondendo a pergunta que
+    não está lendo.
+*@
+
+@if (Dialogs.Current is { } opcoes)
+{
+    @* @key no título: sem ele, uma confirmação seguida de outra reaproveitaria a mesma
+       instância do <dialog>, e o navegador não reexecutaria showModal() — a segunda pergunta
+       apareceria com o foco ainda onde a primeira o havia deixado. *@
+    <RvmDialog @key="opcoes"
+               Title="@opcoes.Title"
+               Size="@opcoes.Size"
+               Open="true"
+               OpenChanged="AoFechar"
+               CloseLabel="@opcoes.CancelLabel">
+        <ChildContent>
+            <p class="rvm-dialog-host__mensagem">@opcoes.Message</p>
+        </ChildContent>
+        <Footer>
+            @* Cancelar vem ANTES no DOM: é o primeiro a receber foco depois do botão de
+               fechar, e numa confirmação destrutiva o caminho seguro é o que deve estar
+               debaixo do dedo. *@
+            <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="() => Responder(false)">
+                @opcoes.CancelLabel
+            </RvmButton>
+            <RvmButton Variant="@VarianteDeConfirmar(opcoes.Severity)" OnClick="() => Responder(true)">
+                @opcoes.ConfirmLabel
+            </RvmButton>
+        </Footer>
+    </RvmDialog>
+}
+
+@code {
+    protected override void OnInitialized() => Dialogs.Changed += AoMudar;
+
+    private void AoMudar() => InvokeAsync(StateHasChanged);
+
+    private void Responder(bool resultado) => Dialogs.Responder(resultado);
+
+    // Fechar por ESC ou pelo "x" é sair sem decidir, e sair sem decidir é NÃO. O caminho
+    // destrutivo nunca pode ser o que acontece por acidente.
+    private void AoFechar(bool aberto)
+    {
+        if (!aberto)
+        {
+            Dialogs.Responder(false);
+        }
+    }
+
+    private static RvmButtonVariant VarianteDeConfirmar(RvmSeverity severidade) =>
+        severidade == RvmSeverity.Danger ? RvmButtonVariant.Danger : RvmButtonVariant.Primary;
+
+    /// <inheritdoc />
+    public void Dispose() => Dialogs.Changed -= AoMudar;
+}

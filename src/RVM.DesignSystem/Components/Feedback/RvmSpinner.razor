@@ -1,0 +1,57 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Indicador de "estou trabalhando".
+
+    O desenho é `aria-hidden` e o texto vai num `role="status"` — nunca o contrário. Um SVG
+    girando não diz nada a quem não vê a tela; a frase diz.
+*@
+
+<span class="@ClasseFinal" role="status" @attributes="AdditionalAttributes">
+    <span class="rvm-spinner__roda" aria-hidden="true"></span>
+
+    @if (ShowLabel)
+    {
+        <span class="rvm-spinner__rotulo">@Label</span>
+    }
+    else
+    {
+        @* Sem rótulo visível, o texto continua existindo para o leitor de tela: um
+           `role="status"` vazio é uma região que anuncia silêncio. *@
+        <span class="rvm-sr-only">@Label</span>
+    }
+</span>
+
+@code {
+    /// <summary>Tamanho da roda.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>
+    /// O que está acontecendo. Sempre existe — visível ou só para leitor de tela.
+    /// </summary>
+    /// <remarks>
+    /// Padrão sobrescrevível, como todo texto da biblioteca. Prefira dizer o que está sendo
+    /// carregado ("Carregando os pedidos…") em vez do genérico: numa tela com três regiões
+    /// carregando, "Carregando…" três vezes não orienta ninguém.
+    /// </remarks>
+    [Parameter]
+    public string Label { get; set; } = "Carregando…";
+
+    /// <summary>Mostra o rótulo ao lado da roda.</summary>
+    [Parameter]
+    public bool ShowLabel { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-spinner",
+        $"rvm-spinner--{RvmClasse.Sufixo(Size)}",
+        Class);
+}

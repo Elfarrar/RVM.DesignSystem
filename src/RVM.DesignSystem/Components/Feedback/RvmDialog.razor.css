@@ -1,0 +1,124 @@
+/*
+  O <dialog> nativo já vem posicionado e na camada de topo. O que este arquivo faz é vesti-lo
+  com os tokens — e desfazer os padrões do agente de usuário (borda, padding, largura).
+*/
+.rvm-dialog {
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-lg);
+    background-color: var(--rvm-color-surface-raised);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    box-shadow: var(--rvm-shadow-5);
+    /* max-height e não height: o diálogo cresce com o conteúdo até caber na tela, e aí o
+       corpo passa a rolar por dentro — em vez de o diálogo vazar para fora da janela. */
+    max-height: calc(100dvh - var(--rvm-space-16));
+    max-width: calc(100vw - var(--rvm-space-8));
+    width: 100%;
+    overflow: hidden;
+}
+
+.rvm-dialog--small { max-width: 24rem; }
+.rvm-dialog--medium { max-width: 34rem; }
+.rvm-dialog--large { max-width: 52rem; }
+
+.rvm-dialog--fullscreen {
+    max-width: 100vw;
+    max-height: 100dvh;
+    width: 100vw;
+    height: 100dvh;
+    border-radius: var(--rvm-radius-none);
+}
+
+/*
+  ::backdrop é o véu do próprio navegador. Não há elemento de véu no DOM, e é por isso que ele
+  não pode ser clicado por engano nem entra na ordem de tabulação.
+
+  ⚠️ Ele só enxerga `--rvm-color-scrim` porque, desde 2024, o ::backdrop herda custom
+  properties do elemento de origem — antes disso ele era tratado como se não tivesse pai, e
+  qualquer var() aqui resolveria para nada. Num navegador anterior a isso o véu fica
+  transparente; o diálogo continua modal e inerte, só perde o escurecimento.
+*/
+.rvm-dialog::backdrop {
+    background-color: var(--rvm-color-scrim);
+}
+
+.rvm-dialog__caixa {
+    display: flex;
+    flex-direction: column;
+    max-height: inherit;
+}
+
+.rvm-dialog__cabecalho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--rvm-space-4);
+    flex-shrink: 0;
+    padding: var(--rvm-space-5) var(--rvm-space-6);
+    border-bottom: 1px solid var(--rvm-color-border);
+}
+
+.rvm-dialog__titulo {
+    margin: 0;
+    font-size: var(--rvm-font-size-h5);
+    font-weight: var(--rvm-font-weight-semibold);
+    line-height: var(--rvm-line-height-heading);
+}
+
+.rvm-dialog__fechar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--rvm-control-height-md);
+    height: var(--rvm-control-height-md);
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-md);
+    background: none;
+    color: var(--rvm-color-on-surface-variant);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-dialog__fechar:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-dialog__fechar:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: -2px;
+}
+
+.rvm-dialog__corpo {
+    /* É este que rola, e não o diálogo: assim cabeçalho e rodapé ficam parados e as ações
+       continuam visíveis num conteúdo longo. */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--rvm-space-6);
+    line-height: var(--rvm-line-height-body);
+}
+
+.rvm-dialog__rodape {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--rvm-space-3);
+    flex-shrink: 0;
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    border-top: 1px solid var(--rvm-color-border);
+    background-color: var(--rvm-color-surface);
+}
+
+/* No celular o rodapé empilha e as ações ocupam a largura toda — alvo de toque decente e a
+   ação primária no lugar onde o polegar chega. */
+@media (max-width: 480px) {
+    .rvm-dialog__rodape {
+        flex-direction: column-reverse;
+    }
+
+    .rvm-dialog__rodape ::deep .rvm-button {
+        width: 100%;
+    }
+}

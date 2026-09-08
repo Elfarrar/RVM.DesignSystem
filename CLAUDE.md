@@ -69,6 +69,10 @@ em `03-arquitetura.md` § Desvio, e registrada em `docs/Vault/05_References/ADR-
 - Altura e espaçamento vertical de controle saem de `--rvm-control-*`, nunca de `--rvm-space-*`
   direto. É o que faz a densidade `Compact` valer sem o componente saber que ela existe — e um
   componente que use a escala de espaçamento no eixo vertical a ignora **em silêncio**.
+- Componente que interrompe o leitor de tela (`role="alert"`, `aria-live="assertive"`) é
+  **opt-in**, nunca padrão: um aviso estático anunciado a cada render atropela o título da
+  página. E região `aria-live` precisa existir no DOM **antes** da mensagem — criada junto com
+  ela, não é observada e a mensagem passa em silêncio.
 - CSS de um componente não alcança elemento renderizado por outro sem `::deep` — escopos `b-*`
   diferentes. Vale também para o conteúdo que o consumidor passa num slot, e aí `::deep` costuma
   ser a resposta errada: a biblioteca garante o contêiner, o consumidor estiliza o que é dele.
@@ -150,10 +154,19 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   mesmo passo: até 08/09/2026 o Kuma tinha 17 monitores e **zero** canais.
 - ✅ **Onda 1 fechada e publicada como `0.1.0`** (`DSGN-012`): tokens, motor de tema, nove
   componentes básicos, ícones Phosphor e o site com página por componente.
-- ✅ **Onda 2 fechada, sai como `0.2.0`** (`DSGN-017`): casca de aplicação, layout, navegação e
-  densidade `Compact`. O critério de saída era o próprio site usar `RvmAppShell` — cumprido em
-  `Docs/Layout/MainLayout.razor`.
-- Próximo passo: onda 3 do `09-roadmap.md` — `RvmDialog`, `RvmToast` e o resto do feedback.
+- ✅ **Onda 2 fechada e EM PRODUÇÃO** (`DSGN-017`, autorizada por ele em 08/09/2026): casca de
+  aplicação, layout, navegação e densidade `Compact`. O critério de saída era o próprio site usar
+  `RvmAppShell` — cumprido em `Docs/Layout/MainLayout.razor`, e agora é o que serve
+  `design.rvmit.com.br`.
+- ⚠️ **Rota profunda em produção devolve HTTP 404 com a página certa.** É o fallback do GitHub
+  Pages: caminho desconhecido serve o `404.html`, que é cópia do `index.html`, e o Blazor roteia
+  no cliente. Não é regressão e não tem conserto em host estático — **verificação de deploy é por
+  CONTEÚDO, nunca por código HTTP**, e é por isso que o monitor do Kuma é do tipo `keyword`.
+- ✅ **Onda 3 fechada, sai como `0.3.0`** (`DSGN-019`): diálogo, toast, alerta, estado vazio,
+  spinner, progresso, esqueleto e tooltip — mais a seção Padrões e a busca do site (`RF-27`).
+  O `RvmDialog` é o `<dialog>` **nativo** com `showModal()`; foco preso, ESC e retorno de foco
+  vêm do navegador. **Não reimplementar isso à mão.**
+- Próximo passo: onda 4 do `09-roadmap.md` — `RvmDataGrid` e o resto de Dados. É a onda cara.
 
 ## Pendências que bloqueiam
 

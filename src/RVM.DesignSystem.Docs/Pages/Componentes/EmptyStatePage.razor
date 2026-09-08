@@ -1,0 +1,144 @@
+@page "/componentes/empty-state"
+
+<PaginaDeComponente Nome="RvmEmptyState"
+                    Tipo="typeof(RvmEmptyState)"
+                    Frase="A tela vazia — e as quatro razões de ela estar vazia, que não são a mesma coisa e não pedem a mesma ação.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmCard Variant="RvmCardVariant.Outlined" NoPadding="true">
+                    <ChildContent>
+                        <RvmEmptyState Variant="_variante">
+                            <Actions>
+                                @if (_variante == RvmEmptyStateVariant.Empty)
+                                {
+                                    <RvmButton>Cadastrar o primeiro pedido</RvmButton>
+                                }
+                                else if (_variante == RvmEmptyStateVariant.NoResults)
+                                {
+                                    <RvmButton Variant="RvmButtonVariant.Secondary">Limpar os filtros</RvmButton>
+                                }
+                                else if (_variante == RvmEmptyStateVariant.Error)
+                                {
+                                    <RvmButton Variant="RvmButtonVariant.Secondary">Tentar de novo</RvmButton>
+                                }
+                            </Actions>
+                        </RvmEmptyState>
+                    </ChildContent>
+                </RvmCard>
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmEmptyStateVariant" @bind-Value="_variante" Label="Variant">
+                    @foreach (var v in Enum.GetValues<RvmEmptyStateVariant>())
+                    {
+                        <option value="@v">@v</option>
+                    }
+                </RvmSelect>
+                <p class="doc__nota">
+                    Repare que a <strong>ação muda com a razão</strong> — e que
+                    <code>Forbidden</code> não tem ação nenhuma, porque não há o que a pessoa
+                    possa fazer ali.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Variante</th>
+                        <th scope="col">Quando</th>
+                        <th scope="col">A ação que cabe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Empty</code></td>
+                        <td>Ainda não há registros.</td>
+                        <td>Criar o primeiro.</td>
+                    </tr>
+                    <tr>
+                        <td><code>NoResults</code></td>
+                        <td>Há registros, mas nenhum casou com o filtro.</td>
+                        <td>Limpar o filtro.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Error</code></td>
+                        <td>Falhou ao carregar.</td>
+                        <td>Tentar de novo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Forbidden</code></td>
+                        <td>Sem permissão.</td>
+                        <td><strong>Nenhuma</strong> — não há o que fazer dali.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="doc__nota">
+            Tratar as quatro como um só estado vazio é o que produz aquele "Nenhum resultado
+            encontrado" que não ajuda ninguém a sair da tela. A distinção é a razão de o
+            componente existir; sem ela, ele seria um parágrafo centralizado.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>O título é <code>h2</code>, com tamanho de <code>h4</code>.</strong> Nível
+                e tamanho são decisões separadas: o nível diz onde isto entra na estrutura do
+                documento, o tamanho diz quanto peso visual tem. <code>h1</code> seria errado — o
+                estado vazio ocupa uma região da tela, não a tela.
+            </li>
+            <li>
+                <strong>O ícone é decorativo</strong> e some do leitor de tela: quem carrega a
+                informação é o título e a descrição.
+            </li>
+            <li>
+                <strong>Texto em PT-BR explicativo, sem código interno.</strong> O padrão do
+                <code>Error</code> é o fallback do ecossistema — "Tivemos um problema técnico, por
+                favor tente de novo em alguns minutos" —, nunca um
+                <code>user_not_found</code> vazando para a tela.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Enquanto carrega.</strong> Uma lista que ainda não chegou não está vazia.
+                Isso é <a href="componentes/skeleton">RvmSkeleton</a> ou
+                <a href="componentes/spinner">RvmSpinner</a> — mostrar "nada por aqui" e depois
+                trocar por dados é o pior dos dois mundos.
+            </li>
+            <li>
+                <strong>Para erro de formulário.</strong> A tela não está vazia; um campo está
+                errado. <a href="componentes/alert">RvmAlert</a> ou a mensagem do próprio campo.
+            </li>
+            <li>
+                <strong>Numa região pequena.</strong> O componente respira: título, descrição e
+                ação. Numa caixa de 200px ele só ocupa espaço — ali basta uma linha de texto.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmEmptyStateVariant _variante = RvmEmptyStateVariant.Empty;
+
+    private string Snippet() =>
+        $"""
+        <RvmEmptyState Variant="RvmEmptyStateVariant.{_variante}">
+            <Actions>
+                <RvmButton>Cadastrar o primeiro pedido</RvmButton>
+            </Actions>
+        </RvmEmptyState>
+
+        @* Título e descrição são sobrescrevíveis; o padrão de cada variante já é PT-BR. *@
+        """;
+}

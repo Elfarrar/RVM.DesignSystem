@@ -1,0 +1,219 @@
+@namespace RVM.DesignSystem.Components
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@*
+    ⚠️ Desvio declarado do `11`, que pede "foco preso" implementado.
+
+    Isto usa o `<dialog>` NATIVO com `showModal()`, e é a mesma escolha do `<select>` nativo no
+    RvmSelect, pelo mesmo motivo: o navegador já faz melhor.
+
+    `showModal()` entrega, sem uma linha nossa:
+      • foco preso de verdade, incluindo Shift+Tab e conteúdo que aparece depois;
+      • ESC fecha;
+      • o resto do documento fica inerte — nem clique, nem foco, nem leitor de tela;
+      • camada de topo, acima de qualquer z-index de qualquer app consumidor;
+      • `::backdrop` sem um elemento de véu no DOM;
+      • retorno do foco ao elemento que estava ativo quando o diálogo abriu.
+
+    Escrever isso à mão são ~150 linhas de JS, e cada item da lista é um lugar conhecido de
+    errar. O `role="dialog"` e o `aria-modal` são implícitos no elemento — não são repetidos
+    aqui, porque atributo ARIA redundante com a semântica nativa é uma das causas mais comuns
+    de leitor de tela anunciar errado.
+*@
+
+<dialog @ref="_elemento" class="@ClasseFinal" aria-labelledby="@_idTitulo" @attributes="AdditionalAttributes">
+    <div class="rvm-dialog__caixa">
+        <header class="rvm-dialog__cabecalho">
+            <h2 class="rvm-dialog__titulo" id="@_idTitulo">@Title</h2>
+
+            @if (ShowCloseButton)
+            {
+                <button type="button"
+                        class="rvm-dialog__fechar"
+                        aria-label="@CloseLabel"
+                        @onclick="FecharPeloBotao">
+                    <RvmIcon Name="x" Size="1.25rem" />
+                </button>
+            }
+        </header>
+
+        <div class="rvm-dialog__corpo">
+            @ChildContent
+        </div>
+
+        @if (Footer is not null)
+        {
+            <footer class="rvm-dialog__rodape">@Footer</footer>
+        }
+    </div>
+</dialog>
+
+@code {
+    private const string ModulePath = "./_content/RVM.DesignSystem/js/rvm-dialog.js";
+
+    private readonly string _idTitulo = $"rvm-dialog-titulo-{Guid.NewGuid():N}";
+
+    private ElementReference _elemento;
+    private IJSObjectReference? _modulo;
+    private DotNetObjectReference<RvmDialog>? _referencia;
+    private bool _abertoNoNavegador;
+    private bool _escInterceptado;
+
+    /// <summary>Título. Vira o nome acessível do diálogo.</summary>
+    /// <remarks>
+    /// Obrigatório: um diálogo sem nome é anunciado como "diálogo" e nada mais, e quem não vê a
+    /// tela não sabe o que acabou de abrir na frente dela.
+    /// </remarks>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>Aberto ou fechado. Use com <c>@bind-Open</c>.</summary>
+    [Parameter]
+    public bool Open { get; set; }
+
+    /// <summary>Disparado quando o diálogo abre ou fecha, inclusive por <kbd>ESC</kbd>.</summary>
+    [Parameter]
+    public EventCallback<bool> OpenChanged { get; set; }
+
+    /// <summary>Tamanho da caixa.</summary>
+    [Parameter]
+    public RvmDialogSize Size { get; set; } = RvmDialogSize.Medium;
+
+    /// <summary>
+    /// Permite fechar por <kbd>ESC</kbd> e pelo botão de fechar.
+    /// </summary>
+    /// <remarks>
+    /// <c>false</c> só para operação que não pode ser interrompida no meio (um upload em curso,
+    /// um passo obrigatório). <b>Não use para forçar uma decisão</b>: um diálogo sem saída é o
+    /// padrão escuro mais comum que existe, e a WCAG 2.1.2 trata prender o teclado como falha.
+    /// Mesmo com <c>false</c>, quem usa deve oferecer uma saída no rodapé.
+    /// </remarks>
+    [Parameter]
+    public bool Dismissible { get; set; } = true;
+
+    /// <summary>Mostra o "×" no cabeçalho. Vale só quando <see cref="Dismissible"/>.</summary>
+    [Parameter]
+    public bool ShowCloseButton { get; set; } = true;
+
+    /// <summary>Nome acessível do botão de fechar.</summary>
+    [Parameter]
+    public string CloseLabel { get; set; } = "Fechar";
+
+    /// <summary>O conteúdo.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Rodapé — onde ficam as ações.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-dialog",
+        $"rvm-dialog--{RvmClasse.Sufixo(Size)}",
+        Class);
+
+    /// <summary>
+    /// Chamado pelo JS quando o navegador tenta fechar por <kbd>ESC</kbd>.
+    /// </summary>
+    /// <remarks>
+    /// O <c>&lt;dialog&gt;</c> nativo fecha no ESC <b>sem passar por aqui</b>, e isso quebraria
+    /// um diálogo de confirmação: ele sumiria da tela sem devolver "cancelado", deixando quem
+    /// chamou esperando para sempre. O JS cancela o evento e devolve a decisão para cá.
+    /// </remarks>
+    [JSInvokable]
+    public async Task AoCancelarPeloNavegador()
+    {
+        if (!Dismissible)
+        {
+            return;
+        }
+
+        await FecharAsync();
+    }
+
+    private Task FecharPeloBotao() => FecharAsync();
+
+    private async Task FecharAsync()
+    {
+        Open = false;
+        await OpenChanged.InvokeAsync(false);
+        await SincronizarAsync();
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primeiraVez)
+    {
+        // Todo o interop mora aqui, nunca antes: em pré-render (Server antes do circuito, WASM
+        // antes do runtime) não existe JS, e o diálogo precisa RENDERIZAR sem ele.
+        await SincronizarAsync();
+    }
+
+    private async Task SincronizarAsync()
+    {
+        if (Open == _abertoNoNavegador)
+        {
+            return;
+        }
+
+        try
+        {
+            var modulo = await ObterModuloAsync();
+
+            if (Open)
+            {
+                if (!_escInterceptado)
+                {
+                    _referencia ??= DotNetObjectReference.Create(this);
+                    await modulo.InvokeVoidAsync("interceptarEsc", _elemento, _referencia);
+                    _escInterceptado = true;
+                }
+
+                await modulo.InvokeVoidAsync("abrir", _elemento);
+            }
+            else
+            {
+                await modulo.InvokeVoidAsync("fechar", _elemento);
+            }
+
+            _abertoNoNavegador = Open;
+        }
+        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException or ObjectDisposedException)
+        {
+            // Sem JS (pré-render, circuito caindo): o <dialog> fica fechado, que é o estado
+            // seguro. Deixar propagar derrubaria a tela por um detalhe de ciclo de vida.
+        }
+    }
+
+    private async ValueTask<IJSObjectReference> ObterModuloAsync() =>
+        _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", ModulePath);
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        _referencia?.Dispose();
+
+        if (_modulo is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _modulo.DisposeAsync();
+        }
+        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        {
+            // Circuito já caiu — não há módulo para liberar.
+        }
+    }
+}

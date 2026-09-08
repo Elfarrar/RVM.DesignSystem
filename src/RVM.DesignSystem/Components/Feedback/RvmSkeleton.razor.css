@@ -1,0 +1,65 @@
+.rvm-skeleton {
+    display: block;
+    background-color: var(--rvm-color-surface-sunken);
+    /*
+      O brilho é um gradiente que atravessa o bloco. `background-image` sobre a cor de base, e
+      não uma cor animada: assim a animação toca só a posição do fundo, que o navegador compõe
+      sem relayout.
+
+      A "luz" é a superfície elevada, não branco — em tema escuro o branco vira um flash.
+    */
+    background-image: linear-gradient(
+        90deg,
+        var(--rvm-color-surface-sunken) 0%,
+        var(--rvm-color-surface-raised) 50%,
+        var(--rvm-color-surface-sunken) 100%);
+    background-size: 200% 100%;
+    animation: rvm-skeleton-brilho var(--rvm-motion-duration-slow) linear infinite;
+    animation-duration: calc(var(--rvm-motion-duration-slow) * 4);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-skeleton--text {
+    /* Casa com a altura de uma linha de corpo, para o esqueleto ocupar o mesmo espaço que o
+       texto vai ocupar — sem isso a tela pula quando o conteúdo chega. */
+    height: calc(var(--rvm-font-size-body) * var(--rvm-line-height-body));
+    width: 100%;
+}
+
+.rvm-skeleton--rect {
+    width: 100%;
+    height: 8rem;
+    border-radius: var(--rvm-radius-md);
+}
+
+.rvm-skeleton--circle {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--rvm-radius-full);
+}
+
+.rvm-skeleton--ultima {
+    width: 60%;
+}
+
+.rvm-skeleton-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+@keyframes rvm-skeleton-brilho {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
+/*
+  Sem o brilho, o esqueleto continua sendo um bloco cinza no lugar certo — que é 90% do que ele
+  faz. O movimento é enfeite; a forma é a informação.
+*/
+@media (prefers-reduced-motion: reduce) {
+    .rvm-skeleton {
+        animation: none;
+        background-image: none;
+    }
+}

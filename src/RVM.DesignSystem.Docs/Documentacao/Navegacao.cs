@@ -73,6 +73,23 @@ public static class Navegacao
             new("Avatar", "componentes/avatar"),
         ]),
 
+        new("Feedback",
+        [
+            new("Dialog", "componentes/dialog"),
+            new("Toast", "componentes/toast"),
+            new("Alert", "componentes/alert"),
+            new("EmptyState", "componentes/empty-state"),
+            new("Spinner", "componentes/spinner"),
+            new("Progress", "componentes/progress"),
+            new("Skeleton", "componentes/skeleton"),
+            new("Tooltip", "componentes/tooltip"),
+        ]),
+
+        new("Padrões",
+        [
+            new("Padrões", "padroes"),
+        ]),
+
         new("Sobre",
         [
             new("Acessibilidade", "acessibilidade"),

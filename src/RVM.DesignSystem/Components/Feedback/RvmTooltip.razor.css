@@ -1,0 +1,53 @@
+.rvm-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/*
+  O balão existe SEMPRE no DOM — o aria-describedby precisa apontar para algo que exista. O que
+  muda é a visibilidade.
+
+  ⚠️ Não usar `display: none` nem `visibility: hidden`: os dois tiram o elemento da árvore de
+  acessibilidade, e a descrição deixaria de ser lida justamente para quem depende dela.
+  `opacity: 0` + `pointer-events: none` esconde da tela e mantém a descrição disponível.
+*/
+.rvm-tooltip__balao {
+    position: absolute;
+    z-index: var(--rvm-z-tooltip);
+    max-width: 16rem;
+    width: max-content;
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-on-surface);
+    color: var(--rvm-color-surface);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-caption);
+    line-height: var(--rvm-line-height-body);
+    box-shadow: var(--rvm-shadow-3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+.rvm-tooltip__balao[data-visivel="true"] {
+    opacity: 1;
+}
+
+/*
+  A inversão de cor (fundo `on-surface`, texto `surface`) é o par de contraste do tema lido ao
+  contrário — ele passa no portão nas duas direções, porque contraste é simétrico. É o que faz
+  a dica funcionar nos dois modos sem um papel próprio na paleta.
+*/
+
+.rvm-tooltip--vertical .rvm-tooltip__balao {
+    bottom: calc(100% + var(--rvm-space-2));
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.rvm-tooltip--horizontal .rvm-tooltip__balao {
+    left: calc(100% + var(--rvm-space-2));
+    top: 50%;
+    transform: translateY(-50%);
+}

@@ -1,0 +1,88 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Esqueleto de carregamento.
+
+    Ele é SEMPRE `aria-hidden`, e isso não é um detalhe: um leitor de tela anunciando cinco
+    caixas cinzas não informa nada, e ainda atrasa a informação real. Quem anuncia "carregando"
+    é a REGIÃO em volta, com `aria-busy="true"` — e essa região é do consumidor, porque só ele
+    sabe qual parte da tela está esperando.
+*@
+
+@if (VariasLinhas)
+{
+    <span class="rvm-skeleton-grupo" aria-hidden="true" @attributes="AdditionalAttributes">
+        @for (var i = 0; i < Quantidade; i++)
+        {
+            @* A última sai mais curta, como um parágrafo real termina. É o detalhe que faz o
+               carregamento parecer com o texto que vai chegar, em vez de com uma tabela. *@
+            <span class="@ClasseDaLinha(i == Quantidade - 1)" style="@(i == 0 ? EstiloFinal : null)"></span>
+        }
+    </span>
+}
+else
+{
+    <span class="@ClasseFinal" style="@EstiloFinal" aria-hidden="true" @attributes="AdditionalAttributes"></span>
+}
+
+@code {
+    /// <summary>Forma do esqueleto.</summary>
+    [Parameter]
+    public RvmSkeletonShape Shape { get; set; } = RvmSkeletonShape.Text;
+
+    /// <summary>Largura em CSS. Aceita qualquer unidade.</summary>
+    [Parameter]
+    public string? Width { get; set; }
+
+    /// <summary>Altura em CSS. Ignorada na forma <c>Text</c>, que segue a altura da linha.</summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>Quantas linhas, na forma <c>Text</c>. A última sai mais curta.</summary>
+    [Parameter]
+    public int Lines { get; set; } = 1;
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // Limitado em vez de estourar: 500 linhas de esqueleto é um erro de quem chamou, e travar
+    // o navegador por causa dele não ajuda ninguém.
+    private int Quantidade => Math.Clamp(Lines, 1, 20);
+
+    private bool VariasLinhas => Shape == RvmSkeletonShape.Text && Quantidade > 1;
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-skeleton",
+        $"rvm-skeleton--{RvmClasse.Sufixo(Shape)}",
+        Class);
+
+    private string ClasseDaLinha(bool ultima) => RvmClasse.Juntar(
+        "rvm-skeleton",
+        "rvm-skeleton--text",
+        ultima ? "rvm-skeleton--ultima" : null);
+
+    private string? EstiloFinal
+    {
+        get
+        {
+            var partes = new List<string>(2);
+
+            if (Width is not null)
+            {
+                partes.Add($"width:{Width}");
+            }
+
+            if (Height is not null && Shape != RvmSkeletonShape.Text)
+            {
+                partes.Add($"height:{Height}");
+            }
+
+            return partes.Count == 0 ? null : string.Join(';', partes);
+        }
+    }
+}

@@ -1,0 +1,160 @@
+@page "/componentes/toast"
+@inject IRvmToastService Toasts
+
+<PaginaDeComponente Nome="RvmToast"
+                    Tipo="typeof(RvmToast)"
+                    Frase="Notificação passageira, disparada de qualquer lugar por IRvmToastService. Fica pelo menos 5 segundos e pausa no hover e no foco.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Wrap="true">
+                    <RvmButton OnClick="Sucesso">Sucesso</RvmButton>
+                    <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="Informativo">Info com ação</RvmButton>
+                    <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="Aviso">Atenção</RvmButton>
+                    <RvmButton Variant="RvmButtonVariant.Danger" OnClick="Erro">Erro</RvmButton>
+                </RvmStack>
+            </div>
+            <div class="playground__controles">
+                <p class="doc__nota">
+                    Os toasts aparecem no canto superior direito — o host está no
+                    <code>MainLayout</code> deste site. Passe o mouse por cima de um: o relógio
+                    <strong>congela</strong>. Tabule até o botão "Desfazer": congela também.
+                </p>
+                @if (_desfeito)
+                {
+                    <p class="doc__ok" role="status">Ação desfeita.</p>
+                }
+            </div>
+        </div>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">O host vai uma vez, no layout</h3>
+        <BlocoDeCodigo Codigo="@_host" />
+        <p class="doc__nota">
+            <strong>Não é organização, é requisito.</strong> As regiões <code>aria-live</code>
+            precisam existir no DOM <em>antes</em> da primeira mensagem — uma região só é
+            observada a partir do instante em que entra na página. Montar o host por tela as
+            recriaria a cada navegação, e a mensagem disparada logo depois de navegar seria
+            justamente a perdida.
+        </p>
+
+        <h3 class="doc__subtitulo">Posições</h3>
+        <p>
+            <code>TopEnd</code> (padrão), <code>TopCenter</code>, <code>BottomEnd</code>,
+            <code>BottomCenter</code>. É configuração do <strong>host</strong>, não de cada
+            toast: dois toasts em cantos diferentes na mesma tela dividem a atenção e nenhum é
+            lido.
+        </p>
+        <p class="doc__nota">
+            No celular a pilha vai para o rodapé e ocupa a largura toda, independente da posição
+            escolhida — o topo é onde ficam a barra do navegador e o notch, e o polegar chega no
+            pé da tela. Mesma lógica da regra que desfaz a
+            <a href="fundamentos/densidade">densidade compacta</a>.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Duas regiões <code>aria-live</code>, criadas uma vez e sempre
+                presentes.</strong> Erro vai para a assertiva (<code>role="alert"</code>,
+                interrompe o leitor); o resto vai para a educada (<code>role="status"</code>,
+                espera a pausa). São duas porque mudar o <code>aria-live</code> de uma região
+                viva não é confiável — a maioria dos leitores lê o valor no momento em que a
+                região é registrada.
+            </li>
+            <li>
+                <strong>Piso de 5 segundos, imposto no serviço.</strong> Não é estética: é o
+                tempo de notar que apareceu algo, mover os olhos até lá e ler. Quem chama pode
+                pedir mais, nunca menos.
+            </li>
+            <li>
+                <strong>Pausa no hover E no foco.</strong> Tabular até "Desfazer" e ver o toast
+                sumir no meio do caminho é a versão de teclado do mesmo defeito que o hover
+                resolve para o mouse.
+            </li>
+            <li>
+                <strong>O host é transparente ao clique.</strong> Ele cobre a tela em
+                <code>position: fixed</code>, então sem <code>pointer-events: none</code> uma
+                faixa invisível bloquearia cliques na página — e o sintoma seria "o botão do
+                canto não funciona às vezes", sem nada visível para explicar.
+            </li>
+            <li>
+                <strong>Limite de simultâneos.</strong> Sem ele, uma falha em laço enche a tela
+                de avisos idênticos e cobre justamente a interface que a pessoa usaria para sair
+                do problema.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para erro que exige ação.</strong> Toast some. Se a pessoa precisa
+                corrigir algo, o lugar é <a href="componentes/alert">RvmAlert</a> perto do campo,
+                ou a mensagem de validação do próprio formulário.
+            </li>
+            <li>
+                <strong>Para informação que precisa ser lida.</strong> Tudo que some sozinho pode
+                não ser visto. Nada essencial pode depender de um toast.
+            </li>
+            <li>
+                <strong>Para confirmar uma decisão.</strong> Toast não pergunta.
+                <a href="componentes/dialog">RvmDialog</a>.
+            </li>
+            <li>
+                <strong>Em sequência.</strong> Três toasts seguidos são um relatório, e ninguém
+                lê um relatório de canto de tela. Junte numa mensagem só.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private bool _desfeito;
+
+    private void Sucesso() => Toasts.Success("Pedido salvo.");
+
+    private void Informativo() => Toasts.Show(
+        "O relatório foi enviado para a fila.",
+        RvmSeverity.Info,
+        actionLabel: "Desfazer",
+        onAction: () =>
+        {
+            _desfeito = true;
+            StateHasChanged();
+            return Task.CompletedTask;
+        });
+
+    private void Aviso() => Toasts.Show(
+        "Três itens ficaram sem preço e não entraram no total.",
+        RvmSeverity.Warning,
+        title: "Nem tudo foi importado");
+
+    private void Erro() => Toasts.Error(
+        "Tivemos um problema técnico, por favor tente de novo em alguns minutos.",
+        "Não foi possível salvar");
+
+    private const string _exemplo = """
+        @inject IRvmToastService Toasts
+
+        Toasts.Success("Pedido salvo.");
+
+        Toasts.Error("Tivemos um problema técnico, por favor tente de novo em alguns minutos.",
+                     "Não foi possível salvar");
+
+        // Com ação de desfazer:
+        Toasts.Show("O relatório foi enviado para a fila.",
+                    RvmSeverity.Info,
+                    actionLabel: "Desfazer",
+                    onAction: () => _servico.CancelarAsync(id));
+        """;
+
+    private const string _host = """
+        @* MainLayout.razor — UMA vez, nunca por tela. *@
+        <RvmToastHost Position="RvmToastPosition.TopEnd" Max="3" />
+        """;
+}

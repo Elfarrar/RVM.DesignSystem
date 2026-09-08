@@ -1,0 +1,80 @@
+/*
+  O host cobre a tela inteira em `position: fixed`, mas é TRANSPARENTE AO CLIQUE
+  (`pointer-events: none`) — cada toast reativa o seu.
+
+  Sem isso, uma faixa invisível ficaria por cima da página bloqueando cliques em qualquer lugar
+  onde o host se estenda, e o sintoma seria "o botão do canto não funciona às vezes" — sem
+  nada visível na tela para explicar.
+*/
+.rvm-toast-host {
+    position: fixed;
+    inset: 0;
+    z-index: var(--rvm-z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-4);
+    pointer-events: none;
+}
+
+.rvm-toast-host__regiao {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    width: 100%;
+    align-items: inherit;
+}
+
+/*
+  A ordem das duas regiões no eixo é `column` fixo; o que muda por posição é o alinhamento e
+  se a pilha cresce de cima ou de baixo.
+*/
+/*
+  As posições de topo descem a altura da topbar. Sem isso o toast cobre justamente a barra da
+  aplicação — onde ficam a busca, o menu e o avatar —, e a pessoa perde o acesso aos controles
+  no exato momento em que recebeu um aviso sobre eles.
+
+  O token existe sempre; num app sem topbar isto só afasta os toasts 56px do teto, que não
+  atrapalha nada.
+*/
+.rvm-toast-host--top-end,
+.rvm-toast-host--top-center {
+    padding-top: calc(var(--rvm-space-4) + var(--rvm-topbar-height));
+}
+
+.rvm-toast-host--top-end {
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.rvm-toast-host--top-center {
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.rvm-toast-host--bottom-end {
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.rvm-toast-host--bottom-center {
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/*
+  No celular a pilha ocupa a largura toda e vai para o RODAPÉ, independente da posição
+  escolhida: o topo é onde ficam a barra do navegador e o notch, e o polegar chega no pé da
+  tela. É a mesma lógica da regra que desfaz a densidade compacta — a configuração vale
+  enquanto não conflita com o uso real.
+*/
+@media (max-width: 480px) {
+    .rvm-toast-host {
+        justify-content: flex-end;
+        align-items: stretch;
+    }
+
+    .rvm-toast-host__regiao {
+        align-items: stretch;
+    }
+}

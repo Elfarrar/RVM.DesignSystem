@@ -1,0 +1,113 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    O estado vazio — e as quatro razões de uma tela estar vazia, que NÃO são a mesma coisa.
+
+    "Ainda não há nada" pede um botão de criar. "Nada casou com o filtro" pede limpar o filtro.
+    "Falhou ao carregar" pede tentar de novo. "Você não tem permissão" não pede ação nenhuma.
+    Tratar os quatro como um só é o que produz aquele "Nenhum resultado encontrado" que não
+    ajuda ninguém a sair dali.
+
+    O texto padrão de cada variante é PT-BR explicativo e sobrescrevível, e nunca traz código
+    interno (`CLAUDE.md` § Mensagens ao usuário final).
+*@
+
+<div class="@ClasseFinal" @attributes="AdditionalAttributes">
+    @if (Illustration is not null)
+    {
+        <div class="rvm-empty-state__arte" aria-hidden="true">@Illustration</div>
+    }
+    else
+    {
+        <RvmIcon Name="@IconeFinal" Class="rvm-empty-state__icone" Size="2.5rem" />
+    }
+
+    <h2 class="rvm-empty-state__titulo">@TituloFinal</h2>
+
+    @if (DescricaoFinal is not null || ChildContent is not null)
+    {
+        <div class="rvm-empty-state__descricao">
+            @if (ChildContent is not null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                @DescricaoFinal
+            }
+        </div>
+    }
+
+    @if (Actions is not null)
+    {
+        <div class="rvm-empty-state__acoes">@Actions</div>
+    }
+</div>
+
+@code {
+    /// <summary>Por que a tela está vazia. Define o texto e o ícone padrão.</summary>
+    [Parameter]
+    public RvmEmptyStateVariant Variant { get; set; } = RvmEmptyStateVariant.Empty;
+
+    /// <summary>Título. Quando nulo, usa o padrão da variante.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Descrição. Quando nula, usa o padrão da variante.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>Ícone do conjunto Phosphor. Quando nulo, usa o padrão da variante.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>Ilustração própria, no lugar do ícone. É decorativa.</summary>
+    [Parameter]
+    public RenderFragment? Illustration { get; set; }
+
+    /// <summary>A ação que tira a pessoa deste estado.</summary>
+    [Parameter]
+    public RenderFragment? Actions { get; set; }
+
+    /// <summary>Descrição como marcação, quando texto simples não basta.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string TituloFinal => Title ?? Variant switch
+    {
+        RvmEmptyStateVariant.NoResults => "Nenhum resultado para essa busca",
+        RvmEmptyStateVariant.Error => "Não foi possível carregar",
+        RvmEmptyStateVariant.Forbidden => "Você não tem acesso a esta área",
+        _ => "Nada por aqui ainda",
+    };
+
+    private string? DescricaoFinal => Description ?? Variant switch
+    {
+        RvmEmptyStateVariant.NoResults => "Tente mudar os termos ou limpar os filtros.",
+        // Fallback do `CLAUDE.md`: contexto + o que aconteceu + próximo passo, sem jargão.
+        RvmEmptyStateVariant.Error => "Tivemos um problema técnico, por favor tente de novo em alguns minutos.",
+        RvmEmptyStateVariant.Forbidden => "Se você precisa deste acesso, peça a quem administra a sua conta.",
+        _ => "Quando houver algo para mostrar, aparece aqui.",
+    };
+
+    private string IconeFinal => Icon ?? Variant switch
+    {
+        RvmEmptyStateVariant.NoResults => "magnifying-glass",
+        RvmEmptyStateVariant.Error => "warning",
+        RvmEmptyStateVariant.Forbidden => "lock",
+        _ => "tray",
+    };
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-empty-state",
+        $"rvm-empty-state--{RvmClasse.Sufixo(Variant)}",
+        Class);
+}

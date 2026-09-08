@@ -1,0 +1,68 @@
+.rvm-progress {
+    display: block;
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.rvm-progress__cabecalho {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    margin-bottom: var(--rvm-space-1);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-progress__valor {
+    /* Tabular para o número não dançar de largura enquanto sobe de 9% para 10%. */
+    font-variant-numeric: tabular-nums;
+    color: var(--rvm-color-on-surface-variant);
+}
+
+.rvm-progress__trilho {
+    overflow: hidden;
+    height: var(--rvm-space-2);
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-surface-sunken);
+}
+
+.rvm-progress__barra {
+    height: 100%;
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-primary);
+    transition: width var(--rvm-motion-duration-base) var(--rvm-motion-ease-standard);
+}
+
+.rvm-progress--success .rvm-progress__barra { background-color: var(--rvm-color-success); }
+.rvm-progress--warning .rvm-progress__barra { background-color: var(--rvm-color-warning); }
+.rvm-progress--danger .rvm-progress__barra { background-color: var(--rvm-color-danger); }
+.rvm-progress--info .rvm-progress__barra { background-color: var(--rvm-color-info); }
+
+/*
+  Indeterminada: um trecho que atravessa o trilho. A largura é fixa em 40% e quem se move é a
+  posição — animar `width` forçaria relayout a cada quadro.
+*/
+.rvm-progress--indeterminada .rvm-progress__barra {
+    width: 40%;
+    animation: rvm-progress-atravessar var(--rvm-motion-duration-slow) var(--rvm-motion-ease-standard) infinite;
+    /* A duração dos tokens é curta demais para esta animação em particular; o multiplicador
+       mantém o vínculo com a escala de motion em vez de cravar um número solto. */
+    animation-duration: calc(var(--rvm-motion-duration-slow) * 5);
+}
+
+@keyframes rvm-progress-atravessar {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
+}
+
+/*
+  Movimento infinito é exatamente o que prefers-reduced-motion existe para evitar. Parada, a
+  barra vira uma faixa estática — e quem carrega a informação é o role="progressbar" sem
+  aria-valuenow, que já diz "em curso, sem previsão".
+*/
+@media (prefers-reduced-motion: reduce) {
+    .rvm-progress--indeterminada .rvm-progress__barra {
+        animation: none;
+        width: 100%;
+        opacity: 0.6;
+    }
+}

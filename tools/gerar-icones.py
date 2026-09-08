@@ -26,6 +26,11 @@ ICONES = [
     'house',                 # item de navegacao mais comum
     'dots-three-vertical',   # menu de acoes secundarias
     'copy',                  # botao de copiar do bloco de codigo (site de documentacao)
+    # Onda 3 — feedback
+    'check-circle',          # severidade Success no RvmAlert e no RvmToast
+    'x-circle',              # severidade Danger (o `warning` triangular fica com Warning)
+    'lock',                  # RvmEmptyState, variante "sem permissao"
+    'tray',                  # RvmEmptyState, variante "vazio"
 ]
 
 origem = pathlib.Path(sys.argv[1])

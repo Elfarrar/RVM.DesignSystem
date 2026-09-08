@@ -1,0 +1,113 @@
+@page "/componentes/tooltip"
+
+<PaginaDeComponente Nome="RvmTooltip"
+                    Tipo="typeof(RvmTooltip)"
+                    Frase="Dica curta que aparece no hover E no foco, some com ESC, e COMPLEMENTA o nome do controle em vez de substituí-lo.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Lg" Align="RvmAlign.Center">
+                    <RvmTooltip Id="dica-salvar" Text="Salva e volta para a lista" Orientation="_orientacao">
+                        <RvmButton aria-describedby="dica-salvar">Salvar</RvmButton>
+                    </RvmTooltip>
+
+                    <RvmTooltip Id="dica-copiar" Text="Copia o número do pedido" Orientation="_orientacao">
+                        <RvmIconButton Icon="copy" Label="Copiar" aria-describedby="dica-copiar" />
+                    </RvmTooltip>
+                </RvmStack>
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmOrientation" @bind-Value="_orientacao" Label="Orientation">
+                    <option value="Vertical">Vertical (acima)</option>
+                    <option value="Horizontal">Horizontal (ao lado)</option>
+                </RvmSelect>
+                <p class="doc__nota">
+                    <strong>Tabule até o botão</strong> — a dica aparece sem o mouse. Depois
+                    aperte <kbd>ESC</kbd>: ela some e o foco fica onde está.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Por que você liga o <code>aria-describedby</code> à mão</h3>
+        <p>
+            O componente <strong>não</strong> injeta o atributo no seu controle, e isso é escolha.
+            Para injetar, ele teria que reescrever atributos de marcação que não é dele — o que
+            funciona num <code>&lt;button&gt;</code> literal e falha em silêncio no dia em que o
+            conteúdo do slot for um componente. O <code>Id</code> explícito na API deixa a ligação
+            visível em vez de mágica.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Aparece no FOCO, não só no hover.</strong> É a falha mais comum de
+                tooltip na web, e a razão de o atributo <code>title</code> nativo não servir: ele
+                só responde ao ponteiro, e quem navega por teclado nunca o vê.
+            </li>
+            <li>
+                <strong><kbd>ESC</kbd> fecha sem tirar o foco de onde está</strong> (WCAG 1.4.13).
+                Uma dica que cobre o campo seguinte prende quem depende de ampliação; tirar o foco
+                junto "resolveria" a obstrução perdendo o lugar na tela.
+            </li>
+            <li>
+                <strong><code>aria-describedby</code>, nunca <code>aria-label</code>.</strong> A
+                dica complementa o nome do controle; não o substitui. Com <code>aria-label</code>,
+                o botão "Salvar" com dica "Salva e volta à lista" passaria a se
+                <em>chamar</em> "Salva e volta à lista" — e sumiria da busca por voz por "Salvar".
+            </li>
+            <li>
+                <strong>O balão fica SEMPRE no DOM</strong>, escondido por opacidade.
+                <code>aria-describedby</code> precisa apontar para um elemento que exista, e
+                leitores de tela leem a descrição no momento em que o controle recebe foco — não
+                quando o mouse passa. Renderizar só no hover faria a referência apontar para o
+                vazio.
+            </li>
+            <li>
+                ⚠️ <strong>Não use <code>display: none</code> nem <code>visibility: hidden</code>
+                para esconder uma descrição.</strong> Os dois tiram o elemento da árvore de
+                acessibilidade, e ela deixaria de ser lida justamente para quem depende dela.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para informação essencial.</strong> Tooltip não existe no celular — não há
+                hover, e o foco chega por toque, que já é o clique. Nada que a pessoa precise
+                saber pode morar só aí.
+            </li>
+            <li>
+                <strong>Para dar nome a um botão só de ícone.</strong> Isso é
+                <code>aria-label</code>, e o
+                <a href="componentes/icon-button">RvmIconButton</a> já exige um. A dica vem
+                <em>além</em> do nome.
+            </li>
+            <li>
+                <strong>Para texto longo.</strong> Se não cabe em uma frase, é ajuda de campo
+                (<code>Help</code> do <a href="componentes/form-field">RvmFormField</a>) ou um
+                <a href="componentes/dialog">RvmDialog</a>.
+            </li>
+            <li>
+                <strong>Com conteúdo interativo dentro.</strong> Um link dentro da dica não é
+                alcançável: ela some quando o foco sai do controle.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmOrientation _orientacao = RvmOrientation.Vertical;
+
+    private const string _exemplo = """
+        @* O Id liga os dois. É a única parte manual, e é deliberado. *@
+        <RvmTooltip Id="dica-salvar" Text="Salva e volta para a lista">
+            <RvmButton aria-describedby="dica-salvar">Salvar</RvmButton>
+        </RvmTooltip>
+        """;
+}

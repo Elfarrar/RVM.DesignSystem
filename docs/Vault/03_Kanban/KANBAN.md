@@ -9,14 +9,18 @@
 
 ## Em revisao
 
-- [[DSGN-017]] — **Onda 2**: casca de aplicacao (`RvmAppShell`/`Sidebar`/`Topbar`/`NavItem`),
-  layout (`Stack`/`Grid`/`Card`/`Divider`), conteudo e navegacao (`Chip`/`Avatar`/`Tabs`/
-  `Breadcrumb`) e densidade `Compact`. **O proprio site ja usa a casca** — criterio de saida
-  cumprido. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos. No ar em dev,
-  `0.2.0-alpha.12` no BaGet. **Aguardando o Rafael para promover a `master` / `0.2.0`.**
+- [[DSGN-019]] — **Onda 3**: dialogo (`<dialog>` nativo), toast, alerta, estado vazio, spinner,
+  progresso, esqueleto e tooltip. Mais a secao Padroes e a busca do site (`RF-27`). 223 testes,
+  E2E com o criterio de saida da onda. No ar em dev, `0.3.0-alpha.15` no BaGet.
+  **Aguardando o Rafael para promover a `master` / `0.3.0`.**
 
 ## Concluido
 
+- [[DSGN-018]] — `--timeout` por tentativa no push do BaGet. Sem ele, uma tentativa pendurada
+  consumia o job inteiro e o retry nunca rodava — 25 min num push que o re-run fez em 40s.
+- [[DSGN-017]] — **Onda 2 EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): casca de
+  aplicacao, layout, navegacao e densidade `Compact`. `design.rvmit.com.br` servindo o site
+  montado com `RvmAppShell`. 187 testes, 29 pares de contraste, axe em 29 paginas x 2 modos.
 - [[DSGN-001]] — Bootstrap + **producao no ar** (08/09/2026): repo publico, esqueleto .NET 10,
   5 workflows, DNS/SSL nos dois ambientes, `design.dev.rvmtech.com.br` e `design.rvmit.com.br`.
   ⏳ So o monitor no Uptime-Kuma ficou de fora — o Kuma nao tem canal de notificacao nenhum.
@@ -37,17 +41,20 @@ Nove componentes, camada de tokens, motor de tema, icones Phosphor e o site de d
 `design.rvmit.com.br` no ar. Cards: [[DSGN-002]], [[DSGN-012]], [[DSGN-013]], [[DSGN-014]],
 [[DSGN-015]].
 
-### Onda 3 — Feedback (proxima)
+### ✅ Onda 3 — fechada em 08/09/2026, sai como `0.3.0`
 
-`RvmDialog` + `IRvmDialogService`, `RvmToast` + `IRvmToastService`, `RvmAlert`, `RvmSkeleton`,
-`RvmSpinner`, `RvmProgress`, `RvmTooltip`, `RvmEmptyState`. Fecha em `0.3.0`.
+Card: [[DSGN-019]].
 
-> **Meta (`09-roadmap`):** o E2E abre o dialogo, navega so por teclado, fecha com `ESC` e
-> confirma que o foco voltou ao botao de origem.
+### Onda 4 — Dados (proxima)
 
-⚠️ **O que a onda 2 deixa para ela:** a densidade hoje alcanca os controles da onda 1 e o
-`RvmNavItem`. Componente de dado (onda 4) precisa entrar na conta dos tokens `--rvm-control-*`,
-ou nasce ignorando a densidade em silencio.
+`RvmDataGrid<T>` com colunas tipadas, ordenacao, paginacao e selecao, mais o resto de Dados.
+Fecha em `0.4.0`. **E a onda cara** — cada linha dela vale, em esforco, varias das anteriores.
+
+⚠️ **O que as ondas 2 e 3 deixam para ela:**
+- A densidade alcanca os controles da onda 1 e o `RvmNavItem`. O componente de dado precisa
+  entrar na conta dos tokens `--rvm-control-*`, ou nasce ignorando a densidade **em silencio**.
+- Tabela e o lugar onde `aria-busy` + `RvmSkeleton` e `RvmEmptyState` (as quatro variantes)
+  finalmente se combinam. O padrao ja esta escrito e demonstrado em `/padroes`.
 
 <details>
 <summary>Escopo original da onda 1, para referencia</summary>

@@ -1,0 +1,45 @@
+.rvm-spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    color: var(--rvm-color-primary);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.rvm-spinner__roda {
+    display: block;
+    flex-shrink: 0;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: var(--rvm-radius-full);
+    animation: rvm-spinner-girar var(--rvm-motion-duration-slow) linear infinite;
+}
+
+.rvm-spinner--small .rvm-spinner__roda { width: 1rem; height: 1rem; }
+.rvm-spinner--medium .rvm-spinner__roda { width: 1.5rem; height: 1.5rem; border-width: 2px; }
+.rvm-spinner--large .rvm-spinner__roda { width: 2.5rem; height: 2.5rem; border-width: 3px; }
+
+.rvm-spinner__rotulo {
+    color: var(--rvm-color-on-surface);
+}
+
+@keyframes rvm-spinner-girar {
+    to { transform: rotate(360deg); }
+}
+
+/*
+  Aqui a animação precisa PARAR, não acelerar. Os tokens de motion já zeram a duração em
+  prefers-reduced-motion, mas animação infinita com duração 0 continua repintando sem parar —
+  o mesmo cuidado do spinner do RvmButton.
+
+  O que fica no lugar: um anel incompleto, parado. Ele continua comunicando "algo está em
+  curso" pela FORMA, e o texto do role="status" continua fazendo o trabalho de verdade.
+*/
+@media (prefers-reduced-motion: reduce) {
+    .rvm-spinner__roda {
+        animation: none;
+        border-top-color: currentColor;
+        border-right-color: transparent;
+    }
+}

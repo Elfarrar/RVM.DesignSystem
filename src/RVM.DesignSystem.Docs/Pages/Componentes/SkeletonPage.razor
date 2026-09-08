@@ -1,0 +1,142 @@
+@page "/componentes/skeleton"
+
+<PaginaDeComponente Nome="RvmSkeleton"
+                    Tipo="typeof(RvmSkeleton)"
+                    Frase="A forma do conteúdo antes dele chegar. É sempre invisível ao leitor de tela — quem anuncia &quot;carregando&quot; é a região em volta.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                @* aria-busy na REGIÃO: é ele que diz "esta parte está carregando". O esqueleto
+                   é só a forma. *@
+                <div aria-busy="@(_carregando ? "true" : "false")">
+                    @if (_carregando)
+                    {
+                        <RvmCard Variant="RvmCardVariant.Outlined">
+                            <ChildContent>
+                                <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Md" Align="RvmAlign.Center">
+                                    <RvmSkeleton Shape="RvmSkeletonShape.Circle" />
+                                    <RvmStack Gap="RvmSpacing.Sm" Class="doc__cresce">
+                                        <RvmSkeleton Width="40%" />
+                                        <RvmSkeleton Lines="2" />
+                                    </RvmStack>
+                                </RvmStack>
+                            </ChildContent>
+                        </RvmCard>
+                    }
+                    else
+                    {
+                        <RvmCard Variant="RvmCardVariant.Outlined">
+                            <ChildContent>
+                                <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Md" Align="RvmAlign.Center">
+                                    <RvmAvatar Name="Ana Silva" />
+                                    <div>
+                                        <p><strong>Ana Silva</strong></p>
+                                        <p>Aprovou o pedido #4821 e liberou a entrega para sexta-feira.</p>
+                                    </div>
+                                </RvmStack>
+                            </ChildContent>
+                        </RvmCard>
+                    }
+                </div>
+            </div>
+            <div class="playground__controles">
+                <RvmSwitch @bind-Value="_carregando" Label="Carregando" />
+                <p class="doc__nota">
+                    Alterne: o esqueleto ocupa <strong>o mesmo espaço</strong> que o conteúdo real,
+                    então a tela não pula quando ele chega.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <RvmStack Gap="RvmSpacing.Lg">
+            <div>
+                <p class="doc__nota"><code>Text</code> — altura de uma linha de corpo.</p>
+                <RvmSkeleton />
+            </div>
+            <div>
+                <p class="doc__nota"><code>Text</code> com <code>Lines="3"</code> — a última sai mais curta.</p>
+                <RvmSkeleton Lines="3" />
+            </div>
+            <div>
+                <p class="doc__nota"><code>Rect</code> — imagem, cartão.</p>
+                <RvmSkeleton Shape="RvmSkeletonShape.Rect" Height="5rem" />
+            </div>
+            <div>
+                <p class="doc__nota"><code>Circle</code> — avatar.</p>
+                <RvmSkeleton Shape="RvmSkeletonShape.Circle" />
+            </div>
+        </RvmStack>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Sempre <code>aria-hidden</code>, sem parâmetro para desligar.</strong> Um
+                leitor de tela anunciando cinco caixas cinzas não informa nada, e ainda atrasa a
+                informação real.
+            </li>
+            <li>
+                <strong>Quem anuncia "carregando" é a REGIÃO</strong>, com
+                <code>aria-busy="true"</code> — e essa região é de quem usa, porque só ele sabe
+                qual parte da tela está esperando. O esqueleto sozinho é forma, não semântica.
+            </li>
+            <li>
+                <strong>A última linha sai mais curta</strong>, como um parágrafo real termina. É
+                o detalhe que faz o carregamento parecer com o texto que vai chegar, em vez de com
+                uma tabela de barras.
+            </li>
+            <li>
+                <strong>A "luz" do brilho é a superfície elevada, não branco.</strong> Em tema
+                escuro, branco vira um flash.
+            </li>
+            <li>
+                <strong>Com <code>prefers-reduced-motion</code> o brilho some inteiro.</strong> O
+                bloco cinza no lugar certo continua sendo 90% do que o componente faz.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Quando a forma do conteúdo é desconhecida.</strong> Esqueleto que não
+                casa com o que chega faz a tela pular — pior que um
+                <a href="componentes/spinner">RvmSpinner</a> honesto.
+            </li>
+            <li>
+                <strong>Para espera longa.</strong> Acima de uns segundos, o esqueleto vira uma
+                tela quebrada piscando. Aí cabe <a href="componentes/progress">RvmProgress</a> ou
+                uma mensagem.
+            </li>
+            <li>
+                <strong>Para lista vazia.</strong> Se não vai chegar nada, não mostre a forma de
+                algo. <a href="componentes/empty-state">RvmEmptyState</a>.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private bool _carregando = true;
+
+    private const string _exemplo = """
+        @* O aria-busy vai na REGIÃO; o esqueleto é só a forma. *@
+        <div aria-busy="@(carregando ? "true" : "false")">
+            @if (carregando)
+            {
+                <RvmSkeleton Shape="RvmSkeletonShape.Circle" />
+                <RvmSkeleton Width="40%" />
+                <RvmSkeleton Lines="2" />
+            }
+            else
+            {
+                <RvmAvatar Name="@pessoa.Nome" />
+                <p>@pessoa.Resumo</p>
+            }
+        </div>
+        """;
+}
