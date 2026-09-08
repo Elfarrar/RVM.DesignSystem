@@ -1,0 +1,94 @@
+.rvm-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    border-radius: var(--rvm-radius-full);
+    border: 1px solid var(--rvm-color-border);
+    background-color: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    font-weight: var(--rvm-font-weight-medium);
+    line-height: var(--rvm-line-height-body);
+    max-width: 100%;
+}
+
+.rvm-chip--small { padding: 0 var(--rvm-space-1); font-size: var(--rvm-font-size-caption); }
+.rvm-chip--medium { padding: 0 var(--rvm-space-2); font-size: var(--rvm-font-size-body-sm); }
+.rvm-chip--large { padding: 0 var(--rvm-space-3); font-size: var(--rvm-font-size-body); }
+
+/* --- Severidade ---
+   O container da marca é um papel medido; os de estado usam a cor do estado como TEXTO sobre
+   a superfície rebaixada, par que o portão de contraste verifica explicitamente. */
+
+.rvm-chip--primary {
+    background-color: var(--rvm-color-primary-container);
+    border-color: transparent;
+    color: var(--rvm-color-on-primary-container);
+}
+
+.rvm-chip--success { color: var(--rvm-color-success); }
+.rvm-chip--warning { color: var(--rvm-color-warning); }
+.rvm-chip--danger { color: var(--rvm-color-danger); }
+.rvm-chip--info { color: var(--rvm-color-info); }
+
+.rvm-chip--selecionado {
+    background-color: var(--rvm-color-primary);
+    border-color: transparent;
+    color: var(--rvm-color-on-primary);
+}
+
+.rvm-chip--desabilitado {
+    background-color: var(--rvm-color-disabled);
+    border-color: transparent;
+    color: var(--rvm-color-on-disabled);
+}
+
+/* --- Os dois botões irmãos --- */
+
+.rvm-chip__acao,
+.rvm-chip__conteudo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    padding: var(--rvm-space-1) var(--rvm-space-1);
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-chip__acao { cursor: pointer; }
+.rvm-chip__acao:disabled { cursor: not-allowed; }
+
+.rvm-chip__remover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 1.5em em vez de 1em: o alvo do X precisa ser clicável com o dedo, e ele é o menor
+       controle da biblioteca inteira. */
+    width: 1.5em;
+    height: 1.5em;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-full);
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-chip__remover:hover:not(:disabled) { background-color: var(--rvm-color-border); }
+}
+
+.rvm-chip__acao:focus-visible,
+.rvm-chip__remover:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}
+
+.rvm-chip__icone { flex-shrink: 0; }

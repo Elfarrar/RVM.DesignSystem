@@ -1,0 +1,77 @@
+.rvm-card {
+    display: block;
+    box-sizing: border-box;
+    border-radius: var(--rvm-radius-lg);
+    background-color: var(--rvm-color-surface);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    border: 1px solid transparent;
+    /* text-align: left e width: 100% desfazem o que o agente de usuário faz com <button>:
+       centralizar o texto e encolher para o conteúdo. Sem isso, o cartão clicável fica
+       visivelmente diferente do não-clicável — que é justamente o que não pode acontecer. */
+    text-align: left;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+
+.rvm-card--elevated { background-color: var(--rvm-color-surface-raised); }
+.rvm-card--elev-0 { box-shadow: var(--rvm-shadow-0); }
+.rvm-card--elev-1 { box-shadow: var(--rvm-shadow-1); }
+.rvm-card--elev-2 { box-shadow: var(--rvm-shadow-2); }
+.rvm-card--elev-3 { box-shadow: var(--rvm-shadow-3); }
+.rvm-card--elev-4 { box-shadow: var(--rvm-shadow-4); }
+.rvm-card--elev-5 { box-shadow: var(--rvm-shadow-5); }
+
+/*
+  No tema escuro a sombra não comunica elevação — preto sobre preto não aparece. Por isso a
+  superfície muda junto, e o cartão delineado ganha borda visível: a informação "isto está
+  acima daquilo" precisa sobreviver aos dois modos.
+*/
+.rvm-card--outlined {
+    background-color: var(--rvm-color-surface);
+    border-color: var(--rvm-color-border);
+}
+
+.rvm-card--filled {
+    background-color: var(--rvm-color-surface-sunken);
+}
+
+.rvm-card__header {
+    padding: var(--rvm-space-4) var(--rvm-space-5);
+    border-bottom: 1px solid var(--rvm-color-border);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-card__body {
+    padding: var(--rvm-space-5);
+    line-height: var(--rvm-line-height-body);
+}
+
+.rvm-card__footer {
+    padding: var(--rvm-space-4) var(--rvm-space-5);
+    border-top: 1px solid var(--rvm-color-border);
+    color: var(--rvm-color-on-surface-variant);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.rvm-card--sem-padding .rvm-card__body { padding: 0; }
+
+/* --- Interativo --- */
+
+.rvm-card--interativo {
+    cursor: pointer;
+    transition:
+        box-shadow var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
+        border-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+@media (hover: hover) {
+    .rvm-card--interativo:hover { border-color: var(--rvm-color-border-strong); }
+    .rvm-card--interativo.rvm-card--elevated:hover { box-shadow: var(--rvm-shadow-3); }
+}
+
+.rvm-card--interativo:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}

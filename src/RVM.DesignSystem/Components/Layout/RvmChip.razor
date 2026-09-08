@@ -1,0 +1,122 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    ⚠️ Um chip selecionável E removível seria um botão dentro de outro botão.
+
+    HTML proíbe elemento interativo aninhado, e o resultado prático não é um aviso do validador:
+    é o Enter disparando as duas ações, e o leitor de tela anunciando um controle só. Por isso o
+    invólucro é sempre um `<span>` NEUTRO, e os dois papéis são botões IRMÃOS dentro dele.
+
+    O custo é um elemento a mais no DOM. O que se ganha é que a combinação simplesmente não tem
+    como ficar errada — nem aqui, nem em quem usar o componente.
+*@
+
+<span class="@ClasseFinal" @attributes="AdditionalAttributes">
+    @if (Selectable)
+    {
+        <button type="button"
+                class="rvm-chip__acao"
+                aria-pressed="@(Selected ? "true" : "false")"
+                disabled="@Disabled"
+                @onclick="AlternarSelecao">
+            @Conteudo
+        </button>
+    }
+    else
+    {
+        <span class="rvm-chip__conteudo">@Conteudo</span>
+    }
+
+    @if (OnRemove.HasDelegate)
+    {
+        @* aria-label próprio e explícito: "Remover" sozinho não diz o quê, e numa lista de oito
+           chips o leitor de tela anunciaria oito botões idênticos. *@
+        <button type="button"
+                class="rvm-chip__remover"
+                aria-label="@RemoveLabel"
+                disabled="@Disabled"
+                @onclick="OnRemove">
+            <RvmIcon Name="x" Size="0.875em" />
+        </button>
+    }
+</span>
+
+@code {
+    /// <summary>Severidade. A cor reforça o texto, nunca o substitui.</summary>
+    [Parameter]
+    public RvmChipVariant Variant { get; set; } = RvmChipVariant.Neutral;
+
+    /// <summary>Tamanho do chip.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Ícone opcional antes do texto.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>Torna o chip um alternador de dois estados (filtro).</summary>
+    [Parameter]
+    public bool Selectable { get; set; }
+
+    /// <summary>Estado do alternador. Use com <c>@bind-Selected</c>.</summary>
+    [Parameter]
+    public bool Selected { get; set; }
+
+    /// <summary>Disparado quando a seleção muda.</summary>
+    [Parameter]
+    public EventCallback<bool> SelectedChanged { get; set; }
+
+    /// <summary>Disparado ao remover. Informá-lo faz aparecer o botão de remover.</summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnRemove { get; set; }
+
+    /// <summary>Nome acessível do botão de remover. Diga o quê está sendo removido.</summary>
+    [Parameter]
+    public string RemoveLabel { get; set; } = "Remover";
+
+    /// <summary>Desabilita o chip inteiro.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>O texto do chip.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-chip",
+        $"rvm-chip--{RvmClasse.Sufixo(Variant)}",
+        $"rvm-chip--{RvmClasse.Sufixo(Size)}",
+        Selectable && Selected ? "rvm-chip--selecionado" : null,
+        Disabled ? "rvm-chip--desabilitado" : null,
+        Class);
+
+    private RenderFragment Conteudo => @<text>
+        @if (Icon is not null)
+        {
+            @* Peso Fill no selecionado: o estado ganha um segundo sinal além da cor. *@
+            <RvmIcon Name="@Icon"
+                     Weight="@(Selected ? RvmIconWeight.Fill : RvmIconWeight.Regular)"
+                     Class="rvm-chip__icone" />
+        }
+        @ChildContent
+    </text>;
+
+    private Task AlternarSelecao()
+    {
+        if (Disabled)
+        {
+            return Task.CompletedTask;
+        }
+
+        Selected = !Selected;
+        return SelectedChanged.InvokeAsync(Selected);
+    }
+}

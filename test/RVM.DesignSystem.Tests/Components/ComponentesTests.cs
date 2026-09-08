@@ -288,6 +288,24 @@ public class ComponentesTests : BunitContext
     }
 
     [Fact]
+    public void Select_ABRE_mostrando_o_valor_ligado_e_nao_a_primeira_opcao()
+    {
+        // Sem o atributo `value` no <select>, o campo abre na PRIMEIRA opcao e o formulario
+        // parece preenchido com um dado que nao e o do modelo — em silencio, porque o valor
+        // ligado continua certo no C#.
+        //
+        // Nao apareceu na onda 1: todo select de la tinha Placeholder e comecava sem valor,
+        // entao a primeira opcao era mesmo a certa. Apareceu na onda 2, num select de enum cujo
+        // padrao nao e o primeiro membro.
+        var cut = Render<RvmSelect<string>>(p => p
+            .Add(x => x.Value, "MG")
+            .Add(x => x.Label, "Estado")
+            .AddChildContent("<option value=\"SP\">São Paulo</option><option value=\"MG\">Minas Gerais</option>"));
+
+        Assert.Equal("MG", cut.Find("select").GetAttribute("value"));
+    }
+
+    [Fact]
     public void Select_com_placeholder_gera_opcao_de_valor_vazio()
     {
         // value="" e o que faz o `required` nativo reconhecer "nada selecionado".

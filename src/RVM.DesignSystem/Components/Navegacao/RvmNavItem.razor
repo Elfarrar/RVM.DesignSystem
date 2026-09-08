@@ -1,0 +1,183 @@
+@namespace RVM.DesignSystem.Components
+@using Microsoft.AspNetCore.Components.Routing
+@implements IDisposable
+@inject NavigationManager Nav
+
+@*
+    Um item de navegação. Vira `<a>` quando tem destino e `<button>` quando abre sub-itens —
+    nunca uma `div` clicável.
+
+    O estado ativo NUNCA é comunicado só por cor (`11`): há `aria-current="page"` para quem usa
+    leitor de tela, uma barra à esquerda para quem não distingue as cores, e o ícone muda para o
+    peso `Fill`. A cor é o quarto sinal, não o único.
+*@
+
+<li class="rvm-nav-item">
+    @if (TemFilhos)
+    {
+        <button type="button"
+                class="@ClasseDoGatilho"
+                aria-expanded="@(_aberto ? "true" : "false")"
+                @onclick="Alternar"
+                @attributes="AdditionalAttributes">
+            @Rotulo
+            <RvmIcon Name="caret-right" Class="rvm-nav-item__seta" Size="1rem" />
+        </button>
+
+        @if (_aberto)
+        {
+            <ul class="rvm-nav-item__filhos">
+                @ChildContent
+            </ul>
+        }
+    }
+    else
+    {
+        <a href="@Href"
+           class="@ClasseDoGatilho"
+           aria-current="@(Ativo ? "page" : null)"
+           @attributes="AdditionalAttributes">
+            @Rotulo
+        </a>
+    }
+</li>
+
+@code {
+    private bool _aberto;
+
+    /// <summary>Destino. Sem ele, e com sub-itens, o item vira um expansor.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>Texto do item.</summary>
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = string.Empty;
+
+    /// <summary>Ícone opcional, do conjunto Phosphor.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>
+    /// Contador ou etiqueta curta à direita ("3" mensagens novas).
+    /// </summary>
+    /// <remarks>
+    /// O valor visível vai acompanhado de um texto só para leitor de tela. Sem ele, o leitor
+    /// anuncia "Mensagens" e depois "3" solto, sem dizer três do quê.
+    /// </remarks>
+    [Parameter]
+    public string? Badge { get; set; }
+
+    /// <summary>Como o contador é anunciado. O <c>{0}</c> recebe o valor.</summary>
+    [Parameter]
+    public string BadgeLabel { get; set; } = "{0} novos";
+
+    /// <summary>
+    /// Casamento exato da rota. Por padrão, o item também fica ativo nas rotas filhas.
+    /// </summary>
+    /// <remarks>
+    /// O item da raiz (<c>Href=""</c>) casaria com tudo, então ele é sempre tratado como exato —
+    /// sem isso, "Início" ficaria aceso em todas as páginas do site.
+    /// </remarks>
+    [Parameter]
+    public bool Exact { get; set; }
+
+    /// <summary>Sub-itens. Informá-los transforma o item num expansor.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [CascadingParameter]
+    private RvmShellContext? Casca { get; set; }
+
+    private bool TemFilhos => ChildContent is not null;
+
+    private bool Ativo { get; set; }
+
+    private string ClasseDoGatilho => RvmClasse.Juntar(
+        "rvm-nav-item__gatilho",
+        Ativo ? "rvm-nav-item__gatilho--ativo" : null);
+
+    private RenderFragment Rotulo => @<text>
+        @if (Icon is not null)
+        {
+            <RvmIcon Name="@Icon"
+                     Weight="@(Ativo ? RvmIconWeight.Fill : RvmIconWeight.Regular)"
+                     Class="rvm-nav-item__icone"
+                     Size="1.25rem" />
+        }
+        else
+        {
+            @*
+                A inicial do texto, para o item nunca ficar VAZIO na barra colapsada.
+
+                Sem isto, um menu cujos itens nao tem `Icon` colapsa numa coluna de linhas em
+                branco — cada uma clicavel, nenhuma identificavel. E a biblioteca nao pode
+                depender de quem usa ter posto icone em todos: ela oferece o botao de colapsar,
+                entao o estado colapsado e responsabilidade dela.
+
+                Fica escondida por padrao e so aparece quando a barra colapsa; e `aria-hidden`
+                porque o texto completo continua no DOM, e uma letra solta nao identifica nada.
+            *@
+            <span class="rvm-nav-item__inicial" aria-hidden="true">@Inicial</span>
+        }
+        <span class="rvm-nav-item__texto">@Text</span>
+        @if (Badge is not null)
+        {
+            <span class="rvm-nav-item__badge">
+                <span aria-hidden="true">@Badge</span>
+                <span class="rvm-sr-only">@RotuloDoBadge</span>
+            </span>
+        }
+    </text>;
+
+    private string Inicial => string.IsNullOrWhiteSpace(Text)
+        ? "?"
+        : char.ToUpper(Text.TrimStart()[0], System.Globalization.CultureInfo.CurrentCulture).ToString();
+
+    private string RotuloDoBadge =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, BadgeLabel, Badge);
+
+    protected override void OnInitialized()
+    {
+        Nav.LocationChanged += AoNavegar;
+        Recalcular();
+    }
+
+    protected override void OnParametersSet() => Recalcular();
+
+    // Fechar a gaveta ao navegar é do item, e não de quem usa: no celular a gaveta continuaria
+    // cobrindo a tela que a pessoa acabou de escolher, e parece que o toque não funcionou.
+    private void AoNavegar(object? remetente, LocationChangedEventArgs evento)
+    {
+        Recalcular();
+        Casca?.CloseSidebar();
+        StateHasChanged();
+    }
+
+    private void Recalcular()
+    {
+        if (Href is null)
+        {
+            return;
+        }
+
+        var atual = Nav.ToBaseRelativePath(Nav.Uri).Split(SeparadoresDeUri)[0].Trim(Barra);
+        var alvo = Href.Trim(Barra);
+
+        // O item da raiz é sempre exato: "" é prefixo de toda rota que existe.
+        Ativo = Exact || alvo.Length == 0
+            ? string.Equals(atual, alvo, StringComparison.OrdinalIgnoreCase)
+            : atual.Equals(alvo, StringComparison.OrdinalIgnoreCase)
+              || atual.StartsWith(alvo + "/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void Alternar() => _aberto = !_aberto;
+
+    public void Dispose() => Nav.LocationChanged -= AoNavegar;
+
+    private static readonly char[] SeparadoresDeUri = ['?', '#'];
+    private static readonly char[] Barra = ['/'];
+}

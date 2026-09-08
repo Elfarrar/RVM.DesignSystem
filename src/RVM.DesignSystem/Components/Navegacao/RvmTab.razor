@@ -1,0 +1,80 @@
+@namespace RVM.DesignSystem.Components
+@implements IDisposable
+
+@*
+    Uma aba. Renderiza SÓ o painel — o botão dela é desenhado pelo `RvmTabs`, porque todos os
+    botões precisam estar dentro do mesmo elemento `role="tablist"` para o leitor de tela
+    anunciar "aba 2 de 5". Se cada aba desenhasse o próprio botão, eles ficariam espalhados no
+    DOM junto dos painéis e a lista deixaria de existir.
+*@
+
+@if (Ativa)
+{
+    @*
+        tabindex="0" no painel é exigência do APG e parece errado à primeira vista: por que
+        tornar tabulável algo que não é controle? Porque o painel pode não ter nenhum elemento
+        focável dentro (um parágrafo, uma tabela), e sem isso quem navega por teclado sai da
+        lista de abas e pula o conteúdo dela inteiro.
+    *@
+    <div id="@RvmTabs.IdDoPainel(Id)"
+         class="rvm-tab-panel"
+         role="tabpanel"
+         aria-labelledby="@RvmTabs.IdDaAba(Id)"
+         tabindex="0"
+         @attributes="AdditionalAttributes">
+        @ChildContent
+    </div>
+}
+
+@code {
+    /// <summary>
+    /// Identificador da aba, único dentro do grupo.
+    /// </summary>
+    /// <remarks>
+    /// É o valor que <c>@bind-Value</c> do <see cref="RvmTabs"/> carrega, e vira parte do
+    /// <c>id</c> do painel no HTML. Repetido, faz o <c>aria-controls</c> apontar para o
+    /// elemento errado — por isso o pai reprova duplicata em vez de aceitar.
+    /// </remarks>
+    [Parameter, EditorRequired]
+    public string Id { get; set; } = string.Empty;
+
+    /// <summary>Texto do botão da aba.</summary>
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>Ícone opcional no botão da aba.</summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>Desabilita a aba: ela aparece, não recebe foco e as setas a pulam.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>O conteúdo do painel.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Atributos extras, aplicados ao painel.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [CascadingParameter]
+    private RvmTabs? Pai { get; set; }
+
+    private bool Ativa => Pai?.EhAtiva(Id) ?? false;
+
+    protected override void OnInitialized()
+    {
+        if (Pai is null)
+        {
+            // Sem o pai não há tablist, e um painel `role="tabpanel"` solto é marcação inválida
+            // que o leitor de tela anuncia errado. Falhar alto é melhor que renderizar isso.
+            throw new InvalidOperationException(
+                "RvmTab precisa estar dentro de um RvmTabs.");
+        }
+
+        Pai.Registrar(this);
+    }
+
+    public void Dispose() => Pai?.Remover(this);
+}

@@ -1,0 +1,42 @@
+/*
+  Os valores literais das media queries repetem os --rvm-breakpoint-*, e isso não é descuido:
+  media query NÃO aceita custom property (CSS Env não cobre esse caso em nenhum navegador
+  hoje). Os tokens continuam sendo a fonte — este arquivo é uma cópia declarada dela.
+*/
+
+.rvm-grid {
+    --rvm-grid-columns: 1;
+    --rvm-grid-columns-sm: 1;
+    --rvm-grid-columns-md: 1;
+    --rvm-grid-columns-lg: 1;
+    --rvm-grid-columns-xl: 1;
+
+    display: grid;
+    /* minmax(0, 1fr) e não 1fr: com 1fr o mínimo é `auto`, e uma célula com conteúdo
+       largo (uma tabela, uma palavra sem espaço) empurra a coluna e estoura o grid. */
+    grid-template-columns: repeat(var(--rvm-grid-columns), minmax(0, 1fr));
+}
+
+.rvm-grid--gap-none { gap: var(--rvm-space-0); }
+.rvm-grid--gap-xs { gap: var(--rvm-space-1); }
+.rvm-grid--gap-sm { gap: var(--rvm-space-2); }
+.rvm-grid--gap-md { gap: var(--rvm-space-4); }
+.rvm-grid--gap-lg { gap: var(--rvm-space-6); }
+.rvm-grid--gap-xl { gap: var(--rvm-space-8); }
+.rvm-grid--gap-xxl { gap: var(--rvm-space-12); }
+
+@media (min-width: 640px) {
+    .rvm-grid { grid-template-columns: repeat(var(--rvm-grid-columns-sm), minmax(0, 1fr)); }
+}
+
+@media (min-width: 768px) {
+    .rvm-grid { grid-template-columns: repeat(var(--rvm-grid-columns-md), minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+    .rvm-grid { grid-template-columns: repeat(var(--rvm-grid-columns-lg), minmax(0, 1fr)); }
+}
+
+@media (min-width: 1280px) {
+    .rvm-grid { grid-template-columns: repeat(var(--rvm-grid-columns-xl), minmax(0, 1fr)); }
+}

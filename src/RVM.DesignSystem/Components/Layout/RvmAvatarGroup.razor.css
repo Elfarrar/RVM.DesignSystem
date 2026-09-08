@@ -1,0 +1,33 @@
+.rvm-avatar-group {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+  A sobreposição é margem negativa e não position: assim os avatares continuam no fluxo e o
+  grupo mede a própria largura sozinho.
+*/
+.rvm-avatar-group__item + .rvm-avatar-group__item {
+    margin-left: -0.6em;
+}
+
+/*
+  O anel usa a cor da SUPERFÍCIE, e não branco: é ele que separa um avatar do outro na pilha,
+  e precisa acompanhar o modo escuro.
+
+  ::deep é obrigatório no primeiro seletor. O `.rvm-avatar` renderizado ali dentro pertence ao
+  RvmAvatar, que tem OUTRO escopo b-* — sem ::deep a regra nunca casa. Foi o defeito nº 2 da
+  onda 1, e ele volta toda vez que um componente estiliza elemento de outro.
+*/
+.rvm-avatar-group__item ::deep .rvm-avatar {
+    box-shadow: 0 0 0 2px var(--rvm-color-surface);
+}
+
+.rvm-avatar-group__excedente {
+    box-shadow: 0 0 0 2px var(--rvm-color-surface);
+    background-color: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface);
+}

@@ -73,10 +73,21 @@ public class CssDeComponenteTests
     {
         var problemas = new List<string>();
 
+        // Custom property DECLARADA no proprio arquivo tambem existe. Sem esta linha o portao
+        // proibiria o unico jeito de fazer grid responsivo em CSS: a media query nao pode ser
+        // gerada por instancia, entao o componente declara `--rvm-grid-columns` com um padrao e
+        // a instancia sobrescreve por style inline. O defeito que o portao persegue continua
+        // pego — `--rvm-color-primry` nao esta declarado em lugar nenhum.
+        var declaradasAqui = Regex.Matches(css, @"^\s*(--rvm-[a-z0-9-]+)\s*:", RegexOptions.Multiline)
+            .Select(m => m.Groups[1].Value);
+
+        var validos = new HashSet<string>(conhecidos, StringComparer.Ordinal);
+        validos.UnionWith(declaradasAqui);
+
         foreach (Match m in ReferenciaDeToken.Matches(css))
         {
             var token = m.Groups[1].Value;
-            if (!conhecidos.Contains(token))
+            if (!validos.Contains(token))
             {
                 problemas.Add($"  {rotulo}: usa {token}, que nao existe em nenhuma camada de token");
             }
@@ -132,6 +143,34 @@ public class CssDeComponenteTests
         var problemas = Violacoes(css, "teste.razor.css", TokensConhecidos());
 
         Assert.True(problemas.Count > 0, $"O portao deixou passar: {oQue}.");
+    }
+
+    [Fact]
+    public void O_portao_APROVA_custom_property_declarada_no_proprio_arquivo()
+    {
+        // O caso do RvmGrid: media query nao pode ser gerada por instancia, entao o componente
+        // declara a propria propriedade com padrao e a instancia sobrescreve inline.
+        const string css = """
+            .rvm-grid {
+                --rvm-grid-columns: 1;
+                display: grid;
+                grid-template-columns: repeat(var(--rvm-grid-columns), minmax(0, 1fr));
+            }
+            """;
+
+        Assert.Empty(Violacoes(css, "grid.razor.css", TokensConhecidos()));
+    }
+
+    [Fact]
+    public void O_portao_continua_REPROVANDO_propriedade_que_ninguem_declarou()
+    {
+        // A folga acima nao pode virar buraco: usar sem declarar continua sendo erro.
+        var problemas = Violacoes(
+            ".rvm-grid { grid-template-columns: repeat(var(--rvm-grid-colunas), 1fr); }",
+            "grid.razor.css",
+            TokensConhecidos());
+
+        Assert.NotEmpty(problemas);
     }
 
     [Fact]

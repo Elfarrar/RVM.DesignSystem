@@ -1,0 +1,116 @@
+@page "/componentes/nav-item"
+
+<PaginaDeComponente Nome="RvmNavItem"
+                    Tipo="typeof(RvmNavItem)"
+                    Frase="Um item de menu que sabe sozinho se está ativo. Vira link quando tem destino e botão quando abre sub-itens.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                @* O RvmSidebar em volta é o que dá o `ul` — RvmNavItem renderiza um `li`. *@
+                <RvmSidebar Label="Exemplo de navegação" Collapsible="false">
+                    <RvmNavItem Text="Início" Href="" Icon="house" Exact="true" />
+                    <RvmNavItem Text="Componentes" Href="componentes/nav-item" Icon="list" Badge="12" BadgeLabel="{0} componentes" />
+                    <RvmNavItem Text="Cadastros" Icon="user">
+                        <RvmNavItem Text="Clientes" Href="cadastros/clientes" />
+                        <RvmNavItem Text="Produtos" Href="cadastros/produtos" />
+                    </RvmNavItem>
+                    <RvmNavItem Text="Acessibilidade" Href="acessibilidade" />
+                </RvmSidebar>
+            </div>
+            <div class="playground__controles">
+                <p class="doc__nota">
+                    O item "Componentes" está aceso porque a rota atual é a desta página. Clique
+                    em "Acessibilidade" e volte: o item acende sozinho, sem ninguém informar
+                    estado.
+                </p>
+                <p class="doc__nota">
+                    "Cadastros" não tem <code>Href</code> — só sub-itens. Por isso ele é um
+                    <code>&lt;button aria-expanded&gt;</code>, e não um link.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Estados>
+        <ul class="doc__lista">
+            <li>
+                <strong>Ativo</strong> — quatro sinais ao mesmo tempo:
+                <code>aria-current="page"</code> para o leitor de tela, uma barra à esquerda para
+                quem não distingue cores, o ícone no peso <code>Fill</code>, e a cor. Nunca só a
+                cor.
+            </li>
+            <li>
+                <strong>Ativo por rota filha</strong> — <code>Href="produtos"</code> fica aceso em
+                <code>produtos/42/editar</code>. Passe <code>Exact</code> para exigir a rota exata.
+            </li>
+            <li>
+                <strong>Com contador</strong> — o valor visível é <code>aria-hidden</code> e
+                acompanha um texto só para leitor de tela. Sem isso o leitor anuncia "Mensagens" e
+                depois "3" solto, sem dizer três do quê.
+            </li>
+        </ul>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>O item da raiz é sempre exato.</strong> <code>Href=""</code> é prefixo de
+                toda rota que existe, então sem tratamento "Início" ficaria aceso no site inteiro
+                — o defeito mais comum de menu lateral feito à mão.
+            </li>
+            <li>
+                <strong>Prefixo parecido não confunde.</strong>
+                <code>produtos-antigos</code> começa com <code>produtos</code>, mas não é filha
+                dela. A comparação exige a barra.
+            </li>
+            <li>
+                <strong>Navegar fecha a gaveta.</strong> Quando há um
+                <a href="componentes/app-shell">RvmAppShell</a> em volta, o item fecha o menu
+                sozinho ao mudar de rota. Sem isso, no celular a gaveta continua cobrindo a tela
+                que a pessoa acabou de escolher, e parece que o toque não funcionou.
+            </li>
+            <li>
+                <strong>Item com filhos é <code>&lt;button aria-expanded&gt;</code></strong>, e não
+                um link que não leva a lugar nenhum.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Fora de uma lista.</strong> Ele renderiza um <code>&lt;li&gt;</code>, e um
+                <code>li</code> solto é marcação inválida. Use dentro de
+                <a href="componentes/sidebar">RvmSidebar</a> ou de um <code>RvmNavGroup</code>.
+            </li>
+            <li>
+                <strong>Para ação.</strong> Item de navegação leva a algum lugar. "Exportar",
+                "Salvar" e "Sair" são <a href="componentes/button">RvmButton</a> — mesmo que
+                fiquem no menu.
+            </li>
+            <li>
+                <strong>Para trocar de aba na mesma tela.</strong> Isso é
+                <a href="componentes/tabs">RvmTabs</a>, e a diferença importa: aba não muda a URL,
+                item de menu sim.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private const string _exemplo = """
+        <RvmSidebar Label="Navegação principal">
+            <RvmNavItem Text="Início" Href="" Icon="house" Exact="true" />
+            <RvmNavItem Text="Mensagens" Href="mensagens" Icon="list"
+                        Badge="3" BadgeLabel="{0} mensagens não lidas" />
+
+            @* Sem Href e com filhos: vira um expansor com aria-expanded. *@
+            <RvmNavItem Text="Cadastros" Icon="user">
+                <RvmNavItem Text="Clientes" Href="cadastros/clientes" />
+                <RvmNavItem Text="Produtos" Href="cadastros/produtos" />
+            </RvmNavItem>
+        </RvmSidebar>
+        """;
+}

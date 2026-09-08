@@ -1,0 +1,117 @@
+@page "/componentes/grid"
+
+<PaginaDeComponente Nome="RvmGrid"
+                    Tipo="typeof(RvmGrid)"
+                    Frase="Grade responsiva por número de colunas em cada breakpoint. Cada faixa herda a anterior quando não é informada.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmGrid Columns="_base" ColumnsMd="_md" ColumnsLg="_lg" Gap="RvmSpacing.Md">
+                    @for (var i = 1; i <= 6; i++)
+                    {
+                        <RvmCard Variant="RvmCardVariant.Outlined"><ChildContent>Célula @i</ChildContent></RvmCard>
+                    }
+                </RvmGrid>
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="int" @bind-Value="_base" Label="Columns (base)">
+                    @foreach (var n in new[] { 1, 2, 3 })
+                    {
+                        <option value="@n">@n</option>
+                    }
+                </RvmSelect>
+                <RvmSelect TValue="int" @bind-Value="_md" Label="ColumnsMd (≥768px)">
+                    @foreach (var n in new[] { 1, 2, 3, 4 })
+                    {
+                        <option value="@n">@n</option>
+                    }
+                </RvmSelect>
+                <RvmSelect TValue="int" @bind-Value="_lg" Label="ColumnsLg (≥1024px)">
+                    @foreach (var n in new[] { 1, 2, 3, 4, 6 })
+                    {
+                        <option value="@n">@n</option>
+                    }
+                </RvmSelect>
+            </div>
+        </div>
+        <p class="doc__nota">
+            Diminua a janela para ver as faixas trocarem. As colunas do exemplo acima estão em
+            <strong>@_base</strong> na base, <strong>@_md</strong> a partir de 768px e
+            <strong>@_lg</strong> a partir de 1024px.
+        </p>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Herança entre as faixas</h3>
+        <p>
+            <code>ColumnsSm</code>, <code>ColumnsMd</code>, <code>ColumnsLg</code> e
+            <code>ColumnsXl</code> são opcionais, e cada uma <strong>herda a anterior</strong>
+            quando não é informada. Sem isso, quem escreve só <code>Columns="1"</code> e
+            <code>ColumnsLg="3"</code> veria o layout voltar para uma coluna entre 640 e 1024px —
+            uma faixa inteira de larguras errada, e justamente a do tablet, que ninguém testa.
+        </p>
+        <BlocoDeCodigo Codigo="@_heranca" />
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Sem papel ARIA.</strong> É <code>display: grid</code> numa
+                <code>div</code>. Grade visual não é tabela de dados — pôr <code>role="grid"</code>
+                aqui faria o leitor de tela anunciar linhas e colunas que não existem
+                semanticamente. Tabela de dados é <code>RvmDataGrid</code>, na onda 4.
+            </li>
+            <li>
+                <strong>A ordem de leitura é a ordem do HTML</strong>, e o grid não a altera:
+                nada de <code>grid-auto-flow: dense</code>, que reposiciona células e faz o foco
+                do teclado saltar.
+            </li>
+            <li>
+                <strong><code>minmax(0, 1fr)</code> e não <code>1fr</code>.</strong> Com
+                <code>1fr</code> o mínimo é <code>auto</code>, e uma célula com conteúdo largo
+                empurra a coluna e estoura a grade — o transbordo horizontal que a WCAG 1.4.10
+                trata como falha de refluxo.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para uma fileira só.</strong> Um eixo é <a href="componentes/stack">RvmStack</a>.
+            </li>
+            <li>
+                <strong>Para dados tabulares.</strong> Se as colunas têm cabeçalho e significado,
+                é uma <code>&lt;table&gt;</code> — ou o <code>RvmDataGrid</code> da onda 4. Grade
+                de layout com aparência de tabela é ilegível para leitor de tela.
+            </li>
+            <li>
+                <strong>Quando o número de colunas depende da largura do item, e não da tela.</strong>
+                Aí o certo é <code>repeat(auto-fill, minmax(...))</code> em CSS próprio; o
+                <code>RvmGrid</code> fala em breakpoints, não em largura mínima de célula.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private int _base = 1;
+    private int _md = 2;
+    private int _lg = 3;
+
+    private const string _heranca = """
+        @* 1 coluna no celular, 3 a partir de 1024px — e 1 em tudo que está no meio,
+           porque sm e md herdam o valor da base. *@
+        <RvmGrid Columns="1" ColumnsLg="3">...</RvmGrid>
+        """;
+
+    private string Snippet() =>
+        $"""
+        <RvmGrid Columns="{_base}" ColumnsMd="{_md}" ColumnsLg="{_lg}" Gap="RvmSpacing.Md">
+            <RvmCard>Célula 1</RvmCard>
+            <RvmCard>Célula 2</RvmCard>
+        </RvmGrid>
+        """;
+}

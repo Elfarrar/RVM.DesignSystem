@@ -1,0 +1,72 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Três formas, uma regra: o NOME sempre chega ao leitor de tela, inteiro.
+
+    Com imagem, ele é o `alt`. Com iniciais, as letras ficam `aria-hidden` e o nome vai no
+    `aria-label` do círculo — porque "MS" anunciado letra por letra não identifica ninguém.
+    Sem nome nenhum, sobra o ícone genérico, e aí o avatar é decorativo de verdade.
+*@
+
+<span class="@ClasseFinal" style="@EstiloFinal"
+      role="@(TemNome ? "img" : null)"
+      aria-label="@(TemNome && Src is null ? Name : null)"
+      aria-hidden="@(TemNome ? null : "true")"
+      @attributes="AdditionalAttributes">
+    @if (Src is not null)
+    {
+        <img class="rvm-avatar__imagem" src="@Src" alt="@Name" loading="lazy" />
+    }
+    else if (_iniciais.Length > 0)
+    {
+        <span class="rvm-avatar__iniciais" aria-hidden="true">@_iniciais</span>
+    }
+    else
+    {
+        <RvmIcon Name="user" Class="rvm-avatar__icone" />
+    }
+</span>
+
+@code {
+    private string _iniciais = string.Empty;
+    private string _fundo = string.Empty;
+    private string _texto = string.Empty;
+
+    /// <summary>Nome completo. Vira as iniciais, a cor e o nome acessível.</summary>
+    [Parameter]
+    public string? Name { get; set; }
+
+    /// <summary>Endereço da imagem. Quando informado, substitui as iniciais.</summary>
+    [Parameter]
+    public string? Src { get; set; }
+
+    /// <summary>Tamanho do círculo.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private bool TemNome => !string.IsNullOrWhiteSpace(Name);
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-avatar",
+        $"rvm-avatar--{RvmClasse.Sufixo(Size)}",
+        Class);
+
+    // A cor derivada do nome sai por style inline porque não é um papel do tema: ela é
+    // calculada por instância. O contraste do par é garantido em RvmAvatarCor e medido em teste.
+    private string? EstiloFinal =>
+        Src is not null ? null : $"background-color:{_fundo};color:{_texto}";
+
+    protected override void OnParametersSet()
+    {
+        _iniciais = RvmAvatarCor.Iniciais(Name);
+        (_fundo, _texto) = RvmAvatarCor.DoNome(Name);
+    }
+}

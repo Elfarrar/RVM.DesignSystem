@@ -1,0 +1,124 @@
+@namespace RVM.DesignSystem.Components
+@implements IDisposable
+
+@*
+    A barra lateral. Um `nav` de verdade, com nome — é assim que o leitor de tela oferece
+    "pular para a navegação" sem que ninguém escreva nada para isso.
+
+    Ela tem DOIS estados independentes, e confundi-los é o erro comum:
+
+      • colapsada  — em tela larga, reduzida a ícones. Continua ocupando espaço no fluxo.
+      • aberta     — em tela estreita, sobreposta ao conteúdo como gaveta. Fora do fluxo.
+
+    Quem manda nos dois é o RvmShellContext, porque o botão que abre a gaveta mora na topbar.
+*@
+
+<nav class="@ClasseFinal" aria-label="@Label" @attributes="AdditionalAttributes">
+    @if (Header is not null)
+    {
+        <div class="rvm-sidebar__topo">@Header</div>
+    }
+
+    <ul class="rvm-sidebar__lista">
+        @ChildContent
+    </ul>
+
+    @if (Footer is not null)
+    {
+        <div class="rvm-sidebar__rodape">@Footer</div>
+    }
+
+    @if (Collapsible)
+    {
+        <div class="rvm-sidebar__acoes">
+            @*
+                O nome do botão MUDA com o estado, em vez de ficar "Alternar a barra lateral".
+                Um nome fixo obriga quem não vê a tela a adivinhar o que vai acontecer.
+            *@
+            <button type="button"
+                    class="rvm-sidebar__colapsar"
+                    aria-label="@(Colapsada ? ExpandLabel : CollapseLabel)"
+                    aria-expanded="@(Colapsada ? "false" : "true")"
+                    @onclick="AlternarColapso">
+                <RvmIcon Name="sidebar-simple" Size="1.25rem" />
+            </button>
+        </div>
+    }
+</nav>
+
+@code {
+    /// <summary>
+    /// Nome da navegação para o leitor de tela.
+    /// </summary>
+    /// <remarks>
+    /// Uma página costuma ter mais de um <c>nav</c> (a lateral, a trilha, o rodapé). Sem nome,
+    /// todos são anunciados como "navegação" e a lista de marcos do leitor de tela fica inútil.
+    /// </remarks>
+    [Parameter]
+    public string Label { get; set; } = "Navegação principal";
+
+    /// <summary>Mostra o botão que reduz a barra a ícones.</summary>
+    [Parameter]
+    public bool Collapsible { get; set; } = true;
+
+    /// <summary>Nome acessível do botão quando ele vai colapsar.</summary>
+    [Parameter]
+    public string CollapseLabel { get; set; } = "Recolher a barra lateral";
+
+    /// <summary>Nome acessível do botão quando ele vai expandir.</summary>
+    [Parameter]
+    public string ExpandLabel { get; set; } = "Expandir a barra lateral";
+
+    /// <summary>Topo fixo — marca, seletor de empresa.</summary>
+    [Parameter]
+    public RenderFragment? Header { get; set; }
+
+    /// <summary>Rodapé fixo — usuário, sair.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>Os <see cref="RvmNavItem"/> e <see cref="RvmNavGroup"/>.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [CascadingParameter]
+    private RvmShellContext? Casca { get; set; }
+
+    private bool Colapsada => Casca?.SidebarCollapsed ?? false;
+
+    private bool Aberta => Casca?.SidebarOpen ?? false;
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-sidebar",
+        Colapsada ? "rvm-sidebar--colapsada" : null,
+        Aberta ? "rvm-sidebar--aberta" : null,
+        Class);
+
+    protected override void OnInitialized()
+    {
+        if (Casca is not null)
+        {
+            Casca.Changed += AoMudar;
+        }
+    }
+
+    private void AoMudar() => InvokeAsync(StateHasChanged);
+
+    private void AlternarColapso() => Casca?.ToggleCollapsed();
+
+    public void Dispose()
+    {
+        if (Casca is not null)
+        {
+            Casca.Changed -= AoMudar;
+        }
+    }
+}

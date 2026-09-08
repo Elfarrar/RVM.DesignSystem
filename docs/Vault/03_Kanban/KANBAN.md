@@ -9,7 +9,10 @@
 
 ## Em revisao
 
-_(vazio — a onda 1 fechou)_
+- [[DSGN-017]] — **Onda 2**: casca de aplicacao (`RvmAppShell`/`Sidebar`/`Topbar`/`NavItem`),
+  layout (`Stack`/`Grid`/`Card`/`Divider`), conteudo e navegacao (`Chip`/`Avatar`/`Tabs`/
+  `Breadcrumb`) e densidade `Compact`. **O proprio site ja usa a casca** — criterio de saida
+  cumprido. 184 testes, 29 pares de contraste. Sai como `0.2.0`.
 
 ## Concluido
 
@@ -21,23 +24,29 @@ _(vazio — a onda 1 fechou)_
 
 ## A fazer
 
+### ✅ Onda 2 — fechada em 08/09/2026, sai como `0.2.0`
+
+Doze componentes de layout e navegacao, densidade `Compact`, 8 icones novos e 13 paginas de
+documentacao. O conjunto de icones — a decisao de contrato que sobrava da onda 1 — ficou
+**curado**: 19 icones, cada um entrando junto do componente que o usa. Card: [[DSGN-017]].
+
 ### ✅ Onda 1 — fechada em 08/09/2026, publicada como `0.1.0`
 
 Nove componentes, camada de tokens, motor de tema, icones Phosphor e o site de documentacao.
 `design.rvmit.com.br` no ar. Cards: [[DSGN-002]], [[DSGN-012]], [[DSGN-013]], [[DSGN-014]],
 [[DSGN-015]].
 
-### Onda 2 — Layout (proxima)
+### Onda 3 — Feedback (proxima)
 
-`RvmAppShell`, `RvmSidebar` (colapsavel, drawer no mobile), `RvmTopbar`, `RvmNavItem`,
-`RvmCard`, `RvmGrid`/`RvmStack`, `RvmTabs`, `RvmBreadcrumb`, `RvmDivider`, `RvmChip`,
-`RvmAvatar`, densidade `Compact`. Fecha em `0.2.0`.
+`RvmDialog` + `IRvmDialogService`, `RvmToast` + `IRvmToastService`, `RvmAlert`, `RvmSkeleton`,
+`RvmSpinner`, `RvmProgress`, `RvmTooltip`, `RvmEmptyState`. Fecha em `0.3.0`.
 
-⚠️ **Decisao de contrato que sobra da onda 1:** quais icones entram no sprite. Cada um e nome
-publico e bytes que todo consumidor baixa — a lista e curada junto dos componentes que os usam.
+> **Meta (`09-roadmap`):** o E2E abre o dialogo, navega so por teclado, fecha com `ESC` e
+> confirma que o foco voltou ao botao de origem.
 
-> **Meta da onda 2 (`09-roadmap`):** o proprio site passa a usar `RvmAppShell` — a casca deixa
-> de ser codigo de exemplo e vira codigo em producao.
+⚠️ **O que a onda 2 deixa para ela:** a densidade hoje alcanca os controles da onda 1 e o
+`RvmNavItem`. Componente de dado (onda 4) precisa entrar na conta dos tokens `--rvm-control-*`,
+ou nasce ignorando a densidade em silencio.
 
 <details>
 <summary>Escopo original da onda 1, para referencia</summary>

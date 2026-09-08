@@ -1,0 +1,159 @@
+@page "/componentes/avatar"
+
+<PaginaDeComponente Nome="RvmAvatar"
+                    Tipo="typeof(RvmAvatar)"
+                    Frase="Identifica uma pessoa por imagem ou iniciais. A cor é derivada do nome — e a derivação nasce aprovada no contraste AA.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Md" Align="RvmAlign.Center">
+                    <RvmAvatar Name="@_nome" Size="_tamanho" />
+                    <span>@(string.IsNullOrWhiteSpace(_nome) ? "(sem nome — cai no ícone genérico)" : _nome)</span>
+                </RvmStack>
+            </div>
+            <div class="playground__controles">
+                <RvmTextField @bind-Value="_nome" Label="Name" Help="Muda as iniciais E a cor." />
+                <RvmSelect TValue="RvmSize" @bind-Value="_tamanho" Label="Size">
+                    @foreach (var s in Enum.GetValues<RvmSize>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">A cor sai do nome</h3>
+        <p>
+            A matiz vem de um hash <strong>FNV-1a</strong> do nome, e não de
+            <code>string.GetHashCode</code>: desde o .NET Core o hash de string é aleatorizado
+            por processo, então o mesmo nome mudaria de cor a cada reinício do servidor — e a cor
+            é justamente como a pessoa se acha numa lista.
+        </p>
+        <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Wrap="true">
+            @foreach (var n in _pessoas)
+            {
+                <RvmAvatar Name="@n" />
+            }
+        </RvmStack>
+
+        <h3 class="doc__subtitulo">Contraste medido, não estimado</h3>
+        <p>
+            Luminosidade e croma são <strong>fixos</strong>; só a matiz varia. Deixar as três
+            variarem com o hash daria paletas mais bonitas e contraste imprevisível. Abaixo, a
+            razão real de cada par, calculada agora nesta página pela mesma função que reprova o
+            build:
+        </p>
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Fundo</th>
+                        <th scope="col">Texto</th>
+                        <th scope="col">Contraste</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var n in _pessoas)
+                    {
+                        var (fundo, texto) = RvmAvatarCor.DoNome(n);
+                        var razao = RvmColor.Contrast(RvmColor.Parse(texto), RvmColor.Parse(fundo));
+
+                        <tr>
+                            <td>@n</td>
+                            <td><code>@fundo</code></td>
+                            <td><code>@texto</code></td>
+                            <td>@razao.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture):1</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="doc__nota">
+            Há um teste que percorre <strong>as 360 matizes possíveis</strong> — não só os nomes
+            do exemplo — e reprova o build se alguma cair abaixo de 4.5:1. Sem ele, esta seria a
+            única cor da biblioteca capaz de reprovar AA sem nada reclamar, porque ela não está
+            na paleta nem em arquivo CSS nenhum: nasce num <code>style</code> inline.
+        </p>
+
+        <h3 class="doc__subtitulo">Grupo empilhado</h3>
+        <RvmAvatarGroup Max="4" People="_equipe" />
+        <p class="doc__nota">
+            Com 4 no <code>Max</code> e 5 pessoas, o quinto avatar aparece em vez de um "+1": ele
+            ocupa o mesmo espaço e diz mais. O "+N" só entra quando esconde dois ou mais.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Com iniciais, as letras são <code>aria-hidden</code> e o nome inteiro vai
+                no <code>aria-label</code>.</strong> "MS" anunciado letra por letra não identifica
+                ninguém.
+            </li>
+            <li>
+                <strong>Com imagem, o nome vai no <code>alt</code> e não se repete no
+                <code>aria-label</code></strong> — com os dois, o leitor de tela anunciaria o nome
+                duas vezes.
+            </li>
+            <li>
+                <strong>Sem nome, o avatar é decorativo</strong> (<code>aria-hidden</code>) e
+                mostra o ícone genérico. Um círculo cinza anunciado como "imagem" não acrescenta
+                nada.
+            </li>
+            <li>
+                <strong>As iniciais são a primeira e a última palavra</strong>, não as duas
+                primeiras: "Maria Aparecida Silva" é conhecida como "MS", não como "MA".
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Como botão.</strong> O avatar identifica; ele não age. Um menu de conta se
+                faz com um <a href="componentes/button">RvmButton</a> ou
+                <code>RvmIconButton</code> <em>contendo</em> o avatar, para o controle ter nome e
+                papel próprios.
+            </li>
+            <li>
+                <strong>Para logotipo de empresa.</strong> A cor derivada do nome é para
+                distinguir pessoas entre si. Marca tem cor própria, e recortá-la num círculo
+                costuma piorá-la.
+            </li>
+            <li>
+                <strong>Como única identificação numa lista.</strong> Iniciais colidem: "Ana
+                Silva" e "Antônio Souza" são as duas "AS". O nome precisa estar escrito ao lado
+                em algum lugar.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string? _nome = "Rafael Venerosi Morici";
+    private RvmSize _tamanho = RvmSize.Medium;
+
+    private readonly string[] _pessoas =
+    [
+        "Ana Silva", "Bruno Costa", "Carla Dias", "Diego Reis", "Elza Nunes", "Fábio Lima",
+    ];
+
+    private readonly RvmAvatarGroup.Pessoa[] _equipe =
+    [
+        new("Ana Silva"), new("Bruno Costa"), new("Carla Dias"),
+        new("Diego Reis"), new("Elza Nunes"),
+    ];
+
+    private string Snippet() =>
+        $"""
+        <RvmAvatar Name="{_nome}" Size="RvmSize.{_tamanho}" />
+
+        @* Com foto, o nome continua obrigatório: ele vira o alt. *@
+        <RvmAvatar Name="{_nome}" Src="/fotos/rafael.jpg" />
+        """;
+}
