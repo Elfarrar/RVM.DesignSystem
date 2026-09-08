@@ -71,14 +71,25 @@ jobs:
         run: |
           # Verificar CONTEUDO, nao so o codigo HTTP: host estatico com fallback devolve 200
           # para url inexistente e o status daria verde com a pagina errada no ar.
-          for i in 1 2 3 4 5; do
+          #
+          # A janela e generosa (10x30s) porque o certificado do dominio proprio leva alguns
+          # minutos para propagar entre as bordas do Pages, e durante esse tempo o mesmo
+          # endereco alterna entre 200 e erro de TLS conforme o no que atende.
+          for i in $(seq 1 10); do
             body="$(curl -sS --max-time 20 -L https://design.rvmit.com.br || true)"
             if echo "$body" | grep -q "RVM Design System"; then
               echo "design.rvmit.com.br no ar e com o conteudo esperado (tentativa $i)"
               exit 0
             fi
-            echo "::warning::design.rvmit.com.br ainda sem o conteudo esperado (tentativa $i/5)"
-            sleep 20
+            echo "::warning::design.rvmit.com.br ainda sem o conteudo esperado (tentativa $i/10)"
+            sleep 30
           done
-          echo "::error::Verificacao falhou. Conferir DNS (CNAME -> elfarrar.github.io) e 'Enforce HTTPS' nas settings de Pages."
+          echo "::error::Verificacao falhou apos 5 minutos."
+          echo "::error::SE ESTE FOR O PRIMEIRO DEPLOY do repositorio, e esperado: o dominio proprio"
+          echo "::error::so pode ser registrado DEPOIS que existe um deployment, entao o site publica"
+          echo "::error::mas ainda nao responde em design.rvmit.com.br. Registrar o dominio e re-rodar:"
+          echo "::error::  gh api -X PUT repos/\$GITHUB_REPOSITORY/pages -f cname=design.rvmit.com.br"
+          echo "::error::  gh api -X PUT repos/\$GITHUB_REPOSITORY/pages -f cname=design.rvmit.com.br -F https_enforced=true"
+          echo "::error::Fora do primeiro deploy: conferir o CNAME na zona rvmit.com.br e o estado do"
+          echo "::error::certificado em 'gh api repos/\$GITHUB_REPOSITORY/pages'."
           exit 1
