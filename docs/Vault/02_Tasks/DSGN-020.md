@@ -3,7 +3,7 @@ id: DSGN-020
 titulo: Onda 4 — dados, e a 1.0
 repo: RVM.DesignSystem
 tipo: feature
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 
@@ -96,6 +96,17 @@ resumo da paginacao.
 Conferido no dev, no modo escuro: ordenacao por clique, selecao de 3 linhas com o total somado
 na barra, e a caixa de "selecionar todas" no estado **indeterminado** — que e o unico dos tres
 estados que exige JS, porque `indeterminate` e propriedade do elemento e nao atributo.
+
+| Prod no ar | `design.rvmit.com.br`, verificado por CONTEUDO e no navegador |
+| Pacote | **`1.0.0`** no BaGet, pela tag `v1.0.0`, presa ao commit `2366388` |
+
+## Promocao para producao — 08/09/2026
+
+Autorizada pelo Rafael. `dev` -> `master` pelo PR #34, deploy do Pages verde. Conferida em
+producao: 487 pedidos, ordenacao por Total funcionando e a legenda da tabela anunciando
+"ordenada por Total, crescente".
+
+A `1.0.0` saiu em **33 segundos** — o `--timeout` do `DSGN-018` continua valendo.
 
 ## O que a 1.0 significa
 
