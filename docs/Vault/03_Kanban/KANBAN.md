@@ -11,6 +11,8 @@
 
 - [[DSGN-001]] — Bootstrap: repo publico, esqueleto .NET 10, 5 workflows, DNS/SSL e o site no ar
   em `design.dev.rvmtech.com.br`. **Producao aguarda sinal verde do Rafael.**
+- [[DSGN-002]] — Camada de tokens, `RvmTheme.FromSeed` e os dois portoes. 62 testes; o portao de
+  contraste cobre 5 temas x 2 modos x 14 pares e reprova entrada ruim de proposito.
 
 ## A fazer
 
@@ -19,9 +21,9 @@
 Meta: um formulario completo, coerente e acessivel, montado so com componentes `Rvm*`.
 Fecha com o pacote `0.1.0` no BaGet e o site publicando os fundamentos.
 
-- Camada de tokens (cor, tipografia, espacamento, raio, sombra, motion, z-index, breakpoint)
-- `RvmTheme` + `FromSeed` + `RvmThemeProvider` + claro/escuro + script anti-flash
-- Teste de contraste de toda paleta — o portao do `06`
+- ~~Camada de tokens (cor, tipografia, espacamento, raio, sombra, motion, z-index, breakpoint)~~ [[DSGN-002]]
+- ~~`RvmTheme` + `FromSeed`~~ [[DSGN-002]] · falta `RvmThemeProvider` + script anti-flash
+- ~~Teste de contraste de toda paleta — o portao do `06`~~ [[DSGN-002]]
 - `RvmButton`, `RvmIconButton`, `RvmTextField`, `RvmTextArea`, `RvmSelect`, `RvmCheckbox`,
   `RvmRadioGroup`, `RvmSwitch`, `RvmLabel`/`RvmFormField`
 - Site: casca, fundamentos, pagina por componente, codigo copiavel, instalacao, changelog

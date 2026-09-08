@@ -1,0 +1,130 @@
+/*
+  Camada de tokens do RVM Design System — escalas nao-cromaticas.
+
+  ⚠️ AS CORES NAO ESTAO AQUI. Elas sao derivadas em C# (RvmTheme.FromSeed) e emitidas em
+  tempo de execucao pelo provider de tema, porque mudam por produto e por modo. O que mora
+  neste arquivo e o que NAO muda por tema: espacamento, raio, tipografia, sombra, motion,
+  breakpoint e z-index.
+
+  Convencao de nome (`04-modelo-de-dados.md` § Convencao de nome):
+      --rvm-<categoria>-<papel>[-<variante>][-<estado>]
+  Sempre em ingles, sempre kebab-case, sempre com o prefixo rvm. O prefixo nao e enfeite:
+  e o que permite o pacote conviver com o CSS de um app que tenha suas proprias custom
+  properties.
+*/
+
+:root {
+    /* === Espacamento — base 4px ===
+       Componente nao usa valor fora desta escala. E o que faz telas de autores diferentes
+       parecerem a mesma tela. */
+    --rvm-space-0: 0;
+    --rvm-space-1: 0.25rem;   /*  4px */
+    --rvm-space-2: 0.5rem;    /*  8px */
+    --rvm-space-3: 0.75rem;   /* 12px */
+    --rvm-space-4: 1rem;      /* 16px */
+    --rvm-space-5: 1.25rem;   /* 20px */
+    --rvm-space-6: 1.5rem;    /* 24px */
+    --rvm-space-8: 2rem;      /* 32px */
+    --rvm-space-10: 2.5rem;   /* 40px */
+    --rvm-space-12: 3rem;     /* 48px */
+    --rvm-space-16: 4rem;     /* 64px */
+    --rvm-space-20: 5rem;     /* 80px */
+    --rvm-space-24: 6rem;     /* 96px */
+
+    /* === Raio === */
+    --rvm-radius-none: 0;
+    --rvm-radius-sm: 0.25rem;
+    --rvm-radius-md: 0.5rem;   /* padrao de card e input */
+    --rvm-radius-lg: 0.75rem;
+    --rvm-radius-full: 9999px;
+
+    /* === Tipografia ===
+       Escala em rem com base 16px — decisao registrada (`04` § Pendencias, item 2):
+       previsivel e mais importante que elegante numa v1. A unica excecao e o display,
+       que e fluido: um titulo de 3rem no celular estoura a linha.
+
+       A pilha comeca em Geist, a mesma do rvmtech.com.br. A fonte sera auto-hospedada
+       (`02` § Seguranca proibe CDN em runtime); ate ela entrar no pacote, o fallback do
+       sistema assume e o site nao quebra. */
+    --rvm-font-family-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --rvm-font-family-mono: "Geist Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+    --rvm-font-size-display: clamp(2rem, 1.25rem + 3.75vw, 3.5rem);
+    --rvm-font-size-h1: 2.25rem;
+    --rvm-font-size-h2: 1.875rem;
+    --rvm-font-size-h3: 1.5rem;
+    --rvm-font-size-h4: 1.25rem;
+    --rvm-font-size-h5: 1.125rem;
+    --rvm-font-size-h6: 1rem;
+    --rvm-font-size-body-lg: 1.125rem;
+    --rvm-font-size-body: 1rem;
+    --rvm-font-size-body-sm: 0.875rem;
+    --rvm-font-size-caption: 0.75rem;
+    --rvm-font-size-code: 0.875rem;
+
+    --rvm-font-weight-regular: 400;
+    --rvm-font-weight-medium: 500;
+    --rvm-font-weight-semibold: 600;
+
+    --rvm-line-height-display: 1.05;
+    --rvm-line-height-heading: 1.25;
+    --rvm-line-height-body: 1.55;
+
+    --rvm-tracking-display: -0.03em;
+    --rvm-tracking-heading: -0.015em;
+    --rvm-tracking-body: 0;
+
+    /* === Sombra ===
+       Sobe com a elevacao. No tema escuro a sombra sozinha nao comunica elevacao (preto
+       sobre preto nao aparece), entao la ela vem acompanhada de mudanca de superficie —
+       e por isso que surface-raised existe como papel proprio. */
+    --rvm-shadow-0: none;
+    --rvm-shadow-1: 0 1px 2px rgb(0 0 0 / 0.06), 0 1px 1px rgb(0 0 0 / 0.04);
+    --rvm-shadow-2: 0 2px 4px rgb(0 0 0 / 0.07), 0 1px 2px rgb(0 0 0 / 0.05);
+    --rvm-shadow-3: 0 4px 8px rgb(0 0 0 / 0.08), 0 2px 4px rgb(0 0 0 / 0.05);
+    --rvm-shadow-4: 0 8px 16px rgb(0 0 0 / 0.10), 0 4px 6px rgb(0 0 0 / 0.05);
+    --rvm-shadow-5: 0 16px 32px rgb(0 0 0 / 0.12), 0 8px 12px rgb(0 0 0 / 0.06);
+
+    /* === Motion === */
+    --rvm-motion-duration-instant: 0ms;
+    --rvm-motion-duration-fast: 120ms;
+    --rvm-motion-duration-base: 200ms;
+    --rvm-motion-duration-slow: 320ms;
+
+    --rvm-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --rvm-motion-ease-decelerate: cubic-bezier(0, 0, 0, 1);
+    --rvm-motion-ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+
+    /* === Breakpoint ===
+       Os mesmos nomes e valores existem no C#. Aqui servem para container queries e para
+       o app consultar; media query nao aceita custom property, entao os componentes
+       escrevem o valor literal e ESTES tokens sao a fonte que eles copiam. */
+    --rvm-breakpoint-sm: 640px;
+    --rvm-breakpoint-md: 768px;
+    --rvm-breakpoint-lg: 1024px;
+    --rvm-breakpoint-xl: 1280px;
+    --rvm-breakpoint-2xl: 1536px;
+
+    /* === Z-index ===
+       Faixa fechada, em ordem de quem cobre quem. O app nao deve competir: se precisar de
+       algo acima do tooltip, e sinal de que o componente errado esta sendo usado. */
+    --rvm-z-dropdown: 1000;
+    --rvm-z-sticky: 1100;
+    --rvm-z-drawer: 1200;
+    --rvm-z-dialog: 1300;
+    --rvm-z-toast: 1400;
+    --rvm-z-tooltip: 1500;
+}
+
+/*
+  Respeitar prefers-reduced-motion nao e opcional (`CLAUDE.md` § Convencoes).
+  Zerando a duracao AQUI, na origem, nenhum componente precisa lembrar de fazer isso —
+  e um componente que esqueca continua correto.
+*/
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --rvm-motion-duration-fast: 0ms;
+        --rvm-motion-duration-base: 0ms;
+        --rvm-motion-duration-slow: 0ms;
+    }
+}
