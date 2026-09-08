@@ -104,6 +104,28 @@ nao e efeito colateral de bootstrap de design system. **Decisao do Rafael.** Uma
 declarar que pacote e reconstruivel do git e nao precisa de backup — mas isso e escolha, nao
 esquecimento, e hoje nao esta escrita em lugar nenhum.
 
+## Identidade visual — pedido do Rafael em 07/09/2026
+
+Depois do bootstrap fechado, ele pediu que o design system use **as cores do site dele**
+(`rvmtech.com.br`, do RVM.Curriculo): roxo do Visual Studio + azul do VS Code.
+
+Aplicado na casca do site de doc; registrado em `06-tokens-e-tematizacao.md` § A identidade da
+marca, que e onde a onda 1 vai buscar as sementes do `RvmTheme.Rvm`.
+
+Duas coisas medidas, nao assumidas:
+
+- **As sementes sao `#641974` / `#006DBD`, os valores RENDERIZADOS**, nao os nominais `#68217A` /
+  `#007ACC` do `CLAUDE.md` do RVM.Curriculo. O azul nominal da **3.90** de contraste contra o fundo
+  e reprovaria no portao AA; o renderizado da 4.62. O site esta certo — o nome escrito la e que
+  esta desatualizado.
+- **O modo escuro nao existe no site** (`color-scheme: light`). Derivei mantendo matiz e croma,
+  invertendo luminosidade, e verifiquei: os cinco pares passam. ⏳ **Mas e derivacao minha, nao
+  escolha dele** — confirmar antes da 1.0.
+
+Tres tokens do site (`text-subtle` 3.42, `accent-warm` 4.42, `border-strong` 1.67) nao sobrevivem
+como token semantico da biblioteca; o porque e o ajuste estao no `06`. Nao e defeito do site: la
+eles vivem em texto grande e divisoria decorativa, onde 3.0 basta.
+
 ## Pendencias que continuam abertas
 
 As seis do `09-roadmap` § Pendencias seguem abertas, menos a **5** (visibilidade/licenca), que o
