@@ -115,8 +115,13 @@ Rafael pelo **screenshot** → `master` só com sinal verde explícito dele.
 
 Não há `demo`: o fluxo vai de `dev` direto para `master`.
 
-Publicação de pacote acompanha a branch: pré-release (`0.x.y-alpha.N`) a partir de `dev`, versão
-estável só de `master`.
+Publicação de pacote: pré-release (`0.x.y-alpha.N`, numerado pelo run) a cada push em `dev`;
+**versão estável só de TAG `vX.Y.Z`** — push em `master` não publica.
+
+> Mudou em 08/09/2026 (`DSGN-009`). A versão estável saía do `VersionPrefix` do csproj a cada push
+> em `master`, e isso fazia dela um **alvo móvel**: perdido o feed, o republish entregaria o mesmo
+> número com código diferente. A tag prende a versão ao commit — e é **a condição que sustenta a
+> decisão de não fazer backup do BaGet** (`Vault/05_References/baget-sem-backup.md`).
 
 ## Modo de trabalho
 
