@@ -9,10 +9,16 @@
 
 ## Em revisao
 
-- [[DSGN-001]] — Bootstrap: repo publico, esqueleto .NET 10, 5 workflows, DNS/SSL e o site no ar
-  em `design.dev.rvmtech.com.br`. **Producao aguarda sinal verde do Rafael.**
 - [[DSGN-002]] — Camada de tokens, `RvmTheme.FromSeed` e os dois portoes. 62 testes; o portao de
   contraste cobre 5 temas x 2 modos x 14 pares e reprova entrada ruim de proposito.
+
+## Concluido
+
+- [[DSGN-001]] — Bootstrap + **producao no ar** (08/09/2026): repo publico, esqueleto .NET 10,
+  5 workflows, DNS/SSL nos dois ambientes, `design.dev.rvmtech.com.br` e `design.rvmit.com.br`.
+  ⏳ So o monitor no Uptime-Kuma ficou de fora — o Kuma nao tem canal de notificacao nenhum.
+- [[DSGN-003]] — `CNAME` no artefato, borda do titulo removida e 404 do CSS isolado consertado.
+- [[DSGN-004]] — `Verify` do primeiro deploy de Pages: o site subia certo e o job ficava vermelho.
 
 ## A fazer
 
@@ -37,6 +43,4 @@ Fecha com o pacote `0.1.0` no BaGet e o site publicando os fundamentos.
 Layout, Feedback e Dados — escopo e criterio de saida em `09-roadmap.md`. Cards saem quando a
 onda anterior fechar.
 
-## Concluido
 
-_(vazio — a DSGN-001 fecha quando o Rafael aprovar)_
