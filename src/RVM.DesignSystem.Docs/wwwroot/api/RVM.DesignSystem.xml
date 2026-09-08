@@ -60,6 +60,74 @@
         <member name="M:RVM.DesignSystem.Components.RvmInputBase`1.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView)">
             <inheritdoc />
         </member>
+        <member name="T:RVM.DesignSystem.Components.RvmDataGridRequest">
+            <summary>
+            O que o grid esta pedindo, no modo remoto.
+            </summary>
+            <param name="Page">Pagina, comecando em 1.</param>
+            <param name="PageSize">Quantos itens por pagina.</param>
+            <param name="SortColumn">
+            Titulo da coluna ordenada, ou <c>null</c>. E o <b>titulo</b>, e nao a expressao: quem responde
+            traduz para o campo do banco, porque so ele sabe o nome da coluna la.
+            </param>
+            <param name="SortDirection">Direcao da ordenacao.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDataGridRequest.#ctor(System.Int32,System.Int32,System.String,RVM.DesignSystem.Components.RvmSortDirection)">
+            <summary>
+            O que o grid esta pedindo, no modo remoto.
+            </summary>
+            <param name="Page">Pagina, comecando em 1.</param>
+            <param name="PageSize">Quantos itens por pagina.</param>
+            <param name="SortColumn">
+            Titulo da coluna ordenada, ou <c>null</c>. E o <b>titulo</b>, e nao a expressao: quem responde
+            traduz para o campo do banco, porque so ele sabe o nome da coluna la.
+            </param>
+            <param name="SortDirection">Direcao da ordenacao.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGridRequest.Page">
+            <summary>Pagina, comecando em 1.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGridRequest.PageSize">
+            <summary>Quantos itens por pagina.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGridRequest.SortColumn">
+            <summary>
+            Titulo da coluna ordenada, ou <c>null</c>. E o <b>titulo</b>, e nao a expressao: quem responde
+            traduz para o campo do banco, porque so ele sabe o nome da coluna la.
+            </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGridRequest.SortDirection">
+            <summary>Direcao da ordenacao.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmDataGridResult`1">
+            <summary>
+            A resposta do modo remoto.
+            </summary>
+            <param name="Items">Os itens DESTA pagina, ja ordenados por quem respondeu.</param>
+            <param name="TotalItems">
+            Quantos itens existem no total, e nao nesta pagina. E ele que o rodape usa para saber quantas
+            paginas ha — devolver a contagem da pagina faria a paginacao dizer que so existe uma.
+            </param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDataGridResult`1.#ctor(System.Collections.Generic.IReadOnlyList{`0},System.Int32)">
+            <summary>
+            A resposta do modo remoto.
+            </summary>
+            <param name="Items">Os itens DESTA pagina, ja ordenados por quem respondeu.</param>
+            <param name="TotalItems">
+            Quantos itens existem no total, e nao nesta pagina. E ele que o rodape usa para saber quantas
+            paginas ha — devolver a contagem da pagina faria a paginacao dizer que so existe uma.
+            </param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGridResult`1.Items">
+            <summary>Os itens DESTA pagina, ja ordenados por quem respondeu.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGridResult`1.TotalItems">
+            <summary>
+            Quantos itens existem no total, e nao nesta pagina. E ele que o rodape usa para saber quantas
+            paginas ha — devolver a contagem da pagina faria a paginacao dizer que so existe uma.
+            </summary>
+        </member>
         <member name="T:RVM.DesignSystem.Components.RvmConfirmOptions">
             <summary>
             O texto e a aparencia de uma confirmacao.
@@ -774,6 +842,101 @@
         <member name="F:RVM.DesignSystem.Components.RvmEmptyStateVariant.Forbidden">
             <summary>Sem permissão para ver isto.</summary>
         </member>
+        <member name="T:RVM.DesignSystem.Components.RvmSortDirection">
+            <summary>Direção de uma ordenação.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSortDirection.None">
+            <summary>Sem ordenação nesta coluna.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSortDirection.Ascending">
+            <summary>Crescente — A→Z, menor→maior, mais antigo→mais recente.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSortDirection.Descending">
+            <summary>Decrescente.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmSelectionMode">
+            <summary>Como as linhas de um grid podem ser selecionadas.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSelectionMode.None">
+            <summary>Sem seleção. O padrão — seleção que ninguém usa é só uma coluna a menos de dado.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSelectionMode.Single">
+            <summary>Uma linha por vez.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSelectionMode.Multiple">
+            <summary>Várias linhas, com "selecionar todas da página".</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmAlignment">
+            <summary>Alinhamento do conteúdo de uma coluna.</summary>
+            <remarks>
+            <c>End</c> existe para <b>número</b>: valores alinhados à direita comparam-se pela ordem de
+            grandeza, que é a razão de a coluna de total existir. Texto alinhado à direita, não.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlignment.Start">
+            <summary>Início da linha. O padrão, e o certo para texto.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlignment.Center">
+            <summary>Centro.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlignment.End">
+            <summary>Fim da linha. Para número e moeda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.Title">
+            <summary>Texto do cabeçalho.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.Field">
+             <summary>
+             De onde sai o valor da célula.
+             </summary>
+             <remarks>
+             É uma <b>expressão</b>, e não um <c>Func</c>, porque ela serve para duas coisas: extrair
+             o valor e servir de chave de ordenação. Com <c>Func</c> só a primeira seria possível.
+            
+             <para>
+             Sem <c>Field</c> a coluna precisa de <see cref="P:RVM.DesignSystem.Components.RvmColumn`1.CellTemplate"/>, e não é ordenável — não
+             há por onde ordenar.
+             </para>
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.CellTemplate">
+            <summary>Conteúdo da célula, quando o valor cru não basta.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.HeaderTemplate">
+            <summary>Conteúdo do cabeçalho, quando o texto não basta.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.Format">
+            <summary>
+            Formato aplicado ao valor. Usa a cultura pt-BR.
+            </summary>
+            <remarks>
+            <c>"C"</c> para moeda, <c>"N2"</c> para número, <c>"dd/MM/yyyy"</c> para data. Vale só
+            para valores <see cref="T:System.IFormattable"/> — texto ignora.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.Align">
+            <summary>Alinhamento do conteúdo. <c>End</c> para número.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.Sortable">
+            <summary>Permite ordenar por esta coluna. Exige <see cref="P:RVM.DesignSystem.Components.RvmColumn`1.Field"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.Width">
+            <summary>Largura em CSS. Sem ela, a coluna se ajusta ao conteúdo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.EmptyText">
+            <summary>Texto exibido quando o valor é nulo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmColumn`1.Valor">
+            <summary>Chave de ordenação, compilada uma vez.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmColumn`1.TextoDe(`0)">
+            <summary>O conteúdo de uma célula, já formatado.</summary>
+            <param name="item">A linha.</param>
+            <returns>O texto a exibir.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmColumn`1.Dispose">
+            <inheritdoc />
+        </member>
         <member name="P:RVM.DesignSystem.Components.RvmTab.Id">
             <summary>
             Identificador da aba, único dentro do grupo.
@@ -1093,6 +1256,392 @@
         </member>
         <member name="M:RVM.DesignSystem.Components.RvmTextField.TryParseValueFromString(System.String,System.String@,System.String@)">
             <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Id">
+            <summary>Identificador. Gerado quando não informado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Label">
+            <summary>Rótulo visível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Help">
+            <summary>Texto de ajuda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Error">
+            <summary>Mensagem de erro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Placeholder">
+            <summary>Dica dentro do campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Value">
+            <summary>O item escolhido. Use com <c>@bind-Value</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.ValueChanged">
+            <summary>Disparado quando o item escolhido muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.SearchAsync">
+            <summary>
+            A busca. Recebe o termo e um token de cancelamento.
+            </summary>
+            <remarks>
+            <b>Respeite o token.</b> Ele é cancelado quando a pessoa digita de novo, e é o que impede
+            a resposta de uma busca velha sobrescrever a da atual.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.TextSelector">
+            <summary>Como um item vira texto. Sem ele, usa <c>ToString()</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.ItemTemplate">
+            <summary>Aparência de um item da lista.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.DebounceMs">
+            <summary>
+            Quanto esperar depois da última tecla antes de buscar.
+            </summary>
+            <remarks>
+            300ms é o padrão porque é o intervalo em que a maioria das pessoas ainda está digitando a
+            mesma palavra. Muito baixo dispara uma busca por letra; muito alto faz a lista parecer
+            travada.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.MinLength">
+            <summary>Mínimo de caracteres antes de buscar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Disabled">
+            <summary>Desabilita o campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Required">
+            <summary>Marca como obrigatório.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.ListLabel">
+            <summary>Nome acessível da lista de resultados.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.NoResultsLabel">
+            <summary>Texto quando a busca não encontra nada.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.SearchingLabel">
+            <summary>Rótulo do indicador de busca em curso.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.ResultCountLabel">
+            <summary>Modelo do anúncio da contagem. Recebe a quantidade.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAutocomplete`1.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmAutocomplete`1.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmDataGrid`1.Cultura">
+            <summary>Cultura de exibição da biblioteca. Usada na formatação de célula.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Columns">
+            <summary>As <see cref="T:RVM.DesignSystem.Components.RvmColumn`1"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Items">
+            <summary>
+            Os itens, no modo em memória. O grid ordena e pagina sozinho.
+            </summary>
+            <remarks>
+            Para volume grande ou dados que vivem no servidor, use <see cref="P:RVM.DesignSystem.Components.RvmDataGrid`1.ItemsProvider"/>: com
+            <c>Items</c>, tudo passa pela memória do cliente.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.ItemsProvider">
+            <summary>
+            Modo remoto: recebe a requisição e devolve a página e o total.
+            </summary>
+            <remarks>
+            Quando informado, o grid <b>não ordena nem pagina</b> — quem faz isso é quem responde,
+            que é o único que sabe consultar o banco. O grid só informa o que foi pedido.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Caption">
+            <summary>Nome da tabela, para o leitor de tela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Page">
+            <summary>Página atual. Use com <c>@bind-Page</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.PageChanged">
+            <summary>Disparado quando a página muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.PageSize">
+            <summary>Itens por página. Use com <c>@bind-PageSize</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.PageSizeChanged">
+            <summary>Disparado quando o tamanho da página muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.ShowPagination">
+            <summary>Mostra a paginação no rodapé.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.SelectionMode">
+            <summary>Como as linhas podem ser selecionadas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Selection">
+            <summary>As linhas selecionadas. Use com <c>@bind-Selection</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.SelectionChanged">
+            <summary>Disparado quando a seleção muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.RowLabel">
+            <summary>
+            Como uma linha é nomeada no checkbox de seleção.
+            </summary>
+            <remarks>
+            Sem isto, uma tabela de 20 linhas dá 20 caixas chamadas "Selecionar", e quem não vê a
+            tela não sabe o que está marcando. Aponte para a coluna que identifica a linha.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Loading">
+            <summary>Está carregando. Mostra esqueleto nas linhas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.LinhasDeEsqueleto">
+            <summary>Quantas linhas de esqueleto durante o carregamento.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Error">
+            <summary>Mensagem de erro. Quando informada, substitui a lista.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.OnRetry">
+            <summary>Disparado no "tentar de novo" do estado de erro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.RetryLabel">
+            <summary>Rótulo do botão de tentar de novo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.EmptyVariant">
+            <summary>
+            Por que a lista está vazia.
+            </summary>
+            <remarks>
+            <c>NoResults</c> quando há filtro aplicado, <c>Empty</c> quando não há. A distinção muda
+            a ação que cabe — limpar o filtro ou criar o primeiro.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.EmptyTemplate">
+            <summary>Estado vazio próprio, no lugar do padrão.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.SelectAllLabel">
+            <summary>Nome acessível da caixa "selecionar todas da página".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.SelectColumnLabel">
+            <summary>Nome acessível da coluna de seleção, no modo único.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.LegendaCompleta">
+            <summary>
+            A legenda que o leitor de tela ouve ao entrar na tabela.
+            </summary>
+            <remarks>
+            Inclui a ordenação corrente de propósito: quem não vê a seta do cabeçalho precisa saber
+            por que as linhas estão nessa ordem antes de começar a lê-las.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDataGrid`1.LinhasVisiveis">
+            <summary>As linhas desta página, já ordenadas.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDataGrid`1.Registrar(RVM.DesignSystem.Components.RvmColumn{`0})">
+            <summary>Registra uma coluna filha.</summary>
+            <param name="coluna">A coluna.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDataGrid`1.Remover(RVM.DesignSystem.Components.RvmColumn{`0})">
+            <summary>Remove uma coluna que saiu da tela.</summary>
+            <param name="coluna">A coluna.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDataGrid`1.DisposeAsync">
+            <inheritdoc />
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Id">
+            <summary>Identificador. Gerado quando não informado.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Label">
+            <summary>Rótulo visível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Placeholder">
+            <summary>Dica dentro do campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Min">
+            <summary>Menor data aceita.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Max">
+            <summary>Maior data aceita.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.IsDisabled">
+            <summary>Datas bloqueadas — feriado, dia sem expediente.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Disabled">
+            <summary>Desabilita o campo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Required">
+            <summary>Marca como obrigatório.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.InvalidDateMessage">
+            <summary>Mensagem quando o texto digitado não é uma data.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.OpenCalendarLabel">
+            <summary>Nome acessível do botão que abre o calendário.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.CloseCalendarLabel">
+            <summary>Nome acessível do botão quando o calendário está aberto.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.CalendarLabel">
+            <summary>Nome acessível do calendário.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.PreviousMonthLabel">
+            <summary>Nome acessível do botão de mês anterior.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.NextMonthLabel">
+            <summary>Nome acessível do botão de mês seguinte.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDatePicker.Semanas">
+            <summary>
+            As seis semanas da grade, sempre seis.
+            </summary>
+            <remarks>
+            Número fixo de linhas de propósito: com 5 ou 6 conforme o mês, o calendário mudaria de
+            altura ao navegar e os botões dançariam debaixo do cursor.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmDatePicker.TryParseValueFromString(System.String,System.Nullable{System.DateTime}@,System.String@)">
+             <summary>
+             Exigido pelo <c>InputBase&lt;T&gt;</c>, e aqui ele quase nunca roda.
+             </summary>
+             <remarks>
+             O caminho normal e o <see cref="M:RVM.DesignSystem.Components.RvmDatePicker.AoDigitar(Microsoft.AspNetCore.Components.ChangeEventArgs)"/>, que precisa de mais do que este metodo
+             permite: distinguir "vazio" de "texto que nao e data" e manter o texto ruim na tela para
+             a pessoa ver o que digitou. O <c>InputBase</c> so oferece "converteu ou nao".
+            
+             <para>
+             Continua implementado com o MESMO formato fixo — se alguem chamar por outro caminho, o
+             contrato de `dd/MM/yyyy` vale igual.
+             </para>
+             </remarks>
+             <param name="value">O texto.</param>
+             <param name="result">A data convertida.</param>
+             <param name="validationErrorMessage">A mensagem, quando nao converte.</param>
+             <returns>Se converteu.</returns>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.Label">
+            <summary>Nome da região e rótulo do botão que a abre.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.ActiveCount">
+            <summary>
+            Quantos filtros estão aplicados agora.
+            </summary>
+            <remarks>
+            Quem conta é quem usa — só ele sabe o que conta como "aplicado" no domínio dele. O que a
+            barra faz é <b>mostrar</b>, e é isso que evita a tela que devolve 3 resultados sem
+            ninguém entender por quê.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.OnClear">
+            <summary>Disparado no "limpar". Informá-lo faz o botão aparecer quando há filtro ativo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.ClearLabel">
+            <summary>Rótulo do botão de limpar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.ActiveCountLabel">
+            <summary>Modelo do texto do contador para leitor de tela. Recebe a quantidade.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.Expanded">
+             <summary>
+             Começa aberta. O padrão é sim.
+             </summary>
+             <remarks>
+             Em tela estreita costuma valer <c>false</c>: filtros abertos empurram a lista inteira
+             para fora da tela antes de a pessoa ver um resultado, e o que ela veio ver é o resultado.
+            
+             <para>
+             A biblioteca <b>não</b> decide isso por largura de tela, e não é omissão: fechar por CSS
+             deixaria o <c>aria-expanded</c> dizendo "true" com o conteúdo invisível — o ARIA mentindo
+             para quem depende dele. Estado só pode morar num lugar.
+             </para>
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.ChildContent">
+            <summary>Os campos de filtro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmFilterBar.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.Page">
+            <summary>Página atual, começando em 1. Use com <c>@bind-Page</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.PageChanged">
+            <summary>Disparado quando a página muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.PageSize">
+            <summary>Itens por página. Use com <c>@bind-PageSize</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.PageSizeChanged">
+            <summary>Disparado quando o tamanho da página muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.TotalItems">
+            <summary>Total de itens, de todas as páginas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.PageSizeOptions">
+            <summary>Tamanhos oferecidos no seletor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.ShowPageSize">
+            <summary>Mostra o seletor de itens por página.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.WindowSize">
+            <summary>
+            Quantos números de página aparecem em volta do atual.
+            </summary>
+            <remarks>
+            Uma fileira com 40 números não é navegação, é uma parede. A janela mantém a fileira do
+            mesmo tamanho independente do total, e os saltos de primeira/última cobrem o resto.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.Label">
+            <summary>Nome da navegação para o leitor de tela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.PageSizeLabel">
+            <summary>Rótulo do seletor de itens por página.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.SummaryFormat">
+            <summary>
+            Modelo do resumo. Recebe, nesta ordem: primeiro item, último item e total.
+            </summary>
+            <remarks>
+            "21–40 de 137" informa mais que "página 2 de 7": diz quantos itens existem e onde a
+            pessoa está dentro deles.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.EmptySummary">
+            <summary>Resumo quando não há nenhum item.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.PageLabel">
+            <summary>Modelo do nome acessível de um número de página. Recebe a página.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.FirstLabel">
+            <summary>Modelo do nome acessível do botão "primeira".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.PreviousLabel">
+            <summary>Modelo do nome acessível do botão "anterior". Recebe a página de destino.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.NextLabel">
+            <summary>Modelo do nome acessível do botão "seguinte". Recebe a página de destino.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.LastLabel">
+            <summary>Modelo do nome acessível do botão "última".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmPagination.TotalDePaginas">
+            <summary>Quantas páginas existem. Nunca menos que 1 — "página 0 de 0" não é uma tela.</summary>
         </member>
         <member name="P:RVM.DesignSystem.Components.RvmAlert.Severity">
             <summary>Severidade. O ícone e a cor acompanham; o texto continua carregando o sentido.</summary>

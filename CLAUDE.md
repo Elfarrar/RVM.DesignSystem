@@ -69,6 +69,10 @@ em `03-arquitetura.md` § Desvio, e registrada em `docs/Vault/05_References/ADR-
 - Altura e espaçamento vertical de controle saem de `--rvm-control-*`, nunca de `--rvm-space-*`
   direto. É o que faz a densidade `Compact` valer sem o componente saber que ela existe — e um
   componente que use a escala de espaçamento no eixo vertical a ignora **em silêncio**.
+- ⚠️ **A plataforma primeiro.** Três desvios declarados da spec seguem o mesmo critério, e não
+  são exceções: `<select>` nativo (onda 1), `<dialog>` + `showModal()` (onda 3) e `<table>`
+  semântica **sem `role="grid"`** (onda 4). Quando o navegador ou o leitor de tela já resolve,
+  reimplementar entrega pior. **Não "corrigir" nenhum dos três para a versão custom.**
 - Componente que interrompe o leitor de tela (`role="alert"`, `aria-live="assertive"`) é
   **opt-in**, nunca padrão: um aviso estático anunciado a cada render atropela o título da
   página. E região `aria-live` precisa existir no DOM **antes** da mensagem — criada junto com
@@ -167,7 +171,13 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   spinner, progresso, esqueleto e tooltip — mais a seção Padrões e a busca do site (`RF-27`).
   O `RvmDialog` é o `<dialog>` **nativo** com `showModal()`; foco preso, ESC e retorno de foco
   vêm do navegador. **Não reimplementar isso à mão.**
-- Próximo passo: onda 4 do `09-roadmap.md` — `RvmDataGrid` e o resto de Dados. É a onda cara.
+- ✅ **Onda 4 fechada, sai como `1.0.0`** (`DSGN-020`): `RvmDataGrid`, `RvmPagination`,
+  `RvmFilterBar`, `RvmDatePicker`, `RvmAutocomplete` e a tela de Listagem com 487 linhas.
+  **Os 35 componentes da v1 estão entregues.**
+- ⚠️ **A `1.0.0` congela o contrato.** Daqui em diante, mudança que quebra é major — as ondas
+  anteriores puderam tornar papel de paleta `required` sem cerimônia; isso acabou.
+- Próximo passo: **não há onda 5**. O que vem é adoção — e ela é só em projeto novo (`09` §
+  Adoção). O próximo projeto RVM que precisar de UI nasce aqui, e é ele quem prova a biblioteca.
 
 ## Pendências que bloqueiam
 

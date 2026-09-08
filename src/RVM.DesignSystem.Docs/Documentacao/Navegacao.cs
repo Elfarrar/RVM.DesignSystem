@@ -85,9 +85,19 @@ public static class Navegacao
             new("Tooltip", "componentes/tooltip"),
         ]),
 
+        new("Dados",
+        [
+            new("DataGrid", "componentes/data-grid"),
+            new("Pagination", "componentes/pagination"),
+            new("FilterBar", "componentes/filter-bar"),
+            new("DatePicker", "componentes/date-picker"),
+            new("Autocomplete", "componentes/autocomplete"),
+        ]),
+
         new("Padrões",
         [
             new("Padrões", "padroes"),
+            new("Listagem", "padroes/listagem"),
         ]),
 
         new("Sobre",

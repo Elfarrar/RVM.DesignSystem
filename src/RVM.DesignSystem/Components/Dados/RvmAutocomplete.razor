@@ -1,0 +1,344 @@
+@namespace RVM.DesignSystem.Components
+@typeparam TItem
+@implements IDisposable
+
+@*
+    Combobox do padrão ARIA APG, com busca assíncrona.
+
+    Duas coisas que separam isto de um campo com uma lista embaixo:
+
+    1. O FOCO NÃO SAI DO CAMPO. As setas movem o item "ativo", apontado por
+       `aria-activedescendant` — quem navega continua digitando para refinar sem perder a
+       seleção. É o comportamento da barra de endereços, que todo mundo já conhece.
+
+    2. A BUSCA ANTERIOR É CANCELADA. Sem isso, digitar "sao paulo" dispara oito buscas e a
+       resposta que chega por último vence — que pode ser a de "sao", não a de "sao paulo".
+       O sintoma é a lista mostrando resultados de um termo que já não está no campo.
+*@
+
+<div class="rvm-autocomplete" @onfocusout="AoPerderFoco">
+    <RvmFormField FieldId="@Id" Label="@Label" Help="@Help" Error="@Error" Required="@Required">
+        <div class="rvm-autocomplete__caixa">
+            <input type="text"
+                   id="@Id"
+                   class="@ClasseInput"
+                   role="combobox"
+                   autocomplete="off"
+                   placeholder="@Placeholder"
+                   disabled="@Disabled"
+                   required="@Required"
+                   aria-expanded="@(Aberto ? "true" : "false")"
+                   aria-controls="@_idDaLista"
+                   aria-autocomplete="list"
+                   aria-activedescendant="@(Aberto && _ativo >= 0 ? IdDoItem(_ativo) : null)"
+                   aria-describedby="@_idDoAnuncio"
+                   value="@_termo"
+                   @oninput="AoDigitar"
+                   @onkeydown="AoTeclar" />
+
+            @if (_buscando)
+            {
+                <span class="rvm-autocomplete__spinner">
+                    <RvmSpinner Size="RvmSize.Small" Label="@SearchingLabel" />
+                </span>
+            }
+        </div>
+    </RvmFormField>
+
+    @*
+        A região de anúncio existe SEMPRE, e vazia — mesma regra do RvmToastHost. Criada junto
+        com o resultado, ela não seria observada e a contagem não seria anunciada.
+    *@
+    <span class="rvm-sr-only" id="@_idDoAnuncio" role="status" aria-live="polite">@_anuncio</span>
+
+    @if (Aberto)
+    {
+        <ul class="rvm-autocomplete__lista" id="@_idDaLista" role="listbox" aria-label="@ListLabel">
+            @for (var i = 0; i < _resultados.Count; i++)
+            {
+                var indice = i;
+                var item = _resultados[i];
+
+                <li id="@IdDoItem(indice)"
+                    class="@(indice == _ativo ? "rvm-autocomplete__item rvm-autocomplete__item--ativo" : "rvm-autocomplete__item")"
+                    role="option"
+                    aria-selected="@(indice == _ativo ? "true" : "false")"
+                    @onmousedown:preventDefault="true"
+                    @onmousedown="() => Escolher(item)">
+                    @if (ItemTemplate is not null)
+                    {
+                        @ItemTemplate(item)
+                    }
+                    else
+                    {
+                        @TextoDe(item)
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else if (_semResultado)
+    {
+        <p class="rvm-autocomplete__vazio" role="status">@NoResultsLabel</p>
+    }
+</div>
+
+@code {
+    private readonly string _idDaLista = $"rvm-autocomplete-lista-{Guid.NewGuid():N}";
+    private readonly string _idDoAnuncio = $"rvm-autocomplete-anuncio-{Guid.NewGuid():N}";
+
+    private CancellationTokenSource? _busca;
+    private string? _termo;
+    private IReadOnlyList<TItem> _resultados = [];
+    private int _ativo = -1;
+    private bool _buscando;
+    private bool _semResultado;
+    private string? _anuncio;
+
+    /// <summary>Identificador. Gerado quando não informado.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-autocomplete-{Guid.NewGuid():N}";
+
+    /// <summary>Rótulo visível.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Texto de ajuda.</summary>
+    [Parameter]
+    public string? Help { get; set; }
+
+    /// <summary>Mensagem de erro.</summary>
+    [Parameter]
+    public string? Error { get; set; }
+
+    /// <summary>Dica dentro do campo.</summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>O item escolhido. Use com <c>@bind-Value</c>.</summary>
+    [Parameter]
+    public TItem? Value { get; set; }
+
+    /// <summary>Disparado quando o item escolhido muda.</summary>
+    [Parameter]
+    public EventCallback<TItem?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// A busca. Recebe o termo e um token de cancelamento.
+    /// </summary>
+    /// <remarks>
+    /// <b>Respeite o token.</b> Ele é cancelado quando a pessoa digita de novo, e é o que impede
+    /// a resposta de uma busca velha sobrescrever a da atual.
+    /// </remarks>
+    [Parameter, EditorRequired]
+    public Func<string, CancellationToken, Task<IReadOnlyList<TItem>>>? SearchAsync { get; set; }
+
+    /// <summary>Como um item vira texto. Sem ele, usa <c>ToString()</c>.</summary>
+    [Parameter]
+    public Func<TItem, string>? TextSelector { get; set; }
+
+    /// <summary>Aparência de um item da lista.</summary>
+    [Parameter]
+    public RenderFragment<TItem>? ItemTemplate { get; set; }
+
+    /// <summary>
+    /// Quanto esperar depois da última tecla antes de buscar.
+    /// </summary>
+    /// <remarks>
+    /// 300ms é o padrão porque é o intervalo em que a maioria das pessoas ainda está digitando a
+    /// mesma palavra. Muito baixo dispara uma busca por letra; muito alto faz a lista parecer
+    /// travada.
+    /// </remarks>
+    [Parameter]
+    public int DebounceMs { get; set; } = 300;
+
+    /// <summary>Mínimo de caracteres antes de buscar.</summary>
+    [Parameter]
+    public int MinLength { get; set; } = 2;
+
+    /// <summary>Desabilita o campo.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Marca como obrigatório.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Nome acessível da lista de resultados.</summary>
+    [Parameter]
+    public string ListLabel { get; set; } = "Resultados";
+
+    /// <summary>Texto quando a busca não encontra nada.</summary>
+    [Parameter]
+    public string NoResultsLabel { get; set; } = "Nenhum resultado para essa busca.";
+
+    /// <summary>Rótulo do indicador de busca em curso.</summary>
+    [Parameter]
+    public string SearchingLabel { get; set; } = "Buscando…";
+
+    /// <summary>Modelo do anúncio da contagem. Recebe a quantidade.</summary>
+    [Parameter]
+    public string ResultCountLabel { get; set; } = "{0} resultado(s)";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private bool Aberto => _resultados.Count > 0;
+
+    private string ClasseInput => RvmClasse.Juntar(
+        "rvm-autocomplete__campo",
+        string.IsNullOrWhiteSpace(Error) ? null : "rvm-autocomplete__campo--invalido",
+        Class);
+
+    private string IdDoItem(int i) => $"{_idDaLista}-item-{i}";
+
+    private string TextoDe(TItem item) =>
+        TextSelector?.Invoke(item) ?? item?.ToString() ?? string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        // O texto só é reescrito quando o valor mudou POR FORA. Reescrever a cada render
+        // apagaria o que a pessoa está digitando.
+        if (Value is not null && _termo is null)
+        {
+            _termo = TextoDe(Value);
+        }
+    }
+
+    private async Task AoDigitar(ChangeEventArgs e)
+    {
+        _termo = e.Value?.ToString();
+
+        // Digitar invalida a escolha anterior: o campo mostra um texto que já não corresponde ao
+        // item selecionado, e deixar o Value antigo faria o formulário guardar um dado que a
+        // tela não está mostrando.
+        if (Value is not null)
+        {
+            Value = default;
+            await ValueChanged.InvokeAsync(default);
+        }
+
+        await BuscarAsync();
+    }
+
+    private async Task BuscarAsync()
+    {
+        // Cancela a busca anterior ANTES de qualquer coisa. Sem isso, digitar "sao paulo"
+        // dispara oito buscas e a que responder por último vence — podendo ser a de "sao".
+        _busca?.Cancel();
+        _busca?.Dispose();
+        _busca = null;
+
+        _semResultado = false;
+
+        if (SearchAsync is null || string.IsNullOrWhiteSpace(_termo) || _termo.Trim().Length < MinLength)
+        {
+            _resultados = [];
+            _ativo = -1;
+            _anuncio = null;
+            return;
+        }
+
+        var cts = new CancellationTokenSource();
+        _busca = cts;
+
+        var termo = _termo.Trim();
+
+        try
+        {
+            await Task.Delay(DebounceMs, cts.Token);
+
+            _buscando = true;
+            StateHasChanged();
+
+            var itens = await SearchAsync(termo, cts.Token);
+
+            // A resposta só vale se ESTA busca ainda é a corrente. Sem a checagem, uma resposta
+            // lenta que escapou do cancelamento sobrescreveria a lista da busca mais nova.
+            if (cts.IsCancellationRequested)
+            {
+                return;
+            }
+
+            _resultados = itens;
+            _ativo = itens.Count > 0 ? 0 : -1;
+            _semResultado = itens.Count == 0;
+
+            // A contagem é ANUNCIADA. Sem isto, quem não vê a tela digita e ouve silêncio, sem
+            // saber que apareceram oito opções logo abaixo.
+            _anuncio = itens.Count == 0
+                ? NoResultsLabel
+                : string.Format(System.Globalization.CultureInfo.CurrentCulture, ResultCountLabel, itens.Count);
+        }
+        catch (OperationCanceledException)
+        {
+            // Digitou de novo antes de a busca terminar. É o caminho normal, não um erro.
+        }
+        finally
+        {
+            if (!cts.IsCancellationRequested)
+            {
+                _buscando = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task AoTeclar(KeyboardEventArgs e)
+    {
+        if (_resultados.Count == 0)
+        {
+            return;
+        }
+
+        switch (e.Key)
+        {
+            case "ArrowDown":
+                _ativo = (_ativo + 1) % _resultados.Count;
+                break;
+
+            case "ArrowUp":
+                _ativo = (_ativo - 1 + _resultados.Count) % _resultados.Count;
+                break;
+
+            case "Enter" when _ativo >= 0:
+                await Escolher(_resultados[_ativo]);
+                break;
+
+            // ESC fecha a lista SEM tirar o foco do campo — a mesma regra do RvmTooltip.
+            case "Escape":
+                _resultados = [];
+                _ativo = -1;
+                break;
+        }
+    }
+
+    private async Task Escolher(TItem item)
+    {
+        _termo = TextoDe(item);
+        _resultados = [];
+        _ativo = -1;
+        _semResultado = false;
+        _anuncio = null;
+
+        Value = item;
+        await ValueChanged.InvokeAsync(item);
+    }
+
+    // Fecha ao sair o foco do conjunto (campo + lista), não do campo: sem isso, clicar num
+    // resultado fecharia a lista antes de o clique chegar.
+    private void AoPerderFoco()
+    {
+        _resultados = [];
+        _ativo = -1;
+        _semResultado = false;
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        _busca?.Cancel();
+        _busca?.Dispose();
+    }
+}

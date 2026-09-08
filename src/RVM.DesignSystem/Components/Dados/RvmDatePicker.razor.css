@@ -1,0 +1,187 @@
+.rvm-date-picker {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}
+
+.rvm-date-picker__campo {
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+    /* O padding da direita abre espaço para o botão do calendário, que fica por cima. */
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-10) var(--rvm-control-padding-y-md) var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body);
+    /* Tabular: a data digitada não muda de largura entre "11/11/2026" e "01/01/2026". */
+    font-variant-numeric: tabular-nums;
+}
+
+.rvm-date-picker__campo:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.rvm-date-picker__campo--invalido {
+    border-color: var(--rvm-color-danger);
+}
+
+.rvm-date-picker__campo:disabled {
+    background-color: var(--rvm-color-disabled);
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-date-picker__gatilho {
+    position: absolute;
+    top: 50%;
+    right: var(--rvm-space-1);
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--rvm-control-height-sm);
+    height: var(--rvm-control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: var(--rvm-color-on-surface-variant);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-date-picker__gatilho:hover:not(:disabled) { color: var(--rvm-color-primary); }
+}
+
+.rvm-date-picker__gatilho:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}
+
+/* --- Calendário --- */
+
+.rvm-date-picker__calendario {
+    position: absolute;
+    top: calc(100% + var(--rvm-space-1));
+    left: 0;
+    z-index: var(--rvm-z-dropdown);
+    padding: var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-surface-raised);
+    box-shadow: var(--rvm-shadow-4);
+}
+
+.rvm-date-picker__navegacao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-2);
+    margin-bottom: var(--rvm-space-2);
+}
+
+.rvm-date-picker__titulo {
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-semibold);
+    color: var(--rvm-color-on-surface);
+    /* min-width fixa a largura do título: sem ela, "maio de 2026" e "setembro de 2026" movem os
+       botões de navegação debaixo do cursor a cada mês. */
+    min-width: 10rem;
+    text-align: center;
+}
+
+.rvm-date-picker__mes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--rvm-control-height-sm);
+    height: var(--rvm-control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: var(--rvm-color-on-surface);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-date-picker__mes:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-date-picker__mes:focus-visible,
+.rvm-date-picker__dia:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}
+
+.rvm-date-picker__grade {
+    border-collapse: collapse;
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.rvm-date-picker__dia-semana {
+    padding: var(--rvm-space-1);
+    color: var(--rvm-color-on-surface-variant);
+    font-size: var(--rvm-font-size-caption);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-date-picker__celula {
+    padding: 0;
+}
+
+.rvm-date-picker__dia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Quadrado de 2rem: alvo aceitável e grade que não muda de largura entre "1" e "30". */
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: var(--rvm-color-on-surface);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-date-picker__dia:hover:not(:disabled) {
+        background-color: var(--rvm-color-surface-sunken);
+    }
+}
+
+/* Dias do mês vizinho: visíveis, mas claramente de fora. Escondê-los deixaria buracos na
+   grade e quebraria a leitura de "que dia da semana cai o dia 1". */
+.rvm-date-picker__dia--fora {
+    color: var(--rvm-color-on-surface-variant);
+}
+
+/*
+  HOJE tem CONTORNO; o dia ESCOLHIDO tem preenchimento. Duas formas diferentes, porque os dois
+  podem coincidir — e se ambos fossem cor de fundo, o dia de hoje escolhido não se distinguiria
+  de um dia qualquer escolhido.
+*/
+.rvm-date-picker__dia--hoje {
+    border-color: var(--rvm-color-primary);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-date-picker__dia--escolhido {
+    background-color: var(--rvm-color-primary);
+    border-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-date-picker__dia:disabled {
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}

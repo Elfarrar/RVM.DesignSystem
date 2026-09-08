@@ -1,0 +1,185 @@
+@page "/componentes/data-grid"
+
+<PaginaDeComponente Nome="RvmDataGrid"
+                    Tipo="typeof(RvmDataGrid<object>)"
+                    Frase="A listagem. Uma <table> semântica de verdade — sem role=&quot;grid&quot;, porque ele deixaria a tabela MENOS navegável.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmDataGrid TItem="Pedido"
+                             Caption="Pedidos de exemplo"
+                             Items="_amostra"
+                             ShowPagination="false"
+                             SelectionMode="_selecao"
+                             Selection="_selecionados"
+                             SelectionChanged="s => _selecionados = s"
+                             RowLabel="NomeDaLinha"
+                             Loading="_carregando">
+                    <Columns>
+                        <RvmColumn TItem="Pedido" Title="Número" Field="p => p.Numero" Sortable="true" Width="7rem" />
+                        <RvmColumn TItem="Pedido" Title="Cliente" Field="p => p.Cliente" Sortable="true" />
+                        <RvmColumn TItem="Pedido" Title="Total" Field="p => p.Total" Format="C2"
+                                   Align="RvmAlignment.End" Sortable="true" Width="10rem" />
+                    </Columns>
+                </RvmDataGrid>
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmSelectionMode" @bind-Value="_selecao" Label="SelectionMode">
+                    @foreach (var m in Enum.GetValues<RvmSelectionMode>())
+                    {
+                        <option value="@m">@m</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_carregando" Label="Loading" />
+                <p class="doc__nota">
+                    Clique num cabeçalho para ordenar; clique de novo para inverter. Com
+                    <kbd>Tab</kbd> e <kbd>Enter</kbd> funciona igual.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+        <p class="doc__nota">
+            A tela completa, com filtro, paginação e <strong>487 linhas</strong>, está em
+            <a href="padroes/listagem">Padrões › Listagem</a>.
+        </p>
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Dois modos, e eles não se misturam</h3>
+        <p>
+            <strong>Em memória</strong> (<code>Items</code>): o grid ordena e pagina sozinho.
+            Simples, e o certo até uns milhares de linhas.
+        </p>
+        <p>
+            <strong>Remoto</strong> (<code>ItemsProvider</code>): o grid <em>não</em> ordena nem
+            pagina — ele informa o que foi pedido e usa o que voltar. Quem consulta o banco é o
+            único que sabe consultá-lo.
+        </p>
+        <BlocoDeCodigo Linguagem="csharp" Codigo="@_remoto" />
+        <p class="doc__nota">
+            O <code>SortColumn</code> é o <strong>título</strong> da coluna, não a expressão:
+            quem responde traduz para o campo do banco, porque só ele sabe o nome da coluna lá.
+        </p>
+
+        <h3 class="doc__subtitulo">Os três estados que não são "a lista"</h3>
+        <ul class="doc__lista">
+            <li><strong>Carregando</strong> — <code>Loading</code>: esqueleto nas linhas, com o mesmo número de colunas, e <code>aria-busy</code> na tabela.</li>
+            <li><strong>Vazio</strong> — <a href="componentes/empty-state">RvmEmptyState</a>. Passe <code>EmptyVariant="NoResults"</code> quando houver filtro aplicado: a ação que cabe é outra.</li>
+            <li><strong>Erro</strong> — <code>Error</code> com <code>OnRetry</code>.</li>
+        </ul>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                ⚠️ <strong>Não tem <code>role="grid"</code>, e isso é a decisão principal.</strong>
+                Um leitor de tela já sabe percorrer tabela: NVDA e JAWS têm modo próprio, com
+                <kbd>Ctrl+Alt+setas</kbd>, anúncio do cabeçalho ao mudar de coluna e leitura da
+                linha inteira. <code>role="grid"</code> <em>desliga</em> esse modo e obriga a
+                usar a navegação que a biblioteca escrever — que será pior, porque o leitor foi
+                feito para isso e a biblioteca não. O APG reserva <code>grid</code> para tabela
+                <em>interativa</em>, onde a célula é um controle; aqui a célula é dado.
+            </li>
+            <li>
+                <strong>O que é interativo são controles de verdade.</strong> Ordenar é um
+                <code>&lt;button&gt;</code> dentro do <code>&lt;th&gt;</code> — <kbd>Enter</kbd> e
+                <kbd>Espaço</kbd> funcionam sem nenhum handler de teclado nosso. Selecionar é
+                <code>&lt;input&gt;</code> nativo.
+            </li>
+            <li>
+                <strong><code>aria-sort="none"</code> na coluna ordenável ainda não ordenada</strong>,
+                e não a ausência do atributo: é isso que faz o leitor anunciar que ela
+                <em>pode</em> ser ordenada.
+            </li>
+            <li>
+                <strong>A legenda diz a ordenação corrente.</strong> Quem não vê a seta do
+                cabeçalho precisa saber por que as linhas estão nessa ordem antes de começar a
+                lê-las.
+            </li>
+            <li>
+                <strong>Cada caixa de seleção diz qual linha marca</strong> (<code>RowLabel</code>).
+                Sem isso, 20 linhas dão 20 caixas chamadas "Selecionar".
+            </li>
+            <li>
+                <strong>Seleção única é <code>radio</code>; múltipla é <code>checkbox</code>.</strong>
+                O controle nativo já comunica "uma" ou "várias", sem texto explicando.
+            </li>
+            <li>
+                <strong>A região que rola é focável</strong> (<code>tabindex="0"</code> +
+                <code>role="region"</code> com nome). Uma tabela larga que só rola com o mouse
+                esconde as colunas da direita de quem usa teclado.
+            </li>
+            <li>
+                <strong>"Selecionar todas" age só sobre a página.</strong> Alcançar 487 linhas
+                invisíveis é como se apagam 487 registros por engano.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para layout.</strong> Grade visual é <a href="componentes/grid">RvmGrid</a>.
+                Tabela com dados que não são tabulares é ilegível para leitor de tela.
+            </li>
+            <li>
+                <strong>Para poucas linhas com pouca informação.</strong> Cinco itens com dois
+                campos são uma lista, e uma lista lê melhor no celular.
+            </li>
+            <li>
+                <strong>Para edição in-loco.</strong> Está fora da v1 (`09` § Fora da v1) — e é
+                justamente o caso em que <code>role="grid"</code> passaria a fazer sentido.
+            </li>
+            <li>
+                <strong>Com <code>Items</code> e dezenas de milhares de linhas.</strong> Tudo
+                passa pela memória do cliente. Aí é <code>ItemsProvider</code>.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmSelectionMode _selecao = RvmSelectionMode.Multiple;
+    private bool _carregando;
+    private IReadOnlyList<Pedido> _selecionados = [];
+
+    private readonly IReadOnlyList<Pedido> _amostra = Pedidos.Todos.Take(5).ToList();
+
+    private static string NomeDaLinha(Pedido p) => $"pedido {p.Numero} de {p.Cliente}";
+
+    private const string _exemplo = """
+        <RvmDataGrid TItem="Pedido" Caption="Pedidos"
+                     Items="_pedidos"
+                     @bind-Page="_pagina"
+                     SelectionMode="RvmSelectionMode.Multiple"
+                     @bind-Selection="_selecionados"
+                     RowLabel="NomeDaLinha">
+            <Columns>
+                <RvmColumn TItem="Pedido" Title="Número" Field="p => p.Numero" Sortable="true" />
+                <RvmColumn TItem="Pedido" Title="Cliente" Field="p => p.Cliente" Sortable="true" />
+                <RvmColumn TItem="Pedido" Title="Total" Field="p => p.Total"
+                           Format="C2" Align="RvmAlignment.End" Sortable="true" />
+
+                @* Sem Field: a célula é sua. *@
+                <RvmColumn TItem="Pedido" Title="Situação">
+                    <CellTemplate Context="p"><RvmChip>@p.Situacao</RvmChip></CellTemplate>
+                </RvmColumn>
+            </Columns>
+        </RvmDataGrid>
+        """;
+
+    private const string _remoto = """
+        // O grid informa o que foi pedido; quem consulta é você.
+        async Task<RvmDataGridResult<Pedido>> Buscar(RvmDataGridRequest r)
+        {
+            var (itens, total) = await _repositorio.PaginarAsync(
+                pagina: r.Page,
+                tamanho: r.PageSize,
+                ordenarPor: r.SortColumn,       // o TÍTULO da coluna
+                descendente: r.SortDirection == RvmSortDirection.Descending);
+
+            return new RvmDataGridResult<Pedido>(itens, total);
+        }
+        """;
+}

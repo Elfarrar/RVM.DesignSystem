@@ -9,7 +9,9 @@
 
 ## Em revisao
 
-_(vazio — a onda 3 foi promovida)_
+- [[DSGN-020]] — **Onda 4**: `RvmDataGrid`, `RvmPagination`, `RvmFilterBar`, `RvmDatePicker`,
+  `RvmAutocomplete` e a tela de Listagem com 487 linhas. 260 testes, E2E com o criterio de saida.
+  Sai como **`1.0.0`** — a primeira versao estavel, contrato congelado.
 
 ## Concluido
 
@@ -45,7 +47,14 @@ Nove componentes, camada de tokens, motor de tema, icones Phosphor e o site de d
 
 Card: [[DSGN-019]].
 
-### Onda 4 — Dados (proxima)
+### ✅ Onda 4 — fechada em 08/09/2026, sai como `1.0.0`
+
+Card: [[DSGN-020]]. **Os 35 componentes da v1 estao entregues.**
+
+<details>
+<summary>Escopo original da onda 4, para referencia</summary>
+
+### Onda 4 — Dados
 
 `RvmDataGrid<T>` com colunas tipadas, ordenacao, paginacao e selecao, mais o resto de Dados.
 Fecha em `0.4.0`. **E a onda cara** — cada linha dela vale, em esforco, varias das anteriores.
@@ -55,6 +64,14 @@ Fecha em `0.4.0`. **E a onda cara** — cada linha dela vale, em esforco, varias
   entrar na conta dos tokens `--rvm-control-*`, ou nasce ignorando a densidade **em silencio**.
 - Tabela e o lugar onde `aria-busy` + `RvmSkeleton` e `RvmEmptyState` (as quatro variantes)
   finalmente se combinam. O padrao ja esta escrito e demonstrado em `/padroes`.
+
+</details>
+
+### Depois da 1.0
+
+**Nao ha onda 5.** O que vem e adocao, e ela e so em projeto novo (`09` § Adocao): ERPAgro,
+ObraEmDia, Fiscal e Propostinha seguem no MudBlazor, sem prazo. O proximo projeto RVM que
+precisar de UI nasce no design system, e e ele quem prova a biblioteca.
 
 <details>
 <summary>Escopo original da onda 1, para referencia</summary>

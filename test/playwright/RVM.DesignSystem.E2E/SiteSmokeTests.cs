@@ -303,6 +303,124 @@ public class SiteSmokeTests : IAsyncLifetime
     }
 
     /// <summary>
+    /// O criterio de saida da onda 4 (`09-roadmap`): a listagem inteira, so por teclado.
+    /// </summary>
+    /// <remarks>
+    /// Nao e um teste de componente — as paginas de componente ja cobrem cada peca. Este prova
+    /// que elas funcionam <b>juntas</b>, com volume de verdade (~500 linhas): filtrar, ordenar,
+    /// selecionar e paginar sem tocar no mouse.
+    /// </remarks>
+    [SkippableFact]
+    public async Task A_listagem_filtra_ordena_e_pagina_SO_POR_TECLADO()
+    {
+        Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
+
+        var page = await _browser!.NewPageAsync();
+        await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/padroes/listagem");
+        await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync();
+
+        // O resumo e buscado DENTRO da paginacao, e nao por "o primeiro role=status da pagina":
+        // a barra de selecao tambem e um status, e assim que ela aparece passa a ser a primeira.
+        var resumo = page
+            .GetByRole(AriaRole.Navigation, new() { Name = "Paginação" })
+            .GetByRole(AriaRole.Status);
+        var tabela = page.Locator("table");
+
+        // ---- 1. O volume e real ----
+        await Assertions.Expect(resumo).ToContainTextAsync("de 487");
+
+        // ---- 2. ORDENAR pelo teclado ----
+        // Focar o cabecalho e apertar Enter: sem handler de teclado nosso, porque ele e um
+        // <button> de verdade dentro do <th>.
+        var ordenarPorTotal = page.GetByRole(AriaRole.Button, new() { Name = "Ordenar por Total, crescente" });
+        await ordenarPorTotal.FocusAsync();
+        await page.Keyboard.PressAsync("Enter");
+
+        await Assertions.Expect(page.Locator("th[aria-sort='ascending']")).ToHaveCountAsync(1);
+
+        // A ordem REAL das linhas, e nao so o atributo: o aria-sort podia estar mentindo.
+        var totais = await LerColunaDeTotais(page);
+        Assert.True(
+            totais.SequenceEqual(totais.OrderBy(v => v)),
+            "As linhas nao vieram em ordem crescente de total:\n"
+            + string.Join(", ", totais.Take(5)));
+
+        // Enter de novo inverte.
+        await page.Keyboard.PressAsync("Enter");
+        await Assertions.Expect(page.Locator("th[aria-sort='descending']")).ToHaveCountAsync(1);
+
+        var invertidos = await LerColunaDeTotais(page);
+        Assert.True(
+            invertidos.SequenceEqual(invertidos.OrderByDescending(v => v)),
+            "O segundo Enter nao inverteu a ordem.");
+
+        // ---- 3. A legenda diz a ordenacao ----
+        // Quem nao ve a seta precisa saber por que as linhas estao nessa ordem.
+        await Assertions.Expect(tabela.Locator("caption"))
+            .ToContainTextAsync("ordenada por Total");
+
+        // ---- 4. FILTRAR pelo teclado ----
+        // GetByRole com o papel explicito, e nao GetByLabel: "Cliente" tambem e o nome do
+        // botao de ordenar da coluna, e o locator resolveria para dois elementos.
+        var cliente = page.GetByRole(AriaRole.Textbox, new() { Name = "Cliente" });
+        await cliente.FocusAsync();
+        await page.Keyboard.TypeAsync("Aurora");
+
+        await Assertions.Expect(resumo).Not.ToContainTextAsync("de 487");
+
+        // Toda linha que sobrou casa com o filtro.
+        var clientes = await page.EvalOnSelectorAllAsync<string[]>(
+            "tbody tr td:nth-child(3)", "tds => tds.map(td => td.textContent.trim())");
+
+        Assert.NotEmpty(clientes);
+        Assert.All(clientes, c => Assert.Contains("Aurora", c, StringComparison.OrdinalIgnoreCase));
+
+        // ---- 5. SELECIONAR pelo teclado ----
+        // Espaco na caixa de "selecionar todas desta pagina".
+        var todas = page.GetByRole(AriaRole.Checkbox,
+            new() { Name = "Selecionar todas as linhas desta página" });
+        await todas.FocusAsync();
+        await page.Keyboard.PressAsync(" ");
+
+        // A barra de selecao aparece com a contagem — e ela e `Live`, entao e anunciada.
+        await Assertions.Expect(page.GetByText("selecionado", new() { Exact = false })).ToBeVisibleAsync();
+
+        // ---- 6. PAGINAR pelo teclado ----
+        await page.GetByRole(AriaRole.Button, new() { Name = "Limpar filtros" }).ClickAsync();
+        await Assertions.Expect(resumo).ToContainTextAsync("de 487");
+
+        var paginacao = page.GetByRole(AriaRole.Navigation, new() { Name = "Paginação" });
+
+        var seguinte = page.GetByRole(AriaRole.Button, new() { Name = "Página seguinte, 2" });
+        await seguinte.FocusAsync();
+        await page.Keyboard.PressAsync("Enter");
+
+        await Assertions.Expect(resumo).ToContainTextAsync("21–40 de 487");
+
+        // Dentro da paginacao, de novo: o item ATIVO DO MENU tambem e aria-current="page", e
+        // um locator solto pegaria os dois. Dois marcadores de "voce esta aqui" convivem na
+        // mesma pagina — em contextos diferentes, e cada um esta certo.
+        await Assertions.Expect(paginacao.Locator("[aria-current='page']")).ToHaveTextAsync("2");
+    }
+
+    /// <summary>Os valores da coluna Total da pagina corrente, como numeros.</summary>
+    private static async Task<IReadOnlyList<decimal>> LerColunaDeTotais(IPage page)
+    {
+        var textos = await page.EvalOnSelectorAllAsync<string[]>(
+            "tbody tr td:last-child", "tds => tds.map(td => td.textContent.trim())");
+
+        // "R$ 1.234,56" -> 1234.56. A cultura da string e pt-BR, e nao a do runner.
+        var ptBr = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+
+        return textos
+            .Select(t => decimal.Parse(
+                t.Replace("R$", string.Empty, StringComparison.Ordinal).Trim(),
+                System.Globalization.NumberStyles.Currency,
+                ptBr))
+            .ToList();
+    }
+
+    /// <summary>
     /// Sair do <c>ConfirmAsync</c> sem decidir devolve "nao".
     /// </summary>
     /// <remarks>

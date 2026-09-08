@@ -1,0 +1,127 @@
+@namespace RVM.DesignSystem.Components
+@using System.Linq.Expressions
+@typeparam TItem
+@implements IDisposable
+
+@*
+    Uma coluna. Não renderiza nada sozinha: ela se REGISTRA no grid, que é quem desenha a
+    tabela.
+
+    Tem que ser assim porque `<table>` não aceita elementos intercalados entre `<thead>` e
+    `<tbody>` — a coluna precisa contribuir com um `<th>` no cabeçalho E um `<td>` em cada
+    linha, que são lugares diferentes do DOM. Um componente que renderiza os dois não existe.
+*@
+
+@code {
+    /// <summary>Texto do cabeçalho.</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// De onde sai o valor da célula.
+    /// </summary>
+    /// <remarks>
+    /// É uma <b>expressão</b>, e não um <c>Func</c>, porque ela serve para duas coisas: extrair
+    /// o valor e servir de chave de ordenação. Com <c>Func</c> só a primeira seria possível.
+    ///
+    /// <para>
+    /// Sem <c>Field</c> a coluna precisa de <see cref="CellTemplate"/>, e não é ordenável — não
+    /// há por onde ordenar.
+    /// </para>
+    /// </remarks>
+    [Parameter]
+    public Expression<Func<TItem, object?>>? Field { get; set; }
+
+    /// <summary>Conteúdo da célula, quando o valor cru não basta.</summary>
+    [Parameter]
+    public RenderFragment<TItem>? CellTemplate { get; set; }
+
+    /// <summary>Conteúdo do cabeçalho, quando o texto não basta.</summary>
+    [Parameter]
+    public RenderFragment? HeaderTemplate { get; set; }
+
+    /// <summary>
+    /// Formato aplicado ao valor. Usa a cultura pt-BR.
+    /// </summary>
+    /// <remarks>
+    /// <c>"C"</c> para moeda, <c>"N2"</c> para número, <c>"dd/MM/yyyy"</c> para data. Vale só
+    /// para valores <see cref="IFormattable"/> — texto ignora.
+    /// </remarks>
+    [Parameter]
+    public string? Format { get; set; }
+
+    /// <summary>Alinhamento do conteúdo. <c>End</c> para número.</summary>
+    [Parameter]
+    public RvmAlignment Align { get; set; } = RvmAlignment.Start;
+
+    /// <summary>Permite ordenar por esta coluna. Exige <see cref="Field"/>.</summary>
+    [Parameter]
+    public bool Sortable { get; set; }
+
+    /// <summary>Largura em CSS. Sem ela, a coluna se ajusta ao conteúdo.</summary>
+    [Parameter]
+    public string? Width { get; set; }
+
+    /// <summary>Texto exibido quando o valor é nulo.</summary>
+    [Parameter]
+    public string EmptyText { get; set; } = "—";
+
+    [CascadingParameter]
+    private RvmDataGrid<TItem>? Grid { get; set; }
+
+    /// <summary>Chave de ordenação, compilada uma vez.</summary>
+    internal Func<TItem, object?>? Valor { get; private set; }
+
+    protected override void OnInitialized()
+    {
+        if (Grid is null)
+        {
+            // Uma coluna solta não tem onde desenhar. Falhar aqui é mais barato que renderizar
+            // nada e alguém procurar por que a tabela saiu sem a coluna.
+            throw new InvalidOperationException(
+                $"RvmColumn \"{Title}\" precisa estar dentro do <Columns> de um RvmDataGrid.");
+        }
+
+        if (Sortable && Field is null)
+        {
+            throw new InvalidOperationException(
+                $"RvmColumn \"{Title}\" está marcada como Sortable mas não tem Field. "
+                + "Sem Field não há por onde ordenar — use um Field ou tire o Sortable.");
+        }
+
+        if (Field is null && CellTemplate is null)
+        {
+            throw new InvalidOperationException(
+                $"RvmColumn \"{Title}\" não tem Field nem CellTemplate: ela renderizaria uma "
+                + "coluna vazia em todas as linhas.");
+        }
+
+        // Compilada UMA vez, no registro. Compilar a expressão por célula seria refazer o mesmo
+        // trabalho a cada linha de cada render.
+        Valor = Field?.Compile();
+
+        Grid.Registrar(this);
+    }
+
+    /// <summary>O conteúdo de uma célula, já formatado.</summary>
+    /// <param name="item">A linha.</param>
+    /// <returns>O texto a exibir.</returns>
+    internal string TextoDe(TItem item)
+    {
+        var valor = Valor?.Invoke(item);
+
+        if (valor is null)
+        {
+            return EmptyText;
+        }
+
+        // Cultura explícita, sempre (`CLAUDE.md` § Convenções): sem ela, o mesmo número sai com
+        // ponto ou vírgula dependendo de onde o servidor está hospedado.
+        return Format is not null && valor is IFormattable formatavel
+            ? formatavel.ToString(Format, RvmDataGrid<TItem>.Cultura)
+            : valor.ToString() ?? EmptyText;
+    }
+
+    /// <inheritdoc />
+    public void Dispose() => Grid?.Remover(this);
+}

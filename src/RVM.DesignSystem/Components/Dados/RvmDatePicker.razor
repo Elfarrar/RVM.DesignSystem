@@ -1,0 +1,446 @@
+@namespace RVM.DesignSystem.Components
+@using System.Diagnostics.CodeAnalysis
+@using Microsoft.JSInterop
+@inherits RvmInputBase<DateTime?>
+
+@*
+    ⚠️ A DIGITAÇÃO vem antes do calendário, e essa é a decisão que define este componente.
+
+    O defeito mais comum de date picker é obrigar a abrir o calendário para informar uma data.
+    Quem preenche cadastro o dia inteiro digita "15/03/2026" em dois segundos; navegar até março
+    de 2026 com o mouse leva dez vezes mais. O calendário existe para quem NÃO sabe a data — está
+    escolhendo, não informando.
+
+    Por isso o controle é um `<input type="text">` que aceita `dd/MM/yyyy`, com o calendário como
+    auxílio opcional atrás de um botão. `type="date"` nativo não serve: ele impõe o formato do
+    LOCALE DO NAVEGADOR, então quem está com o Windows em inglês vê mm/dd/yyyy num sistema em
+    português — e digita 03/15 achando que é 15 de março.
+*@
+
+<RvmFormField FieldId="@Id" Label="@Label" Help="@Help" Error="@MensagemFinal" Required="@Required" Class="@Class">
+    <div class="rvm-date-picker">
+        <input type="text"
+               id="@Id"
+               class="@ClasseInput"
+               inputmode="numeric"
+               placeholder="@Placeholder"
+               disabled="@Disabled"
+               required="@Required"
+               aria-invalid="@(TemErro || _textoInvalido ? "true" : null)"
+               aria-describedby="@DescricaoPara(Id)"
+               value="@_texto"
+               @onchange="AoDigitar"
+               @attributes="AdditionalAttributes" />
+
+        <button type="button"
+                class="rvm-date-picker__gatilho"
+                aria-label="@(_aberto ? CloseCalendarLabel : OpenCalendarLabel)"
+                aria-expanded="@(_aberto ? "true" : "false")"
+                aria-controls="@_idDoCalendario"
+                disabled="@Disabled"
+                @onclick="AlternarCalendario">
+            <RvmIcon Name="calendar-blank" Size="1.125rem" />
+        </button>
+
+        @if (_aberto)
+        {
+            @* role="dialog" e não um popup solto: o calendário é uma camada que se fecha com
+               ESC, e o leitor de tela precisa saber que entrou nela. *@
+            <div class="rvm-date-picker__calendario"
+                 id="@_idDoCalendario"
+                 role="dialog"
+                 aria-label="@CalendarLabel"
+                 @onkeydown="AoTeclarNoCalendario">
+
+                <div class="rvm-date-picker__navegacao">
+                    <button type="button" class="rvm-date-picker__mes"
+                            aria-label="@PreviousMonthLabel"
+                            @onclick="() => MoverMes(-1)">
+                        <RvmIcon Name="caret-left" Size="1rem" />
+                    </button>
+
+                    @* aria-live: mudar de mês com as setas precisa ser ANUNCIADO, senão quem
+                       não vê a tela navega às cegas por uma grade que mudou sem aviso. *@
+                    <span class="rvm-date-picker__titulo" aria-live="polite">@TituloDoMes</span>
+
+                    <button type="button" class="rvm-date-picker__mes"
+                            aria-label="@NextMonthLabel"
+                            @onclick="() => MoverMes(1)">
+                        <RvmIcon Name="caret-right" Size="1rem" />
+                    </button>
+                </div>
+
+                <table class="rvm-date-picker__grade" role="grid">
+                    <thead>
+                        <tr>
+                            @foreach (var dia in NomesDosDias)
+                            {
+                                @* abbr no th: o leitor de tela lê "domingo" enquanto a tela
+                                   mostra "dom". *@
+                                <th scope="col" abbr="@dia.Completo" class="rvm-date-picker__dia-semana">
+                                    <span aria-hidden="true">@dia.Curto</span>
+                                    <span class="rvm-sr-only">@dia.Completo</span>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var semana in Semanas)
+                        {
+                            <tr>
+                                @foreach (var data in semana)
+                                {
+                                    var d = data;
+                                    var doMes = d.Month == _mesVisivel.Month;
+                                    var desabilitado = EstaDesabilitada(d);
+
+                                    <td class="rvm-date-picker__celula">
+                                        <button type="button"
+                                                class="@ClasseDoDia(d, doMes)"
+                                                tabindex="@(d.Date == _focado.Date ? 0 : -1)"
+                                                aria-selected="@((Value?.Date == d.Date).ToString().ToLowerInvariant())"
+                                                aria-current="@(d.Date == DateTime.Today ? "date" : null)"
+                                                aria-label="@PorExtenso(d)"
+                                                disabled="@desabilitado"
+                                                @ref="_botoes[d.Date]"
+                                                @onclick="() => Escolher(d)">
+                                            @d.Day
+                                        </button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</RvmFormField>
+
+@code {
+    private static readonly System.Globalization.CultureInfo PtBr =
+        System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+
+    private const string Formato = "dd/MM/yyyy";
+
+    private readonly string _idDoCalendario = $"rvm-date-picker-cal-{Guid.NewGuid():N}";
+    private readonly Dictionary<DateTime, ElementReference> _botoes = [];
+
+    private string? _texto;
+    private bool _textoInvalido;
+    private bool _aberto;
+    private DateTime _mesVisivel = DateTime.Today;
+    private DateTime _focado = DateTime.Today;
+    private bool _precisaFocar;
+
+    /// <summary>Identificador. Gerado quando não informado.</summary>
+    [Parameter]
+    public string Id { get; set; } = $"rvm-date-picker-{Guid.NewGuid():N}";
+
+    /// <summary>Rótulo visível.</summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>Dica dentro do campo.</summary>
+    [Parameter]
+    public string Placeholder { get; set; } = "dd/mm/aaaa";
+
+    /// <summary>Menor data aceita.</summary>
+    [Parameter]
+    public DateTime? Min { get; set; }
+
+    /// <summary>Maior data aceita.</summary>
+    [Parameter]
+    public DateTime? Max { get; set; }
+
+    /// <summary>Datas bloqueadas — feriado, dia sem expediente.</summary>
+    [Parameter]
+    public Func<DateTime, bool>? IsDisabled { get; set; }
+
+    /// <summary>Desabilita o campo.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Marca como obrigatório.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Mensagem quando o texto digitado não é uma data.</summary>
+    [Parameter]
+    public string InvalidDateMessage { get; set; } = "Data inválida. Use o formato dd/mm/aaaa.";
+
+    /// <summary>Nome acessível do botão que abre o calendário.</summary>
+    [Parameter]
+    public string OpenCalendarLabel { get; set; } = "Abrir o calendário";
+
+    /// <summary>Nome acessível do botão quando o calendário está aberto.</summary>
+    [Parameter]
+    public string CloseCalendarLabel { get; set; } = "Fechar o calendário";
+
+    /// <summary>Nome acessível do calendário.</summary>
+    [Parameter]
+    public string CalendarLabel { get; set; } = "Calendário";
+
+    /// <summary>Nome acessível do botão de mês anterior.</summary>
+    [Parameter]
+    public string PreviousMonthLabel { get; set; } = "Mês anterior";
+
+    /// <summary>Nome acessível do botão de mês seguinte.</summary>
+    [Parameter]
+    public string NextMonthLabel { get; set; } = "Mês seguinte";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    // Classe propria, e nao a `rvm-input` do RvmTextField: o CSS de la vive em OUTRO escopo
+    // b-*, entao a regra nunca casaria com este elemento. E o mesmo motivo pelo qual um
+    // componente nao estiliza elemento de outro sem ::deep.
+    private string ClasseInput => RvmClasse.Juntar(
+        "rvm-date-picker__campo",
+        TemErro || _textoInvalido ? "rvm-date-picker__campo--invalido" : null);
+
+    // O texto ilegivel vence a validacao do modelo: enquanto o que esta no campo nao e uma
+    // data, e disso que a pessoa precisa saber primeiro.
+    private string? MensagemFinal => _textoInvalido ? InvalidDateMessage : MensagemDeErro;
+
+    private static IReadOnlyList<(string Curto, string Completo)> NomesDosDias { get; } =
+        Enumerable.Range(0, 7)
+            .Select(i => (DayOfWeek)i)
+            .Select(d => (
+                PtBr.DateTimeFormat.GetShortestDayName(d),
+                PtBr.DateTimeFormat.GetDayName(d)))
+            .ToList();
+
+    private string TituloDoMes =>
+        PtBr.TextInfo.ToTitleCase(_mesVisivel.ToString("MMMM 'de' yyyy", PtBr));
+
+    /// <summary>
+    /// As seis semanas da grade, sempre seis.
+    /// </summary>
+    /// <remarks>
+    /// Número fixo de linhas de propósito: com 5 ou 6 conforme o mês, o calendário mudaria de
+    /// altura ao navegar e os botões dançariam debaixo do cursor.
+    /// </remarks>
+    private IEnumerable<IEnumerable<DateTime>> Semanas
+    {
+        get
+        {
+            var primeiro = new DateTime(_mesVisivel.Year, _mesVisivel.Month, 1);
+
+            // A semana começa no DOMINGO (`11` § RvmDatePicker), que é a convenção do Brasil.
+            var inicio = primeiro.AddDays(-(int)primeiro.DayOfWeek);
+
+            return Enumerable.Range(0, 6)
+                .Select(semana => Enumerable.Range(0, 7)
+                    .Select(dia => inicio.AddDays((semana * 7) + dia)));
+        }
+    }
+
+    private bool EstaDesabilitada(DateTime data) =>
+        (Min is not null && data.Date < Min.Value.Date)
+        || (Max is not null && data.Date > Max.Value.Date)
+        || (IsDisabled?.Invoke(data) ?? false);
+
+    private string ClasseDoDia(DateTime data, bool doMes) => RvmClasse.Juntar(
+        "rvm-date-picker__dia",
+        doMes ? null : "rvm-date-picker__dia--fora",
+        Value?.Date == data.Date ? "rvm-date-picker__dia--escolhido" : null,
+        data.Date == DateTime.Today ? "rvm-date-picker__dia--hoje" : null);
+
+    // Por extenso, sempre: "15 de março de 2026". Um botão chamado "15" numa grade de 42 botões
+    // não diz de que mês nem de que ano.
+    private string PorExtenso(DateTime data) =>
+        data.ToString("dd 'de' MMMM 'de' yyyy", PtBr);
+
+    protected override void OnParametersSet()
+    {
+        // O texto só é reescrito quando o valor mudou POR FORA. Reescrever a cada render
+        // apagaria o que a pessoa está digitando no meio da digitação.
+        var esperado = Value?.ToString(Formato, PtBr);
+
+        if (!_textoInvalido && _texto != esperado)
+        {
+            _texto = esperado;
+        }
+
+        if (Value is { } v)
+        {
+            _mesVisivel = new DateTime(v.Year, v.Month, 1);
+            _focado = v;
+        }
+    }
+
+    private async Task AoDigitar(ChangeEventArgs e)
+    {
+        var texto = e.Value?.ToString();
+        _texto = texto;
+
+        if (string.IsNullOrWhiteSpace(texto))
+        {
+            _textoInvalido = false;
+            await DefinirAsync(null);
+            return;
+        }
+
+        // ParseExact com o formato fixo, e não Parse: aceitar "3/15/2026" porque a cultura do
+        // servidor entende seria justamente o defeito que o `type="date"` nativo tem.
+        if (DateTime.TryParseExact(texto, Formato, PtBr,
+                System.Globalization.DateTimeStyles.None, out var data)
+            && !EstaDesabilitada(data))
+        {
+            _textoInvalido = false;
+            await DefinirAsync(data);
+            return;
+        }
+
+        // Texto ruim NÃO apaga o valor: a pessoa vê o que digitou e a mensagem do que está
+        // errado. Limpar o campo aqui esconderia o erro e o dado ao mesmo tempo.
+        _textoInvalido = true;
+    }
+
+    /// <summary>
+    /// Exigido pelo <c>InputBase&lt;T&gt;</c>, e aqui ele quase nunca roda.
+    /// </summary>
+    /// <remarks>
+    /// O caminho normal e o <see cref="AoDigitar"/>, que precisa de mais do que este metodo
+    /// permite: distinguir "vazio" de "texto que nao e data" e manter o texto ruim na tela para
+    /// a pessoa ver o que digitou. O <c>InputBase</c> so oferece "converteu ou nao".
+    ///
+    /// <para>
+    /// Continua implementado com o MESMO formato fixo — se alguem chamar por outro caminho, o
+    /// contrato de `dd/MM/yyyy` vale igual.
+    /// </para>
+    /// </remarks>
+    /// <param name="value">O texto.</param>
+    /// <param name="result">A data convertida.</param>
+    /// <param name="validationErrorMessage">A mensagem, quando nao converte.</param>
+    /// <returns>Se converteu.</returns>
+    protected override bool TryParseValueFromString(
+        string? value,
+        out DateTime? result,
+        [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            result = null;
+            validationErrorMessage = null;
+            return true;
+        }
+
+        if (DateTime.TryParseExact(value, Formato, PtBr,
+                System.Globalization.DateTimeStyles.None, out var data))
+        {
+            result = data;
+            validationErrorMessage = null;
+            return true;
+        }
+
+        result = null;
+        validationErrorMessage = InvalidDateMessage;
+        return false;
+    }
+
+    private async Task DefinirAsync(DateTime? data)
+    {
+        CurrentValue = data;
+        await Task.CompletedTask;
+    }
+
+    private void AlternarCalendario()
+    {
+        _aberto = !_aberto;
+
+        if (_aberto)
+        {
+            _focado = Value ?? DateTime.Today;
+            _mesVisivel = new DateTime(_focado.Year, _focado.Month, 1);
+            _precisaFocar = true;
+        }
+    }
+
+    private void MoverMes(int meses)
+    {
+        _mesVisivel = _mesVisivel.AddMonths(meses);
+        _focado = _focado.AddMonths(meses);
+        _precisaFocar = true;
+    }
+
+    private async Task Escolher(DateTime data)
+    {
+        _textoInvalido = false;
+        _texto = data.ToString(Formato, PtBr);
+        await DefinirAsync(data);
+
+        _aberto = false;
+    }
+
+    private void AoTeclarNoCalendario(KeyboardEventArgs e)
+    {
+        var passo = e.Key switch
+        {
+            "ArrowRight" => 1,
+            "ArrowLeft" => -1,
+            "ArrowDown" => 7,
+            "ArrowUp" => -7,
+            _ => 0,
+        };
+
+        if (passo != 0)
+        {
+            _focado = _focado.AddDays(passo);
+            _mesVisivel = new DateTime(_focado.Year, _focado.Month, 1);
+            _precisaFocar = true;
+            return;
+        }
+
+        switch (e.Key)
+        {
+            case "PageUp":
+                MoverMes(-1);
+                break;
+
+            case "PageDown":
+                MoverMes(1);
+                break;
+
+            case "Home":
+                _focado = new DateTime(_mesVisivel.Year, _mesVisivel.Month, 1);
+                _precisaFocar = true;
+                break;
+
+            case "End":
+                _focado = new DateTime(_mesVisivel.Year, _mesVisivel.Month,
+                    DateTime.DaysInMonth(_mesVisivel.Year, _mesVisivel.Month));
+                _precisaFocar = true;
+                break;
+
+            case "Escape":
+                _aberto = false;
+                break;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primeiraVez)
+    {
+        if (!_precisaFocar || !_aberto)
+        {
+            return;
+        }
+
+        _precisaFocar = false;
+
+        if (_botoes.TryGetValue(_focado.Date, out var botao))
+        {
+            try
+            {
+                await botao.FocusAsync();
+            }
+            catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+            {
+                // Sem JS ou elemento já fora da tela: a navegação por setas continua mudando o
+                // dia focado no C#; o que se perde é só o foco visual.
+            }
+        }
+    }
+}

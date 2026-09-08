@@ -1,0 +1,121 @@
+.rvm-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-4);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    color: var(--rvm-color-on-surface);
+}
+
+.rvm-pagination__resumo {
+    margin: 0;
+    color: var(--rvm-color-on-surface-variant);
+    /* Tabular para o resumo não mudar de largura ao passar de "9–20" para "21–40". */
+    font-variant-numeric: tabular-nums;
+}
+
+.rvm-pagination__controles {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-4);
+    flex-wrap: wrap;
+}
+
+.rvm-pagination__tamanho {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-pagination__tamanho-rotulo {
+    color: var(--rvm-color-on-surface-variant);
+    white-space: nowrap;
+}
+
+.rvm-pagination__select {
+    height: var(--rvm-control-height-sm);
+    padding: 0 var(--rvm-space-2);
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    background: var(--rvm-color-surface);
+    color: var(--rvm-color-on-surface);
+    font: inherit;
+}
+
+.rvm-pagination__select:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}
+
+.rvm-pagination__botoes {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+}
+
+.rvm-pagination__botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Quadrado do tamanho de um controle: os números ficam todos com a mesma largura, e a
+       fileira não dança quando se passa de "9" para "10". */
+    min-width: var(--rvm-control-height-sm);
+    height: var(--rvm-control-height-sm);
+    padding: 0 var(--rvm-space-1);
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-md);
+    background: none;
+    color: var(--rvm-color-on-surface);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-pagination__botao:hover:not(:disabled) {
+        background-color: var(--rvm-color-surface-sunken);
+    }
+}
+
+.rvm-pagination__botao:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}
+
+/*
+  A página atual tem preenchimento E peso, além do aria-current. Só a cor de fundo não
+  serviria: num tema onde o container da marca é claro, a diferença some para quem não
+  distingue as duas.
+*/
+.rvm-pagination__botao--atual {
+    background-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-pagination__botao:disabled {
+    color: var(--rvm-color-on-disabled);
+    cursor: not-allowed;
+}
+
+/*
+  No celular a fileira de números sai e ficam só os saltos. Sete botões de 32px não cabem em
+  360px sem virar alvo de toque ruim — e o resumo ("21–40 de 137") continua dizendo onde a
+  pessoa está.
+*/
+@media (max-width: 480px) {
+    .rvm-pagination {
+        justify-content: center;
+    }
+
+    .rvm-pagination__botao--atual {
+        /* O atual fica: sem ele, some a única indicação de posição na fileira. */
+        display: inline-flex;
+    }
+
+    .rvm-pagination__botao:not(.rvm-pagination__botao--atual):not(:disabled):not(:first-child):not(:nth-child(2)):not(:nth-last-child(2)):not(:last-child) {
+        display: none;
+    }
+}
