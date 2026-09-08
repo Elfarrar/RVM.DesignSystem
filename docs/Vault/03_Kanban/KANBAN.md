@@ -7,7 +7,20 @@
 >
 > Modo de trabalho: **Claude implementa, o Rafael revisa** (`CLAUDE.md § Modo de trabalho`).
 
+## A decidir
+
+- [[DSGN-022]] — **Graficos** (obras). A condicao do `09` foi satisfeita: um app RVM precisa.
+  ⚠️ **Card aberto sem codigo**: o roadmap diz "embrulhar biblioteca existente" e o `CLAUDE.md`
+  diz "sem dependencia NuGet de terceiros" e "nada depende de JS para renderizar" — as tres
+  frases nao cabem juntas. Quatro saidas descritas no card; a decisao e do Rafael.
+
 ## Em revisao
+
+- [[DSGN-023]] — **A paleta em construcao repinta o site inteiro**: mexeu numa cor em
+  `/fundamentos/paleta`, a documentacao toda passa a usar a paleta — que e o unico jeito de ver
+  que uma primaria vermelha faz "Salvar" parecer "Excluir". Zero mudanca na biblioteca: o
+  mecanismo ja existia. Revelou e corrigiu um seletor de tema que **mentia** com tema fora da
+  lista.
 
 - [[DSGN-021]] — **Criar sua paleta**: cores de estado escolhiveis (`RvmSeed`, aditivo) e a
   ferramenta em `/fundamentos/paleta` que gera **o CSS pronto**. Avisa quando a marca colide com

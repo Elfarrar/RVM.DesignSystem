@@ -1,5 +1,6 @@
 @page "/fundamentos/paleta"
-@inject IJSRuntime JS
+@inject IRvmThemeService Site
+@implements IDisposable
 
 <PageTitle>Criar sua paleta · RVM Design System</PageTitle>
 
@@ -37,7 +38,8 @@
                             discordar. <strong>Deixe em branco para usar o padrão.</strong>
                         </p>
 
-                        <RvmSwitch @bind-Value="_customizarEstados" Label="Escolher as cores de feedback" />
+                        <RvmSwitch @bind-Value="_customizarEstados" @bind-Value:after="Armar"
+                                   Label="Escolher as cores de feedback" />
 
                         @if (_customizarEstados)
                         {
@@ -55,6 +57,30 @@
             </ChildContent>
         </RvmCard>
     </section>
+
+    @if (_seguirNoSite)
+    {
+        @*
+            role="status" e nao "alert": e informacao sobre o que ACABOU de acontecer por
+            escolha da pessoa, nao uma interrupcao. O texto e estatico, entao anuncia uma vez,
+            quando aparece — nao a cada ajuste de cor.
+        *@
+        <div class="paleta__espelho" role="status">
+            <div>
+                <p class="paleta__espelho-titulo">O site inteiro está nas suas cores.</p>
+                <p class="paleta__espelho-texto">
+                    Navegue pelas páginas de componentes — botão, tabela, diálogo, formulário.
+                    É o único jeito de descobrir que uma paleta não funciona <em>antes</em> de
+                    adotá-la: aqui ela é doze quadradinhos; lá é a tela que alguém vai usar o
+                    dia inteiro. O modo escuro também segue.
+                </p>
+            </div>
+
+            <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="Restaurar">
+                Restaurar o tema do site
+            </RvmButton>
+        </div>
+    }
 
     @if (Colisoes.Count > 0)
     {
@@ -293,11 +319,85 @@
             Info = _customizarEstados ? _info : null,
         });
 
+    /// <summary>
+    /// Se o site inteiro esta espelhando a paleta que esta sendo montada aqui.
+    /// </summary>
+    /// <remarks>
+    /// Comeca <b>desligado</b>, e isso e a decisao central desta tela. As cores iniciais do
+    /// formulario nao sao as do site — quem apenas ABRE esta pagina veria a documentacao inteira
+    /// trocar de cor sozinha, sem ter pedido nada. O espelho liga na primeira vez que a pessoa
+    /// mexe numa cor, que e exatamente quando ela quer ver o efeito.
+    /// </remarks>
+    private bool _seguirNoSite;
+
     private void Definir(ref string campo, string? valor)
     {
-        if (!string.IsNullOrWhiteSpace(valor))
+        if (string.IsNullOrWhiteSpace(valor) || string.Equals(campo, valor, StringComparison.Ordinal))
         {
-            campo = valor;
+            return;
+        }
+
+        campo = valor;
+        Armar();
+    }
+
+    private void Armar() => _seguirNoSite = true;
+
+    /// <summary>
+    /// Desarma o espelho quando o tema do site muda por OUTRO caminho.
+    /// </summary>
+    /// <remarks>
+    /// Sem isto os dois controles brigariam: o visitante escolheria "RVM" no seletor da topbar,
+    /// o <c>OnAfterRenderAsync</c> daqui reaplicaria a paleta dele no render seguinte, e o
+    /// seletor pareceria quebrado. Quem manda e o ultimo comando dado — se veio de fora, esta
+    /// pagina para de espelhar.
+    /// </remarks>
+    private void AoMudarTemaPorFora()
+    {
+        if (_seguirNoSite && Site.Theme != Tema)
+        {
+            _seguirNoSite = false;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    protected override void OnInitialized() => Site.Changed += AoMudarTemaPorFora;
+
+    public void Dispose() => Site.Changed -= AoMudarTemaPorFora;
+
+    private async Task Restaurar()
+    {
+        _seguirNoSite = false;
+        await Site.SetThemeAsync(RvmThemes.Rvm);
+    }
+
+    /// <summary>Manda o tema montado aqui para o site inteiro.</summary>
+    /// <remarks>
+    /// Aplicar depois do render, e nao dentro do manipulador de cada campo, resolve tres coisas
+    /// de uma vez:
+    ///
+    /// <para>
+    /// <b>Nao ha fogo-e-esquece.</b> O <c>Definir</c> recebe o campo por <c>ref</c>, e C# proibe
+    /// <c>ref</c> em metodo <c>async</c> — chamar de la exigiria descartar a Task.
+    /// </para>
+    ///
+    /// <para>
+    /// <b>Nao ha laco.</b> <see cref="RvmTheme"/> e record: a comparacao e por valor, campo a
+    /// campo. O <c>SetThemeAsync</c> dispara o <c>Changed</c>, o provider re-renderiza, esta
+    /// pagina re-renderiza junto — e na segunda passada os dois temas ja sao iguais e nada
+    /// acontece. Com igualdade por referencia isso giraria para sempre.
+    /// </para>
+    ///
+    /// <para>
+    /// <b>Uma escrita so por rajada.</b> Arrastar o seletor de cor dispara varias mudancas; o
+    /// que chega ao site e o estado final de cada render, nao cada passo intermediario.
+    /// </para>
+    /// </remarks>
+    protected override async Task OnAfterRenderAsync(bool primeiraVez)
+    {
+        if (_seguirNoSite && Site.Theme != Tema)
+        {
+            await Site.SetThemeAsync(Tema);
         }
     }
 
