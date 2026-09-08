@@ -1,5 +1,13 @@
 /*
   Casca minima do site, em CSS puro.
+
+  Cores: roxo do Visual Studio (#641974) + azul do VS Code (#006DBD), a mesma identidade
+  do rvmtech.com.br (RVM.Curriculo). Decisao do Rafael, registrada em
+  06-tokens-e-tematizacao.md § A identidade da marca — leia LA antes de mexer aqui:
+  os valores sao os RENDERIZADOS do site, nao os nominais, porque o azul nominal
+  (#007ACC) reprova no teste de contraste AA. A metade escura foi derivada e ainda
+  nao foi aprovada por ele.
+
   Nao ha framework CSS aqui de proposito (03-arquitetura § CSS): a partir da onda 1
   o site passa a se vestir com os proprios tokens do pacote, e o que estiver escrito
   aqui vai embora. Nao acrescentar Bootstrap/Tailwind — o template do Blazor traz
@@ -8,20 +16,24 @@
 
 :root {
     color-scheme: light dark;
-    --site-fg: #16161a;
-    --site-bg: #ffffff;
-    --site-muted: #5b5b66;
-    --site-line: #e3e3e8;
-    --site-link: #1b4dd1;
+    --site-fg: #1E1E26;
+    --site-bg: #EEEEF1;
+    --site-bg-elev: #FCFCFE;
+    --site-muted: #575760;
+    --site-line: #DEDEE4;
+    --site-link: #641974;
+    --site-accent-alt: #006DBD;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --site-fg: #ececf1;
-        --site-bg: #131316;
-        --site-muted: #a0a0ad;
-        --site-line: #2c2c33;
-        --site-link: #8fb0ff;
+        --site-fg: #E7E7ED;
+        --site-bg: #111117;
+        --site-bg-elev: #1A1A20;
+        --site-muted: #A3A4AC;
+        --site-line: #32323A;
+        --site-link: #CF8FDE;
+        --site-accent-alt: #65B2F1;
     }
 }
 
@@ -38,6 +50,7 @@ a { color: var(--site-link); }
 .page { display: flex; flex-direction: column; min-height: 100vh; }
 
 .site-header {
+    background: var(--site-bg-elev);
     border-bottom: 1px solid var(--site-line);
     padding: 1rem 1.5rem;
 }
@@ -47,6 +60,7 @@ a { color: var(--site-link); }
 .site-main { flex: 1; padding: 2rem 1.5rem; max-width: 46rem; margin: 0 auto; width: 100%; box-sizing: border-box; }
 
 .site-footer {
+    background: var(--site-bg-elev);
     border-top: 1px solid var(--site-line);
     padding: 1rem 1.5rem;
     color: var(--site-muted);
@@ -54,6 +68,21 @@ a { color: var(--site-link); }
 }
 
 .aviso { color: var(--site-muted); }
+
+/* Azul de apoio, o mesmo papel que ele tem no rvmtech.com.br: destaque secundario. */
+code {
+    font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+    font-size: .9em;
+    color: var(--site-accent-alt);
+}
+
+/* Foco visivel — 2px solidos no roxo da marca, como no rvmtech.com.br.
+   O site inteiro tem que ser operavel por teclado; e portao do proprio projeto. */
+:focus-visible {
+    outline: 2px solid var(--site-link);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
 
 /* Indicador de carregamento do WASM — vem do template, mantido. */
 .loading-progress {
