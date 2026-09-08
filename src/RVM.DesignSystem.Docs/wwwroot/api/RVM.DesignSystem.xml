@@ -2703,6 +2703,55 @@
              A regra existe para acessibilidade; aplica-la aqui trabalharia contra ela.
              </remarks>
         </member>
+        <member name="T:RVM.DesignSystem.Theming.RvmSeed">
+             <summary>
+             As cores que um produto escolhe. Tudo o mais e derivado delas.
+             </summary>
+             <remarks>
+             <b>Duas cores sao obrigatorias; quatro sao opcionais.</b> Essa proporcao e a tese do motor de
+             tema: um produto novo escreve duas linhas em vez das ~200 que cada app do ecossistema
+             duplicou.
+            
+             <para>
+             As quatro opcionais existem porque <b>convencao cultural nao e lei</b>. Verde-sucesso,
+             vermelho-erro e a leitura mais comum no Brasil, e por isso e o padrao — mas um produto de
+             sinalizacao ferroviaria, um de saude ou um cuja marca ja e vermelha tem motivo real para
+             discordar. Quem discorda informa a cor; quem nao informa fica com o padrao.
+             </para>
+            
+             <para>
+             ⚠️ <b>Informar uma cor de estado nao dispensa o contraste.</b> O que a biblioteca aceita de
+             voce e a <b>matiz e o croma</b>; a luminosidade continua sendo calculada contra a superficie
+             mais exigente da paleta, ate atender AA. Uma cor bonita e ilegivel entra como a versao
+             legivel dela mesma — ver <see cref="M:RVM.DesignSystem.Theming.RvmContrast.Ensure(RVM.DesignSystem.Theming.RvmColor,RVM.DesignSystem.Theming.RvmColor,System.Double)"/>.
+             </para>
+             </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmSeed.Primary">
+            <summary>
+            Cor principal da marca, em hexadecimal.
+            </summary>
+            <remarks>
+            E ela que aparece no botao de acao, no link e no item de menu ativo — os <b>10%</b> da
+            regra de proporcao. Ela tambem matiza os neutros em ~4% do croma dela, que e o detalhe
+            barato que faz a interface parecer desenhada em vez de montada.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmSeed.Secondary">
+            <summary>Cor de apoio, em hexadecimal. Complementa a primaria em variacoes de componente.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmSeed.Success">
+            <summary>Cor de sucesso. Nulo usa o verde padrao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmSeed.Warning">
+            <summary>Cor de aviso. Nulo usa o ambar padrao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmSeed.Danger">
+            <summary>Cor de erro. Nulo usa o vermelho padrao.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmSeed.Info">
+            <summary>Cor de informacao. Nulo usa o azul padrao.</summary>
+        </member>
         <member name="T:RVM.DesignSystem.Theming.RvmThemeMode">
             <summary>Modo de cor corrente.</summary>
         </member>
@@ -2747,6 +2796,43 @@
              e regressao desta funcao.
              </remarks>
              <returns>Tema com as duas paletas derivadas e ja verificadas contra os limiares AA.</returns>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmTheme.FromSeed(System.String,RVM.DesignSystem.Theming.RvmSeed)">
+             <summary>
+             Deriva um tema completo a partir das cores que o produto escolheu.
+             </summary>
+             <param name="name">Nome do tema.</param>
+             <param name="seed">As duas cores obrigatorias e, opcionalmente, as quatro de estado.</param>
+             <returns>Tema com as duas paletas derivadas e ja verificadas contra os limiares AA.</returns>
+             <remarks>
+             Sobrecarga aditiva, de <c>1.1.0</c>: a de tres argumentos continua valendo e delega para
+             esta. Ela existe para o caso que a de tres nao cobre — trocar as cores de <b>estado</b>,
+             que ate a 1.0 eram fixas.
+            
+             <para>
+             Do que voce informa, o motor aproveita a <b>matiz e o croma</b>; a luminosidade e
+             recalculada contra a superficie mais exigente da paleta ate atender AA. E o que permite
+             aceitar a cor da marca sem aceitar um par ilegivel.
+             </para>
+             </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Theming.RvmTheme.Matiz(System.String)">
+             <summary>
+             A matiz e o croma de uma cor informada, com o croma limitado ao que a tela alcanca.
+             </summary>
+             <param name="hex">A cor, em hexadecimal.</param>
+             <returns>Matiz em graus e croma.</returns>
+             <remarks>
+             O limite de croma nao e capricho: OKLCH e um espaco maior que o sRGB, e um croma alto
+             demais gera uma cor que o monitor nao consegue mostrar — o resultado seria recortado na
+             conversao, saindo diferente do que a pessoa escolheu e, pior, com luminosidade diferente
+             da calculada. 0.20 e o teto que a maioria das matizes alcanca em sRGB.
+            
+             <para>
+             Um cinza informado (croma ~0) fica cinza: o motor nao inventa saturacao que nao foi
+             pedida.
+             </para>
+             </remarks>
         </member>
         <member name="M:RVM.DesignSystem.Theming.RvmTheme.ToCss">
              <summary>

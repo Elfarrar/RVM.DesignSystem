@@ -335,3 +335,156 @@
 }
 
 .doc__espaco-acima { margin-top: var(--rvm-space-4); }
+
+/* --- Criar sua paleta (fundamentos/paleta) --- */
+
+.paleta__entradas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: var(--rvm-space-4);
+}
+
+.paleta__entradas--acima { margin-top: var(--rvm-space-4); }
+
+.color-input {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+}
+
+.color-input__rotulo {
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-medium);
+    color: var(--rvm-color-on-surface);
+}
+
+.color-input__controles {
+    display: flex;
+    gap: var(--rvm-space-2);
+}
+
+/* A amostra e quadrada e grande o bastante para a cor ser JULGAVEL — um retangulo de 20px nao
+   deixa ninguem decidir se o verde e o verde certo. */
+.color-input__amostra {
+    width: var(--rvm-control-height-md);
+    height: var(--rvm-control-height-md);
+    padding: 0;
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    background: none;
+    cursor: pointer;
+}
+
+.color-input__hex {
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: var(--rvm-control-padding-y-md) var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border-strong);
+    border-radius: var(--rvm-radius-md);
+    background: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface);
+    /* Mono e tabular: hexadecimal se le caractere a caractere, e o campo nao pode mudar de
+       largura entre "#FFF000" e "#111111". */
+    font-family: var(--rvm-font-family-mono);
+    font-size: var(--rvm-font-size-code);
+    text-transform: uppercase;
+}
+
+.color-input__amostra:focus-visible,
+.color-input__hex:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
+
+.color-input__ajuda {
+    margin: 0;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-on-surface-variant);
+}
+
+.doc__opcional {
+    margin-left: var(--rvm-space-2);
+    padding: 0 var(--rvm-space-2);
+    border-radius: var(--rvm-radius-full);
+    background: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface-variant);
+    font-size: var(--rvm-font-size-caption);
+    font-weight: var(--rvm-font-weight-regular);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.paleta__modos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--rvm-space-6);
+}
+
+@media (min-width: 900px) {
+    .paleta__modos { grid-template-columns: 1fr 1fr; }
+}
+
+.paleta__amostras {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: var(--rvm-space-2);
+}
+
+/* A amostra mostra o par x/on-x JUNTOS: o nome do papel e escrito na cor de texto dele, sobre o
+   fundo dele. E o unico jeito de ver o par como ele vai aparecer na tela -- um quadradinho de
+   cor sozinho nao diz se da para ler nada em cima. */
+.paleta__amostra {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    padding: var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-md);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.paleta__papel { font-weight: var(--rvm-font-weight-semibold); }
+
+.paleta__hex {
+    font-family: var(--rvm-font-family-mono);
+    font-size: var(--rvm-font-size-caption);
+    opacity: 0.85;
+}
+
+.paleta__proporcao {
+    display: flex;
+    height: 3.5rem;
+    margin: var(--rvm-space-4) 0;
+    border-radius: var(--rvm-radius-md);
+    overflow: hidden;
+    font-size: var(--rvm-font-size-caption);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.paleta__faixa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.paleta__faixa--60 {
+    flex: 60;
+    background: var(--rvm-color-background);
+    color: var(--rvm-color-on-background);
+    border: 1px solid var(--rvm-color-border);
+}
+
+.paleta__faixa--30 {
+    flex: 30;
+    background: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface);
+}
+
+.paleta__faixa--10 {
+    flex: 10;
+    background: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+}
