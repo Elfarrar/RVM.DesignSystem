@@ -39,6 +39,7 @@ public static class Navegacao
         new("Fundamentos",
         [
             new("Cor", "fundamentos/cor"),
+            new("Criar sua paleta", "fundamentos/paleta"),
             new("Ícones", "fundamentos/icones"),
             new("Espaçamento", "fundamentos/espacamento"),
             new("Densidade", "fundamentos/densidade"),

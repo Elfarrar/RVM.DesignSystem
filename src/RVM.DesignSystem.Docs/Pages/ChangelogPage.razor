@@ -11,6 +11,39 @@
         </p>
     </header>
 
+    <section aria-labelledby="cl-110">
+        <h2 id="cl-110">1.1.0</h2>
+        <p class="doc__nota">
+            Primeira minor depois do congelamento. <strong>Nada quebra</strong> — só acrescenta.
+        </p>
+        <ul class="doc__lista">
+            <li>
+                <strong><code>RvmSeed</code> e a sobrecarga <code>FromSeed(nome, seed)</code></strong>:
+                as quatro cores de estado passam a ser escolhíveis. Verde, âmbar, vermelho e azul
+                continuam sendo o padrão — mas um produto de saúde, de sinalização, ou cuja marca
+                já é vermelha agora pode discordar.
+            </li>
+            <li>
+                <strong><a href="fundamentos/paleta">Fundamentos › Criar sua paleta</a></strong>:
+                escolha as cores, veja os 27 papéis derivados nos dois modos, o contraste de
+                todos os pares medido ao vivo, e <strong>copie o CSS pronto</strong> — que não
+                depende de Blazor.
+            </li>
+        </ul>
+
+        <p class="doc__nota">
+            <strong>A cor escolhida não dispensa o contraste.</strong> Do que você informa, o
+            motor aproveita a matiz e o croma; a luminosidade continua sendo calculada até
+            atender AA. Há teste que passa amarelo puro e branco como cores de estado, em seis
+            marcas diferentes, e exige que os 29 pares continuem passando.
+        </p>
+        <p class="doc__nota">
+            A ferramenta também <strong>avisa quando a marca colide com uma cor de estado</strong>
+            — o caso em que "Salvar" e "Excluir" passam a parecer o mesmo botão. Não é questão de
+            contraste: as duas podem passar em AA e ainda assim serem indistinguíveis entre si.
+        </p>
+    </section>
+
     <section aria-labelledby="cl-100">
         <h2 id="cl-100">1.0.0 — Onda 4</h2>
         <p class="doc__nota">Dados. A primeira versão estável — <strong>o contrato congela aqui</strong>.</p>
