@@ -3,7 +3,7 @@ id: DSGN-023
 titulo: A paleta em construcao repinta o site inteiro
 repo: RVM.DesignSystem
 tipo: feature
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 

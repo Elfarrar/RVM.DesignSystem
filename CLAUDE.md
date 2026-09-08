@@ -179,6 +179,15 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 - ⚠️ **A `1.0.0` está no ar e o contrato ESTÁ congelado.** Daqui em diante, mudança que quebra
   é major — as ondas anteriores puderam tornar papel de paleta `required` sem cerimônia; isso
   acabou. A tag `v1.0.0` prende a versão ao commit `2366388`.
+- ✅ **`DSGN-023` EM PRODUÇÃO** (08/09/2026): mexer numa cor em `/fundamentos/paleta` aplica o
+  tema no **site inteiro**, nos dois modos. Não é enfeite — é o único jeito de ver que uma
+  primária vermelha faz o "Salvar" parecer um botão de excluir. **Nada mudou na biblioteca**: o
+  `RvmThemeProvider` já emitia o CSS do tema e reagia ao `Changed`.
+- ⚠️ **A tag `v1.1.0` existe, mas o pacote NÃO está no feed do BaGet.** Duas execuções do
+  "Push no BaGet" falharam por rede (1908s e ~equivalente), e o `--timeout 120` **não as
+  limitou** — ver a correção no `DSGN-018`. O site não depende disso (compila por
+  `ProjectReference`); o primeiro consumidor externo depende. **Não republicar movendo a tag
+  sem decidir o conserto antes.**
 - Próximo passo: **não há onda 5**. O que vem é adoção — e ela é só em projeto novo (`09` §
   Adoção). O próximo projeto RVM que precisar de UI nasce aqui, e é ele quem prova a biblioteca.
 

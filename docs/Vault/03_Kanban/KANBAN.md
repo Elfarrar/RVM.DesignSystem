@@ -16,18 +16,20 @@
 
 ## Em revisao
 
-- [[DSGN-023]] — **A paleta em construcao repinta o site inteiro**: mexeu numa cor em
-  `/fundamentos/paleta`, a documentacao toda passa a usar a paleta — que e o unico jeito de ver
-  que uma primaria vermelha faz "Salvar" parecer "Excluir". Zero mudanca na biblioteca: o
-  mecanismo ja existia. Revelou e corrigiu um seletor de tema que **mentia** com tema fora da
-  lista.
-
-- [[DSGN-021]] — **Criar sua paleta**: cores de estado escolhiveis (`RvmSeed`, aditivo) e a
-  ferramenta em `/fundamentos/paleta` que gera **o CSS pronto**. Avisa quando a marca colide com
-  uma cor de estado — o caso em que "Salvar" e "Excluir" viram o mesmo botao. No ar em dev,
-  `1.1.0-alpha.19` no BaGet. **Aguardando o Rafael para promover a `master` / `1.1.0`.**
+_Nada em revisao._
 
 ## Concluido
+
+- [[DSGN-023]] — ✅ **EM PRODUCAO** (08/09/2026, autorizada pelo Rafael): a paleta em construcao
+  repinta o site inteiro. E o unico jeito de ver que uma primaria vermelha faz "Salvar" parecer
+  "Excluir" — as amostras de cor nao mostram isso. **Zero mudanca na biblioteca**: o mecanismo
+  ja existia. Revelou e corrigiu um seletor de tema que **mentia** com tema fora da lista.
+
+- [[DSGN-021]] — ✅ **EM PRODUCAO** (08/09/2026): cores de estado escolhiveis (`RvmSeed`,
+  aditivo) e a ferramenta em `/fundamentos/paleta` que gera **o CSS pronto**.
+  ⚠️ **A tag `v1.1.0` existe e aponta para `7013b46`, mas o pacote NAO esta no feed** — duas
+  execucoes do push no BaGet falharam por rede. O site nao depende disso (compila por
+  `ProjectReference`); quem depende e o primeiro consumidor. Ver [[DSGN-018]].
 
 - [[DSGN-020]] — 🎉 **Onda 4 EM PRODUCAO e a `1.0.0` PUBLICADA** (08/09/2026, autorizada pelo
   Rafael): grid, paginacao, filtro, data e busca assincrona, mais a tela de Listagem com 487
