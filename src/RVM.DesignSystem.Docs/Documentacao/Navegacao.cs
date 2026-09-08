@@ -3,7 +3,8 @@ namespace RVM.DesignSystem.Docs.Documentacao;
 /// <summary>Um item de menu.</summary>
 /// <param name="Texto">O rótulo exibido.</param>
 /// <param name="Rota">A rota, sem barra inicial.</param>
-public sealed record ItemDeMenu(string Texto, string Rota);
+/// <param name="Icone">Ícone opcional, do conjunto Phosphor.</param>
+public sealed record ItemDeMenu(string Texto, string Rota, string? Icone = null);
 
 /// <summary>Um grupo de itens.</summary>
 /// <param name="Titulo">O título da seção.</param>
@@ -16,8 +17,13 @@ public sealed record GrupoDeMenu(string Titulo, IReadOnlyList<ItemDeMenu> Itens)
 /// <remarks>
 /// Declarada num lugar só, e não espalhada em <c>NavLink</c> pelo layout: assim a página nova
 /// aparece no menu por acrescentar uma linha aqui, e não por alguém lembrar de editar dois
-/// arquivos. Segue o desenho do `07` § Estrutura de navegação; os grupos que ainda não têm
-/// página (Padrões, ondas 2 a 4) entram quando os componentes deles existirem.
+/// arquivos. Segue o desenho do `07` § Estrutura de navegação.
+///
+/// <para>
+/// Os componentes estão em <b>dois grupos</b> desde a onda 2. Vinte e um itens numa lista só
+/// obrigam a rolar a barra lateral para achar qualquer coisa — e a separação por onda é a que
+/// as pessoas já usam para falar da biblioteca.
+/// </para>
 /// </remarks>
 public static class Navegacao
 {
@@ -26,7 +32,7 @@ public static class Navegacao
     [
         new("Começar",
         [
-            new("Início", ""),
+            new("Início", "", "house"),
             new("Instalação", "instalacao"),
         ]),
 
@@ -35,9 +41,10 @@ public static class Navegacao
             new("Cor", "fundamentos/cor"),
             new("Ícones", "fundamentos/icones"),
             new("Espaçamento", "fundamentos/espacamento"),
+            new("Densidade", "fundamentos/densidade"),
         ]),
 
-        new("Componentes",
+        new("Básicos",
         [
             new("Button", "componentes/button"),
             new("IconButton", "componentes/icon-button"),
@@ -48,6 +55,22 @@ public static class Navegacao
             new("RadioGroup", "componentes/radio-group"),
             new("Switch", "componentes/switch"),
             new("FormField", "componentes/form-field"),
+        ]),
+
+        new("Layout",
+        [
+            new("AppShell", "componentes/app-shell"),
+            new("Sidebar", "componentes/sidebar"),
+            new("Topbar", "componentes/topbar"),
+            new("NavItem", "componentes/nav-item"),
+            new("Tabs", "componentes/tabs"),
+            new("Breadcrumb", "componentes/breadcrumb"),
+            new("Card", "componentes/card"),
+            new("Stack", "componentes/stack"),
+            new("Grid", "componentes/grid"),
+            new("Divider", "componentes/divider"),
+            new("Chip", "componentes/chip"),
+            new("Avatar", "componentes/avatar"),
         ]),
 
         new("Sobre",

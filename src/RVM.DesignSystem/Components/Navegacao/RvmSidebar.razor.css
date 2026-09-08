@@ -1,0 +1,195 @@
+.rvm-sidebar {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: var(--rvm-sidebar-width);
+    flex-shrink: 0;
+    /* Sem padding EMBAIXO: a barra de acoes e `position: sticky`, e a regiao em que um sticky
+       pode parar e o scrollport JA DESCONTADO o padding do container. Com 12px aqui, a faixa
+       para 12px acima do fim e o proximo item de menu aparece por baixo dela. O respiro de
+       baixo vai na lista. (Margem negativa nao resolve: ela nao desloca um sticky.) */
+    padding: var(--rvm-space-3) var(--rvm-space-3) 0;
+    gap: var(--rvm-space-2);
+    background-color: var(--rvm-color-surface);
+    border-right: 1px solid var(--rvm-color-border);
+    font-family: var(--rvm-font-family-sans);
+    overflow-y: auto;
+    transition: width var(--rvm-motion-duration-base) var(--rvm-motion-ease-standard);
+}
+
+.rvm-sidebar--colapsada {
+    width: var(--rvm-sidebar-width-collapsed);
+}
+
+.rvm-sidebar__lista {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    margin: 0;
+    padding: 0 0 var(--rvm-space-3);
+    list-style: none;
+}
+
+.rvm-sidebar__topo,
+.rvm-sidebar__rodape {
+    padding: var(--rvm-space-2);
+    min-width: 0;
+}
+
+.rvm-sidebar__rodape {
+    border-top: 1px solid var(--rvm-color-border);
+}
+
+/*
+  O botao de colapsar fica GRUDADO no fim da barra. Sem o sticky ele e o ultimo elemento de uma
+  coluna rolavel: numa aplicacao com quinze itens de menu, o controle que reduz a barra so
+  aparece depois de rolar ate embaixo — que e onde ninguem procura por ele.
+
+  O fundo proprio e obrigatorio junto do sticky, senao os itens passam por tras do botao.
+*/
+.rvm-sidebar__acoes {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--rvm-space-2) var(--rvm-space-3) var(--rvm-space-3);
+    /* Margem negativa nas LATERAIS (isso funciona) para o fundo cobrir de borda a borda —
+       senao os itens passam pelas beiradas da faixa ao rolar. */
+    margin: 0 calc(-1 * var(--rvm-space-3));
+    background-color: var(--rvm-color-surface);
+}
+
+.rvm-sidebar__colapsar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--rvm-control-height-md);
+    height: var(--rvm-control-height-md);
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-md);
+    background: none;
+    color: var(--rvm-color-on-surface-variant);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-sidebar__colapsar:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-sidebar__colapsar:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: -2px;
+}
+
+/*
+  === Colapsada ===
+
+  O texto some da TELA, não da árvore de acessibilidade: continua no DOM, recortado a 1px.
+  Assim o item colapsado mantém o nome acessível completo — que é o que o catálogo pede por
+  "tooltip do item colapsado é acessível". A alternativa comum, `title`, não serve: o title
+  nativo não aparece no foco por teclado e vários leitores de tela o ignoram.
+
+  ::deep porque o texto e o contador moram no RvmNavItem, que tem outro escopo b-*.
+*/
+.rvm-sidebar--colapsada ::deep .rvm-nav-item__texto,
+.rvm-sidebar--colapsada ::deep .rvm-nav-item__badge,
+.rvm-sidebar--colapsada ::deep .rvm-nav-item__seta,
+.rvm-sidebar--colapsada ::deep .rvm-nav-group__titulo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.rvm-sidebar--colapsada ::deep .rvm-nav-item__gatilho {
+    justify-content: center;
+    padding-left: var(--rvm-space-2);
+    padding-right: var(--rvm-space-2);
+}
+
+.rvm-sidebar--colapsada ::deep .rvm-nav-item__filhos {
+    padding-left: 0;
+}
+
+.rvm-sidebar--colapsada .rvm-sidebar__topo,
+.rvm-sidebar--colapsada .rvm-sidebar__rodape {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+}
+
+/*
+  === Gaveta ===
+
+  Abaixo de md a barra sai do fluxo e cobre o conteúdo. `position: fixed` e não `absolute`:
+  com absolute ela rolaria junto com a página e sumiria do topo.
+*/
+@media (max-width: 767px) {
+    .rvm-sidebar {
+        position: fixed;
+        top: var(--rvm-topbar-height);
+        bottom: 0;
+        left: 0;
+        z-index: var(--rvm-z-drawer);
+        width: var(--rvm-sidebar-width);
+        transform: translateX(-100%);
+        box-shadow: var(--rvm-shadow-4);
+        transition: transform var(--rvm-motion-duration-base) var(--rvm-motion-ease-standard);
+    }
+
+    .rvm-sidebar--aberta {
+        transform: translateX(0);
+    }
+
+    /*
+      Colapsar não faz sentido numa gaveta: ela já está fora do fluxo, e o botão só confundiria
+      quem abriu o menu para ver os nomes dos itens.
+    */
+    .rvm-sidebar--colapsada {
+        width: var(--rvm-sidebar-width);
+    }
+
+    /*
+      E o texto tem que VOLTAR. Sem desfazer o recorte, quem estava com a barra colapsada no
+      desktop e diminui a janela abre a gaveta e ve uma coluna de icones sem nome nenhum.
+    */
+    .rvm-sidebar--colapsada ::deep .rvm-nav-item__texto,
+    .rvm-sidebar--colapsada ::deep .rvm-nav-item__badge,
+    .rvm-sidebar--colapsada ::deep .rvm-nav-item__seta,
+    .rvm-sidebar--colapsada ::deep .rvm-nav-group__titulo {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        clip-path: none;
+    }
+
+    .rvm-sidebar--colapsada ::deep .rvm-nav-item__gatilho {
+        justify-content: flex-start;
+        padding-left: var(--rvm-space-3);
+        padding-right: var(--rvm-space-3);
+    }
+
+    .rvm-sidebar--colapsada ::deep .rvm-nav-item__filhos {
+        padding-left: var(--rvm-space-6);
+    }
+
+    .rvm-sidebar--colapsada .rvm-sidebar__topo,
+    .rvm-sidebar--colapsada .rvm-sidebar__rodape {
+        padding-left: var(--rvm-space-2);
+        padding-right: var(--rvm-space-2);
+        text-align: left;
+    }
+
+    .rvm-sidebar__acoes {
+        display: none;
+    }
+}

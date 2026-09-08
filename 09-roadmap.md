@@ -39,7 +39,7 @@ para sempre, **sem erro nenhum** (`padrao-rvm` §5).
 **Verifica:** o site está no ar com o seletor de tema funcionando nas quatro identidades; um
 formulário de exemplo passa na auditoria axe e é operável só por teclado.
 
-## Onda 2 — Layout
+## Onda 2 — Layout ✅ 08/09/2026
 
 **Meta:** a casca de aplicação que hoje está duplicada em quatro `MainLayout`.
 
@@ -52,6 +52,11 @@ formulário de exemplo passa na auditoria axe e é operável só por teclado.
 
 **Verifica:** o próprio site passa a usar `RvmAppShell` — a casca deixa de ser código de exemplo e
 vira código em produção.
+
+✅ Feito em `Docs/Layout/MainLayout.razor` (`DSGN-017`). Entrou junto o que não estava previsto e
+apareceu na hora de montar: o papel `on-surface-variant` na paleta (texto secundário sem
+`opacity`), o slot de rodapé na casca (`footer` fora do `main`, senão perde o marco
+`contentinfo`) e a varredura axe por página no E2E — pendência que a onda 1 tinha deixado.
 
 ## Onda 3 — Feedback
 

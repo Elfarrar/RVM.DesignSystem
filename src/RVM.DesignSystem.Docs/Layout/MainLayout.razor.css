@@ -1,56 +1,53 @@
 /*
-  Casca do site, em CSS isolado do Blazor (gera os atributos b-*).
+  O que sobrou da casca do site depois da onda 2.
 
-  Por que aqui e nao no app.css global: alem de ser o lugar certo para estilo que so o
-  layout usa, isto e o que FAZ EXISTIR o bundle RVM.DesignSystem.Docs.styles.css.
+  Até a onda 1 este arquivo tinha o header, a navegação lateral, o main e o rodapé — a mesma
+  casca que os quatro MainLayout do ecossistema duplicam. Agora tudo isso é RvmAppShell, e o
+  que fica aqui é o que é DESTE site e de mais nenhum: a marca no topo.
 
-  O index.html referencia esse bundle — e o Blazor so o gera quando ha pelo menos um
-  .razor.css no projeto ou nas RCLs que ele consome. Enquanto nao havia nenhum, o
-  arquivo nao existia e o navegador registrava 404 no console.
+  ⚠️ Não apagar o arquivo mesmo se ficar vazio. É ele que FAZ EXISTIR o bundle
+  RVM.DesignSystem.Docs.styles.css, que o index.html referencia: o Blazor só gera esse arquivo
+  quando há pelo menos um .razor.css no projeto ou nas RCLs que ele consome.
 
-  Na dev o defeito ficava INVISIVEL: o `try_files ... /index.html` do Nginx devolve o
-  index com status 200 para qualquer caminho, entao o CSS faltando virava um 200 com
-  HTML dentro, que o navegador descarta em silencio. No GitHub Pages nao ha esse
-  fallback e o 404 aparece. E a mesma armadilha que os workflows deste repo comentam:
-  em host estatico, status 200 nao prova que o arquivo certo esta la.
+  Na dev o defeito ficava INVISÍVEL: o `try_files ... /index.html` do Nginx devolve o index com
+  status 200 para qualquer caminho, então o CSS faltando virava um 200 com HTML dentro, que o
+  navegador descarta em silêncio. No GitHub Pages não há esse fallback e o 404 aparece. É a
+  mesma armadilha que os workflows deste repo comentam: em host estático, status 200 não prova
+  que o arquivo certo está lá.
 */
 
-.page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.site-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--rvm-space-4);
-    flex-wrap: wrap;
-    background: var(--site-bg-elev);
-    border-bottom: 1px solid var(--site-line);
-    padding: 1rem 1.5rem;
-}
-
+/*
+  O RvmTopbar garante que a marca nao vaze por cima das ações; as reticências são deste site.
+  `display: block` é necessário: `text-overflow` não vale em caixa inline — e um `<a>` só é
+  blocado automaticamente quando é filho DIRETO do flex, o que aqui ele é.
+*/
 .site-brand {
-    font-weight: 600;
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: var(--rvm-font-weight-semibold);
     text-decoration: none;
     color: inherit;
 }
 
-.site-main {
-    flex: 1;
-    padding: 2rem 1.5rem;
-    max-width: 46rem;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+.site-brand:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--rvm-radius-sm);
 }
 
-.site-footer {
-    background: var(--site-bg-elev);
-    border-top: 1px solid var(--site-line);
-    padding: 1rem 1.5rem;
-    color: var(--site-muted);
-    font-size: .875rem;
+/*
+  O conteúdo tem largura máxima de leitura. O padding vem do RvmAppShell; aqui só a medida de
+  linha, que é decisão editorial deste site e não da biblioteca.
+*/
+.site-conteudo {
+    max-width: 52rem;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.site-rodape__texto {
+    margin: 0;
 }

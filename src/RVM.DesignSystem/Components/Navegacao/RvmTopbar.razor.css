@@ -1,0 +1,79 @@
+.rvm-topbar {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    height: var(--rvm-topbar-height);
+    padding: 0 var(--rvm-space-4);
+    background-color: var(--rvm-color-surface);
+    border-bottom: 1px solid var(--rvm-color-border);
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+}
+
+/*
+  `min-width: 0` destrava o encolhimento do item de flex; `overflow: hidden` e o que impede o
+  conteudo de PASSAR POR BAIXO das acoes em tela estreita. Os dois juntos, e nao um so.
+
+  A biblioteca para aqui, de proposito. As reticencias teriam que ser aplicadas ao elemento que
+  QUEM USA colocou neste slot — outro escopo de CSS isolation, alcancavel so por `::deep`, e um
+  `::deep *` num slot aberto imporia `nowrap` a tudo que alguem coloque aqui dentro. A regra que
+  evita o defeito e da biblioteca; a decisao de como o texto proprio trunca e de quem o escreveu.
+*/
+.rvm-topbar__inicio {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+    overflow: hidden;
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-topbar__meio {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+/*
+  margin-left: auto empurra as ações para a direita mesmo sem o slot do meio. Sem isto, uma
+  topbar só com marca e avatar deixaria os dois grudados à esquerda.
+*/
+.rvm-topbar__fim {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.rvm-topbar__menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 2.75rem = 44px, o alvo de toque da WCAG 2.2 (2.5.8). Este botão é usado só no celular,
+       então não segue a densidade: aqui a mão é sempre o dedo. */
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-md);
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-topbar__menu:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-topbar__menu:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: -2px;
+}
+
+@media (min-width: 768px) {
+    .rvm-topbar__menu { display: none; }
+}

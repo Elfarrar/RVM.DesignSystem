@@ -81,6 +81,11 @@ public sealed record RvmTheme
         var onSurface = RvmContrast.Ensure(Neutral(dark ? 0.94 : 0.22), surface, RvmContrast.NormalText);
         var onBackground = RvmContrast.Ensure(onSurface, background, RvmContrast.NormalText);
 
+        // Texto secundario: um neutro entre o texto principal e a borda forte, medido contra a
+        // superficie mais exigente logo abaixo. Nao e `onSurface` com opacidade — ver o
+        // comentario em RvmPalette.OnSurfaceVariant.
+        var onSurfaceVariantTone = Neutral(dark ? 0.72 : 0.44);
+
         // ⚠️ O contraste e garantido contra a superficie MAIS EXIGENTE da paleta, nao contra a
         // `surface`. Papel de marca e de estado tambem aparecem como TEXTO sobre o `background`
         // da pagina e sobre o `surface-sunken` de um campo — e no modo claro esses dois sao mais
@@ -132,6 +137,8 @@ public sealed record RvmTheme
         var disabled = dark ? Neutral(0.26) : Neutral(0.92);
         var onDisabled = RvmContrast.Ensure(Neutral(0.55), disabled, RvmContrast.LargeTextOrUi);
 
+        var onSurfaceVariant = RvmContrast.Ensure(onSurfaceVariantTone, piorFundo, RvmContrast.NormalText);
+
         var focusRing = RvmContrast.Ensure(primary, surface, RvmContrast.LargeTextOrUi);
 
         return new RvmPalette
@@ -152,6 +159,7 @@ public sealed record RvmTheme
             OnInfo = RvmContrast.Ensure(RvmContrast.BestForegroundOn(info), info, RvmContrast.NormalText).ToHex(),
             Surface = surface.ToHex(),
             OnSurface = onSurface.ToHex(),
+            OnSurfaceVariant = onSurfaceVariant.ToHex(),
             SurfaceRaised = surfaceRaised.ToHex(),
             SurfaceSunken = surfaceSunken.ToHex(),
             Background = background.ToHex(),
@@ -219,6 +227,7 @@ public sealed record RvmTheme
         Var(sb, "on-info", p.OnInfo);
         Var(sb, "surface", p.Surface);
         Var(sb, "on-surface", p.OnSurface);
+        Var(sb, "on-surface-variant", p.OnSurfaceVariant);
         Var(sb, "surface-raised", p.SurfaceRaised);
         Var(sb, "surface-sunken", p.SurfaceSunken);
         Var(sb, "background", p.Background);

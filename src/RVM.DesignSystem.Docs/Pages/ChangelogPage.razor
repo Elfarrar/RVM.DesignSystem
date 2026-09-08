@@ -11,6 +11,53 @@
         </p>
     </header>
 
+    <section aria-labelledby="cl-020">
+        <h2 id="cl-020">0.2.0 — Onda 2</h2>
+        <p class="doc__nota">Layout e navegação. 08/09/2026.</p>
+        <ul class="doc__lista">
+            <li>
+                <strong>A casca de aplicação:</strong> <code>RvmAppShell</code>,
+                <code>RvmSidebar</code>, <code>RvmTopbar</code>, <code>RvmNavItem</code> e
+                <code>RvmNavGroup</code>. Marcos de página, link de pulo e gaveta responsiva vêm
+                juntos — <a href="componentes/app-shell">o próprio site usa</a>.
+            </li>
+            <li>
+                <strong>Layout:</strong> <code>RvmStack</code>, <code>RvmGrid</code>,
+                <code>RvmCard</code>, <code>RvmDivider</code>.
+            </li>
+            <li>
+                <strong>Conteúdo e navegação:</strong> <code>RvmChip</code>,
+                <code>RvmAvatar</code> (+ <code>RvmAvatarGroup</code>), <code>RvmTabs</code> com o
+                teclado do padrão APG, <code>RvmBreadcrumb</code>.
+            </li>
+            <li>
+                <strong>Densidade <code>Compact</code></strong> (<code>RF-05</code>) como troca na
+                camada de token: nenhum componente sabe que densidade existe. Ver
+                <a href="fundamentos/densidade">Fundamentos › Densidade</a>.
+            </li>
+            <li><strong>Sete ícones novos</strong> — <code>list</code>, <code>caret-right</code>,
+                <code>caret-left</code>, <code>sidebar-simple</code>, <code>user</code>,
+                <code>house</code>, <code>dots-three-vertical</code>.
+            </li>
+            <li>
+                <strong>O axe passou a varrer o site inteiro no E2E</strong>, nos dois modos de
+                cor, em vez de só a página inicial — pendência que a onda 1 deixou registrada.
+            </li>
+        </ul>
+
+        <p class="doc__nota">
+            <strong>Papel novo na paleta:</strong> <code>--rvm-color-on-surface-variant</code>,
+            para texto secundário. Ele existe para que ninguém faça isso com <code>opacity</code>,
+            que compõe a cor com o fundo e afeta tudo o que está dentro do elemento. O portão de
+            contraste foi de 26 para <strong>29 pares</strong> por paleta.
+        </p>
+        <p class="doc__nota">
+            <strong>Mudança que quebra quem monta paleta à mão:</strong>
+            <code>RvmPalette.OnSurfaceVariant</code> é <code>required</code>. Quem usa
+            <code>RvmTheme.FromSeed</code> — o caminho documentado — não é afetado.
+        </p>
+    </section>
+
     <section aria-labelledby="cl-010">
         <h2 id="cl-010">0.1.0 — Onda 1</h2>
         <p class="doc__nota">Primeira versão estável. 08/09/2026.</p>

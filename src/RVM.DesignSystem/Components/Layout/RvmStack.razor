@@ -1,0 +1,54 @@
+@namespace RVM.DesignSystem.Components
+
+<div class="@ClasseFinal" @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>Direção do empilhamento.</summary>
+    [Parameter]
+    public RvmOrientation Orientation { get; set; } = RvmOrientation.Vertical;
+
+    /// <summary>Espaço entre os itens, da escala fechada.</summary>
+    [Parameter]
+    public RvmSpacing Gap { get; set; } = RvmSpacing.Md;
+
+    /// <summary>Alinhamento no eixo transversal.</summary>
+    [Parameter]
+    public RvmAlign Align { get; set; } = RvmAlign.Stretch;
+
+    /// <summary>Distribuição no eixo principal.</summary>
+    [Parameter]
+    public RvmJustify Justify { get; set; } = RvmJustify.Start;
+
+    /// <summary>
+    /// Permite quebrar para a linha seguinte quando não cabe.
+    /// </summary>
+    /// <remarks>
+    /// Padrão <c>false</c> porque quebra silenciosa esconde layout quebrado: sem ela, o
+    /// transbordo aparece em desenvolvimento em vez de aparecer no celular do usuário.
+    /// </remarks>
+    [Parameter]
+    public bool Wrap { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Os itens empilhados.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-stack",
+        $"rvm-stack--{RvmClasse.Sufixo(Orientation)}",
+        $"rvm-stack--gap-{RvmClasse.Sufixo(Gap)}",
+        $"rvm-stack--align-{RvmClasse.Sufixo(Align)}",
+        $"rvm-stack--justify-{RvmClasse.Sufixo(Justify)}",
+        Wrap ? "rvm-stack--wrap" : null,
+        Class);
+}

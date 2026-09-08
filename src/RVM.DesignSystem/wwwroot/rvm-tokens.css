@@ -31,6 +31,27 @@
     --rvm-space-20: 5rem;     /* 80px */
     --rvm-space-24: 6rem;     /* 96px */
 
+    /* === Controle e densidade (RF-05) ===
+       Altura de controle e espacamento VERTICAL de controle — nunca tamanho de fonte
+       (`06` § Densidade). Estes tokens existem para que a densidade seja uma troca na
+       CAMADA DE TOKEN: nenhum componente sabe que densidade existe, ele so le o token.
+       Um componente escrito depois ja nasce respeitando densidade sem fazer nada. */
+    --rvm-control-height-sm: 2rem;      /* 32px */
+    --rvm-control-height-md: 2.5rem;    /* 40px */
+    --rvm-control-height-lg: 3rem;      /* 48px */
+    --rvm-control-padding-y-sm: var(--rvm-space-1);
+    --rvm-control-padding-y-md: var(--rvm-space-2);
+    --rvm-control-padding-y-lg: var(--rvm-space-3);
+    --rvm-field-gap: var(--rvm-space-4);     /* entre dois campos de um formulario */
+
+    /* === Casca de aplicacao ===
+       Medidas da RvmAppShell. Sao token e nao numero solto no CSS porque o app precisa
+       delas para posicionar coisa propria — um botao flutuante que nao pode cair atras
+       da topbar, por exemplo. */
+    --rvm-topbar-height: 3.5rem;             /* 56px */
+    --rvm-sidebar-width: 16rem;              /* 256px */
+    --rvm-sidebar-width-collapsed: 4rem;     /* 64px — cabe icone + alvo de toque */
+
     /* === Raio === */
     --rvm-radius-none: 0;
     --rvm-radius-sm: 0.25rem;
@@ -114,6 +135,73 @@
     --rvm-z-dialog: 1300;
     --rvm-z-toast: 1400;
     --rvm-z-tooltip: 1500;
+}
+
+/*
+  === A unica classe deste arquivo ===
+
+  `.rvm-sr-only` esconde um texto da tela SEM esconde-lo do leitor de tela. Ela mora aqui, e
+  nao no CSS isolado de um componente, por duas razoes: e usada por varios (o contador do
+  RvmNavItem, o rotulo do RvmSidebar colapsado) e e util para quem consome a biblioteca —
+  entao e API publica, com prefixo `rvm-`.
+
+  ⚠️ `display: none` e `visibility: hidden` NAO servem: os dois removem o elemento da arvore
+  de acessibilidade, que e exatamente o oposto do que se quer. O recorte de 1px e o unico jeito
+  que funciona em todos os leitores.
+*/
+.rvm-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/*
+  === Densidade compacta ===
+
+  Aplicada por atributo, o que da duas propriedades boas de graca: herda pela arvore
+  (uma tabela densa dentro de uma tela confortavel funciona) e nao exige JavaScript.
+
+      <div data-rvm-density="compact"> ... </div>
+
+  Redefine SO os tokens de controle. Espacamento de layout (--rvm-space-*) continua igual
+  de proposito: encolher a escala inteira nao deixa a tela densa, deixa a tela apertada.
+*/
+[data-rvm-density="compact"] {
+    --rvm-control-height-sm: 1.75rem;   /* 28px */
+    --rvm-control-height-md: 2rem;      /* 32px */
+    --rvm-control-height-lg: 2.5rem;    /* 40px */
+    --rvm-control-padding-y-sm: var(--rvm-space-0);
+    --rvm-control-padding-y-md: var(--rvm-space-1);
+    --rvm-control-padding-y-lg: var(--rvm-space-2);
+    --rvm-field-gap: var(--rvm-space-3);
+}
+
+/*
+  ⚠️ A REGRA VENCE A CONFIGURACAO.
+
+  Alvo de toque nunca desce de 40px onde se toca com o dedo, independente da densidade que o
+  desenvolvedor escolheu (`06` § Densidade) — acessibilidade nao e preferencia de quem
+  desenvolve. Aqui a compacta e DESFEITA em tela estreita ou em ponteiro grosso, e nao apenas
+  amenizada: o alvo volta a 40px inteiros.
+
+  As duas condicoes, e nao so a largura: um tablet de 900px em modo retrato tem tela larga e
+  dedo grosso, e e exatamente onde o alvo de 32px erra.
+*/
+@media (pointer: coarse), (max-width: 767px) {
+    [data-rvm-density="compact"] {
+        --rvm-control-height-sm: 2rem;
+        --rvm-control-height-md: 2.5rem;
+        --rvm-control-height-lg: 3rem;
+        --rvm-control-padding-y-sm: var(--rvm-space-1);
+        --rvm-control-padding-y-md: var(--rvm-space-2);
+        --rvm-control-padding-y-lg: var(--rvm-space-3);
+    }
 }
 
 /*

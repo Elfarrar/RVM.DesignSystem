@@ -1,101 +1,13 @@
 /*
-  Estilos do site de documentação — a casca e as páginas, não os componentes.
+  Estilos das PÁGINAS do site de documentação.
+
+  A casca (link de pulo, navegação lateral, main, rodapé) saiu daqui na onda 2: virou
+  RvmAppShell, da própria biblioteca. O que resta é a anatomia da página de documentação e as
+  vitrines de exemplo — coisas que só este site tem.
 
   Tudo aqui consome tokens da própria biblioteca. O site se veste com o design system que
   documenta: se um token ficar feio, a primeira pessoa a sofrer sou eu, montando a página.
 */
-
-/* Skip link: primeiro tabulável, escondido até receber foco. Sem ele, quem navega por
-   teclado atravessa a navegação lateral inteira em TODA página antes de chegar ao texto. */
-.skip-link {
-    position: absolute;
-    left: var(--rvm-space-2);
-    top: -10rem;
-    z-index: var(--rvm-z-sticky);
-    padding: var(--rvm-space-2) var(--rvm-space-4);
-    background: var(--rvm-color-primary);
-    color: var(--rvm-color-on-primary);
-    border-radius: var(--rvm-radius-md);
-    text-decoration: none;
-    transition: top var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
-}
-
-.skip-link:focus {
-    top: var(--rvm-space-2);
-}
-
-.site-corpo {
-    display: flex;
-    gap: var(--rvm-space-8);
-    flex: 1;
-    align-items: flex-start;
-    max-width: 76rem;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
-    padding: var(--rvm-space-6) var(--rvm-space-6) var(--rvm-space-12);
-}
-
-.site-nav {
-    flex: 0 0 13rem;
-    position: sticky;
-    top: var(--rvm-space-4);
-}
-
-.site-nav__grupo {
-    margin-bottom: var(--rvm-space-6);
-}
-
-.site-nav__titulo {
-    margin: 0 0 var(--rvm-space-2);
-    font-size: var(--rvm-font-size-caption);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--rvm-color-on-surface);
-}
-
-.site-nav__lista {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.site-nav__link {
-    display: block;
-    padding: var(--rvm-space-1) var(--rvm-space-2);
-    border-radius: var(--rvm-radius-sm);
-    color: var(--rvm-color-on-surface);
-    text-decoration: none;
-    font-size: var(--rvm-font-size-body-sm);
-}
-
-.site-nav__link:hover {
-    background: var(--rvm-color-surface-sunken);
-}
-
-.site-nav__link.active {
-    background: var(--rvm-color-primary-container);
-    color: var(--rvm-color-on-primary-container);
-    font-weight: var(--rvm-font-weight-medium);
-}
-
-.site-nav__link:focus-visible {
-    outline: 2px solid var(--rvm-color-focus-ring);
-    outline-offset: 2px;
-}
-
-.site-main {
-    flex: 1;
-    min-width: 0;
-    max-width: 52rem;
-    padding: 0;
-}
-
-/* O main recebe foco pelo skip link, mas tem tabindex="-1" e ninguém chega nele com Tab —
-   o anel ali não orientaria ninguém. Mesma lógica do h1 do roteador. */
-.site-main:focus {
-    outline: none;
-}
 
 /* --- Anatomia da página --- */
 
@@ -326,7 +238,3 @@
     gap: var(--rvm-space-4);
 }
 
-@media (max-width: 60rem) {
-    .site-corpo { flex-direction: column; }
-    .site-nav { position: static; flex: 1 1 auto; width: 100%; }
-}

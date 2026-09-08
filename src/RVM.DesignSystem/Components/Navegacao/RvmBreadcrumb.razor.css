@@ -1,0 +1,89 @@
+.rvm-breadcrumb {
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.rvm-breadcrumb__lista {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rvm-breadcrumb__item {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    min-width: 0;
+}
+
+/*
+  O separador é decoração pura e por isso é CSS. Um "/" escrito no HTML seria lido em voz
+  alta: "Início barra Produtos barra Cadastro".
+*/
+.rvm-breadcrumb__item + .rvm-breadcrumb__item::before {
+    content: "/";
+    color: var(--rvm-color-border-strong);
+    /* Não faz parte do texto do item: sem isto ele entraria na seleção ao copiar a trilha. */
+    user-select: none;
+}
+
+.rvm-breadcrumb__link {
+    color: var(--rvm-color-on-surface-variant);
+    text-decoration: none;
+    padding: var(--rvm-space-1) 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (hover: hover) {
+    .rvm-breadcrumb__link:hover {
+        color: var(--rvm-color-primary);
+        text-decoration: underline;
+    }
+}
+
+.rvm-breadcrumb__link:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--rvm-radius-sm);
+}
+
+/*
+  A página atual é semibold e usa a cor de texto cheia. A diferença para os links não é só
+  cor: é peso — quem não distingue as duas cores ainda vê qual é o item atual.
+*/
+.rvm-breadcrumb__atual {
+    color: var(--rvm-color-on-surface);
+    font-weight: var(--rvm-font-weight-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-breadcrumb__mais {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: var(--rvm-color-on-surface-variant);
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .rvm-breadcrumb__mais:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-breadcrumb__mais:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 1px;
+}

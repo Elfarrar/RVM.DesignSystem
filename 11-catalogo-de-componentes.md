@@ -23,7 +23,7 @@ desabilitado e dos callbacks; página no site; e passar na auditoria axe.
 `RvmFormField` é o que impede o defeito clássico: cinco campos, cinco jeitos de ligar a mensagem de
 erro, três deles errados.
 
-## Onda 2 — Layout (12)
+## Onda 2 — Layout (12) ✅ entregue em 08/09/2026
 
 | Componente | Próprio dele | Acessibilidade |
 |---|---|---|
@@ -40,7 +40,12 @@ erro, três deles errados.
 | `RvmChip` | Variantes por severidade, removível, selecionável | Chip removível tem botão com `aria-label` próprio |
 | `RvmAvatar` | Iniciais, imagem, cor derivada do nome, tamanhos, grupo empilhado | Imagem com `alt`; iniciais com `aria-label` do nome completo |
 
-Mais `RvmIcon` (do sprite, `aria-hidden` por padrão — ícone decorativo não deve ser anunciado).
+Mais `RvmIcon` (`aria-hidden` por padrão — ícone decorativo não deve ser anunciado).
+
+Entrou também o **`RvmNavGroup`**, que não estava na lista: é ele que torna real o "grupos" do
+`RvmSidebar`. Dentro de uma lista, todo filho direto precisa ser `li`, então um `h2` solto seguido
+de outra `ul` seria marcação inválida — a seção nomeada precisa ser `li > h2 + ul[aria-labelledby]`.
+Documentado na página do Sidebar, sem página própria.
 
 ## Onda 3 — Feedback (8)
 

@@ -1,0 +1,124 @@
+@page "/componentes/tabs"
+
+<PaginaDeComponente Nome="RvmTabs"
+                    Tipo="typeof(RvmTabs)"
+                    Frase="Abas no padrão ARIA APG. O que separa isto de uma fileira de botões é o teclado: Tab entra e sai da lista, as setas navegam dentro.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmTabs Label="Seções do cadastro" @bind-Value="_aba">
+                    <RvmTab Id="geral" Label="Geral" Icon="house">
+                        <p>Nome, documento, contato.</p>
+                    </RvmTab>
+                    <RvmTab Id="fiscal" Label="Fiscal" Icon="warning">
+                        <p>Regime tributário, inscrição estadual.</p>
+                    </RvmTab>
+                    <RvmTab Id="anexos" Label="Anexos">
+                        <p>Documentos enviados.</p>
+                    </RvmTab>
+                    <RvmTab Id="auditoria" Label="Auditoria" Disabled="true">
+                        <p>Você não deveria estar vendo isto.</p>
+                    </RvmTab>
+                </RvmTabs>
+            </div>
+            <div class="playground__controles">
+                <p class="doc__nota">
+                    Aba ativa: <code>@_aba</code>
+                </p>
+                <p class="doc__nota">
+                    Dê <kbd>Tab</kbd> até a lista e use <kbd>←</kbd> <kbd>→</kbd> <kbd>Home</kbd>
+                    <kbd>End</kbd>. A aba desabilitada é pulada.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Estados>
+        <ul class="doc__lista">
+            <li><strong>Ativa</strong> — faixa embaixo, peso semibold, cor da marca e <code>aria-selected="true"</code>. Quatro sinais.</li>
+            <li><strong>Inativa</strong> — cor secundária, <code>tabindex="-1"</code>.</li>
+            <li><strong>Desabilitada</strong> — visível, não focável, pulada pelas setas.</li>
+            <li><strong>Sem seleção explícita</strong> — a primeira aba habilitada assume, em vez de a tela abrir sem conteúdo.</li>
+        </ul>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Tabindex móvel (roving tabindex).</strong> Só a aba ativa é tabulável; as
+                outras têm <code>tabindex="-1"</code>. Sem isso, uma tela com oito abas obriga
+                quem usa teclado a passar por oito paradas antes de chegar ao conteúdo. É a
+                diferença entre uma <code>tablist</code> de verdade e uma fileira de botões.
+            </li>
+            <li>
+                <strong>Ativação automática.</strong> Mover o foco já troca o painel. O APG
+                permite as duas formas e recomenda esta quando o painel é barato de renderizar —
+                a manual obriga a apertar <kbd>Enter</kbd> em cada aba, e quem não sabe disso
+                conclui que a seta não funciona.
+            </li>
+            <li>
+                <strong>As setas dão a volta.</strong> Da última para a primeira e vice-versa: em
+                lista circular ninguém precisa saber em que ponta está.
+            </li>
+            <li>
+                <strong>O painel tem <code>tabindex="0"</code></strong>, o que parece errado — por
+                que tornar tabulável algo que não é controle? Porque o painel pode não ter nenhum
+                elemento focável dentro (um parágrafo, uma tabela), e sem isso quem navega por
+                teclado sai da lista e pula o conteúdo inteiro.
+            </li>
+            <li>
+                <strong><code>Label</code> é obrigatório.</strong> Sem ele o leitor de tela
+                anuncia só "lista de abas", e numa página com duas listas não há como saber qual
+                é qual.
+            </li>
+            <li>
+                <strong><code>Id</code> repetido falha alto.</strong> Ids duplicados fariam
+                <code>aria-controls</code> apontar para o elemento errado e as setas pularem uma
+                aba — dois defeitos que só aparecem para quem usa leitor de tela.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para navegar entre páginas.</strong> Aba troca o conteúdo <em>desta</em>
+                tela. Se cada item tem URL própria, é
+                <a href="componentes/nav-item">navegação</a> — e aí o botão "voltar" do navegador
+                precisa funcionar, o que uma tablist não faz.
+            </li>
+            <li>
+                <strong>Para um passo a passo.</strong> Abas podem ser visitadas em qualquer
+                ordem. Um fluxo com ordem obrigatória é outro componente, e o usuário precisa ver
+                onde está e o que falta.
+            </li>
+            <li>
+                <strong>Para esconder conteúdo importante.</strong> O que está numa aba não
+                visitada não é lido por quase ninguém. Se todo mundo precisa ver, não pode estar
+                atrás de uma aba.
+            </li>
+            <li>
+                <strong>Com mais de seis ou sete abas.</strong> Elas rolam na horizontal e viram
+                um menu ruim. Muitas seções pedem navegação lateral.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private string _aba = "geral";
+
+    private const string _exemplo = """
+        <RvmTabs Label="Seções do cadastro" @bind-Value="aba">
+            <RvmTab Id="geral" Label="Geral" Icon="house">
+                <p>Nome, documento, contato.</p>
+            </RvmTab>
+            <RvmTab Id="fiscal" Label="Fiscal" Icon="warning">
+                <p>Regime tributário, inscrição estadual.</p>
+            </RvmTab>
+            <RvmTab Id="auditoria" Label="Auditoria" Disabled="true" />
+        </RvmTabs>
+        """;
+}

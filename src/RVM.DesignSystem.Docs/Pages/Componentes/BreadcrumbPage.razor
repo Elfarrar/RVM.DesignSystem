@@ -1,0 +1,122 @@
+@page "/componentes/breadcrumb"
+
+<PaginaDeComponente Nome="RvmBreadcrumb"
+                    Tipo="typeof(RvmBreadcrumb)"
+                    Frase="A trilha até onde a pessoa está. Colapsa no meio quando não cabe — nunca no fim.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmBreadcrumb Items="Trilha" MaxItems="_max" />
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="int" @bind-Value="_niveis" Label="Níveis">
+                    @foreach (var n in new[] { 2, 3, 4, 5, 6 })
+                    {
+                        <option value="@n">@n</option>
+                    }
+                </RvmSelect>
+                <RvmSelect TValue="int" @bind-Value="_max" Label="MaxItems">
+                    @foreach (var n in new[] { 3, 4, 5, 99 })
+                    {
+                        <option value="@n">@(n == 99 ? "sem limite" : n.ToString())</option>
+                    }
+                </RvmSelect>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Variantes>
+        <h3 class="doc__subtitulo">Colapsa no meio</h3>
+        <p>
+            Passando de <code>MaxItems</code>, ficam a raiz, um botão de reticências e os últimos
+            níveis. Colapsar o <em>fim</em> deixaria a pessoa sem saber onde está, que é a única
+            coisa que a trilha precisa dizer.
+        </p>
+        <RvmBreadcrumb MaxItems="3" Items="@(new RvmBreadcrumb.Item[]
+        {
+            new("Início", ""),
+            new("Clientes", "clientes"),
+            new("Construtora Alvorada", "clientes/12"),
+            new("Obras", "clientes/12/obras"),
+            new("Residencial Ipê", "clientes/12/obras/7"),
+            new("Medições"),
+        })" />
+        <p class="doc__nota">
+            As reticências são um <strong>botão</strong>, não um "…" solto: um texto cortado que
+            só o mouse revela é informação perdida para quem navega por teclado.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong><code>nav</code> com <code>aria-label</code></strong>. É assim que o leitor
+                de tela acha a trilha na lista de marcos da página. Uma página costuma ter mais de
+                um <code>nav</code>, e sem nome todos são anunciados igual.
+            </li>
+            <li>
+                <strong><code>ol</code>, porque a ordem é a informação.</strong> Uma
+                <code>ul</code> diria que os níveis são intercambiáveis.
+            </li>
+            <li>
+                <strong>O último item é <code>aria-current="page"</code> e não é link.</strong> Ele
+                é onde a pessoa está, não um lugar para onde ir. Um link que aponta para a própria
+                página é uma parada de teclado que não leva a nada.
+            </li>
+            <li>
+                <strong>O separador é CSS (<code>::before</code>), não um caractere no HTML.</strong>
+                Uma barra escrita entre os itens faria o leitor ler "Início barra Produtos barra
+                Cadastro". Ele também tem <code>user-select: none</code>, para não entrar na
+                seleção ao copiar a trilha.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Em hierarquia rasa.</strong> Dois níveis não são uma trilha — são um
+                título. A trilha começa a valer no terceiro.
+            </li>
+            <li>
+                <strong>Para mostrar o histórico de navegação.</strong> A trilha diz a posição na
+                <em>estrutura</em>, não o caminho que a pessoa percorreu. Para voltar existe o
+                botão do navegador.
+            </li>
+            <li>
+                <strong>Como substituto do menu.</strong> Ela orienta, não navega — mostra onde
+                se está, e não para onde se pode ir. Isso é a
+                <a href="componentes/sidebar">RvmSidebar</a>.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private int _niveis = 5;
+    private int _max = 4;
+
+    private static readonly RvmBreadcrumb.Item[] _todos =
+    [
+        new("Início", ""),
+        new("Clientes", "clientes"),
+        new("Construtora Alvorada", "clientes/12"),
+        new("Obras", "clientes/12/obras"),
+        new("Residencial Ipê", "clientes/12/obras/7"),
+        new("Medições"),
+    ];
+
+    private IReadOnlyList<RvmBreadcrumb.Item> Trilha => _todos.Take(_niveis).ToList();
+
+    private const string _exemplo = """
+        <RvmBreadcrumb MaxItems="4" Items="@(new RvmBreadcrumb.Item[]
+        {
+            new("Início", ""),
+            new("Clientes", "clientes"),
+            new("Construtora Alvorada", "clientes/12"),
+            new("Medições"),   // sem Href: é a página atual
+        })" />
+        """;
+}

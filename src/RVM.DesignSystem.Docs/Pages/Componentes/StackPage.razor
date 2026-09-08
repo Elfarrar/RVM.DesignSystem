@@ -1,0 +1,116 @@
+@page "/componentes/stack"
+
+<PaginaDeComponente Nome="RvmStack"
+                    Tipo="typeof(RvmStack)"
+                    Frase="Empilha com espaço da escala. É flexbox com uma regra a mais: o Gap é fechado, então gap: 13px não tem como acontecer.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmStack Orientation="_orientacao" Gap="_gap" Align="_align" Wrap="_wrap">
+                    <RvmCard Variant="RvmCardVariant.Outlined"><ChildContent>Primeiro</ChildContent></RvmCard>
+                    <RvmCard Variant="RvmCardVariant.Outlined"><ChildContent>Segundo</ChildContent></RvmCard>
+                    <RvmCard Variant="RvmCardVariant.Outlined"><ChildContent>Terceiro</ChildContent></RvmCard>
+                </RvmStack>
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmOrientation" @bind-Value="_orientacao" Label="Orientation">
+                    <option value="Vertical">Vertical</option>
+                    <option value="Horizontal">Horizontal</option>
+                </RvmSelect>
+                <RvmSelect TValue="RvmSpacing" @bind-Value="_gap" Label="Gap">
+                    @foreach (var g in Enum.GetValues<RvmSpacing>())
+                    {
+                        <option value="@g">@g</option>
+                    }
+                </RvmSelect>
+                <RvmSelect TValue="RvmAlign" @bind-Value="_align" Label="Align">
+                    @foreach (var a in Enum.GetValues<RvmAlign>())
+                    {
+                        <option value="@a">@a</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_wrap" Label="Wrap" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <p class="doc__nota">
+            A escala de <code>Gap</code> é a mesma de todo o resto: <code>Xs</code> 4px,
+            <code>Sm</code> 8px, <code>Md</code> 16px, <code>Lg</code> 24px, <code>Xl</code> 32px,
+            <code>Xxl</code> 48px. Ver <a href="fundamentos/espacamento">Espaçamento</a>.
+        </p>
+        <RvmStack Gap="RvmSpacing.Sm">
+            @foreach (var g in Enum.GetValues<RvmSpacing>())
+            {
+                <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Align="RvmAlign.Center">
+                    <code class="demo-rotulo">@g</code>
+                    <RvmStack Orientation="RvmOrientation.Horizontal" Gap="@g">
+                        <span class="demo-bloco"></span>
+                        <span class="demo-bloco"></span>
+                        <span class="demo-bloco"></span>
+                    </RvmStack>
+                </RvmStack>
+            }
+        </RvmStack>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Não acrescenta nem tira nada da árvore de acessibilidade.</strong> É uma
+                <code>div</code> com <code>display: flex</code>, e é assim que tem que ser: o
+                empilhamento é apresentação pura, e quem lê a tela recebe os filhos na ordem em
+                que eles estão no HTML.
+            </li>
+            <li>
+                <strong>A ordem visual é a ordem do DOM.</strong> Não há
+                <code>flex-direction: row-reverse</code> nem <code>order</code> na API, de
+                propósito: os dois separam o que se vê do que se lê, e é aí que o teclado começa a
+                pular de um canto ao outro da tela sem explicação.
+            </li>
+            <li>
+                <strong><code>min-width: 0</code></strong> no contêiner. Sem isso, um filho longo
+                (uma tabela, uma palavra sem espaço) estoura o flex pai — que não é acessibilidade,
+                mas é o defeito que mais aparece em tela pequena.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Para grade de duas dimensões.</strong> Stack é um eixo só. Cartões que
+                precisam alinhar em linhas <em>e</em> colunas são <a href="componentes/grid">RvmGrid</a>.
+            </li>
+            <li>
+                <strong>Para reordenar visualmente.</strong> Se a ordem visual precisa diferir da
+                ordem do HTML, o problema é a ordem do HTML.
+            </li>
+            <li>
+                <strong>Quando um <code>gap</code> na medida já resolve.</strong> Um contêiner que
+                já é flex por outro motivo não precisa de um Stack em volta — a escala fechada vale
+                a pena onde há escolha a errar, não como embrulho.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmOrientation _orientacao = RvmOrientation.Horizontal;
+    private RvmSpacing _gap = RvmSpacing.Md;
+    private RvmAlign _align = RvmAlign.Stretch;
+    private bool _wrap = true;
+
+    private string Snippet() =>
+        $"""
+        <RvmStack Orientation="RvmOrientation.{_orientacao}"
+                  Gap="RvmSpacing.{_gap}"
+                  Align="RvmAlign.{_align}"{(_wrap ? "\n          Wrap=\"true\"" : string.Empty)}>
+            <RvmCard>Primeiro</RvmCard>
+            <RvmCard>Segundo</RvmCard>
+        </RvmStack>
+        """;
+}

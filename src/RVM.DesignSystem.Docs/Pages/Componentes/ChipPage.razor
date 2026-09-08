@@ -1,0 +1,167 @@
+@page "/componentes/chip"
+
+<PaginaDeComponente Nome="RvmChip"
+                    Tipo="typeof(RvmChip)"
+                    Frase="Etiqueta compacta: estado, categoria, filtro. Pode ser selecionável, removível, ou os dois — sem nunca aninhar botão dentro de botão.">
+
+    <Exemplo>
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmChip Variant="_variante"
+                         Size="_tamanho"
+                         Selectable="_selecionavel"
+                         @bind-Selected="_selecionado"
+                         Icon="@(_comIcone ? "check" : null)"
+                         OnRemove="@(_removivel ? Remover : default(EventCallback<MouseEventArgs>))"
+                         RemoveLabel="Remover o filtro Vencidos">
+                    Vencidos
+                </RvmChip>
+
+                @if (_removido)
+                {
+                    <p class="doc__ok" role="status">Removido.</p>
+                }
+            </div>
+            <div class="playground__controles">
+                <RvmSelect TValue="RvmChipVariant" @bind-Value="_variante" Label="Variant">
+                    @foreach (var v in Enum.GetValues<RvmChipVariant>())
+                    {
+                        <option value="@v">@v</option>
+                    }
+                </RvmSelect>
+                <RvmSelect TValue="RvmSize" @bind-Value="_tamanho" Label="Size">
+                    @foreach (var s in Enum.GetValues<RvmSize>())
+                    {
+                        <option value="@s">@s</option>
+                    }
+                </RvmSelect>
+                <RvmCheckbox @bind-Value="_selecionavel" Label="Selectable" />
+                <RvmCheckbox @bind-Value="_removivel" Label="Removível" />
+                <RvmCheckbox @bind-Value="_comIcone" Label="Com ícone" />
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@Snippet()" />
+    </Exemplo>
+
+    <Variantes>
+        <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Wrap="true" Align="RvmAlign.Center">
+            <RvmChip>Neutral</RvmChip>
+            <RvmChip Variant="RvmChipVariant.Primary">Primary</RvmChip>
+            <RvmChip Variant="RvmChipVariant.Success">Aprovado</RvmChip>
+            <RvmChip Variant="RvmChipVariant.Warning">Pendente</RvmChip>
+            <RvmChip Variant="RvmChipVariant.Danger">Vencido</RvmChip>
+            <RvmChip Variant="RvmChipVariant.Info">Em análise</RvmChip>
+            <RvmChip Disabled="true">Desabilitado</RvmChip>
+        </RvmStack>
+
+        <p class="doc__nota">
+            Repare que <strong>o texto diz o que a cor diz</strong>. "Aprovado" continua legível
+            em preto e branco, e é essa a regra: severidade nunca é comunicada só por cor
+            (<code>02</code> § Acessibilidade). Um chip verde escrito "Status" não informa nada a
+            quem não distingue verde de vermelho — que é 1 homem em 12.
+        </p>
+
+        <h3 class="doc__subtitulo">Como filtro</h3>
+        <RvmStack Orientation="RvmOrientation.Horizontal" Gap="RvmSpacing.Sm" Wrap="true">
+            @foreach (var f in _filtros)
+            {
+                <RvmChip Selectable="true"
+                         Icon="check"
+                         Selected="_ativos.Contains(f)"
+                         SelectedChanged="@(v => Alternar(f, v))">
+                    @f
+                </RvmChip>
+            }
+        </RvmStack>
+        <p class="doc__nota">
+            Selecionados: <strong>@(_ativos.Count == 0 ? "nenhum" : string.Join(", ", _ativos))</strong>.
+            O ícone muda para o peso <code>Fill</code> quando o chip está selecionado — o segundo
+            sinal além da cor.
+        </p>
+    </Variantes>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>Selecionável + removível não aninha botão em botão.</strong> O invólucro é
+                sempre um <code>&lt;span&gt;</code> neutro e os dois papéis são botões
+                <em>irmãos</em>. HTML proíbe controle aninhado, e o efeito prático não é um aviso
+                do validador: é o <kbd>Enter</kbd> disparando as duas ações e o leitor de tela
+                anunciando um controle só.
+            </li>
+            <li>
+                <strong>Chip selecionável é <code>aria-pressed</code></strong>, não
+                <code>aria-selected</code>: ele é um alternador independente, não um item de uma
+                lista de seleção única.
+            </li>
+            <li>
+                <strong>O botão de remover tem nome próprio.</strong> Numa lista de oito filtros,
+                oito botões chamados "Remover" são indistinguíveis para quem não vê a tela — por
+                isso <code>RemoveLabel</code> existe e deve dizer o quê.
+            </li>
+            <li>
+                <strong>O alvo do X é 1.5em</strong>, e não 1em: é o menor controle da biblioteca
+                inteira, e ainda assim precisa ser tocável com o dedo.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Como botão.</strong> Chip não é ação primária. "Salvar" é
+                <a href="componentes/button">RvmButton</a> — o chip é pequeno demais para carregar
+                a ação principal de uma tela.
+            </li>
+            <li>
+                <strong>Para escolha única obrigatória.</strong> Uma fileira de chips selecionáveis
+                permite marcar zero ou vários. "Pessoa física / jurídica" é
+                <a href="componentes/radio-group">RvmRadioGroup</a>.
+            </li>
+            <li>
+                <strong>Para texto longo.</strong> O chip trunca com reticências. Se o rótulo não
+                cabe em duas ou três palavras, ele não é uma etiqueta.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private RvmChipVariant _variante = RvmChipVariant.Neutral;
+    private RvmSize _tamanho = RvmSize.Medium;
+    private bool _selecionavel = true;
+    private bool _selecionado;
+    private bool _removivel = true;
+    private bool _comIcone = true;
+    private bool _removido;
+
+    private readonly string[] _filtros = ["Vencidos", "Pagos", "Em aberto", "Cancelados"];
+    private readonly List<string> _ativos = ["Pagos"];
+
+    private EventCallback<MouseEventArgs> Remover =>
+        EventCallback.Factory.Create<MouseEventArgs>(this, () => _removido = true);
+
+    private void Alternar(string filtro, bool ativo)
+    {
+        if (ativo)
+        {
+            _ativos.Add(filtro);
+        }
+        else
+        {
+            _ativos.Remove(filtro);
+        }
+    }
+
+    private string Snippet()
+    {
+        var atributos = new List<string> { $"Variant=\"RvmChipVariant.{_variante}\"" };
+
+        if (_tamanho != RvmSize.Medium) atributos.Add($"Size=\"RvmSize.{_tamanho}\"");
+        if (_comIcone) atributos.Add("Icon=\"check\"");
+        if (_selecionavel) atributos.Add("Selectable=\"true\" @bind-Selected=\"filtro.Ativo\"");
+        if (_removivel) atributos.Add("OnRemove=\"Remover\" RemoveLabel=\"Remover o filtro Vencidos\"");
+
+        return "<RvmChip " + string.Join("\n          ", atributos) + ">\n    Vencidos\n</RvmChip>";
+    }
+}

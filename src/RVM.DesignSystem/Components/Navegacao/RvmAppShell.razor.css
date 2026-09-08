@@ -1,0 +1,105 @@
+/*
+  Altura FIXA, e não mínima: é o que faz a topbar e a barra lateral ficarem paradas enquanto o
+  conteúdo rola. Com `min-height`, a página inteira rola, a barra lateral fica tão alta quanto o
+  conteúdo, e o botão de recolher vai parar abaixo da dobra.
+
+  100dvh e não 100vh: no celular a barra de endereço do navegador entra e sai da conta, e com vh
+  o pé da tela fica escondido atrás dela.
+*/
+.rvm-app-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: var(--rvm-color-background);
+    color: var(--rvm-color-on-background);
+    font-family: var(--rvm-font-family-sans);
+}
+
+.rvm-app-shell__corpo {
+    display: flex;
+    flex: 1;
+    /* min-height: 0 destrava a rolagem dos filhos. Sem isso, um item de flex nunca encolhe
+       abaixo do próprio conteúdo, e o `overflow: auto` de dentro nunca chega a valer. */
+    min-height: 0;
+    position: relative;
+}
+
+.rvm-app-shell__rolagem {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+}
+
+.rvm-app-shell__conteudo {
+    flex: 1;
+    min-width: 0;
+    padding: var(--rvm-space-6);
+    box-sizing: border-box;
+}
+
+/*
+  O `main` é focável (tabindex="-1") para receber o link de pulo, mas ele não é um controle:
+  o anel em volta da página inteira, depois de um clique qualquer, é ruído visual sem
+  significado. Some só o anel — a capacidade de receber o foco continua, que é o que importa
+  para o leitor de tela anunciar o começo do conteúdo.
+*/
+.rvm-app-shell__conteudo:focus {
+    outline: none;
+}
+
+.rvm-app-shell__rodape {
+    flex-shrink: 0;
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    border-top: 1px solid var(--rvm-color-border);
+    background-color: var(--rvm-color-surface);
+    color: var(--rvm-color-on-surface-variant);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+/* --- Pular para o conteúdo --- */
+
+.rvm-app-shell__pular {
+    position: absolute;
+    top: var(--rvm-space-2);
+    left: var(--rvm-space-2);
+    /* Fora da tela, e não escondido: `display: none` tiraria o link da ordem de tabulação e
+       ele deixaria de existir justamente para quem depende dele. */
+    transform: translateY(-200%);
+    z-index: var(--rvm-z-sticky);
+    padding: var(--rvm-space-2) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-medium);
+    text-decoration: none;
+    box-shadow: var(--rvm-shadow-3);
+    transition: transform var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+.rvm-app-shell__pular:focus {
+    transform: translateY(0);
+}
+
+/* --- Véu da gaveta --- */
+
+.rvm-app-shell__veu {
+    position: fixed;
+    inset: var(--rvm-topbar-height) 0 0 0;
+    /* Um nível abaixo da gaveta: cobre o conteúdo, nunca a navegação que ele acompanha. */
+    z-index: calc(var(--rvm-z-drawer) - 1);
+    background-color: var(--rvm-color-on-surface);
+    opacity: 0.4;
+    cursor: pointer;
+}
+
+/*
+  O véu só existe enquanto a gaveta existe. Acima de md a barra volta ao fluxo e um véu
+  cobrindo a tela seria um bloqueio invisível.
+*/
+@media (min-width: 768px) {
+    .rvm-app-shell__veu { display: none; }
+}

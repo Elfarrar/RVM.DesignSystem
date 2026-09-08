@@ -1,0 +1,102 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    A trilha. `nav` + `aria-label` para o leitor de tela achar, `ol` porque a ordem é a
+    informação, e o último item com `aria-current="page"` — ele é onde a pessoa está, não um
+    lugar para onde ir, e por isso não é link.
+
+    O separador é CSS (`::before`), e não um caractere no HTML: uma barra "/" entre cada item
+    faria o leitor de tela ler "Início barra Produtos barra Cadastro".
+*@
+
+<nav class="@ClasseFinal" aria-label="@Label" @attributes="AdditionalAttributes">
+    <ol class="rvm-breadcrumb__lista">
+        @foreach (var (item, indice) in Visiveis.Select((x, i) => (x, i)))
+        {
+            <li class="rvm-breadcrumb__item">
+                @if (item is null)
+                {
+                    @*
+                        As reticências são um BOTÃO, e não um "…" solto: quem navega por teclado
+                        precisa conseguir abrir o que foi escondido. Um texto cortado que só o
+                        mouse revela é informação perdida.
+                    *@
+                    <button type="button"
+                            class="rvm-breadcrumb__mais"
+                            aria-label="@ExpandLabel"
+                            @onclick="() => _expandido = true">
+                        <RvmIcon Name="dots-three-vertical" Size="1rem" />
+                    </button>
+                }
+                else if (indice == Visiveis.Count - 1)
+                {
+                    <span class="rvm-breadcrumb__atual" aria-current="page">@item.Text</span>
+                }
+                else
+                {
+                    <a class="rvm-breadcrumb__link" href="@item.Href">@item.Text</a>
+                }
+            </li>
+        }
+    </ol>
+</nav>
+
+@code {
+    private bool _expandido;
+
+    /// <summary>Um degrau da trilha.</summary>
+    /// <param name="Text">O rótulo exibido.</param>
+    /// <param name="Href">O destino. O último item ignora, porque não é link.</param>
+    public sealed record Item(string Text, string? Href = null);
+
+    /// <summary>Os degraus, da raiz até a página atual.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<Item> Items { get; set; } = [];
+
+    /// <summary>
+    /// Quantos degraus aparecem antes de a trilha colapsar no meio.
+    /// </summary>
+    /// <remarks>
+    /// Colapsa no MEIO, e não no fim: o primeiro item (a raiz) e os últimos são os que orientam.
+    /// Cortar o fim deixaria a pessoa sem saber onde está, que é a única coisa que a trilha
+    /// precisa dizer.
+    /// </remarks>
+    [Parameter]
+    public int MaxItems { get; set; } = 4;
+
+    /// <summary>Nome da trilha para o leitor de tela.</summary>
+    [Parameter]
+    public string Label { get; set; } = "Trilha de navegação";
+
+    /// <summary>Nome acessível do botão que revela os degraus escondidos.</summary>
+    [Parameter]
+    public string ExpandLabel { get; set; } = "Mostrar os níveis intermediários";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar("rvm-breadcrumb", Class);
+
+    // `null` na lista representa as reticências. É feio como tipo e é o que mantém o laço da
+    // marcação com um caso só; a alternativa seria três laços e a mesma <li> escrita três vezes.
+    private IReadOnlyList<Item?> Visiveis
+    {
+        get
+        {
+            if (_expandido || Items.Count <= MaxItems)
+            {
+                return [.. Items];
+            }
+
+            // Sempre a raiz, as reticências, e os últimos que couberem.
+            var doFim = Math.Max(1, MaxItems - 2);
+
+            return [Items[0], null, .. Items.TakeLast(doFim)];
+        }
+    }
+}

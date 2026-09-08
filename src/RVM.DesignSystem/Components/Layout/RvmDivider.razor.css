@@ -1,0 +1,46 @@
+.rvm-divider {
+    border: 0;
+    margin: 0;
+    background-color: var(--rvm-color-border);
+    flex-shrink: 0;
+}
+
+.rvm-divider--horizontal {
+    width: 100%;
+    height: 1px;
+}
+
+.rvm-divider--vertical {
+    /* align-self: stretch faz o divisor vertical acompanhar a altura da linha sem
+       ninguém informar altura — que é o único jeito de ele funcionar dentro de um Stack. */
+    align-self: stretch;
+    width: 1px;
+    min-height: 1em;
+}
+
+.rvm-divider--with-label {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    background-color: transparent;
+    color: var(--rvm-color-on-surface-variant);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.rvm-divider--with-label.rvm-divider--vertical {
+    flex-direction: column;
+    width: auto;
+}
+
+.rvm-divider__linha {
+    flex: 1;
+    background-color: var(--rvm-color-border);
+}
+
+.rvm-divider--horizontal .rvm-divider__linha { height: 1px; }
+.rvm-divider--vertical .rvm-divider__linha { width: 1px; }
+
+.rvm-divider__rotulo {
+    white-space: nowrap;
+}

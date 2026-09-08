@@ -1,0 +1,81 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    Pilha de avatares com "+N" quando não cabem todos.
+
+    O grupo é uma LISTA (`ul`/`li`), e não uma fileira de spans: quem usa leitor de tela ouve
+    "lista com 5 itens" e sabe quantas pessoas há antes de percorrer uma a uma.
+*@
+
+<ul class="@ClasseFinal" @attributes="AdditionalAttributes">
+    @foreach (var pessoa in Visiveis)
+    {
+        <li class="rvm-avatar-group__item">
+            <RvmAvatar Name="@pessoa.Name" Src="@pessoa.Src" Size="@Size" />
+        </li>
+    }
+
+    @if (Excedente > 0)
+    {
+        <li class="rvm-avatar-group__item">
+            @* O "+3" não é decoração: é a informação de que há mais gente. Vai com nome. *@
+            <span class="@ClasseDoExcedente" role="img" aria-label="@RotuloDoExcedente">
+                <span class="rvm-avatar__iniciais" aria-hidden="true">+@Excedente</span>
+            </span>
+        </li>
+    }
+</ul>
+
+@code {
+    /// <summary>Uma pessoa do grupo.</summary>
+    /// <param name="Name">Nome completo.</param>
+    /// <param name="Src">Endereço da imagem, quando houver.</param>
+    public sealed record Pessoa(string Name, string? Src = null);
+
+    /// <summary>As pessoas, na ordem de exibição.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<Pessoa> People { get; set; } = [];
+
+    /// <summary>Quantos avatares aparecem antes do "+N".</summary>
+    [Parameter]
+    public int Max { get; set; } = 4;
+
+    /// <summary>Tamanho dos círculos.</summary>
+    [Parameter]
+    public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>
+    /// Como o excedente é anunciado. O <c>{0}</c> recebe a quantidade.
+    /// </summary>
+    /// <remarks>
+    /// Parâmetro e não literal fixo: todo texto padrão de componente é sobrescrevível
+    /// (`CLAUDE.md` § Convenções).
+    /// </remarks>
+    [Parameter]
+    public string OverflowLabel { get; set; } = "mais {0}";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar("rvm-avatar-group", Class);
+
+    private string ClasseDoExcedente => RvmClasse.Juntar(
+        "rvm-avatar",
+        $"rvm-avatar--{RvmClasse.Sufixo(Size)}",
+        "rvm-avatar-group__excedente");
+
+    private string RotuloDoExcedente =>
+        string.Format(System.Globalization.CultureInfo.CurrentCulture, OverflowLabel, Excedente);
+
+    // Quando sobraria exatamente um, mostrar a pessoa vale mais que mostrar "+1": ocupa o
+    // mesmo espaço e diz mais.
+    private IReadOnlyList<Pessoa> Visiveis =>
+        People.Count <= Max + 1 ? People : People.Take(Math.Max(1, Max)).ToList();
+
+    private int Excedente => People.Count - Visiveis.Count;
+}

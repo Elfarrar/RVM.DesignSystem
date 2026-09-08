@@ -69,6 +69,117 @@
         <member name="F:RVM.DesignSystem.Components.RvmIconData.Nomes">
             <summary>Os nomes disponiveis, para a pagina de icones do site e para a mensagem de erro.</summary>
         </member>
+        <member name="T:RVM.DesignSystem.Components.RvmAvatarCor">
+            <summary>
+            A cor e as iniciais que um nome produz.
+            </summary>
+            <remarks>
+            Isolado do componente para poder ser <b>medido em teste</b>: a cor de fundo do avatar nao sai
+            da paleta do tema, ela e calculada a partir do nome - e cor calculada e exatamente o tipo de
+            cor que escapa do portao de contraste sem ninguem perceber. Aqui ela nao escapa: o teste
+            varre milhares de nomes e reprova se algum par cair abaixo de 4.5:1.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmAvatarCor.DoNome(System.String)">
+             <summary>
+             Deriva o par de cores (fundo, texto) de um nome.
+             </summary>
+             <param name="nome">O nome completo da pessoa ou entidade.</param>
+             <returns>Fundo e texto em hexadecimal, com contraste AA garantido entre os dois.</returns>
+             <remarks>
+             A matiz vem de um hash <b>FNV-1a</b>, e nao de <c>string.GetHashCode</c>: desde o .NET
+             Core o hash de string e aleatorizado por processo, entao o mesmo nome mudaria de cor a
+             cada reinicio do servidor - e num avatar a cor e o que a pessoa usa para se reconhecer
+             numa lista. Precisa ser estavel entre processos e entre maquinas.
+            
+             <para>
+             Luminosidade e croma sao <b>fixos</b>. Deixa-los variar com o hash daria paletas mais
+             bonitas e contraste imprevisivel - e o contraste e o que nao e negociavel.
+             </para>
+             </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmAvatarCor.MatizDe(System.String)">
+            <summary>Matiz (0-360) estavel para um nome.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmAvatarCor.Iniciais(System.String)">
+            <summary>
+            As iniciais exibidas quando nao ha imagem.
+            </summary>
+            <param name="nome">O nome completo.</param>
+            <returns>Uma ou duas letras maiusculas; vazio quando o nome nao tem letra alguma.</returns>
+            <remarks>
+            Primeira e ultima palavra, e nao as duas primeiras: "Maria Aparecida Silva" vira "MS", que
+            e como a pessoa e identificada, e nao "MA".
+            </remarks>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmShellContext">
+             <summary>
+             O estado que a casca de aplicacao compartilha entre topbar, sidebar e conteudo.
+             </summary>
+             <remarks>
+             <b>Por que existe um objeto em vez de parametros.</b> O botao de menu vive na
+             <c>RvmTopbar</c> e a gaveta que ele abre vive na <c>RvmSidebar</c> — dois componentes irmaos,
+             nenhum pai do outro. Sem um estado em comum, o consumidor teria que segurar um <c>bool</c> no
+             proprio layout e ligar os dois na mao, que e exatamente o codigo duplicado nos quatro
+             <c>MainLayout</c> do ecossistema e que esta onda existe para eliminar.
+            
+             <para>
+             Nao e estado global: uma instancia por <see cref="T:RVM.DesignSystem.Components.RvmAppShell"/>, cascateada para baixo. Duas
+             cascas na mesma pagina (raro, mas possivel) tem estados independentes.
+             </para>
+             </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmShellContext.ContentId">
+            <summary>
+            O <c>id</c> do elemento <c>main</c>, alvo do "pular para o conteudo".
+            </summary>
+            <remarks>
+            Fixo e nao configuravel de proposito: o link de pulo e o <c>main</c> precisam concordar, e
+            deixar isso por conta de quem usa e criar um jeito de a acessibilidade quebrar em
+            silencio — o link continua funcionando visualmente e simplesmente nao leva a lugar nenhum.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmShellContext.SidebarOpen">
+            <summary>A gaveta esta aberta sobre o conteudo (viewport estreita).</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmShellContext.SidebarCollapsed">
+            <summary>A barra lateral esta reduzida a icones (viewport larga).</summary>
+        </member>
+        <member name="E:RVM.DesignSystem.Components.RvmShellContext.Changed">
+            <summary>Disparado quando qualquer um dos dois estados muda.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmShellContext.ToggleSidebar">
+            <summary>Abre ou fecha a gaveta. E o que o botao de menu da topbar chama.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmShellContext.CloseSidebar">
+            <summary>
+            Fecha a gaveta.
+            </summary>
+            <remarks>
+            Chamado ao navegar e ao clicar fora. Sem isso, no celular a gaveta continua cobrindo a
+            tela que o usuario acabou de escolher — ele toca no item e parece que nada aconteceu.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmShellContext.ToggleCollapsed">
+            <summary>Alterna entre a barra completa e a so de icones.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmClasse">
+            <summary>
+            Montagem da lista de classes de um componente.
+            </summary>
+            <remarks>
+            Existe para que a regra "<c>Class</c> do consumidor <b>soma</b> com as internas, nunca é
+            descartado" (`CLAUDE.md` § Convenções) tenha <b>um</b> ponto de verdade em vez de doze cópias
+            do mesmo <c>string.Join</c>. A classe do consumidor entra por último de propósito: com
+            especificidade igual, o CSS dele vence o nosso — que é o que "soma" significa na prática.
+            </remarks>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmClasse.Juntar(System.String[])">
+            <summary>Junta as partes não vazias, na ordem dada.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmClasse.Sufixo``1(``0)">
+            <summary>O sufixo kebab-case de um membro de enum (<c>SpaceBetween</c> → <c>space-between</c>).</summary>
+        </member>
         <member name="T:RVM.DesignSystem.Components.RvmSize">
             <summary>
             Tamanho de um controle.
@@ -158,6 +269,163 @@
         </member>
         <member name="F:RVM.DesignSystem.Components.RvmTextFieldType.Search">
             <summary>Busca.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmDensity">
+             <summary>Densidade da interface (<c>RF-05</c>).</summary>
+             <remarks>
+             Afeta <b>altura de controle e espaçamento vertical</b>, nunca tamanho de fonte — encolher a
+             letra não deixa a tela densa, deixa a tela ilegível. A troca acontece na camada de token
+             (<c>data-rvm-density</c>), então nenhum componente precisa saber que densidade existe.
+            
+             <para>
+             <b>A regra vence a configuração:</b> em tela estreita ou ponteiro grosso, a compacta é
+             desfeita e o alvo de toque volta aos 40px. Acessibilidade não é preferência de quem
+             desenvolve.
+             </para>
+             </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmDensity.Comfortable">
+            <summary>Padrão — 40px de altura de controle. Formulário, cadastro, celular.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmDensity.Compact">
+            <summary>32px — grid, listagem densa, tela de operação.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmOrientation">
+            <summary>Direção de um eixo.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmOrientation.Horizontal">
+            <summary>Da esquerda para a direita.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmOrientation.Vertical">
+            <summary>De cima para baixo.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmSpacing">
+            <summary>
+            Um degrau da escala de espaçamento.
+            </summary>
+            <remarks>
+            Enum e não <c>string</c> ou <c>int</c> de propósito: é o que impede <c>Gap="13px"</c>. A
+            escala fechada é o que faz telas de autores diferentes parecerem a mesma tela.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSpacing.None">
+            <summary>Sem espaço.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSpacing.Xs">
+            <summary>4px.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSpacing.Sm">
+            <summary>8px.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSpacing.Md">
+            <summary>16px — o padrão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSpacing.Lg">
+            <summary>24px.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSpacing.Xl">
+            <summary>32px.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmSpacing.Xxl">
+            <summary>48px.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmAlign">
+            <summary>Alinhamento no eixo transversal (<c>align-items</c>).</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlign.Stretch">
+            <summary>Ocupa a altura (ou largura) toda. Padrão do empilhamento vertical.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlign.Start">
+            <summary>Início do eixo.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlign.Center">
+            <summary>Centro.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlign.End">
+            <summary>Fim do eixo.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmAlign.Baseline">
+            <summary>Alinha pela linha de base do texto.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmJustify">
+            <summary>Distribuição no eixo principal (<c>justify-content</c>).</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmJustify.Start">
+            <summary>Agrupado no início.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmJustify.Center">
+            <summary>Agrupado no centro.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmJustify.End">
+            <summary>Agrupado no fim.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmJustify.SpaceBetween">
+            <summary>Extremos nas pontas, espaço igual entre os itens.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmJustify.SpaceAround">
+            <summary>Espaço igual em volta de cada item.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmCardVariant">
+            <summary>Aparência de um cartão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmCardVariant.Elevated">
+            <summary>Superfície elevada com sombra. O padrão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmCardVariant.Outlined">
+            <summary>Contorno, sem sombra — melhor em tela com muitos cartões lado a lado.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmCardVariant.Filled">
+            <summary>Superfície rebaixada, sem sombra nem contorno.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmChipVariant">
+            <summary>Severidade de um chip.</summary>
+            <remarks>
+            Severidade nunca é comunicada <b>só</b> por cor (`02` § Acessibilidade): o texto do chip
+            carrega o significado, a cor reforça.
+            </remarks>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmChipVariant.Neutral">
+            <summary>Sem carga semântica. O padrão.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmChipVariant.Primary">
+            <summary>Marca — categoria, filtro selecionado.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmChipVariant.Success">
+            <summary>Sucesso, aprovado, ativo.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmChipVariant.Warning">
+            <summary>Atenção, pendente.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmChipVariant.Danger">
+            <summary>Erro, recusado, vencido.</summary>
+        </member>
+        <member name="F:RVM.DesignSystem.Components.RvmChipVariant.Info">
+            <summary>Informação neutra em destaque.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTab.Id">
+            <summary>
+            Identificador da aba, único dentro do grupo.
+            </summary>
+            <remarks>
+            É o valor que <c>@bind-Value</c> do <see cref="T:RVM.DesignSystem.Components.RvmTabs"/> carrega, e vira parte do
+            <c>id</c> do painel no HTML. Repetido, faz o <c>aria-controls</c> apontar para o
+            elemento errado — por isso o pai reprova duplicata em vez de aceitar.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTab.Label">
+            <summary>Texto do botão da aba.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTab.Icon">
+            <summary>Ícone opcional no botão da aba.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTab.Disabled">
+            <summary>Desabilita a aba: ela aparece, não recebe foco e as setas a pulam.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTab.ChildContent">
+            <summary>O conteúdo do painel.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTab.AdditionalAttributes">
+            <summary>Atributos extras, aplicados ao painel.</summary>
         </member>
         <member name="P:RVM.DesignSystem.Components.RvmButton.Variant">
             <summary>Peso visual do botao.</summary>
@@ -480,6 +748,425 @@
         <member name="P:RVM.DesignSystem.Components.RvmIcon.AdditionalAttributes">
             <summary>Atributos extras.</summary>
         </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatar.Name">
+            <summary>Nome completo. Vira as iniciais, a cor e o nome acessível.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatar.Src">
+            <summary>Endereço da imagem. Quando informado, substitui as iniciais.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatar.Size">
+            <summary>Tamanho do círculo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatar.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatar.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmAvatarGroup.Pessoa">
+            <summary>Uma pessoa do grupo.</summary>
+            <param name="Name">Nome completo.</param>
+            <param name="Src">Endereço da imagem, quando houver.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmAvatarGroup.Pessoa.#ctor(System.String,System.String)">
+            <summary>Uma pessoa do grupo.</summary>
+            <param name="Name">Nome completo.</param>
+            <param name="Src">Endereço da imagem, quando houver.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.Pessoa.Name">
+            <summary>Nome completo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.Pessoa.Src">
+            <summary>Endereço da imagem, quando houver.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.People">
+            <summary>As pessoas, na ordem de exibição.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.Max">
+            <summary>Quantos avatares aparecem antes do "+N".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.Size">
+            <summary>Tamanho dos círculos.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.OverflowLabel">
+            <summary>
+            Como o excedente é anunciado. O <c>{0}</c> recebe a quantidade.
+            </summary>
+            <remarks>
+            Parâmetro e não literal fixo: todo texto padrão de componente é sobrescrevível
+            (`CLAUDE.md` § Convenções).
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAvatarGroup.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.Variant">
+            <summary>Aparência do cartão.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.Elevation">
+            <summary>
+            Elevação, de 0 a 5, mapeada nos tokens de sombra.
+            </summary>
+            <remarks>
+            Vale só na variante <c>Elevated</c>. Valor fora da faixa é limitado em vez de estourar:
+            um cartão com sombra errada é um detalhe, uma exceção em produção é uma tela em branco.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.Href">
+            <summary>Destino do link. Informá-lo faz o cartão inteiro virar um link real.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.OnClick">
+            <summary>Disparado no clique. Informá-lo faz o cartão inteiro virar um botão real.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.Header">
+            <summary>Faixa superior — título e ações.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.ChildContent">
+            <summary>O conteúdo.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.Footer">
+            <summary>Faixa inferior — ações, metadados.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.NoPadding">
+            <summary>Remove o preenchimento interno, para cartão que começa com imagem ou tabela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmCard.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.Variant">
+            <summary>Severidade. A cor reforça o texto, nunca o substitui.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.Size">
+            <summary>Tamanho do chip.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.Icon">
+            <summary>Ícone opcional antes do texto.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.Selectable">
+            <summary>Torna o chip um alternador de dois estados (filtro).</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.Selected">
+            <summary>Estado do alternador. Use com <c>@bind-Selected</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.SelectedChanged">
+            <summary>Disparado quando a seleção muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.OnRemove">
+            <summary>Disparado ao remover. Informá-lo faz aparecer o botão de remover.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.RemoveLabel">
+            <summary>Nome acessível do botão de remover. Diga o quê está sendo removido.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.Disabled">
+            <summary>Desabilita o chip inteiro.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.ChildContent">
+            <summary>O texto do chip.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmChip.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDivider.Orientation">
+            <summary>Direção do traço.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDivider.Label">
+            <summary>
+            Texto no meio do traço. Informá-lo torna o separador semântico.
+            </summary>
+            <remarks>
+            Sem rótulo o divisor é decorativo e some do leitor de tela; com rótulo ele vira
+            <c>role="separator"</c> com nome acessível. A escolha é do conteúdo, não do estilo.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDivider.ChildContent">
+            <summary>Rótulo como marcação, quando texto simples não basta.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDivider.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmDivider.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.Columns">
+            <summary>Colunas na largura base (celular).</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.ColumnsSm">
+            <summary>Colunas a partir de 640px. Quando nulo, herda o valor anterior.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.ColumnsMd">
+            <summary>Colunas a partir de 768px. Quando nulo, herda o valor anterior.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.ColumnsLg">
+            <summary>Colunas a partir de 1024px. Quando nulo, herda o valor anterior.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.ColumnsXl">
+            <summary>Colunas a partir de 1280px. Quando nulo, herda o valor anterior.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.Gap">
+            <summary>Espaço entre as células, da escala fechada.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.ChildContent">
+            <summary>As células.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmGrid.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.Orientation">
+            <summary>Direção do empilhamento.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.Gap">
+            <summary>Espaço entre os itens, da escala fechada.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.Align">
+            <summary>Alinhamento no eixo transversal.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.Justify">
+            <summary>Distribuição no eixo principal.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.Wrap">
+            <summary>
+            Permite quebrar para a linha seguinte quando não cabe.
+            </summary>
+            <remarks>
+            Padrão <c>false</c> porque quebra silenciosa esconde layout quebrado: sem ela, o
+            transbordo aparece em desenvolvimento em vez de aparecer no celular do usuário.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.ChildContent">
+            <summary>Os itens empilhados.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmStack.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.Topbar">
+            <summary>A <see cref="T:RVM.DesignSystem.Components.RvmTopbar"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.Sidebar">
+            <summary>A <see cref="T:RVM.DesignSystem.Components.RvmSidebar"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.ChildContent">
+            <summary>O conteúdo da página, dentro do <c>main</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.Footer">
+            <summary>Rodapé da aplicação. Fica fora do <c>main</c>, como marco próprio.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.Density">
+            <summary>Densidade aplicada à árvore inteira (<c>RF-05</c>).</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.SkipLabel">
+            <summary>Texto do link "pular para o conteúdo".</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmAppShell.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="T:RVM.DesignSystem.Components.RvmBreadcrumb.Item">
+            <summary>Um degrau da trilha.</summary>
+            <param name="Text">O rótulo exibido.</param>
+            <param name="Href">O destino. O último item ignora, porque não é link.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmBreadcrumb.Item.#ctor(System.String,System.String)">
+            <summary>Um degrau da trilha.</summary>
+            <param name="Text">O rótulo exibido.</param>
+            <param name="Href">O destino. O último item ignora, porque não é link.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.Item.Text">
+            <summary>O rótulo exibido.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.Item.Href">
+            <summary>O destino. O último item ignora, porque não é link.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.Items">
+            <summary>Os degraus, da raiz até a página atual.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.MaxItems">
+            <summary>
+            Quantos degraus aparecem antes de a trilha colapsar no meio.
+            </summary>
+            <remarks>
+            Colapsa no MEIO, e não no fim: o primeiro item (a raiz) e os últimos são os que orientam.
+            Cortar o fim deixaria a pessoa sem saber onde está, que é a única coisa que a trilha
+            precisa dizer.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.Label">
+            <summary>Nome da trilha para o leitor de tela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.ExpandLabel">
+            <summary>Nome acessível do botão que revela os degraus escondidos.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmBreadcrumb.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavGroup.Title">
+            <summary>Título da seção.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavGroup.ChildContent">
+            <summary>Os <see cref="T:RVM.DesignSystem.Components.RvmNavItem"/> da seção.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.Href">
+            <summary>Destino. Sem ele, e com sub-itens, o item vira um expansor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.Text">
+            <summary>Texto do item.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.Icon">
+            <summary>Ícone opcional, do conjunto Phosphor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.Badge">
+            <summary>
+            Contador ou etiqueta curta à direita ("3" mensagens novas).
+            </summary>
+            <remarks>
+            O valor visível vai acompanhado de um texto só para leitor de tela. Sem ele, o leitor
+            anuncia "Mensagens" e depois "3" solto, sem dizer três do quê.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.BadgeLabel">
+            <summary>Como o contador é anunciado. O <c>{0}</c> recebe o valor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.Exact">
+            <summary>
+            Casamento exato da rota. Por padrão, o item também fica ativo nas rotas filhas.
+            </summary>
+            <remarks>
+            O item da raiz (<c>Href=""</c>) casaria com tudo, então ele é sempre tratado como exato —
+            sem isso, "Início" ficaria aceso em todas as páginas do site.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.ChildContent">
+            <summary>Sub-itens. Informá-los transforma o item num expansor.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmNavItem.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.Label">
+            <summary>
+            Nome da navegação para o leitor de tela.
+            </summary>
+            <remarks>
+            Uma página costuma ter mais de um <c>nav</c> (a lateral, a trilha, o rodapé). Sem nome,
+            todos são anunciados como "navegação" e a lista de marcos do leitor de tela fica inútil.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.Collapsible">
+            <summary>Mostra o botão que reduz a barra a ícones.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.CollapseLabel">
+            <summary>Nome acessível do botão quando ele vai colapsar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.ExpandLabel">
+            <summary>Nome acessível do botão quando ele vai expandir.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.Header">
+            <summary>Topo fixo — marca, seletor de empresa.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.Footer">
+            <summary>Rodapé fixo — usuário, sair.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.ChildContent">
+            <summary>Os <see cref="T:RVM.DesignSystem.Components.RvmNavItem"/> e <see cref="T:RVM.DesignSystem.Components.RvmNavGroup"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmSidebar.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTabs.Label">
+            <summary>
+            Nome da lista de abas para o leitor de tela ("Seções do cadastro").
+            </summary>
+            <remarks>
+            Sem ele o leitor anuncia só "lista de abas", e numa página com duas listas de abas não há
+            como saber qual é qual.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTabs.Value">
+            <summary>Id da aba ativa. Use com <c>@bind-Value</c>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTabs.ValueChanged">
+            <summary>Disparado quando a aba ativa muda.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTabs.ChildContent">
+            <summary>Os <see cref="T:RVM.DesignSystem.Components.RvmTab"/>.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTabs.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTabs.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmTabs.IdDaAba(System.String)">
+            <summary>Id do botão de uma aba. O painel aponta para ele por <c>aria-labelledby</c>.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmTabs.IdDoPainel(System.String)">
+            <summary>Id do painel de uma aba.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmTabs.EhAtiva(System.String)">
+            <summary>A aba está ativa? Sem seleção explícita, a primeira habilitada assume.</summary>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmTabs.Registrar(RVM.DesignSystem.Components.RvmTab)">
+            <summary>
+            Registra uma aba filha. Chamado pelo próprio <see cref="T:RVM.DesignSystem.Components.RvmTab"/> ao inicializar.
+            </summary>
+            <param name="aba">A aba que está entrando.</param>
+        </member>
+        <member name="M:RVM.DesignSystem.Components.RvmTabs.Remover(RVM.DesignSystem.Components.RvmTab)">
+            <summary>Remove uma aba que saiu da tela.</summary>
+            <param name="aba">A aba que está saindo.</param>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.Start">
+            <summary>Marca, título da tela.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.Center">
+            <summary>Busca, trilha. Ocupa o espaço que sobra.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.End">
+            <summary>Ações, notificações, avatar.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.ShowMenuButton">
+            <summary>
+            Mostra o botão que abre a gaveta em tela estreita.
+            </summary>
+            <remarks>
+            Padrão <c>true</c>, mas ele só aparece se houver uma casca em volta: sem
+            <see cref="T:RVM.DesignSystem.Components.RvmAppShell"/> não existe gaveta para abrir, e um botão que não faz nada é
+            pior que botão nenhum.
+            </remarks>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.OpenMenuLabel">
+            <summary>Nome acessível do botão quando ele vai abrir o menu.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.CloseMenuLabel">
+            <summary>Nome acessível do botão quando ele vai fechar o menu.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.Class">
+            <summary>Classes do consumidor. Somam com as internas.</summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Components.RvmTopbar.AdditionalAttributes">
+            <summary>Atributos extras.</summary>
+        </member>
         <member name="T:RVM.DesignSystem.RvmDesignSystemOptions">
             <summary>Opcoes de registro da biblioteca.</summary>
         </member>
@@ -727,6 +1414,24 @@
             Texto e icone sobre <see cref="P:RVM.DesignSystem.Theming.RvmPalette.Surface"/>, e tambem sobre
             <see cref="P:RVM.DesignSystem.Theming.RvmPalette.SurfaceRaised"/> e <see cref="P:RVM.DesignSystem.Theming.RvmPalette.SurfaceSunken"/>.
             </summary>
+        </member>
+        <member name="P:RVM.DesignSystem.Theming.RvmPalette.OnSurfaceVariant">
+             <summary>
+             Texto secundario sobre superficie: ajuda de campo, legenda, item ja percorrido de uma
+             trilha. Mesmo tamanho, menos peso visual.
+             </summary>
+             <remarks>
+             <b>Existe para que ninguem faca isso com <c>opacity</c>.</b> Opacidade compoe a cor com o
+             fundo e afeta <b>tudo</b> que esta dentro do elemento — inclusive um <c>&lt;code&gt;</c>
+             colorido, que herda o efeito e nao a cor. Foi o defeito nº 4 da onda 1, e apareceu duas
+             vezes antes de virar regra. Hierarquia de texto se faz com <b>cor</b>, e a cor precisa ser
+             um papel medido — nao um cinza escolhido no olho.
+            
+             <para>
+             Exige os mesmos 4.5:1 do <c>on-surface</c>: e texto corrido em tamanho de corpo, e a WCAG
+             nao da desconto para texto que o designer considera menos importante.
+             </para>
+             </remarks>
         </member>
         <member name="P:RVM.DesignSystem.Theming.RvmPalette.SurfaceRaised">
             <summary>Superficie elevada (card, menu flutuante). Compartilha o <see cref="P:RVM.DesignSystem.Theming.RvmPalette.OnSurface"/>.</summary>

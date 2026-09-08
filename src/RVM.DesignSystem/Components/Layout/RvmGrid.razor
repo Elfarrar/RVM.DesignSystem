@@ -1,0 +1,77 @@
+@namespace RVM.DesignSystem.Components
+
+@*
+    O número de colunas chega por style inline, e não por classe, de propósito.
+
+    Uma classe por combinação (`rvm-grid--md-3`) exigiria emitir dezenas de regras para cobrir
+    5 breakpoints x N colunas — a maioria nunca usada, todas baixadas por todo consumidor. Com
+    custom property, o CSS tem UMA regra por breakpoint e a instância informa o valor.
+
+    É também a única forma que existe: media query não pode ser gerada por instância de
+    componente, porque CSS isolation gera UM arquivo, não um por uso.
+*@
+
+<div class="@ClasseFinal" style="@EstiloFinal" @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>Colunas na largura base (celular).</summary>
+    [Parameter]
+    public int Columns { get; set; } = 1;
+
+    /// <summary>Colunas a partir de 640px. Quando nulo, herda o valor anterior.</summary>
+    [Parameter]
+    public int? ColumnsSm { get; set; }
+
+    /// <summary>Colunas a partir de 768px. Quando nulo, herda o valor anterior.</summary>
+    [Parameter]
+    public int? ColumnsMd { get; set; }
+
+    /// <summary>Colunas a partir de 1024px. Quando nulo, herda o valor anterior.</summary>
+    [Parameter]
+    public int? ColumnsLg { get; set; }
+
+    /// <summary>Colunas a partir de 1280px. Quando nulo, herda o valor anterior.</summary>
+    [Parameter]
+    public int? ColumnsXl { get; set; }
+
+    /// <summary>Espaço entre as células, da escala fechada.</summary>
+    [Parameter]
+    public RvmSpacing Gap { get; set; } = RvmSpacing.Md;
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>As células.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar(
+        "rvm-grid",
+        $"rvm-grid--gap-{RvmClasse.Sufixo(Gap)}",
+        Class);
+
+    // Cada faixa herda a anterior quando não é informada. Sem isso, quem escreve só
+    // `Columns="1" ColumnsLg="3"` veria o layout voltar para 1 coluna entre 640 e 1024.
+    private string EstiloFinal
+    {
+        get
+        {
+            var b = Math.Max(1, Columns);
+            var sm = ColumnsSm ?? b;
+            var md = ColumnsMd ?? sm;
+            var lg = ColumnsLg ?? md;
+            var xl = ColumnsXl ?? lg;
+
+            return string.Create(
+                System.Globalization.CultureInfo.InvariantCulture,
+                $"--rvm-grid-columns:{b};--rvm-grid-columns-sm:{sm};--rvm-grid-columns-md:{md};--rvm-grid-columns-lg:{lg};--rvm-grid-columns-xl:{xl}");
+        }
+    }
+}

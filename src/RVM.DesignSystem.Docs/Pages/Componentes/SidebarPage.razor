@@ -1,0 +1,124 @@
+@page "/componentes/sidebar"
+
+<PaginaDeComponente Nome="RvmSidebar"
+                    Tipo="typeof(RvmSidebar)"
+                    Frase="A navegação lateral. Colapsa a ícones no desktop e vira gaveta no celular — dois estados independentes, e confundi-los é o erro comum.">
+
+    <Exemplo>
+        <p class="doc__nota">
+            <strong>Esta página está dentro de uma.</strong> A barra à esquerda do site é um
+            <code>RvmSidebar</code> de verdade, com <code>RvmNavGroup</code> e
+            <code>RvmNavItem</code> — não uma imitação. Use o botão no rodapé dela para colapsar,
+            e diminua a janela abaixo de 768px para ela virar gaveta.
+        </p>
+
+        <div class="playground">
+            <div class="playground__palco">
+                <RvmSidebar Label="Exemplo isolado" Collapsible="false">
+                    <RvmNavGroup Title="Operação">
+                        <RvmNavItem Text="Painel" Href="exemplo/painel" Icon="house" />
+                        <RvmNavItem Text="Pedidos" Href="exemplo/pedidos" Icon="list" Badge="8" BadgeLabel="{0} pedidos novos" />
+                    </RvmNavGroup>
+                    <RvmNavGroup Title="Cadastros">
+                        <RvmNavItem Text="Clientes" Href="exemplo/clientes" Icon="user" />
+                        <RvmNavItem Text="Produtos" Href="exemplo/produtos" />
+                    </RvmNavGroup>
+                </RvmSidebar>
+            </div>
+            <div class="playground__controles">
+                <p class="doc__nota">
+                    <code>Collapsible="false"</code> neste exemplo: o botão de colapsar pertence à
+                    barra da aplicação, e ter dois na mesma tela confundiria.
+                </p>
+            </div>
+        </div>
+        <BlocoDeCodigo Codigo="@_exemplo" />
+    </Exemplo>
+
+    <Estados>
+        <ul class="doc__lista">
+            <li>
+                <strong>Completa</strong> — o padrão. Ocupa <code>--rvm-sidebar-width</code> no
+                fluxo.
+            </li>
+            <li>
+                <strong>Colapsada</strong> — em tela larga, reduzida a ícones
+                (<code>--rvm-sidebar-width-collapsed</code>). Continua no fluxo.
+            </li>
+            <li>
+                <strong>Gaveta</strong> — abaixo de 768px, sai do fluxo e cobre o conteúdo. Quem
+                abre é o botão de menu da <a href="componentes/topbar">RvmTopbar</a>.
+            </li>
+        </ul>
+        <p class="doc__nota">
+            Os dois primeiros são <em>independentes</em> do terceiro, e é por isso que quem manda
+            neles é o <code>RvmShellContext</code>, e não a própria barra: o botão que abre a
+            gaveta mora em outro componente.
+        </p>
+    </Estados>
+
+    <Acessibilidade>
+        <ul class="doc__lista">
+            <li>
+                <strong>É um <code>&lt;nav&gt;</code> com nome.</strong> É o que faz o leitor de
+                tela oferecer "pular para a navegação" sem ninguém escrever nada. Uma página
+                costuma ter vários <code>nav</code> (a lateral, a trilha, o rodapé) — sem
+                <code>Label</code>, todos são anunciados como "navegação" e a lista de marcos fica
+                inútil.
+            </li>
+            <li>
+                <strong>Colapsada, o texto some da TELA, não do documento.</strong> Ele continua
+                no DOM, recortado a 1px, então cada item mantém o nome acessível completo. A
+                alternativa comum — o atributo <code>title</code> — não serve: o balão nativo não
+                aparece no foco por teclado e vários leitores de tela o ignoram.
+            </li>
+            <li>
+                <strong>O botão de colapsar muda de nome</strong> conforme o que vai fazer
+                ("Recolher" / "Expandir"), em vez de um "alternar a barra lateral" que obriga quem
+                não vê a tela a adivinhar.
+            </li>
+            <li>
+                <strong>Na gaveta, o colapso é desfeito.</strong> Quem estava com a barra
+                colapsada no desktop e diminui a janela abriria uma gaveta com uma coluna de
+                ícones sem nome nenhum.
+            </li>
+        </ul>
+    </Acessibilidade>
+
+    <QuandoNaoUsar>
+        <ul class="doc__lista">
+            <li>
+                <strong>Com menos de quatro ou cinco destinos.</strong> Uma coluna inteira para
+                três links é espaço caro. Aí os links cabem na
+                <a href="componentes/topbar">RvmTopbar</a>.
+            </li>
+            <li>
+                <strong>Para filtros ou propriedades.</strong> Uma coluna lateral de filtros
+                <em>parece</em> uma sidebar e não é navegação: marcá-la como <code>nav</code>
+                polui a lista de marcos. Use um <a href="componentes/card">RvmCard</a> na coluna.
+            </li>
+            <li>
+                <strong>Em hierarquia de três níveis ou mais.</strong> O expansor do
+                <code>RvmNavItem</code> aguenta um nível de filhos. Além disso, o menu vira uma
+                árvore, e árvore tem regras de teclado próprias que este componente não implementa.
+            </li>
+        </ul>
+    </QuandoNaoUsar>
+</PaginaDeComponente>
+
+@code {
+    private const string _exemplo = """
+        @* Dentro de um RvmAppShell, no slot Sidebar. *@
+        <RvmSidebar Label="Navegação principal">
+            <RvmNavGroup Title="Operação">
+                <RvmNavItem Text="Painel" Href="painel" Icon="house" />
+                <RvmNavItem Text="Pedidos" Href="pedidos" Icon="list"
+                            Badge="8" BadgeLabel="{0} pedidos novos" />
+            </RvmNavGroup>
+
+            <RvmNavGroup Title="Cadastros">
+                <RvmNavItem Text="Clientes" Href="clientes" Icon="user" />
+            </RvmNavGroup>
+        </RvmSidebar>
+        """;
+}

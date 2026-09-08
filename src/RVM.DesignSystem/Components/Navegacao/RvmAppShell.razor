@@ -1,0 +1,126 @@
+@namespace RVM.DesignSystem.Components
+@implements IDisposable
+
+@*
+    A casca de aplicação — o que esta onda existe para eliminar dos quatro `MainLayout` do
+    ecossistema.
+
+    Três coisas que ela garante e que ninguém precisa lembrar de fazer:
+
+    1. Os MARCOS. `header`, `nav` e `main` existem sempre, na ordem certa. É o que faz o leitor
+       de tela oferecer "pular para a navegação" e "pular para o conteúdo" sem nenhum código.
+
+    2. O LINK DE PULO é o primeiro elemento tabulável da página, e aponta para o `main`. Sem
+       ele, quem navega por teclado atravessa a lateral inteira em TODA página antes de chegar
+       ao texto.
+
+    3. A GAVETA e o botão que a abre concordam, porque os dois leem o mesmo RvmShellContext.
+*@
+
+<CascadingValue Value="_contexto" IsFixed="true">
+    <div class="@ClasseFinal" data-rvm-density="@Densidade" @attributes="AdditionalAttributes">
+        @*
+            O link fica escondido até receber foco. `position: absolute` fora da tela e não
+            `display: none`: escondido de verdade ele não seria focável, e o link deixaria de
+            existir para quem mais precisa dele.
+        *@
+        <a class="rvm-app-shell__pular" href="@($"#{RvmShellContext.ContentId}")">@SkipLabel</a>
+
+        @Topbar
+
+        <div class="rvm-app-shell__corpo">
+            @Sidebar
+
+            @if (_contexto.SidebarOpen)
+            {
+                @*
+                    O véu é `aria-hidden` e não recebe foco: ele é decoração e atalho de mouse.
+                    Quem usa teclado fecha a gaveta pelo mesmo botão que a abriu, que continua
+                    visível na topbar — por isso não há um "fechar" escondido aqui dentro.
+                *@
+                <div class="rvm-app-shell__veu" aria-hidden="true" @onclick="Fechar"></div>
+            }
+
+            @*
+                A COLUNA QUE ROLA. Topbar e sidebar ficam parados; só isto aqui se move.
+
+                Numa casca de aplicação, deixar a página inteira rolar tem um efeito colateral
+                que só aparece com o menu cheio: a barra lateral fica tão alta quanto a página,
+                e o botão de recolher — que é o último elemento dela — vai parar abaixo da
+                dobra, onde ninguém procura por ele.
+
+                O rodapé fica DENTRO desta coluna, e por isso rola junto: uma faixa presa no pé
+                da tela come altura em toda página, e o rodapé não vale isso.
+            *@
+            <div class="rvm-app-shell__rolagem">
+                <main class="rvm-app-shell__conteudo" id="@RvmShellContext.ContentId" tabindex="-1">
+                    @ChildContent
+                </main>
+
+                @if (Footer is not null)
+                {
+                    @*
+                        O `footer` fica FORA do `main`, e isso é o que decide se ele existe como
+                        marco. A regra de escopo do HTML é sutil: um `footer` só vira
+                        `contentinfo` quando o ancestral de secionamento mais próximo é o `body`
+                        — e `div` não é secionamento, então esta aqui não atrapalha. Dentro do
+                        `main` ele viraria um elemento genérico e a lista de marcos perderia o
+                        rodapé, sem nenhum aviso, porque a marcação continua válida.
+                    *@
+                    <footer class="rvm-app-shell__rodape">@Footer</footer>
+                }
+            </div>
+        </div>
+    </div>
+</CascadingValue>
+
+@code {
+    private readonly RvmShellContext _contexto = new();
+
+    /// <summary>A <see cref="RvmTopbar"/>.</summary>
+    [Parameter]
+    public RenderFragment? Topbar { get; set; }
+
+    /// <summary>A <see cref="RvmSidebar"/>.</summary>
+    [Parameter]
+    public RenderFragment? Sidebar { get; set; }
+
+    /// <summary>O conteúdo da página, dentro do <c>main</c>.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Rodapé da aplicação. Fica fora do <c>main</c>, como marco próprio.</summary>
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    /// <summary>Densidade aplicada à árvore inteira (<c>RF-05</c>).</summary>
+    [Parameter]
+    public RvmDensity Density { get; set; } = RvmDensity.Comfortable;
+
+    /// <summary>Texto do link "pular para o conteúdo".</summary>
+    [Parameter]
+    public string SkipLabel { get; set; } = "Pular para o conteúdo";
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar("rvm-app-shell", Class);
+
+    // Só emite o atributo quando é compacta: `data-rvm-density="comfortable"` não faz nada, e
+    // um atributo inerte no HTML é só uma coisa a mais para alguém tentar entender depois.
+    private string? Densidade =>
+        Density == RvmDensity.Compact ? "compact" : null;
+
+    protected override void OnInitialized() => _contexto.Changed += AoMudar;
+
+    private void AoMudar() => InvokeAsync(StateHasChanged);
+
+    private void Fechar() => _contexto.CloseSidebar();
+
+    public void Dispose() => _contexto.Changed -= AoMudar;
+}

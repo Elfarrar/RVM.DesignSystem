@@ -1,0 +1,28 @@
+.rvm-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: var(--rvm-radius-full);
+    font-family: var(--rvm-font-family-sans);
+    font-weight: var(--rvm-font-weight-semibold);
+    /* A cor sai do style inline, derivada do nome — ver RvmAvatarCor. Este par é o fallback
+       do avatar sem nome, que cai no ícone genérico. */
+    background-color: var(--rvm-color-surface-sunken);
+    color: var(--rvm-color-on-surface);
+    user-select: none;
+}
+
+.rvm-avatar--small { width: 1.75rem; height: 1.75rem; font-size: var(--rvm-font-size-caption); }
+.rvm-avatar--medium { width: 2.5rem; height: 2.5rem; font-size: var(--rvm-font-size-body-sm); }
+.rvm-avatar--large { width: 3.5rem; height: 3.5rem; font-size: var(--rvm-font-size-body-lg); }
+
+.rvm-avatar__imagem {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.rvm-avatar__iniciais { line-height: 1; }

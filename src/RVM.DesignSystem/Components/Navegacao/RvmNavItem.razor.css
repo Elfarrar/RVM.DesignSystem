@@ -1,0 +1,79 @@
+.rvm-nav-item {
+    list-style: none;
+}
+
+.rvm-nav-item__gatilho {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    width: 100%;
+    box-sizing: border-box;
+    /* min-height e não height: o item cresce se o texto quebrar, em vez de vazar. */
+    min-height: var(--rvm-control-height-md);
+    padding: var(--rvm-control-padding-y-sm) var(--rvm-space-3);
+    border: 0;
+    /* A barra do estado ativo mora na borda esquerda, e ela existe SEMPRE, transparente:
+       assim o texto não desloca 3px no instante em que o item fica ativo. */
+    border-left: 3px solid transparent;
+    border-radius: var(--rvm-radius-md);
+    background: none;
+    color: var(--rvm-color-on-surface);
+    font-family: var(--rvm-font-family-sans);
+    font-size: var(--rvm-font-size-body-sm);
+    font-weight: var(--rvm-font-weight-medium);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+@media (hover: hover) {
+    .rvm-nav-item__gatilho:hover { background-color: var(--rvm-color-surface-sunken); }
+}
+
+.rvm-nav-item__gatilho:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: -2px;
+}
+
+.rvm-nav-item__gatilho--ativo {
+    background-color: var(--rvm-color-primary-container);
+    border-left-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary-container);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-nav-item__icone { flex-shrink: 0; }
+
+.rvm-nav-item__texto {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-nav-item__badge {
+    flex-shrink: 0;
+    padding: 0 var(--rvm-space-2);
+    border-radius: var(--rvm-radius-full);
+    background-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    font-size: var(--rvm-font-size-caption);
+    font-weight: var(--rvm-font-weight-semibold);
+}
+
+.rvm-nav-item__seta {
+    flex-shrink: 0;
+    transition: transform var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
+}
+
+.rvm-nav-item__gatilho[aria-expanded="true"] .rvm-nav-item__seta {
+    transform: rotate(90deg);
+}
+
+.rvm-nav-item__filhos {
+    margin: 0;
+    padding: 0 0 0 var(--rvm-space-6);
+    list-style: none;
+}

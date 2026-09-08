@@ -1,0 +1,198 @@
+@namespace RVM.DesignSystem.Components
+@implements IDisposable
+
+@*
+    Abas no padrão ARIA APG.
+
+    O detalhe que separa isto de uma fileira de botões é o TECLADO. Numa `tablist` de verdade,
+    Tab não percorre as abas: ele entra na lista e sai dela. Dentro, quem navega são as setas.
+    Isso é "tabindex móvel" (roving tabindex) — só a aba ativa é tabulável, as outras têm
+    tabindex="-1". Sem isso, uma tela com oito abas obriga quem usa teclado a passar por oito
+    paradas para chegar ao conteúdo.
+
+    A ativação é AUTOMÁTICA: mover o foco já troca o painel. O APG permite as duas formas e
+    recomenda a automática quando o painel é barato de renderizar, que é o caso aqui — a manual
+    obrigaria a apertar Enter em cada aba, e quem não sabe disso conclui que a seta não funciona.
+*@
+
+<div class="@ClasseFinal" @attributes="AdditionalAttributes">
+    <div class="rvm-tabs__lista"
+         role="tablist"
+         aria-label="@Label"
+         aria-orientation="horizontal">
+        @foreach (var aba in _abas)
+        {
+            var ativa = EhAtiva(aba.Id);
+
+            <button type="button"
+                    id="@IdDaAba(aba.Id)"
+                    class="@(ativa ? "rvm-tabs__aba rvm-tabs__aba--ativa" : "rvm-tabs__aba")"
+                    role="tab"
+                    aria-selected="@(ativa ? "true" : "false")"
+                    aria-controls="@IdDoPainel(aba.Id)"
+                    tabindex="@(ativa ? 0 : -1)"
+                    disabled="@aba.Disabled"
+                    @ref="_botoes[aba.Id]"
+                    @onclick="() => Selecionar(aba.Id)"
+                    @onkeydown="AoTeclar"
+                    @onkeydown:preventDefault="_precisaBloquearTecla">
+                @if (aba.Icon is not null)
+                {
+                    <RvmIcon Name="@aba.Icon"
+                             Weight="@(ativa ? RvmIconWeight.Fill : RvmIconWeight.Regular)"
+                             Size="1.125rem" />
+                }
+                @aba.Label
+            </button>
+        }
+    </div>
+
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    private readonly List<RvmTab> _abas = [];
+    private readonly Dictionary<string, ElementReference> _botoes = [];
+    private bool _precisaBloquearTecla;
+    private string? _focarApos;
+
+    /// <summary>
+    /// Nome da lista de abas para o leitor de tela ("Seções do cadastro").
+    /// </summary>
+    /// <remarks>
+    /// Sem ele o leitor anuncia só "lista de abas", e numa página com duas listas de abas não há
+    /// como saber qual é qual.
+    /// </remarks>
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>Id da aba ativa. Use com <c>@bind-Value</c>.</summary>
+    [Parameter]
+    public string? Value { get; set; }
+
+    /// <summary>Disparado quando a aba ativa muda.</summary>
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    /// <summary>Os <see cref="RvmTab"/>.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classes do consumidor. Somam com as internas.</summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Atributos extras.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClasseFinal => RvmClasse.Juntar("rvm-tabs", Class);
+
+    /// <summary>Id do botão de uma aba. O painel aponta para ele por <c>aria-labelledby</c>.</summary>
+    internal static string IdDaAba(string id) => $"rvm-tab-{id}";
+
+    /// <summary>Id do painel de uma aba.</summary>
+    internal static string IdDoPainel(string id) => $"rvm-tabpanel-{id}";
+
+    /// <summary>A aba está ativa? Sem seleção explícita, a primeira habilitada assume.</summary>
+    internal bool EhAtiva(string id) =>
+        string.Equals(Value ?? PrimeiraHabilitada, id, StringComparison.Ordinal);
+
+    private string? PrimeiraHabilitada => _abas.FirstOrDefault(a => !a.Disabled)?.Id;
+
+    /// <summary>
+    /// Registra uma aba filha. Chamado pelo próprio <see cref="RvmTab"/> ao inicializar.
+    /// </summary>
+    /// <param name="aba">A aba que está entrando.</param>
+    internal void Registrar(RvmTab aba)
+    {
+        if (_abas.Any(a => a.Id == aba.Id))
+        {
+            // Dois painéis com o mesmo id fariam aria-controls apontar para o elemento errado e
+            // as setas pularem uma aba. Falhar aqui é mais barato que caçar isso depois.
+            throw new InvalidOperationException(
+                $"Já existe uma aba com Id \"{aba.Id}\". O Id identifica o painel no HTML e precisa ser único.");
+        }
+
+        _abas.Add(aba);
+
+        // As abas se registram DURANTE a renderização do ChildContent, quando a lista de abas
+        // acima já foi montada vazia. Sem este segundo passe, a fileira de botões não aparece.
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>Remove uma aba que saiu da tela.</summary>
+    /// <param name="aba">A aba que está saindo.</param>
+    internal void Remover(RvmTab aba)
+    {
+        _abas.Remove(aba);
+        _botoes.Remove(aba.Id);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private Task Selecionar(string id)
+    {
+        if (string.Equals(Value, id, StringComparison.Ordinal))
+        {
+            return Task.CompletedTask;
+        }
+
+        Value = id;
+        return ValueChanged.InvokeAsync(id);
+    }
+
+    private async Task AoTeclar(KeyboardEventArgs e)
+    {
+        var habilitadas = _abas.Where(a => !a.Disabled).Select(a => a.Id).ToList();
+
+        if (habilitadas.Count == 0)
+        {
+            return;
+        }
+
+        var atual = Math.Max(0, habilitadas.FindIndex(id => EhAtiva(id)));
+
+        var destino = e.Key switch
+        {
+            // A volta ao início é deliberada: numa lista circular a pessoa não precisa saber
+            // em que ponta está para chegar à aba que quer.
+            "ArrowRight" => (atual + 1) % habilitadas.Count,
+            "ArrowLeft" => (atual - 1 + habilitadas.Count) % habilitadas.Count,
+            "Home" => 0,
+            "End" => habilitadas.Count - 1,
+            _ => -1,
+        };
+
+        // preventDefault só nas teclas que tratamos: bloquear as outras roubaria o Tab de sair
+        // da lista e o Home/End de rolar a página quando o foco está em outro lugar.
+        _precisaBloquearTecla = destino >= 0;
+
+        if (destino < 0)
+        {
+            return;
+        }
+
+        await Selecionar(habilitadas[destino]);
+
+        // O foco acompanha a seleção. Sem isso a próxima seta continuaria contando a partir do
+        // botão antigo, e a navegação daria saltos.
+        _focarApos = habilitadas[destino];
+    }
+
+    protected override async Task OnAfterRenderAsync(bool primeiraVez)
+    {
+        if (_focarApos is not null && _botoes.TryGetValue(_focarApos, out var botao))
+        {
+            _focarApos = null;
+            await botao.FocusAsync();
+        }
+    }
+
+    public void Dispose()
+    {
+        _abas.Clear();
+        _botoes.Clear();
+    }
+}
