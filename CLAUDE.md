@@ -6,10 +6,10 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 **Prefixo de task:** `DSGN-NNN` · contador próprio · card em `docs/Vault/02_Tasks/`,
 índice em `docs/Vault/03_Kanban/KANBAN.md`.
 
-> **Estado em 07/09/2026, após o bootstrap (`DSGN-001`):** repositório **público** em
-> `Elfarrar/RVM.DesignSystem` (MIT), esqueleto .NET 10 com os quatro projetos, cinco workflows,
-> CI verde e o site no ar em `design.dev.rvmtech.com.br`. **Produção não foi promovida** — falta
-> o sinal verde do Rafael. Componentes: zero, começam na onda 1 do `09-roadmap.md`.
+> **Estado em 08/09/2026:** repositório **público** em `Elfarrar/RVM.DesignSystem` (MIT),
+> esqueleto .NET 10, cinco workflows, camada de tokens e motor de tema (`DSGN-002`).
+> **No ar nos dois ambientes**: `design.dev.rvmtech.com.br` e `design.rvmit.com.br`.
+> Pacote estável `0.1.0` no BaGet. Componentes: zero — começam na onda 1 do `09-roadmap.md`.
 
 ## Escopo
 
@@ -129,9 +129,11 @@ da tela/componente novo — sem isso, a entrega está incompleta.
 
 - Spec `01`–`11` escrita em 07/09/2026; bootstrap (`DSGN-001`) executado no mesmo dia.
 - No ar: `https://design.dev.rvmtech.com.br` (casca do site, sem componentes ainda).
-- Produção (`master` → Pages → `design.rvmit.com.br`) **preparada mas não disparada**: falta DNS
-  `design` na zona `rvmit.com.br`, ligar o Pages nas settings e o monitor no Uptime-Kuma. Tudo
-  espera o sinal verde do Rafael.
+- **Produção no ar desde 08/09/2026**: `https://design.rvmit.com.br`, autorizada por ele.
+  Certificado do Pages emitido, `Enforce HTTPS` ligado, verificação por conteúdo.
+- ⏳ **Monitor no Uptime-Kuma não criado**, e de propósito: o Uptime-Kuma tem **17 monitores e
+  zero canais de notificação** — nenhum avisa ninguém hoje, incluindo as produções de ERPAgro,
+  Gypsy e Payments. Criar o 18º monitor mudo seria teatro. Espera o Rafael escolher o destino.
 - Próximo passo: onda 1 do `09-roadmap.md` — tokens, tematização e os nove componentes básicos.
 
 ## Pendências que bloqueiam
