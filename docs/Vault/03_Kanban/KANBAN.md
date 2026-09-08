@@ -16,6 +16,11 @@
 
 ## Em revisao
 
+- [[DSGN-024]] — **A paleta do visitante fica guardada no navegador**. Achado pelo Rafael usando
+  a `DSGN-023`: navegar e voltar deixava o site pintado e o formulario nos valores iniciais —
+  dois lugares discordando sobre a mesma escolha. Guarda as cores **escolhidas**, nunca o tema
+  derivado, para que uma paleta antiga passe pelas regras de contraste de hoje.
+
 - [[DSGN-023]] — **A paleta em construcao repinta o site inteiro**: mexeu numa cor em
   `/fundamentos/paleta`, a documentacao toda passa a usar a paleta — que e o unico jeito de ver
   que uma primaria vermelha faz "Salvar" parecer "Excluir". Zero mudanca na biblioteca: o

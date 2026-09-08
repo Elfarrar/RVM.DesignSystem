@@ -20,4 +20,8 @@ builder.Services.AddScoped<ApiDoc>();
 // nunca de uma lista paralela que desatualizaria no primeiro componente novo.
 builder.Services.AddScoped<Busca>();
 
+// A paleta que o visitante monta em /fundamentos/paleta, guardada no navegador dele.
+// E do SITE, nao da biblioteca: tema por usuario final em runtime segue fora do escopo da v1.
+builder.Services.AddScoped<PaletaDoVisitante>();
+
 await builder.Build().RunAsync();
