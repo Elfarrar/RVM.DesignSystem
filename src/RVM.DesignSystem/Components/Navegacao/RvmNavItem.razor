@@ -103,10 +103,14 @@
 
     private bool TemFilhos => ChildContent is not null;
 
-    /// <summary>Aparencia: vale tambem quando o item e ANCESTRAL da rota aberta.</summary>
+    // Aparencia: vale tambem quando o item e ANCESTRAL da rota aberta.
     private bool Ativo { get; set; }
 
-    /// <summary>Anuncio: so na propria rota. Ver a nota no topo do arquivo (DSGN-034).</summary>
+    // Anuncio: so na propria rota. Ver a nota no topo do arquivo (DSGN-034).
+    //
+    // ⚠️ Comentario `//` e nao `///` de proposito: os dois sao PRIVADOS, e a doc XML alimenta a
+    // tabela de API do site. Documentar membro privado com `///` o publica numa tabela que
+    // promete listar so o que o consumidor pode usar.
     private bool NaRotaExata { get; set; }
 
     private string ClasseDoGatilho => RvmClasse.Juntar(
