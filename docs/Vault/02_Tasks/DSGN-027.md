@@ -3,11 +3,19 @@ id: DSGN-027
 titulo: Aparencia "Admin" e a tela de Dashboard
 repo: RVM.DesignSystem
 tipo: feature
-status: aguardando-decisao
+status: reprovado-e-revertido
 criada: 2026-09-08
 ---
 
 # DSGN-027 — O desenho do AdminLTE
+
+> ⛔ **REPROVADO E REVERTIDO em 08/09/2026** pela [[DSGN-028]]: *"nao ficou bom, remova o
+> AdminLTE, mas crie um dashboard"*. A aparencia `Admin` saiu inteira e a tela de painel foi
+> refeita na linguagem daqui.
+>
+> **O card fica** porque duas coisas dele continuam valendo e custariam para redescobrir: a
+> tecnica da casca escura tirada da paleta ESCURA do tema (em vez de hexadecimais fixos), e o
+> defeito `scrollable-region-focusable` em tela sem nenhum elemento focavel.
 
 Pedido do Rafael em 08/09/2026: *"quero algo parecido com isso"* +
 `https://adminlte.io/themes/AdminLTE/index2.html`.

@@ -521,8 +521,11 @@
 /* ---------------------------------------------------------------------------
    Painel (/padroes/dashboard)
 
-   A estrutura e a do AdminLTE; a cor sai dos papeis verificados da paleta. Cada caixa usa um
-   par `x`/`on-x` — o mesmo que o teste de contraste mede a cada build.
+   O numero grande e um idioma de painel, nao uma copia: a caixa e uma SUPERFICIE da paleta, com
+   a cor concentrada num distintivo redondo e no valor. A versao anterior era o bloco solido do
+   AdminLTE, com marca d'agua e faixa de rodape; o Rafael reprovou em 08/09/2026.
+
+   A cor vem do papel semantico, e cada par distintivo/valor e um `x`/`on-x` ja medido.
    --------------------------------------------------------------------------- */
 
 .painel__numeros {
@@ -536,62 +539,60 @@
 @media (min-width: 64rem) { .painel__numeros { grid-template-columns: repeat(4, 1fr); } }
 
 .painel__numero {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: var(--rvm-space-4);
-    padding: var(--rvm-space-5) var(--rvm-space-5) 0;
-    border-radius: var(--rvm-radius-md);
-}
-
-/* O rodape "Mais informacoes" do AdminLTE: faixa levemente mais escura na base da caixa. */
-.painel__numero-mais {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--rvm-space-2);
-    margin: 0 calc(var(--rvm-space-5) * -1);
-    padding: var(--rvm-space-2);
-    background: rgb(0 0 0 / 0.15);
+    gap: var(--rvm-space-4);
+    padding: var(--rvm-space-5);
+    border: 1px solid var(--rvm-color-border);
+    border-radius: var(--rvm-radius-lg);
+    background: var(--rvm-color-surface);
     color: inherit;
-    font-size: var(--rvm-font-size-body-sm);
     text-decoration: none;
-    z-index: 1;
+    transition: box-shadow var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
+                border-color var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
 }
 
-.painel__numero-mais:hover { background: rgb(0 0 0 / 0.25); }
-
-/* O anel de foco herda a cor do texto da caixa, e nao a --rvm-color-focus-ring: sobre um fundo
-   saturado, o anel padrao pode sumir. O `on-x` da caixa e o unico tom garantido contra ela. */
-.painel__numero-mais:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: -4px;
+.painel__numero:hover {
+    box-shadow: var(--rvm-shadow-2);
+    border-color: var(--rvm-color-border-strong);
 }
 
-.painel__numero--primary { background: var(--rvm-color-primary);  color: var(--rvm-color-on-primary); }
-.painel__numero--success { background: var(--rvm-color-success);  color: var(--rvm-color-on-success); }
-.painel__numero--warning { background: var(--rvm-color-warning);  color: var(--rvm-color-on-warning); }
-.painel__numero--danger  { background: var(--rvm-color-danger);   color: var(--rvm-color-on-danger); }
+.painel__numero:focus-visible {
+    outline: 2px solid var(--rvm-color-focus-ring);
+    outline-offset: 2px;
+}
 
-.painel__numero-texto { display: flex; flex-direction: column; z-index: 1; }
+.painel__numero-icone {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--rvm-radius-full);
+}
+
+.painel__numero--primary .painel__numero-icone { background: var(--rvm-color-primary); color: var(--rvm-color-on-primary); }
+.painel__numero--success .painel__numero-icone { background: var(--rvm-color-success); color: var(--rvm-color-on-success); }
+.painel__numero--warning .painel__numero-icone { background: var(--rvm-color-warning); color: var(--rvm-color-on-warning); }
+.painel__numero--danger  .painel__numero-icone { background: var(--rvm-color-danger);  color: var(--rvm-color-on-danger); }
+
+.painel__numero-texto { display: flex; flex-direction: column; min-width: 0; }
 
 .painel__numero-valor {
-    font-size: var(--rvm-font-size-h2);
+    font-size: var(--rvm-font-size-h3);
     font-weight: var(--rvm-font-weight-semibold);
     line-height: var(--rvm-line-height-heading);
+    font-variant-numeric: tabular-nums;
+
+    /* O valor NUNCA quebra: "R$ 6,2 mi" em duas linhas desalinha a fileira inteira e faz o
+       numero, que e a coisa que a pessoa veio ler, parecer dois numeros. O rotulo abaixo pode
+       quebrar a vontade. */
+    white-space: nowrap;
 }
 
-.painel__numero-rotulo { font-size: var(--rvm-font-size-body-sm); }
-
-/* A marca d'agua do AdminLTE: icone grande, cortado pela borda, atras do texto. */
-.painel__numero-marca {
-    position: absolute;
-    right: -0.5rem;
-    bottom: -0.75rem;
-    width: 5.5rem;
-    height: 5.5rem;
-    opacity: 0.22;
+.painel__numero-rotulo {
+    font-size: var(--rvm-font-size-body-sm);
+    color: var(--rvm-color-on-surface-variant);
 }
 
 .painel__colunas {

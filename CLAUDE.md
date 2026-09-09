@@ -192,12 +192,28 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   guardada no `localStorage` e sobrevive à navegação e ao F5. Guarda as **cores escolhidas**,
   nunca o tema derivado — assim uma paleta antiga passa pelas regras de contraste de hoje, em
   vez de virar cópia congelada que nenhuma correção do `FromSeed` alcança.
-- ⏳ **`DSGN-025` — preview de aparência, no ar em PRODUÇÃO e TEMPORÁRIO.** O seletor
-  "Aparência" na topbar troca entre `Atual`, `Sóbrio` e `Marcante`. ⚠️ **`aparencia.css`,
-  `aparencia.js`, o seletor no `MainLayout` e o teste `As_duas_aparencias_do_preview_passam_no_axe`
-  saem INTEIROS quando o Rafael escolher.** Nada disso é a biblioteca. E nenhum preset mexe em
-  cor de superfície de propósito: tingir superfície é motor de tema (`FromSeed` +
-  `EnsureContrast()`), não folha de estilo — a mão livre no CSS fura o portão em silêncio.
+- ⏳ **Preview de aparência (`DSGN-025`/`026`) — no ar em PRODUÇÃO e TEMPORÁRIO.** O seletor
+  "Aparência" na topbar troca entre **`Atual`, `Sóbrio`, `Marcante` e `Vivo`**.
+  ⚠️ **Sai INTEIRO quando o Rafael escolher**, e a lista do que remover é esta:
+  `wwwroot/css/aparencia.css`, `wwwroot/js/aparencia.js`, `Documentacao/AparenciaViva.cs`, o
+  seletor no `MainLayout` e o teste `As_duas_aparencias_do_preview_passam_no_axe`.
+  **Nada disso é a biblioteca.**
+  - `Vivo` é **metade CSS e metade C#**: ele troca o TEMA, não só o estilo. Um teste que só
+    escrevesse `data-rvm-aparencia` aprovaria a aparência sem a parte que mexe nas cores — por
+    isso o teste usa o seletor.
+  - **Tingir superfície é motor de tema** (`FromSeed` + `EnsureContrast()`), nunca folha de
+    estilo: um cinza escrito à mão fura o portão em silêncio. Por isso `AparenciaViva` é C#, e
+    por isso o tingimento mexe muito na croma e pouco na luminosidade — o `EnsureContrast()`
+    re-deriva os papéis coloridos, mas **não** o `on-surface`.
+- ✅ **`DSGN-026` EM PRODUÇÃO** (08/09/2026): **164 ícones** (eram 27), com ícone em todo item de
+  menu, e a aparência `Vivo`.
+- ⛔ **A aparência `Admin` (imitação do AdminLTE) foi REPROVADA e revertida** (`DSGN-027` →
+  `DSGN-028`). Ficou a tela `/padroes/dashboard`, refeita na linguagem daqui. **Não recriar** sem
+  ele pedir — e, se pedir, a técnica da casca escura está descrita no `DSGN-027`.
+- ⚠️ **Tela sem NENHUM elemento focável reprova no axe** (`scrollable-region-focusable`). A área
+  de conteúdo do `RvmAppShell` rola; sem nada que receba foco, não há como rolá-la pelo teclado.
+  Pegou a página de Dashboard, que era só texto, chip e barra. **Um app consumidor com tela só de
+  leitura herda isso** — a resposta seria no `RvmAppShell`, e ainda não foi feita.
 - Próximo passo: **não há onda 5**. O que vem é adoção — e ela é só em projeto novo (`09` §
   Adoção). O próximo projeto RVM que precisar de UI nasce aqui, e é ele quem prova a biblioteca.
 
