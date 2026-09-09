@@ -3,7 +3,7 @@ id: DSGN-035
 titulo: Os quatro KPIs do Dashboard prometem destinos diferentes e vao para o mesmo
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -34,5 +34,12 @@ Recomendo a **1**: a Listagem ja tem filtro; falta so ler da query string.
 
 ## Validacao
 
-- [ ] Cada card leva a um resultado diferente, ou o texto diz que o link e ilustrativo.
-- [ ] E2E cobrindo pelo menos um card que chega filtrado (se a saida for a 1).
+- [x] Cada card leva a um resultado diferente, ou o texto diz que o link e ilustrativo.
+- [x] E2E cobrindo pelo menos um card que chega filtrado (se a saida for a 1).
+
+## Resultado (09/09/2026, verificado no dev)
+
+Os destinos agora sao `padroes/listagem`, `padroes/listagem`,
+`padroes/listagem?situacao=Pendente` e `padroes/listagem?situacao=Cancelado`. E2E novo
+confere o resultado na tela, e pegou de cara um erro meu: a primeira versao do teste contava
+colunas e a quarta e a data.

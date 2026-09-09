@@ -3,7 +3,7 @@ id: DSGN-037
 titulo: O padrao de Dashboard so mostra o caminho feliz
 repo: RVM.DesignSystem
 tipo: feature
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -33,5 +33,10 @@ O padrao de Listagem ja combina `aria-busy` + `RvmSkeleton` + `RvmEmptyState` e 
 
 ## Validacao
 
-- [ ] Os tres estados visiveis na pagina, alternaveis.
-- [ ] axe passa nos tres, nos dois temas.
+- [x] Os tres estados visiveis na pagina, alternaveis.
+- [x] axe passa nos tres, nos dois temas.
+
+## Resultado (09/09/2026, verificado no dev)
+
+Tres estados no ar, trocaveis na pagina. Medido no carregando: **3 regioes com `aria-busy`
+e 32 esqueletos**. O vazio abre com titulo, explicacao e acao.
