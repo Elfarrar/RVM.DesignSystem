@@ -3,7 +3,7 @@ id: DSGN-032
 titulo: "Março De 2026" — o ToTitleCase capitaliza a preposicao
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -31,9 +31,9 @@ Mantem o formato `"MMMM 'de' yyyy"` como esta — nao e hora de inventar paramet
 
 ## Validacao
 
-- [ ] Teste bUnit com data fixa: o titulo de 15/03/2026 e exatamente `Março de 2026`.
-- [ ] Suite unitaria e E2E verdes.
-- [ ] Conferido no navegador.
+- [x] Teste bUnit com data fixa: o titulo de 15/03/2026 e exatamente `Março de 2026`.
+- [x] Suite unitaria (310) e E2E (10) verdes; Release com 0 avisos.
+- [x] Conferido no navegador, no dev, com o locale em `en-US`.
 
 ## Versao
 
