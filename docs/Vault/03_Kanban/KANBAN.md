@@ -31,6 +31,12 @@ _Nada em revisao._
 
 ## Concluido
 
+- [[DSGN-032]] — ✅ **EM PRODUCAO** (09/09/2026): "Março De 2026" virou "Março de 2026". O
+  `ToTitleCase` e regra de ingles e sobe cada palavra. ⚠️ Este **mexe na biblioteca**, ao
+  contrario do [[DSGN-030]] e do [[DSGN-031]], que eram so o site — entra como patch na
+  proxima publicacao do pacote. Nao era regressao: estava assim desde a onda 4, escondido
+  atras do titulo em ingles.
+
 - [[DSGN-031]] — ✅ **EM PRODUCAO** (09/09/2026): o calendario tambem falava ingles. Achado pelo
   review do [[DSGN-030]] e confirmado em PRODUCAO antes de aceitar: com navegador `en-US` o
   `RvmDatePicker` mostrava `Sunday`/`March 2026`. Mesma causa, **zero codigo de produto** — a
