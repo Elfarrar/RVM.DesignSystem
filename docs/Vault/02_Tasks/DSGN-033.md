@@ -3,7 +3,7 @@ id: DSGN-033
 titulo: Timeout POR FORA no push do BaGet, e a 1.1.1 no feed
 repo: RVM.DesignSystem
 tipo: chore
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -59,9 +59,14 @@ O `DSGN-018` deixou tres saidas e escolheu a primeira, dizendo em quantas palavr
 
 ## Validacao
 
-- [ ] O alpha de `dev` publica com o conserto no ar (e a prova barata, antes da tag).
-- [ ] `1.1.1` no feed, conferida pelo passo do workflow e por `curl` direto.
-- [ ] O passo "Push no BaGet" leva segundos, nao dezenas de minutos.
+- [x] `1.1.2-alpha.23` publicada no merge em `dev` — run inteiro em **27 segundos**.
+- [x] `1.1.1` no feed, do commit `7e6cc03`, conferida pelo passo do workflow e por `curl` direto.
+- [x] O passo "Push no BaGet" respondeu `Your package was pushed` em ~2s; o run da tag levou
+      27s de ponta a ponta, contra os 1908s de uma unica tentativa na `v1.1.0`.
+
+⚠️ **O que isto NAO provou**: a rede estava boa hoje. O `timeout 180` so mostra servico quando
+ela travar de novo — o que ficou provado e que o limite existe e que o caminho feliz nao
+regrediu. A prova real vem no dia ruim.
 
 ## Versao
 
