@@ -3,7 +3,7 @@ id: DSGN-031
 titulo: O calendario tambem falava ingles — teste, e a pergunta de arquitetura que sobra
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -64,10 +64,14 @@ A flag do `DSGN-030` ja conserta — nao ha codigo de produto a escrever. O que 
 
 ## Validacao
 
-- [ ] O teste novo passa contra o `dev` (com o fix).
-- [ ] O mesmo teste **falha** contra a producao enquanto ela nao for promovida — se passar nos
-      dois, ele nao esta provando nada.
-- [ ] Suite E2E completa verde.
+- [x] O teste novo passa contra o `dev` (com o fix).
+- [x] O mesmo teste **falha** contra a producao enquanto ela nao for promovida — verificado em
+      09/09: `Actual: ["Sunday", "Monday", ...]`. Se passasse nos dois, nao estaria provando nada.
+- [x] Suite E2E completa verde.
+
+⚠️ **O pipeline so conhece este teste depois da promocao**: o `e2e.yml` roda sempre o codigo do
+branch padrao (`master`), apontando para o site de `dev`. Ate promover, a prova e a execucao
+local contra os dois alvos.
 
 ## Versao
 
