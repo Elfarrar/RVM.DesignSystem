@@ -31,6 +31,11 @@ _Nada em revisao._
 
 ## Concluido
 
+- [[DSGN-033]] — ✅ **PUBLICADA** (09/09/2026): `1.1.1` no feed do BaGet, e o `timeout 180`
+  do coreutils **por fora** da tentativa de push — o card proprio que o [[DSGN-018]] pediu.
+  ⚠️ A `1.1.0` tem tag e nunca teve pacote, **de proposito**: reusar o numero com codigo
+  diferente seria o alvo movel que o [[DSGN-009]] proibiu. O feed pula de `1.0.0` para `1.1.1`.
+
 - [[DSGN-032]] — ✅ **EM PRODUCAO** (09/09/2026): "Março De 2026" virou "Março de 2026". O
   `ToTitleCase` e regra de ingles e sobe cada palavra. ⚠️ Este **mexe na biblioteca**, ao
   contrario do [[DSGN-030]] e do [[DSGN-031]], que eram so o site — entra como patch na

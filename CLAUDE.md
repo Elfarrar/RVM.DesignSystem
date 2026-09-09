@@ -188,11 +188,15 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   tema no **site inteiro**, nos dois modos. Não é enfeite — é o único jeito de ver que uma
   primária vermelha faz o "Salvar" parecer um botão de excluir. **Nada mudou na biblioteca**: o
   `RvmThemeProvider` já emitia o CSS do tema e reagia ao `Changed`.
-- ⚠️ **A tag `v1.1.0` existe, mas o pacote NÃO está no feed do BaGet.** Duas execuções do
-  "Push no BaGet" falharam por rede (1908s e ~equivalente), e o `--timeout 120` **não as
-  limitou** — ver a correção no `DSGN-018`. O site não depende disso (compila por
-  `ProjectReference`); o primeiro consumidor externo depende. **Não republicar movendo a tag
-  sem decidir o conserto antes.**
+- ✅ **`1.1.1` no feed do BaGet** (09/09/2026, `DSGN-033`): a última estável publicada, do
+  commit `7e6cc03`. O push agora tem `timeout 180` do coreutils **por fora** da tentativa — o
+  `--timeout 120` do `dotnet nuget push` governa a requisição e não o fetch de índice, que era
+  quem pendurava (1908s medidos na `v1.1.0`). São dois limites de coisas diferentes; nenhum
+  substitui o outro.
+- ⚠️ **A `1.1.0` tem tag e nunca teve pacote, e vai continuar assim.** A tag `v1.1.0` prende o
+  commit `ad48171`, anterior ao `DSGN-032`; republicar aquele número com código de hoje seria o
+  **alvo móvel** que o `DSGN-009` proibiu. O feed pula de `1.0.0` para `1.1.1` — ninguém chegou
+  a consumir o número que falta.
 - ✅ **`DSGN-024` EM PRODUÇÃO** (08/09/2026): a paleta montada em `/fundamentos/paleta` fica
   guardada no `localStorage` e sobrevive à navegação e ao F5. Guarda as **cores escolhidas**,
   nunca o tema derivado — assim uma paleta antiga passa pelas regras de contraste de hoje, em
