@@ -145,6 +145,12 @@
 </article>
 
 @code {
+    // A situacao pode chegar pela URL: e o link do painel (DSGN-035) prometendo uma listagem
+    // ja filtrada e cumprindo. Vale so na PRIMEIRA carga — depois disso quem manda e o
+    // formulario, senao limpar o filtro seria desfeito pela query que continua na barra.
+    [Parameter, SupplyParameterFromQuery(Name = "situacao")]
+    public string? SituacaoDaUrl { get; set; }
+
     private string? _busca = string.Empty;
     private string? _situacao;
     private DateTime? _de;
@@ -157,6 +163,16 @@
     // Método, e não lambda no atributo: string interpolada dentro de atributo Razor não
     // compila — as aspas de dentro fecham o atributo.
     private static string NomeDaLinha(Pedido p) => $"pedido {p.Numero} de {p.Cliente}";
+
+    protected override void OnInitialized()
+    {
+        // So valor conhecido entra. Uma query com lixo ("?situacao=xpto") nao pode deixar a
+        // tela num estado que o formulario nao consegue representar nem limpar.
+        if (Pedidos.TodasAsSituacoes.Contains(SituacaoDaUrl, StringComparer.Ordinal))
+        {
+            _situacao = SituacaoDaUrl;
+        }
+    }
 
     private int FiltrosAtivos =>
         (string.IsNullOrWhiteSpace(_busca) ? 0 : 1)
