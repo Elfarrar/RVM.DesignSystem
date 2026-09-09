@@ -17,6 +17,26 @@
     de exemplo e virou código em produção — que é exatamente o que a onda tinha para provar.
 *@
 
+@*
+    As cores da CASCA ESCURA da aparencia "admin", derivadas da paleta ESCURA do tema corrente.
+
+    ⚠️ Vem da paleta escura de proposito, e nao de valores escritos a mao. A barra lateral escura
+    sobre conteudo claro e o desenho do AdminLTE — e no AdminLTE ela e um punhado de hexadecimais
+    fixos. Aqui ela precisa de um par fundo/texto que ja tenha sido verificado, e o modo escuro
+    do tema e exatamente isso: um par gerado e medido pelo mesmo portao. Reaproveita-lo da a
+    casca escura de graca, em qualquer tema, inclusive numa paleta montada pelo visitante.
+*@
+<style>
+    :root {
+        --rvm-shell-fundo: @Tema.Theme.Dark.Surface;
+        --rvm-shell-afundado: @Tema.Theme.Dark.SurfaceSunken;
+        --rvm-shell-texto: @Tema.Theme.Dark.OnSurface;
+        --rvm-shell-apagado: @Tema.Theme.Dark.OnSurfaceVariant;
+        --rvm-shell-borda: @Tema.Theme.Dark.Border;
+        --rvm-shell-ativo: @Tema.Theme.Dark.Primary;
+    }
+</style>
+
 <RvmThemeProvider>
     <RvmAppShell>
         <Topbar>
@@ -56,6 +76,7 @@
                         <option value="sobrio" selected="@(_aparencia == "sobrio")">Sóbrio</option>
                         <option value="marcante" selected="@(_aparencia == "marcante")">Marcante</option>
                         <option value="vivo" selected="@(_aparencia == "vivo")">Vivo</option>
+                        <option value="admin" selected="@(_aparencia == "admin")">Admin</option>
                     </select>
 
                     <RvmIconButton Icon="@(_escuro ? "eye" : "eye-slash")"

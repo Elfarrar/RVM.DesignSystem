@@ -576,7 +576,7 @@ public class SiteSmokeTests : IAsyncLifetime
         var page = await _browser!.NewPageAsync();
         var problemas = new List<string>();
 
-        foreach (var aparencia in new[] { "sobrio", "marcante", "vivo" })
+        foreach (var aparencia in new[] { "sobrio", "marcante", "vivo", "admin" })
         {
             // ⚠️ Pelo SELETOR, e nao escrevendo o atributo direto. O "vivo" nao e so CSS: ele
             // troca o TEMA por um derivado com as superficies tingidas, e essa metade acontece
@@ -586,7 +586,7 @@ public class SiteSmokeTests : IAsyncLifetime
             await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
             await page.Locator("#seletor-aparencia").SelectOptionAsync(aparencia);
 
-            foreach (var rota in new[] { "", "/padroes/listagem", "/componentes/button" })
+            foreach (var rota in new[] { "", "/padroes/listagem", "/padroes/dashboard", "/componentes/button" })
             {
                 // A escolha sobrevive a navegacao pelo localStorage, e a casca re-aplica o
                 // tingimento na entrada — o mesmo caminho que o visitante percorre.

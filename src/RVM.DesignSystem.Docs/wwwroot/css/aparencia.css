@@ -207,3 +207,91 @@
         transform: none;
     }
 }
+
+/* ============================================================
+   ADMIN — o desenho do AdminLTE: barra lateral escura sobre conteudo claro.
+
+   ⚠️ AS CORES NAO SAO AS DO ADMINLTE, e isso nao e liberdade poetica. As small-box de la sao
+   branco sobre `#00c0ef`, `#f39c12` e afins: 2.4:1 e 2.2:1, contra os 4.5:1 que a WCAG exige.
+   Copiar os hexadecimais entregaria o visual e reprovaria no axe — com razao. O que se copia
+   aqui e a ESTRUTURA (casca escura, caixa de numero saturada, cartao com faixa colorida no
+   topo); a cor sai dos papeis ja verificados da paleta.
+
+   A casca escura vem das variaveis `--rvm-shell-*`, que o MainLayout deriva da paleta ESCURA do
+   tema corrente. Fundo escuro com texto claro e um par que o portao ja mediu — reaproveita-lo
+   dispensa inventar cinza a mao, que e onde essa ideia costuma furar o contraste.
+   ============================================================ */
+
+:root[data-rvm-aparencia="admin"] {
+    --rvm-shadow-1: 0 1px 2px rgb(0 0 0 / 0.10);
+    --rvm-shadow-2: 0 2px 5px rgb(0 0 0 / 0.12);
+    --rvm-shadow-3: 0 6px 14px rgb(0 0 0 / 0.14);
+
+    /* Denso: painel de administracao mostra muita informacao por tela. */
+    --rvm-radius-md: 0.25rem;
+    --rvm-radius-lg: 0.25rem;
+
+    --rvm-font-size-h1: 1.75rem;
+    --rvm-font-size-h2: 1.375rem;
+    --rvm-font-size-h3: 1.125rem;
+    --rvm-line-height-heading: 1.25;
+}
+
+/* ---- A barra lateral escura ---- */
+
+:root[data-rvm-aparencia="admin"] .rvm-sidebar.rvm-sidebar,
+:root[data-rvm-aparencia="admin"] .rvm-sidebar.rvm-sidebar .rvm-sidebar__acoes {
+    background-color: var(--rvm-shell-fundo);
+    border-right: 1px solid var(--rvm-shell-borda);
+}
+
+:root[data-rvm-aparencia="admin"] .rvm-sidebar .rvm-nav-item__gatilho {
+    color: var(--rvm-shell-texto);
+    border-radius: 0;
+}
+
+:root[data-rvm-aparencia="admin"] .rvm-sidebar .rvm-nav-item__icone {
+    color: var(--rvm-shell-apagado);
+}
+
+:root[data-rvm-aparencia="admin"] .rvm-sidebar .rvm-nav-item__gatilho:hover {
+    background-color: var(--rvm-shell-afundado);
+}
+
+/* O item ativo do AdminLTE: fundo mais escuro e uma faixa da cor da marca a esquerda. */
+:root[data-rvm-aparencia="admin"] .rvm-sidebar .rvm-nav-item__gatilho--ativo {
+    background-color: var(--rvm-shell-afundado);
+    border-left: 3px solid var(--rvm-shell-ativo);
+    color: var(--rvm-shell-texto);
+}
+
+:root[data-rvm-aparencia="admin"] .rvm-sidebar .rvm-nav-item__gatilho--ativo .rvm-nav-item__icone {
+    color: var(--rvm-shell-ativo);
+}
+
+:root[data-rvm-aparencia="admin"] .rvm-sidebar .rvm-nav-group__titulo,
+:root[data-rvm-aparencia="admin"] .rvm-sidebar .rvm-sidebar__colapsar {
+    color: var(--rvm-shell-apagado);
+}
+
+/* ---- A barra de cima, na cor da marca ---- */
+
+:root[data-rvm-aparencia="admin"] .rvm-topbar.rvm-topbar {
+    background-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    box-shadow: var(--rvm-shadow-1);
+}
+
+:root[data-rvm-aparencia="admin"] .rvm-topbar.rvm-topbar .site-brand,
+:root[data-rvm-aparencia="admin"] .rvm-topbar.rvm-topbar .site-controls__label,
+:root[data-rvm-aparencia="admin"] .rvm-topbar.rvm-topbar .rvm-icon-button {
+    color: var(--rvm-color-on-primary);
+}
+
+/* ---- Cartao com faixa colorida no topo, a marca visual do AdminLTE ---- */
+
+:root[data-rvm-aparencia="admin"] .rvm-card.rvm-card {
+    box-shadow: var(--rvm-shadow-1);
+    border: none;
+    border-top: 3px solid var(--rvm-color-primary);
+}
