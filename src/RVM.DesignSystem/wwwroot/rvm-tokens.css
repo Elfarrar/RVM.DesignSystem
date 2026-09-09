@@ -87,6 +87,15 @@
     --rvm-font-weight-medium: 500;
     --rvm-font-weight-semibold: 600;
 
+    /* LARGURA DE LEITURA (DSGN-039). Medido em 09/09/2026 no site: o texto corrido chegava a
+       109 caracteres por linha, contra os 65-75 em que o olho reencontra a linha seguinte sem
+       reler a mesma. Nao e preferencia tipografica: acima disso a volta da linha erra o alvo.
+
+       Em `ch` de proposito — a medida acompanha o tamanho da fonte, entao continua valendo se
+       alguem aumentar o corpo do texto. Vale para PROSA: tabela, grade e bloco de codigo
+       precisam da largura toda, e linha longa neles e legitima. */
+    --rvm-measure: 68ch;
+
     --rvm-line-height-display: 1.05;
     --rvm-line-height-heading: 1.25;
     --rvm-line-height-body: 1.55;

@@ -11,6 +11,21 @@
 
 /* --- Anatomia da página --- */
 
+/*
+  Largura de leitura no texto corrido (DSGN-039).
+
+  Só nos filhos DIRETOS do cabeçalho e da seção — que é onde mora a prosa. Parágrafo dentro de
+  vitrine, card ou tabela não é alcançado, e é por isso que o seletor é `>` e não descendente:
+  um `max-width` em `ch` dentro de uma grade de exemplo estreitaria a demonstração, que é
+  justamente o que a página quer mostrar em tamanho real.
+*/
+.doc__cabecalho > p,
+.doc section > p,
+.doc section > ul,
+.doc section > ol {
+    max-width: var(--rvm-measure);
+}
+
 .doc__cabecalho { margin-bottom: var(--rvm-space-8); }
 .doc h1 { margin: 0 0 var(--rvm-space-3); letter-spacing: var(--rvm-tracking-display); }
 .doc__frase { margin: 0; font-size: var(--rvm-font-size-body-lg); }
