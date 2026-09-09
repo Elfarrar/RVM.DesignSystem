@@ -26,6 +26,23 @@
         <h2 id="dash-tela">A tela</h2>
 
         @*
+            OS TRES ESTADOS, trocáveis aqui mesmo (DSGN-037).
+
+            Até 09/09/2026 este padrão só mostrava a tela cheia — e "documentação que só mostra o
+            resultado" é uma das anti-referências registradas no PRODUCT.md. A pergunta que quem
+            copia o padrão faz primeiro é justamente a que faltava: o que aparece no dia 1, quando
+            não há pedido nenhum? Quatro caixas com zero solto não respondem nada.
+        *@
+        <div class="painel__estados">
+            <RvmSelect TValue="EstadoDaTela" Value="_estado" ValueChanged="@(e => _estado = e)"
+                       ValueExpression="() => _estado" Label="Estado da tela">
+                <option value="@EstadoDaTela.ComDados">Com dados</option>
+                <option value="@EstadoDaTela.Carregando">Carregando</option>
+                <option value="@EstadoDaTela.Vazio">Vazio (primeiro mês)</option>
+            </RvmSelect>
+        </div>
+
+        @*
             Cada caixa é um LINK, e isso não é só conveniência.
 
             Sem ela esta página não tinha NENHUM elemento focável — só texto, chip e barra de
@@ -36,9 +53,42 @@
             O número já é a porta de entrada natural para a lista que ele resume, então o link
             resolve as duas coisas de uma vez.
         *@
-        <div class="painel__numeros">
+        @if (_estado == EstadoDaTela.Vazio)
+        {
+            @*
+                O vazio precisa dizer O QUE FAZER, e não só que está vazio. `Empty` (e não
+                `NoResults`) porque não há filtro nenhum aplicado: ninguém procurou e não achou,
+                o mês é que ainda não começou.
+            *@
+            <RvmEmptyState Variant="RvmEmptyStateVariant.Empty"
+                           Title="Nenhum pedido neste mês ainda"
+                           Description="Assim que o primeiro pedido for emitido, os números, a comparação por situação e a lista aparecem aqui.">
+                <Actions>
+                    <RvmButton Variant="RvmButtonVariant.Primary">Emitir o primeiro pedido</RvmButton>
+                </Actions>
+            </RvmEmptyState>
+        }
+        else
+        {
+        @* aria-busy diz ao leitor de tela que o conteúdo abaixo ainda vai mudar. Sem ele, o
+           esqueleto é anunciado como se fosse o conteúdo final. *@
+        <div class="painel__numeros" aria-busy="@(_estado == EstadoDaTela.Carregando ? "true" : null)">
             @foreach (var n in Numeros)
             {
+                if (_estado == EstadoDaTela.Carregando)
+                {
+                    @* O esqueleto ocupa a MESMA caixa do conteúdo real: se ele for menor, a
+                       tela pula quando os dados chegam, e o salto é pior que a espera. *@
+                    <div class="painel__numero painel__numero--esqueleto">
+                        <RvmSkeleton Shape="RvmSkeletonShape.Circle" Width="2.5rem" Height="2.5rem" />
+                        <span class="painel__numero-texto">
+                            <RvmSkeleton Width="4rem" Height="1.75rem" />
+                            <RvmSkeleton Width="7rem" />
+                        </span>
+                    </div>
+                    continue;
+                }
+
                 <a class="painel__numero @($"painel__numero--{n.Papel}")"
                    href="@n.Destino"
                    aria-label="@n.RotuloDoLink">
@@ -62,9 +112,18 @@
                         <RvmIcon Name="chart-line" /> Faturamento por situação
                     </h3>
 
-                    <ul class="painel__barras">
+                    <ul class="painel__barras" aria-busy="@(_estado == EstadoDaTela.Carregando ? "true" : null)">
                         @foreach (var b in Barras)
                         {
+                            if (_estado == EstadoDaTela.Carregando)
+                            {
+                                <li class="painel__barra">
+                                    <RvmSkeleton Width="60%" />
+                                    <RvmSkeleton Height="0.5rem" />
+                                </li>
+                                continue;
+                            }
+
                             <li class="painel__barra">
                                 <div class="painel__barra-topo">
                                     <span>@b.Rotulo</span>
@@ -84,9 +143,17 @@
                         <RvmIcon Name="clock-counter-clockwise" /> Últimos pedidos
                     </h3>
 
-                    <ul class="painel__lista">
+                    <ul class="painel__lista" aria-busy="@(_estado == EstadoDaTela.Carregando ? "true" : null)">
                         @foreach (var p in Ultimos)
                         {
+                            if (_estado == EstadoDaTela.Carregando)
+                            {
+                                <li class="painel__item">
+                                    <RvmSkeleton Width="40%" Lines="2" />
+                                </li>
+                                continue;
+                            }
+
                             <li class="painel__item">
                                 <div>
                                     <strong>@p.Cliente</strong>
@@ -104,6 +171,7 @@
                 </ChildContent>
             </RvmCard>
         </div>
+        }
     </section>
 
     <section aria-labelledby="dash-notas">
@@ -200,6 +268,17 @@
     //
     // Duas delas continuam sem filtro, e isso tambem e honesto: "Pedidos no mes" e o total, e
     // "Faturado" e uma soma. Quem nao filtra nao promete filtrar, e o texto do link muda junto.
+    private EstadoDaTela _estado = EstadoDaTela.ComDados;
+
+    // Os três estados que qualquer tela de dados tem, e que o padrão precisa demonstrar —
+    // não só o último.
+    private enum EstadoDaTela
+    {
+        ComDados,
+        Carregando,
+        Vazio,
+    }
+
     private sealed record Numero(string Valor, string Rotulo, string Icone, string Papel, string? Situacao = null)
     {
         public string Destino => Situacao is null
