@@ -25,6 +25,26 @@
   diz "sem dependencia NuGet de terceiros" e "nada depende de JS para renderizar" — as tres
   frases nao cabem juntas. Quatro saidas descritas no card; a decisao e do Rafael.
 
+## A fazer agora — achados do critique de 09/09/2026
+
+> Vieram da primeira rodada do `impeccable critique` com o subagente `design-reviewer`. Os dois
+> P1 foram **confirmados no DOM da producao**, nao sao impressao. Contexto de design agora vive em
+> `PRODUCT.md` e `DESIGN.md` na raiz.
+
+- [[DSGN-034]] — 🔴 **`aria-current="page"` em dois links ao mesmo tempo**. Pai e filho anunciam
+  "voce esta aqui". Conserto na **biblioteca** (decisao do Rafael): ancestral pinta, mas nao
+  anuncia.
+- [[DSGN-035]] — 🔴 **Os quatro KPIs prometem destinos diferentes e vao para o mesmo lugar.**
+- [[DSGN-036]] — 🟡 A mesma situacao com **duas cores na mesma tela** (chip verde, barra roxa).
+- [[DSGN-037]] — 🟡 O padrao de Dashboard **so mostra o caminho feliz** — contraria a
+  anti-referencia que o `PRODUCT.md` acabou de registrar.
+- [[DSGN-038]] — 🟡 **Borda do chip a ~1,5:1 no escuro.** O achado maior e outro: ha uma classe de
+  contraste (borda contra superficie) que o portao do CI **nao** verifica.
+- [[DSGN-039]] — 🟡 **Linha de texto com 109 caracteres**; o confortavel e 65-75. Falta token de
+  largura de leitura.
+- [[DSGN-040]] — 🟡 **Tela so de leitura reprova no axe.** A resposta e no `RvmAppShell`, nao em
+  cada tela inventando um link.
+
 ## Em revisao
 
 _Nada em revisao._
