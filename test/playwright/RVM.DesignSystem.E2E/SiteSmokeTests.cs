@@ -315,7 +315,11 @@ public class SiteSmokeTests : IAsyncLifetime
     {
         Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
 
-        var page = await _browser!.NewPageAsync();
+        // ⚠️ Locale FIXO, e de proposito em ingles (DSGN-030). O Blazor WASM escolhe o pedaco de
+        // ICU pelo idioma do NAVEGADOR, e sem o dado de pt-BR o BrlFormatter cai para invariante:
+        // "BRL96.90" em vez de "R$ 96,90". Herdando o idioma da maquina, este teste passava no
+        // Windows e falhava no runner. Fixo em en-US, ele prova que o site nao depende disso.
+        var page = await _browser!.NewPageAsync(new() { Locale = "en-US" });
         await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/padroes/listagem");
         await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync();
 
@@ -418,6 +422,46 @@ public class SiteSmokeTests : IAsyncLifetime
                 System.Globalization.NumberStyles.Currency,
                 ptBr))
             .ToList();
+    }
+
+    /// <summary>
+    /// O calendario fala portugues mesmo com o navegador em ingles.
+    /// </summary>
+    /// <remarks>
+    /// A outra ponta do <c>DSGN-030</c>, e a pior das duas: sem os dados de pt-BR, a moeda troca
+    /// a pontuacao, mas o calendario troca o <b>idioma</b> — "Su/Mo/Tu", "March 2026" — numa
+    /// biblioteca que se declara pt-BR fixo. Confirmado em producao em 09/09/2026, antes do fix.
+    /// </remarks>
+    [SkippableFact]
+    public async Task O_calendario_fala_portugues_com_o_navegador_em_ingles()
+    {
+        Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
+
+        var page = await _browser!.NewPageAsync(new() { Locale = "en-US" });
+        await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/componentes/date-picker");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Abrir o calendário" }).First.ClickAsync();
+
+        // Pelo `abbr` do <th>, e nao pelo texto: a celula carrega "dom." para os olhos e
+        // "domingo" para o leitor de tela, e comparar textContent compararia os dois colados.
+        var diasDaSemana = await page.EvalOnSelectorAllAsync<string[]>(
+            ".rvm-date-picker__dia-semana", "ths => ths.map(th => th.getAttribute('abbr'))");
+
+        Assert.Equal(
+            ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"],
+            diasDaSemana);
+
+        // O titulo e "Marco de 2026". Comparar com o mes de HOJE seria refem do fuso do runner,
+        // e quebraria sozinho na virada do mes; a lista dos doze prova a mesma coisa.
+        var titulo = await page.Locator(".rvm-date-picker__titulo").First.InnerTextAsync();
+        string[] meses =
+        [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+        Assert.True(
+            meses.Any(m => titulo.StartsWith(m, StringComparison.Ordinal)),
+            $"O titulo do mes nao esta em portugues: \"{titulo}\".");
     }
 
     /// <summary>

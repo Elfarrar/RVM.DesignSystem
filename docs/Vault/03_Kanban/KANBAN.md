@@ -31,6 +31,18 @@ _Nada em revisao._
 
 ## Concluido
 
+- [[DSGN-031]] — ✅ **EM DEV** (09/09/2026): o calendario tambem falava ingles. Achado pelo
+  review do [[DSGN-030]] e confirmado em PRODUCAO antes de aceitar: com navegador `en-US` o
+  `RvmDatePicker` mostrava `Sunday`/`March 2026`. Mesma causa, **zero codigo de produto** — a
+  flag do 030 ja conserta; o que faltava era a prova. ⏳ Fica aberta no card a pergunta de
+  arquitetura: a biblioteca deveria parar de depender do ICU e nao exigir a flag do consumidor?
+
+- [[DSGN-030]] — ✅ **EM DEV** (09/09/2026): o site WASM sem os dados de pt-BR. O Blazor
+  escolhe o pedaco de ICU pelo idioma do NAVEGADOR e `EFIGS` nao tem portugues — a moeda
+  saia `BRL3,348.65` para quem nao estava em pt-BR, e era isso que deixava o E2E vermelho
+  desde 08/09 19:18. ⚠️ **Cultura explicita nao basta no WASM**: a cultura existe, os dados
+  dela e que nao foram baixados. Nada mudou na biblioteca. **Espera sinal verde para o master.**
+
 - [[DSGN-029]] — ✅ **EM PRODUCAO** (08/09/2026): as cores do Bootstrap como tema de exemplo, no
   seletor e em `/fundamentos/bootstrap`. ⚠️ O achado: **nenhuma das seis atinge 4,5:1** contra
   superficie clara — quatro erram por uma casa decimal, `info` e `warning` erram muito e mudam de
