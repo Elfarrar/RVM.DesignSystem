@@ -576,7 +576,7 @@ public class SiteSmokeTests : IAsyncLifetime
         var page = await _browser!.NewPageAsync();
         var problemas = new List<string>();
 
-        foreach (var aparencia in new[] { "sobrio", "marcante", "vivo", "admin" })
+        foreach (var aparencia in new[] { "sobrio", "marcante", "vivo" })
         {
             // ⚠️ Pelo SELETOR, e nao escrevendo o atributo direto. O "vivo" nao e so CSS: ele
             // troca o TEMA por um derivado com as superficies tingidas, e essa metade acontece

@@ -4,57 +4,54 @@
 <PageTitle>Dashboard · RVM Design System</PageTitle>
 
 @*
-    A tela de painel: número grande, cartão com faixa, progresso e lista curta.
+    A tela de painel: número grande, progresso e lista curta.
 
-    ⚠️ É o desenho do AdminLTE — com as CORES DAQUI. As small-box de lá são branco sobre
-    `#00c0ef` e `#f39c12`: 2,4:1 e 2,2:1, contra os 4,5:1 da WCAG. Copiar o hexadecimal
-    entregaria o visual e reprovaria no axe, com razão. O que se copia é a estrutura; a cor sai
-    dos papéis já verificados, e por isso os números aqui usam os pares `x`/`on-x` da paleta.
+    ⚠️ A primeira versão desta tela copiava o AdminLTE — bloco solido, marca d'água e faixa de
+    rodapé. **O Rafael reprovou em 08/09/2026**, e a aparência "Admin" saiu junto. O que ficou é
+    o idioma de painel (número que resume, barra que compara, lista que detalha) na linguagem
+    daqui: a caixa é uma superfície da paleta, com a cor concentrada no distintivo e no valor.
 *@
 
 <article class="doc">
     <header class="doc__cabecalho">
         <h1>Dashboard</h1>
         <p class="doc__frase">
-            O painel de abertura de um sistema de gestão: <strong>número grande</strong>, cartão
-            com faixa, progresso e lista curta. Troque a aparência para <strong>Admin</strong> na
-            barra de cima para ver esta tela no desenho de painel de administração.
+            O painel de abertura de um sistema de gestão: <strong>número que resume</strong>,
+            barra que compara e lista que detalha. Cada caixa é um link para a listagem que ela
+            resume.
         </p>
     </header>
 
     <section aria-labelledby="dash-tela">
         <h2 id="dash-tela">A tela</h2>
 
+        @*
+            Cada caixa é um LINK, e isso não é só conveniência.
+
+            Sem ela esta página não tinha NENHUM elemento focável — só texto, chip e barra de
+            progresso. O axe reprovou por `scrollable-region-focusable`: a área de conteúdo do
+            RvmAppShell rola, e sem nada que receba foco não havia como rolá-la pelo teclado. Foi
+            a primeira página do site sem um link sequer, e por isso a primeira a expor isso.
+
+            O número já é a porta de entrada natural para a lista que ele resume, então o link
+            resolve as duas coisas de uma vez.
+        *@
         <div class="painel__numeros">
             @foreach (var n in Numeros)
             {
-                <div class="painel__numero @($"painel__numero--{n.Papel}")">
-                    <div class="painel__numero-texto">
+                <a class="painel__numero @($"painel__numero--{n.Papel}")"
+                   href="padroes/listagem"
+                   aria-label="@($"{n.Rotulo}: {n.Valor}. Ver na listagem.")">
+                    <span class="painel__numero-icone">
+                        @* Decorativo: o rótulo ao lado já diz o que a caixa mede. *@
+                        <RvmIcon Name="@n.Icone" />
+                    </span>
+
+                    <span class="painel__numero-texto">
                         <span class="painel__numero-valor">@n.Valor</span>
                         <span class="painel__numero-rotulo">@n.Rotulo</span>
-                    </div>
-
-                    @*
-                        A marca d'água é DECORATIVA — o valor e o rótulo já dizem tudo. O RvmIcon
-                        sem Title já sai com aria-hidden, que é o padrão certo aqui: sem isso, o
-                        leitor de tela anunciaria "imagem" no meio do número.
-                    *@
-                    <RvmIcon Name="@n.Icone" Class="painel__numero-marca" />
-
-                    @*
-                        O rodape "Mais informacoes" e do AdminLTE — e aqui ele nao e so estilo.
-
-                        Sem ele esta pagina NAO TINHA NENHUM ELEMENTO FOCAVEL: so texto, chip e
-                        barra de progresso. O axe reprovou por `scrollable-region-focusable`, e
-                        com razao — a area de conteudo rola, e sem nada que receba foco nao havia
-                        como rolar pelo teclado. Foi a primeira pagina do site sem um link
-                        sequer, e por isso a primeira a expor isso.
-                    *@
-                    <a class="painel__numero-mais" href="padroes/listagem">
-                        <span>Mais informações</span>
-                        <RvmIcon Name="arrow-right" />
-                    </a>
-                </div>
+                    </span>
+                </a>
             }
         </div>
 
@@ -112,18 +109,20 @@
     <section aria-labelledby="dash-notas">
         <h2 id="dash-notas">O que esta tela decide por você</h2>
 
-        <RvmAlert Severity="RvmSeverity.Info" Title="As caixas de número não usam as cores do AdminLTE">
+        <RvmAlert Severity="RvmSeverity.Info" Title="Por que a caixa de número não é um bloco de cor sólida">
             <ChildContent>
                 <p>
-                    E não é preciosismo. As <em>small-box</em> do AdminLTE são branco sobre
-                    <code>#00c0ef</code> e <code>#f39c12</code> — <strong>2,4:1 e 2,2:1</strong>,
-                    contra os 4,5:1 que a WCAG 2.1 AA exige para texto normal. Copiar o
-                    hexadecimal entregaria o visual e reprovaria no axe, e o axe estaria certo.
+                    A primeira versão desta tela copiava as <em>small-box</em> do AdminLTE: bloco
+                    saturado inteiro, ícone de marca d'água e faixa de rodapé. Além de ter sido
+                    reprovada, ela tinha um problema de origem — as caixas originais são branco
+                    sobre <code>#00c0ef</code> e <code>#f39c12</code>, ou seja
+                    <strong>2,4:1 e 2,2:1</strong> contra os 4,5:1 que a WCAG 2.1 AA exige.
                 </p>
                 <p>
-                    O que se copia é a <strong>estrutura</strong>: número grande, rótulo curto,
-                    ícone de marca d'água. A cor sai dos pares <code>x</code>/<code>on-x</code> da
-                    sua paleta, que nascem medidos.
+                    O que ficou é o <strong>idioma</strong>, não a pele: número que resume, barra
+                    que compara, lista que detalha. A cor fica concentrada no distintivo e no
+                    valor, e cada par sai dos papéis <code>x</code>/<code>on-x</code> da paleta,
+                    que nascem medidos.
                 </p>
             </ChildContent>
         </RvmAlert>
@@ -138,10 +137,18 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td>A caixa inteira é um link</td>
+                        <td>
+                            Sem nenhum elemento focável, o axe reprova a página por
+                            <code>scrollable-region-focusable</code>: a área de conteúdo rola e
+                            não haveria como rolá-la pelo teclado.
+                        </td>
+                    </tr>
+                    <tr>
                         <td>O ícone da caixa é decorativo</td>
                         <td>
-                            O valor e o rótulo já dizem tudo. Anunciá-lo faria o leitor de tela
-                            dizer "imagem" no meio do número.
+                            O rótulo ao lado já diz o que a caixa mede. Anunciá-lo faria o leitor
+                            de tela dizer "imagem" no meio do número.
                         </td>
                     </tr>
                     <tr>
