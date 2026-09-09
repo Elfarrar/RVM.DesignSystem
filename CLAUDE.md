@@ -214,6 +214,14 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   de conteúdo do `RvmAppShell` rola; sem nada que receba foco, não há como rolá-la pelo teclado.
   Pegou a página de Dashboard, que era só texto, chip e barra. **Um app consumidor com tela só de
   leitura herda isso** — a resposta seria no `RvmAppShell`, e ainda não foi feita.
+- ✅ **`DSGN-029` EM PRODUÇÃO** (08/09/2026): as cores do **Bootstrap 5** como tema de exemplo,
+  no seletor e em `/fundamentos/bootstrap`. ⚠️ **Nenhuma das seis atinge 4,5:1** contra
+  superfície clara — quatro erram por uma casa decimal (3,90–4,06) e saem quase iguais; `info` e
+  `warning` erram muito, e o amarelo `#FFC107` vira o âmbar `#955B00`. **Não é defeito do
+  Bootstrap**: as cores dele são pensadas como FUNDO (com texto escuro por cima); aqui a mesma
+  cor também precisa servir de texto sobre a superfície, e é esse uso que aperta.
+  - O tema vive no **site** (`Documentacao/TemasDeExemplo.cs`), **não no pacote**: paleta de
+    terceiro não é identidade nossa, e nome público é compromisso.
 - Próximo passo: **não há onda 5**. O que vem é adoção — e ela é só em projeto novo (`09` §
   Adoção). O próximo projeto RVM que precisar de UI nasce aqui, e é ele quem prova a biblioteca.
 

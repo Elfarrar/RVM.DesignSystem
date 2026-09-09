@@ -3,7 +3,7 @@ id: DSGN-029
 titulo: As cores do Bootstrap como tema de exemplo
 repo: RVM.DesignSystem
 tipo: feature
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 
