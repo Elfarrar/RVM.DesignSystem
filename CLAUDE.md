@@ -217,10 +217,24 @@ Detalhe de cada uma em `09-roadmap.md` § Pendências. Depois da 1.0, mudá-las 
 | **Ícones** | **Phosphor** (MIT), pesos `Regular` e `Fill` na v1 |
 | Paleta da marca | roxo VS + azul VS Code, **modo escuro aprovado** |
 
-✅ **A decisão que sobrava — quais ícones entram — foi fechada na onda 2**: o conjunto é
-**curado**, hoje com 19 ícones, cada um entrando junto do componente que o usa. A política está
-escrita no topo do `tools/gerar-icones.py` e vale para sempre: ícone não entra "porque pode ser
-útil". Cada um é um nome público e bytes que todo consumidor baixa.
+✅ **Quais ícones entram**: o conjunto é **curado**, hoje com **164 ícones**, e a curadoria é
+**por aplicação** — cobre o vocabulário de que uma tela de negócio precisa (ação, estado,
+arquivo, dinheiro, pessoa, tempo, obra, agro), não só o que os componentes daqui usam. A
+política está no topo do `tools/gerar-icones.py`.
+
+> ⚠️ **Isto REVISA a regra da onda 2** ("ícone entra quando um componente precisa, nunca porque
+> pode ser útil"), em 08/09/2026 (`DSGN-026`), a pedido do Rafael. A regra antiga otimizava a
+> coisa errada: quem consome não monta componentes, monta **telas** — e com 27 ícones o
+> consumidor caía fora do design system no primeiro botão de "imprimir".
+>
+> E o argumento de custo que eu tinha usado para sustentá-la **não se sustentava**: medido, cada
+> ícone-peso custa ~300 bytes de string no assembly. O argumento real para curar nunca foi byte
+> — é superfície de API e manutenção, e é por isso que são 164 e não os 1512 do Phosphor.
+
+⚠️ **Nome de ícone é API pública.** Remover um depois da 1.0 é quebra, e quebra em tempo de
+execução. Há teste (`ConjuntoDeIconesTests`) que renderiza os 27 da v1 nos dois pesos e reprova
+se algum sumir — o `RvmIconData.cs` é **regerado por inteiro** a cada mudança da lista, então
+uma linha apagada por descuido no script apagaria o ícone sem nenhum outro aviso.
 - ✅ **Repositório público sob MIT** — respondido pelo Rafael em 07/09/2026. Consequência não
   óbvia: foi essa decisão que inviabilizou o caller do `RVM.Actions` (**ADR-011**) e, de quebra,
   dispensou o runner self-hosted.

@@ -576,15 +576,22 @@ public class SiteSmokeTests : IAsyncLifetime
         var page = await _browser!.NewPageAsync();
         var problemas = new List<string>();
 
-        foreach (var aparencia in new[] { "sobrio", "marcante" })
+        foreach (var aparencia in new[] { "sobrio", "marcante", "vivo" })
         {
+            // ⚠️ Pelo SELETOR, e nao escrevendo o atributo direto. O "vivo" nao e so CSS: ele
+            // troca o TEMA por um derivado com as superficies tingidas, e essa metade acontece
+            // no C#. Um teste que so escrevesse o atributo aprovaria uma aparencia pela metade
+            // — justamente sem a parte que mexe nas cores.
+            await page.GotoAsync(BaseUrl!);
+            await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
+            await page.Locator("#seletor-aparencia").SelectOptionAsync(aparencia);
+
             foreach (var rota in new[] { "", "/padroes/listagem", "/componentes/button" })
             {
+                // A escolha sobrevive a navegacao pelo localStorage, e a casca re-aplica o
+                // tingimento na entrada — o mesmo caminho que o visitante percorre.
                 await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}{rota}");
                 await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync(Carregou);
-
-                await page.EvaluateAsync(
-                    "a => document.documentElement.setAttribute('data-rvm-aparencia', a)", aparencia);
 
                 var resultado = await page.RunAxe();
 

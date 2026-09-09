@@ -9,6 +9,12 @@
 
 ## A decidir
 
+- [[DSGN-026]] — **Aparencia "Vivo" e 164 icones**. Resposta ao "nao vi muita diferenca, quero
+  mais cor, e pouco icone": o "vivo" tinge a superficie **pelo motor de tema** (o que a
+  `DSGN-025` nao podia fazer em CSS sem furar o portao), e o conjunto de icones passa a ser
+  curado **por aplicacao**, nao por componente. ⚠️ Revisa a regra de icones da onda 2, e a
+  medicao derrubou o argumento de bytes que eu tinha usado para justifica-la.
+
 - [[DSGN-025]] — **Preview de aparencia**: as duas direcoes ("sobrio" e "marcante") no ar ao
   mesmo tempo, trocaveis na topbar, porque gosto se decide olhando. Temporario — sai inteiro
   quando a direcao for escolhida. ⚠️ Nao mexe em cor de superficie de proposito: isso e motor de

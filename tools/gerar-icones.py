@@ -10,9 +10,13 @@ em vez de aparecer por magica no CI.
 """
 import re, sys, pathlib, collections
 
-# A lista e CURADA, nao o conjunto inteiro do Phosphor (1512 icones). Cada nome aqui vira
-# API publica e bytes que todo consumidor baixa. Icone entra quando um componente precisa,
-# nunca "porque pode ser util" — a regra esta no `03-arquitetura.md` § Icones.
+# A lista e CURADA, nao o conjunto inteiro do Phosphor (1512 icones), e a curadoria e POR
+# APLICACAO: o conjunto cobre o vocabulario de que uma tela de negocio precisa (acao, estado,
+# arquivo, dinheiro, pessoa, tempo, obra, agro), nao apenas o que os componentes daqui usam.
+#
+# ⚠️ Isto REVISA a regra anterior ("icone entra quando um componente precisa"), em 08/09/2026,
+# a pedido do Rafael. O motivo esta no bloco da DSGN-026, mais abaixo, junto com a medicao que
+# derrubou o argumento de bytes que eu tinha usado para justificar a regra antiga.
 ICONES = [
     # Onda 1 — formulario e estado
     'check', 'x', 'caret-down', 'caret-up', 'eye', 'eye-slash',
@@ -36,6 +40,69 @@ ICONES = [
     'caret-double-right',    # RvmPagination: ultima pagina
     'arrows-down-up',        # RvmDataGrid: coluna ordenavel ainda NAO ordenada
     'funnel',                # RvmFilterBar
+
+    # ---------------------------------------------------------------------------
+    # DSGN-026 — o conjunto deixa de ser POR COMPONENTE e passa a ser POR APLICACAO.
+    #
+    # A regra antiga era 'icone entra quando um componente precisa'. Ela fazia sentido
+    # enquanto a biblioteca estava sendo construida: o conjunto crescia junto com o que
+    # existia para desenhar. Mas ela otimizava a coisa errada — quem consome a
+    # biblioteca nao esta montando componentes, esta montando TELAS, e uma tela de
+    # pedido precisa de um icone de pedido que nenhum componente meu jamais vai pedir.
+    # Com 27 icones, o consumidor cai fora do design system no primeiro botao de
+    # 'imprimir' — e um conjunto que empurra para fora falhou no proposito dele.
+    #
+    # ⚠️ E o argumento do custo, que eu mesmo escrevi, NAO se sustentava: medido, cada
+    # icone-peso custa ~300 bytes de string no assembly. Os 27 davam 16 KB. Passar de
+    # 27 para 142 custa ~70 KB de fonte, o que e ruido perto do runtime do WASM. O
+    # argumento REAL para curar nunca foi byte: e superficie de API e manutencao —
+    # e esse continua valendo, que e porque sao 142 e nao os 1512 do Phosphor.
+    #
+    # Nenhum nome antigo saiu. Remover um seria quebra depois da 1.0.
+    # ---------------------------------------------------------------------------
+    # Navegacao e estrutura
+    'arrow-left', 'arrow-right', 'arrow-up', 'arrow-down', 'arrow-square-out', 'dots-three',
+    'squares-four', 'stack', 'tree-structure', 'list-checks',
+    # Acoes
+    'plus', 'minus', 'pencil-simple', 'trash', 'floppy-disk', 'clipboard-text',
+    'download-simple', 'upload-simple', 'share-network', 'printer', 'arrow-clockwise',
+    'arrows-clockwise', 'sort-ascending', 'sort-descending', 'dots-six-vertical',
+    'check-square',
+    # Estado
+    'warning-circle', 'question', 'prohibit', 'seal-check', 'clock', 'hourglass', 'bell',
+    'bell-ringing',
+    # Arquivos
+    'file', 'file-text', 'file-pdf', 'file-xls', 'file-csv', 'folder', 'folder-open',
+    'paperclip', 'image', 'images', 'note-pencil',
+    # Comunicacao
+    'envelope', 'envelope-simple', 'chat-circle', 'chat-teardrop-text', 'phone',
+    'whatsapp-logo', 'megaphone',
+    # Pessoas
+    'users', 'user-circle', 'user-plus', 'identification-card', 'address-book', 'user-gear',
+    # Comercio e financeiro
+    'currency-circle-dollar', 'money', 'receipt', 'shopping-cart', 'package', 'barcode',
+    'credit-card', 'bank', 'calculator', 'percent', 'tag', 'hand-coins', 'wallet',
+    # Tempo
+    'calendar-check', 'calendar-dots', 'timer', 'clock-counter-clockwise',
+    # Dados e graficos
+    'chart-line', 'chart-bar', 'chart-pie-slice', 'chart-donut', 'trend-up', 'trend-down',
+    'table', 'database',
+    # Obra e campo
+    'hammer', 'wrench', 'hard-hat', 'ruler', 'buildings', 'truck', 'map-pin', 'path',
+    'crane-tower', 'toolbox',
+    # Agro
+    'plant', 'tractor', 'drop', 'sun', 'cloud-rain', 'thermometer-simple', 'leaf',
+    # Sistema
+    'gear', 'gear-six', 'sliders-horizontal', 'key', 'lock-open', 'shield-check', 'sign-out',
+    'sign-in', 'power', 'cloud-arrow-up', 'link-simple', 'globe', 'translate', 'moon',
+    'archive',
+
+    # Vocabulario de interface — o que o proprio site de documentacao usa no menu, e o
+    # que qualquer app precisa para dar forma a uma tela (controle, secao, estado visual).
+    'palette', 'dots-nine', 'arrows-out-line-horizontal', 'rows', 'cursor-click', 'selection',
+    'textbox', 'text-align-left', 'radio-button', 'toggle-right', 'note', 'browser',
+    'rectangle', 'signpost', 'tabs', 'flow-arrow', 'cards', 'frame-corners', 'spinner-gap',
+    'placeholder', 'book-open', 'person-arms-spread',
 ]
 
 origem = pathlib.Path(sys.argv[1])
