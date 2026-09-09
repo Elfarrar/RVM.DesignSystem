@@ -84,14 +84,28 @@ jobs:
           #
           # Retry sem timeout por tentativa nao e retry: e uma espera longa com aparencia de
           # retry. 120s e folgado para um pacote de 96 KB num feed que responde em 200ms.
+          #
+          # ⚠️ E POR ISSO EXISTE O `timeout 180` POR FORA (DSGN-033). Medido ao publicar a
+          # v1.1.0 em 08/09/2026, com o --timeout ja presente no commit da tag: a tentativa
+          # levou 1908s — 31,8 minutos — e o laco abaixo nunca chegou a rodar as tres vezes.
+          # A flag governa a REQUISICAO DE PUSH; quem pendurou foi o fetch do indice do
+          # servico, que ela nao alcanca. Sao dois limites de coisas diferentes, e nao
+          # redundancia: o de dentro corta a requisicao, o de fora corta a tentativa inteira.
+          # Com ele, o pior caso do passo e ~9 min em vez de o job inteiro.
           for pkg in nupkgs/*.nupkg; do
             ok=0
             for tentativa in 1 2 3; do
-              if dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate --timeout 120; then
+              if timeout 180 dotnet nuget push "$pkg" --source "$FEED" --api-key "$KEY" --skip-duplicate --timeout 120; then
                 ok=1
                 break
+              else
+                codigo=$?
               fi
-              echo "::warning::push de $(basename "$pkg") falhou (tentativa $tentativa/3)"
+              if [ "$codigo" = "124" ]; then
+                echo "::warning::push de $(basename "$pkg") passou de 180s e foi CORTADO (tentativa $tentativa/3) — rede ate o BagEnd, nao o pacote"
+              else
+                echo "::warning::push de $(basename "$pkg") falhou com codigo $codigo (tentativa $tentativa/3)"
+              fi
               sleep 30
             done
             if [ "$ok" != "1" ]; then
