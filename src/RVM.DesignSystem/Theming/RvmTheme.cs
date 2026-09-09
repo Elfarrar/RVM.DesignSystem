@@ -155,6 +155,32 @@ public sealed record RvmTheme
             return RvmContrast.Ensure(baseTone, piorFundo, RvmContrast.NormalText);
         }
 
+        // Afasta a cor do fundo que MAIS aperta, repetindo enquanto algum fundo reprovar:
+        // afastar-se de um fundo pode aproximar de outro, entao uma passada so nao basta.
+        static RvmColor GarantirEmTodas(RvmColor cor, double minimo, params RvmColor[] fundos)
+        {
+            for (var passada = 0; passada < 4; passada++)
+            {
+                var pior = fundos[0];
+                foreach (var fundo in fundos)
+                {
+                    if (RvmColor.Contrast(cor, fundo) < RvmColor.Contrast(cor, pior))
+                    {
+                        pior = fundo;
+                    }
+                }
+
+                if (RvmColor.Contrast(cor, pior) >= minimo)
+                {
+                    break;
+                }
+
+                cor = RvmContrast.Ensure(cor, pior, minimo);
+            }
+
+            return cor;
+        }
+
         var success = Status(148, 0.14, escolhas?.Success);
         var warning = Status(75, 0.14, escolhas?.Warning);
         var danger = Status(25, 0.19, escolhas?.Danger);
@@ -162,7 +188,15 @@ public sealed record RvmTheme
 
         // Borda decorativa nao precisa de 3:1 (nao comunica estado); a de controle precisa.
         var border = dark ? Neutral(0.30) : Neutral(0.89);
-        var borderStrong = RvmContrast.Ensure(Neutral(dark ? 0.49 : 0.63), surface, RvmContrast.LargeTextOrUi);
+
+        // ⚠️ Contra TODAS as superficies, e nao so contra a `surface` (DSGN-038). O mesmo campo
+        // cai sobre o card elevado, sobre o fundo da pagina e dentro de um bloco rebaixado —
+        // sao quatro fundos possiveis, e a garantia precisa valer no pior deles. Medido em
+        // 09/09/2026: garantindo so contra `surface`, a borda ficava em 2.67:1 sobre a
+        // superficie elevada no tema escuro, em 6 das 12 paletas. Violacao de 1.4.11 que
+        // nenhum portao via, porque o par nem estava na lista.
+        var borderStrong = GarantirEmTodas(
+            Neutral(dark ? 0.49 : 0.63), RvmContrast.LargeTextOrUi, surface, surfaceRaised, surfaceSunken, background);
 
         // Desabilitado a 3:1 e deliberado — ver RvmPalette.PairsToVerify.
         var disabled = dark ? Neutral(0.26) : Neutral(0.92);
@@ -170,7 +204,10 @@ public sealed record RvmTheme
 
         var onSurfaceVariant = RvmContrast.Ensure(onSurfaceVariantTone, piorFundo, RvmContrast.NormalText);
 
-        var focusRing = RvmContrast.Ensure(primary, surface, RvmContrast.LargeTextOrUi);
+        // Pelo mesmo motivo da borda: o anel de foco aparece em volta de controle que esta em
+        // qualquer uma das quatro superficies.
+        var focusRing = GarantirEmTodas(
+            primary, RvmContrast.LargeTextOrUi, surface, surfaceRaised, surfaceSunken, background);
 
         return new RvmPalette
         {

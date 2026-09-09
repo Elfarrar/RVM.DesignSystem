@@ -162,6 +162,41 @@ public sealed record RvmPalette
         string Ajustar(string cor) =>
             RvmContrast.Ensure(RvmColor.Parse(cor), pior, RvmContrast.NormalText).ToHex();
 
+        // ⚠️ Borda de controle e anel de foco NAO usam a mesma conta (DSGN-038). Sao dois
+        // desvios do bloco acima, e os dois importam:
+        //
+        // 1. O minimo e 3:1 (1.4.11), e nao 4.5:1 — pedir 4.5 a uma borda a escureceria muito
+        //    alem do necessario, e borda escura demais vira moldura.
+        // 2. A superficie que mais aperta uma BORDA nao e a de luminancia media: e a mais
+        //    proxima da propria borda. Um cinza medio some contra o cinza rebaixado do card
+        //    muito antes de sumir contra o branco. Por isso aqui a pior superficie e
+        //    recalculada contra a cor, e nao herdada de `pior`.
+        string AjustarLimite(string cor)
+        {
+            var atual = RvmColor.Parse(cor);
+
+            for (var passada = 0; passada < 4; passada++)
+            {
+                var maisApertada = superficies[0];
+                foreach (var superficie in superficies)
+                {
+                    if (RvmColor.Contrast(atual, superficie) < RvmColor.Contrast(atual, maisApertada))
+                    {
+                        maisApertada = superficie;
+                    }
+                }
+
+                if (RvmColor.Contrast(atual, maisApertada) >= RvmContrast.LargeTextOrUi)
+                {
+                    break;
+                }
+
+                atual = RvmContrast.Ensure(atual, maisApertada, RvmContrast.LargeTextOrUi);
+            }
+
+            return atual.ToHex();
+        }
+
         return this with
         {
             Primary = Ajustar(Primary),
@@ -171,6 +206,8 @@ public sealed record RvmPalette
             Danger = Ajustar(Danger),
             Info = Ajustar(Info),
             OnSurfaceVariant = Ajustar(OnSurfaceVariant),
+            BorderStrong = AjustarLimite(BorderStrong),
+            FocusRing = AjustarLimite(FocusRing),
         };
     }
 
@@ -213,6 +250,22 @@ public sealed record RvmPalette
         // Limite de controle e anel de foco: 3:1 contra a superficie adjacente.
         yield return ("border-strong/surface", BorderStrong, Surface, RvmContrast.LargeTextOrUi);
         yield return ("focus-ring/surface", FocusRing, Surface, RvmContrast.LargeTextOrUi);
+
+        // ⚠️ ...e contra as OUTRAS superficies, porque o controle nao vive so na `surface`
+        // (DSGN-038). Um campo dentro de um card cai sobre `surface-raised`; o mesmo campo
+        // solto na pagina cai sobre `background`; dentro de um bloco rebaixado, sobre
+        // `surface-sunken`. Medir so contra `surface` deixava tres casos reais sem portao —
+        // e medido em 09/09/2026 no tema escuro, a borda do campo estava em 3.07:1 contra a
+        // superficie elevada, sete centesimos acima do minimo e sem nada vigiando.
+        //
+        // E o mesmo defeito que o axe pegou em 08/09 com os papeis de estado, uma linha
+        // abaixo: um par que existe na tela e nao existia na lista.
+        yield return ("border-strong/background", BorderStrong, Background, RvmContrast.LargeTextOrUi);
+        yield return ("border-strong/surface-raised", BorderStrong, SurfaceRaised, RvmContrast.LargeTextOrUi);
+        yield return ("border-strong/surface-sunken", BorderStrong, SurfaceSunken, RvmContrast.LargeTextOrUi);
+        yield return ("focus-ring/background", FocusRing, Background, RvmContrast.LargeTextOrUi);
+        yield return ("focus-ring/surface-raised", FocusRing, SurfaceRaised, RvmContrast.LargeTextOrUi);
+        yield return ("focus-ring/surface-sunken", FocusRing, SurfaceSunken, RvmContrast.LargeTextOrUi);
 
         // ⚠️ Os papeis de MARCA e de ESTADO tambem sao usados como TEXTO sobre os fundos mais
         // escuros da propria paleta — o `background` da pagina e o `surface-sunken` de um campo
