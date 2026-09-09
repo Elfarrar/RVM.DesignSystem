@@ -1,0 +1,275 @@
+@page "/fundamentos/bootstrap"
+@inject IRvmThemeService Site
+
+<PageTitle>As cores do Bootstrap · RVM Design System</PageTitle>
+
+@*
+    Um exemplo pedido pelo Rafael: "gosto das cores do Bootstrap, pode me dar um exemplo usando
+    as cores do Bootstrap?".
+
+    A página existe para mostrar as duas coisas ao mesmo tempo — que o motor aceita a paleta de
+    fora, e o que ele MUDA nela. Os números são medidos no render, com a mesma função que reprova
+    o build, em vez de escritos à mão aqui.
+*@
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>As cores do Bootstrap</h1>
+        <p class="doc__frase">
+            As seis cores do Bootstrap 5 entram como <em>seed</em> e saem uma paleta de 27
+            papéis. E o resultado surpreende: <strong>nenhuma das seis atinge 4,5:1 sobre
+            superfície clara</strong> — quatro erram por pouco, duas erram muito —, então todas
+            saem escurecidas, mantendo a matiz.
+        </p>
+    </header>
+
+    <section aria-labelledby="bs-aplicar">
+        <h2 id="bs-aplicar">Ver o site inteiro nelas</h2>
+        <p>
+            O tema <strong>Bootstrap</strong> está no seletor da barra de cima. O botão abaixo faz
+            a mesma coisa e volta.
+        </p>
+
+        <div class="bs__acoes">
+            <RvmButton OnClick="Aplicar" Disabled="@Aplicado">Aplicar o tema Bootstrap</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Secondary" OnClick="Restaurar" Disabled="@(!Aplicado)">
+                Voltar ao tema RVM
+            </RvmButton>
+        </div>
+    </section>
+
+    <section aria-labelledby="bs-comparacao">
+        <h2 id="bs-comparacao">O que entra e o que sai</h2>
+
+        <p>
+            Do que você informa, o motor aproveita a <strong>matiz e o croma</strong>. A
+            <strong>luminosidade é recalculada</strong> contra a superfície mais exigente da
+            paleta até atender AA. Repare na coluna de contraste: <strong>quatro cores erram por
+            uma casa decimal</strong> (3,90 · 3,92 · 3,93 · 4,06 contra 4,50) e saem quase iguais.
+            O <code>info</code> e o <code>warning</code> erram por muito, e mudam de cara.
+        </p>
+
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Papel</th>
+                        <th scope="col">Bootstrap</th>
+                        <th scope="col">Contraste</th>
+                        <th scope="col">Derivado</th>
+                        <th scope="col">Contraste</th>
+                        <th scope="col">Situação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var l in Comparacao)
+                    {
+                        <tr>
+                            <td><code>@l.Papel</code></td>
+                            <td>
+                                <span class="bs__amostra" style="@($"background:{l.Original}")"></span>
+                                <code>@l.Original</code>
+                            </td>
+                            <td>@l.ContrasteOriginal.ToString("0.00", Invariante):1</td>
+                            <td>
+                                <span class="bs__amostra" style="@($"background:{l.Derivado}")"></span>
+                                <code>@l.Derivado</code>
+                            </td>
+                            <td>@l.ContrasteDerivado.ToString("0.00", Invariante):1</td>
+                            <td>
+                                <RvmChip Size="RvmSize.Small" Variant="@l.Variante">@l.Situacao</RvmChip>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <p class="doc__nota">
+            O contraste é medido contra a <strong>superfície mais exigente</strong> da paleta —
+            aquela cuja luminância está mais perto do meio, onde qualquer cor tem a menor folga.
+            Não é contra o branco.
+        </p>
+    </section>
+
+    <section aria-labelledby="bs-porque">
+        <h2 id="bs-porque">Por que todas mudam</h2>
+
+        <RvmAlert Severity="RvmSeverity.Info" Title="O Bootstrap não está errado — ele resolve o problema de outro jeito">
+            <ChildContent>
+                <p>
+                    As cores do Bootstrap são pensadas como <strong>fundo</strong>. Um
+                    <code>.btn-warning</code> pinta o botão de amarelo e escreve em texto escuro
+                    por cima; um <code>.btn-primary</code> pinta de azul e escreve em branco. Nesse
+                    uso o contraste fecha, e é uma solução correta.
+                </p>
+                <p>
+                    Aqui a mesma cor tem <strong>dois papéis</strong>: ela é fundo (com o
+                    <code>on-x</code> por cima) <em>e</em> é cor de texto e de ícone sobre a
+                    superfície — num alerta, num chip contornado, num rótulo de estado. É o segundo
+                    uso que aperta: <code>#0D6EFD</code> sobre fundo claro dá
+                    <strong>3,90:1</strong>, e 3,90 reprova.
+                </p>
+                <p>
+                    Por isso quatro delas saem quase iguais — o ajuste é de uma casa decimal, e o
+                    olho não percebe. Já o <code>warning</code> <code>#FFC107</code> sai em
+                    <code>#955B00</code>: <strong>o amarelo vira âmbar escuro</strong>. É a mudança
+                    mais visível desta página, e não tem como escapar dela em AA — amarelo claro
+                    simplesmente não funciona como cor de texto sobre fundo claro.
+                </p>
+                <p class="doc__nota">
+                    Se o amarelo vivo importa mais que o papel de texto, o caminho é usá-lo como
+                    <strong>fundo</strong> — <code>warning</code> com <code>on-warning</code> por
+                    cima —, que é exatamente o que o Bootstrap faz e o que a vitrine abaixo mostra
+                    na primeira linha.
+                </p>
+            </ChildContent>
+        </RvmAlert>
+    </section>
+
+    <section aria-labelledby="bs-exemplo">
+        <h2 id="bs-exemplo">Os componentes, na paleta derivada</h2>
+        <p class="doc__nota">
+            Este bloco usa o tema Bootstrap <strong>sempre</strong>, independente do que estiver
+            aplicado no site — é um recorte, para comparar sem trocar o tema da página inteira.
+        </p>
+
+        <div class="bs__vitrine" style="@CssDoRecorte">
+            <div class="bs__vitrine-linha">
+                @foreach (var (papel, fundo, texto) in ParesDeEstado())
+                {
+                    <span class="bs__pilula" style="@($"background:{fundo};color:{texto}")">@papel</span>
+                }
+            </div>
+
+            <div class="bs__vitrine-linha">
+                @foreach (var (papel, cor) in CoresSobreSuperficie())
+                {
+                    <span class="bs__contorno" style="@($"color:{cor};border-color:{cor}")">@papel</span>
+                }
+            </div>
+        </div>
+    </section>
+</article>
+
+@code {
+    private static readonly System.Globalization.CultureInfo Invariante =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    private static RvmTheme Bootstrap => TemasDeExemplo.Bootstrap;
+
+    private bool Aplicado => Site.Theme == Bootstrap;
+
+    private Task Aplicar() => Site.SetThemeAsync(Bootstrap);
+
+    private Task Restaurar() => Site.SetThemeAsync(RvmThemes.Rvm);
+
+    private sealed record Linha(
+        string Papel, string Original, double ContrasteOriginal,
+        string Derivado, double ContrasteDerivado, bool Mudou)
+    {
+        /// <summary>
+        /// Quanto o motor precisou mexer.
+        /// </summary>
+        /// <remarks>
+        /// A distincao importa mais que "mudou / nao mudou": errar por 0.6 e sair quase igual;
+        /// errar por 3.1, como o <c>warning</c>, e virar outra cor aos olhos de quem escolheu.
+        /// Chamar os dois casos de "ajustado" esconderia justamente o que a pessoa precisa saber.
+        /// </remarks>
+        public string Situacao => !Mudou ? "intacto"
+            : ContrasteOriginal >= 3.0 ? "ajuste pequeno"
+            : "ajuste grande";
+
+        public RvmChipVariant Variante => !Mudou ? RvmChipVariant.Success
+            : ContrasteOriginal >= 3.0 ? RvmChipVariant.Info
+            : RvmChipVariant.Warning;
+    }
+
+    /// <summary>
+    /// A superficie mais exigente da paleta: a de luminancia mais proxima do meio.
+    /// </summary>
+    /// <remarks>
+    /// E a mesma escolha do <c>RvmPalette.EnsureContrast</c>, e nao "o branco". Medir contra o
+    /// branco daria um numero mais bonito e errado — a cor precisa sobreviver ao pior fundo em
+    /// que a biblioteca vai coloca-la, nao ao mais facil.
+    /// </remarks>
+    private static RvmColor PiorSuperficie(RvmPalette p) =>
+        new[] { p.Surface, p.SurfaceRaised, p.SurfaceSunken, p.Background }
+            .Select(RvmColor.Parse)
+            .OrderBy(c => Math.Abs(c.RelativeLuminance - 0.5))
+            .First();
+
+    private static IReadOnlyList<Linha> Comparacao
+    {
+        get
+        {
+            var paleta = Bootstrap.Light;
+            var fundo = PiorSuperficie(paleta);
+
+            string Derivado(string papel) => papel switch
+            {
+                "primary" => paleta.Primary,
+                "secondary" => paleta.Secondary,
+                "success" => paleta.Success,
+                "info" => paleta.Info,
+                "warning" => paleta.Warning,
+                _ => paleta.Danger,
+            };
+
+            return TemasDeExemplo.SementesDoBootstrap
+                .Select(s =>
+                {
+                    var derivado = Derivado(s.Papel);
+
+                    return new Linha(
+                        s.Papel,
+                        s.Hex,
+                        RvmColor.Contrast(RvmColor.Parse(s.Hex), fundo),
+                        derivado,
+                        RvmColor.Contrast(RvmColor.Parse(derivado), fundo),
+                        !string.Equals(s.Hex, derivado, StringComparison.OrdinalIgnoreCase));
+                })
+                .ToList();
+        }
+    }
+
+    /// <summary>
+    /// As variaveis do tema Bootstrap num escopo so, para a vitrine.
+    /// </summary>
+    /// <remarks>
+    /// O <c>ToCss()</c> emite blocos <c>:root</c> completos, com media query de modo escuro — nao
+    /// serve dentro de um <c>style</c> de elemento. Aqui basta a mao cheia de papeis que a
+    /// vitrine usa, e escritos inline eles valem so para esta caixa.
+    /// </remarks>
+    private static string CssDoRecorte
+    {
+        get
+        {
+            var p = Bootstrap.Light;
+            return $"background:{p.Surface};color:{p.OnSurface};border-color:{p.Border}";
+        }
+    }
+
+    private static IEnumerable<(string Papel, string Fundo, string Texto)> ParesDeEstado()
+    {
+        var p = Bootstrap.Light;
+
+        yield return ("primary", p.Primary, p.OnPrimary);
+        yield return ("secondary", p.Secondary, p.OnSecondary);
+        yield return ("success", p.Success, p.OnSuccess);
+        yield return ("info", p.Info, p.OnInfo);
+        yield return ("warning", p.Warning, p.OnWarning);
+        yield return ("danger", p.Danger, p.OnDanger);
+    }
+
+    private static IEnumerable<(string Papel, string Cor)> CoresSobreSuperficie()
+    {
+        var p = Bootstrap.Light;
+
+        yield return ("primary", p.Primary);
+        yield return ("success", p.Success);
+        yield return ("info", p.Info);
+        yield return ("warning", p.Warning);
+        yield return ("danger", p.Danger);
+    }
+}

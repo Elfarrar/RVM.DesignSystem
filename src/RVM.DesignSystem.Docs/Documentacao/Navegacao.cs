@@ -48,6 +48,7 @@ public static class Navegacao
             new("Cor", "fundamentos/cor", "palette"),
             new("Criar sua paleta", "fundamentos/paleta", "sliders-horizontal"),
             new("Ícones", "fundamentos/icones", "dots-nine"),
+            new("Cores do Bootstrap", "fundamentos/bootstrap", "browser"),
             new("Espaçamento", "fundamentos/espacamento", "arrows-out-line-horizontal"),
             new("Densidade", "fundamentos/densidade", "rows"),
         ]),

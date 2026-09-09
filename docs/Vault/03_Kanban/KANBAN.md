@@ -27,7 +27,11 @@
 
 ## Em revisao
 
-_Nada em revisao._
+- [[DSGN-029]] — **As cores do Bootstrap como tema de exemplo**, no seletor e em
+  `/fundamentos/bootstrap`. ⚠️ O achado: **nenhuma das seis cores do Bootstrap atinge 4,5:1**
+  contra superficie clara — quatro erram por uma casa decimal, `info` e `warning` erram muito e
+  mudam de cara. Nao e defeito deles: as cores do Bootstrap sao pensadas como FUNDO, e aqui a
+  mesma cor tambem precisa servir de texto.
 
 ## Concluido
 
