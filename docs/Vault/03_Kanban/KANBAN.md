@@ -25,6 +25,13 @@
   diz "sem dependencia NuGet de terceiros" e "nada depende de JS para renderizar" — as tres
   frases nao cabem juntas. Quatro saidas descritas no card; a decisao e do Rafael.
 
+## A fazer agora
+
+- [[DSGN-030]] — 🔴 **O site WASM sem os dados de pt-BR**: o Blazor escolhe o shard de ICU pelo
+  idioma do NAVEGADOR, e `EFIGS` nao tem pt-BR — a moeda sai `BRL96.90` para quem nao esta em
+  portugues, e o E2E esta vermelho desde 08/09 19:18. ⚠️ Cultura explicita **nao basta** no
+  WASM: a cultura existe, os dados dela e que nao foram baixados.
+
 ## Em revisao
 
 _Nada em revisao._

@@ -315,7 +315,11 @@ public class SiteSmokeTests : IAsyncLifetime
     {
         Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
 
-        var page = await _browser!.NewPageAsync();
+        // ⚠️ Locale FIXO, e de proposito em ingles (DSGN-030). O Blazor WASM escolhe o pedaco de
+        // ICU pelo idioma do NAVEGADOR, e sem o dado de pt-BR o BrlFormatter cai para invariante:
+        // "BRL96.90" em vez de "R$ 96,90". Herdando o idioma da maquina, este teste passava no
+        // Windows e falhava no runner. Fixo em en-US, ele prova que o site nao depende disso.
+        var page = await _browser!.NewPageAsync(new() { Locale = "en-US" });
         await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/padroes/listagem");
         await Assertions.Expect(page.Locator("h1")).ToBeVisibleAsync();
 

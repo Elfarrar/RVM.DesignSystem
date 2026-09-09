@@ -65,6 +65,11 @@ em `03-arquitetura.md` § Desvio, e registrada em `docs/Vault/05_References/ADR-
   auto-hospedados.
 - `Class` do consumidor **soma** com as classes internas, nunca é descartado.
 - Data/número/moeda com `CultureInfo` explícito; BRL por `BrlFormatter`, nunca interpolação manual.
+- ⚠️ **No WebAssembly, `CultureInfo` explícito NÃO basta** (`DSGN-030`). O Blazor publica o ICU em
+  três pedaços e escolhe um pelo idioma do **navegador**; `EFIGS` não tem pt-BR, então a cultura
+  existe como objeto, sem dados, e a moeda sai `BRL96.90` em vez de `R$ 96,90` — em silêncio, com
+  símbolo plausível. O site liga `BlazorWebAssemblyLoadAllGlobalizationData`; **todo app consumidor
+  em WASM precisa fazer o mesmo**. Em Blazor Server não acontece: o ICU é o do servidor.
 - Todo texto padrão de componente é sobrescrevível por parâmetro — nenhum literal preso no meio.
 - `prefers-reduced-motion` respeitado em toda animação.
 - Altura e espaçamento vertical de controle saem de `--rvm-control-*`, nunca de `--rvm-space-*`

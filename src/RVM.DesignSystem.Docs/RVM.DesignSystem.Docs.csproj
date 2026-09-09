@@ -6,6 +6,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     <IsPackable>false</IsPackable>
+
+    <!-- DSGN-030 — cultura explicita NAO basta no WASM.
+         Sem isto, o Blazor publica o ICU em tres pedacos (EFIGS, no_CJK, CJK) e escolhe um em
+         runtime pelo idioma do NAVEGADOR. `EFIGS` e ingles/frances/italiano/alemao/espanhol:
+         pt-BR nao esta la. O CultureInfo("pt-BR") do BrlFormatter continua existindo como
+         objeto, mas sem dados — e a moeda sai "BRL96.90" em vez de "R$ 96,90", em silencio,
+         para todo visitante que nao esteja em portugues.
+
+         Medido em 09/09/2026: o publish ENCOLHE 1,8 MB (um arquivo no lugar de tres, cada um
+         com seu .br e .gz) e o download cresce ~180 KB brotli no pior caso. -->
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>
