@@ -52,7 +52,21 @@
                 O rodapé fica DENTRO desta coluna, e por isso rola junto: uma faixa presa no pé
                 da tela come altura em toda página, e o rodapé não vale isso.
             *@
-            <div class="rvm-app-shell__rolagem">
+            @*
+                ⚠️ `tabindex="0"` NA COLUNA QUE ROLA, e não é enfeite (DSGN-040): uma região que
+                rola e não tem nada focável dentro não pode ser rolada pelo teclado, e o axe
+                reprova com `scrollable-region-focusable`.
+
+                Isso pegou a página de Dashboard do site, que era só texto, chip e barra — e o
+                contorno na época foi transformar as caixas em link, ou seja, inventar um foco
+                que a tela não precisava ter. Um app consumidor com tela só de leitura herdaria
+                o mesmo problema, e provavelmente o mesmo contorno torto.
+
+                A parada extra na tabulação é o preço, e ele é justo: quem navega por teclado
+                PRECISA de um jeito de rolar o conteúdo. Ela vem depois da navegação e antes do
+                conteúdo, que é onde faz sentido.
+            *@
+            <div class="rvm-app-shell__rolagem" tabindex="0">
                 <main class="rvm-app-shell__conteudo" id="@RvmShellContext.ContentId" tabindex="-1">
                     @ChildContent
                 </main>

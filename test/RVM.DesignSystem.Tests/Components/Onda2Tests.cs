@@ -630,6 +630,23 @@ public class Onda2Tests : BunitContext
     }
 
     [Fact]
+    public void A_coluna_que_rola_e_FOCAVEL_para_a_tela_so_de_leitura_nao_reprovar()
+    {
+        // DSGN-040. Uma regiao que rola e nao tem nada focavel dentro nao pode ser rolada pelo
+        // teclado, e o axe reprova com scrollable-region-focusable. Pegou a pagina de Dashboard
+        // do site, que era so texto, chip e barra; o contorno da epoca foi transformar as caixas
+        // em link — inventar um foco que a tela nao precisava ter.
+        //
+        // O teste renderiza uma casca cujo conteudo NAO tem nenhum focavel, que e exatamente o
+        // caso que um app consumidor com tela de leitura entrega.
+        var cut = Render(Casca());
+
+        var rolagem = cut.Find(".rvm-app-shell__rolagem");
+
+        Assert.Equal("0", rolagem.GetAttribute("tabindex"));
+    }
+
+    [Fact]
     public void O_link_de_pulo_e_o_PRIMEIRO_tabulavel_e_aponta_para_o_main()
     {
         var cut = Render(Casca());
