@@ -517,3 +517,137 @@
     background: var(--rvm-color-primary);
     color: var(--rvm-color-on-primary);
 }
+
+/* ---------------------------------------------------------------------------
+   Painel (/padroes/dashboard)
+
+   A estrutura e a do AdminLTE; a cor sai dos papeis verificados da paleta. Cada caixa usa um
+   par `x`/`on-x` — o mesmo que o teste de contraste mede a cada build.
+   --------------------------------------------------------------------------- */
+
+.painel__numeros {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--rvm-space-4);
+    margin-bottom: var(--rvm-space-6);
+}
+
+@media (min-width: 40rem) { .painel__numeros { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64rem) { .painel__numeros { grid-template-columns: repeat(4, 1fr); } }
+
+.painel__numero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-4);
+    padding: var(--rvm-space-5) var(--rvm-space-5) 0;
+    border-radius: var(--rvm-radius-md);
+}
+
+/* O rodape "Mais informacoes" do AdminLTE: faixa levemente mais escura na base da caixa. */
+.painel__numero-mais {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-2);
+    margin: 0 calc(var(--rvm-space-5) * -1);
+    padding: var(--rvm-space-2);
+    background: rgb(0 0 0 / 0.15);
+    color: inherit;
+    font-size: var(--rvm-font-size-body-sm);
+    text-decoration: none;
+    z-index: 1;
+}
+
+.painel__numero-mais:hover { background: rgb(0 0 0 / 0.25); }
+
+/* O anel de foco herda a cor do texto da caixa, e nao a --rvm-color-focus-ring: sobre um fundo
+   saturado, o anel padrao pode sumir. O `on-x` da caixa e o unico tom garantido contra ela. */
+.painel__numero-mais:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -4px;
+}
+
+.painel__numero--primary { background: var(--rvm-color-primary);  color: var(--rvm-color-on-primary); }
+.painel__numero--success { background: var(--rvm-color-success);  color: var(--rvm-color-on-success); }
+.painel__numero--warning { background: var(--rvm-color-warning);  color: var(--rvm-color-on-warning); }
+.painel__numero--danger  { background: var(--rvm-color-danger);   color: var(--rvm-color-on-danger); }
+
+.painel__numero-texto { display: flex; flex-direction: column; z-index: 1; }
+
+.painel__numero-valor {
+    font-size: var(--rvm-font-size-h2);
+    font-weight: var(--rvm-font-weight-semibold);
+    line-height: var(--rvm-line-height-heading);
+}
+
+.painel__numero-rotulo { font-size: var(--rvm-font-size-body-sm); }
+
+/* A marca d'agua do AdminLTE: icone grande, cortado pela borda, atras do texto. */
+.painel__numero-marca {
+    position: absolute;
+    right: -0.5rem;
+    bottom: -0.75rem;
+    width: 5.5rem;
+    height: 5.5rem;
+    opacity: 0.22;
+}
+
+.painel__colunas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--rvm-space-4);
+}
+
+@media (min-width: 64rem) { .painel__colunas { grid-template-columns: 1fr 1fr; } }
+
+.painel__cartao-titulo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    margin: 0 0 var(--rvm-space-4);
+    font-size: var(--rvm-font-size-h4);
+}
+
+.painel__barras,
+.painel__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.painel__barra + .painel__barra { margin-top: var(--rvm-space-4); }
+
+.painel__barra-topo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--rvm-space-1);
+    font-size: var(--rvm-font-size-body-sm);
+}
+
+.painel__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-3) 0;
+    border-bottom: 1px solid var(--rvm-color-border);
+}
+
+.painel__item:last-child { border-bottom: none; }
+
+.painel__item-meta {
+    display: block;
+    font-size: var(--rvm-font-size-caption);
+    color: var(--rvm-color-on-surface-variant);
+}
+
+.painel__item-fim {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    white-space: nowrap;
+}
+
+.painel__item-total { font-variant-numeric: tabular-nums; }

@@ -105,6 +105,7 @@ public static class Navegacao
         new("Padrões",
         [
             new("Padrões", "padroes", "book-open"),
+            new("Dashboard", "padroes/dashboard", "chart-bar"),
             new("Listagem", "padroes/listagem", "list-checks"),
         ]),
 

@@ -9,6 +9,11 @@
 
 ## A decidir
 
+- [[DSGN-027]] — **Aparencia "Admin" e a tela de Dashboard**, no desenho do AdminLTE: barra
+  lateral escura, caixa de numero com marca d'agua, cartao com faixa no topo. ⚠️ As cores NAO
+  sao as do AdminLTE — as small-box de la dao 2,4:1, e reprovariam no axe. A casca escura sai da
+  paleta ESCURA do tema, que ja e um par medido.
+
 - [[DSGN-026]] — **Aparencia "Vivo" e 164 icones**. Resposta ao "nao vi muita diferenca, quero
   mais cor, e pouco icone": o "vivo" tinge a superficie **pelo motor de tema** (o que a
   `DSGN-025` nao podia fazer em CSS sem furar o portao), e o conjunto de icones passa a ser
