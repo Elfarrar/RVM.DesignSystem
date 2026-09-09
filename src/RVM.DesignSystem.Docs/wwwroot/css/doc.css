@@ -717,3 +717,25 @@
     border: 1px solid;
     background: transparent;
 }
+
+/*
+  Seletor de estado do padrão de painel (DSGN-037). Fica à direita e estreito: é um controle da
+  DEMONSTRAÇÃO, não parte da tela demonstrada — se ocupasse a largura toda, viraria protagonista
+  de uma página que existe para mostrar outra coisa.
+*/
+.painel__estados {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--rvm-space-4);
+}
+
+.painel__estados > * { min-width: 14rem; }
+
+/* O esqueleto ocupa a mesma caixa do conteúdo real: sem isso a tela pula quando os dados
+   chegam, e o salto é pior que a espera. */
+.painel__numero--esqueleto {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    cursor: default;
+}
