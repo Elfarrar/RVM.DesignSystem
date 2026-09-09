@@ -40,7 +40,7 @@
                         {
                             var t = TemasDoSeletor[i];
                             <option value="@i" selected="@(t == _temaBase)">
-                                @(i >= RvmThemes.All.Count ? $"{t.Name} (sua paleta)" : t.Name)
+                                @(i >= Embutidos.Count ? $"{t.Name} (sua paleta)" : t.Name)
                             </option>
                         }
                     </select>
@@ -181,8 +181,19 @@
     /// embutida nao aparece duas vezes, porque nao e outro tema.
     /// </para>
     /// </remarks>
+    /// <summary>
+    /// Os temas prontos: os da biblioteca e os de exemplo do proprio site.
+    /// </summary>
+    /// <remarks>
+    /// Os de exemplo (hoje, o Bootstrap) vivem no SITE porque paleta de terceiro nao e
+    /// identidade nossa — nome publico no pacote e um compromisso, e a paleta deles pode mudar
+    /// na versao seguinte.
+    /// </remarks>
+    private static IReadOnlyList<RvmTheme> Embutidos { get; } =
+        [.. RvmThemes.All, .. TemasDeExemplo.Todos];
+
     private IReadOnlyList<RvmTheme> TemasDoSeletor =>
-        RvmThemes.All.Contains(_temaBase) ? RvmThemes.All : [.. RvmThemes.All, _temaBase];
+        Embutidos.Contains(_temaBase) ? Embutidos : [.. Embutidos, _temaBase];
 
     private async Task TrocarTema(ChangeEventArgs e)
     {
@@ -198,7 +209,7 @@
 
         // Escolher um tema embutido APAGA a paleta guardada. Sem isto o proximo F5 a traria de
         // volta por cima da escolha que acabou de ser feita aqui.
-        if (i < RvmThemes.All.Count)
+        if (i < Embutidos.Count)
         {
             await Paleta.EsquecerAsync();
         }
