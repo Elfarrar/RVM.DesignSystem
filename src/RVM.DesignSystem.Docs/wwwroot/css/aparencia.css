@@ -96,19 +96,100 @@
     background-color: var(--rvm-color-surface-sunken);
 }
 
+
+/* ============================================================
+   VIVO — a resposta a "nao vi muita diferenca, quero mais cor".
+
+   Esta e a unica das tres que mexe em SUPERFICIE, e por isso a parte principal dela nao esta
+   neste arquivo: esta em `Documentacao/AparenciaViva.cs`, passando pelo `EnsureContrast()`.
+   Superficie e o fundo contra o qual toda cor foi verificada — mexer nela em CSS fura o portao
+   em silencio. O que sobra aqui e o que CSS pode fazer sem risco.
+   ============================================================ */
+
+:root[data-rvm-aparencia="vivo"] {
+    --rvm-shadow-1: 0 2px 6px rgb(0 0 0 / 0.10), 0 1px 2px rgb(0 0 0 / 0.06);
+    --rvm-shadow-2: 0 6px 14px rgb(0 0 0 / 0.12), 0 2px 5px rgb(0 0 0 / 0.08);
+    --rvm-shadow-3: 0 12px 26px rgb(0 0 0 / 0.14), 0 5px 10px rgb(0 0 0 / 0.09);
+    --rvm-shadow-4: 0 22px 44px rgb(0 0 0 / 0.16), 0 9px 16px rgb(0 0 0 / 0.10);
+    --rvm-shadow-5: 0 36px 72px rgb(0 0 0 / 0.20), 0 16px 28px rgb(0 0 0 / 0.12);
+
+    --rvm-font-size-h1: 3rem;
+    --rvm-font-size-h2: 2.125rem;
+    --rvm-font-size-h3: 1.5rem;
+    --rvm-line-height-heading: 1.12;
+
+    --rvm-radius-md: 0.75rem;
+    --rvm-radius-lg: 1rem;
+}
+
+:root[data-rvm-aparencia="vivo"] h1 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* A casca inteira na cor da marca. `primary` + `on-primary` e par verificado; nunca literal. */
+:root[data-rvm-aparencia="vivo"] .rvm-topbar.rvm-topbar {
+    background-color: var(--rvm-color-primary);
+    color: var(--rvm-color-on-primary);
+    box-shadow: var(--rvm-shadow-2);
+}
+
+:root[data-rvm-aparencia="vivo"] .rvm-topbar.rvm-topbar .site-brand {
+    color: var(--rvm-color-on-primary);
+}
+
+:root[data-rvm-aparencia="vivo"] .rvm-card.rvm-card {
+    box-shadow: var(--rvm-shadow-2);
+    border-color: transparent;
+}
+
+/* O icone do item de menu ganha a cor da marca, e a linha ativa fica cheia em vez de so
+   marcada na borda. E o icone que faz a barra lateral virar forma em vez de coluna de texto. */
+:root[data-rvm-aparencia="vivo"] .rvm-nav-item__icone {
+    color: var(--rvm-color-primary);
+}
+
+:root[data-rvm-aparencia="vivo"] .rvm-nav-item__gatilho--ativo .rvm-nav-item__icone {
+    color: inherit;
+}
+
+:root[data-rvm-aparencia="vivo"] .rvm-nav-item__gatilho--ativo {
+    box-shadow: var(--rvm-shadow-1);
+}
+
+/* ============================================================
+   CONTRASTE NA CASCA COLORIDA
+
+   Pintar o fundo da topbar quebra tudo que herdava cor de `on-surface` — rotulo, marca e
+   botao de icone continuariam escuros sobre a cor da marca. Nao e detalhe de acabamento: e
+   texto ilegivel, e foi o que o primeiro screenshot do "vivo" mostrou.
+
+   Cada preset usa o `on-*` do papel que ELE aplicou no fundo. Par verificado, sempre.
+   ============================================================ */
+
+:root[data-rvm-aparencia="vivo"] .rvm-topbar.rvm-topbar .site-controls__label,
+:root[data-rvm-aparencia="vivo"] .rvm-topbar.rvm-topbar .rvm-icon-button {
+    color: var(--rvm-color-on-primary);
+}
+
+:root[data-rvm-aparencia="marcante"] .rvm-topbar.rvm-topbar .site-brand,
+:root[data-rvm-aparencia="marcante"] .rvm-topbar.rvm-topbar .site-controls__label,
+:root[data-rvm-aparencia="marcante"] .rvm-topbar.rvm-topbar .rvm-icon-button {
+    color: var(--rvm-color-on-primary-container);
+}
+
 /* ============================================================
    MOVIMENTO — vale para os dois presets.
    ============================================================ */
 
-:root[data-rvm-aparencia="sobrio"] .rvm-card.rvm-card,
-:root[data-rvm-aparencia="marcante"] .rvm-card.rvm-card,
-:root[data-rvm-aparencia="sobrio"] .rvm-button,
-:root[data-rvm-aparencia="marcante"] .rvm-button {
+:root[data-rvm-aparencia] .rvm-card.rvm-card,
+:root[data-rvm-aparencia] .rvm-button {
     transition: box-shadow var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard),
                 transform var(--rvm-motion-duration-fast) var(--rvm-motion-ease-standard);
 }
 
-:root[data-rvm-aparencia="marcante"] .rvm-button:hover:not(:disabled) {
+:root[data-rvm-aparencia="marcante"] .rvm-button:hover:not(:disabled),
+:root[data-rvm-aparencia="vivo"] .rvm-button:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: var(--rvm-shadow-2);
 }
@@ -121,7 +202,8 @@
         transition: none;
     }
 
-    :root[data-rvm-aparencia="marcante"] .rvm-button:hover:not(:disabled) {
+    :root[data-rvm-aparencia="marcante"] .rvm-button:hover:not(:disabled),
+    :root[data-rvm-aparencia="vivo"] .rvm-button:hover:not(:disabled) {
         transform: none;
     }
 }
