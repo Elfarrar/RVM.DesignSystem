@@ -26,6 +26,23 @@
         <h2 id="dash-tela">A tela</h2>
 
         @*
+            OS TRES ESTADOS, trocáveis aqui mesmo (DSGN-037).
+
+            Até 09/09/2026 este padrão só mostrava a tela cheia — e "documentação que só mostra o
+            resultado" é uma das anti-referências registradas no PRODUCT.md. A pergunta que quem
+            copia o padrão faz primeiro é justamente a que faltava: o que aparece no dia 1, quando
+            não há pedido nenhum? Quatro caixas com zero solto não respondem nada.
+        *@
+        <div class="painel__estados">
+            <RvmSelect TValue="EstadoDaTela" Value="_estado" ValueChanged="@(e => _estado = e)"
+                       ValueExpression="() => _estado" Label="Estado da tela">
+                <option value="@EstadoDaTela.ComDados">Com dados</option>
+                <option value="@EstadoDaTela.Carregando">Carregando</option>
+                <option value="@EstadoDaTela.Vazio">Vazio (primeiro mês)</option>
+            </RvmSelect>
+        </div>
+
+        @*
             Cada caixa é um LINK, e isso não é só conveniência.
 
             Sem ela esta página não tinha NENHUM elemento focável — só texto, chip e barra de
@@ -36,12 +53,45 @@
             O número já é a porta de entrada natural para a lista que ele resume, então o link
             resolve as duas coisas de uma vez.
         *@
-        <div class="painel__numeros">
+        @if (_estado == EstadoDaTela.Vazio)
+        {
+            @*
+                O vazio precisa dizer O QUE FAZER, e não só que está vazio. `Empty` (e não
+                `NoResults`) porque não há filtro nenhum aplicado: ninguém procurou e não achou,
+                o mês é que ainda não começou.
+            *@
+            <RvmEmptyState Variant="RvmEmptyStateVariant.Empty"
+                           Title="Nenhum pedido neste mês ainda"
+                           Description="Assim que o primeiro pedido for emitido, os números, a comparação por situação e a lista aparecem aqui.">
+                <Actions>
+                    <RvmButton Variant="RvmButtonVariant.Primary">Emitir o primeiro pedido</RvmButton>
+                </Actions>
+            </RvmEmptyState>
+        }
+        else
+        {
+        @* aria-busy diz ao leitor de tela que o conteúdo abaixo ainda vai mudar. Sem ele, o
+           esqueleto é anunciado como se fosse o conteúdo final. *@
+        <div class="painel__numeros" aria-busy="@(_estado == EstadoDaTela.Carregando ? "true" : null)">
             @foreach (var n in Numeros)
             {
+                if (_estado == EstadoDaTela.Carregando)
+                {
+                    @* O esqueleto ocupa a MESMA caixa do conteúdo real: se ele for menor, a
+                       tela pula quando os dados chegam, e o salto é pior que a espera. *@
+                    <div class="painel__numero painel__numero--esqueleto">
+                        <RvmSkeleton Shape="RvmSkeletonShape.Circle" Width="2.5rem" Height="2.5rem" />
+                        <span class="painel__numero-texto">
+                            <RvmSkeleton Width="4rem" Height="1.75rem" />
+                            <RvmSkeleton Width="7rem" />
+                        </span>
+                    </div>
+                    continue;
+                }
+
                 <a class="painel__numero @($"painel__numero--{n.Papel}")"
-                   href="padroes/listagem"
-                   aria-label="@($"{n.Rotulo}: {n.Valor}. Ver na listagem.")">
+                   href="@n.Destino"
+                   aria-label="@n.RotuloDoLink">
                     <span class="painel__numero-icone">
                         @* Decorativo: o rótulo ao lado já diz o que a caixa mede. *@
                         <RvmIcon Name="@n.Icone" />
@@ -62,9 +112,18 @@
                         <RvmIcon Name="chart-line" /> Faturamento por situação
                     </h3>
 
-                    <ul class="painel__barras">
+                    <ul class="painel__barras" aria-busy="@(_estado == EstadoDaTela.Carregando ? "true" : null)">
                         @foreach (var b in Barras)
                         {
+                            if (_estado == EstadoDaTela.Carregando)
+                            {
+                                <li class="painel__barra">
+                                    <RvmSkeleton Width="60%" />
+                                    <RvmSkeleton Height="0.5rem" />
+                                </li>
+                                continue;
+                            }
+
                             <li class="painel__barra">
                                 <div class="painel__barra-topo">
                                     <span>@b.Rotulo</span>
@@ -84,9 +143,17 @@
                         <RvmIcon Name="clock-counter-clockwise" /> Últimos pedidos
                     </h3>
 
-                    <ul class="painel__lista">
+                    <ul class="painel__lista" aria-busy="@(_estado == EstadoDaTela.Carregando ? "true" : null)">
                         @foreach (var p in Ultimos)
                         {
+                            if (_estado == EstadoDaTela.Carregando)
+                            {
+                                <li class="painel__item">
+                                    <RvmSkeleton Width="40%" Lines="2" />
+                                </li>
+                                continue;
+                            }
+
                             <li class="painel__item">
                                 <div>
                                     <strong>@p.Cliente</strong>
@@ -104,6 +171,7 @@
                 </ChildContent>
             </RvmCard>
         </div>
+        }
     </section>
 
     <section aria-labelledby="dash-notas">
@@ -139,9 +207,22 @@
                     <tr>
                         <td>A caixa inteira é um link</td>
                         <td>
-                            Sem nenhum elemento focável, o axe reprova a página por
-                            <code>scrollable-region-focusable</code>: a área de conteúdo rola e
-                            não haveria como rolá-la pelo teclado.
+                            Ela leva à listagem que resume — e as duas que falam de uma situação
+                            chegam lá <strong>já filtradas</strong>. Rótulo que promete um
+                            destino e entrega outro é o tipo de detalhe que denuncia protótipo.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            A barra usa <strong>uma cor só</strong>, e o chip da lista usa a cor
+                            de cada situação
+                        </td>
+                        <td>
+                            Parece incoerência na mesma tela, e é deliberado: o chip comunica o
+                            <strong>estado</strong> de um pedido, enquanto a barra compara
+                            <strong>participação no faturamento</strong>. Pintar a fatia de
+                            "Cancelado" de vermelho transformaria 8% de um mês saudável em alarme
+                            permanente. Quem distingue as barras é o rótulo, que está sempre lá.
                         </td>
                     </tr>
                     <tr>
@@ -181,7 +262,33 @@
     private static readonly System.Globalization.CultureInfo Invariante =
         System.Globalization.CultureInfo.InvariantCulture;
 
-    private sealed record Numero(string Valor, string Rotulo, string Icone, string Papel);
+    // ⚠️ `Situacao` existe para o link CUMPRIR o que o rotulo promete (DSGN-035). Ate 09/09/2026
+    // as quatro caixas apontavam para a mesma listagem sem filtro, e quem clicasse em duas caia
+    // na mesma tela duas vezes — um rotulo dizendo "Cancelados" que leva a tudo.
+    //
+    // Duas delas continuam sem filtro, e isso tambem e honesto: "Pedidos no mes" e o total, e
+    // "Faturado" e uma soma. Quem nao filtra nao promete filtrar, e o texto do link muda junto.
+    private EstadoDaTela _estado = EstadoDaTela.ComDados;
+
+    // Os três estados que qualquer tela de dados tem, e que o padrão precisa demonstrar —
+    // não só o último.
+    private enum EstadoDaTela
+    {
+        ComDados,
+        Carregando,
+        Vazio,
+    }
+
+    private sealed record Numero(string Valor, string Rotulo, string Icone, string Papel, string? Situacao = null)
+    {
+        public string Destino => Situacao is null
+            ? "padroes/listagem"
+            : $"padroes/listagem?situacao={Uri.EscapeDataString(Situacao)}";
+
+        public string RotuloDoLink => Situacao is null
+            ? $"{Rotulo}: {Valor}. Ver a listagem completa."
+            : $"{Rotulo}: {Valor}. Ver na listagem, já filtrado por {Situacao}.";
+    }
 
     private sealed record Barra(string Rotulo, double Percentual);
 
@@ -189,8 +296,8 @@
     [
         new("487", "Pedidos no mês", "receipt", "primary"),
         new("R$ 6,2 mi", "Faturado", "currency-circle-dollar", "success"),
-        new("38", "Aguardando aprovação", "hourglass", "warning"),
-        new("9", "Cancelados", "x-circle", "danger"),
+        new("38", "Aguardando aprovação", "hourglass", "warning", "Pendente"),
+        new("9", "Cancelados", "x-circle", "danger", "Cancelado"),
     ];
 
     private static IReadOnlyList<Barra> Barras =>

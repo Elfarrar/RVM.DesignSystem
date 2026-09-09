@@ -479,7 +479,31 @@ public class Onda2Tests : BunitContext
             .Add(x => x.Text, "Produtos")
             .Add(x => x.Href, "produtos"));
 
-        Assert.Equal("page", cut.Find("a").GetAttribute("aria-current"));
+        // A APARENCIA acende no ancestral: sem isso a secao inteira parece apagada enquanto
+        // uma filha dela esta na tela.
+        Assert.Contains("rvm-nav-item__gatilho--ativo", cut.Find("a").ClassName, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void O_ancestral_acende_mas_NAO_anuncia_ser_a_pagina_atual()
+    {
+        // DSGN-034. Ate 09/09/2026 os dois vinham juntos, e /padroes e /padroes/dashboard
+        // apareciam ambos com aria-current="page" na producao. "Onde eu estou" nao pode ter
+        // duas respostas: quem le a tela ouve duas paginas atuais na mesma navegacao.
+        Services.GetRequiredService<NavigationManager>().NavigateTo("padroes/dashboard");
+
+        var ancestral = Render<RvmNavItem>(p => p
+            .Add(x => x.Text, "Padrões")
+            .Add(x => x.Href, "padroes"));
+
+        var exato = Render<RvmNavItem>(p => p
+            .Add(x => x.Text, "Dashboard")
+            .Add(x => x.Href, "padroes/dashboard"));
+
+        Assert.Null(ancestral.Find("a").GetAttribute("aria-current"));
+        Assert.Contains("rvm-nav-item__gatilho--ativo", ancestral.Find("a").ClassName, StringComparison.Ordinal);
+
+        Assert.Equal("page", exato.Find("a").GetAttribute("aria-current"));
     }
 
     [Fact]
@@ -603,6 +627,23 @@ public class Onda2Tests : BunitContext
         Assert.NotNull(cut.Find("header"));
         Assert.NotNull(cut.Find("nav"));
         Assert.NotNull(cut.Find("main"));
+    }
+
+    [Fact]
+    public void A_coluna_que_rola_e_FOCAVEL_para_a_tela_so_de_leitura_nao_reprovar()
+    {
+        // DSGN-040. Uma regiao que rola e nao tem nada focavel dentro nao pode ser rolada pelo
+        // teclado, e o axe reprova com scrollable-region-focusable. Pegou a pagina de Dashboard
+        // do site, que era so texto, chip e barra; o contorno da epoca foi transformar as caixas
+        // em link — inventar um foco que a tela nao precisava ter.
+        //
+        // O teste renderiza uma casca cujo conteudo NAO tem nenhum focavel, que e exatamente o
+        // caso que um app consumidor com tela de leitura entrega.
+        var cut = Render(Casca());
+
+        var rolagem = cut.Find(".rvm-app-shell__rolagem");
+
+        Assert.Equal("0", rolagem.GetAttribute("tabindex"));
     }
 
     [Fact]

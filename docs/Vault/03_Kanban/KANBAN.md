@@ -31,6 +31,25 @@ _Nada em revisao._
 
 ## Concluido
 
+- **Os sete achados do `critique` de 09/09/2026 — ✅ TODOS EM DEV.** Contexto de design agora
+  vive em `PRODUCT.md` e `DESIGN.md` na raiz, e foi a primeira rodada do `impeccable`.
+  - [[DSGN-034]] — `aria-current` em dois links. Conserto na **biblioteca**: ancestral pinta,
+    nao anuncia. Nada mudou no site.
+  - [[DSGN-035]] — os KPIs prometiam destinos diferentes e iam ao mesmo lugar. Dois agora
+    chegam filtrados; os outros dois **mudaram o texto** em vez de fingir filtro.
+  - [[DSGN-036]] — a cor da barra vs a do chip: a escolha se sustenta, faltava estar na tabela.
+  - [[DSGN-037]] — o padrao mostra carregando e vazio, nao so o caminho feliz.
+  - [[DSGN-038]] — ⚠️ **o achado do critique nao se sustentou** (era borda de card, decorativa),
+    e a medicao revelou outro: `border-strong` so era medido contra `surface`. Com os pares que
+    faltavam, **6 das 12 paletas reprovaram** — violacao de 1.4.11 que estava em producao.
+  - [[DSGN-039]] — linha de 109 caracteres. Token `--rvm-measure`; agora 73.
+  - [[DSGN-040]] — tela so de leitura reprovava no axe. Resposta no `RvmAppShell`.
+
+- [[DSGN-033]] — ✅ **PUBLICADA** (09/09/2026): `1.1.1` no feed do BaGet, e o `timeout 180`
+  do coreutils **por fora** da tentativa de push — o card proprio que o [[DSGN-018]] pediu.
+  ⚠️ A `1.1.0` tem tag e nunca teve pacote, **de proposito**: reusar o numero com codigo
+  diferente seria o alvo movel que o [[DSGN-009]] proibiu. O feed pula de `1.0.0` para `1.1.1`.
+
 - [[DSGN-032]] — ✅ **EM PRODUCAO** (09/09/2026): "Março De 2026" virou "Março de 2026". O
   `ToTitleCase` e regra de ingles e sobe cada palavra. ⚠️ Este **mexe na biblioteca**, ao
   contrario do [[DSGN-030]] e do [[DSGN-031]], que eram so o site — entra como patch na

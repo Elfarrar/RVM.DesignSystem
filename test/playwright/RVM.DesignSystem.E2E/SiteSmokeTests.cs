@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Deque.AxeCore.Playwright;
 using Microsoft.Playwright;
 
@@ -422,6 +423,40 @@ public class SiteSmokeTests : IAsyncLifetime
                 System.Globalization.NumberStyles.Currency,
                 ptBr))
             .ToList();
+    }
+
+    /// <summary>
+    /// O card do painel leva a listagem JA FILTRADA pela situacao que ele resume.
+    /// </summary>
+    /// <remarks>
+    /// Ate 09/09/2026 as quatro caixas apontavam para a mesma listagem sem filtro, com rotulos
+    /// que prometiam destinos diferentes (<c>DSGN-035</c>). O teste clica na caixa e confere o
+    /// RESULTADO na tela, e nao a URL: uma query string que a pagina ignorasse passaria por uma
+    /// verificacao de endereco.
+    /// </remarks>
+    [SkippableFact]
+    public async Task O_card_do_painel_leva_a_listagem_JA_FILTRADA()
+    {
+        Skip.If(BaseUrl is null, "E2E_BASE_URL nao definida — rodando fora do pipeline de E2E.");
+
+        var page = await _browser!.NewPageAsync();
+        await page.GotoAsync($"{BaseUrl!.TrimEnd('/')}/padroes/dashboard");
+
+        await page.GetByRole(AriaRole.Link, new() { NameRegex = new Regex("Cancelados") }).ClickAsync();
+
+        await Assertions.Expect(page.Locator("h1")).ToHaveTextAsync("Listagem");
+
+        // Pelo CHIP, e nao por indice de coluna: a quarta coluna e a data, e um teste que conta
+        // colunas quebra no dia em que alguem reordena a tabela — dizendo que o filtro parou de
+        // funcionar quando o que mudou foi o layout.
+        var situacoes = page.Locator("tbody tr .rvm-chip");
+        var quantas = await situacoes.CountAsync();
+        Assert.True(quantas > 0, "A listagem filtrada nao trouxe nenhuma linha.");
+
+        for (var i = 0; i < quantas; i++)
+        {
+            await Assertions.Expect(situacoes.Nth(i)).ToContainTextAsync("Cancelado");
+        }
     }
 
     /// <summary>

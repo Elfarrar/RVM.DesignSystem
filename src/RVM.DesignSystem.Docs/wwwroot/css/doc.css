@@ -11,6 +11,21 @@
 
 /* --- Anatomia da página --- */
 
+/*
+  Largura de leitura no texto corrido (DSGN-039).
+
+  Só nos filhos DIRETOS do cabeçalho e da seção — que é onde mora a prosa. Parágrafo dentro de
+  vitrine, card ou tabela não é alcançado, e é por isso que o seletor é `>` e não descendente:
+  um `max-width` em `ch` dentro de uma grade de exemplo estreitaria a demonstração, que é
+  justamente o que a página quer mostrar em tamanho real.
+*/
+.doc__cabecalho > p,
+.doc section > p,
+.doc section > ul,
+.doc section > ol {
+    max-width: var(--rvm-measure);
+}
+
 .doc__cabecalho { margin-bottom: var(--rvm-space-8); }
 .doc h1 { margin: 0 0 var(--rvm-space-3); letter-spacing: var(--rvm-tracking-display); }
 .doc__frase { margin: 0; font-size: var(--rvm-font-size-body-lg); }
@@ -701,4 +716,26 @@
 .bs__contorno {
     border: 1px solid;
     background: transparent;
+}
+
+/*
+  Seletor de estado do padrão de painel (DSGN-037). Fica à direita e estreito: é um controle da
+  DEMONSTRAÇÃO, não parte da tela demonstrada — se ocupasse a largura toda, viraria protagonista
+  de uma página que existe para mostrar outra coisa.
+*/
+.painel__estados {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--rvm-space-4);
+}
+
+.painel__estados > * { min-width: 14rem; }
+
+/* O esqueleto ocupa a mesma caixa do conteúdo real: sem isso a tela pula quando os dados
+   chegam, e o salto é pior que a espera. */
+.painel__numero--esqueleto {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    cursor: default;
 }

@@ -10,6 +10,15 @@
     O estado ativo NUNCA é comunicado só por cor (`11`): há `aria-current="page"` para quem usa
     leitor de tela, uma barra à esquerda para quem não distingue as cores, e o ícone muda para o
     peso `Fill`. A cor é o quarto sinal, não o único.
+
+    ⚠️ SEÇÃO ATIVA E PÁGINA ATUAL SÃO DUAS COISAS (DSGN-034). Um item que é ANCESTRAL da rota
+    aberta precisa aparecer destacado — senão a seção inteira parece apagada enquanto um filho
+    dela está na tela. Mas ele não é a página atual: `aria-current="page"` responde "onde eu
+    estou", e essa resposta não pode ser dois lugares. Até 09/09/2026 os dois vinham juntos, e
+    `/padroes` e `/padroes/dashboard` anunciavam ambos ser a página atual ao mesmo tempo.
+
+    Então: `Ativo` governa a APARÊNCIA (classe, barra, ícone `Fill`) e vale para o ancestral;
+    `NaRotaExata` governa o ANÚNCIO e só é verdade na própria rota.
 *@
 
 <li class="rvm-nav-item">
@@ -35,7 +44,7 @@
     {
         <a href="@Href"
            class="@ClasseDoGatilho"
-           aria-current="@(Ativo ? "page" : null)"
+           aria-current="@(NaRotaExata ? "page" : null)"
            @attributes="AdditionalAttributes">
             @Rotulo
         </a>
@@ -94,7 +103,15 @@
 
     private bool TemFilhos => ChildContent is not null;
 
+    // Aparencia: vale tambem quando o item e ANCESTRAL da rota aberta.
     private bool Ativo { get; set; }
+
+    // Anuncio: so na propria rota. Ver a nota no topo do arquivo (DSGN-034).
+    //
+    // ⚠️ Comentario `//` e nao `///` de proposito: os dois sao PRIVADOS, e a doc XML alimenta a
+    // tabela de API do site. Documentar membro privado com `///` o publica numa tabela que
+    // promete listar so o que o consumidor pode usar.
+    private bool NaRotaExata { get; set; }
 
     private string ClasseDoGatilho => RvmClasse.Juntar(
         "rvm-nav-item__gatilho",
@@ -167,11 +184,12 @@
         var atual = Nav.ToBaseRelativePath(Nav.Uri).Split(SeparadoresDeUri)[0].Trim(Barra);
         var alvo = Href.Trim(Barra);
 
+        NaRotaExata = string.Equals(atual, alvo, StringComparison.OrdinalIgnoreCase);
+
         // O item da raiz é sempre exato: "" é prefixo de toda rota que existe.
         Ativo = Exact || alvo.Length == 0
-            ? string.Equals(atual, alvo, StringComparison.OrdinalIgnoreCase)
-            : atual.Equals(alvo, StringComparison.OrdinalIgnoreCase)
-              || atual.StartsWith(alvo + "/", StringComparison.OrdinalIgnoreCase);
+            ? NaRotaExata
+            : NaRotaExata || atual.StartsWith(alvo + "/", StringComparison.OrdinalIgnoreCase);
     }
 
     private void Alternar() => _aberto = !_aberto;
