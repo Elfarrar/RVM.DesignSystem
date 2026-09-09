@@ -479,7 +479,31 @@ public class Onda2Tests : BunitContext
             .Add(x => x.Text, "Produtos")
             .Add(x => x.Href, "produtos"));
 
-        Assert.Equal("page", cut.Find("a").GetAttribute("aria-current"));
+        // A APARENCIA acende no ancestral: sem isso a secao inteira parece apagada enquanto
+        // uma filha dela esta na tela.
+        Assert.Contains("rvm-nav-item__gatilho--ativo", cut.Find("a").ClassName, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void O_ancestral_acende_mas_NAO_anuncia_ser_a_pagina_atual()
+    {
+        // DSGN-034. Ate 09/09/2026 os dois vinham juntos, e /padroes e /padroes/dashboard
+        // apareciam ambos com aria-current="page" na producao. "Onde eu estou" nao pode ter
+        // duas respostas: quem le a tela ouve duas paginas atuais na mesma navegacao.
+        Services.GetRequiredService<NavigationManager>().NavigateTo("padroes/dashboard");
+
+        var ancestral = Render<RvmNavItem>(p => p
+            .Add(x => x.Text, "Padrões")
+            .Add(x => x.Href, "padroes"));
+
+        var exato = Render<RvmNavItem>(p => p
+            .Add(x => x.Text, "Dashboard")
+            .Add(x => x.Href, "padroes/dashboard"));
+
+        Assert.Null(ancestral.Find("a").GetAttribute("aria-current"));
+        Assert.Contains("rvm-nav-item__gatilho--ativo", ancestral.Find("a").ClassName, StringComparison.Ordinal);
+
+        Assert.Equal("page", exato.Find("a").GetAttribute("aria-current"));
     }
 
     [Fact]
