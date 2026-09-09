@@ -50,7 +50,7 @@ consumidor com menu aninhado repetir tudo. Decisao do Rafael em 09/09: **consert
 
 Mexe na biblioteca. Muda comportamento de acessibilidade, nao API: **patch**.
 
-## Resultado (09/09/2026, verificado no dev)
+## Resultado (09/09/2026) — EM PRODUCAO
 
 `document.querySelectorAll("[aria-current]")` devolve **um** elemento — "Dashboard".
 Eram dois. Nada mudou no site: o conserto ficou inteiro na biblioteca.

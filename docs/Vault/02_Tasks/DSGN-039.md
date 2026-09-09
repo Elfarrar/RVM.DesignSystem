@@ -36,7 +36,7 @@ Componente nenhum tem culpa — o texto simplesmente ocupa o que a coluna oferec
 
 Se o token entrar na biblioteca: **minor** (token novo e aditivo).
 
-## Resultado (09/09/2026, verificado no dev)
+## Resultado (09/09/2026) — EM PRODUCAO
 
 Texto corrido a **73 caracteres** por linha, contra os 109 medidos antes. Tabela, grade e
 bloco de codigo intactos.

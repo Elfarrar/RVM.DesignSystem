@@ -43,7 +43,7 @@ torto, ou nem perceber ate o axe reprovar.
 
 Mexe na biblioteca: **patch**.
 
-## Resultado (09/09/2026, verificado no dev)
+## Resultado (09/09/2026) — EM PRODUCAO
 
 `.rvm-app-shell__rolagem` com `tabindex="0"` em producao de dev, e o E2E (10/10) confirma
 que o link de pulo continua sendo o primeiro focavel.
