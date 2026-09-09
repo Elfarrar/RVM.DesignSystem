@@ -37,7 +37,7 @@ Recomendo a **1**: a Listagem ja tem filtro; falta so ler da query string.
 - [x] Cada card leva a um resultado diferente, ou o texto diz que o link e ilustrativo.
 - [x] E2E cobrindo pelo menos um card que chega filtrado (se a saida for a 1).
 
-## Resultado (09/09/2026, verificado no dev)
+## Resultado (09/09/2026) — EM PRODUCAO
 
 Os destinos agora sao `padroes/listagem`, `padroes/listagem`,
 `padroes/listagem?situacao=Pendente` e `padroes/listagem?situacao=Cancelado`. E2E novo

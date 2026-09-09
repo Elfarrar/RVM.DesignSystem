@@ -31,7 +31,7 @@ _Nada em revisao._
 
 ## Concluido
 
-- **Os sete achados do `critique` de 09/09/2026 — ✅ TODOS EM DEV.** Contexto de design agora
+- **Os sete achados do `critique` de 09/09/2026 — ✅ TODOS EM PRODUCAO** (autorizado por ele). Contexto de design agora
   vive em `PRODUCT.md` e `DESIGN.md` na raiz, e foi a primeira rodada do `impeccable`.
   - [[DSGN-034]] — `aria-current` em dois links. Conserto na **biblioteca**: ancestral pinta,
     nao anuncia. Nada mudou no site.
