@@ -3,7 +3,7 @@ id: DSGN-034
 titulo: Secao ativa nao e pagina atual — `aria-current` em dois links
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -42,10 +42,15 @@ consumidor com menu aninhado repetir tudo. Decisao do Rafael em 09/09: **consert
 
 ## Validacao
 
-- [ ] Teste bUnit novo cobrindo ancestral e rota exata.
-- [ ] Na producao, depois do deploy, `document.querySelectorAll('[aria-current]')` devolve **um**.
-- [ ] Suite unitaria e E2E verdes.
+- [x] Teste bUnit novo cobrindo ancestral e rota exata.
+- [x] Na producao, depois do deploy, `document.querySelectorAll('[aria-current]')` devolve **um**.
+- [x] Suite unitaria e E2E verdes.
 
 ## Versao
 
 Mexe na biblioteca. Muda comportamento de acessibilidade, nao API: **patch**.
+
+## Resultado (09/09/2026, verificado no dev)
+
+`document.querySelectorAll("[aria-current]")` devolve **um** elemento — "Dashboard".
+Eram dois. Nada mudou no site: o conserto ficou inteiro na biblioteca.

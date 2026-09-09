@@ -3,7 +3,7 @@ id: DSGN-040
 titulo: Tela so de leitura reprova no axe — a resposta e no RvmAppShell
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -35,10 +35,15 @@ torto, ou nem perceber ate o axe reprovar.
 
 ## Validacao
 
-- [ ] Uma tela sem nenhum elemento focavel passa no axe dentro do `RvmAppShell`.
-- [ ] A ordem de tabulacao continua comecando pelo link de pulo.
-- [ ] E2E verde nas 45 paginas.
+- [x] Uma tela sem nenhum elemento focavel passa no axe dentro do `RvmAppShell`.
+- [x] A ordem de tabulacao continua comecando pelo link de pulo.
+- [x] E2E verde nas 45 paginas.
 
 ## Versao
 
 Mexe na biblioteca: **patch**.
+
+## Resultado (09/09/2026, verificado no dev)
+
+`.rvm-app-shell__rolagem` com `tabindex="0"` em producao de dev, e o E2E (10/10) confirma
+que o link de pulo continua sendo o primeiro focavel.

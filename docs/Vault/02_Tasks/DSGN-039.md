@@ -3,7 +3,7 @@ id: DSGN-039
 titulo: Linha de texto com 109 caracteres
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -29,9 +29,14 @@ Componente nenhum tem culpa — o texto simplesmente ocupa o que a coluna oferec
 
 ## Validacao
 
-- [ ] Paragrafo de texto corrido entre 65 e 75 caracteres a 1280px.
-- [ ] Tabela e bloco de codigo intactos.
+- [x] Paragrafo de texto corrido entre 65 e 75 caracteres a 1280px.
+- [x] Tabela e bloco de codigo intactos.
 
 ## Versao
 
 Se o token entrar na biblioteca: **minor** (token novo e aditivo).
+
+## Resultado (09/09/2026, verificado no dev)
+
+Texto corrido a **73 caracteres** por linha, contra os 109 medidos antes. Tabela, grade e
+bloco de codigo intactos.

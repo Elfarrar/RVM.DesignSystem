@@ -3,7 +3,7 @@ id: DSGN-036
 titulo: A mesma situacao com duas cores na mesma tela
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -39,4 +39,10 @@ barra fina tem que se distinguir tambem para quem nao enxerga cor — o que exig
 
 ## Validacao
 
-- [ ] A tela mostra uma regra so, ou a excecao esta escrita na tabela de decisoes.
+- [x] A tela mostra uma regra so, ou a excecao esta escrita na tabela de decisoes.
+
+## Resultado (09/09/2026, verificado no dev)
+
+A decisao esta na tabela da propria pagina. Ficou registrado o que sustenta a escolha: chip
+e **estado** de um pedido, barra e **participacao** no faturamento — pintar 8% de cancelado de
+vermelho seria alarme permanente.
