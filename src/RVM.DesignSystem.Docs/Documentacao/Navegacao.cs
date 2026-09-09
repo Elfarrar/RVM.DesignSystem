@@ -20,6 +20,13 @@ public sealed record GrupoDeMenu(string Titulo, IReadOnlyList<ItemDeMenu> Itens)
 /// arquivos. Segue o desenho do `07` § Estrutura de navegação.
 ///
 /// <para>
+/// <b>Todo item tem ícone desde a DSGN-026.</b> Antes só "Início" tinha, e o menu era uma
+/// coluna de texto — a maior superfície da tela sem nenhuma forma para o olho ancorar. Ícone
+/// aqui não é enfeite: é o que deixa achar "DataGrid" na lista pelo formato, sem ler os 45
+/// rótulos. Alguns são metáfora frouxa (não existe desenho óbvio para "Skeleton"); mesmo
+/// assim, forma distinta ajuda a varrer, e é por isso que nenhum item ficou sem.
+///
+/// <para>
 /// Os componentes estão em <b>dois grupos</b> desde a onda 2. Vinte e um itens numa lista só
 /// obrigam a rolar a barra lateral para achar qualquer coisa — e a separação por onda é a que
 /// as pessoas já usam para falar da biblioteca.
@@ -33,78 +40,79 @@ public static class Navegacao
         new("Começar",
         [
             new("Início", "", "house"),
-            new("Instalação", "instalacao"),
+            new("Instalação", "instalacao", "download-simple"),
         ]),
 
         new("Fundamentos",
         [
-            new("Cor", "fundamentos/cor"),
-            new("Criar sua paleta", "fundamentos/paleta"),
-            new("Ícones", "fundamentos/icones"),
-            new("Espaçamento", "fundamentos/espacamento"),
-            new("Densidade", "fundamentos/densidade"),
+            new("Cor", "fundamentos/cor", "palette"),
+            new("Criar sua paleta", "fundamentos/paleta", "sliders-horizontal"),
+            new("Ícones", "fundamentos/icones", "dots-nine"),
+            new("Espaçamento", "fundamentos/espacamento", "arrows-out-line-horizontal"),
+            new("Densidade", "fundamentos/densidade", "rows"),
         ]),
 
         new("Básicos",
         [
-            new("Button", "componentes/button"),
-            new("IconButton", "componentes/icon-button"),
-            new("TextField", "componentes/text-field"),
-            new("TextArea", "componentes/text-area"),
-            new("Select", "componentes/select"),
-            new("Checkbox", "componentes/checkbox"),
-            new("RadioGroup", "componentes/radio-group"),
-            new("Switch", "componentes/switch"),
-            new("FormField", "componentes/form-field"),
+            new("Button", "componentes/button", "cursor-click"),
+            new("IconButton", "componentes/icon-button", "selection"),
+            new("TextField", "componentes/text-field", "textbox"),
+            new("TextArea", "componentes/text-area", "text-align-left"),
+            new("Select", "componentes/select", "caret-down"),
+            new("Checkbox", "componentes/checkbox", "check-square"),
+            new("RadioGroup", "componentes/radio-group", "radio-button"),
+            new("Switch", "componentes/switch", "toggle-right"),
+            new("FormField", "componentes/form-field", "note"),
         ]),
 
         new("Layout",
         [
-            new("AppShell", "componentes/app-shell"),
-            new("Sidebar", "componentes/sidebar"),
-            new("Topbar", "componentes/topbar"),
-            new("NavItem", "componentes/nav-item"),
-            new("Tabs", "componentes/tabs"),
-            new("Breadcrumb", "componentes/breadcrumb"),
-            new("Card", "componentes/card"),
-            new("Stack", "componentes/stack"),
-            new("Grid", "componentes/grid"),
-            new("Divider", "componentes/divider"),
-            new("Chip", "componentes/chip"),
-            new("Avatar", "componentes/avatar"),
+            new("AppShell", "componentes/app-shell", "browser"),
+            new("Sidebar", "componentes/sidebar", "sidebar-simple"),
+            new("Topbar", "componentes/topbar", "rectangle"),
+            new("NavItem", "componentes/nav-item", "signpost"),
+            new("Tabs", "componentes/tabs", "tabs"),
+            new("Breadcrumb", "componentes/breadcrumb", "flow-arrow"),
+            new("Card", "componentes/card", "cards"),
+            new("Stack", "componentes/stack", "stack"),
+            new("Grid", "componentes/grid", "squares-four"),
+            new("Divider", "componentes/divider", "minus"),
+            new("Chip", "componentes/chip", "tag"),
+            new("Avatar", "componentes/avatar", "user-circle"),
         ]),
 
         new("Feedback",
         [
-            new("Dialog", "componentes/dialog"),
-            new("Toast", "componentes/toast"),
-            new("Alert", "componentes/alert"),
-            new("EmptyState", "componentes/empty-state"),
-            new("Spinner", "componentes/spinner"),
-            new("Progress", "componentes/progress"),
-            new("Skeleton", "componentes/skeleton"),
-            new("Tooltip", "componentes/tooltip"),
+            new("Dialog", "componentes/dialog", "frame-corners"),
+            new("Toast", "componentes/toast", "bell"),
+            new("Alert", "componentes/alert", "warning"),
+            new("EmptyState", "componentes/empty-state", "tray"),
+            new("Spinner", "componentes/spinner", "spinner-gap"),
+            new("Progress", "componentes/progress", "hourglass"),
+            new("Skeleton", "componentes/skeleton", "placeholder"),
+            new("Tooltip", "componentes/tooltip", "info"),
         ]),
 
         new("Dados",
         [
-            new("DataGrid", "componentes/data-grid"),
-            new("Pagination", "componentes/pagination"),
-            new("FilterBar", "componentes/filter-bar"),
-            new("DatePicker", "componentes/date-picker"),
-            new("Autocomplete", "componentes/autocomplete"),
+            new("DataGrid", "componentes/data-grid", "table"),
+            new("Pagination", "componentes/pagination", "caret-double-right"),
+            new("FilterBar", "componentes/filter-bar", "funnel"),
+            new("DatePicker", "componentes/date-picker", "calendar-blank"),
+            new("Autocomplete", "componentes/autocomplete", "magnifying-glass"),
         ]),
 
         new("Padrões",
         [
-            new("Padrões", "padroes"),
-            new("Listagem", "padroes/listagem"),
+            new("Padrões", "padroes", "book-open"),
+            new("Dashboard", "padroes/dashboard", "chart-bar"),
+            new("Listagem", "padroes/listagem", "list-checks"),
         ]),
 
         new("Sobre",
         [
-            new("Acessibilidade", "acessibilidade"),
-            new("Changelog", "changelog"),
+            new("Acessibilidade", "acessibilidade", "person-arms-spread"),
+            new("Changelog", "changelog", "clock-counter-clockwise"),
         ]),
     ];
 }

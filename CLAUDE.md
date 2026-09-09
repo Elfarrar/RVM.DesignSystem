@@ -188,6 +188,32 @@ da tela/componente novo — sem isso, a entrega está incompleta.
   limitou** — ver a correção no `DSGN-018`. O site não depende disso (compila por
   `ProjectReference`); o primeiro consumidor externo depende. **Não republicar movendo a tag
   sem decidir o conserto antes.**
+- ✅ **`DSGN-024` EM PRODUÇÃO** (08/09/2026): a paleta montada em `/fundamentos/paleta` fica
+  guardada no `localStorage` e sobrevive à navegação e ao F5. Guarda as **cores escolhidas**,
+  nunca o tema derivado — assim uma paleta antiga passa pelas regras de contraste de hoje, em
+  vez de virar cópia congelada que nenhuma correção do `FromSeed` alcança.
+- ⏳ **Preview de aparência (`DSGN-025`/`026`) — no ar em PRODUÇÃO e TEMPORÁRIO.** O seletor
+  "Aparência" na topbar troca entre **`Atual`, `Sóbrio`, `Marcante` e `Vivo`**.
+  ⚠️ **Sai INTEIRO quando o Rafael escolher**, e a lista do que remover é esta:
+  `wwwroot/css/aparencia.css`, `wwwroot/js/aparencia.js`, `Documentacao/AparenciaViva.cs`, o
+  seletor no `MainLayout` e o teste `As_duas_aparencias_do_preview_passam_no_axe`.
+  **Nada disso é a biblioteca.**
+  - `Vivo` é **metade CSS e metade C#**: ele troca o TEMA, não só o estilo. Um teste que só
+    escrevesse `data-rvm-aparencia` aprovaria a aparência sem a parte que mexe nas cores — por
+    isso o teste usa o seletor.
+  - **Tingir superfície é motor de tema** (`FromSeed` + `EnsureContrast()`), nunca folha de
+    estilo: um cinza escrito à mão fura o portão em silêncio. Por isso `AparenciaViva` é C#, e
+    por isso o tingimento mexe muito na croma e pouco na luminosidade — o `EnsureContrast()`
+    re-deriva os papéis coloridos, mas **não** o `on-surface`.
+- ✅ **`DSGN-026` EM PRODUÇÃO** (08/09/2026): **164 ícones** (eram 27), com ícone em todo item de
+  menu, e a aparência `Vivo`.
+- ⛔ **A aparência `Admin` (imitação do AdminLTE) foi REPROVADA e revertida** (`DSGN-027` →
+  `DSGN-028`). Ficou a tela `/padroes/dashboard`, refeita na linguagem daqui. **Não recriar** sem
+  ele pedir — e, se pedir, a técnica da casca escura está descrita no `DSGN-027`.
+- ⚠️ **Tela sem NENHUM elemento focável reprova no axe** (`scrollable-region-focusable`). A área
+  de conteúdo do `RvmAppShell` rola; sem nada que receba foco, não há como rolá-la pelo teclado.
+  Pegou a página de Dashboard, que era só texto, chip e barra. **Um app consumidor com tela só de
+  leitura herda isso** — a resposta seria no `RvmAppShell`, e ainda não foi feita.
 - Próximo passo: **não há onda 5**. O que vem é adoção — e ela é só em projeto novo (`09` §
   Adoção). O próximo projeto RVM que precisar de UI nasce aqui, e é ele quem prova a biblioteca.
 
@@ -207,10 +233,24 @@ Detalhe de cada uma em `09-roadmap.md` § Pendências. Depois da 1.0, mudá-las 
 | **Ícones** | **Phosphor** (MIT), pesos `Regular` e `Fill` na v1 |
 | Paleta da marca | roxo VS + azul VS Code, **modo escuro aprovado** |
 
-✅ **A decisão que sobrava — quais ícones entram — foi fechada na onda 2**: o conjunto é
-**curado**, hoje com 19 ícones, cada um entrando junto do componente que o usa. A política está
-escrita no topo do `tools/gerar-icones.py` e vale para sempre: ícone não entra "porque pode ser
-útil". Cada um é um nome público e bytes que todo consumidor baixa.
+✅ **Quais ícones entram**: o conjunto é **curado**, hoje com **164 ícones**, e a curadoria é
+**por aplicação** — cobre o vocabulário de que uma tela de negócio precisa (ação, estado,
+arquivo, dinheiro, pessoa, tempo, obra, agro), não só o que os componentes daqui usam. A
+política está no topo do `tools/gerar-icones.py`.
+
+> ⚠️ **Isto REVISA a regra da onda 2** ("ícone entra quando um componente precisa, nunca porque
+> pode ser útil"), em 08/09/2026 (`DSGN-026`), a pedido do Rafael. A regra antiga otimizava a
+> coisa errada: quem consome não monta componentes, monta **telas** — e com 27 ícones o
+> consumidor caía fora do design system no primeiro botão de "imprimir".
+>
+> E o argumento de custo que eu tinha usado para sustentá-la **não se sustentava**: medido, cada
+> ícone-peso custa ~300 bytes de string no assembly. O argumento real para curar nunca foi byte
+> — é superfície de API e manutenção, e é por isso que são 164 e não os 1512 do Phosphor.
+
+⚠️ **Nome de ícone é API pública.** Remover um depois da 1.0 é quebra, e quebra em tempo de
+execução. Há teste (`ConjuntoDeIconesTests`) que renderiza os 27 da v1 nos dois pesos e reprova
+se algum sumir — o `RvmIconData.cs` é **regerado por inteiro** a cada mudança da lista, então
+uma linha apagada por descuido no script apagaria o ícone sem nenhum outro aviso.
 - ✅ **Repositório público sob MIT** — respondido pelo Rafael em 07/09/2026. Consequência não
   óbvia: foi essa decisão que inviabilizou o caller do `RVM.Actions` (**ADR-011**) e, de quebra,
   dispensou o runner self-hosted.

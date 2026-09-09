@@ -1,0 +1,213 @@
+@page "/padroes/dashboard"
+@using RVM.DesignSystem.Formatting
+
+<PageTitle>Dashboard · RVM Design System</PageTitle>
+
+@*
+    A tela de painel: número grande, progresso e lista curta.
+
+    ⚠️ A primeira versão desta tela copiava o AdminLTE — bloco solido, marca d'água e faixa de
+    rodapé. **O Rafael reprovou em 08/09/2026**, e a aparência "Admin" saiu junto. O que ficou é
+    o idioma de painel (número que resume, barra que compara, lista que detalha) na linguagem
+    daqui: a caixa é uma superfície da paleta, com a cor concentrada no distintivo e no valor.
+*@
+
+<article class="doc">
+    <header class="doc__cabecalho">
+        <h1>Dashboard</h1>
+        <p class="doc__frase">
+            O painel de abertura de um sistema de gestão: <strong>número que resume</strong>,
+            barra que compara e lista que detalha. Cada caixa é um link para a listagem que ela
+            resume.
+        </p>
+    </header>
+
+    <section aria-labelledby="dash-tela">
+        <h2 id="dash-tela">A tela</h2>
+
+        @*
+            Cada caixa é um LINK, e isso não é só conveniência.
+
+            Sem ela esta página não tinha NENHUM elemento focável — só texto, chip e barra de
+            progresso. O axe reprovou por `scrollable-region-focusable`: a área de conteúdo do
+            RvmAppShell rola, e sem nada que receba foco não havia como rolá-la pelo teclado. Foi
+            a primeira página do site sem um link sequer, e por isso a primeira a expor isso.
+
+            O número já é a porta de entrada natural para a lista que ele resume, então o link
+            resolve as duas coisas de uma vez.
+        *@
+        <div class="painel__numeros">
+            @foreach (var n in Numeros)
+            {
+                <a class="painel__numero @($"painel__numero--{n.Papel}")"
+                   href="padroes/listagem"
+                   aria-label="@($"{n.Rotulo}: {n.Valor}. Ver na listagem.")">
+                    <span class="painel__numero-icone">
+                        @* Decorativo: o rótulo ao lado já diz o que a caixa mede. *@
+                        <RvmIcon Name="@n.Icone" />
+                    </span>
+
+                    <span class="painel__numero-texto">
+                        <span class="painel__numero-valor">@n.Valor</span>
+                        <span class="painel__numero-rotulo">@n.Rotulo</span>
+                    </span>
+                </a>
+            }
+        </div>
+
+        <div class="painel__colunas">
+            <RvmCard Variant="RvmCardVariant.Outlined">
+                <ChildContent>
+                    <h3 class="painel__cartao-titulo">
+                        <RvmIcon Name="chart-line" /> Faturamento por situação
+                    </h3>
+
+                    <ul class="painel__barras">
+                        @foreach (var b in Barras)
+                        {
+                            <li class="painel__barra">
+                                <div class="painel__barra-topo">
+                                    <span>@b.Rotulo</span>
+                                    <strong>@b.Percentual.ToString("0", Invariante)%</strong>
+                                </div>
+                                <RvmProgress Value="@b.Percentual"
+                                             AccessibleLabel="@($"{b.Rotulo}, participação no faturamento")" />
+                            </li>
+                        }
+                    </ul>
+                </ChildContent>
+            </RvmCard>
+
+            <RvmCard Variant="RvmCardVariant.Outlined">
+                <ChildContent>
+                    <h3 class="painel__cartao-titulo">
+                        <RvmIcon Name="clock-counter-clockwise" /> Últimos pedidos
+                    </h3>
+
+                    <ul class="painel__lista">
+                        @foreach (var p in Ultimos)
+                        {
+                            <li class="painel__item">
+                                <div>
+                                    <strong>@p.Cliente</strong>
+                                    <span class="painel__item-meta">
+                                        #@p.Numero · @p.Emissao.ToString("dd/MM/yyyy", Invariante)
+                                    </span>
+                                </div>
+                                <div class="painel__item-fim">
+                                    <RvmChip Size="RvmSize.Small" Variant="@Variante(p.Situacao)">@p.Situacao</RvmChip>
+                                    <span class="painel__item-total">@BrlFormatter.Format(p.Total)</span>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </ChildContent>
+            </RvmCard>
+        </div>
+    </section>
+
+    <section aria-labelledby="dash-notas">
+        <h2 id="dash-notas">O que esta tela decide por você</h2>
+
+        <RvmAlert Severity="RvmSeverity.Info" Title="Por que a caixa de número não é um bloco de cor sólida">
+            <ChildContent>
+                <p>
+                    A primeira versão desta tela copiava as <em>small-box</em> do AdminLTE: bloco
+                    saturado inteiro, ícone de marca d'água e faixa de rodapé. Além de ter sido
+                    reprovada, ela tinha um problema de origem — as caixas originais são branco
+                    sobre <code>#00c0ef</code> e <code>#f39c12</code>, ou seja
+                    <strong>2,4:1 e 2,2:1</strong> contra os 4,5:1 que a WCAG 2.1 AA exige.
+                </p>
+                <p>
+                    O que ficou é o <strong>idioma</strong>, não a pele: número que resume, barra
+                    que compara, lista que detalha. A cor fica concentrada no distintivo e no
+                    valor, e cada par sai dos papéis <code>x</code>/<code>on-x</code> da paleta,
+                    que nascem medidos.
+                </p>
+            </ChildContent>
+        </RvmAlert>
+
+        <div class="doc__tabela-scroll">
+            <table class="doc__tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Decisão</th>
+                        <th scope="col">Por quê</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>A caixa inteira é um link</td>
+                        <td>
+                            Sem nenhum elemento focável, o axe reprova a página por
+                            <code>scrollable-region-focusable</code>: a área de conteúdo rola e
+                            não haveria como rolá-la pelo teclado.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>O ícone da caixa é decorativo</td>
+                        <td>
+                            O rótulo ao lado já diz o que a caixa mede. Anunciá-lo faria o leitor
+                            de tela dizer "imagem" no meio do número.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cada barra tem rótulo acessível próprio</td>
+                        <td>
+                            Sem ele, o leitor anuncia quatro barras chamadas "Progresso" e o
+                            número fica sem dizer de quê.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Situação é <strong>chip com texto</strong>, nunca só cor</td>
+                        <td>
+                            WCAG 1.4.1: cor não pode ser o único meio de transmitir informação.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Valor com <code>BrlFormatter</code></td>
+                        <td>
+                            Nunca interpolação manual — é a regra do <code>CLAUDE.md</code>, e o
+                            motivo é que a máquina do CI não roda em pt-BR.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</article>
+
+@code {
+    private static readonly System.Globalization.CultureInfo Invariante =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    private sealed record Numero(string Valor, string Rotulo, string Icone, string Papel);
+
+    private sealed record Barra(string Rotulo, double Percentual);
+
+    private static IReadOnlyList<Numero> Numeros =>
+    [
+        new("487", "Pedidos no mês", "receipt", "primary"),
+        new("R$ 6,2 mi", "Faturado", "currency-circle-dollar", "success"),
+        new("38", "Aguardando aprovação", "hourglass", "warning"),
+        new("9", "Cancelados", "x-circle", "danger"),
+    ];
+
+    private static IReadOnlyList<Barra> Barras =>
+    [
+        new("Aprovado", 42),
+        new("Entregue", 31),
+        new("Pendente", 19),
+        new("Cancelado", 8),
+    ];
+
+    private static IReadOnlyList<Pedido> Ultimos => Pedidos.Todos.Take(6).ToList();
+
+    private static RvmChipVariant Variante(string situacao) => situacao switch
+    {
+        "Aprovado" => RvmChipVariant.Success,
+        "Entregue" => RvmChipVariant.Info,
+        "Cancelado" => RvmChipVariant.Danger,
+        _ => RvmChipVariant.Warning,
+    };
+}

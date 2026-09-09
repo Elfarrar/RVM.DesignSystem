@@ -2,6 +2,7 @@
 @inject IRvmThemeService Tema
 @inject PaletaDoVisitante Paleta
 @inject IJSRuntime JS
+@implements IDisposable
 
 @*
     ⚠️ Este arquivo É o critério de saída da onda 2 (`09-roadmap.md`).
@@ -38,7 +39,7 @@
                         @for (var i = 0; i < TemasDoSeletor.Count; i++)
                         {
                             var t = TemasDoSeletor[i];
-                            <option value="@i" selected="@(t == Tema.Theme)">
+                            <option value="@i" selected="@(t == _temaBase)">
                                 @(i >= RvmThemes.All.Count ? $"{t.Name} (sua paleta)" : t.Name)
                             </option>
                         }
@@ -54,6 +55,7 @@
                         <option value="atual" selected="@(_aparencia == "atual")">Atual (v1)</option>
                         <option value="sobrio" selected="@(_aparencia == "sobrio")">Sóbrio</option>
                         <option value="marcante" selected="@(_aparencia == "marcante")">Marcante</option>
+                        <option value="vivo" selected="@(_aparencia == "vivo")">Vivo</option>
                     </select>
 
                     <RvmIconButton Icon="@(_escuro ? "eye" : "eye-slash")"
@@ -115,11 +117,56 @@
     /// <summary>Aparencia escolhida no preview temporario (DSGN-025).</summary>
     private string _aparencia = "atual";
 
+    /// <summary>O tema escolhido no seletor, SEM tingir.</summary>
+    /// <remarks>
+    /// Precisa existir separado porque o "vivo" troca o tema aplicado por um derivado dele. Sem
+    /// guardar a base, o seletor nao acharia o tema tingido na lista e passaria a chama-lo de
+    /// "sua paleta" — mentindo sobre o que o visitante escolheu.
+    /// </remarks>
+    private RvmTheme _temaBase = RvmThemes.Rvm;
+
     private async Task TrocarAparencia(ChangeEventArgs e)
     {
         _aparencia = e.Value?.ToString() ?? "atual";
         await JS.InvokeVoidAsync("rvmAparencia.definir", _aparencia);
+        await Tema.SetThemeAsync(_aparencia == "vivo" ? AparenciaViva.Tingir(_temaBase) : _temaBase);
     }
+
+    /// <summary>
+    /// Mantem o tingimento colado no tema, venha a troca de onde vier.
+    /// </summary>
+    /// <remarks>
+    /// O tema muda por tres caminhos: este seletor, o de aparencia e a pagina
+    /// <c>/fundamentos/paleta</c>. Reagir ao evento cobre os tres de uma vez, em vez de eu ter
+    /// de lembrar de tingir em cada um.
+    ///
+    /// <para>
+    /// <b>Nao ha laco porque <c>Tingir</c> e idempotente</b>: as superficies saem de valores
+    /// fixos calculados da matiz da primaria, que o tingimento nao altera. Tingir duas vezes da
+    /// o mesmo tema, a comparacao por valor da igual, e a segunda passada nao faz nada.
+    /// </para>
+    /// </remarks>
+    private void AoMudarTema()
+    {
+        var atual = Tema.Theme;
+        var tingido = AparenciaViva.Tingir(atual);
+
+        if (atual == tingido)
+        {
+            return;   // ja esta tingido — nada a fazer, e e aqui que o laco para
+        }
+
+        _temaBase = atual;
+
+        if (_aparencia == "vivo")
+        {
+            InvokeAsync(() => Tema.SetThemeAsync(tingido));
+        }
+    }
+
+    protected override void OnInitialized() => Tema.Changed += AoMudarTema;
+
+    public void Dispose() => Tema.Changed -= AoMudarTema;
 
     /// <summary>
     /// Os temas que o seletor oferece: os embutidos e, quando ha uma, a paleta do visitante.
@@ -135,7 +182,7 @@
     /// </para>
     /// </remarks>
     private IReadOnlyList<RvmTheme> TemasDoSeletor =>
-        RvmThemes.All.Contains(Tema.Theme) ? RvmThemes.All : [.. RvmThemes.All, Tema.Theme];
+        RvmThemes.All.Contains(_temaBase) ? RvmThemes.All : [.. RvmThemes.All, _temaBase];
 
     private async Task TrocarTema(ChangeEventArgs e)
     {
@@ -146,7 +193,8 @@
             return;
         }
 
-        await Tema.SetThemeAsync(lista[i]);
+        _temaBase = lista[i];
+        await Tema.SetThemeAsync(_aparencia == "vivo" ? AparenciaViva.Tingir(_temaBase) : _temaBase);
 
         // Escolher um tema embutido APAGA a paleta guardada. Sem isto o proximo F5 a traria de
         // volta por cima da escolha que acabou de ser feita aqui.
@@ -183,6 +231,11 @@
         // O atributo ja foi aplicado pelo script, antes do primeiro paint; aqui o C# so descobre
         // qual e, para o seletor nao mostrar "Atual" com a pagina em outra aparencia.
         _aparencia = await JS.InvokeAsync<string>("rvmAparencia.atual");
+
+        if (_aparencia == "vivo")
+        {
+            await Tema.SetThemeAsync(AparenciaViva.Tingir(Tema.Theme));
+        }
 
         StateHasChanged();
     }
