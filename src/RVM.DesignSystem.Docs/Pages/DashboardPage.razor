@@ -40,8 +40,8 @@
             @foreach (var n in Numeros)
             {
                 <a class="painel__numero @($"painel__numero--{n.Papel}")"
-                   href="padroes/listagem"
-                   aria-label="@($"{n.Rotulo}: {n.Valor}. Ver na listagem.")">
+                   href="@n.Destino"
+                   aria-label="@n.RotuloDoLink">
                     <span class="painel__numero-icone">
                         @* Decorativo: o rótulo ao lado já diz o que a caixa mede. *@
                         <RvmIcon Name="@n.Icone" />
@@ -181,7 +181,22 @@
     private static readonly System.Globalization.CultureInfo Invariante =
         System.Globalization.CultureInfo.InvariantCulture;
 
-    private sealed record Numero(string Valor, string Rotulo, string Icone, string Papel);
+    // ⚠️ `Situacao` existe para o link CUMPRIR o que o rotulo promete (DSGN-035). Ate 09/09/2026
+    // as quatro caixas apontavam para a mesma listagem sem filtro, e quem clicasse em duas caia
+    // na mesma tela duas vezes — um rotulo dizendo "Cancelados" que leva a tudo.
+    //
+    // Duas delas continuam sem filtro, e isso tambem e honesto: "Pedidos no mes" e o total, e
+    // "Faturado" e uma soma. Quem nao filtra nao promete filtrar, e o texto do link muda junto.
+    private sealed record Numero(string Valor, string Rotulo, string Icone, string Papel, string? Situacao = null)
+    {
+        public string Destino => Situacao is null
+            ? "padroes/listagem"
+            : $"padroes/listagem?situacao={Uri.EscapeDataString(Situacao)}";
+
+        public string RotuloDoLink => Situacao is null
+            ? $"{Rotulo}: {Valor}. Ver a listagem completa."
+            : $"{Rotulo}: {Valor}. Ver na listagem, já filtrado por {Situacao}.";
+    }
 
     private sealed record Barra(string Rotulo, double Percentual);
 
@@ -189,8 +204,8 @@
     [
         new("487", "Pedidos no mês", "receipt", "primary"),
         new("R$ 6,2 mi", "Faturado", "currency-circle-dollar", "success"),
-        new("38", "Aguardando aprovação", "hourglass", "warning"),
-        new("9", "Cancelados", "x-circle", "danger"),
+        new("38", "Aguardando aprovação", "hourglass", "warning", "Pendente"),
+        new("9", "Cancelados", "x-circle", "danger", "Cancelado"),
     ];
 
     private static IReadOnlyList<Barra> Barras =>
