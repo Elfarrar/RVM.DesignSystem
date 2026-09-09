@@ -212,8 +212,16 @@
                 PtBr.DateTimeFormat.GetDayName(d)))
             .ToList();
 
-    private string TituloDoMes =>
-        PtBr.TextInfo.ToTitleCase(_mesVisivel.ToString("MMMM 'de' yyyy", PtBr));
+    // ⚠️ So a PRIMEIRA letra sobe. ToTitleCase capitaliza cada palavra — regra de ingles — e
+    // devolvia "Março De 2026", com a preposicao em maiuscula.
+    private string TituloDoMes
+    {
+        get
+        {
+            var titulo = _mesVisivel.ToString("MMMM 'de' yyyy", PtBr);
+            return char.ToUpper(titulo[0], PtBr) + titulo[1..];
+        }
+    }
 
     /// <summary>
     /// As seis semanas da grade, sempre seis.

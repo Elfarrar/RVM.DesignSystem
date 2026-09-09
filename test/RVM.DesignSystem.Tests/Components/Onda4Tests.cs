@@ -520,6 +520,20 @@ public class Onda4Tests : BunitContext
     }
 
     [Fact]
+    public void O_titulo_do_mes_capitaliza_SO_a_primeira_letra()
+    {
+        // "Março De 2026" era o que saia: o ToTitleCase e regra de ingles e sobe cada palavra.
+        // Em portugues a preposicao fica minuscula.
+        var cut = Render<RvmDatePicker>(p => p
+            .Add(x => x.Label, "Emissão")
+            .Add(x => x.Value, new DateTime(2026, 3, 15)));
+
+        cut.Find("button[aria-expanded]").Click();
+
+        Assert.Equal("Março de 2026", cut.Find(".rvm-date-picker__titulo").TextContent);
+    }
+
+    [Fact]
     public void ESC_fecha_o_calendario()
     {
         var cut = Render<RvmDatePicker>(p => p.Add(x => x.Label, "Emissão"));
