@@ -3,7 +3,7 @@ id: DSGN-028
 titulo: Remove a aparencia Admin e refaz o Dashboard na linguagem daqui
 repo: RVM.DesignSystem
 tipo: feature
-status: em-revisao
+status: concluido
 criada: 2026-09-08
 ---
 
