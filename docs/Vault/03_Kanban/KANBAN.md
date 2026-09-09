@@ -25,18 +25,17 @@
   diz "sem dependencia NuGet de terceiros" e "nada depende de JS para renderizar" — as tres
   frases nao cabem juntas. Quatro saidas descritas no card; a decisao e do Rafael.
 
-## A fazer agora
-
-- [[DSGN-030]] — 🔴 **O site WASM sem os dados de pt-BR**: o Blazor escolhe o shard de ICU pelo
-  idioma do NAVEGADOR, e `EFIGS` nao tem pt-BR — a moeda sai `BRL96.90` para quem nao esta em
-  portugues, e o E2E esta vermelho desde 08/09 19:18. ⚠️ Cultura explicita **nao basta** no
-  WASM: a cultura existe, os dados dela e que nao foram baixados.
-
 ## Em revisao
 
 _Nada em revisao._
 
 ## Concluido
+
+- [[DSGN-030]] — ✅ **EM DEV** (09/09/2026): o site WASM sem os dados de pt-BR. O Blazor
+  escolhe o pedaco de ICU pelo idioma do NAVEGADOR e `EFIGS` nao tem portugues — a moeda
+  saia `BRL3,348.65` para quem nao estava em pt-BR, e era isso que deixava o E2E vermelho
+  desde 08/09 19:18. ⚠️ **Cultura explicita nao basta no WASM**: a cultura existe, os dados
+  dela e que nao foram baixados. Nada mudou na biblioteca. **Espera sinal verde para o master.**
 
 - [[DSGN-029]] — ✅ **EM PRODUCAO** (08/09/2026): as cores do Bootstrap como tema de exemplo, no
   seletor e em `/fundamentos/bootstrap`. ⚠️ O achado: **nenhuma das seis atinge 4,5:1** contra

@@ -3,7 +3,7 @@ id: DSGN-030
 titulo: O site WASM sem os dados de pt-BR — moeda sai "BRL96.90" em navegador estrangeiro
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -75,10 +75,25 @@ lingua. Em Blazor **Server** o problema nao existe — o ICU e o do servidor.
 
 ## Validacao
 
-- [ ] Reproduzir: o teste com `Locale = "en-US"` falha contra o dev **antes** do deploy.
-- [ ] Deploy em dev e o mesmo teste passa, sem tocar no `LerColunaDeTotais`.
-- [ ] E2E completo verde (9 testes), incluindo o axe nas duas aparencias.
-- [ ] Conferir no navegador que `/padroes/listagem` mostra `R$` com o navegador em `en-US`.
+- [x] Reproduzir: o teste com `Locale = "en-US"` falha contra o dev **antes** do deploy.
+- [x] Deploy em dev e o mesmo teste passa, sem tocar no `LerColunaDeTotais`.
+- [x] E2E completo verde (9 testes), incluindo o axe nas duas aparencias.
+- [x] Conferir no navegador que `/padroes/listagem` mostra `R$` com o navegador em `en-US`.
+
+## Resultado (09/09/2026)
+
+Verde. O E2E do pipeline passou as 11:41 — **primeiro sucesso desde 08/09 14:55** — e o `dev`
+serve `icudt.<hash>.dat`; `icudt_EFIGS` devolve 404, ou seja, o shard sumiu de vez.
+
+Com o navegador em `en-US`, lado a lado na mesma tela:
+
+| | coluna Total |
+|---|---|
+| dev antes do deploy | `BRL3,348.65` |
+| dev depois | `R$ 3.348,65` |
+
+O que o conserto **nao** resolve, e fica dito: um app consumidor em WASM continua tendo que
+ligar a mesma flag. Isso agora esta no `CLAUDE.md § Convencoes`.
 
 ## Versao
 
