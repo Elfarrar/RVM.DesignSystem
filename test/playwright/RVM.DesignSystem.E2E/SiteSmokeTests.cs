@@ -446,8 +446,10 @@ public class SiteSmokeTests : IAsyncLifetime
 
         await Assertions.Expect(page.Locator("h1")).ToHaveTextAsync("Listagem");
 
-        // Toda linha da primeira pagina esta cancelada — e o filtro valendo, nao a URL enfeitada.
-        var situacoes = page.Locator("tbody tr td:nth-child(4)");
+        // Pelo CHIP, e nao por indice de coluna: a quarta coluna e a data, e um teste que conta
+        // colunas quebra no dia em que alguem reordena a tabela — dizendo que o filtro parou de
+        // funcionar quando o que mudou foi o layout.
+        var situacoes = page.Locator("tbody tr .rvm-chip");
         var quantas = await situacoes.CountAsync();
         Assert.True(quantas > 0, "A listagem filtrada nao trouxe nenhuma linha.");
 
