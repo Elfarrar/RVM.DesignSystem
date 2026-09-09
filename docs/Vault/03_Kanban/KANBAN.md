@@ -27,12 +27,14 @@
 
 ## Em revisao
 
-- [[DSGN-028]] — **Fora a aparencia Admin, fica o painel**. O Rafael reprovou a imitacao do
-  AdminLTE (`DSGN-027`): saiu o bloco solido, a marca d'agua e a faixa de rodape, e a aparencia
-  `Admin` inteira. Ficou o idioma de painel na linguagem daqui. ⚠️ Cada caixa continua sendo um
-  LINK por exigencia do axe, nao por estilo — sem elemento focavel a pagina reprova.
+_Nada em revisao._
 
 ## Concluido
+
+- [[DSGN-028]] — ✅ **EM PRODUCAO** (08/09/2026): fora a aparencia `Admin`, fica o painel. O
+  Rafael reprovou a imitacao do AdminLTE (`DSGN-027`): saiu o bloco solido, a marca d'agua e a
+  faixa de rodape. Ficou o idioma de painel na linguagem daqui. ⚠️ Cada caixa continua sendo um
+  LINK por exigencia do axe, nao por estilo — sem elemento focavel a pagina reprova.
 
 - [[DSGN-024]] — ✅ **EM PRODUCAO** (08/09/2026): a paleta do visitante fica guardada no
   navegador. Achado pelo Rafael usando a `DSGN-023`: navegar e voltar deixava o site pintado e o
