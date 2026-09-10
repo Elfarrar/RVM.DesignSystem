@@ -3,7 +3,7 @@ id: DSGN-041
 titulo: O changelog do site parou na 1.1.0 — e anuncia uma versao que nao existe no feed
 repo: RVM.DesignSystem
 tipo: bug
-status: todo
+status: concluido
 criada: 2026-09-09
 atualizada: 2026-09-09
 ---
@@ -43,5 +43,14 @@ entre no fluxo de publicacao, junto da tag. Vale escrever isso no `CLAUDE.md § 
 
 ## Validacao
 
-- [ ] `/changelog` mostra `1.1.2`, `1.1.1` e o aviso na `1.1.0`.
-- [ ] axe passa na pagina, nos dois modos.
+- [x] `/changelog` mostra `1.1.2`, `1.1.1` e o aviso na `1.1.0`.
+- [x] axe passa na pagina, nos dois modos.
+
+## Resultado (10/09/2026, verificado em producao)
+
+`/changelog` abre com `1.1.2`, `1.1.1` e a `1.1.0` carregando o aviso "Esta versao nao esta no
+feed — use a 1.1.1". E2E 11/11 depois do deploy.
+
+⚠️ **Este card foi promovido antes de ser fechado** — ficou `status: todo` e fora do Kanban ate o
+handoff de 10/09. O codigo estava certo e verificado; faltou a rastreabilidade, e a causa foi
+nascer no meio de uma resposta a uma pergunta, fora do fluxo normal de task.
