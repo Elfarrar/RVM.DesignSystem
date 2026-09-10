@@ -31,6 +31,11 @@ _Nada em revisao._
 
 ## Concluido
 
+- [[DSGN-041]] — ✅ **EM PRODUCAO** (10/09/2026): o `/changelog` parou na `1.1.0` enquanto o feed
+  ja tinha `1.1.1` e `1.1.2`. ⚠️ O defeito pior nao era o atraso: a secao da `1.1.0` anunciava uma
+  versao **que nunca chegou ao feed**. Entram as secoes novas, o aviso apontando a substituta, e a
+  regra no `CLAUDE.md` de que toda tag estavel leva TRES coisas — tag, changelog e `VersionPrefix`.
+
 - **Os sete achados do `critique` de 09/09/2026 — ✅ TODOS EM PRODUCAO** (autorizado por ele). Contexto de design agora
   vive em `PRODUCT.md` e `DESIGN.md` na raiz, e foi a primeira rodada do `impeccable`.
   - [[DSGN-034]] — `aria-current` em dois links. Conserto na **biblioteca**: ancestral pinta,
