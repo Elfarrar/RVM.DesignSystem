@@ -11,11 +11,73 @@
         </p>
     </header>
 
+    <section aria-labelledby="cl-112">
+        <h2 id="cl-112">1.1.2</h2>
+        <p class="doc__nota">
+            Acessibilidade e leitura. <strong>Nada quebra</strong>; um token novo entra.
+        </p>
+        <ul class="doc__lista">
+            <li>
+                <strong>Seção ativa e página atual deixam de ser a mesma coisa</strong> no
+                <code>RvmNavItem</code>. Um item que é ancestral da rota aberta continua
+                destacado, mas não anuncia mais <code>aria-current="page"</code> — antes, um menu
+                com filhos dava <em>duas</em> respostas para "onde eu estou".
+            </li>
+            <li>
+                <strong>Borda de controle e anel de foco passam a ser medidos contra as quatro
+                superfícies</strong>, e não só contra a <code>surface</code>. O mesmo campo cai
+                sobre o card elevado, sobre o fundo da página e dentro de um bloco rebaixado; ao
+                acrescentar os pares que faltavam, <strong>6 das 12 paletas reprovaram</strong> —
+                a borda ficava entre 2,67:1 e 2,77:1 no modo escuro, abaixo dos 3:1 da WCAG
+                1.4.11. Se você derivou uma paleta própria, ela ganha bordas um pouco mais claras
+                no escuro.
+            </li>
+            <li>
+                <strong><code>--rvm-measure</code></strong>: largura de leitura, em
+                <code>ch</code>. Texto corrido acima de ~75 caracteres por linha faz o olho errar
+                a volta da linha.
+            </li>
+            <li>
+                <strong>A área de conteúdo do <code>RvmAppShell</code> ficou focável.</strong> Uma
+                tela só de leitura, sem nenhum elemento focável, reprovava no axe por
+                <code>scrollable-region-focusable</code> — a região rola e não havia como rolá-la
+                pelo teclado. Agora isso é responsabilidade da casca, e não de cada tela.
+            </li>
+        </ul>
+    </section>
+
+    <section aria-labelledby="cl-111">
+        <h2 id="cl-111">1.1.1</h2>
+        <p class="doc__nota">Correção de texto no calendário.</p>
+        <ul class="doc__lista">
+            <li>
+                O título do mês do <code>RvmDatePicker</code> sai
+                <strong>"Março de 2026"</strong>, e não "Março De 2026". <em>Title Case</em> é
+                regra de inglês e capitaliza cada palavra; em português só a primeira letra sobe.
+            </li>
+        </ul>
+    </section>
+
     <section aria-labelledby="cl-110">
         <h2 id="cl-110">1.1.0</h2>
         <p class="doc__nota">
             Primeira minor depois do congelamento. <strong>Nada quebra</strong> — só acrescenta.
         </p>
+
+        <RvmAlert Severity="RvmSeverity.Warning" Title="Esta versão não está no feed — use a 1.1.1">
+            <ChildContent>
+                <p>
+                    A tag <code>v1.1.0</code> existe no repositório, mas o pacote nunca chegou ao
+                    BaGet: o envio falhou por rede e a decisão foi <strong>não republicar o mesmo
+                    número com código diferente</strong> — versão estável fica presa ao commit que
+                    a gerou, senão o número deixa de significar alguma coisa.
+                </p>
+                <p>
+                    Nada se perdeu: <strong>tudo o que está descrito abaixo está na
+                    <code>1.1.1</code></strong> e nas seguintes.
+                </p>
+            </ChildContent>
+        </RvmAlert>
         <ul class="doc__lista">
             <li>
                 <strong><code>RvmSeed</code> e a sobrecarga <code>FromSeed(nome, seed)</code></strong>:
