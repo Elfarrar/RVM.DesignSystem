@@ -140,6 +140,11 @@ Não há `demo`: o fluxo vai de `dev` direto para `master`.
 Publicação de pacote: pré-release (`0.x.y-alpha.N`, numerado pelo run) a cada push em `dev`;
 **versão estável só de TAG `vX.Y.Z`** — push em `master` não publica.
 
+⚠️ **Toda tag estável leva três coisas juntas, e não só o pacote** (`DSGN-041`): a tag, a seção
+nova no `/changelog` (que é escrito à mão) e o `VersionPrefix` apontando para a **próxima**
+versão. Publicar sem o changelog deixa o site anunciando um estado que não é o do feed — e foi
+assim que a página ficou parada na `1.1.0` enquanto a `1.1.2` já estava publicada.
+
 > Mudou em 08/09/2026 (`DSGN-009`). A versão estável saía do `VersionPrefix` do csproj a cada push
 > em `master`, e isso fazia dela um **alvo móvel**: perdido o feed, o republish entregaria o mesmo
 > número com código diferente. A tag prende a versão ao commit — e é **a condição que sustenta a
