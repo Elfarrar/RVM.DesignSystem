@@ -10,7 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-001]] | Bootstrap: repo publico, esqueleto, 5 workflows, borda de dev | dev no ar; falta monitor no Kuma e a promocao para prod |
+| — | — | — |
 
 ## A fazer — Onda 1 (tokens + 9 componentes)
 
@@ -25,4 +25,4 @@ Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
 
 | Card | O que |
 |---|---|
-| — | — |
+| [[DSGN-001]] | Bootstrap (16/09): repo publico, esqueleto, 5 workflows, dev no ar, `0.1.0-alpha.*` no BaGet, monitor no Kuma. Prod espera autorizacao |

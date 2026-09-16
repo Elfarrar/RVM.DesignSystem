@@ -3,7 +3,7 @@ id: DSGN-001
 titulo: Bootstrap — repo publico, esqueleto RCL + Docs WASM, 5 workflows proprios, borda de dev
 repo: RVM.DesignSystem
 tipo: chore
-status: concluido ate dev — producao espera autorizacao do Rafael
+status: concluido ate dev (monitor incluso) — producao espera autorizacao do Rafael
 criada: 2026-09-16
 ---
 
@@ -51,12 +51,16 @@ do Rafael — decidido por ele em 16/09/2026, no inicio desta task.
 3. **A guarda do E2E se mordia**: o proprio `playwright.config.ts` explica por que `waitForTimeout`
    e proibido, e o `grep` achava a palavra no comentario. Agora ela le so as linhas de codigo.
 
+- [x] Monitor **28 `DesignSystem - dev`** no Uptime-Kuma: tipo `keyword` procurando
+      `RVM Design System`, canal **E-mail (Resend)**, aviso de expiracao de certificado, 60 s com
+      1 nova tentativa. Primeiro heartbeat verde: `[Up] 200 - OK, keyword is found`, 160 ms
+- [x] Monitor **25 `DesignSystem - prod` pausado** — apontava para o ambiente apagado em 16/09
+      (`getaddrinfo ENOTFOUND design.rvmit.com.br`). ⚠️ **Retomar junto com a subida de prod.**
+
 ## Pendente
 
-- [ ] Monitor `DesignSystem - dev` no Uptime-Kuma (tipo `keyword`, canal de e-mail) — a escrita no
-      banco do Kuma foi barrada por ser recurso compartilhado; espera autorizacao
-- [ ] Monitor `DesignSystem - prod` (id 25) segue **ativo apontando para um ambiente apagado**
 - [ ] Producao: GitHub Pages + CNAME `design` em `rvmit.com.br` — so com sinal verde do Rafael
+- [ ] Fora desta task, visto no painel do Kuma: **`Backup remoto - GestorDeObras` em 0%**
 
 ## Desvios da skill, e por que
 
