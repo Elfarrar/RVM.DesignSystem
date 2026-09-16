@@ -1,16 +1,28 @@
 @inherits LayoutComponentBase
+@inject IJSRuntime JS
 
-<div class="pagina">
+<RvmThemeProvider @bind-Theme="_tema" class="pagina">
     <header class="topo">
-        <a class="marca" href="">RVM Design System</a>
+        <a class="marca rvm-text-h6" href="">RVM Design System</a>
+
+        <nav class="menu" aria-label="Secoes do site">
+            <NavLink class="link" href="" Match="NavLinkMatch.All">Inicio</NavLink>
+            <NavLink class="link" href="fundamentos">Fundamentos</NavLink>
+        </nav>
+
+        @* Seletor de tema no topo, visivel em toda pagina: e o jeito de conferir claro/escuro sem F5. *@
+        <button type="button" class="seletor-tema rvm-text-button-sm" @onclick="TrocarTema"
+                aria-pressed="@(_tema == RvmTheme.Dark)">
+            @(_tema == RvmTheme.Dark ? "Tema escuro" : "Tema claro")
+        </button>
     </header>
 
     <main class="conteudo">
         @Body
     </main>
 
-    @* Credito CC BY 4.0 ao kit de origem: obrigacao de licenca, presente em TODA pagina (08-monetizacao). *@
-    <footer class="rodape">
+    @* Credito CC BY 4.0 ao kit de origem: obrigacao de licenca, presente em TODA pagina. *@
+    <footer class="rodape rvm-text-caption">
         Visual derivado do
         <a href="https://www.figma.com/community/file/1353029852156886079/neatlab-super-admin-dashboard-ui-design-kit"
            target="_blank" rel="noopener">NEATLAB — Super Admin Dashboard UI Design Kit</a>,
@@ -18,4 +30,21 @@
         <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.
         Codigo sob licenca MIT.
     </footer>
-</div>
+</RvmThemeProvider>
+
+@code {
+    private RvmTheme _tema = RvmTheme.Light;
+
+    protected override void OnInitialized()
+    {
+        // WebAssembly tem interop sincrono, entao da para comecar ja com o tema guardado e nao
+        // piscar claro antes de trocar. O <script> inline do index.html faz o mesmo no <html>.
+        if (JS is IJSInProcessRuntime sincrono && sincrono.Invoke<string?>("rvmTheme.read") == "dark")
+        {
+            _tema = RvmTheme.Dark;
+        }
+    }
+
+    private void TrocarTema()
+        => _tema = _tema == RvmTheme.Dark ? RvmTheme.Light : RvmTheme.Dark;
+}

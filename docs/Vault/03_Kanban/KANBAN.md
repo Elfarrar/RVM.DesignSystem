@@ -10,14 +10,13 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| — | — | — |
+| [[DSGN-002]] | Tokens do `06` + tema claro/escuro + pagina Fundamentos | codigo pronto, esperando CI e screenshot |
 
 ## A fazer — Onda 1 (tokens + 9 componentes)
 
 | Card | O que |
 |---|---|
-| DSGN-002 | Tokens do `06` (paleta, tipografia, espacamento, raio, sombra) + tema claro/escuro |
-| — | Os 9 componentes da onda 1 do `11-catalogo-de-componentes.md` |
+| DSGN-003 | Os 9 componentes da onda 1 do `11-catalogo-de-componentes.md`, na ordem do catalogo |
 
 Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
 

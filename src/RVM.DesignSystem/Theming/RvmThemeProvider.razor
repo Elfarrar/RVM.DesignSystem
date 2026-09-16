@@ -1,0 +1,10 @@
+@namespace RVM.DesignSystem.Theming
+
+@* Raiz da tematizacao. O `data-theme` fica NESTE elemento, e nao so no <html>, de proposito: assim
+   o tema correto sai ja na primeira renderizacao, sem JS — a regra dos dois modos de hospedagem
+   (Server e WebAssembly). O JS entra so para persistir a escolha e pintar o <html>. *@
+<div @attributes="AdditionalAttributes" class="@CssClass" data-theme="@ThemeAttribute">
+    <CascadingValue TValue="RvmThemeProvider" Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>

@@ -1,0 +1,358 @@
+/* =============================================================================
+   RVM Design System — camada de tokens
+   -----------------------------------------------------------------------------
+   Todo valor de cor aqui foi MEDIDO do kit NEATLAB (referencia-neatlab/Theme/*.png)
+   e esta registrado no `06-tokens-e-tematizacao.md`. Componente nao escolhe cor:
+   usa SEMPRE uma custom property daqui. Hex literal em CSS de componente e bug —
+   quebra o tema escuro.
+
+   Visual derivado do NEATLAB - Super Admin Dashboard UI Design Kit, de hello.uiworld,
+   sob CC BY 4.0. Fonte Inter sob SIL OFL (wwwroot/fonts/OFL.txt).
+   ============================================================================= */
+
+/* --- Inter, servida pelo proprio pacote (ADR-006): nada de Google Fonts em runtime --- */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300 500;
+    font-display: swap;
+    src: url('./fonts/inter-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                   U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+                   U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300 500;
+    font-display: swap;
+    src: url('./fonts/inter-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+                   U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+                   U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+    color-scheme: light;
+
+    /* ---------------------------------------------------------------------
+       Cores de marca — IGUAIS nos dois temas, conferidas swatch a swatch.
+       Quem "escurecer" a paleta no tema escuro esta inventando.
+       --------------------------------------------------------------------- */
+    --rvm-color-primary-main: #264CC8;
+    --rvm-color-primary-alt-light: #4067E9;
+    --rvm-color-primary-alt-dark: #1B368F;
+    --rvm-color-primary-hover: #264CC8;
+
+    --rvm-color-secondary-main: #8A8D93;
+    --rvm-color-secondary-alt-light: #9C9FA4;
+    --rvm-color-secondary-alt-dark: #4D5056;
+    --rvm-color-secondary-hover: #777B82;
+
+    --rvm-color-info-main: #16B1FF;
+    --rvm-color-info-alt-light: #32BAFF;
+    --rvm-color-info-alt-dark: #0E71A3;
+    --rvm-color-info-hover: #139CE0;
+
+    --rvm-color-success-main: #56CA00;
+    --rvm-color-success-alt-light: #6AD01F;
+    --rvm-color-success-alt-dark: #378100;
+    --rvm-color-success-hover: #4CB200;
+
+    --rvm-color-warning-main: #FFB400;
+    --rvm-color-warning-alt-light: #FFB547;
+    --rvm-color-warning-alt-dark: #A37300;
+    --rvm-color-warning-hover: #E09E00;
+
+    --rvm-color-error-main: #FF4C51;
+    --rvm-color-error-alt-light: #FF6166;
+    --rvm-color-error-alt-dark: #A33134;
+    --rvm-color-error-hover: #E04347;
+
+    /* Texto SOBRE a cor de marca. Desvio consciente do kit, que manda branco nos seis:
+       branco reprova AA em cinco (secondary 3.33, info 2.40, success 2.13, warning 1.78,
+       error 3.28). Contraste >= 4.5:1 e criterio de aceite (RNF-02), entao so o primary —
+       7.12 com branco — fica com branco; os outros usam #212121 (4.84 a 9.03). */
+    --rvm-color-primary-contrast: #FFFFFF;
+    --rvm-color-secondary-contrast: #212121;
+    --rvm-color-info-contrast: #212121;
+    --rvm-color-success-contrast: #212121;
+    --rvm-color-warning-contrast: #212121;
+    --rvm-color-error-contrast: #212121;
+
+    /* Fundo do variante outlined: hover e resting (selecionado) */
+    --rvm-color-primary-outlined-hover: #F5F7FE;
+    --rvm-color-primary-outlined-resting: #CBD6F9;
+    --rvm-color-secondary-outlined-hover: #F6F6F7;
+    --rvm-color-secondary-outlined-resting: #C5C6C9;
+    --rvm-color-info-outlined-hover: #EFFAFF;
+    --rvm-color-info-outlined-resting: #99DDFF;
+    --rvm-color-success-outlined-hover: #F2FBEB;
+    --rvm-color-success-outlined-resting: #ABE580;
+    --rvm-color-warning-outlined-hover: #FFF9EB;
+    --rvm-color-warning-outlined-resting: #FFDA80;
+    --rvm-color-error-outlined-hover: #FFF1F1;
+    --rvm-color-error-outlined-resting: #FFA6A8;
+
+    /* Fundos suaves (Custom BG). O primary-soft e ROXO com um primary AZUL — e assim no kit,
+       resquicio da paleta roxa que o autor usou antes de trocar o primary. Mantido FIEL: o
+       criterio de aceite e o screenshot lado a lado com o PNG. Harmonizar e mudar uma linha. */
+    --rvm-color-primary-soft: #F2EAFF;
+    --rvm-color-secondary-soft: #F1F1F2;
+    --rvm-color-info-soft: #E4F2FE;
+    --rvm-color-success-soft: #E9F5EA;
+    --rvm-color-warning-soft: #FDEDE0;
+    --rvm-color-error-soft: #FEE8E7;
+    --rvm-color-menu-active: #2C78E1;
+
+    /* --- Superficies --- */
+    --rvm-color-background-body: #F4F5FA;
+    --rvm-color-background-paper: #FFFFFF;
+    --rvm-color-divider: #E7E6E8;
+    --rvm-color-outline: #D1D0D3;
+    --rvm-color-input-line: #D4D3D5;
+    --rvm-color-overlay: #9D9AA0;
+    --rvm-color-snackbar-background: #212121;
+    --rvm-color-snackbar-text: #FFFFFF;
+
+    /* --- Texto: base #3A3541 com alpha, a estrutura do kit ---
+       0.87 primario, 0.72 secundario, 0.38 desabilitado.
+       O secundario do kit e 0.68, que da 4.46:1 no papel e 4.32:1 no corpo — reprova AA por
+       pouco. Subiu para 0.72 (5.01 e 4.79), a menor mudanca que passa nos dois fundos.
+       O desabilitado fica em 2.10: WCAG 1.4.3 isenta controle inativo. */
+    --rvm-color-text-primary: rgba(58, 53, 65, 0.87);
+    --rvm-color-text-secondary: rgba(58, 53, 65, 0.72);
+    --rvm-color-text-disabled: rgba(58, 53, 65, 0.38);
+
+    /* --- Acoes --- */
+    --rvm-color-action-hover: #F7F7F8;
+    --rvm-color-action-selected: #F0EFF0;
+    --rvm-color-action-disabled: #CCCBCE;
+    --rvm-color-action-focus: #E7E6E8;
+
+    /* ---------------------------------------------------------------------
+       Tipografia — a escala veio ESCRITA na pagina Typography do kit.
+       Caption (19.9) e Overline (31.9) foram arredondados para 20 e 32:
+       desvio consciente, registrado no 06.
+       --------------------------------------------------------------------- */
+    --rvm-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --rvm-font-weight-light: 300;
+    --rvm-font-weight-regular: 400;
+    --rvm-font-weight-medium: 500;
+
+    --rvm-text-h1-size: 6rem;
+    --rvm-text-h1-line: 7rem;
+    --rvm-text-h1-weight: 300;
+    --rvm-text-h2-size: 3.75rem;
+    --rvm-text-h2-line: 4.5rem;
+    --rvm-text-h2-weight: 300;
+    --rvm-text-h3-size: 3rem;
+    --rvm-text-h3-line: 3.5rem;
+    --rvm-text-h3-weight: 400;
+    --rvm-text-h4-size: 2.125rem;
+    --rvm-text-h4-line: 2.625rem;
+    --rvm-text-h4-weight: 400;
+    --rvm-text-h5-size: 1.5rem;
+    --rvm-text-h5-line: 2rem;
+    --rvm-text-h5-weight: 400;
+    --rvm-text-h6-size: 1.25rem;
+    --rvm-text-h6-line: 2rem;
+    --rvm-text-h6-weight: 500;
+    --rvm-text-subtitle1-size: 1rem;
+    --rvm-text-subtitle1-line: 1.75rem;
+    --rvm-text-subtitle1-weight: 400;
+    --rvm-text-subtitle2-size: 0.875rem;
+    --rvm-text-subtitle2-line: 1.375rem;
+    --rvm-text-subtitle2-weight: 500;
+    --rvm-text-body1-size: 0.875rem;
+    --rvm-text-body1-line: 1.5rem;
+    --rvm-text-body1-weight: 400;
+    --rvm-text-body2-size: 0.875rem;
+    --rvm-text-body2-line: 1.25rem;
+    --rvm-text-body2-weight: 400;
+    --rvm-text-caption-size: 0.75rem;
+    --rvm-text-caption-line: 1.25rem;
+    --rvm-text-caption-weight: 400;
+    --rvm-text-overline-size: 0.75rem;
+    --rvm-text-overline-line: 2rem;
+    --rvm-text-overline-weight: 400;
+    --rvm-text-button-lg-size: 0.9375rem;
+    --rvm-text-button-lg-line: 1.625rem;
+    --rvm-text-button-lg-weight: 500;
+    --rvm-text-button-md-size: 0.875rem;
+    --rvm-text-button-md-line: 1.5rem;
+    --rvm-text-button-md-weight: 500;
+    --rvm-text-button-sm-size: 0.8125rem;
+    --rvm-text-button-sm-line: 1.375rem;
+    --rvm-text-button-sm-weight: 500;
+    --rvm-text-input-label-size: 0.75rem;
+    --rvm-text-input-label-line: 0.75rem;
+    --rvm-text-input-label-weight: 400;
+    --rvm-text-helper-size: 0.75rem;
+    --rvm-text-helper-line: 1.25rem;
+    --rvm-text-helper-weight: 400;
+    --rvm-text-input-size: 1rem;
+    --rvm-text-input-line: 1.5rem;
+    --rvm-text-input-weight: 400;
+    --rvm-text-avatar-size: 1.25rem;
+    --rvm-text-avatar-line: 1.25rem;
+    --rvm-text-avatar-weight: 400;
+    --rvm-text-chip-size: 0.8125rem;
+    --rvm-text-chip-line: 1.125rem;
+    --rvm-text-chip-weight: 400;
+    --rvm-text-tooltip-size: 0.625rem;
+    --rvm-text-tooltip-line: 0.875rem;
+    --rvm-text-tooltip-weight: 500;
+    --rvm-text-alert-title-size: 1rem;
+    --rvm-text-alert-title-line: 1.5rem;
+    --rvm-text-alert-title-weight: 500;
+    --rvm-text-table-header-size: 0.875rem;
+    --rvm-text-table-header-line: 1.5rem;
+    --rvm-text-table-header-weight: 500;
+    --rvm-text-badge-size: 0.75rem;
+    --rvm-text-badge-line: 1.25rem;
+    --rvm-text-badge-weight: 500;
+
+    /* --- Espacamento: base 4 px --- */
+    --rvm-space-1: 0.25rem;
+    --rvm-space-2: 0.5rem;
+    --rvm-space-3: 0.75rem;
+    --rvm-space-4: 1rem;
+    --rvm-space-5: 1.25rem;
+    --rvm-space-6: 1.5rem;
+    --rvm-space-8: 2rem;
+    --rvm-space-10: 2.5rem;
+    --rvm-space-12: 3rem;
+
+    /* --- Raio: por regua sobre o PNG, erro de 1-2 px --- */
+    --rvm-radius-sm: 6px;
+    --rvm-radius-md: 8px;
+    --rvm-radius-lg: 10px;
+    --rvm-radius-pill: 999px;
+    --rvm-radius-circle: 50%;
+
+    /* --- Sombra: APROXIMACAO. O kit mostra 24 elevacoes e NAO escreve os valores; estas cinco
+       saem de medicao visual e viram numero exato quando o kit for lido pela API do Figma
+       (09-roadmap, pendencia 1). Nao tratar como definitivo. --- */
+    --rvm-shadow-1: 0 1px 3px rgba(58, 53, 65, 0.1), 0 1px 2px rgba(58, 53, 65, 0.06);
+    --rvm-shadow-2: 0 2px 6px rgba(58, 53, 65, 0.12), 0 1px 3px rgba(58, 53, 65, 0.08);
+    --rvm-shadow-3: 0 4px 12px rgba(58, 53, 65, 0.14), 0 2px 5px rgba(58, 53, 65, 0.08);
+    --rvm-shadow-4: 0 8px 20px rgba(58, 53, 65, 0.16), 0 3px 8px rgba(58, 53, 65, 0.09);
+    --rvm-shadow-5: 0 16px 32px rgba(58, 53, 65, 0.18), 0 6px 12px rgba(58, 53, 65, 0.1);
+
+    /* --- Foco e movimento --- */
+    --rvm-focus-ring-width: 2px;
+    --rvm-focus-ring-offset: 2px;
+    --rvm-focus-ring-color: var(--rvm-color-primary-main);
+    --rvm-transition-fast: 150ms ease;
+    --rvm-transition-medium: 250ms ease;
+}
+
+/* =============================================================================
+   Tema escuro. O que muda e SUPERFICIE e ESTADO — a marca nao muda.
+   ============================================================================= */
+[data-theme='dark'] {
+    color-scheme: dark;
+
+    --rvm-color-primary-outlined-hover: #797992;
+    --rvm-color-primary-outlined-resting: #646D9F;
+    --rvm-color-secondary-outlined-hover: #383451;
+    --rvm-color-secondary-outlined-resting: #5E5D6F;
+    --rvm-color-info-outlined-hover: #313859;
+    --rvm-color-info-outlined-resting: #3274A5;
+    --rvm-color-success-outlined-hover: #343945;
+    --rvm-color-success-outlined-resting: #447C26;
+    --rvm-color-warning-outlined-hover: #413745;
+    --rvm-color-warning-outlined-resting: #987126;
+    --rvm-color-error-outlined-hover: #412F4B;
+    --rvm-color-error-outlined-resting: #983D4E;
+
+    --rvm-color-primary-soft: #3D3261;
+    --rvm-color-secondary-soft: #3C3954;
+    --rvm-color-info-soft: #2F3A60;
+    --rvm-color-success-soft: #343D4C;
+    --rvm-color-warning-soft: #4A3E42;
+    --rvm-color-error-soft: #493049;
+    /* No escuro o kit nao tem "menu ativo" nesta faixa — cai no primary para nao inventar cor. */
+    --rvm-color-menu-active: var(--rvm-color-primary-main);
+
+    --rvm-color-background-body: #28243D;
+    --rvm-color-background-paper: #312D4B;
+    --rvm-color-divider: #474360;
+    --rvm-color-outline: #5B5774;
+    --rvm-color-input-line: #595572;
+    --rvm-color-overlay: #2C2A43;
+    --rvm-color-snackbar-background: #FFFFFF;
+    --rvm-color-snackbar-text: #212121;
+
+    /* Texto: base #E7E3FC com os mesmos alphas do kit. Nao e chute — #E7E3FC a 0.87 sobre o
+       papel #312D4B da EXATAMENTE o #CFCBE5 medido no PNG, o que revelou a base e os alphas
+       que o bitmap tinha perdido (resolve a pendencia 2 do 09-roadmap). */
+    --rvm-color-text-primary: rgba(231, 227, 252, 0.87);
+    --rvm-color-text-secondary: rgba(231, 227, 252, 0.68);
+    --rvm-color-text-disabled: rgba(231, 227, 252, 0.38);
+
+    --rvm-color-action-hover: #383452;
+    --rvm-color-action-selected: #3F3B59;
+    --rvm-color-action-disabled: #605C79;
+    --rvm-color-action-focus: #474360;
+
+    /* Sombra no escuro precisa de mais preto para aparecer sobre a superficie escura. */
+    --rvm-shadow-1: 0 1px 3px rgba(19, 17, 32, 0.3), 0 1px 2px rgba(19, 17, 32, 0.2);
+    --rvm-shadow-2: 0 2px 6px rgba(19, 17, 32, 0.36), 0 1px 3px rgba(19, 17, 32, 0.24);
+    --rvm-shadow-3: 0 4px 12px rgba(19, 17, 32, 0.42), 0 2px 5px rgba(19, 17, 32, 0.24);
+    --rvm-shadow-4: 0 8px 20px rgba(19, 17, 32, 0.48), 0 3px 8px rgba(19, 17, 32, 0.27);
+    --rvm-shadow-5: 0 16px 32px rgba(19, 17, 32, 0.54), 0 6px 12px rgba(19, 17, 32, 0.3);
+}
+
+/* =============================================================================
+   Base e escala tipografica aplicadas. Sao as unicas regras de elemento que a
+   biblioteca impoe: o resto e por componente, em CSS isolado.
+   ============================================================================= */
+.rvm-root {
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    color: var(--rvm-color-text-primary);
+    background-color: var(--rvm-color-background-body);
+    -webkit-font-smoothing: antialiased;
+}
+
+.rvm-text-h1 { font-size: var(--rvm-text-h1-size); line-height: var(--rvm-text-h1-line); font-weight: var(--rvm-text-h1-weight); }
+.rvm-text-h2 { font-size: var(--rvm-text-h2-size); line-height: var(--rvm-text-h2-line); font-weight: var(--rvm-text-h2-weight); }
+.rvm-text-h3 { font-size: var(--rvm-text-h3-size); line-height: var(--rvm-text-h3-line); font-weight: var(--rvm-text-h3-weight); }
+.rvm-text-h4 { font-size: var(--rvm-text-h4-size); line-height: var(--rvm-text-h4-line); font-weight: var(--rvm-text-h4-weight); }
+.rvm-text-h5 { font-size: var(--rvm-text-h5-size); line-height: var(--rvm-text-h5-line); font-weight: var(--rvm-text-h5-weight); }
+.rvm-text-h6 { font-size: var(--rvm-text-h6-size); line-height: var(--rvm-text-h6-line); font-weight: var(--rvm-text-h6-weight); }
+.rvm-text-subtitle1 { font-size: var(--rvm-text-subtitle1-size); line-height: var(--rvm-text-subtitle1-line); font-weight: var(--rvm-text-subtitle1-weight); }
+.rvm-text-subtitle2 { font-size: var(--rvm-text-subtitle2-size); line-height: var(--rvm-text-subtitle2-line); font-weight: var(--rvm-text-subtitle2-weight); }
+.rvm-text-body1 { font-size: var(--rvm-text-body1-size); line-height: var(--rvm-text-body1-line); font-weight: var(--rvm-text-body1-weight); }
+.rvm-text-body2 { font-size: var(--rvm-text-body2-size); line-height: var(--rvm-text-body2-line); font-weight: var(--rvm-text-body2-weight); }
+.rvm-text-caption { font-size: var(--rvm-text-caption-size); line-height: var(--rvm-text-caption-line); font-weight: var(--rvm-text-caption-weight); }
+.rvm-text-overline { font-size: var(--rvm-text-overline-size); line-height: var(--rvm-text-overline-line); font-weight: var(--rvm-text-overline-weight); text-transform: uppercase; letter-spacing: 0.08em; }
+.rvm-text-button-lg { font-size: var(--rvm-text-button-lg-size); line-height: var(--rvm-text-button-lg-line); font-weight: var(--rvm-text-button-lg-weight); }
+.rvm-text-button-md { font-size: var(--rvm-text-button-md-size); line-height: var(--rvm-text-button-md-line); font-weight: var(--rvm-text-button-md-weight); }
+.rvm-text-button-sm { font-size: var(--rvm-text-button-sm-size); line-height: var(--rvm-text-button-sm-line); font-weight: var(--rvm-text-button-sm-weight); }
+.rvm-text-input-label { font-size: var(--rvm-text-input-label-size); line-height: var(--rvm-text-input-label-line); font-weight: var(--rvm-text-input-label-weight); }
+.rvm-text-helper { font-size: var(--rvm-text-helper-size); line-height: var(--rvm-text-helper-line); font-weight: var(--rvm-text-helper-weight); }
+.rvm-text-input { font-size: var(--rvm-text-input-size); line-height: var(--rvm-text-input-line); font-weight: var(--rvm-text-input-weight); }
+.rvm-text-avatar { font-size: var(--rvm-text-avatar-size); line-height: var(--rvm-text-avatar-line); font-weight: var(--rvm-text-avatar-weight); }
+.rvm-text-chip { font-size: var(--rvm-text-chip-size); line-height: var(--rvm-text-chip-line); font-weight: var(--rvm-text-chip-weight); }
+.rvm-text-tooltip { font-size: var(--rvm-text-tooltip-size); line-height: var(--rvm-text-tooltip-line); font-weight: var(--rvm-text-tooltip-weight); }
+.rvm-text-alert-title { font-size: var(--rvm-text-alert-title-size); line-height: var(--rvm-text-alert-title-line); font-weight: var(--rvm-text-alert-title-weight); }
+.rvm-text-table-header { font-size: var(--rvm-text-table-header-size); line-height: var(--rvm-text-table-header-line); font-weight: var(--rvm-text-table-header-weight); }
+.rvm-text-badge { font-size: var(--rvm-text-badge-size); line-height: var(--rvm-text-badge-line); font-weight: var(--rvm-text-badge-weight); }
+
+/* Foco visivel em tudo que e alcancavel por teclado — criterio de aceite, nao enfeite. */
+.rvm-root :focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --rvm-transition-fast: 0ms;
+        --rvm-transition-medium: 0ms;
+    }
+}
