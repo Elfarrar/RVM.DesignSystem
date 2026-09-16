@@ -10,9 +10,12 @@
             <NavLink class="link" href="fundamentos">Fundamentos</NavLink>
         </nav>
 
-        @* Seletor de tema no topo, visivel em toda pagina: e o jeito de conferir claro/escuro sem F5. *@
+        @* Seletor de tema no topo, visivel em toda pagina: e o jeito de conferir claro/escuro sem F5.
+           O aria-pressed vai como "true"/"false" em TEXTO: com bool, o Blazor omite o atributo
+           quando e false e emite vazio quando e true — o leitor de tela fica sem o estado.
+           ⚠️ Comentario Razor NAO pode ficar entre os atributos: compila e vira um setAttribute
+           invalido em tempo de execucao, derrubando a pagina inteira. *@
         <button type="button" class="seletor-tema rvm-text-button-sm" @onclick="TrocarTema"
-                @* Atributo aria pede "true"/"false" em texto: bool false o Blazor simplesmente OMITE. *@
                 aria-pressed="@(_tema == RvmTheme.Dark ? "true" : "false")">
             @(_tema == RvmTheme.Dark ? "Tema escuro" : "Tema claro")
         </button>

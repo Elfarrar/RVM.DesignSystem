@@ -74,6 +74,18 @@
        branco reprova AA em cinco (secondary 3.33, info 2.40, success 2.13, warning 1.78,
        error 3.28). Contraste >= 4.5:1 e criterio de aceite (RNF-02), entao so o primary —
        7.12 com branco — fica com branco; os outros usam #212121 (4.84 a 9.03). */
+    /* A cor do papel usada COMO TEXTO sobre superficie clara. Nao e capricho: o `main` de
+       info (2.09), success (1.86), warning (1.55), error (2.86) e secondary (2.90) reprova AA
+       como texto — quem escrever `color: var(--rvm-color-info-main)` num link entrega texto
+       ilegivel. Sai das proprias variantes do kit (`alt-dark`), escurecidas so onde nem elas
+       passam: success 10% e warning 15% de preto. Pior caso entre papel, corpo e selecionado. */
+    --rvm-color-primary-text: #264CC8;
+    --rvm-color-secondary-text: #4D5056;
+    --rvm-color-info-text: #0E71A3;
+    --rvm-color-success-text: #327400;
+    --rvm-color-warning-text: #8B6200;
+    --rvm-color-error-text: #A33134;
+
     --rvm-color-primary-contrast: #FFFFFF;
     --rvm-color-secondary-contrast: #212121;
     --rvm-color-info-contrast: #212121;
@@ -254,6 +266,16 @@
    ============================================================================= */
 [data-theme='dark'] {
     color-scheme: dark;
+
+    /* No escuro o `main` do primary como texto da 1.84:1 — link invisivel. Estes saem do
+       `alt-light` do kit, clareados so onde ele nao alcanca 4.5:1 (primary +50%, secondary +20%
+       e error +30% de branco). Info, success e warning ja passam com o alt-light puro. */
+    --rvm-color-primary-text: #A0B3F4;
+    --rvm-color-secondary-text: #B0B2B6;
+    --rvm-color-info-text: #32BAFF;
+    --rvm-color-success-text: #6AD01F;
+    --rvm-color-warning-text: #FFB547;
+    --rvm-color-error-text: #FF9094;
 
     --rvm-color-primary-outlined-hover: #797992;
     --rvm-color-primary-outlined-resting: #646D9F;

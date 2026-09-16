@@ -25,6 +25,20 @@
             </div>
         }
     </div>
+    <p class="rvm-text-body2 apoio">
+        Para escrever <strong>com</strong> a cor do papel — link, texto de destaque — existe a
+        variante <code>-text</code>, que muda por tema. O <code>-main</code> nao serve: no claro ele
+        reprova AA em cinco papeis, e no escuro o primary da 1.84:1.
+    </p>
+
+    <div class="lista-texto">
+        @foreach (var papel in Papeis)
+        {
+            <p class="rvm-text-body1" style="color: var(--rvm-color-@(papel)-text);">
+                Texto em @papel — <code>--rvm-color-@(papel)-text</code>
+            </p>
+        }
+    </div>
 </section>
 
 <section aria-labelledby="fundos-suaves">

@@ -23,7 +23,7 @@ body {
 }
 
 .marca {
-    color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-text);
     text-decoration: none;
 }
 
@@ -46,7 +46,7 @@ body {
 }
 
 .link.active {
-    color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-text);
     background: var(--rvm-color-action-selected);
 }
 
@@ -89,7 +89,7 @@ body {
 }
 
 a {
-    color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-text);
 }
 
 code {
