@@ -1,0 +1,36 @@
+@* Tabela de parametros do componente. Cabecalho de verdade (<th scope="col">) porque leitor de
+   tela anuncia a coluna a cada celula — sem isso a tabela vira uma lista de palavras soltas. *@
+
+<section aria-labelledby="parametros">
+    <h3 id="parametros" class="rvm-text-subtitle1">Parametros</h3>
+
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th scope="col" class="rvm-text-table-header">Nome</th>
+                <th scope="col" class="rvm-text-table-header">Tipo</th>
+                <th scope="col" class="rvm-text-table-header">Padrao</th>
+                <th scope="col" class="rvm-text-table-header">O que faz</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Parametros)
+            {
+                <tr>
+                    <td class="rvm-text-body2"><code>@p.Nome</code></td>
+                    <td class="rvm-text-body2"><code>@p.Tipo</code></td>
+                    <td class="rvm-text-body2"><code>@p.Padrao</code></td>
+                    <td class="rvm-text-body2">@p.Descricao</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+@code {
+    /// <summary>Um item por parametro publico do componente.</summary>
+    [Parameter, EditorRequired] public IReadOnlyList<Parametro> Parametros { get; set; } = [];
+
+    /// <summary>Linha da tabela de parametros.</summary>
+    public sealed record Parametro(string Nome, string Tipo, string Padrao, string Descricao);
+}

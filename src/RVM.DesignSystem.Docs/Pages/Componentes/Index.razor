@@ -1,0 +1,46 @@
+@page "/componentes"
+
+<PageTitle>Componentes — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">Componentes</h1>
+
+<p class="rvm-text-body1 apoio">
+    A onda 1 traz a fundacao: sem estes, nenhuma tela existe. Cada pagina tem o exemplo rodando, as
+    variacoes, os estados, a tabela de parametros e o recorte do kit ao lado.
+</p>
+
+<ul class="lista-componentes">
+    @foreach (var (rota, nome, resumo, pronto) in Componentes)
+    {
+        <li class="cartao-componente">
+            @if (pronto)
+            {
+                <a class="rvm-text-subtitle1" href="@rota">@nome</a>
+            }
+            else
+            {
+                <span class="rvm-text-subtitle1 apoio">@nome</span>
+            }
+            <span class="rvm-text-body2 apoio">@resumo</span>
+            @if (!pronto)
+            {
+                <span class="rvm-text-caption apoio">ainda nao construido</span>
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    private static readonly (string Rota, string Nome, string Resumo, bool Pronto)[] Componentes =
+    [
+        ("componentes/typography", "RvmTypography", "Toda a escala tipografica do kit, em 24 estilos.", true),
+        ("componentes/divider", "RvmDivider", "Linha que separa blocos, com ou sem rotulo no meio.", true),
+        ("componentes/icon", "RvmIcon", "Icones Tabler, em tres tamanhos e por papel de cor.", false),
+        ("componentes/button", "RvmButton", "Contained, outlined e text; tres tamanhos; icone e carregando.", false),
+        ("componentes/avatar", "RvmAvatar", "Imagem, iniciais ou icone, em tres tamanhos.", false),
+        ("componentes/chip", "RvmChip", "Filled e outlined, com avatar, removivel.", false),
+        ("componentes/alert", "RvmAlert", "Seis papeis, contained e outlined, fechavel.", false),
+        ("componentes/card", "RvmCard", "Basico, com cabecalho, com acoes, com midia.", false),
+        ("componentes/text-field", "RvmTextField", "Outlined e filled, com rotulo, apoio e erro.", false)
+    ];
+}

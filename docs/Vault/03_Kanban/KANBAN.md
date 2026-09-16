@@ -10,13 +10,13 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-002]] | Tokens do `06` + tema claro/escuro + pagina Fundamentos | no dev, verde de ponta a ponta; espera o screenshot aprovado |
+| [[DSGN-003]] | Onda 1: os 9 componentes do `11-catalogo-de-componentes.md` | em andamento |
 
-## A fazer — Onda 1 (tokens + 9 componentes)
+## A fazer — ondas 2 a 4
 
 | Card | O que |
 |---|---|
-| DSGN-003 | Os 9 componentes da onda 1 do `11-catalogo-de-componentes.md`, na ordem do catalogo |
+| DSGN-004 | Onda 2 — formulario e navegacao (10 componentes) |
 
 Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
 
@@ -24,4 +24,5 @@ Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
 
 | Card | O que |
 |---|---|
+| [[DSGN-002]] | Tokens e tematizacao (16/09): paleta, tipografia, espacamento, raio, elevacao, tema claro/escuro, pagina Fundamentos. Fidelidade conferida pixel a pixel contra o PNG e aprovada |
 | [[DSGN-001]] | Bootstrap (16/09): repo publico, esqueleto, 5 workflows, dev no ar, `0.1.0-alpha.*` no BaGet, monitor no Kuma. Prod espera autorizacao |
