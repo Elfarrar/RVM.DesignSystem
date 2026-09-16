@@ -33,7 +33,12 @@
                    U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-:root {
+/* O `[data-theme='light']` nao e decoracao: o RvmThemeProvider escreve o `data-theme` no PROPRIO
+   elemento, entao da para ter um provider claro DENTRO de uma arvore escura. Sem este seletor, o
+   claro-dentro-de-escuro nao voltaria ao claro — as custom properties do ancestral continuariam
+   valendo por heranca, sem erro nenhum, so com a cor errada na tela. */
+:root,
+[data-theme='light'] {
     color-scheme: light;
 
     /* ---------------------------------------------------------------------

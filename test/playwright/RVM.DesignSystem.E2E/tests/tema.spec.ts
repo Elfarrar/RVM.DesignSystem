@@ -44,6 +44,28 @@ test('o tema escolhido sobrevive ao recarregamento', async ({ page }) => {
     expect(await corDeFundo(page)).toBe('#28243D');
 });
 
+test('tema claro aninhado dentro de uma arvore escura volta aos tokens claros', async ({ page }) => {
+    await page.goto('/fundamentos');
+    const seletor = page.getByRole('button', { name: /Tema/ });
+    await seletor.click();
+    await expect(seletor).toHaveAttribute('aria-pressed', 'true');
+
+    // O provider escreve data-theme no proprio elemento, entao dois providers aninhados sao um uso
+    // legitimo ("card claro dentro de app escuro"). Sem um bloco [data-theme='light'] no CSS, o
+    // filho herdaria os tokens escuros do pai em silencio.
+    const fundoAninhado = await page.evaluate(() => {
+        const filho = document.createElement('div');
+        filho.setAttribute('data-theme', 'light');
+        document.querySelector('.rvm-root')!.appendChild(filho);
+        const valor = getComputedStyle(filho).getPropertyValue('--rvm-color-background-body').trim();
+        filho.remove();
+        return valor;
+    });
+
+    expect(fundoAninhado).toBe('#F4F5FA');
+    expect(await corDeFundo(page)).toBe('#28243D');
+});
+
 test('a fonte Inter vem do proprio pacote, nao de CDN', async ({ page }) => {
     const deTerceiros: string[] = [];
     page.on('request', r => {

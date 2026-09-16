@@ -43,6 +43,7 @@ spec, porque a promocao para producao espera o sinal verde do Rafael. Volta ao n
 | **`--rvm-color-<papel>-text`, uma variante por tema** | O `-main` NAO serve para escrever: no claro reprova AA em cinco dos seis papeis (warning 1.55:1), e no escuro o primary da **1.84:1** — link ilegivel. Os valores saem das variantes do proprio kit (`alt-dark` no claro, `alt-light` no escuro), ajustadas so onde nem elas alcancam 4.5:1 |
 | **Texto primario do tema claro = `#676C74` medido, nao `#544F5A` do modelo** | Amostrando o PNG: o secundario e o desabilitado batem com `#3A3541` a 0.68 e 0.38 **exatamente**, mas o primario do kit **nao segue o proprio modelo**. O pixel manda, porque a fidelidade e conferida contra o PNG — e ele passa AA (5.28:1) |
 | **`data-theme` no elemento do provider, nao so no `<html>`** | Faz o tema certo sair na **primeira renderizacao, sem JS** — a regra dos dois modos de hospedagem. O JS so persiste e pinta o `<html>` |
+| **O CSS tem bloco `[data-theme='light']`, alem do `:root`** | Como o `data-theme` vai no elemento do provider, provider claro DENTRO de arvore escura e uso legitimo. So com `:root` o filho herdaria os tokens escuros **em silencio** — sem erro, so com a cor errada. Achado do reviewer independente; coberto por teste E2E |
 | **Tokens moram em `wwwroot/`, nao em `Tokens/`** | RCL so serve o que esta em `wwwroot/`, e nao ha passo de build para copiar; duas copias sairiam de sincronia. `Tokens/LEIA-ME.md` explica |
 
 ## Armadilhas que esta task pagou
@@ -70,6 +71,10 @@ spec, porque a promocao para producao espera o sinal verde do Rafael. Volta ao n
 - [ ] ⏳ Elevacoes: as 5 sao **aproximacao visual**; o kit mostra 24 quadrados sem escrever valores
 - [ ] Guarda automatica contra hex literal em CSS de componente — entra junto com o primeiro
       componente (`DSGN-003`), quando houver `Components/**/*.razor.css` para varrer
+- [ ] ⚠️ **Para a `DSGN-003` em diante:** o contraste do texto secundario e do desabilitado foi
+      calibrado contra `paper` e `body`. Componente que puser texto secundario sobre fundo `-soft`
+      ou `-outlined-*` **precisa medir de novo** — sao tokens com alpha, entao o valor real depende
+      do que esta por baixo. Achado do reviewer independente.
 
 ## Verificado
 
