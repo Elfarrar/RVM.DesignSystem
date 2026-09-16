@@ -1,0 +1,27 @@
+# Build
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+*.user
+.vs/
+.idea/
+
+# Testes
+TestResults/
+coverage/
+*.coverage
+*.trx
+
+# Playwright
+node_modules/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Segredos
+.env
+.env.*
+docs/ACESSOS.md
+*.dump
