@@ -36,7 +36,7 @@ spec, porque a promocao para producao espera o sinal verde do Rafael. Volta ao n
 | Decisao | Motivo |
 |---|---|
 | **Texto do tema escuro = `#E7E3FC` com alpha 0.87 / 0.68 / 0.38** | ⭐ **Resolve a pendencia 2 do `09-roadmap`.** Nao e chute: `#E7E3FC` a 0.87 sobre o papel `#312D4B` da **exatamente** o `#CFCBE5` medido no PNG. O kit e Material (Materio), e sao os alphas dele — o bitmap tinha perdido so a opacidade |
-| **Texto do tema claro = `#3A3541` com alpha 0.87 / 0.72 / 0.38** | Mesma estrutura: 0.68 e 0.38 sobre branco reproduzem **exatamente** o secundario e o desabilitado medidos. O "primario" que estava medido como `#676C74` era swatch trocado — o certo e `#544F5A` (0.87) |
+| **Texto do tema claro: secundario por alpha, primario e desabilitado medidos** | O secundario (`#3A3541` a 0.68) e o desabilitado (0.38) reproduzem **exatamente** os swatches medidos. O primario do kit **nao** segue esse modelo — ver a linha abaixo |
 | **Secundario claro subiu de 0.68 para 0.72** | 0.68 da 4.46:1 no papel e 4.32:1 no corpo: reprova o portao de 4.5:1. 0.72 da 5.01 e 4.79 — a **menor** mudanca que passa nos dois fundos |
 | **`-contrast` e branco so no primary; os outros cinco usam `#212121`** | O kit manda branco nos seis, mas branco reprova AA em cinco (info 2.40, success 2.13, warning 1.78, error 3.28, secondary 3.33). Contraste e criterio de aceite (RNF-02) |
 | **Fundos suaves mantidos ROXOS no tema claro** | ⏳ A spec reserva esta escolha ao Rafael (pendencia 3). Default = **fidelidade ao kit**, porque o criterio de aceite e o screenshot lado a lado com o PNG. Harmonizar com o azul e mudar uma linha de `--rvm-color-primary-soft` |
