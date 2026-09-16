@@ -43,7 +43,10 @@
               Codigo="@CodigoCor">
     <RvmTypography Color="RvmTextColor.Primary">Texto primario</RvmTypography>
     <RvmTypography Color="RvmTextColor.Secondary">Texto secundario</RvmTypography>
-    <RvmTypography Color="RvmTextColor.Disabled">Texto desabilitado</RvmTypography>
+    @* Esta amostra reprova contraste POR DEFINICAO — e o token de texto desabilitado. A marca
+       `data-rvm-demo` e o que o E2E exclui do exame do axe; WCAG 1.4.3 isenta componente inativo. *@
+    <RvmTypography Color="RvmTextColor.Disabled" aria-disabled="true"
+                   data-rvm-demo="texto-desabilitado">Texto desabilitado</RvmTypography>
 </BlocoExemplo>
 
 <TabelaParametros Parametros="@Parametros" />
