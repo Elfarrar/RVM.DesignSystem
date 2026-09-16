@@ -333,3 +333,17 @@ code {
     gap: var(--rvm-space-1);
     text-align: center;
 }
+
+.grade-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: var(--rvm-space-4);
+}
+
+.grade-cards .bloco-exemplo {
+    margin-block: 0;
+}
+
+.grade-cards .exemplo-vivo {
+    background: var(--rvm-color-background-body);
+}

@@ -1,0 +1,92 @@
+@page "/componentes/card"
+
+<PageTitle>RvmCard — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmCard</h1>
+
+<p class="rvm-text-body1 apoio">
+    A superficie que agrupa um assunto. Midia, cabecalho, conteudo e acoes sao todos opcionais.
+    Raio de 6 px e recuo de 20 px, <strong>medidos no kit</strong> com regua sobre o recorte ampliado.
+</p>
+
+<div class="grade-cards">
+    <BlocoExemplo Titulo="Basico"
+                  Descricao="So a superficie com o conteudo."
+                  Codigo="@CodigoBasico">
+        <RvmCard>
+            Cancun esta de volta, melhor do que nunca. Mais de cem resorts reabriram, e o ministro do
+            turismo preve tantos visitantes quanto antes.
+        </RvmCard>
+    </BlocoExemplo>
+
+    <BlocoExemplo Titulo="Com cabecalho e acoes"
+                  Descricao="O titulo sai como h3 por padrao; ajuste com TitleElement para seguir a ordem de cabecalhos da pagina."
+                  Codigo="@CodigoCabecalho">
+        <RvmCard Title="Influenciando o influenciador" Subheader="Atualizado ontem" TitleElement="RvmTextElement.H4">
+            <ChildContent>
+                Cancun esta de volta, melhor do que nunca. Mais de cem resorts reabriram.
+            </ChildContent>
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small">Ler mais</RvmButton>
+            </Actions>
+        </RvmCard>
+    </BlocoExemplo>
+
+    <BlocoExemplo Titulo="Com midia"
+                  Descricao="Imagem no topo. Sem MediaAlt, ela e tratada como decorativa."
+                  Codigo="@CodigoMidia">
+        <RvmCard MediaSrc="@MidiaDeExemplo" MediaHeight="140"
+                 Title="Colheita da safra 2026" TitleElement="RvmTextElement.H4">
+            <ChildContent>Talhao 12 fechou com 58 sacas por hectare.</ChildContent>
+            <Actions>
+                <RvmButton Size="RvmSize.Small" StartIcon="RvmIconName.Download">Relatorio</RvmButton>
+            </Actions>
+        </RvmCard>
+    </BlocoExemplo>
+</div>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/card.jpg"
+              Arquivo="referencia-neatlab/Basic Card.png (recorte)"
+              Descricao="Os cards basicos do kit: com midia, com cabecalho, com acoes."
+              Alt="Recorte do kit NEATLAB mostrando cards com imagem no topo, titulo, texto e botoes" />
+
+@code {
+    // Midia desenhada inline, para o exemplo nao depender de imagem externa nem de rede.
+    private const string MidiaDeExemplo =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 140'><rect width='400' height='140' fill='%2356CA00'/><circle cx='320' cy='40' r='22' fill='%23FFB400'/><path d='M0 110 Q100 70 200 105 T400 95 V140 H0Z' fill='%23378100'/></svg>";
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Title", "string?", "—", "Titulo do cabecalho."),
+        new("Subheader", "string?", "—", "Linha de apoio abaixo do titulo."),
+        new("TitleElement", "RvmTextElement", "H3", "Elemento do titulo, para seguir a ordem de cabecalhos da pagina."),
+        new("HeaderAction", "RenderFragment?", "—", "Algo no canto direito do cabecalho."),
+        new("MediaSrc", "string?", "—", "Imagem no topo."),
+        new("MediaAlt", "string?", "—", "Alt da imagem. Vazio quando ela e decorativa."),
+        new("MediaHeight", "int", "200", "Altura da imagem em pixels."),
+        new("ChildContent", "RenderFragment?", "—", "O conteudo."),
+        new("Actions", "RenderFragment?", "—", "Acoes no rodape."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoBasico = """
+        <RvmCard>Cancun esta de volta, melhor do que nunca.</RvmCard>
+        """;
+
+    private const string CodigoCabecalho = """
+        <RvmCard Title="Influenciando o influenciador" Subheader="Atualizado ontem">
+            <ChildContent>Cancun esta de volta, melhor do que nunca.</ChildContent>
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small">Ler mais</RvmButton>
+            </Actions>
+        </RvmCard>
+        """;
+
+    private const string CodigoMidia = """
+        <RvmCard MediaSrc="colheita.jpg" MediaHeight="140" Title="Colheita da safra 2026">
+            <ChildContent>Talhao 12 fechou com 58 sacas por hectare.</ChildContent>
+        </RvmCard>
+        """;
+}
