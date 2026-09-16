@@ -128,14 +128,17 @@
     --rvm-color-snackbar-background: #212121;
     --rvm-color-snackbar-text: #FFFFFF;
 
-    /* --- Texto: base #3A3541 com alpha, a estrutura do kit ---
-       0.87 primario, 0.72 secundario, 0.38 desabilitado.
-       O secundario do kit e 0.68, que da 4.46:1 no papel e 4.32:1 no corpo — reprova AA por
-       pouco. Subiu para 0.72 (5.01 e 4.79), a menor mudanca que passa nos dois fundos.
-       O desabilitado fica em 2.10: WCAG 1.4.3 isenta controle inativo. */
-    --rvm-color-text-primary: rgba(58, 53, 65, 0.87);
+    /* --- Texto ---
+       O primario e o valor MEDIDO no swatch do kit. ⚠️ Ele nao segue o modelo base+alpha do
+       proprio kit (`#3A3541` a 0.87 daria `#544F5A`): o pixel manda, porque a fidelidade e
+       conferida contra o PNG. Passa AA com folga (5.28:1 no papel, 4.85:1 no corpo).
+       O secundario E alpha do `#3A3541` — 0.68 no kit reproduz o `#79767E` medido exatamente,
+       mas da 4.46:1 e reprova o portao; subiu para 0.72 (5.01 e 4.79), a menor correcao que
+       passa nos dois fundos. O desabilitado e o medido; fica em 2.10:1, e WCAG 1.4.3 isenta
+       componente inativo. */
+    --rvm-color-text-primary: #676C74;
     --rvm-color-text-secondary: rgba(58, 53, 65, 0.72);
-    --rvm-color-text-disabled: rgba(58, 53, 65, 0.38);
+    --rvm-color-text-disabled: #B4B2B7;
 
     /* --- Acoes --- */
     --rvm-color-action-hover: #F7F7F8;
@@ -308,9 +311,10 @@
     --rvm-color-snackbar-background: #FFFFFF;
     --rvm-color-snackbar-text: #212121;
 
-    /* Texto: base #E7E3FC com os mesmos alphas do kit. Nao e chute — #E7E3FC a 0.87 sobre o
-       papel #312D4B da EXATAMENTE o #CFCBE5 medido no PNG, o que revelou a base e os alphas
-       que o bitmap tinha perdido (resolve a pendencia 2 do 09-roadmap). */
+    /* Texto: base #E7E3FC com os alphas do kit. Aqui o PNG nao ajuda — os TRES swatches do tema
+       escuro sao o mesmo `#CFCBE5` solido, porque o bitmap perdeu a opacidade. O que fecha a
+       conta: `#E7E3FC` a 0.87 sobre o papel `#312D4B` da EXATAMENTE `#CFCBE5`. Com a base
+       identificada, 0.68 e 0.38 vem do mesmo modelo (resolve a pendencia 2 do 09-roadmap). */
     --rvm-color-text-primary: rgba(231, 227, 252, 0.87);
     --rvm-color-text-secondary: rgba(231, 227, 252, 0.68);
     --rvm-color-text-disabled: rgba(231, 227, 252, 0.38);

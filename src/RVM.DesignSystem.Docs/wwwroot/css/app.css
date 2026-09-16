@@ -126,6 +126,13 @@ code {
 
 .amostra.borda {
     border: 1px solid var(--rvm-color-divider);
+    background: var(--rvm-color-background-paper);
+}
+
+.linha-amostra {
+    height: 3px;
+    margin-top: auto;
+    border-radius: var(--rvm-radius-pill);
 }
 
 .lista-texto,

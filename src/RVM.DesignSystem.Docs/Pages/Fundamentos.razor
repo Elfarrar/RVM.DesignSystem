@@ -72,6 +72,19 @@
         }
     </div>
 
+    @* Divisor e contorno sao LINHA, nao fundo: pintar um card com eles e escrever em cima da um
+       par de contraste que nao existe no uso real (o texto primario da 4.25:1 sobre o divisor). *@
+    <div class="grade">
+        @foreach (var (token, rotulo) in Linhas)
+        {
+            <div class="amostra borda">
+                <span class="rvm-text-subtitle2">@rotulo</span>
+                <span class="rvm-text-caption apoio">--rvm-color-@token</span>
+                <div class="linha-amostra" style="background: var(--rvm-color-@token);"></div>
+            </div>
+        }
+    </div>
+
     <div class="lista-texto">
         <p class="rvm-text-body1" style="color: var(--rvm-color-text-primary);">
             Texto primario — <code>--rvm-color-text-primary</code>
@@ -152,10 +165,15 @@
     [
         ("background-body", "Fundo do corpo"),
         ("background-paper", "Papel / card"),
-        ("divider", "Divisor"),
-        ("outline", "Contorno"),
         ("action-hover", "Acao — hover"),
         ("action-selected", "Acao — selecionado")
+    ];
+
+    private static readonly (string Token, string Rotulo)[] Linhas =
+    [
+        ("divider", "Divisor"),
+        ("outline", "Contorno"),
+        ("input-line", "Linha de input")
     ];
 
     private static readonly (string Classe, string Rotulo)[] Estilos =
