@@ -3,6 +3,10 @@ name: E2E
 # Playwright + axe sobre o SITE PUBLICADO (nao ha servidor local para subir). Por isso mora em
 # test/playwright/: o padrao do ecossistema pula caminhos com "playwright" ao rodar test/**/*.csproj.
 
+# ⚠️ `workflow_run` e `schedule` so disparam a partir do arquivo que esta no branch PADRAO (master).
+# Enquanto os workflows nao chegarem la, estes dois gatilhos ficam inertes e o E2E depois do deploy
+# de dev roda por `gh workflow run e2e.yml --ref dev`. Nao e configuracao errada — e regra do GitHub.
+
 on:
   workflow_run:
     workflows: ['Deploy dev']

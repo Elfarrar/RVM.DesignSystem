@@ -10,7 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-001]] | Bootstrap: repo publico, esqueleto, 5 workflows, borda de dev | em andamento |
+| [[DSGN-001]] | Bootstrap: repo publico, esqueleto, 5 workflows, borda de dev | dev no ar; falta monitor no Kuma e a promocao para prod |
 
 ## A fazer — Onda 1 (tokens + 9 componentes)
 

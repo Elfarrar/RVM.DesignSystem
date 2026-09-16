@@ -55,6 +55,14 @@ jobs:
           # configuracao do repositorio (gh api -X PUT repos/OWNER/REPO/pages -f cname=...), e so pode
           # ser registrado DEPOIS que existe um deployment. Entao o primeiro run deste workflow falha
           # aqui por construcao, com o site publicado e funcionando. Nao e regressao.
+          # ⚠️ Procurar so a string nao basta: em 16/09 um bloco `types` no vhost fez o index.html sair
+          # como application/octet-stream — o navegador BAIXAVA a pagina, e este mesmo curl devolvia
+          # 200 com a string certa. Por isso o content-type entra na verificacao.
+          tipo=$(curl -fsS -o /dev/null --max-time 20 -w '%{content_type}' https://design.rvmit.com.br/ || true)
+          case "$tipo" in
+            text/html*) ;;
+            *) echo "::error::A pagina inicial saiu como '$tipo' em vez de text/html — o navegador vai baixar em vez de abrir."; exit 1 ;;
+          esac
           for tentativa in 1 2 3 4 5 6; do
             corpo=$(curl -fsS --max-time 20 https://design.rvmit.com.br/ || true)
             if echo "$corpo" | grep -q 'RVM Design System'; then
