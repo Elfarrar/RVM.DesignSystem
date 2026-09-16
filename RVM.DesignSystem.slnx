@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RVM.DesignSystem/RVM.DesignSystem.csproj" />
+    <Project Path="src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/RVM.DesignSystem.Tests/RVM.DesignSystem.Tests.csproj" />
+  </Folder>
+</Solution>

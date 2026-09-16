@@ -1,0 +1,86 @@
+name: CI
+
+# ⛔ Workflow PROPRIO, em ubuntu-latest, e nao um caller do Elfarrar/RVM.Actions@v1 (ADR-002).
+# Repositorio PUBLICO nao consegue chamar reusable workflow de repositorio PRIVADO: o run morre em
+# 0 s, com zero jobs e sem anotacao nenhuma. Nao "padronizar" isto de volta para caller.
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restaurar
+        run: dotnet restore RVM.DesignSystem.slnx
+
+      - name: Compilar em Release (zero warning — portao 3 do CLAUDE.md)
+        run: dotnet build RVM.DesignSystem.slnx -c Release --no-restore
+
+      - name: Testar com cobertura
+        run: |
+          dotnet test RVM.DesignSystem.slnx -c Release --no-build \
+            --settings coverlet.runsettings \
+            --results-directory ./coverage \
+            --logger "console;verbosity=normal"
+
+      - name: Portao de cobertura (>= 80% da biblioteca)
+        run: |
+          set -e
+          arquivo=$(find ./coverage -name 'coverage.cobertura.xml' | head -1)
+          if [ -z "$arquivo" ]; then
+            echo "::error::Nenhum relatorio de cobertura foi gerado."
+            exit 1
+          fi
+          validas=$(grep -o 'lines-valid="[0-9]*"' "$arquivo" | head -1 | grep -o '[0-9]*')
+          taxa=$(grep -o 'line-rate="[0-9.]*"' "$arquivo" | head -1 | sed 's/.*"\(.*\)"/\1/')
+          if [ "${validas:-0}" -eq 0 ]; then
+            # A biblioteca ainda nao tem linha executavel: o esqueleto da DSGN-001 e so empacotamento.
+            # A partir da DSGN-002 (tokens + componentes) este caminho deixa de acontecer sozinho.
+            echo "::warning::Biblioteca sem linha executavel — portao de 80% nao se aplica ainda."
+            exit 0
+          fi
+          pct=$(awk -v t="$taxa" 'BEGIN { printf "%.1f", t * 100 }')
+          echo "Cobertura da biblioteca: ${pct}% (${validas} linhas)"
+          awk -v p="$pct" 'BEGIN { exit (p >= 80) ? 0 : 1 }' || {
+            echo "::error::Cobertura ${pct}% abaixo do minimo de 80%."
+            exit 1
+          }
+
+      - name: Publicar o site
+        run: dotnet publish src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj -c Release -o ./publicado
+
+      - name: Guarda das tres armadilhas de WASM em host estatico
+        run: |
+          set -e
+          raiz=./publicado/wwwroot
+          # 1. sem .nojekyll o Pages ignora a pasta _framework (comeca com _) e o app nao carrega
+          [ -f "$raiz/.nojekyll" ] || { echo "::error::Faltou o .nojekyll no publish."; exit 1; }
+          # 2. sem 404.html igual ao index.html, recarregar rota profunda da 404 de verdade
+          [ -f "$raiz/404.html" ] || { echo "::error::Faltou o 404.html no publish."; exit 1; }
+          cmp -s "$raiz/index.html" "$raiz/404.html" || { echo "::error::404.html nao e copia do index.html."; exit 1; }
+          # 3. base href errado quebra todo asset relativo
+          grep -q '<base href="/"' "$raiz/index.html" || { echo "::error::base href diferente de \"/\"."; exit 1; }
+          # A verificacao de deploy procura esta string; se ela sumir do HTML inicial, o monitor cega
+          grep -q 'RVM Design System' "$raiz/index.html" || { echo "::error::A string 'RVM Design System' sumiu do index.html."; exit 1; }
+          echo "As tres armadilhas estao cobertas."
+
+      - name: Guardar o site publicado
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: ./publicado/wwwroot
+          retention-days: 5

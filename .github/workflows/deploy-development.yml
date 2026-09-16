@@ -1,0 +1,64 @@
+name: Deploy dev
+
+# Dev = site estatico servido pelo rvmtech-nginx da Rivendell, publicado por rsync.
+# Nao ha container, banco nem /health: a verificacao e por CONTEUDO (ver o passo final).
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: https://design.dev.rvmtech.com.br
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publicar o site
+        run: dotnet publish src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj -c Release -o ./publicado
+
+      - name: Preparar a chave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEV_VPS_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          ssh-keyscan -p ${{ secrets.DEV_VPS_PORT }} -H ${{ secrets.DEV_VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Enviar por rsync
+        env:
+          DESTINO: ${{ secrets.DEV_DEPLOY_PATH }}
+        run: |
+          set -e
+          # A barra final em ./publicado/wwwroot/ manda o CONTEUDO, nao a pasta.
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy -p ${{ secrets.DEV_VPS_PORT }}" \
+            ./publicado/wwwroot/ \
+            ${{ secrets.DEV_VPS_USER }}@${{ secrets.DEV_VPS_HOST }}:"$DESTINO/"
+
+      - name: Verificar por CONTEUDO (status 200 aqui nao prova nada)
+        run: |
+          set -e
+          # O try_files do Nginx devolve a pagina inicial para qualquer caminho: um build quebrado
+          # responde 200 alegremente. Por isso procuramos a string, e nao o codigo HTTP.
+          for tentativa in 1 2 3 4 5; do
+            corpo=$(curl -fsS --max-time 20 https://design.dev.rvmtech.com.br/ || true)
+            if echo "$corpo" | grep -q 'RVM Design System'; then
+              echo "Dev no ar com o conteudo esperado."
+              exit 0
+            fi
+            echo "Tentativa $tentativa: string ainda nao encontrada."
+            sleep 10
+          done
+          echo "::error::O site de dev respondeu sem a string 'RVM Design System'."
+          exit 1

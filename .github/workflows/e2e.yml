@@ -1,0 +1,80 @@
+name: E2E
+
+# Playwright + axe sobre o SITE PUBLICADO (nao ha servidor local para subir). Por isso mora em
+# test/playwright/: o padrao do ecossistema pula caminhos com "playwright" ao rodar test/**/*.csproj.
+
+on:
+  workflow_run:
+    workflows: ['Deploy dev']
+    types: [completed]
+  schedule:
+    - cron: '0 6 * * *'
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Guarda do padrao § 12: spec ou config alterado no PR nao pode reintroduzir o que deixou o E2E
+  # do ERPAgro em 5-11 min. Roda so em PR, onde da para barrar antes de entrar.
+  guarda:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Barrar espera por relogio e workers 1
+        run: |
+          set -e
+          base="${{ github.event.pull_request.base.sha }}"
+          alterados=$(git diff --name-only "$base" HEAD -- 'test/playwright/**' || true)
+          [ -n "$alterados" ] || { echo "Nada de E2E neste PR."; exit 0; }
+          echo "Arquivos de E2E no PR:"; echo "$alterados"
+          falhou=0
+          for arquivo in $alterados; do
+            [ -f "$arquivo" ] || continue
+            if grep -nE 'waitForTimeout|networkidle' "$arquivo"; then
+              echo "::error file=$arquivo::Espera por relogio (waitForTimeout/networkidle) e proibida — sincronize por SINAL."
+              falhou=1
+            fi
+            if grep -nE 'workers:\s*1|video:\s*.(on|retain)' "$arquivo"; then
+              echo "::error file=$arquivo::workers 1 ou video ligado contrariam o padrao-rvm § 12."
+              falhou=1
+            fi
+          done
+          exit $falhou
+
+  testar:
+    # Em PR so roda a guarda: nao ha site novo publicado para testar.
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://design.dev.rvmtech.com.br
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Instalar dependencias
+        working-directory: test/playwright/RVM.DesignSystem.E2E
+        run: npm ci
+
+      - name: Instalar o navegador
+        working-directory: test/playwright/RVM.DesignSystem.E2E
+        run: npx playwright install --with-deps chromium
+
+      - name: Rodar o E2E
+        working-directory: test/playwright/RVM.DesignSystem.E2E
+        run: npx playwright test ${{ github.event_name == 'workflow_run' && '--grep @smoke' || '' }}
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: test/playwright/RVM.DesignSystem.E2E/playwright-report
+          retention-days: 7
