@@ -75,9 +75,13 @@ for (const tema of ['claro', 'escuro'] as const) {
 
         const resultado = await new AxeBuilder({ page })
             .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+            // A amostra do token de texto desabilitado reprova contraste por definicao — e disso
+            // que ela trata. WCAG 1.4.3 isenta componente inativo. Exclusao de UM no, nomeado.
+            .exclude('[data-rvm-demo="texto-desabilitado"]')
             .analyze();
 
         const serias = resultado.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
-        expect(serias.map(v => `${v.id}: ${v.help}`)).toEqual([]);
+        // Com o alvo junto: falha de contraste sem dizer ONDE custa outra rodada inteira de deploy.
+        expect(serias.flatMap(v => v.nodes.map(n => `${v.id} em ${n.target.join(' ')}`))).toEqual([]);
     });
 }

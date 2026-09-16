@@ -12,7 +12,8 @@
 
         @* Seletor de tema no topo, visivel em toda pagina: e o jeito de conferir claro/escuro sem F5. *@
         <button type="button" class="seletor-tema rvm-text-button-sm" @onclick="TrocarTema"
-                aria-pressed="@(_tema == RvmTheme.Dark)">
+                @* Atributo aria pede "true"/"false" em texto: bool false o Blazor simplesmente OMITE. *@
+                aria-pressed="@(_tema == RvmTheme.Dark ? "true" : "false")">
             @(_tema == RvmTheme.Dark ? "Tema escuro" : "Tema claro")
         </button>
     </header>
