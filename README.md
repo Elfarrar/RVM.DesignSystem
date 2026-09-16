@@ -14,8 +14,9 @@ pacote NuGet, com site público de documentação construído com a própria bib
 
 ## Estado
 
-**Spec pronta, código zero** (16/09/2026). Para construir: abrir uma sessão nesta pasta e rodar a
-skill `bootstrap-projeto`.
+**Esqueleto no ar, catálogo vazio** (16/09/2026). O site de desenvolvimento responde em
+`design.dev.rvmtech.com.br` e o pacote `0.1.0-alpha.*` sai a cada push em `dev`. Os componentes
+começam na `DSGN-002`, depois da camada de tokens.
 
 ## Documentação
 
