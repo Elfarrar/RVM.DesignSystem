@@ -74,6 +74,18 @@
        branco reprova AA em cinco (secondary 3.33, info 2.40, success 2.13, warning 1.78,
        error 3.28). Contraste >= 4.5:1 e criterio de aceite (RNF-02), entao so o primary —
        7.12 com branco — fica com branco; os outros usam #212121 (4.84 a 9.03). */
+    /* A cor do papel usada COMO TEXTO sobre superficie clara. Nao e capricho: o `main` de
+       info (2.09), success (1.86), warning (1.55), error (2.86) e secondary (2.90) reprova AA
+       como texto — quem escrever `color: var(--rvm-color-info-main)` num link entrega texto
+       ilegivel. Sai das proprias variantes do kit (`alt-dark`), escurecidas so onde nem elas
+       passam: success 10% e warning 15% de preto. Pior caso entre papel, corpo e selecionado. */
+    --rvm-color-primary-text: #264CC8;
+    --rvm-color-secondary-text: #4D5056;
+    --rvm-color-info-text: #0E71A3;
+    --rvm-color-success-text: #327400;
+    --rvm-color-warning-text: #8B6200;
+    --rvm-color-error-text: #A33134;
+
     --rvm-color-primary-contrast: #FFFFFF;
     --rvm-color-secondary-contrast: #212121;
     --rvm-color-info-contrast: #212121;
@@ -116,14 +128,17 @@
     --rvm-color-snackbar-background: #212121;
     --rvm-color-snackbar-text: #FFFFFF;
 
-    /* --- Texto: base #3A3541 com alpha, a estrutura do kit ---
-       0.87 primario, 0.72 secundario, 0.38 desabilitado.
-       O secundario do kit e 0.68, que da 4.46:1 no papel e 4.32:1 no corpo — reprova AA por
-       pouco. Subiu para 0.72 (5.01 e 4.79), a menor mudanca que passa nos dois fundos.
-       O desabilitado fica em 2.10: WCAG 1.4.3 isenta controle inativo. */
-    --rvm-color-text-primary: rgba(58, 53, 65, 0.87);
+    /* --- Texto ---
+       O primario e o valor MEDIDO no swatch do kit. ⚠️ Ele nao segue o modelo base+alpha do
+       proprio kit (`#3A3541` a 0.87 daria `#544F5A`): o pixel manda, porque a fidelidade e
+       conferida contra o PNG. Passa AA com folga (5.28:1 no papel, 4.85:1 no corpo).
+       O secundario E alpha do `#3A3541` — 0.68 no kit reproduz o `#79767E` medido exatamente,
+       mas da 4.46:1 e reprova o portao; subiu para 0.72 (5.01 e 4.79), a menor correcao que
+       passa nos dois fundos. O desabilitado e o medido; fica em 2.10:1, e WCAG 1.4.3 isenta
+       componente inativo. */
+    --rvm-color-text-primary: #676C74;
     --rvm-color-text-secondary: rgba(58, 53, 65, 0.72);
-    --rvm-color-text-disabled: rgba(58, 53, 65, 0.38);
+    --rvm-color-text-disabled: #B4B2B7;
 
     /* --- Acoes --- */
     --rvm-color-action-hover: #F7F7F8;
@@ -255,6 +270,16 @@
 [data-theme='dark'] {
     color-scheme: dark;
 
+    /* No escuro o `main` do primary como texto da 1.84:1 — link invisivel. Estes saem do
+       `alt-light` do kit, clareados so onde ele nao alcanca 4.5:1 (primary +50%, secondary +20%
+       e error +30% de branco). Info, success e warning ja passam com o alt-light puro. */
+    --rvm-color-primary-text: #A0B3F4;
+    --rvm-color-secondary-text: #B0B2B6;
+    --rvm-color-info-text: #32BAFF;
+    --rvm-color-success-text: #6AD01F;
+    --rvm-color-warning-text: #FFB547;
+    --rvm-color-error-text: #FF9094;
+
     --rvm-color-primary-outlined-hover: #797992;
     --rvm-color-primary-outlined-resting: #646D9F;
     --rvm-color-secondary-outlined-hover: #383451;
@@ -286,9 +311,10 @@
     --rvm-color-snackbar-background: #FFFFFF;
     --rvm-color-snackbar-text: #212121;
 
-    /* Texto: base #E7E3FC com os mesmos alphas do kit. Nao e chute — #E7E3FC a 0.87 sobre o
-       papel #312D4B da EXATAMENTE o #CFCBE5 medido no PNG, o que revelou a base e os alphas
-       que o bitmap tinha perdido (resolve a pendencia 2 do 09-roadmap). */
+    /* Texto: base #E7E3FC com os alphas do kit. Aqui o PNG nao ajuda — os TRES swatches do tema
+       escuro sao o mesmo `#CFCBE5` solido, porque o bitmap perdeu a opacidade. O que fecha a
+       conta: `#E7E3FC` a 0.87 sobre o papel `#312D4B` da EXATAMENTE `#CFCBE5`. Com a base
+       identificada, 0.68 e 0.38 vem do mesmo modelo (resolve a pendencia 2 do 09-roadmap). */
     --rvm-color-text-primary: rgba(231, 227, 252, 0.87);
     --rvm-color-text-secondary: rgba(231, 227, 252, 0.68);
     --rvm-color-text-disabled: rgba(231, 227, 252, 0.38);
