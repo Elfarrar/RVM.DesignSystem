@@ -37,11 +37,31 @@ componentes ninguem revisa, e o primeiro erro de padrao se repetiria nove vezes.
   renderizava `name`, e o form em SSR estatico ficou sem binding do POST
 - CSS isolado (`.razor.css`) consumindo **so** custom properties
 
-## Divida herdada da DSGN-002, que fecha aqui
+## Andamento
 
-- [ ] Guarda automatica contra **hex literal** em `Components/**/*.razor.css`
-- [ ] Devolver o `<link>` do bundle de CSS isolado ao `index.html` do site (saiu na `DSGN-002`
-      porque nao existia componente com `.razor.css`; **sem ele nenhum componente tem estilo**)
+- [x] **Fatia 1** (PR #10, #11): `RvmTypography`, `RvmDivider`, enums compartilhados, paginas de
+      componente (exemplo + codigo + parametros + recorte do kit)
+- [x] **Fatia 2**: `RvmIcon` (42 icones Tabler curados) e `RvmButton`
+- [ ] Fatia 3: `RvmAvatar`, `RvmChip`, `RvmAlert`, `RvmCard`
+- [ ] Fatia 4: `RvmTextField`
+
+## Decisoes e medicoes desta task
+
+| O que | Por que |
+|---|---|
+| **`RvmTypography` em C# puro, sem `.razor.css`** | A tag e dinamica e o Razor nao tem sintaxe para isso. O estilo dele E a escala tipografica, que ja mora nos tokens como `rvm-text-*` |
+| **`Border.png` do catalogo NAO e pagina de divisor** | E uma tela de dashboard. A referencia do `RvmDivider` e o divisor dentro dela; corrigido no `11-catalogo` |
+| **Icones: 42 Tabler curados, gerados para enum + catalogo** | Enum: nome errado nao compila. O conjunto e o que os 35 componentes precisam, nao o Tabler inteiro. Teste cobra desenho para todo nome do enum |
+| **Botao medido no `Button.png`: 30 / 38 / 42 px, raio 6, recuo 14 / 22 / 26, caixa alta** | Renderizado e conferido no navegador: bate nos tres tamanhos |
+| **Borda do outlined = `-outlined-resting`, nao `-main`** | Medido no kit: primary `#626B9C` contra o token `#646D9F`, secondary `#5C5B6E` contra `#5E5D6F`. Com `-main` ficava saturada demais |
+| **Anel de foco = `-text`, nao `-main`** | ⚠️ O axe nao mede isto. No tema escuro o `primary-main` dava **1.84:1** sobre o papel — o anel sumia para quem navega por teclado (WCAG 2.4.11 pede 3:1). Com `-text`: 7.12 no claro, 6.38 no escuro. Virou teste E2E |
+| **Botao `Type` padrao = `Button`, nao `submit`** | O padrao do HTML e `submit`: um "cancelar" dentro de formulario enviaria o form |
+| **Clique ignorado em `Disabled` e `Loading` tambem no C#** | O `disabled` do elemento barra o navegador, mas nao chamada programatica — clique que escapa enquanto carrega vira requisicao duplicada |
+
+## Divida herdada da DSGN-002
+
+- [x] Guarda automatica contra **hex literal** em `Components/**/*.razor.css` — teste
+- [x] `<link>` do bundle de CSS isolado de volta ao `index.html`
 - [ ] ⚠️ Texto secundario e desabilitado foram calibrados contra `paper` e `body`. Componente que
       puser texto secundario sobre `-soft` ou `-outlined-*` **mede de novo** — sao tokens com alpha
 

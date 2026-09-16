@@ -1,0 +1,148 @@
+/* CSS isolado do RvmButton. So custom properties — hex literal aqui quebra o tema escuro.
+   Altura, raio e recuo lateral foram MEDIDOS no `referencia-neatlab/Button.png`:
+   30 / 38 / 42 px de altura, raio ~6 px, recuo lateral ~14 / 22 / 26 px. */
+
+.botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-2);
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-sm);
+    font-family: var(--rvm-font-family);
+    cursor: pointer;
+    /* O kit escreve o rotulo em CAIXA ALTA — conferido na pagina Button. A transformacao fica no
+       CSS, e nao no texto, para o rotulo continuar legivel no codigo e no leitor de tela. */
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: background-color var(--rvm-transition-fast), border-color var(--rvm-transition-fast);
+}
+
+/* --- Tamanhos --- */
+.pequeno {
+    min-height: 30px;
+    padding: 0 14px;
+    font-size: var(--rvm-text-button-sm-size);
+    line-height: var(--rvm-text-button-sm-line);
+    font-weight: var(--rvm-text-button-sm-weight);
+}
+
+.medio {
+    min-height: 38px;
+    padding: 0 22px;
+    font-size: var(--rvm-text-button-md-size);
+    line-height: var(--rvm-text-button-md-line);
+    font-weight: var(--rvm-text-button-md-weight);
+}
+
+.grande {
+    min-height: 42px;
+    padding: 0 26px;
+    font-size: var(--rvm-text-button-lg-size);
+    line-height: var(--rvm-text-button-lg-line);
+    font-weight: var(--rvm-text-button-lg-weight);
+}
+
+/* --- Preenchido: fundo na cor do papel, texto no token de contraste --- */
+.preenchido.primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.preenchido.secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.preenchido.info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.preenchido.success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.preenchido.warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.preenchido.error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+
+.preenchido:hover:not(:disabled) { box-shadow: var(--rvm-shadow-2); }
+.preenchido.primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-hover); }
+.preenchido.secondary:hover:not(:disabled) { background-color: var(--rvm-color-secondary-hover); }
+.preenchido.info:hover:not(:disabled) { background-color: var(--rvm-color-info-hover); }
+.preenchido.success:hover:not(:disabled) { background-color: var(--rvm-color-success-hover); }
+.preenchido.warning:hover:not(:disabled) { background-color: var(--rvm-color-warning-hover); }
+.preenchido.error:hover:not(:disabled) { background-color: var(--rvm-color-error-hover); }
+
+/* --- Contorno e texto: a cor do rotulo e a variante `-text`, que passa 4.5:1 nos dois temas.
+       Usar `-main` aqui devolveria 1.84:1 no tema escuro (medido na DSGN-002). --- */
+.contorno,
+.texto {
+    background-color: transparent;
+}
+
+.contorno.primary, .texto.primary { color: var(--rvm-color-primary-text); }
+.contorno.secondary, .texto.secondary { color: var(--rvm-color-secondary-text); }
+.contorno.info, .texto.info { color: var(--rvm-color-info-text); }
+.contorno.success, .texto.success { color: var(--rvm-color-success-text); }
+.contorno.warning, .texto.warning { color: var(--rvm-color-warning-text); }
+.contorno.error, .texto.error { color: var(--rvm-color-error-text); }
+
+/* A borda do contorno e o token `-outlined-resting`, e nao o `-main`: MEDIDO no Button.png do kit
+   (primary #626B9C contra o token #646D9F; secondary #5C5B6E contra #5E5D6F). Com o `-main` a borda
+   saia saturada demais ao lado do kit. Nao pesa em acessibilidade: o botao e identificado pelo
+   rotulo, entao a borda nao precisa dos 3:1 da WCAG 1.4.11. */
+.contorno.primary { border-color: var(--rvm-color-primary-outlined-resting); }
+.contorno.secondary { border-color: var(--rvm-color-secondary-outlined-resting); }
+.contorno.info { border-color: var(--rvm-color-info-outlined-resting); }
+.contorno.success { border-color: var(--rvm-color-success-outlined-resting); }
+.contorno.warning { border-color: var(--rvm-color-warning-outlined-resting); }
+.contorno.error { border-color: var(--rvm-color-error-outlined-resting); }
+
+.contorno.primary:hover:not(:disabled), .texto.primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-outlined-hover); }
+.contorno.secondary:hover:not(:disabled), .texto.secondary:hover:not(:disabled) { background-color: var(--rvm-color-secondary-outlined-hover); }
+.contorno.info:hover:not(:disabled), .texto.info:hover:not(:disabled) { background-color: var(--rvm-color-info-outlined-hover); }
+.contorno.success:hover:not(:disabled), .texto.success:hover:not(:disabled) { background-color: var(--rvm-color-success-outlined-hover); }
+.contorno.warning:hover:not(:disabled), .texto.warning:hover:not(:disabled) { background-color: var(--rvm-color-warning-outlined-hover); }
+.contorno.error:hover:not(:disabled), .texto.error:hover:not(:disabled) { background-color: var(--rvm-color-error-outlined-hover); }
+
+/* --- Foco: o anel e criterio de aceite, nao enfeite. `:focus-visible` e nao `:focus` para o anel
+       nao aparecer no clique de mouse, que e quando ele vira ruido. --- */
+.botao:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.botao:active:not(:disabled) {
+    /* 1 px para baixo: o retorno tatil que diz "o clique chegou", sem animacao que atrapalhe. */
+    transform: translateY(1px);
+}
+
+/* --- Desabilitado: um so tratamento para os tres variantes e as seis cores --- */
+.botao:disabled {
+    cursor: not-allowed;
+    color: var(--rvm-color-text-disabled);
+    background-color: var(--rvm-color-action-disabled);
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.contorno:disabled {
+    background-color: transparent;
+    border-color: var(--rvm-color-action-disabled);
+}
+
+/* O botao de texto nao tem borda nem quando habilitado — desabilitado tambem nao ganha. */
+.texto:disabled {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+/* --- Carregando --- */
+.girando {
+    display: inline-flex;
+    animation: rvm-girar 900ms linear infinite;
+}
+
+@keyframes rvm-girar {
+    to { transform: rotate(360deg); }
+}
+
+/* Quem pediu menos movimento no sistema nao ganha um icone girando na tela. O estado continua
+   sendo anunciado pelo aria-busy, entao nada se perde. */
+@media (prefers-reduced-motion: reduce) {
+    .girando {
+        animation: none;
+    }
+
+    .botao:active:not(:disabled) {
+        transform: none;
+    }
+}

@@ -311,3 +311,25 @@ code {
 .figura-kit figcaption {
     margin-top: var(--rvm-space-2);
 }
+
+.linha-exemplos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-3);
+}
+
+.grade-icones {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+    gap: var(--rvm-space-4);
+    width: 100%;
+}
+
+.item-icone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    text-align: center;
+}

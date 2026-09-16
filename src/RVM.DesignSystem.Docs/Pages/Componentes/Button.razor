@@ -1,0 +1,140 @@
+@page "/componentes/button"
+
+<PageTitle>RvmButton — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmButton</h1>
+
+<p class="rvm-text-body1 apoio">
+    Tres pesos visuais, tres tamanhos, icone dos dois lados e estado de carregando. Altura, raio e
+    recuo lateral foram <strong>medidos no PNG do kit</strong>: 30, 38 e 42 px de altura, raio de
+    6 px. O rotulo sai em caixa alta, como no kit.
+</p>
+
+<BlocoExemplo Titulo="Peso visual"
+              Descricao="Uma tela tem UM contained em destaque; o resto apoia. O contorno e o texto usam a variante -text da cor, que passa 4.5:1 nos dois temas — com o -main, o tema escuro devolveria 1.84:1."
+              Codigo="@CodigoVariantes">
+    <div class="linha-exemplos">
+        <RvmButton>Salvar</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined">Salvar</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Text">Salvar</RvmButton>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Papel de cor"
+              Descricao="O componente escolhe o papel; que cor sai dele e problema da camada de tokens."
+              Codigo="@CodigoCores">
+    <div class="linha-exemplos">
+        @foreach (var cor in Cores)
+        {
+            <RvmButton Color="cor">@cor.ToString()</RvmButton>
+        }
+    </div>
+    <div class="linha-exemplos">
+        @foreach (var cor in Cores)
+        {
+            <RvmButton Variant="RvmButtonVariant.Outlined" Color="cor">@cor.ToString()</RvmButton>
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos"
+              Descricao="Pequeno para tabela e barra de ferramentas; grande para a acao principal de uma tela."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos">
+        <RvmButton Size="RvmSize.Small">Pequeno</RvmButton>
+        <RvmButton Size="RvmSize.Medium">Medio</RvmButton>
+        <RvmButton Size="RvmSize.Large">Grande</RvmButton>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com icone"
+              Descricao="O icone acompanha o tamanho do botao e nao e anunciado pelo leitor de tela — o rotulo ao lado ja diz a mesma coisa."
+              Codigo="@CodigoIcones">
+    <div class="linha-exemplos">
+        <RvmButton StartIcon="RvmIconName.Plus">Novo lancamento</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" EndIcon="RvmIconName.ChevronRight">Proximo</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Error" StartIcon="RvmIconName.Trash">Excluir</RvmButton>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Estados"
+              Descricao="Desabilitado sai da ordem de tabulacao. Carregando bloqueia o clique e marca aria-busy: sem isso, dois cliques viram duas requisicoes e a espera fica silenciosa para quem usa leitor de tela."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos">
+        <RvmButton Disabled="true">Desabilitado</RvmButton>
+        <RvmButton Loading="true">Salvando</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Disabled="true">Desabilitado</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Loading="true">Salvando</RvmButton>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Ligado de verdade"
+              Descricao="O contador abaixo muda a cada clique — o exemplo e interativo, nao uma figura."
+              Codigo="@CodigoClique">
+    <div class="linha-exemplos">
+        <RvmButton StartIcon="RvmIconName.Check" OnClick="@(() => _cliques++)">Confirmar</RvmButton>
+        <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+            @(_cliques == 0 ? "Nenhum clique ainda." : $"Cliques: {_cliques}")
+        </RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/button.png"
+              Arquivo="referencia-neatlab/Button.png (recorte)"
+              Descricao="O bloco de variantes do kit: contained, outlined e text, nas seis cores, com icone a esquerda e a direita."
+              Alt="Recorte do kit NEATLAB mostrando botoes contained, outlined e text nas seis cores" />
+
+@code {
+    private int _cliques;
+
+    private static readonly RvmColor[] Cores =
+        [RvmColor.Primary, RvmColor.Secondary, RvmColor.Info, RvmColor.Success, RvmColor.Warning, RvmColor.Error];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Variant", "RvmButtonVariant", "Contained", "Peso visual: Contained, Outlined ou Text."),
+        new("Color", "RvmColor", "Primary", "Papel semantico da cor."),
+        new("Size", "RvmSize", "Medium", "Small (30 px), Medium (38 px) ou Large (42 px)."),
+        new("Disabled", "bool", "false", "Indisponivel: sai da ordem de tabulacao e ignora clique."),
+        new("Loading", "bool", "false", "Acao em curso: icone girando, aria-busy e clique bloqueado."),
+        new("StartIcon", "RvmIconName?", "—", "Icone antes do rotulo."),
+        new("EndIcon", "RvmIconName?", "—", "Icone depois do rotulo. Some enquanto carrega."),
+        new("Type", "RvmButtonType", "Button", "O type do elemento. Quem envia formulario usa Submit."),
+        new("OnClick", "EventCallback", "—", "O que fazer no clique. Nao dispara quando desabilitado ou carregando."),
+        new("ChildContent", "RenderFragment", "—", "O rotulo."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao botao.")
+    ];
+
+    private const string CodigoVariantes = """
+        <RvmButton>Salvar</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined">Salvar</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Text">Salvar</RvmButton>
+        """;
+
+    private const string CodigoCores = """
+        <RvmButton Color="RvmColor.Success">Success</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Error">Error</RvmButton>
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmButton Size="RvmSize.Small">Pequeno</RvmButton>
+        <RvmButton Size="RvmSize.Medium">Medio</RvmButton>
+        <RvmButton Size="RvmSize.Large">Grande</RvmButton>
+        """;
+
+    private const string CodigoIcones = """
+        <RvmButton StartIcon="RvmIconName.Plus">Novo lancamento</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" EndIcon="RvmIconName.ChevronRight">Proximo</RvmButton>
+        """;
+
+    private const string CodigoEstados = """
+        <RvmButton Disabled="true">Desabilitado</RvmButton>
+        <RvmButton Loading="true">Salvando</RvmButton>
+        """;
+
+    private const string CodigoClique = """
+        <RvmButton StartIcon="RvmIconName.Check" OnClick="@(() => _cliques++)">Confirmar</RvmButton>
+        """;
+}

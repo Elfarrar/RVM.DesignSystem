@@ -272,7 +272,11 @@
     /* --- Foco e movimento --- */
     --rvm-focus-ring-width: 2px;
     --rvm-focus-ring-offset: 2px;
-    --rvm-focus-ring-color: var(--rvm-color-primary-main);
+    /* O anel usa a variante `-text`, e nao o `-main`: indicador de foco precisa de 3:1 contra o que
+       esta em volta (WCAG 2.4.11 / 1.4.11), e o primary-main no tema escuro da 1.84:1 sobre o papel
+       — o anel some. Com `-text`: 7.12 no claro, 6.38 no escuro. O axe NAO mede isto; foi medido a
+       mao na DSGN-003. */
+    --rvm-focus-ring-color: var(--rvm-color-primary-text);
     --rvm-transition-fast: 150ms ease;
     --rvm-transition-medium: 250ms ease;
 }
