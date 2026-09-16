@@ -71,10 +71,24 @@ spec, porque a promocao para producao espera o sinal verde do Rafael. Volta ao n
 - [ ] ⏳ Elevacoes: as 5 sao **aproximacao visual**; o kit mostra 24 quadrados sem escrever valores
 - [ ] Guarda automatica contra hex literal em CSS de componente — entra junto com o primeiro
       componente (`DSGN-003`), quando houver `Components/**/*.razor.css` para varrer
+- [ ] ⚠️ **Para a onda 4 (navegacao):** o menu ativo do kit e um **gradiente**
+      (`#31A1F9` -> `#274FCA`, horizontal), e **nenhuma tinta solida** escreve sobre ele inteiro
+      com 4.5:1 — branco da 2.76 na ponta clara, `#212121` da 2.34 na escura. Quem montar o item
+      de menu resolve no componente (escurecer, usar so a metade escura, ou veu atras do texto).
 - [ ] ⚠️ **Para a `DSGN-003` em diante:** o contraste do texto secundario e do desabilitado foi
       calibrado contra `paper` e `body`. Componente que puser texto secundario sobre fundo `-soft`
       ou `-outlined-*` **precisa medir de novo** — sao tokens com alpha, entao o valor real depende
       do que esta por baixo. Achado do reviewer independente.
+
+## Conferencia de fidelidade contra o PNG (16/09, a pedido do Rafael)
+
+Amostragem de pixel no `Theme/Light.png` e `Theme/Dark.png`, comparada token a token com o CSS:
+
+| Linha do kit | Resultado |
+|---|---|
+| `Custom BG` (6 fundos suaves) | **iguais ao kit, nos dois temas** — `#F2EAFF`, `#F1F1F2`, `#E4F2FE`, `#E9F5EA`, `#FDEDE0`, `#FEE8E7` no claro; `#3D3261`, `#3C3954`, `#2F3A60`, `#343D4C`, `#4A3E42`, `#493049` no escuro |
+| `Other` (divisor, contorno, linha de input, overlay, snackbar, corpo, papel) | **iguais ao kit, nos dois temas** (14 de 14) |
+| `Custom BG / Menu Active` | **era a unica divergencia**: no kit e um gradiente `#31A1F9` -> `#274FCA`; o token solido que existia (`#2C78E1`) e o ponto medio exato dele. O degrade entrou como `--rvm-color-menu-active-gradient` |
 
 ## Verificado
 
