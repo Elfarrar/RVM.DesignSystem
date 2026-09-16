@@ -1,0 +1,14 @@
+@namespace RVM.DesignSystem.Components.Avatar
+
+@* Grupo de avatares sobrepostos, com um "+N" no fim. Quem decide QUAIS avatares aparecem e o
+   consumidor: o grupo nao inspeciona os filhos. Isso evita acoplar o RvmAvatar a um registro em
+   cascata so para contar irmaos. *@
+<div @attributes="AdditionalAttributes" class="@CssClass" role="group" aria-label="@NomeDoGrupo">
+    @ChildContent
+
+    @if (Surplus > 0)
+    {
+        <RvmAvatar Size="@Size" Color="RvmColor.Secondary" Variant="RvmAvatarVariant.Soft"
+                   Initials="@($"+{Surplus}")" Alt="@($"Mais {Surplus}")" />
+    }
+</div>

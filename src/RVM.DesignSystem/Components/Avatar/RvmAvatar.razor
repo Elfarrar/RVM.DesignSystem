@@ -1,0 +1,28 @@
+@namespace RVM.DesignSystem.Components.Avatar
+@using RVM.DesignSystem.Components.Icon
+
+@* Com imagem, o nome acessivel e o `alt` da propria <img>. Sem imagem, o avatar vira `role="img"`
+   com `aria-label`: iniciais soltas ("RV") nao dizem nada a quem ouve a pagina. *@
+@if (TemImagem && !_imagemFalhou)
+{
+    <span @attributes="AdditionalAttributes" class="@CssClass">
+        <img src="@Src" alt="@Alt" class="foto" @onerror="AoFalharImagem" />
+    </span>
+}
+else
+{
+    <span @attributes="AdditionalAttributes" class="@CssClass" role="img" aria-label="@NomeAcessivel">
+        @if (Icon is not null)
+        {
+            <RvmIcon Name="Icon.Value" Size="@TamanhoDoIcone" />
+        }
+        else if (!string.IsNullOrWhiteSpace(Initials))
+        {
+            <span class="iniciais" aria-hidden="true">@IniciaisExibidas</span>
+        }
+        else
+        {
+            @ChildContent
+        }
+    </span>
+}

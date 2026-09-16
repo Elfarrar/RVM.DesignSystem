@@ -1,0 +1,52 @@
+/* CSS isolado do RvmAvatar. So custom properties — hex literal aqui quebra o tema escuro.
+   Tamanhos MEDIDOS no referencia-neatlab/Avatar.png: 24 / 40 / 56 px (o pequeno mede 25 com o
+   antialias da borda do circulo). */
+
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    user-select: none;
+    font-family: var(--rvm-font-family);
+    font-weight: var(--rvm-text-avatar-weight);
+}
+
+.pequeno { width: 24px; height: 24px; font-size: var(--rvm-text-caption-size); }
+.medio { width: 40px; height: 40px; font-size: var(--rvm-text-subtitle1-size); line-height: 1; }
+.grande { width: 56px; height: 56px; font-size: var(--rvm-text-avatar-size); line-height: 1; }
+
+.circulo { border-radius: var(--rvm-radius-circle); }
+.arredondado { border-radius: var(--rvm-radius-sm); }
+.quadrado { border-radius: 0; }
+
+/* --- Preenchido: fundo na cor do papel, conteudo no token de contraste --- */
+.preenchido.primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.preenchido.secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.preenchido.info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.preenchido.success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.preenchido.warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.preenchido.error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+
+/* --- Suave: fundo -soft com conteudo -text. Os seis pares foram medidos antes (DSGN-003):
+       o pior e info no claro, 4.71:1. --- */
+.suave.primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.suave.secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.suave.info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.suave.success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.suave.warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.suave.error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+.foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.iniciais {
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}

@@ -1,0 +1,63 @@
+/* CSS isolado do RvmCard. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Basic Card.png: papel sobre o corpo, raio de ~6 px no canto de
+   baixo, texto a ~20 px da borda (conferido com regua sobre o recorte ampliado). */
+
+.cartao {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.midia {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+}
+
+.cabecalho {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-5) var(--rvm-space-5) 0;
+}
+
+.textos {
+    flex: 1;
+    min-width: 0;
+}
+
+/* O navegador da margem propria ao h3 e ao p que o RvmTypography gera. Sem zerar aqui, o
+   cabecalho ganharia esse espacamento e sairia desalinhado do conteudo. */
+.textos ::deep h1,
+.textos ::deep h2,
+.textos ::deep h3,
+.textos ::deep h4,
+.textos ::deep h5,
+.textos ::deep h6,
+.textos ::deep p {
+    margin: 0;
+}
+
+.conteudo {
+    padding: var(--rvm-space-3) var(--rvm-space-5) var(--rvm-space-5);
+    color: var(--rvm-color-text-secondary);
+}
+
+/* Sem cabecalho, o conteudo abre o card e precisa do recuo de cima inteiro. */
+.cartao > .conteudo:first-child,
+.midia + .conteudo {
+    padding-top: var(--rvm-space-5);
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: 0 var(--rvm-space-5) var(--rvm-space-5);
+}

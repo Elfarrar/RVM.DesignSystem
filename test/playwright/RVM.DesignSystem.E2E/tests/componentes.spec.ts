@@ -10,6 +10,10 @@ const PAGINAS = [
     { rota: '/componentes/divider', titulo: 'RvmDivider' },
     { rota: '/componentes/icon', titulo: 'RvmIcon' },
     { rota: '/componentes/button', titulo: 'RvmButton' },
+    { rota: '/componentes/avatar', titulo: 'RvmAvatar' },
+    { rota: '/componentes/chip', titulo: 'RvmChip' },
+    { rota: '/componentes/alert', titulo: 'RvmAlert' },
+    { rota: '/componentes/card', titulo: 'RvmCard' },
 ];
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {

@@ -1,0 +1,37 @@
+@namespace RVM.DesignSystem.Components.Card
+@using RVM.DesignSystem.Components.Typography
+
+<div @attributes="AdditionalAttributes" class="@CssClass">
+    @if (!string.IsNullOrWhiteSpace(MediaSrc))
+    {
+        @* A altura vem por atributo e nao por style, para nao disputar o `style` do consumidor. *@
+        <img class="midia" src="@MediaSrc" alt="@(MediaAlt ?? string.Empty)" height="@MediaHeight" />
+    }
+
+    @if (TemCabecalho)
+    {
+        <div class="cabecalho">
+            <div class="textos">
+                @if (!string.IsNullOrWhiteSpace(Title))
+                {
+                    <RvmTypography Variant="RvmTypographyVariant.H6" As="@TitleElement" class="titulo">@Title</RvmTypography>
+                }
+                @if (!string.IsNullOrWhiteSpace(Subheader))
+                {
+                    <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">@Subheader</RvmTypography>
+                }
+            </div>
+            @HeaderAction
+        </div>
+    }
+
+    @if (ChildContent is not null)
+    {
+        <div class="conteudo rvm-text-body2">@ChildContent</div>
+    }
+
+    @if (Actions is not null)
+    {
+        <div class="acoes">@Actions</div>
+    }
+</div>

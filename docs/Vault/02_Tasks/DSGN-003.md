@@ -41,8 +41,8 @@ componentes ninguem revisa, e o primeiro erro de padrao se repetiria nove vezes.
 
 - [x] **Fatia 1** (PR #10, #11): `RvmTypography`, `RvmDivider`, enums compartilhados, paginas de
       componente (exemplo + codigo + parametros + recorte do kit)
-- [x] **Fatia 2**: `RvmIcon` (42 icones Tabler curados) e `RvmButton`
-- [ ] Fatia 3: `RvmAvatar`, `RvmChip`, `RvmAlert`, `RvmCard`
+- [x] **Fatia 2** (PR #12): `RvmIcon` (42 icones Tabler curados) e `RvmButton`
+- [x] **Fatia 3**: `RvmAvatar` + `RvmAvatarGroup`, `RvmChip`, `RvmAlert`, `RvmCard`
 - [ ] Fatia 4: `RvmTextField`
 
 ## Decisoes e medicoes desta task
@@ -56,6 +56,15 @@ componentes ninguem revisa, e o primeiro erro de padrao se repetiria nove vezes.
 | **Borda do outlined = `-outlined-resting`, nao `-main`** | Medido no kit: primary `#626B9C` contra o token `#646D9F`, secondary `#5C5B6E` contra `#5E5D6F`. Com `-main` ficava saturada demais |
 | **Anel de foco = `-text`, nao `-main`** | ⚠️ O axe nao mede isto. No tema escuro o `primary-main` dava **1.84:1** sobre o papel — o anel sumia para quem navega por teclado (WCAG 2.4.11 pede 3:1). Com `-text`: 7.12 no claro, 6.38 no escuro. Virou teste E2E |
 | **Botao `Type` padrao = `Button`, nao `submit`** | O padrao do HTML e `submit`: um "cancelar" dentro de formulario enviaria o form |
+| **Avatar 24 / 40 / 56 px, chip 32 / 24 px, alerta 48 px, raio 6 px em todos** | Medidos por varredura de linha nos PNGs (flood fill falhou em forma antialiasada pequena). O avatar pequeno mede 25 com o antialias do circulo |
+| **Card: recuo de 20 px, nao 40** | A primeira medicao automatica deu 40 e estava errada; conferido com regua sobre o recorte ampliado 3x |
+| **Borda do ALERTA outlined = `-main` cheio; do BOTAO = `-outlined-resting`** | Medido nos dois PNGs: alerta de erro `#F74B51` (≈ `-main`), botao primary `#626B9C` (≈ resting). O proprio kit trata os dois diferente |
+| **`-text` sobre `-soft` medido ANTES de construir** | Divida da DSGN-002: Chip suave, Avatar suave e Alerta standard poem texto colorido no fundo suave. Os 12 pares passam; o pior e info no claro, 4.71:1 |
+| **Alerta: `role=alert` so para erro e aviso** | Informacao e sucesso sao `status`. Tudo como `alert` interromperia o leitor de tela a cada "salvo com sucesso" |
+| **Alerta tem as 6 cores do `RvmColor`, o kit desenha 4** | O catalogo pede 6 papeis e o contrato do enum da isso de graca; as 4 do kit sao as documentadas como referencia |
+| **Chip: `.chip.desabilitado`, nao `.desabilitado`** | Especificidade: a regra de cor (0,2,0) venceria a de desabilitado (0,1,0) e o chip colorido seguiria colorido |
+| **Remover do chip e fechar do alerta: `<button>` com nome acessivel em PT-BR** | O "x" sozinho e so desenho para quem usa leitor de tela, e fora de `<button>` nao entra na tabulacao |
+| **Foco do fechar do alerta em `currentColor`** | Dentro de alerta preenchido primary, o anel azul do token sumiria no fundo azul |
 | **Clique ignorado em `Disabled` e `Loading` tambem no C#** | O `disabled` do elemento barra o navegador, mas nao chamada programatica — clique que escapa enquanto carrega vira requisicao duplicada |
 
 ## Divida herdada da DSGN-002
