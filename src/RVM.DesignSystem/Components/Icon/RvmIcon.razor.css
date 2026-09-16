@@ -1,0 +1,8 @@
+/* CSS isolado do RvmIcon. So custom properties: hex literal aqui quebra o tema escuro. */
+
+.icone {
+    /* `block` evita a folga de linha-base que o SVG inline ganha por ser inline por padrao — a
+       folga so aparece ao lado de texto, e desalinha o icone dentro de botao e chip. */
+    display: block;
+    flex: none;
+}

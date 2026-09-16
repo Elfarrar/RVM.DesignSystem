@@ -8,6 +8,8 @@ import { expect, test } from '@playwright/test';
 const PAGINAS = [
     { rota: '/componentes/typography', titulo: 'RvmTypography' },
     { rota: '/componentes/divider', titulo: 'RvmDivider' },
+    { rota: '/componentes/icon', titulo: 'RvmIcon' },
+    { rota: '/componentes/button', titulo: 'RvmButton' },
 ];
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
@@ -25,10 +27,14 @@ for (const { rota, titulo } of PAGINAS) {
 
         await expect(page.getByRole('heading', { name: titulo, level: 1 })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Parametros' })).toBeVisible();
-        // O recorte do kit ao lado do exemplo e criterio do 07-site-de-documentacao: sem ele,
-        // "parece o NEATLAB?" vira discussao de memoria.
-        await expect(page.getByRole('img')).toBeVisible();
         await expect(page.getByRole('table')).toBeVisible();
+
+        // O recorte do kit ao lado do exemplo e criterio do 07-site-de-documentacao: sem ele,
+        // "parece o NEATLAB?" vira discussao de memoria. O RvmIcon e a excecao declarada — os
+        // icones nao vem do kit, que exportou os dele rasterizados (ADR-005).
+        if (titulo !== 'RvmIcon') {
+            await expect(page.getByRole('img').first()).toBeVisible();
+        }
     });
 
     for (const tema of ['claro', 'escuro'] as const) {
@@ -64,3 +70,50 @@ test('o divisor com rotulo continua sendo um separador para o leitor de tela', a
     expect(await separadores.count()).toBeGreaterThanOrEqual(4);
     await expect(page.getByRole('separator').filter({ hasText: 'ou' })).toHaveCount(1);
 });
+
+// O axe NAO mede o contraste do indicador de foco. Foi medido a mao na DSGN-003: no tema escuro o
+// anel saia em primary-main e dava 1.84:1 sobre o papel — some para quem navega por teclado.
+// WCAG 2.4.11 / 1.4.11 pedem 3:1 contra o que esta em volta.
+function luminancia(rgb: string) {
+    const [r, g, b] = rgb.match(/\d+/g)!.slice(0, 3).map(Number).map(v => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contraste(a: string, b: string) {
+    const [x, y] = [luminancia(a), luminancia(b)].sort((m, n) => n - m);
+    return (x + 0.05) / (y + 0.05);
+}
+
+for (const tema of ['claro', 'escuro'] as const) {
+    test(`o anel de foco do botao passa 3:1 no tema ${tema}`, async ({ page }) => {
+        await page.goto('/componentes/button');
+        await expect(page.getByRole('heading', { name: 'RvmButton', level: 1 })).toBeVisible();
+
+        if (tema === 'escuro') {
+            const seletor = page.getByRole('button', { name: /Tema/ });
+            await seletor.click();
+            await expect(seletor).toHaveAttribute('aria-pressed', 'true');
+        }
+
+        // Foco POR TECLADO: o anel e `:focus-visible`, que o foco programatico nem sempre acende.
+        await page.locator('main button').first().focus();
+        await page.keyboard.press('Shift+Tab');
+        await page.keyboard.press('Tab');
+
+        const { anel, fundo } = await page.evaluate(() => {
+            const el = document.activeElement as HTMLElement;
+            let pai: HTMLElement | null = el.parentElement;
+            let cor = 'rgba(0, 0, 0, 0)';
+            while (pai && /rgba\(0, 0, 0, 0\)|transparent/.test(cor)) {
+                cor = getComputedStyle(pai).backgroundColor;
+                pai = pai.parentElement;
+            }
+            return { anel: getComputedStyle(el).outlineColor, fundo: cor };
+        });
+
+        expect(contraste(anel, fundo)).toBeGreaterThanOrEqual(3);
+    });
+}

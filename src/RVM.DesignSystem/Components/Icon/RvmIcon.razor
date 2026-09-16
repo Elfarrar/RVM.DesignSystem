@@ -1,0 +1,28 @@
+@namespace RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* O SVG e inline, e nao <img> nem font-icon, por tres motivos: herda a cor de quem o desenha
+   (`currentColor`), escala sem borrar, e nao custa uma requisicao por icone.
+
+   `aria-hidden` por padrao: icone quase sempre acompanha um texto que ja diz a mesma coisa, e
+   anunciar duas vezes atrapalha. Com `Title`, ele vira imagem com nome acessivel. *@
+<svg @attributes="AdditionalAttributes"
+     class="@CssClass"
+     viewBox="0 0 24 24"
+     width="@Lado"
+     height="@Lado"
+     fill="none"
+     stroke="currentColor"
+     stroke-width="2"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     style="@Estilo"
+     role="@(Title is null ? null : "img")"
+     aria-hidden="@(Title is null ? "true" : null)"
+     focusable="false">
+    @if (Title is not null)
+    {
+        <title>@Title</title>
+    }
+    @Desenho
+</svg>
