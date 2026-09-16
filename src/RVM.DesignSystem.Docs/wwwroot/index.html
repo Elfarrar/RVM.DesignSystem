@@ -8,13 +8,29 @@
     <!-- base href="/" e obrigatorio: caminho errado quebra todo asset relativo (07-site-de-documentacao). -->
     <base href="/" />
     <link rel="preload" id="webassembly" />
+    <link rel="stylesheet" href="_content/RVM.DesignSystem/rvm-design-system.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="RVM.DesignSystem.Docs.styles.css" rel="stylesheet" />
+    <script src="_content/RVM.DesignSystem/rvm-theme.js"></script>
+    <script>
+        // Tema ANTES da primeira pintura: sem isto a pagina pisca branca antes do WASM subir.
+        // E o unico script inline do site, e por isso: ele precisa rodar antes de tudo.
+        (function () {
+            try {
+                var guardado = localStorage.getItem('rvm-theme');
+                if (guardado === 'dark' || guardado === 'light') {
+                    document.documentElement.setAttribute('data-theme', guardado);
+                }
+            } catch (e) {
+                // Armazenamento bloqueado: fica no tema claro, que e o padrao.
+            }
+        })();
+    </script>
     <script type="importmap"></script>
 </head>
 
-<body>
+<body class="rvm-root">
     <div id="app">
         <p class="carregando">Carregando o RVM Design System...</p>
     </div>

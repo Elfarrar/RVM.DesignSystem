@@ -1,11 +1,10 @@
-/* CSS provisorio do site. A camada de tokens (DSGN-002) substitui isto por custom properties. */
+/* Chrome do site de documentacao. Nao ha hex aqui de proposito: o site e o primeiro consumidor
+   da biblioteca, entao ele tambem so usa `var(--rvm-...)`. Se faltar um token para montar o site,
+   falta um token na biblioteca. */
 
-html, body {
+html,
+body {
     margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    line-height: 1.5;
-    color: #676c74;
-    background: #f4f5fa;
 }
 
 .pagina {
@@ -15,38 +14,166 @@ html, body {
 }
 
 .topo {
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid #e7e6e8;
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-6);
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    background: var(--rvm-color-background-paper);
+    border-bottom: 1px solid var(--rvm-color-divider);
 }
 
 .marca {
-    font-weight: 600;
-    color: #264cc8;
+    color: var(--rvm-color-primary-main);
     text-decoration: none;
+}
+
+.menu {
+    display: flex;
+    gap: var(--rvm-space-4);
+    margin-inline-end: auto;
+}
+
+.link {
+    color: var(--rvm-color-text-secondary);
+    text-decoration: none;
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.link:hover {
+    background: var(--rvm-color-action-hover);
+    color: var(--rvm-color-text-primary);
+}
+
+.link.active {
+    color: var(--rvm-color-primary-main);
+    background: var(--rvm-color-action-selected);
+}
+
+.seletor-tema {
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--rvm-color-text-primary);
+    background: var(--rvm-color-background-paper);
+    border: 1px solid var(--rvm-color-outline);
+    border-radius: var(--rvm-radius-md);
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    transition: background var(--rvm-transition-fast);
+}
+
+.seletor-tema:hover {
+    background: var(--rvm-color-action-hover);
 }
 
 .conteudo {
     flex: 1;
-    max-width: 62rem;
     width: 100%;
+    max-width: 62rem;
     box-sizing: border-box;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: var(--rvm-space-8) var(--rvm-space-6);
 }
 
-h1 {
-    color: #264cc8;
+.conteudo section {
+    margin-block: var(--rvm-space-10);
+}
+
+.apoio {
+    color: var(--rvm-color-text-secondary);
 }
 
 .rodape {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e7e6e8;
-    font-size: 0.875rem;
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    border-top: 1px solid var(--rvm-color-divider);
+    color: var(--rvm-color-text-secondary);
+}
+
+a {
+    color: var(--rvm-color-primary-main);
+}
+
+code {
+    font-size: 0.85em;
+    padding: 0 var(--rvm-space-1);
+    border-radius: var(--rvm-radius-sm);
+    background: var(--rvm-color-action-selected);
+}
+
+/* --- Amostras da pagina Fundamentos --- */
+.grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--rvm-space-3);
+    margin-block: var(--rvm-space-4);
+}
+
+.grade-pequena {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--rvm-space-6);
+    margin-block: var(--rvm-space-6);
+}
+
+.amostra {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    min-height: 4.5rem;
+    padding: var(--rvm-space-3);
+    border-radius: var(--rvm-radius-md);
+}
+
+.amostra.borda {
+    border: 1px solid var(--rvm-color-divider);
+}
+
+.lista-texto,
+.escala {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-4);
+    background: var(--rvm-color-background-paper);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.linha-escala {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    align-items: baseline;
+    gap: var(--rvm-space-4);
+}
+
+.medida {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+.barra {
+    height: var(--rvm-space-4);
+    background: var(--rvm-color-primary-main);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.quadrado {
+    width: 4rem;
+    height: 4rem;
+    background: var(--rvm-color-primary-soft);
+    border: 1px solid var(--rvm-color-divider);
+}
+
+.quadrado.elevado {
+    background: var(--rvm-color-background-paper);
+    border: none;
+    border-radius: var(--rvm-radius-md);
 }
 
 .carregando {
-    padding: 2rem 1.5rem;
+    padding: var(--rvm-space-8) var(--rvm-space-6);
+    font-family: system-ui, sans-serif;
 }
 
 #blazor-error-ui {
@@ -54,15 +181,28 @@ h1 {
     position: fixed;
     bottom: 0;
     width: 100%;
-    padding: 0.75rem 1.5rem;
-    background: #ffb400;
-    color: #212121;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    padding: var(--rvm-space-3) var(--rvm-space-6);
+    background: var(--rvm-color-warning-main);
+    color: var(--rvm-color-warning-contrast);
+    box-shadow: var(--rvm-shadow-3);
 }
 
 #blazor-error-ui .dismiss {
     cursor: pointer;
     position: absolute;
-    right: 0.75rem;
-    top: 0.75rem;
+    right: var(--rvm-space-3);
+    top: var(--rvm-space-3);
+}
+
+@media (max-width: 40rem) {
+    .topo {
+        flex-wrap: wrap;
+        gap: var(--rvm-space-3);
+    }
+
+    .linha-escala {
+        grid-template-columns: 1fr;
+        gap: var(--rvm-space-1);
+    }
 }

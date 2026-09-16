@@ -7,7 +7,11 @@
           <Format>cobertura</Format>
           <!-- O site de documentacao nao entra na cobertura: quem tem portao de 80% e a biblioteca. -->
           <Include>[RVM.DesignSystem]*</Include>
-          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+          <!-- ⚠️ NAO excluir CompilerGeneratedAttribute: metodo async vira maquina de estado
+               marcada com esse atributo, e excluir apaga TODO o corpo dos metodos async da conta.
+               Na DSGN-002 isso fez a cobertura sair como "100% (8 linhas)" com o provider inteiro
+               de fora — numero verde que nao media nada. -->
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute</ExcludeByAttribute>
           <SkipAutoProps>true</SkipAutoProps>
         </Configuration>
       </DataCollector>
