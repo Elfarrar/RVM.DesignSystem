@@ -10,7 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-002]] | Tokens do `06` + tema claro/escuro + pagina Fundamentos | codigo pronto, esperando CI e screenshot |
+| [[DSGN-002]] | Tokens do `06` + tema claro/escuro + pagina Fundamentos | no dev, verde de ponta a ponta; espera o screenshot aprovado |
 
 ## A fazer — Onda 1 (tokens + 9 componentes)
 
