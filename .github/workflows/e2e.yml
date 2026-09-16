@@ -36,11 +36,14 @@ jobs:
           falhou=0
           for arquivo in $alterados; do
             [ -f "$arquivo" ] || continue
-            if grep -nE 'waitForTimeout|networkidle' "$arquivo"; then
+            # Linha de comentario nao conta: o proprio config EXPLICA por que waitForTimeout e
+            # proibido, e a guarda nao pode se morder ao ler a explicacao.
+            codigo=$(grep -vE '^[[:space:]]*(//|\*|/\*)' "$arquivo" || true)
+            if echo "$codigo" | grep -nE 'waitForTimeout|networkidle'; then
               echo "::error file=$arquivo::Espera por relogio (waitForTimeout/networkidle) e proibida — sincronize por SINAL."
               falhou=1
             fi
-            if grep -nE 'workers:\s*1|video:\s*.(on|retain)' "$arquivo"; then
+            if echo "$codigo" | grep -nE 'workers:[[:space:]]*1[^0-9]|video:[[:space:]]*.(on|retain)'; then
               echo "::error file=$arquivo::workers 1 ou video ligado contrariam o padrao-rvm § 12."
               falhou=1
             fi
