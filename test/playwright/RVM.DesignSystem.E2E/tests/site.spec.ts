@@ -35,5 +35,5 @@ test('pagina inicial sem violacao seria de acessibilidade', async ({ page }) => 
     .analyze();
 
   const serias = resultado.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
-  expect(serias.map(v => `${v.id}: ${v.help}`)).toEqual([]);
+  expect(serias.flatMap(v => v.nodes.map(n => `${v.id} em ${n.target.join(' ')}`))).toEqual([]);
 });

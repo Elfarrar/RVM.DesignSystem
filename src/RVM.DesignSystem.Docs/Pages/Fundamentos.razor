@@ -65,7 +65,10 @@
         <p class="rvm-text-body1" style="color: var(--rvm-color-text-secondary);">
             Texto secundario — <code>--rvm-color-text-secondary</code>
         </p>
-        <p class="rvm-text-body1" style="color: var(--rvm-color-text-disabled);">
+        @* Esta amostra REPROVA contraste de proposito: e o token de texto desabilitado. WCAG 1.4.3
+           isenta componente inativo, e o E2E exclui so este no do exame do axe. *@
+        <p class="rvm-text-body1" aria-disabled="true" data-rvm-demo="texto-desabilitado"
+           style="color: var(--rvm-color-text-disabled);">
             Texto desabilitado — <code>--rvm-color-text-disabled</code> (isento de contraste: WCAG 1.4.3)
         </p>
     </div>
