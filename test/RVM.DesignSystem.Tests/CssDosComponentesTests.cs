@@ -15,7 +15,7 @@ public class CssDosComponentesTests
     public void Nenhum_css_de_componente_escreve_cor_literal()
     {
         var infratores = Arquivos()
-            .SelectMany(arquivo => File.ReadLines(arquivo)
+            .SelectMany(arquivo => SemComentarios(File.ReadAllText(arquivo)).Split('\n')
                 .Select((linha, i) => (arquivo, numero: i + 1, linha))
                 .Where(x => Regex.IsMatch(x.linha, @"#[0-9a-fA-F]{3,8}\b")
                             || Regex.IsMatch(x.linha, @"\b(rgb|rgba|hsl|hsla)\s*\(")))
@@ -23,6 +23,19 @@ public class CssDosComponentesTests
             .ToArray();
 
         Assert.Empty(infratores);
+    }
+
+    [Fact]
+    public void A_guarda_ignora_hex_em_comentario_mas_continua_pegando_hex_em_declaracao()
+    {
+        // Prova nos dois sentidos: ignorar comentario nao pode ter cegado a guarda.
+        const string css = "/* medido no kit: #626B9C */\n.a { color: var(--rvm-x); }\n.b { color: #FF0000; }";
+
+        var linhas = SemComentarios(css).Split('\n');
+
+        Assert.DoesNotMatch(@"#[0-9a-fA-F]{3,8}", linhas[0]);
+        Assert.DoesNotMatch(@"#[0-9a-fA-F]{3,8}", linhas[1]);
+        Assert.Matches(@"#[0-9a-fA-F]{3,8}", linhas[2]);
     }
 
     [Fact]
@@ -42,6 +55,14 @@ public class CssDosComponentesTests
 
         Assert.Empty(faltando);
     }
+
+    /// <summary>
+    /// Apaga o conteudo dos comentarios preservando as quebras de linha — assim o numero de linha do
+    /// infrator continua certo. Comentario que CITA um hex medido do kit e documentacao, nao cor
+    /// aplicada; a primeira versao desta guarda reprovou exatamente isso no RvmButton.
+    /// </summary>
+    internal static string SemComentarios(string css)
+        => Regex.Replace(css, @"/\*.*?\*/", m => Regex.Replace(m.Value, "[^\n]", " "), RegexOptions.Singleline);
 
     private static IEnumerable<string> Arquivos()
         => Directory.Exists(PastaDeComponentes)
