@@ -1,0 +1,38 @@
+@* Um exemplo da documentacao: o que roda em cima, o codigo que o produz embaixo.
+   O codigo vem como texto e e o MESMO que esta no `ChildContent` — codigo na doc que nao e o
+   codigo que roda vira mentira em duas semanas (`07-site-de-documentacao.md`). *@
+
+<section class="bloco-exemplo" aria-labelledby="@Id">
+    <h3 id="@Id" class="rvm-text-subtitle1">@Titulo</h3>
+
+    @if (Descricao is not null)
+    {
+        <p class="rvm-text-body2 apoio">@Descricao</p>
+    }
+
+    <div class="exemplo-vivo">
+        @ChildContent
+    </div>
+
+    <details class="codigo">
+        <summary class="rvm-text-button-sm">Ver o codigo</summary>
+        <pre><code>@Codigo</code></pre>
+    </details>
+</section>
+
+@code {
+    /// <summary>Titulo do exemplo.</summary>
+    [Parameter, EditorRequired] public string Titulo { get; set; } = string.Empty;
+
+    /// <summary>Uma linha explicando o que o exemplo mostra.</summary>
+    [Parameter] public string? Descricao { get; set; }
+
+    /// <summary>O codigo, igual ao que esta rodando acima.</summary>
+    [Parameter, EditorRequired] public string Codigo { get; set; } = string.Empty;
+
+    /// <summary>O exemplo rodando.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string Id => "ex-" + Titulo.ToLowerInvariant()
+        .Replace(' ', '-').Replace(',', '-').Replace("ç", "c").Replace("ã", "a").Replace("õ", "o");
+}

@@ -11,10 +11,9 @@
     <link rel="stylesheet" href="_content/RVM.DesignSystem/rvm-design-system.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <!-- ⚠️ O bundle de CSS isolado (RVM.DesignSystem.Docs.styles.css) ainda NAO existe: nenhum
-         componente tem .razor.css. Volta nesta linha na DSGN-003, com o primeiro componente —
-         sem ele, componente nenhum tem estilo. Ate la o link so gerava 404 no console (e, no
-         Nginx de dev, o try_files devolvia o index.html com content-type de CSS). -->
+    <!-- Bundle do CSS isolado: agrega os .razor.css dos componentes da biblioteca e do site.
+         Sem este link, componente nenhum tem estilo. -->
+    <link href="RVM.DesignSystem.Docs.styles.css" rel="stylesheet" />
     <script src="_content/RVM.DesignSystem/rvm-theme.js"></script>
     <script>
         // Tema ANTES da primeira pintura: sem isto a pagina pisca branca antes do WASM subir.

@@ -3,7 +3,7 @@ id: DSGN-002
 titulo: Camada de tokens e tematizacao clara/escura
 repo: RVM.DesignSystem
 tipo: feature
-status: concluido no dev — espera o screenshot aprovado pelo Rafael
+status: concluido
 criada: 2026-09-16
 ---
 
@@ -96,4 +96,5 @@ Amostragem de pixel no `Theme/Light.png` e `Theme/Dark.png`, comparada token a t
 2. ✅ Cobertura **97.4%** (portao de 80%), medida no CI
 3. ✅ Troca de tema sem recarregar, conferida no navegador nos dois temas
 4. ✅ axe sem violacao seria nas duas paginas, nos dois temas (E2E 10/10 no site publicado)
-5. ⏳ Screenshot lado a lado com `Theme/Light.png` e `Theme/Dark.png` — **falta a aprovacao do Rafael**
+5. ✅ Screenshot lado a lado com `Theme/Light.png` e `Theme/Dark.png` — **aprovado pelo Rafael em
+   16/09/2026**, depois da conferencia de fidelidade pixel a pixel acima
