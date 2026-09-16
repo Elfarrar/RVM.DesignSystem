@@ -51,6 +51,14 @@ jobs:
           set -e
           # O try_files do Nginx devolve a pagina inicial para qualquer caminho: um build quebrado
           # responde 200 alegremente. Por isso procuramos a string, e nao o codigo HTTP.
+          # ⚠️ Procurar so a string nao basta: em 16/09 um bloco `types` no vhost fez o index.html sair
+          # como application/octet-stream — o navegador BAIXAVA a pagina, e este mesmo curl devolvia
+          # 200 com a string certa. Por isso o content-type entra na verificacao.
+          tipo=$(curl -fsS -o /dev/null --max-time 20 -w '%{content_type}' https://design.dev.rvmtech.com.br/ || true)
+          case "$tipo" in
+            text/html*) ;;
+            *) echo "::error::A pagina inicial saiu como '$tipo' em vez de text/html — o navegador vai baixar em vez de abrir."; exit 1 ;;
+          esac
           for tentativa in 1 2 3 4 5; do
             corpo=$(curl -fsS --max-time 20 https://design.dev.rvmtech.com.br/ || true)
             if echo "$corpo" | grep -q 'RVM Design System'; then
