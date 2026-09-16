@@ -121,7 +121,15 @@
     --rvm-color-success-soft: #E9F5EA;
     --rvm-color-warning-soft: #FDEDE0;
     --rvm-color-error-soft: #FEE8E7;
+    /* No kit o menu ativo e um GRADIENTE horizontal, nao uma cor: medido de #31A1F9 (esquerda) a
+       #274FCA (direita), 214 px de largura, sem variacao vertical. O token solido e o ponto MEDIO
+       exato desse degrade — serve onde so cabe uma cor (borda, icone).
+       ⚠️ Nenhuma tinta solida escreve sobre este degrade inteiro passando 4.5:1: branco da 2.76 na
+       ponta clara e #212121 da 2.34 na ponta escura. Quem montar o item de menu ativo (onda 4)
+       resolve no componente — escurecer o degrade, usar so a metade escura ou por um veu atras do
+       texto. Nao ha decisao a tomar na camada de token. */
     --rvm-color-menu-active: #2C78E1;
+    --rvm-color-menu-active-gradient: linear-gradient(90deg, #31A1F9 0%, #274FCA 100%);
 
     /* --- Superficies --- */
     --rvm-color-background-body: #F4F5FA;
@@ -304,7 +312,8 @@
     --rvm-color-success-soft: #343D4C;
     --rvm-color-warning-soft: #4A3E42;
     --rvm-color-error-soft: #493049;
-    /* No escuro o kit nao tem "menu ativo" nesta faixa — cai no primary para nao inventar cor. */
+    /* No escuro o kit nao desenhou o swatch de menu ativo (a celula e o proprio papel). Como a cor
+       de marca nao muda entre temas, o degrade continua o mesmo; o solido cai no primary. */
     --rvm-color-menu-active: var(--rvm-color-primary-main);
 
     --rvm-color-background-body: #28243D;
