@@ -29,10 +29,18 @@ exit code; arquivo novo pela ferramenta Write.
 
 ## Andamento
 
+- [x] **Fatia 1**: `RvmRating`, `RvmStepper` (+ `RvmStep`), `RvmTimeline` + `RvmTimelineItem`
+
 ## Decisoes e medicoes
 
 | O que | Por que |
 |---|---|
+| **Medidas da fatia 1**: estrelas com passo de 18/24/30 px e vazia no tom do contorno; marcador de etapa de 20 px, numero grande, conector de 4 px; ponto da linha do tempo de 16 px e 70 px entre itens | Varredura em `Rating.png`, `Stepper.png` e `Timeline.png` |
+| **Avaliacao editavel = radios NATIVOS invisiveis sobre as estrelas** (fieldset + legend) | Setas, Tab e envio de formulario de graca, sem JS. Cada radio cobre o trecho da nota que representa (meia estrela com `AllowHalf`). Somente leitura vira `role="img"` com a nota por extenso ("Nota: 3,5 de 5") |
+| **Estrela cheia, marcadores de etapa e pontos da linha do tempo no `-text` das cores** | Sem texto junto, sao o proprio indicador e precisam de 3:1 contra o fundo; o amarelo `-main` do kit da 1.7:1 no claro |
+| **Etapa diz o estado em texto** (concluida, etapa atual, pendente, com erro) e a atual leva `aria-current="step"` | Check e cor sao desenho. "Com validacao" do catalogo = `HasError` na etapa |
+| **Numero da etapa pendente no tom secundario, nao no desabilitado** | O axe reprovou o desabilitado (texto visivel, mesmo com `aria-hidden`) |
+| **Estrela desenhada no proprio componente (star-filled do Tabler), nao pelo `RvmIcon`** | O catalogo de icones tem so a estrela em contorno; a avaliacao precisa da cheia e de recorte parcial |
 
 ## Verifica (cada fatia)
 

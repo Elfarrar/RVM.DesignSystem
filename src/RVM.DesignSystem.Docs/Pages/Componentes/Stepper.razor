@@ -1,0 +1,77 @@
+@page "/componentes/stepper"
+
+<PageTitle>RvmStepper — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmStepper</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    As etapas de um processo e em qual a pessoa esta. E uma lista ordenada; cada etapa diz o proprio estado
+    em texto (concluida, etapa atual, pendente, com erro) e a atual leva <code>aria-current="step"</code>.
+    Marcador de 20 px e numero grande, <strong>medidos no kit</strong>.
+</p>
+
+<BlocoExemplo Titulo="Horizontal, com o texto ao lado"
+              Descricao="A linha Aligned Left do kit. Os botoes so movem a etapa atual do exemplo."
+              Codigo="@CodigoHorizontal">
+    <div class="pilha-exemplos largura-cheia">
+        <RvmStepper Steps="@Etapas" ActiveStep="_atual" AriaLabel="Cadastro da fazenda" />
+        <div class="linha-exemplos">
+            <RvmButton Variant="RvmButtonVariant.Outlined" Size="RvmSize.Small" Disabled="@(_atual == 0)" OnClick="@(() => _atual--)">Voltar</RvmButton>
+            <RvmButton Size="RvmSize.Small" Disabled="@(_atual == Etapas.Length)" OnClick="@(() => _atual++)">Avancar</RvmButton>
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Texto embaixo, vertical e etapa com erro"
+              Descricao="Aligned Center e a secao Vertical do kit. HasError marca a etapa que precisa de revisao."
+              Codigo="@CodigoVertical">
+    <div class="pilha-exemplos largura-cheia">
+        <RvmStepper Steps="@Etapas" ActiveStep="1" Placement="RvmStepperLabelPlacement.Bottom" AriaLabel="Cadastro com texto embaixo" />
+        <RvmStepper Steps="@EtapasComErro" ActiveStep="2" Orientation="RvmOrientation.Vertical" AriaLabel="Cadastro vertical" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/stepper.png"
+              Arquivo="referencia-neatlab/Stepper.png (recorte)"
+              Descricao="Horizontal e vertical, com o texto ao lado ou embaixo, com e sem linha de apoio."
+              Alt="Recorte do kit NEATLAB mostrando etapas numeradas horizontais e verticais" />
+
+@code {
+    private int _atual = 1;
+
+    private static readonly RvmStep[] Etapas =
+    [
+        new("Dados da conta", "E-mail e senha"),
+        new("Dados da fazenda", "Nome e localizacao"),
+        new("Talhoes", "Contorno de cada area")
+    ];
+
+    private static readonly RvmStep[] EtapasComErro =
+    [
+        new("Dados da conta", "E-mail e senha"),
+        new("Dados da fazenda", "CNPJ invalido", HasError: true),
+        new("Talhoes", "Contorno de cada area")
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Steps", "IReadOnlyList<RvmStep>", "[]", "As etapas. Cada uma: Title, Description, HasError."),
+        new("ActiveStep", "int", "0", "Etapa atual, a partir de 0. As anteriores contam como concluidas."),
+        new("Orientation", "RvmOrientation", "Horizontal", "Horizontal ou Vertical."),
+        new("Placement", "RvmStepperLabelPlacement", "End", "End (texto ao lado, com numero) ou Bottom."),
+        new("AriaLabel", "string", "\"Etapas\"", "Nome da lista para o leitor de tela."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao ol.")
+    ];
+
+    private const string CodigoHorizontal = """
+        <RvmStepper ActiveStep="_atual" AriaLabel="Cadastro da fazenda"
+                    Steps="@([new("Dados da conta", "E-mail e senha"), new("Dados da fazenda"), new("Talhoes")])" />
+        """;
+
+    private const string CodigoVertical = """
+        <RvmStepper ActiveStep="2" Orientation="RvmOrientation.Vertical"
+                    Steps="@([new("Dados da conta"), new("Dados da fazenda", "CNPJ invalido", HasError: true), new("Talhoes")])" />
+        """;
+}

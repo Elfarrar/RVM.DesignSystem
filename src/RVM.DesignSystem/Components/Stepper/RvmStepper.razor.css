@@ -1,0 +1,165 @@
+/* CSS isolado do RvmStepper. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Stepper.png: marcador de 20 px (concluida: circulo com check;
+   pendente: ponto de 14 px), numero grande ao lado ("01"), conector de 4 px. O conector e o
+   marcador usam -text, e nao o -main do kit: sao os indicadores do progresso (3:1 contra o fundo). */
+
+.rvm-etapas {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-vertical {
+    flex-direction: column;
+}
+
+.rvm-etapa {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-etapa:last-child {
+    flex: none;
+}
+
+.rvm-vertical .rvm-etapa {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.rvm-cabeca {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    flex: none;
+}
+
+/* --- Marcador --- */
+.rvm-marcador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--rvm-radius-circle);
+}
+
+.rvm-concluida .rvm-marcador,
+.rvm-atual .rvm-marcador {
+    background-color: var(--rvm-color-primary-text);
+    color: var(--rvm-color-background-paper);
+}
+
+/* Atual e pendente sao pontos: a atual cheia no primary, a pendente so o contorno. */
+.rvm-atual .rvm-marcador {
+    box-shadow: 0 0 0 4px var(--rvm-color-primary-soft);
+}
+
+.rvm-pendente .rvm-marcador {
+    width: 14px;
+    height: 14px;
+    margin: 3px;
+    border: 2px solid var(--rvm-color-text-secondary);
+}
+
+.rvm-erro .rvm-marcador {
+    color: var(--rvm-color-error-text);
+}
+
+/* --- Numero e textos --- */
+.rvm-numero {
+    font-size: var(--rvm-text-h4-size);
+    line-height: 1;
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+/* O kit apaga o numero da pendente; o tom desabilitado reprovou contraste no axe (texto visivel e
+   lido, mesmo com aria-hidden). O secundario ainda se distingue do primario das etapas feitas. */
+.rvm-pendente .rvm-numero {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-textos {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.rvm-titulo {
+    font-size: var(--rvm-text-subtitle2-size);
+    line-height: var(--rvm-text-subtitle2-line);
+    font-weight: var(--rvm-text-subtitle2-weight);
+}
+
+.rvm-descricao {
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+}
+
+.rvm-erro .rvm-titulo {
+    color: var(--rvm-color-error-text);
+}
+
+/* --- Conector --- */
+.rvm-conector {
+    flex: 1;
+    min-width: var(--rvm-space-6);
+    height: 4px;
+    margin: 0 var(--rvm-space-4);
+    border-radius: var(--rvm-radius-pill);
+    background-color: var(--rvm-color-divider);
+}
+
+.rvm-concluida .rvm-conector {
+    background-color: var(--rvm-color-primary-text);
+}
+
+.rvm-vertical .rvm-conector {
+    flex: none;
+    width: 4px;
+    min-width: 0;
+    height: 48px;
+    margin: var(--rvm-space-2) 0 var(--rvm-space-2) 8px;
+}
+
+/* --- Texto embaixo: marcador em cima, tudo centralizado --- */
+.rvm-texto-embaixo.rvm-horizontal .rvm-etapa {
+    align-items: flex-start;
+}
+
+.rvm-texto-embaixo .rvm-cabeca {
+    flex-direction: column;
+    text-align: center;
+}
+
+.rvm-texto-embaixo.rvm-horizontal .rvm-conector {
+    margin-top: 8px;
+}
+
+.rvm-texto-embaixo.rvm-vertical .rvm-etapa {
+    align-items: center;
+}
+
+.rvm-texto-embaixo.rvm-vertical .rvm-conector {
+    margin-left: 0;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
