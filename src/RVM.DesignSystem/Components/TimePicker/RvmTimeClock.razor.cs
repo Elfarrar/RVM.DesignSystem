@@ -453,7 +453,7 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
         {
             await _mostrador.FocusAsync();
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao): o foco fica onde esta.
         }
@@ -474,7 +474,7 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
             // e o keypress do mesmo Enter "clicava" nele e reabria o relogio (pego no E2E).
             await _modulo.InvokeVoidAsync("prenderTeclas", _mostrador, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", " ", "Enter" });
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS: as setas funcionam, so a pagina rola junto.
         }

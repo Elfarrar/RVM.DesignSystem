@@ -62,7 +62,11 @@ public class CssDosComponentesTests
         // da escala), mas `.razor` sem CSS costuma ser esquecimento — entao a excecao e nomeada.
         // Os itens do menu sao pecas do RvmAppShell e so existem dentro dele: o estilo mora no CSS
         // da moldura (::deep), que precisa enxergar o estado recolhido e o modo estreito juntos.
-        string[] semCssPorProjeto = ["RvmNavGroup.razor", "RvmNavItem.razor", "RvmNavSection.razor"];
+        // Os graficos derivados so desenham SVG dentro da figura da RvmChartBase, que tem o CSS (::deep).
+        string[] semCssPorProjeto = ["RvmNavGroup.razor", "RvmNavItem.razor", "RvmNavSection.razor",
+            "RvmColumnChart.razor", "RvmBarChart.razor", "RvmHistogram.razor",
+            "RvmLineChart.razor", "RvmAreaChart.razor", "RvmScatterChart.razor",
+            "RvmPieChart.razor", "RvmRadarChart.razor"];
 
         var faltando = Directory.Exists(PastaDeComponentes)
             ? Directory.GetFiles(PastaDeComponentes, "*.razor", SearchOption.AllDirectories)

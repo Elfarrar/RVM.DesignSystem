@@ -199,7 +199,7 @@ public partial class RvmMenu : ComponentBase, IAsyncDisposable
         {
             await acao();
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao, circuito caindo): o menu abre e fecha; so o foco nao anda.
         }

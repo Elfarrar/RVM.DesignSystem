@@ -129,7 +129,7 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
             await _modulo.InvokeVoidAsync("definirIndeterminado", _entrada?.Element, Indeterminate);
             _indeterminadoAplicado = Indeterminate;
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao, circuito caindo): o visual indeterminado ja esta no CSS.
         }

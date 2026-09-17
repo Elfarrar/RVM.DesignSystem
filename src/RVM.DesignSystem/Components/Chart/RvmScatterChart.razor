@@ -1,0 +1,130 @@
+@namespace RVM.DesignSystem.Components.Chart
+@typeparam TItem
+@inherits RvmChartBase<TItem>
+@attribute [CascadingTypeParameter(nameof(TItem))]
+
+@* Dispersao: cada item vira um ponto (X, Y) de cada serie; os dois eixos sao numericos. O teclado percorre
+   os pontos da esquerda para a direita; o ponteiro ativa o ponto mais perto, ate 24 px. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>Nome do eixo X na dica e na tabela. Padrao: "X".</summary>
+    [Parameter] public string XLabel { get; set; } = "X";
+
+    /// <summary>Nome do eixo Y na dica e na tabela. Padrao: "Y".</summary>
+    [Parameter] public string YLabel { get; set; } = "Y";
+
+    /// <summary>Formato dos valores do eixo X. Padrao: <see cref="RvmChartFormat.Compact"/>.</summary>
+    [Parameter] public Func<double, string>? XFormat { get; set; }
+
+    /// <summary>Raio de cada ponto, em px. Padrao: 5.</summary>
+    [Parameter] public int PointRadius { get; set; } = 5;
+
+    internal sealed record Ponto(int Serie, TItem Item, double X, double Y);
+
+    private string FormatarX(double valor) => (XFormat ?? RvmChartFormat.Compact)(valor);
+
+    private List<Ponto> Pontos => Memo<List<Ponto>>("Pontos", () => [.. Series.SelectMany((s, i) => Dados.Select(item => new Ponto(i, item, s.X?.Invoke(item) ?? 0, s.ValorDe(item))))
+                     .OrderBy(p => p.X).ThenBy(p => p.Y)]);
+
+    private Escala EscalaX => Memo("EscalaX", () =>
+        {
+            var xs = Pontos.Select(p => p.X).DefaultIfEmpty(0).ToList();
+            return Escala.Arredondada(xs.Min(), xs.Max());
+        });
+
+    private Escala EscalaY => Memo("EscalaY", () =>
+        {
+            var ys = Pontos.Select(p => p.Y).DefaultIfEmpty(0).ToList();
+            return Escala.Arredondada(ys.Min(), ys.Max());
+        });
+
+    private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaY.Marcas.Select(m => FormatarMarca(m, EscalaY.Passo))));
+
+    private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita);
+
+    private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
+
+    private double PX(double x) => EscalaX.Posicao(x, Esquerda, Esquerda + LarguraDoPlot);
+
+    private double PY(double y) => EscalaY.Posicao(y, MargemTopo + AlturaDoPlot, MargemTopo);
+
+    internal override RenderFragment Desenho => @<g>
+        @{
+            var pontos = Pontos;
+            var marcasX = EscalaX.Marcas.ToList();
+            var salto = SaltoDeRotulos(marcasX.Count, LarguraDoPlot, 56);
+        }
+        @foreach (var marca in EscalaY.Marcas)
+        {
+            @if (ShowGrid)
+            {
+                <line class="rvm-grafico-grade" x1="@N(Esquerda)" y1="@N(PY(marca))" x2="@N(Largura - MargemDireita)" y2="@N(PY(marca))" />
+            }
+            @Texto(Esquerda - 8, PY(marca), FormatarMarca(marca, EscalaY.Passo), "end", "middle")
+        }
+        @for (var i = 0; i < marcasX.Count; i++)
+        {
+            @if (ShowGrid)
+            {
+                <line class="rvm-grafico-grade" x1="@N(PX(marcasX[i]))" y1="@N(MargemTopo)" x2="@N(PX(marcasX[i]))" y2="@N(MargemTopo + AlturaDoPlot)" />
+            }
+            @if (i % salto == 0)
+            {
+                @Texto(PX(marcasX[i]), Height - 10, XFormat is { } fx ? fx(marcasX[i]) : RvmChartFormat.CompactForAxis(marcasX[i], EscalaX.Passo))
+            }
+        }
+        @for (var i = 0; i < pontos.Count; i++)
+        {
+            var p = pontos[i];
+            var ativo = Ativo == i;
+            <circle class="@($"{(ativo ? "rvm-grafico-ponto-cheio rvm-grafico-ponto-ativo" : "rvm-grafico-ponto-cheio")} {ClasseDaCor(CorDa(Series[p.Serie]))}")"
+                    cx="@N(PX(p.X))" cy="@N(PY(p.Y))" r="@(ativo ? PointRadius + 2 : PointRadius)" />
+        }
+    </g>;
+
+    internal override int QuantidadeDePontos => Pontos.Count;
+
+    internal override string TituloDoPonto(int indice)
+    {
+        var p = Pontos[indice];
+        return Label is null ? Series[p.Serie].Name : $"{NomeDe(p.Item, indice)} ({Series[p.Serie].Name})";
+    }
+
+    internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
+    {
+        var p = Pontos[indice];
+        var cor = CorDa(Series[p.Serie]);
+        return [new(XLabel, FormatarX(p.X), cor), new(YLabel, Formatar(p.Y), cor)];
+    }
+
+    internal override (double X, double Y) AncoraDoPonto(int indice)
+    {
+        var p = Pontos[indice];
+        return (PX(p.X), PY(p.Y) - PointRadius);
+    }
+
+    internal override int? PontoEm(double x, double y)
+    {
+        var pontos = Pontos;
+        int? melhor = null;
+        var menor = 24.0 * 24;
+        for (var i = 0; i < pontos.Count; i++)
+        {
+            var dx = PX(pontos[i].X) - x;
+            var dy = PY(pontos[i].Y) - y;
+            var distancia = dx * dx + dy * dy;
+            if (distancia <= menor)
+            {
+                menor = distancia;
+                melhor = i;
+            }
+        }
+
+        return melhor;
+    }
+
+    internal override TabelaDeDados Tabela
+        => new([Label is null ? "Serie" : "Item", XLabel, YLabel],
+               [.. Pontos.Select((p, i) => (IReadOnlyList<string>)[TituloDoPonto(i), FormatarX(p.X), Formatar(p.Y)])]);
+}

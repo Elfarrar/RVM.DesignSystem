@@ -1,0 +1,198 @@
+@namespace RVM.DesignSystem.Components.Chart
+@typeparam TItem
+@inherits RvmChartBase<TItem>
+@attribute [CascadingTypeParameter(nameof(TItem))]
+
+@* Linhas por categoria, uma por serie. Suave usa a interpolacao monotona (a do d3 "monotoneX"): a curva
+   passa por todos os pontos e nunca sobe acima do maior nem desce abaixo do menor entre dois vizinhos —
+   um Catmull-Rom comum inventava picos que os dados nao tem. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>Curva suave em vez de segmentos retos. Padrao: reta na linha, suave na area.</summary>
+    [Parameter] public bool? Smooth { get; set; }
+
+    /// <summary>Marca todos os pontos. Sem isso, so os da categoria ativa aparecem. Padrao: nao.</summary>
+    [Parameter] public bool ShowPoints { get; set; }
+
+    /// <summary>Preenche abaixo da linha (a <see cref="RvmAreaChart{TItem}"/>).</summary>
+    internal virtual bool Preenchida => false;
+
+    private bool Suave => Smooth ?? Preenchida;
+
+    private Escala EscalaDosValores => Memo("EscalaDosValores", () =>
+        {
+            var valores = Dados.SelectMany(item => Series.Select(s => s.ValorDe(item))).DefaultIfEmpty(0).ToList();
+            // So a area parte do zero (area cortada exagera o volume); a linha usa a faixa dos dados, senao
+            // valores entre 950 e 1050 ficavam espremidos no topo (achado do review: os dois ramos eram iguais).
+            return Escala.Arredondada(Preenchida ? Math.Min(0, valores.Min()) : valores.Min(), valores.Max());
+        });
+
+    private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaDosValores.Marcas.Select(m => FormatarMarca(m, EscalaDosValores.Passo))));
+
+    private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita);
+
+    private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
+
+    private double XDe(int indice) => Dados.Count <= 1 ? Esquerda + LarguraDoPlot / 2 : Esquerda + LarguraDoPlot * indice / (Dados.Count - 1);
+
+    private double Y(Escala escala, double valor) => escala.Posicao(valor, MargemTopo + AlturaDoPlot, MargemTopo);
+
+    private List<(double X, double Y)> PontosDa(RvmChartSeries<TItem> serie, Escala escala)
+        => [.. Dados.Select((item, i) => (XDe(i), Y(escala, serie.ValorDe(item))))];
+
+    internal string CaminhoDa(RvmChartSeries<TItem> serie)
+        => Caminho(PontosDa(serie, EscalaDosValores), Suave);
+
+    internal string PreenchimentoDa(RvmChartSeries<TItem> serie)
+    {
+        var escala = EscalaDosValores;
+        var pontos = PontosDa(serie, escala);
+        if (pontos.Count == 0)
+        {
+            return "";
+        }
+
+        var baseY = N(Y(escala, Math.Max(escala.Min, 0)));
+        return $"{Caminho(pontos, Suave)} L {N(pontos[^1].X)} {baseY} L {N(pontos[0].X)} {baseY} Z";
+    }
+
+    /// <summary>O atributo d do path: segmentos retos ou cubicas monotonas.</summary>
+    internal static string Caminho(IReadOnlyList<(double X, double Y)> p, bool suave)
+    {
+        if (p.Count == 0)
+        {
+            return "";
+        }
+
+        var d = new System.Text.StringBuilder($"M {N(p[0].X)} {N(p[0].Y)}");
+        if (!suave || p.Count < 3)
+        {
+            for (var i = 1; i < p.Count; i++) d.Append($" L {N(p[i].X)} {N(p[i].Y)}");
+            return d.ToString();
+        }
+
+        // Fritsch-Carlson: inclinacao em cada ponto limitada para nao ultrapassar os vizinhos.
+        var n = p.Count;
+        var tangentes = new double[n];
+        var secantes = new double[n - 1];
+        for (var i = 0; i < n - 1; i++)
+        {
+            var dx = p[i + 1].X - p[i].X;
+            secantes[i] = dx == 0 ? 0 : (p[i + 1].Y - p[i].Y) / dx;
+        }
+
+        tangentes[0] = secantes[0];
+        tangentes[n - 1] = secantes[n - 2];
+        for (var i = 1; i < n - 1; i++)
+        {
+            tangentes[i] = secantes[i - 1] * secantes[i] <= 0 ? 0 : (secantes[i - 1] + secantes[i]) / 2;
+        }
+
+        for (var i = 0; i < n - 1; i++)
+        {
+            if (secantes[i] == 0)
+            {
+                tangentes[i] = tangentes[i + 1] = 0;
+                continue;
+            }
+
+            var a = tangentes[i] / secantes[i];
+            var b = tangentes[i + 1] / secantes[i];
+            var h = a * a + b * b;
+            if (h > 9)
+            {
+                var t = 3 / Math.Sqrt(h);
+                tangentes[i] = t * a * secantes[i];
+                tangentes[i + 1] = t * b * secantes[i];
+            }
+        }
+
+        for (var i = 0; i < n - 1; i++)
+        {
+            var terco = (p[i + 1].X - p[i].X) / 3;
+            d.Append($" C {N(p[i].X + terco)} {N(p[i].Y + tangentes[i] * terco)}, {N(p[i + 1].X - terco)} {N(p[i + 1].Y - tangentes[i + 1] * terco)}, {N(p[i + 1].X)} {N(p[i + 1].Y)}");
+        }
+
+        return d.ToString();
+    }
+
+    internal override RenderFragment Desenho => @<g>
+        @{
+            var escala = EscalaDosValores;
+            var esquerda = Esquerda;
+            var salto = SaltoDeRotulos(Dados.Count, LarguraDoPlot);
+        }
+        @foreach (var marca in escala.Marcas)
+        {
+            var y = Y(escala, marca);
+            @if (ShowGrid)
+            {
+                <line class="rvm-grafico-grade" x1="@N(esquerda)" y1="@N(y)" x2="@N(Largura - MargemDireita)" y2="@N(y)" />
+            }
+            @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle")
+        }
+        @if (Ativo is { } ativo && ativo < Dados.Count)
+        {
+            <line class="rvm-grafico-eixo" x1="@N(XDe(ativo))" y1="@N(MargemTopo)" x2="@N(XDe(ativo))" y2="@N(MargemTopo + AlturaDoPlot)" />
+        }
+        @for (var s = 0; s < Series.Count; s++)
+        {
+            var serie = Series[s];
+            var cor = ClasseDaCor(CorDa(serie));
+            <g class="@cor">
+                @if (Preenchida)
+                {
+                    var id = $"{IdBase}-degrade-{s}";
+                    <defs>
+                        <linearGradient id="@id" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" class="rvm-grafico-degrade-topo" />
+                            <stop offset="1" class="rvm-grafico-degrade-base" />
+                        </linearGradient>
+                    </defs>
+                    <path class="rvm-grafico-preenchimento" d="@PreenchimentoDa(serie)" fill="@($"url(#{id})")" />
+                }
+                <path class="rvm-grafico-linha" d="@CaminhoDa(serie)" />
+                @for (var i = 0; i < Dados.Count; i++)
+                {
+                    @if (ShowPoints || Ativo == i || Dados.Count == 1)
+                    {
+                        <circle class="rvm-grafico-ponto" cx="@N(XDe(i))" cy="@N(Y(escala, serie.ValorDe(Dados[i])))" r="@(Ativo == i ? "6" : "4")" />
+                    }
+                }
+            </g>
+        }
+        @for (var c = 0; c < Dados.Count; c += salto)
+        {
+            @Texto(XDe(c), Height - 10, NomeDe(Dados[c], c), c == 0 && Dados.Count > 1 ? "start" : c == Dados.Count - 1 && Dados.Count > 1 ? "end" : "middle")
+        }
+    </g>;
+
+    internal override int QuantidadeDePontos => Dados.Count;
+
+    internal override string TituloDoPonto(int indice) => NomeDe(Dados[indice], indice);
+
+    internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
+        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice])), CorDa(s)))];
+
+    internal override (double X, double Y) AncoraDoPonto(int indice)
+    {
+        var escala = EscalaDosValores;
+        var topo = Series.Select(s => Y(escala, s.ValorDe(Dados[indice]))).DefaultIfEmpty(MargemTopo).Min();
+        return (XDe(indice), topo);
+    }
+
+    internal override int? PontoEm(double x, double y)
+    {
+        if (Dados.Count == 0 || x < Esquerda - 12 || x > Largura - MargemDireita + 12)
+        {
+            return null;
+        }
+
+        return Dados.Count == 1 ? 0 : Math.Clamp((int)Math.Round((x - Esquerda) / (LarguraDoPlot / (Dados.Count - 1))), 0, Dados.Count - 1);
+    }
+
+    internal override TabelaDeDados Tabela
+        => new(["Categoria", .. Series.Select(s => s.Name)],
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => Formatar(s.ValorDe(item)))])]);
+}

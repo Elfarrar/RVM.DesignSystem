@@ -1,0 +1,55 @@
+@page "/componentes/scatter-chart"
+
+<PageTitle>RvmScatterChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmScatterChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Pontos num plano para mostrar a relacao entre duas variaveis numericas. Cada serie diz o X e o Y de cada item;
+    os dois eixos sao numericos. O teclado percorre os pontos da esquerda para a direita e o mouse ativa o ponto
+    mais perto.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ O kit nao tem grafico de dispersao: o visual segue o dos outros graficos (grade tracejada, cores de serie).
+</p>
+
+<BlocoExemplo Titulo="Duas variaveis"
+              Descricao="Adubacao (kg/ha) contra produtividade (sc/ha), por talhao, em duas safras."
+              Codigo="@CodigoSeries">
+    <RvmScatterChart Items="Talhoes" Label="t => t.Nome" AriaLabel="Adubacao e produtividade por talhao" Height="320"
+                     XLabel="Adubacao" YLabel="Produtividade"
+                     XFormat="@(v => $"{RvmChartFormat.Number(v)} kg/ha")" ValueFormat="@(v => $"{RvmChartFormat.Number(v)} sc/ha")">
+        <RvmChartSeries Name="Safra 2025" X="t => t.Adubo2025" Value="t => t.Produtividade2025" />
+        <RvmChartSeries Name="Safra 2026" X="t => t.Adubo2026" Value="t => t.Produtividade2026" Color="RvmColor.Success" />
+    </RvmScatterChart>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+@code {
+    private static readonly (string Nome, double Adubo2025, double Produtividade2025, double Adubo2026, double Produtividade2026)[] Talhoes =
+    [
+        ("Talhao Norte", 320, 62, 360, 68), ("Baixada", 280, 55, 300, 58), ("Sede", 410, 66, 420, 71),
+        ("Cerrado", 220, 44, 260, 50), ("Varzea", 350, 64, 380, 69), ("Encosta", 260, 49, 290, 54),
+        ("Represa", 390, 60, 400, 67), ("Divisa", 300, 57, 340, 61)
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, nome de cada ponto e nome do grafico (obrigatorio)."),
+        new("XLabel / YLabel", "string", "\"X\" / \"Y\"", "Nomes dos eixos na dica e na tabela de dados."),
+        new("XFormat / ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato de X e de Y."),
+        new("PointRadius", "int", "5", "Raio de cada ponto, em px."),
+        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
+        new("RvmChartSeries.Name / X / Value / Color", "string / Func<TItem, double> / Func<TItem, double> / RvmColor?", "—", "Cada serie: X e Y de cada item.")
+    ];
+
+    private const string CodigoSeries = """
+        <RvmScatterChart Items="talhoes" Label="t => t.Nome" AriaLabel="Adubacao e produtividade"
+                         XLabel="Adubacao" YLabel="Produtividade">
+            <RvmChartSeries Name="Safra 2025" X="t => t.Adubo2025" Value="t => t.Produtividade2025" />
+            <RvmChartSeries Name="Safra 2026" X="t => t.Adubo2026" Value="t => t.Produtividade2026" Color="RvmColor.Success" />
+        </RvmScatterChart>
+        """;
+}

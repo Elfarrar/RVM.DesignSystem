@@ -1,0 +1,141 @@
+@namespace RVM.DesignSystem.Components.Chart
+@inherits RvmChartBase<double>
+
+@* Histograma: os valores em Items sao agrupados em faixas de mesma largura e cada faixa vira uma coluna
+   encostada na vizinha. Sem Bins nem BinWidth, o numero de faixas segue a regra de Sturges. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>Numero de faixas. Padrao: regra de Sturges (1 + log2 de n).</summary>
+    [Parameter] public int? Bins { get; set; }
+
+    /// <summary>Largura de cada faixa. Vence <see cref="Bins"/> quando informada.</summary>
+    [Parameter] public double? BinWidth { get; set; }
+
+    /// <summary>Nome da contagem na dica e na tabela. Padrao: "Frequencia".</summary>
+    [Parameter] public string SeriesName { get; set; } = "Frequencia";
+
+    /// <summary>Papel de cor das colunas. Padrao: primary.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Primary;
+
+    /// <summary>Formato dos limites das faixas. Padrao: o mesmo dos valores.</summary>
+    [Parameter] public Func<double, string>? BinFormat { get; set; }
+
+    /// <summary>Limite de faixas, qualquer que seja o BinWidth.</summary>
+    internal const int MaximoDeFaixas = 500;
+
+    internal sealed record Faixa(double Inicio, double Fim, int Contagem);
+
+    internal IReadOnlyList<Faixa> Faixas => Memo<IReadOnlyList<Faixa>>("Faixas", () =>
+        {
+            var valores = Dados.Where(double.IsFinite).ToList();
+            if (valores.Count == 0)
+            {
+                return [];
+            }
+
+            var min = valores.Min();
+            var max = valores.Max();
+            double largura;
+            int quantidade;
+            if (BinWidth is > 0 and var passo)
+            {
+                largura = passo;
+                min = Math.Floor(min / passo) * passo;
+                quantidade = (int)Math.Min(MaximoDeFaixas + 1, Math.Max(1, Math.Ceiling((max - min) / passo + 1e-9)));
+                if (quantidade <= MaximoDeFaixas && min + quantidade * passo <= max) quantidade++;
+            }
+            else
+            {
+                quantidade = Math.Max(1, Bins ?? (int)Math.Ceiling(Math.Log2(valores.Count) + 1));
+                largura = max - min < 1e-12 ? 1 : (max - min) / quantidade;
+            }
+
+            // Teto: BinWidth minusculo diante da faixa de valores pediria milhoes de colunas de 0 px.
+            if (quantidade > MaximoDeFaixas)
+            {
+                quantidade = MaximoDeFaixas;
+                largura = (max - min) / quantidade;
+            }
+
+            var contagens = new int[quantidade];
+            foreach (var v in valores)
+            {
+                var i = (int)Math.Floor((v - min) / largura);
+                contagens[Math.Clamp(i, 0, quantidade - 1)]++;
+            }
+
+            return [.. contagens.Select((c, i) => new Faixa(min + i * largura, min + (i + 1) * largura, c))];
+        });
+
+    private string FormatarLimite(double valor) => (BinFormat ?? ValueFormat ?? RvmChartFormat.Compact)(valor);
+
+    private Escala EscalaDasContagens => Memo("EscalaDasContagens", () => Escala.Arredondada(0, Faixas.Select(f => f.Contagem).DefaultIfEmpty(0).Max(), inteiro: true));
+
+    private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaDasContagens.Marcas.Select(m => RvmChartFormat.Number(m))));
+
+    private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita);
+
+    private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
+
+    private double LarguraDaFaixa => Faixas.Count == 0 ? LarguraDoPlot : LarguraDoPlot / Faixas.Count;
+
+    private double Y(double contagem) => EscalaDasContagens.Posicao(contagem, MargemTopo + AlturaDoPlot, MargemTopo);
+
+    internal override RenderFragment Desenho => @<g>
+        @{
+            var faixas = Faixas;
+            var salto = SaltoDeRotulos(faixas.Count + 1, LarguraDoPlot, 52);
+        }
+        @foreach (var marca in EscalaDasContagens.Marcas)
+        {
+            @if (ShowGrid)
+            {
+                <line class="rvm-grafico-grade" x1="@N(Esquerda)" y1="@N(Y(marca))" x2="@N(Largura - MargemDireita)" y2="@N(Y(marca))" />
+            }
+            @Texto(Esquerda - 8, Y(marca), RvmChartFormat.Number(marca), "end", "middle")
+        }
+        @for (var i = 0; i < faixas.Count; i++)
+        {
+            var x = Esquerda + LarguraDaFaixa * i;
+            @if (Ativo == i)
+            {
+                <rect class="rvm-grafico-faixa-ativa" x="@N(x)" y="@N(MargemTopo)" width="@N(LarguraDaFaixa)" height="@N(AlturaDoPlot)" />
+            }
+            <rect class="@($"rvm-grafico-barra {ClasseDaCor(Color)}")" x="@N(x + 1)" y="@N(Y(faixas[i].Contagem))"
+                  width="@N(Math.Max(1, LarguraDaFaixa - 2))" height="@N(MargemTopo + AlturaDoPlot - Y(faixas[i].Contagem))" rx="2" />
+        }
+        @for (var i = 0; faixas.Count > 0 && i <= faixas.Count; i += salto)
+        {
+            var limite = i < faixas.Count ? faixas[i].Inicio : faixas[^1].Fim;
+            @Texto(Esquerda + LarguraDaFaixa * i, Height - 10, FormatarLimite(limite))
+        }
+    </g>;
+
+    internal override int QuantidadeDePontos => Faixas.Count;
+
+    internal override string TituloDoPonto(int indice)
+        => $"{FormatarLimite(Faixas[indice].Inicio)} a {FormatarLimite(Faixas[indice].Fim)}";
+
+    internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
+        => [new(SeriesName, RvmChartFormat.Number(Faixas[indice].Contagem), Color)];
+
+    internal override (double X, double Y) AncoraDoPonto(int indice)
+        => (Esquerda + LarguraDaFaixa * (indice + 0.5), Y(Faixas[indice].Contagem));
+
+    internal override int? PontoEm(double x, double y)
+    {
+        if (Faixas.Count == 0 || x < Esquerda || x > Largura - MargemDireita)
+        {
+            return null;
+        }
+
+        return Math.Clamp((int)((x - Esquerda) / LarguraDaFaixa), 0, Faixas.Count - 1);
+    }
+
+    internal override IReadOnlyList<ItemDaLegenda> Legenda => [];
+
+    internal override TabelaDeDados Tabela
+        => new(["Faixa", SeriesName],
+               [.. Faixas.Select((f, i) => (IReadOnlyList<string>)[TituloDoPonto(i), RvmChartFormat.Number(f.Contagem)])]);
+}

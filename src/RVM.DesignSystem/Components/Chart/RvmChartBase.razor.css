@@ -1,0 +1,244 @@
+/* MEDIDO no referencia-neatlab/Chart Card.png e Analytics.png: grade tracejada no tom do divisor, rotulos
+   de eixo em 12 px no texto secundario, colunas com cantos de 4 px, legenda com marca redonda de 10 px.
+   O desenho de cada tipo e marcacao Razor de OUTRO componente (o grafico derivado): por isso as regras do
+   SVG vao com ::deep a partir da figura. As cores de serie usam os tokens -text: sem texto junto, a cor e
+   o proprio indicador e precisa de 3:1 contra o papel. */
+
+.rvm-grafico {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+    margin: 0;
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-grafico-area {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.rvm-grafico-svg {
+    display: block;
+    overflow: visible;
+}
+
+.rvm-grafico-camada {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-grafico-camada:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-grafico-centro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    text-align: center;
+}
+
+/* --- Cores das series --- */
+.rvm-grafico ::deep .rvm-cor-primary { --rvm-grafico-cor: var(--rvm-color-primary-text); }
+.rvm-grafico ::deep .rvm-cor-secondary { --rvm-grafico-cor: var(--rvm-color-secondary-text); }
+.rvm-grafico ::deep .rvm-cor-info { --rvm-grafico-cor: var(--rvm-color-info-text); }
+.rvm-grafico ::deep .rvm-cor-success { --rvm-grafico-cor: var(--rvm-color-success-text); }
+.rvm-grafico ::deep .rvm-cor-warning { --rvm-grafico-cor: var(--rvm-color-warning-text); }
+.rvm-grafico ::deep .rvm-cor-error { --rvm-grafico-cor: var(--rvm-color-error-text); }
+
+/* --- Eixos e grade --- */
+.rvm-grafico ::deep .rvm-grafico-grade {
+    stroke: var(--rvm-color-divider);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+}
+
+.rvm-grafico ::deep .rvm-grafico-eixo {
+    stroke: var(--rvm-color-divider);
+    stroke-width: 1;
+}
+
+.rvm-grafico ::deep .rvm-grafico-rotulo {
+    fill: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-grafico ::deep .rvm-grafico-faixa-ativa {
+    fill: var(--rvm-color-action-hover);
+}
+
+/* --- Formas --- */
+.rvm-grafico ::deep .rvm-grafico-barra {
+    fill: var(--rvm-grafico-cor);
+}
+
+.rvm-grafico ::deep .rvm-grafico-linha {
+    fill: none;
+    stroke: var(--rvm-grafico-cor);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.rvm-grafico ::deep .rvm-grafico-preenchimento {
+    stroke: none;
+}
+
+.rvm-grafico ::deep .rvm-grafico-degrade-topo {
+    stop-color: var(--rvm-grafico-cor);
+    stop-opacity: 0.32;
+}
+
+.rvm-grafico ::deep .rvm-grafico-degrade-base {
+    stop-color: var(--rvm-grafico-cor);
+    stop-opacity: 0;
+}
+
+.rvm-grafico ::deep .rvm-grafico-ponto {
+    fill: var(--rvm-color-background-paper);
+    stroke: var(--rvm-grafico-cor);
+    stroke-width: 2.5;
+}
+
+.rvm-grafico ::deep .rvm-grafico-ponto-cheio {
+    fill: var(--rvm-grafico-cor);
+    fill-opacity: 0.75;
+    stroke: var(--rvm-grafico-cor);
+    stroke-width: 1;
+}
+
+.rvm-grafico ::deep .rvm-grafico-ponto-ativo {
+    fill-opacity: 1;
+    stroke: var(--rvm-color-background-paper);
+    stroke-width: 2;
+}
+
+.rvm-grafico ::deep .rvm-grafico-fatia {
+    fill: var(--rvm-grafico-cor);
+    stroke: var(--rvm-color-background-paper);
+    stroke-width: 2;
+}
+
+.rvm-grafico ::deep .rvm-grafico-eixo-ativo {
+    stroke: var(--rvm-color-text-secondary);
+}
+
+.rvm-grafico ::deep .rvm-grafico-teia {
+    fill: none;
+    stroke: var(--rvm-color-divider);
+    stroke-width: 1;
+}
+
+.rvm-grafico ::deep .rvm-grafico-poligono {
+    fill: var(--rvm-grafico-cor);
+    fill-opacity: 0.35;
+    stroke: var(--rvm-grafico-cor);
+    stroke-width: 2;
+    stroke-linejoin: round;
+}
+
+/* --- Dica --- */
+.rvm-grafico-dica {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 7rem;
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-tooltip-background);
+    color: var(--rvm-color-tooltip-text);
+    font-size: var(--rvm-text-caption-size);
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 10px));
+}
+
+.rvm-dica-a-direita { transform: translate(0, calc(-100% - 10px)); }
+.rvm-dica-a-esquerda { transform: translate(-100%, calc(-100% - 10px)); }
+.rvm-dica-abaixo { transform: translate(-50%, 10px); }
+.rvm-dica-a-direita.rvm-dica-abaixo { transform: translate(0, 10px); }
+.rvm-dica-a-esquerda.rvm-dica-abaixo { transform: translate(-100%, 10px); }
+
+.rvm-grafico-dica-titulo {
+    font-weight: 600;
+}
+
+.rvm-grafico-dica-linha {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-grafico-dica-linha strong {
+    margin-inline-start: auto;
+    font-weight: 600;
+}
+
+/* A marca na dica fica sobre o fundo escuro da dica: contorno claro para nao sumir. */
+.rvm-grafico-dica .rvm-grafico-marca {
+    box-shadow: 0 0 0 1px var(--rvm-color-tooltip-text);
+}
+
+/* --- Legenda --- */
+.rvm-grafico-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--rvm-space-1) var(--rvm-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--rvm-text-caption-size);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-grafico-legenda li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-grafico-legenda strong {
+    color: var(--rvm-color-text-primary);
+    font-weight: 600;
+}
+
+.rvm-grafico-marca {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--rvm-grafico-cor);
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .rvm-grafico ::deep .rvm-grafico-barra,
+    .rvm-grafico ::deep .rvm-grafico-fatia {
+        transition: opacity var(--rvm-transition-fast);
+    }
+}

@@ -1,0 +1,51 @@
+@page "/componentes/radar-chart"
+
+<PageTitle>RvmRadarChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmRadarChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Teia de aranha para comparar tres ou mais variaveis a partir de um centro. Cada item e um eixo; cada serie e
+    um poligono semitransparente, para as series se verem uma sob a outra. A grade marca niveis de mesma
+    distancia; <code>Max</code> fixa o valor da ponta quando as variaveis tem uma escala comum (notas de 0 a 10).
+</p>
+
+<BlocoExemplo Titulo="Duas series"
+              Descricao="O Performance do kit: avaliacao de dois talhoes em seis criterios, de 0 a 10."
+              Codigo="@CodigoSeries">
+    <RvmRadarChart Items="Criterios" Label="c => c.Nome" AriaLabel="Avaliacao dos talhoes por criterio" Max="10" Height="340">
+        <RvmChartSeries Name="Talhao Norte" Value="c => c.Norte" />
+        <RvmChartSeries Name="Varzea" Value="c => c.Varzea" Color="RvmColor.Info" />
+    </RvmRadarChart>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/radar-chart.png"
+              Arquivo="referencia-neatlab/Chart Card.png (recorte)"
+              Descricao="O cartao Performance: radar de seis eixos com duas series."
+              Alt="Recorte do kit NEATLAB com um grafico de radar" />
+
+@code {
+    private static readonly (string Nome, double Norte, double Varzea)[] Criterios =
+    [
+        ("Solo", 8, 6), ("Irrigacao", 9, 5), ("Produtividade", 7.5, 8), ("Custo", 6, 7), ("Logistica", 7, 9), ("Sanidade", 8.5, 6.5)
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Eixos (3 ou mais), nome de cada eixo e nome do grafico."),
+        new("Max", "double?", "maior valor arredondado", "Valor na ponta dos eixos."),
+        new("GridLevels", "int", "5", "Niveis da grade."),
+        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
+        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie (um poligono).")
+    ];
+
+    private const string CodigoSeries = """
+        <RvmRadarChart Items="criterios" Label="c => c.Nome" AriaLabel="Avaliacao por criterio" Max="10">
+            <RvmChartSeries Name="Talhao Norte" Value="c => c.Norte" />
+            <RvmChartSeries Name="Varzea" Value="c => c.Varzea" Color="RvmColor.Info" />
+        </RvmRadarChart>
+        """;
+}

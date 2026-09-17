@@ -97,7 +97,7 @@ public partial class RvmThemeProvider : ComponentBase
                 _ => null
             };
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS disponivel (pre-renderizacao, circuito caindo) o componente segue correto:
             // o tema ja saiu no data-theme deste elemento. Persistir e melhoria, nao requisito.
@@ -111,7 +111,7 @@ public partial class RvmThemeProvider : ComponentBase
         {
             await JS.InvokeVoidAsync("rvmTheme.apply", ThemeAttribute, Persist);
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Idem: pinta o <html> quando der: e o que evita a faixa clara fora do provider.
         }

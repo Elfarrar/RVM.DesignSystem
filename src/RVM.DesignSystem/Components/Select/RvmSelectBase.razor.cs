@@ -15,8 +15,7 @@ namespace RVM.DesignSystem.Components.Select;
 /// <typeparam name="TValue">Tipo de cada opcao.</typeparam>
 public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDisposable
 {
-    private static int _proximoId;
-    private readonly string _idBase = $"rvm-select-{Interlocked.Increment(ref _proximoId)}";
+    private readonly string _idBase = GeradorDeIds.Novo("rvm-select");
     private ElementReference _gatilho;
     private ElementReference _busca;
     private IJSObjectReference? _modulo;
@@ -434,7 +433,7 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
         {
             await acao();
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao, circuito caindo): abre, fecha e escolhe; so foco e rolagem nao andam.
         }
