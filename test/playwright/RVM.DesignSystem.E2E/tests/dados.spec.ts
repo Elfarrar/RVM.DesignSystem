@@ -230,3 +230,59 @@ for (const tema of ['claro', 'escuro'] as const) {
         await semViolacaoSeria(page);
     });
 }
+
+test('relogio: teclado escolhe hora e minuto, Enter confirma e devolve o foco', async ({ page }) => {
+    await page.goto('/componentes/time-picker');
+    const campo = page.getByRole('button', { name: /Inicio da colheita/ });
+
+    await campo.click();
+    const dialogo = page.getByRole('dialog', { name: 'Escolher Inicio da colheita' });
+    const mostrador = dialogo.getByRole('listbox', { name: 'Horas' });
+    await expect(mostrador).toBeFocused();
+
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('ArrowUp');
+    await expect(dialogo.getByRole('option', { name: '13 horas' })).toHaveAttribute('aria-selected', 'true');
+    await page.keyboard.press('Enter');
+    await expect(dialogo.getByRole('listbox', { name: 'Minutos' })).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('Enter');
+
+    await expect(dialogo).toBeHidden();
+    await expect(campo).toHaveAccessibleName(/Inicio da colheita 13:01/);
+    await expect(campo).toBeFocused();
+    await expect(page.getByText(/Colheita: 13:01/)).toBeVisible();
+});
+
+test('relogio: clicar no mostrador escolhe e CANCELAR descarta', async ({ page }) => {
+    await page.goto('/componentes/time-picker');
+    const campo = page.getByRole('button', { name: /Visita tecnica/ });
+
+    await campo.click();
+    const dialogo = page.getByRole('dialog');
+    const mostrador = dialogo.getByRole('listbox', { name: 'Horas' });
+    await expect(mostrador).toBeFocused();
+    // Clique a direita do centro: 3 horas (da tarde, a janela e das 7 as 18); soltar leva aos minutos.
+    await mostrador.click({ position: { x: 238, y: 130 } });
+    await expect(dialogo.getByRole('button', { name: 'Horas: 03' })).toBeVisible();
+    await expect(dialogo.getByRole('listbox', { name: 'Minutos' })).toBeVisible();
+
+    await dialogo.getByRole('button', { name: 'Cancelar' }).click();
+    await expect(dialogo).toBeHidden();
+    await expect(campo).toHaveAccessibleName('Visita tecnica hh:mm');
+});
+
+for (const tema of ['claro', 'escuro'] as const) {
+    test(`relogio aberto sem violacao seria no tema ${tema}`, async ({ page }) => {
+        await page.goto('/componentes/time-picker');
+        await expect(page.getByRole('heading', { name: 'RvmTimePicker', level: 1 })).toBeVisible();
+        if (tema === 'escuro') {
+            await page.getByRole('button', { name: /Tema/ }).click();
+        }
+
+        await page.getByRole('button', { name: /Visita tecnica/ }).click();
+        await expect(page.getByRole('dialog').getByRole('listbox')).toBeFocused();
+        await page.keyboard.press('ArrowUp');
+        await semViolacaoSeria(page);
+    });
+}

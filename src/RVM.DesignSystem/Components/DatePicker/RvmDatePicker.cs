@@ -27,7 +27,7 @@ public sealed class RvmDatePicker : RvmDatePickerBase
 
     internal override string DialogLabel => $"Escolher {Label}";
 
-    internal override RenderFragment Calendario => builder =>
+    internal override RenderFragment ConteudoDoDialogo => builder =>
     {
         builder.OpenComponent<RvmCalendar>(0);
         builder.AddComponentParameter(1, nameof(RvmCalendar.Value), Value);

@@ -390,6 +390,21 @@ public class RvmTimePickerTests : BunitContext
     }
 
     [Fact]
+    public void Lista_com_janela_que_cruza_a_meia_noite()
+    {
+        var cortado = Render<RvmTimePicker>(p => p
+            .Add(x => x.Label, "Plantao")
+            .Add(x => x.Step, 120)
+            .Add(x => x.Min, new TimeOnly(22, 0))
+            .Add(x => x.Max, new TimeOnly(6, 0))
+            .Add(x => x.Searchable, false));
+
+        cortado.Find("[role=combobox]").Click();
+
+        Assert.Equal(["22:00", "00:00", "02:00", "04:00", "06:00"], cortado.FindAll("[role=option]").Select(o => o.TextContent.Trim()));
+    }
+
+    [Fact]
     public void Escolher_liga_o_valor_e_envia_em_formato_invariante()
     {
         TimeOnly? escolhido = null;
