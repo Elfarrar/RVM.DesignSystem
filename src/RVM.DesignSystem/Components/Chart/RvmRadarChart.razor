@@ -124,7 +124,7 @@
         return (int)Math.Round(angulo / (360d / Eixos)) % Eixos;
     }
 
-    internal override TabelaDeDados Tabela
+    internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
         => new(["Eixo", .. Series.Select(s => s.Name)],
-               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => Formatar(s.ValorDe(item)))])]);
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => formatar(s.ValorDe(item)))])]);
 }

@@ -26,6 +26,20 @@ public class RvmGraficosReviewTests : BunitContext
     }
 
     [Fact]
+    public void Base_do_eixo_escreve_zero_e_nao_zero_mil()
+    {
+        var colunas = Render<RvmColumnChart<Venda>>(p => p
+            .Add(x => x.Items, [new Venda("Jan", 20_000, 0), new Venda("Fev", 60_000, 0)])
+            .Add(x => x.Label, v => v.Mes).Add(x => x.AriaLabel, "Colunas")
+            .AddChildContent<RvmChartSeries<Venda>>(s => s.Add(x => x.Name, "V").Add(x => x.Value, v => v.Receita)));
+        var rotulos = colunas.FindAll("text").Select(t => t.TextContent).ToList();
+
+        Assert.Contains("0", rotulos);
+        Assert.DoesNotContain("0 mil", rotulos);
+        Assert.Contains("60 mil", rotulos);
+    }
+
+    [Fact]
     public async Task Layout_guardado_e_refeito_quando_os_dados_ou_a_largura_mudam()
     {
         var cortado = Render<RvmColumnChart<Venda>>(p => p.Add(x => x.Items, [new Venda("Jan", 10, 0)]).Add(x => x.AriaLabel, "Colunas")

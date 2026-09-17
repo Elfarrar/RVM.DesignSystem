@@ -236,9 +236,38 @@
     border: 0;
 }
 
+/* Animacao: so com Animated e so para quem nao pediu "reduzir movimento". A linha se desenha pelo traco
+   (os paths levam pathLength="1", entao 1 = o comprimento inteiro); o resto aparece. */
 @media (prefers-reduced-motion: no-preference) {
     .rvm-grafico ::deep .rvm-grafico-barra,
     .rvm-grafico ::deep .rvm-grafico-fatia {
         transition: opacity var(--rvm-transition-fast);
+    }
+
+    .rvm-animado ::deep .rvm-grafico-barra {
+        transition: x var(--rvm-transition-medium), y var(--rvm-transition-medium),
+                    width var(--rvm-transition-medium), height var(--rvm-transition-medium),
+                    opacity var(--rvm-transition-fast);
+    }
+
+    .rvm-animado ::deep .rvm-grafico-linha {
+        animation: rvm-grafico-desenhar 600ms ease-out both;
+    }
+
+    .rvm-animado ::deep .rvm-grafico-preenchimento,
+    .rvm-animado ::deep .rvm-grafico-fatia,
+    .rvm-animado ::deep .rvm-grafico-poligono,
+    .rvm-animado ::deep .rvm-grafico-ponto-cheio {
+        animation: rvm-grafico-aparecer 450ms ease-out both;
+    }
+
+    @keyframes rvm-grafico-desenhar {
+        from { stroke-dasharray: 1; stroke-dashoffset: 1; }
+        to { stroke-dasharray: 1; stroke-dashoffset: 0; }
+    }
+
+    @keyframes rvm-grafico-aparecer {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 }

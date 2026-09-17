@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 
 // Graficos (DSGN-010): o SVG e so desenho; a prova e o que o leitor de tela e o teclado recebem.
@@ -80,4 +81,43 @@ test('rosca, radar e area anunciam o ponto ativo', async ({ page }) => {
     await page.getByRole('group', { name: 'Vendas acumuladas no ano' }).focus();
     await page.keyboard.press('ArrowLeft');
     await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Jul' })).toHaveText('Jul: Vendas R$ 42,6 mil');
+});
+
+// Exportar (DSGN-011): o arquivo so existe depois de passar pelo navegador — canvas, Blob e download.
+// Nenhum teste unitario alcanca isso; aqui a prova e o arquivo que cai no disco.
+test('exportar entrega os quatro arquivos do grafico', async ({ page }) => {
+    await page.goto('/componentes/column-chart');
+    await expect(page.getByRole('heading', { name: 'RvmColumnChart', level: 1 })).toBeVisible();
+
+    const baixar = async (item: string) => {
+        await page.getByRole('button', { name: 'Exportar' }).click();
+        const espera = page.waitForEvent('download');
+        await page.getByRole('menuitem', { name: item }).click();
+        const arquivo = await espera;
+        const caminho = await arquivo.path();
+        return { nome: arquivo.suggestedFilename(), bytes: readFileSync(caminho!) };
+    };
+
+    const csv = await baixar('Dados CSV');
+    expect(csv.nome).toBe('receita-e-despesa-por-ano.csv');
+    expect(csv.bytes.toString('utf8')).toContain('Categoria;Receita;Despesa');
+    expect(csv.bytes.toString('utf8')).toContain('2022;45.000;26.000');
+
+    const svg = await baixar('Vetor SVG');
+    expect(svg.nome).toBe('receita-e-despesa-por-ano.svg');
+    // Cores embutidas: um SVG salvo sem elas abre sem tema em qualquer editor.
+    expect(svg.bytes.toString('utf8')).toMatch(/<svg[^>]+xmlns="http:\/\/www.w3.org\/2000\/svg"/);
+    expect(svg.bytes.toString('utf8')).toContain('style="fill:rgb(');
+
+    const png = await baixar('Imagem PNG');
+    expect(png.nome).toBe('receita-e-despesa-por-ano.png');
+    expect(png.bytes.subarray(0, 8)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+
+    const pdf = await baixar('PDF');
+    expect(pdf.nome).toBe('receita-e-despesa-por-ano.pdf');
+    expect(pdf.bytes.subarray(0, 8).toString('latin1')).toBe('%PDF-1.4');
+    expect(pdf.bytes.toString('latin1')).toContain('/Filter /DCTDecode');
+    expect(pdf.bytes.toString('latin1')).toContain('%%EOF');
+
+    await expect(page.getByRole('status').filter({ hasText: 'PDF' })).toBeVisible();
 });
