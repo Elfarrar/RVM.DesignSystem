@@ -38,7 +38,7 @@ public partial class RvmListItem : ComponentBase
     /// <summary>Faz do item um link.</summary>
     [Parameter] public string? Href { get; set; }
 
-    /// <summary>Faz do item um botao.</summary>
+    /// <summary>Faz do item um botao. Com <see cref="Href"/> junto, o link vence e este e ignorado.</summary>
     [Parameter] public EventCallback OnClick { get; set; }
 
     /// <summary>Item escolhido: <c>aria-current</c> no link, <c>aria-pressed</c> no botao.</summary>

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RVM.DesignSystem.Components.Snackbar;
 
 namespace RVM.DesignSystem;
@@ -14,6 +15,8 @@ public static class RvmServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
         services.AddScoped<RvmSnackbarService>();
+        // O relogio do snackbar vem do DI para o teste poder avancar o tempo sem esperar de verdade.
+        services.TryAddSingleton(TimeProvider.System);
         return services;
     }
 }

@@ -3,7 +3,7 @@ id: DSGN-005
 titulo: Onda 3 — feedback e sobreposicao (8 componentes)
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: em revisao
 criada: 2026-09-17
 ---
 
@@ -71,3 +71,20 @@ dialogo aberto no primeiro render tem de aparecer aberto sem JS; mover e prender
 3. axe local nos dois temas, inclusive com o que abre aberto; E2E local e no dev
 4. Teclado: o padrao ARIA de cada componente, testado de verdade
 5. Comparacao lado a lado com o PNG do kit, aprovada pelo Rafael
+
+## Review independente (onda 3 inteira)
+
+Sonnet, 17/09. Achados e o que foi feito:
+
+| Achado | Resolucao |
+|---|---|
+| 🔴 **P0 — abrir e fechar rapido travava a rolagem da pagina para sempre.** O `OnAfterRenderAsync` nao espera o anterior: o fechar rodava antes de o abrir voltar do JS, nao achava nada para fechar, e o abrir concluia depois | `Sobreposicao` serializa abrir/fechar (`SemaphoreSlim`) e segue o estado DESEJADO, nao a ordem das chamadas. Teste bUnit com `IJSRuntime` controlado (o abrir so volta depois de o fechar ser pedido) — vermelho no codigo antigo, verde no novo |
+| **P1 — Esc num dialogo aberto sobre outro fechava os dois** | `@onkeydown:stopPropagation` no dialogo e na gaveta. Teste com dialogo aninhado — vermelho no antigo, verde no novo |
+| **P1 — sem portal: dentro de ancestral com `transform`/`filter`/`perspective`/`contain`, o `position: fixed` nao cobre a tela** | Documentado no XML doc e na pagina. Portal exige mover o no por JS, o que conflita com "aberto no primeiro render sem JS": **decisao para o Rafael** |
+| P2 — `Thread.Sleep` no teste de pausa do snackbar | O host le o relogio do DI (`TimeProvider`, registrado pelo `AddRvmDesignSystem`); os testes usam `FakeTimeProvider` e eventos AGUARDADOS. A versao sincrona do evento do bUnit voltava antes do handler e o teste falhava 1 vez em 3; com eventos aguardados, 5 rodadas seguidas verdes |
+| P2 — `Href` e `OnClick` juntos: o link vence em silencio | Documentado no parametro |
+| P2 — lista de classes genericas cresceu nesta onda | Ja registrado acima como decisao do Rafael antes do `1.0.0` |
+
+Verificado OK pelo reviewer: fila e lock do servico de snackbar, dispatcher no host, escopo por circuito,
+nenhum outro numero em atributo na cultura corrente, nenhum outro `OpenElement` com CSS isolado, padroes
+ARIA de dialogo, acordeao, disclosure e progresso, regioes vivas, contraste dos pares novos.

@@ -21,7 +21,8 @@ else if (Open)
              aria-modal="true"
              aria-label="@AriaLabel"
              tabindex="-1"
-             @onkeydown="AoTeclarAsync">
+             @onkeydown="AoTeclarAsync"
+             @onkeydown:stopPropagation="true">
             @ChildContent
         </div>
     </div>

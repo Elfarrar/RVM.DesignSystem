@@ -7,6 +7,11 @@ namespace RVM.DesignSystem.Components.Dialog;
 /// <summary>
 /// Janela modal por cima da pagina: aviso, confirmacao, formulario curto ou tela cheia.
 /// </summary>
+/// <remarks>
+/// Renderiza onde foi declarado (sem portal). Dentro de um ancestral com <c>transform</c>,
+/// <c>filter</c>, <c>perspective</c> ou <c>contain</c>, o <c>position: fixed</c> deixa de cobrir a tela:
+/// declare o dialogo fora desses containers.
+/// </remarks>
 public partial class RvmDialog : ComponentBase, IAsyncDisposable
 {
     private static int _proximoId;

@@ -10,6 +10,12 @@
     Caixa de 600 px, <strong>medida no kit</strong>. Aberto no primeiro render, aparece aberto sem JS.
 </p>
 
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ O dialogo aparece onde foi declarado, sem ser movido para o fim da pagina. Declare-o fora de
+    containers com <code>transform</code>, <code>filter</code>, <code>perspective</code> ou
+    <code>contain</code>: dentro deles ele nao cobre a tela.
+</p>
+
 <BlocoExemplo Titulo="Simples e confirmacao"
               Descricao="A confirmacao (Alert) vira alertdialog: o corpo e lido junto com o titulo e clicar fora nao fecha — a pessoa precisa responder."
               Codigo="@CodigoConfirmacao">

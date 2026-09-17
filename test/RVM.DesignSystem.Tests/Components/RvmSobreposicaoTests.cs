@@ -1,6 +1,9 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
+using Microsoft.JSInterop;
 using RVM.DesignSystem;
 using RVM.DesignSystem.Components.Dialog;
 using RVM.DesignSystem.Components.Drawer;
@@ -135,6 +138,91 @@ public class RvmDialogTests : BunitContext
     }
 
     [Fact]
+    public void Esc_no_dialogo_de_dentro_nao_fecha_o_de_fora()
+    {
+        var fechados = new List<string>();
+        var cortado = Render<RvmDialog>(p => p
+            .Add(x => x.Open, true)
+            .Add(x => x.Title, "Editar talhao")
+            .Add(x => x.OpenChanged, EventCallback.Factory.Create<bool>(this, _ => fechados.Add("fora")))
+            .Add(x => x.ChildContent, (RenderFragment)(b =>
+            {
+                b.OpenComponent<RvmDialog>(0);
+                b.AddAttribute(1, nameof(RvmDialog.Open), true);
+                b.AddAttribute(2, nameof(RvmDialog.Title), "Excluir?");
+                b.AddAttribute(3, nameof(RvmDialog.OpenChanged), EventCallback.Factory.Create<bool>(this, _ => fechados.Add("dentro")));
+                b.CloseComponent();
+            })));
+
+        cortado.Find("[role=dialog] [role=dialog]").KeyDown(key: "Escape");
+
+        Assert.Equal(["dentro"], fechados);
+    }
+
+    [Fact]
+    public async Task Fechar_antes_de_o_abrir_voltar_do_js_ainda_fecha()
+    {
+        // Review da onda 3: abrir e fechar rapido deixava a rolagem da pagina travada para sempre.
+        var js = new JsControlado();
+        Services.AddSingleton<IJSRuntime>(js);
+        var cortado = Render<RvmDialog>(p => p.Add(x => x.Open, true).Add(x => x.Title, "Rapido"));
+
+        cortado.WaitForAssertion(() => Assert.Equal(1, js.PedidosDeAbrir));
+        cortado.Render(p => p.Add(x => x.Open, false));
+
+        // So agora o "abrir" volta do JS — depois de o fechar ja ter sido pedido.
+        js.LiberarAbrir();
+
+        cortado.WaitForAssertion(() => Assert.Equal(1, js.Fechamentos));
+        await Task.CompletedTask;
+    }
+
+    /// <summary>IJSRuntime em que o teste decide quando o "abrir" termina.</summary>
+    private sealed class JsControlado : IJSRuntime
+    {
+        private readonly TaskCompletionSource _abrir = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int _pedidosDeAbrir;
+        private int _fechamentos;
+
+        public int PedidosDeAbrir => _pedidosDeAbrir;
+
+        public int Fechamentos => _fechamentos;
+
+        public void LiberarAbrir() => _abrir.TrySetResult();
+
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
+            => InvokeAsync<TValue>(identifier, CancellationToken.None, args);
+
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
+            => new((TValue)(object)new Modulo(this));
+
+        private sealed class Modulo(JsControlado dono) : IJSObjectReference
+        {
+            public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
+                => InvokeAsync<TValue>(identifier, CancellationToken.None, args);
+
+            public async ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
+            {
+                if (identifier == "abrir")
+                {
+                    Interlocked.Increment(ref dono._pedidosDeAbrir);
+                    await dono._abrir.Task;
+                    return (TValue)(object)new Modulo(dono);
+                }
+
+                if (identifier == "fechar")
+                {
+                    Interlocked.Increment(ref dono._fechamentos);
+                }
+
+                return default!;
+            }
+
+            public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+        }
+    }
+
+    [Fact]
     public void Abrir_e_fechar_chama_o_modulo_de_foco()
     {
         var modulo = JSInterop.SetupModule("./_content/RVM.DesignSystem/rvm-sobreposicao.js");
@@ -238,9 +326,13 @@ public class RvmSnackbarTests : BunitContext
 {
     private readonly RvmSnackbarService _servico;
 
+    // Relogio falso: o tempo so anda quando o teste manda. Sincroniza por sinal, nunca por espera.
+    private readonly FakeTimeProvider _relogio = new();
+
     public RvmSnackbarTests()
     {
         JSInterop.Mode = JSRuntimeMode.Loose;
+        Services.AddSingleton<TimeProvider>(_relogio);
         Services.AddRvmDesignSystem();
         _servico = Services.GetRequiredService<RvmSnackbarService>();
     }
@@ -310,26 +402,37 @@ public class RvmSnackbarTests : BunitContext
     public void Some_sozinha_depois_da_duracao()
     {
         var cortado = Render<RvmSnackbarHost>();
-        cortado.InvokeAsync(() => _servico.Show("Rapida.", new RvmSnackbarOptions { Duration = TimeSpan.FromMilliseconds(50), ShowCloseButton = false }));
+        cortado.InvokeAsync(() => _servico.Show("Rapida.", new RvmSnackbarOptions { Duration = TimeSpan.FromSeconds(5), ShowCloseButton = false }));
 
         cortado.WaitForAssertion(() => Assert.NotEmpty(cortado.FindAll(".mensagem")));
         Assert.Empty(cortado.FindAll("button.fechar"));
-        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")), TimeSpan.FromSeconds(3));
+
+        _relogio.Advance(TimeSpan.FromSeconds(4));
+        Assert.NotEmpty(cortado.FindAll(".mensagem"));
+
+        _relogio.Advance(TimeSpan.FromSeconds(1));
+        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")));
     }
 
     [Fact]
-    public void Mouse_em_cima_segura_a_mensagem_e_sair_recomeca_o_tempo()
+    public async Task Mouse_em_cima_segura_a_mensagem_e_sair_recomeca_o_tempo()
     {
         var cortado = Render<RvmSnackbarHost>();
-        cortado.InvokeAsync(() => _servico.Show("Leia com calma.", new RvmSnackbarOptions { Duration = TimeSpan.FromMilliseconds(300) }));
+        await cortado.InvokeAsync(() => _servico.Show("Leia com calma.", new RvmSnackbarOptions { Duration = TimeSpan.FromSeconds(5) }));
 
-        cortado.WaitForElement(".mensagem").MouseEnter();
-        Thread.Sleep(600);
+        // Eventos AGUARDADOS: a versao sincrona volta antes do handler rodar, e o relogio falso andava
+        // antes de o tempo ser rearmado — o teste falhava uma vez a cada tres.
+        await cortado.WaitForElement(".mensagem").MouseEnterAsync(new MouseEventArgs());
+        _relogio.Advance(TimeSpan.FromMinutes(1));
         Assert.NotEmpty(cortado.FindAll(".mensagem"));
 
-        cortado.Find(".mensagem").FocusIn();
-        cortado.Find(".mensagem").FocusOut();
-        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")), TimeSpan.FromSeconds(3));
+        // Foco entrou e saiu: o tempo recomeca INTEIRO — 4 s depois ainda esta la, aos 5 s some.
+        await cortado.Find(".mensagem").FocusInAsync(new FocusEventArgs());
+        await cortado.Find(".mensagem").FocusOutAsync(new FocusEventArgs());
+        _relogio.Advance(TimeSpan.FromSeconds(4));
+        Assert.NotEmpty(cortado.FindAll(".mensagem"));
+        _relogio.Advance(TimeSpan.FromSeconds(1));
+        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")), TimeSpan.FromSeconds(5));
     }
 
     [Fact]
