@@ -1,0 +1,122 @@
+@page "/componentes/checkbox"
+
+<PageTitle>RvmCheckbox — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmCheckbox</h1>
+
+<p class="rvm-text-body1 apoio">
+    Caixa de marcar sobre um <code>&lt;input type="checkbox"&gt;</code> <strong>nativo</strong>: funciona
+    sem JS (inclusive em formulario SSR estatico), traz teclado e semantica, e gera o <code>name</code> do
+    POST. O que aparece por cima e so desenho — medido no kit: 16, 18 e 22 px.
+</p>
+
+<BlocoExemplo Titulo="Papel de cor"
+              Descricao="A caixa marcada usa a variante -text da cor: o -main reprova os 3:1 de indicador (warning no claro da 1.78:1, primary no escuro 1.84:1)."
+              Codigo="@CodigoCores">
+    <div class="linha-exemplos">
+        @foreach (var item in _marcados)
+        {
+            @* Objeto com propriedade, e nao `dicionario[cor]`: o @bind-Value vira uma expressao, e o
+               FieldIdentifier do Blazor nao aceita indexador — estouraria em tempo de execucao. *@
+            <RvmCheckbox @bind-Value="item.Ligado" Color="item.Cor" Label="@item.Cor.ToString()" />
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Indeterminado"
+              Descricao="A caixa-mae de uma lista: marca quando todos estao marcados, fica indeterminada quando so alguns. O visual sai por CSS no primeiro render; a semantica misto e completada por JS quando disponivel."
+              Codigo="@CodigoIndeterminado">
+    <div class="lista-vertical">
+        <RvmCheckbox Value="TodosMarcados" ValueChanged="MarcarTodos" Indeterminate="AlgunsMarcados" Label="Todos os talhoes" />
+        <div class="recuo">
+            @foreach (var talhao in _talhoes)
+            {
+                <RvmCheckbox @bind-Value="talhao.Marcado" Label="@talhao.Nome" />
+            }
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos e estados"
+              Descricao="Desabilitado sai da tabulacao. Clicar no texto tambem marca: o label envolve o controle."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos">
+        <RvmCheckbox @bind-Value="_pequeno" Size="RvmSize.Small" Label="Pequeno" />
+        <RvmCheckbox @bind-Value="_medio" Label="Medio" />
+        <RvmCheckbox @bind-Value="_grande" Size="RvmSize.Large" Label="Grande" />
+        <RvmCheckbox Value="true" Disabled="true" Label="Marcado desabilitado" />
+        <RvmCheckbox Value="false" Disabled="true" Label="Desabilitado" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/checkbox.png"
+              Arquivo="referencia-neatlab/Checkbox.png (recorte)"
+              Descricao="As variantes do kit: seis cores, tres tamanhos, e os estados marcado, indeterminado, hover e desabilitado."
+              Alt="Recorte do kit NEATLAB mostrando caixas de marcar em seis cores, tres tamanhos e varios estados" />
+
+@code {
+    private static readonly RvmColor[] Cores =
+        [RvmColor.Primary, RvmColor.Secondary, RvmColor.Error, RvmColor.Warning, RvmColor.Info, RvmColor.Success];
+
+    private sealed class ItemDeCor
+    {
+        public required RvmColor Cor { get; init; }
+        public bool Ligado { get; set; } = true;
+    }
+
+    private readonly List<ItemDeCor> _marcados = Cores.Select(c => new ItemDeCor { Cor = c }).ToList();
+    private bool _pequeno = true, _medio = true, _grande;
+
+    private sealed class Talhao
+    {
+        public required string Nome { get; init; }
+        public bool Marcado { get; set; }
+    }
+
+    private readonly List<Talhao> _talhoes =
+    [
+        new() { Nome = "Talhao 11", Marcado = true },
+        new() { Nome = "Talhao 12" },
+        new() { Nome = "Talhao 13", Marcado = true }
+    ];
+
+    private bool TodosMarcados => _talhoes.All(t => t.Marcado);
+
+    private bool AlgunsMarcados => _talhoes.Any(t => t.Marcado) && !TodosMarcados;
+
+    private void MarcarTodos(bool valor)
+    {
+        foreach (var talhao in _talhoes)
+        {
+            talhao.Marcado = valor;
+        }
+    }
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Value / @bind-Value", "bool", "false", "Marcado ou nao."),
+        new("Label", "string?", "—", "Texto ao lado; tambem e o nome acessivel."),
+        new("ChildContent", "RenderFragment?", "—", "Rotulo livre, quando Label esta vazio."),
+        new("Color", "RvmColor", "Primary", "Papel de cor da caixa marcada."),
+        new("Size", "RvmSize", "Medium", "16, 18 ou 22 px de caixa."),
+        new("Indeterminate", "bool", "false", "Estado 'alguns marcados'. Quem liga desliga."),
+        new("Disabled", "bool", "false", "Indisponivel."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no input nativo.")
+    ];
+
+    private const string CodigoCores = """
+        <RvmCheckbox @bind-Value="_aceito" Color="RvmColor.Success" Label="Aceito os termos" />
+        """;
+
+    private const string CodigoIndeterminado = """
+        <RvmCheckbox Value="TodosMarcados" ValueChanged="MarcarTodos"
+                     Indeterminate="AlgunsMarcados" Label="Todos os talhoes" />
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmCheckbox @bind-Value="_x" Size="RvmSize.Small" Label="Pequeno" />
+        <RvmCheckbox Value="true" Disabled="true" Label="Marcado desabilitado" />
+        """;
+}

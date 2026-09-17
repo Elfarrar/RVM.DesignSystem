@@ -355,3 +355,19 @@ code {
     width: 100%;
     margin-bottom: var(--rvm-space-4);
 }
+
+.lista-vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.recuo {
+    display: flex;
+    flex-direction: column;
+    padding-inline-start: var(--rvm-space-8);
+}
+
+.linha-exemplos.alinhado-topo {
+    align-items: flex-start;
+    gap: var(--rvm-space-10);
+}

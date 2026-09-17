@@ -145,6 +145,9 @@
     --rvm-color-overlay: #9D9AA0;
     --rvm-color-snackbar-background: #212121;
     --rvm-color-snackbar-text: #FFFFFF;
+    /* Polegar do switch: branco nos DOIS temas, como no kit (a pagina Switch escura desenha o polegar
+       inativo branco). Fica fora do bloco escuro de proposito. */
+    --rvm-color-switch-thumb: #FFFFFF;
 
     /* --- Texto ---
        O primario e o valor MEDIDO no swatch do kit. ⚠️ Ele nao segue o modelo base+alpha do
