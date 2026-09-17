@@ -1,0 +1,69 @@
+@page "/componentes/progress"
+
+<PageTitle>RvmProgress — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmProgress</h1>
+
+<p class="rvm-text-body1 apoio">
+    Progresso de uma tarefa, em barra ou anel. Com <code>Value</code> diz quanto andou; sem, diz so que
+    esta andando. E um <code>role="progressbar"</code> com nome: de o <code>Label</code> do que esta
+    carregando.
+</p>
+
+<p class="rvm-text-body2 apoio">
+    ⚠️ O kit <strong>nao tem pagina de progresso</strong>. A barra tem 4 px e o anel usa os tamanhos do
+    avatar. O trilho e neutro de proposito: com o tom suave de cada cor, a parte preenchida nao chegava
+    a 3:1 no tema escuro.
+</p>
+
+<BlocoExemplo Titulo="Barra"
+              Descricao="Determinada, com o valor ao lado, e indeterminada."
+              Codigo="@CodigoBarra">
+    <div class="pilha-exemplos largura-cheia">
+        <RvmProgress Value="_valor" ShowValue="true" Label="Importando notas fiscais" />
+        <RvmProgress Label="Buscando cotacoes" Color="RvmColor.Info" />
+        <div class="linha-exemplos">
+            <RvmButton Variant="RvmButtonVariant.Outlined" Size="RvmSize.Small" OnClick="@(() => Mudar(-10))">Menos 10%</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Outlined" Size="RvmSize.Small" OnClick="@(() => Mudar(10))">Mais 10%</RvmButton>
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Anel, tamanhos e cores"
+              Descricao="24, 40 e 56 px. No pequeno, a porcentagem fica ao lado."
+              Codigo="@CodigoAnel">
+    <div class="linha-exemplos">
+        <RvmProgress Variant="RvmProgressVariant.Circular" Size="RvmSize.Small" Value="_valor" ShowValue="true" Label="Sincronizando pequeno" />
+        <RvmProgress Variant="RvmProgressVariant.Circular" Value="_valor" ShowValue="true" Label="Sincronizando medio" Color="RvmColor.Success" />
+        <RvmProgress Variant="RvmProgressVariant.Circular" Size="RvmSize.Large" Value="_valor" ShowValue="true" Label="Sincronizando grande" Color="RvmColor.Warning" />
+        <RvmProgress Variant="RvmProgressVariant.Circular" Label="Carregando mapa" Color="RvmColor.Error" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+@code {
+    private double _valor = 40;
+
+    private void Mudar(double quanto) => _valor = Math.Clamp(_valor + quanto, 0, 100);
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Variant", "RvmProgressVariant", "Linear", "Linear (barra) ou Circular (anel)."),
+        new("Value", "double?", "—", "De 0 a 100. Sem valor, indeterminado."),
+        new("Color", "RvmColor", "Primary", "Papel de cor da parte preenchida."),
+        new("Size", "RvmSize", "Medium", "Anel de 24, 40 ou 56 px. A barra tem sempre 4 px."),
+        new("Label", "string", "\"Carregando\"", "Nome para o leitor de tela: o que esta progredindo."),
+        new("ShowValue", "bool", "false", "Mostra a porcentagem. So no determinado."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoBarra = """
+        <RvmProgress Value="40" ShowValue="true" Label="Importando notas fiscais" />
+        <RvmProgress Label="Buscando cotacoes" Color="RvmColor.Info" />
+        """;
+
+    private const string CodigoAnel = """
+        <RvmProgress Variant="RvmProgressVariant.Circular" Size="RvmSize.Large" Value="40" ShowValue="true" />
+        """;
+}

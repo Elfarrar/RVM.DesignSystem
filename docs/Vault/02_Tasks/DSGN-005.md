@@ -31,10 +31,18 @@ dialogo aberto no primeiro render tem de aparecer aberto sem JS; mover e prender
 
 ## Andamento
 
+- [x] **Fatia 1**: `RvmProgress`, `RvmSkeleton`, `RvmEmptyState`
+
 ## Decisoes e medicoes
 
 | O que | Por que |
 |---|---|
+| **Progresso e esqueleto sem referencia no kit** — barra de 4 px, anel nos tamanhos do avatar (24/40/56), esqueleto no `action-selected` | O kit nao tem pagina deles (nem em tela de dashboard). No E2E viraram excecao declarada do recorte do kit, como o `RvmIcon` |
+| **Estado vazio segue a composicao da tela `Error.png`** | Titulo, apoio e acao centralizados. O titulo e cabecalho de verdade (`HeadingLevel`) e nomeia a `section` |
+| **Trilho do progresso neutro (`action-selected`), nao o tom suave da cor** | Com `-outlined-resting`, o preenchido dava 2.3 a 3.1:1 contra o trilho no escuro (WCAG 1.4.11 pede 3:1). Contra o neutro passa de 5:1 nos dois temas (medido) |
+| **Indeterminado sem `aria-valuenow`; esqueleto sempre `aria-hidden`** | E como o leitor de tela sabe que nao ha previsao. Quem avisa "carregando" e a regiao com `aria-busy`, nao cada bloco cinza |
+| **Movimento reduzido: progresso desacelera, brilho do esqueleto some** | Parar o indeterminado faria parecer travado; o brilho e so enfeite |
+| 🔴 **Numero decimal em atributo de markup sai na cultura corrente** | `r="@Raio"` virou `r="20,2"` no site em pt-BR: atributo invalido, anel invisivel, sem erro nenhum. O bUnit roda em en-US e passou. Pego na foto; agora literal + teste bUnit em pt-BR + E2E medindo a geometria |
 
 ## Verifica (cada fatia)
 

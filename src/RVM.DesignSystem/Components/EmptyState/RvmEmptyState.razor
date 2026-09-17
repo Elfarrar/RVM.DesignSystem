@@ -1,0 +1,35 @@
+@namespace RVM.DesignSystem.Components.EmptyState
+@using RVM.DesignSystem.Components.Icon
+
+@* O vazio que ensina o proximo passo (11-catalogo, "Estados obrigatorios"): o que aconteceu, por que,
+   e o que fazer. A ilustracao e decorativa; o titulo e um cabecalho de verdade, no nivel que o
+   consumidor escolher, para entrar no esqueleto da pagina. *@
+<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-labelledby="@IdTitulo">
+    @if (Illustration is not null)
+    {
+        <div class="ilustracao" aria-hidden="true">@Illustration</div>
+    }
+    else if (Icon is { } icone)
+    {
+        <span class="icone" aria-hidden="true">
+            <RvmIcon Name="icone" Size="RvmSize.Large" />
+        </span>
+    }
+
+    @TituloRenderizado
+
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <p class="descricao">@Description</p>
+    }
+
+    @if (ChildContent is not null)
+    {
+        <div class="detalhe">@ChildContent</div>
+    }
+
+    @if (Actions is not null)
+    {
+        <div class="acoes">@Actions</div>
+    }
+</section>

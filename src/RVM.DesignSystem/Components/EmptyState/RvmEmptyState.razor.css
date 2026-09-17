@@ -1,0 +1,66 @@
+/* CSS isolado do RvmEmptyState. So custom properties — hex literal aqui quebra o tema escuro.
+   Composicao da tela Error.png do kit: tudo centralizado, titulo em peso medio, apoio no texto
+   secundario e a acao embaixo. */
+
+.vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    box-sizing: border-box;
+    padding: var(--rvm-space-10) var(--rvm-space-4);
+    text-align: center;
+    font-family: var(--rvm-font-family);
+}
+
+.ilustracao {
+    max-width: 16rem;
+    margin-bottom: var(--rvm-space-4);
+}
+
+.ilustracao ::deep img,
+.ilustracao ::deep svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--rvm-space-2);
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-primary-soft);
+    color: var(--rvm-color-primary-text);
+}
+
+.titulo {
+    margin: 0;
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-h5-size);
+    line-height: var(--rvm-text-h5-line);
+    font-weight: var(--rvm-text-h5-weight);
+}
+
+.descricao {
+    max-width: 32rem;
+    margin: 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.detalhe {
+    max-width: 32rem;
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--rvm-space-3);
+    margin-top: var(--rvm-space-4);
+}
