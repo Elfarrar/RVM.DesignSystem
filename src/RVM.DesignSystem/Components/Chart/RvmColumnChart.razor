@@ -56,9 +56,17 @@
 
     private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
 
-    private double Faixa => Dados.Count == 0 ? LarguraDoPlot : LarguraDoPlot / Dados.Count;
+    // Aproximado, cabem menos categorias na mesma largura: a faixa de cada uma cresce na mesma proporcao.
+    private double Faixa => Dados.Count == 0
+        ? LarguraDoPlot
+        : LarguraDoPlot / Dados.Count / (JanelaX.Fim - JanelaX.Inicio);
+
+    private double CentroDe(int categoria) => XDaFracao((categoria + 0.5) / Math.Max(1, Dados.Count), Esquerda, LarguraDoPlot);
 
     private double Y(Escala escala, double valor) => escala.Posicao(valor, MargemTopo + AlturaDoPlot, MargemTopo);
+
+    internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
+        => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
 
     private List<Coluna> Colunas => Memo("Colunas", () =>
         {
@@ -71,13 +79,13 @@
             for (var c = 0; c < Dados.Count; c++)
             {
                 var item = Dados[c];
-                var centro = Esquerda + faixa * (c + 0.5);
+                var centro = CentroDe(c);
                 var positivo = new Dictionary<RvmChartAxis, double>();
                 var negativo = new Dictionary<RvmChartAxis, double>();
                 for (var s = 0; s < Series.Count; s++)
                 {
                     var eixo = EixoDa(Series[s]);
-                    var escala = EscalaDe(eixo);
+                    var escala = NaJanela(EscalaDe(eixo));
                     var valor = Series[s].ValorDe(item);
                     double y0, y1, x;
                     if (Stacked)
@@ -115,9 +123,10 @@
 
     internal override RenderFragment Desenho => @<g>
         @{
-            var escala = EscalaDosValores;
+            var escala = NaJanela(EscalaDosValores);
             var esquerda = Esquerda;
-            var salto = SaltoDeRotulos(Dados.Count, LarguraDoPlot);
+            var direita = Largura - MargemDireita;
+            var salto = SaltoDeRotulos(Dados.Count, LarguraDoPlot / (JanelaX.Fim - JanelaX.Inicio));
         }
         @foreach (var marca in escala.Marcas)
         {
@@ -131,25 +140,35 @@
         @if (TemEixoSecundario)
         {
             // A grade e so do eixo esquerdo: duas grades no mesmo desenho viram teia.
-            var secundaria = EscalaSecundaria;
+            var secundaria = NaJanela(EscalaSecundaria);
             foreach (var marca in secundaria.Marcas)
             {
                 @Texto(Largura - MargemDireita + 8, Y(secundaria, marca), FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary), "start", "middle")
             }
         }
-        @if (Ativo is { } ativo && ativo < Dados.Count)
-        {
-            <rect class="rvm-grafico-faixa-ativa" x="@N(esquerda + Faixa * ativo)" y="@N(MargemTopo)" width="@N(Faixa)" height="@N(AlturaDoPlot)" rx="4" />
-        }
-        @foreach (var coluna in Colunas)
-        {
-            <rect class="@($"rvm-grafico-barra {ClasseDaCor(CorDa(Series[coluna.Serie]))}")"
-                  x="@N(coluna.X)" y="@N(coluna.Y)" width="@N(coluna.Largura)" height="@N(coluna.Altura)"
-                  rx="@N(Math.Min(4, coluna.Largura / 2))" />
-        }
+        @* Aproximado, o que sai da area do desenho e cortado — senao as colunas invadem os rotulos. *@
+        <clipPath id="@($"{IdBase}-recorte")">
+            <rect x="@N(esquerda)" y="@N(MargemTopo)" width="@N(LarguraDoPlot)" height="@N(AlturaDoPlot)" />
+        </clipPath>
+        <g clip-path="@($"url(#{IdBase}-recorte)")">
+            @if (Ativo is { } ativo && ativo < Dados.Count)
+            {
+                <rect class="rvm-grafico-faixa-ativa" x="@N(CentroDe(ativo) - Faixa / 2)" y="@N(MargemTopo)" width="@N(Faixa)" height="@N(AlturaDoPlot)" rx="4" />
+            }
+            @foreach (var coluna in Colunas)
+            {
+                <rect class="@($"rvm-grafico-barra {ClasseDaCor(CorDa(Series[coluna.Serie]))}")"
+                      x="@N(coluna.X)" y="@N(coluna.Y)" width="@N(coluna.Largura)" height="@N(coluna.Altura)"
+                      rx="@N(Math.Min(4, coluna.Largura / 2))" />
+            }
+        </g>
         @for (var c = 0; c < Dados.Count; c += salto)
         {
-            @Texto(esquerda + Faixa * (c + 0.5), Height - 10, NomeDe(Dados[c], c))
+            var centro = CentroDe(c);
+            @if (centro >= esquerda && centro <= direita)
+            {
+                @Texto(centro, Height - 10, NomeDe(Dados[c], c))
+            }
         }
     </g>;
 
@@ -163,7 +182,7 @@
     internal override (double X, double Y) AncoraDoPonto(int indice)
     {
         var topo = Colunas.Where(c => c.Categoria == indice).Select(c => c.Y).DefaultIfEmpty(MargemTopo).Min();
-        return (Esquerda + Faixa * (indice + 0.5), topo);
+        return (CentroDe(indice), topo);
     }
 
     internal override int? PontoEm(double x, double y)
@@ -173,7 +192,7 @@
             return null;
         }
 
-        return Math.Clamp((int)((x - Esquerda) / Faixa), 0, Dados.Count - 1);
+        return Math.Clamp((int)(FracaoDoX(x, Esquerda, LarguraDoPlot) * Dados.Count), 0, Dados.Count - 1);
     }
 
     internal override TabelaDeDados MontarTabela(Func<double, string> formatar)

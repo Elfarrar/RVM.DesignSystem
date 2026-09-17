@@ -143,3 +143,35 @@ test('eixo duplo: escala propria a direita, e a legenda diz qual serie le onde',
     await page.keyboard.press('Home');
     await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Margem' })).toHaveText('Jan: Receita 128 mil; Margem 11,5%');
 });
+
+// Zoom e arrastar (DSGN-011): a roda so cancela a rolagem da pagina num ouvinte nao passivo, coisa que
+// nenhum teste unitario alcanca. Aqui a prova e o desenho mudar e a pagina ficar parada.
+test('zoom: roda aproxima sem rolar a pagina, teclado tambem, e o duplo clique volta', async ({ page }) => {
+    await page.goto('/componentes/line-chart');
+    const grafico = page.getByRole('group', { name: 'Chuva mensal por fazenda' });
+    const figura = page.locator('figure.rvm-grafico').filter({ hasText: 'Boa Vista' });
+    const meses = () => figura.locator('text').filter({ hasText: /^[A-Z][a-z]{2}$/ }).count();
+
+    await expect(grafico).toBeVisible();
+    await expect.poll(meses).toBeGreaterThan(0);
+    const inteiro = await meses();
+    const rolagem = await page.evaluate(() => window.scrollY);
+    await grafico.hover();
+    await page.mouse.wheel(0, -200);
+
+    await expect.poll(meses).toBeLessThan(inteiro);
+    expect(await page.evaluate(() => window.scrollY)).toBe(rolagem);
+    await expect(figura.locator('[aria-live=polite]').filter({ hasText: 'Mostrando de' })).toBeVisible();
+
+    // Duplo clique volta ao grafico inteiro.
+    await grafico.dblclick();
+    await expect.poll(meses).toBe(inteiro);
+
+    // E o mesmo pelo teclado, sem mouse nenhum.
+    await grafico.focus();
+    await page.keyboard.press('+');
+    await expect.poll(meses).toBeLessThan(inteiro);
+    await page.keyboard.press('0');
+    await expect.poll(meses).toBe(inteiro);
+    await expect(figura.locator('[aria-live=polite]').filter({ hasText: 'Grafico inteiro a vista' })).toBeVisible();
+});

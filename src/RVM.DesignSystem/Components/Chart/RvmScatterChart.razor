@@ -45,9 +45,17 @@
 
     private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
 
-    private double PX(double x) => EscalaX.Posicao(x, Esquerda, Esquerda + LarguraDoPlot);
+    // Os dois eixos sao numericos: o zoom recorta cada um na sua fracao.
+    private Escala EscalaXVisivel => EscalaX.Recortada(JanelaX.Inicio, JanelaX.Fim);
 
-    private double PY(double y) => EscalaY.Posicao(y, MargemTopo + AlturaDoPlot, MargemTopo);
+    private Escala EscalaYVisivel => NaJanela(EscalaY);
+
+    private double PX(double x) => EscalaXVisivel.Posicao(x, Esquerda, Esquerda + LarguraDoPlot);
+
+    private double PY(double y) => EscalaYVisivel.Posicao(y, MargemTopo + AlturaDoPlot, MargemTopo);
+
+    internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
+        => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
 
     internal override RenderFragment Desenho => @<g>
         @{

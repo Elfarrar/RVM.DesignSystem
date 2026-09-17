@@ -24,14 +24,18 @@
             }
 
             <div @ref="_camada"
-                 class="rvm-grafico-camada"
+                 class="@(Aproximado ? "rvm-grafico-camada rvm-grafico-arrastavel" : "rvm-grafico-camada")"
                  tabindex="0"
                  role="group"
                  aria-roledescription="grafico"
                  aria-label="@AriaLabel"
                  aria-describedby="@($"{IdBase}-instrucao")"
                  @onpointermove="AoMoverPonteiro"
+                 @onpointerdown="AoApertarPonteiro"
+                 @onpointerup="AoSoltarPonteiro"
+                 @onpointercancel="AoSoltarPonteiro"
                  @onpointerleave="AoSairPonteiro"
+                 @ondblclick="ResetZoom"
                  @onkeydown="AoTeclar"
                  @onblur="AoSairPonteiro"></div>
 
@@ -54,8 +58,18 @@
             }
         </div>
 
-        <span id="@($"{IdBase}-instrucao")" class="rvm-so-leitor">Use as setas para ler os valores, um ponto por vez.</span>
+        <span id="@($"{IdBase}-instrucao")" class="rvm-so-leitor">
+            Use as setas para ler os valores, um ponto por vez.
+            @if (Zoomable)
+            {
+                @: Mais e menos aproximam (com Shift, o eixo vertical), Ctrl com as setas desloca e zero volta ao grafico inteiro.
+            }
+        </span>
         <span class="rvm-so-leitor" aria-live="polite">@TextoDoAtivo</span>
+        @if (Zoomable)
+        {
+            <span class="rvm-so-leitor" aria-live="polite">@AvisoDoZoom</span>
+        }
 
         @if (ShowLegend && Legenda.Count > 0)
         {

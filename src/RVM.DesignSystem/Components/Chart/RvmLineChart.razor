@@ -45,7 +45,12 @@
 
     private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
 
-    private double XDe(int indice) => Dados.Count <= 1 ? Esquerda + LarguraDoPlot / 2 : Esquerda + LarguraDoPlot * indice / (Dados.Count - 1);
+    private double XDe(int indice) => Dados.Count <= 1
+        ? XDaFracao(0.5, Esquerda, LarguraDoPlot)
+        : XDaFracao((double)indice / (Dados.Count - 1), Esquerda, LarguraDoPlot);
+
+    internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
+        => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
 
     private double Y(Escala escala, double valor) => escala.Posicao(valor, MargemTopo + AlturaDoPlot, MargemTopo);
 
@@ -53,11 +58,11 @@
         => [.. Dados.Select((item, i) => (XDe(i), Y(escala, serie.ValorDe(item))))];
 
     internal string CaminhoDa(RvmChartSeries<TItem> serie)
-        => Caminho(PontosDa(serie, EscalaDe(EixoDa(serie))), Suave);
+        => Caminho(PontosDa(serie, NaJanela(EscalaDe(EixoDa(serie)))), Suave);
 
     internal string PreenchimentoDa(RvmChartSeries<TItem> serie)
     {
-        var escala = EscalaDe(EixoDa(serie));
+        var escala = NaJanela(EscalaDe(EixoDa(serie)));
         var pontos = PontosDa(serie, escala);
         if (pontos.Count == 0)
         {
@@ -130,9 +135,10 @@
 
     internal override RenderFragment Desenho => @<g>
         @{
-            var escala = EscalaDosValores;
+            var escala = NaJanela(EscalaDosValores);
             var esquerda = Esquerda;
-            var salto = SaltoDeRotulos(Dados.Count, LarguraDoPlot);
+            var direita = Largura - MargemDireita;
+            var salto = SaltoDeRotulos(Dados.Count, LarguraDoPlot / (JanelaX.Fim - JanelaX.Inicio));
         }
         @foreach (var marca in escala.Marcas)
         {
@@ -146,7 +152,7 @@
         @if (TemEixoSecundario)
         {
             // A grade e so do eixo esquerdo: duas grades no mesmo desenho viram teia.
-            var secundaria = EscalaSecundaria;
+            var secundaria = NaJanela(EscalaSecundaria);
             foreach (var marca in secundaria.Marcas)
             {
                 @Texto(Largura - MargemDireita + 8, Y(secundaria, marca), FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary), "start", "middle")
@@ -156,11 +162,15 @@
         {
             <line class="rvm-grafico-eixo" x1="@N(XDe(ativo))" y1="@N(MargemTopo)" x2="@N(XDe(ativo))" y2="@N(MargemTopo + AlturaDoPlot)" />
         }
+        @* Aproximado, a linha que sai da area e cortada em vez de invadir os rotulos. *@
+        <clipPath id="@($"{IdBase}-recorte")">
+            <rect x="@N(esquerda)" y="@N(MargemTopo)" width="@N(LarguraDoPlot)" height="@N(AlturaDoPlot)" />
+        </clipPath>
         @for (var s = 0; s < Series.Count; s++)
         {
             var serie = Series[s];
             var cor = ClasseDaCor(CorDa(serie));
-            <g class="@cor">
+            <g class="@cor" clip-path="@($"url(#{IdBase}-recorte)")">
                 @if (Preenchida)
                 {
                     var id = $"{IdBase}-degrade-{s}";
@@ -178,14 +188,18 @@
                 {
                     @if (ShowPoints || Ativo == i || Dados.Count == 1)
                     {
-                        <circle class="rvm-grafico-ponto" cx="@N(XDe(i))" cy="@N(Y(EscalaDe(EixoDa(serie)), serie.ValorDe(Dados[i])))" r="@(Ativo == i ? "6" : "4")" />
+                        <circle class="rvm-grafico-ponto" cx="@N(XDe(i))" cy="@N(Y(NaJanela(EscalaDe(EixoDa(serie))), serie.ValorDe(Dados[i])))" r="@(Ativo == i ? "6" : "4")" />
                     }
                 }
             </g>
         }
         @for (var c = 0; c < Dados.Count; c += salto)
         {
-            @Texto(XDe(c), Height - 10, NomeDe(Dados[c], c), c == 0 && Dados.Count > 1 ? "start" : c == Dados.Count - 1 && Dados.Count > 1 ? "end" : "middle")
+            var x = XDe(c);
+            @if (x >= esquerda && x <= direita)
+            {
+                @Texto(x, Height - 10, NomeDe(Dados[c], c), c == 0 && Dados.Count > 1 ? "start" : c == Dados.Count - 1 && Dados.Count > 1 ? "end" : "middle")
+            }
         }
     </g>;
 
@@ -198,7 +212,7 @@
 
     internal override (double X, double Y) AncoraDoPonto(int indice)
     {
-        var topo = Series.Select(s => Y(EscalaDe(EixoDa(s)), s.ValorDe(Dados[indice]))).DefaultIfEmpty(MargemTopo).Min();
+        var topo = Series.Select(s => Y(NaJanela(EscalaDe(EixoDa(s))), s.ValorDe(Dados[indice]))).DefaultIfEmpty(MargemTopo).Min();
         return (XDe(indice), topo);
     }
 
@@ -209,7 +223,9 @@
             return null;
         }
 
-        return Dados.Count == 1 ? 0 : Math.Clamp((int)Math.Round((x - Esquerda) / (LarguraDoPlot / (Dados.Count - 1))), 0, Dados.Count - 1);
+        return Dados.Count == 1
+            ? 0
+            : Math.Clamp((int)Math.Round(FracaoDoX(x, Esquerda, LarguraDoPlot) * (Dados.Count - 1)), 0, Dados.Count - 1);
     }
 
     internal override TabelaDeDados MontarTabela(Func<double, string> formatar)

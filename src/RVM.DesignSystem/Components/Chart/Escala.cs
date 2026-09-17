@@ -50,14 +50,34 @@ internal readonly record struct Escala(double Min, double Max, double Passo)
         return new Escala(inicio, fim, passo);
     }
 
+    /// <summary>
+    /// A parte da escala entre duas fracoes (0 = Min, 1 = Max), com o passo recalculado para a faixa nova.
+    /// E o que o zoom mostra: os limites sao exatos (nao arredondam de volta para fora da janela) e so as
+    /// marcas seguem numeros redondos.
+    /// </summary>
+    public Escala Recortada(double inicio, double fim, int marcas = 5)
+    {
+        if (fim - inicio >= 1 - 1e-9)
+        {
+            return this;
+        }
+
+        var faixa = Max - Min;
+        var min = Min + faixa * inicio;
+        var max = Min + faixa * fim;
+        return new Escala(min, max, Arredondada(min, max, marcas).Passo);
+    }
+
     public IEnumerable<double> Marcas
     {
         get
         {
-            var total = (int)Math.Round((Max - Min) / Passo);
-            for (var i = 0; i <= total; i++)
+            // Multiplos do passo dentro da faixa: com a escala inteira o Min ja e um deles; recortada pelo
+            // zoom, a primeira marca e a proxima "redonda" depois do inicio da janela.
+            var primeira = Math.Ceiling(Min / Passo - 1e-9) * Passo;
+            for (var valor = primeira; valor <= Max + Passo * 1e-9; valor += Passo)
             {
-                yield return Math.Round(Min + i * Passo, 10);
+                yield return Math.Round(valor, 10);
             }
         }
     }
