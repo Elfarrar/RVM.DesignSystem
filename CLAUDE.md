@@ -12,8 +12,13 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 >
 > `DSGN-001` a `DSGN-006`: bootstrap, tokens e os 35 componentes das quatro ondas (mais o relógio
 > circular do `RvmTimePicker`), todos aprovados pelo Rafael. **O contrato da API está congelado no
-> `1.0.0`**: mudança que quebra consumidor é major. Dev em `design.dev.rvmtech.com.br` (alphas
-> `1.1.0-alpha.N`), produção em `design.rvmit.com.br` (GitHub Pages, monitor 25 do Kuma).
+> `1.0.0`**: mudança que quebra consumidor é major. Dev em `design.dev.rvmtech.com.br`, produção em
+> `design.rvmit.com.br` (GitHub Pages, monitor 25 do Kuma).
+>
+> Depois da `1.0.0`, tudo aprovado e em produção: `DSGN-008` (o site passou a usar o próprio
+> `RvmAppShell`, com menu lateral), `DSGN-009` (cinco telas de exemplo) e `DSGN-010` (os oito
+> gráficos, publicados na `1.1.0`). A `DSGN-011` está **no dev** e fecha a `1.2.0` — alphas de `dev`
+> são `1.2.0-alpha.N`.
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 
@@ -42,7 +47,11 @@ banco, auth, container · as telas prontas do kit (login, invoice, chat) · edit
 
 > **Gráfico saiu do "não faz" em 17/09/2026** (`DSGN-010`, decisão do Rafael): oito tipos em SVG próprio,
 > sem biblioteca de terceiros — colunas, barras, histograma, linha, área, dispersão, pizza/rosca e radar.
-> Zoom, arrastar, animação, eixo duplo e exportar imagem seguem fora.
+>
+> **E na mesma data a `DSGN-011` trouxe o resto** ("não deixe nada de fora"): animação, exportar
+> (PNG, SVG, CSV e PDF, o PDF montado byte a byte em C#), eixo duplo, zoom em X e em Y, arrastar e
+> seleção de faixa por arrasto para filtrar outros componentes. **Continuam fora:** zoom por caixa
+> desenhada, `.xlsx` nativo e imprimir.
 
 ## Arquitetura
 

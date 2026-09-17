@@ -21,6 +21,11 @@ public enum RvmChartSelectionMode
 /// <param name="End">O ultimo item da faixa.</param>
 public sealed record RvmChartRange(int Start, int End)
 {
+    /// <summary>O primeiro item da faixa.</summary>
+    public int Start { get; } = Start <= End
+        ? Start
+        : throw new ArgumentOutOfRangeException(nameof(Start), Start, "O inicio da faixa vem depois do fim.");
+
     /// <summary>Quantos itens a faixa cobre.</summary>
     public int Count => End - Start + 1;
 

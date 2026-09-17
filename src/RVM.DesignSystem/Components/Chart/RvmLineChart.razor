@@ -56,7 +56,9 @@
     internal override (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim)
     {
         var meio = Dados.Count <= 1 ? LarguraDoPlot / 2 : (XDe(1) - XDe(0)) / 2;
-        return (XDe(inicio) - meio, XDe(fim) + meio);
+        // A faixa pode ter sido marcada antes de Items encolher: os indices sao presos ao que existe agora.
+        var ultimo = Math.Max(0, Dados.Count - 1);
+        return (XDe(Math.Clamp(inicio, 0, ultimo)) - meio, XDe(Math.Clamp(fim, 0, ultimo)) + meio);
     }
 
     private double Y(Escala escala, double valor) => escala.Posicao(valor, MargemTopo + AlturaDoPlot, MargemTopo);

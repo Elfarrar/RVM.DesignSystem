@@ -39,6 +39,9 @@
     position: absolute;
     inset: 0;
     border-radius: var(--rvm-radius-sm);
+    /* Arrastar para deslocar ou marcar nao pode virar selecao de texto da pagina. */
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* Aproximado, o grafico pode ser arrastado: a mao aberta e a unica pista visual de que da. */

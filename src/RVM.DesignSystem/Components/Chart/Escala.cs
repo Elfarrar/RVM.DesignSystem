@@ -75,9 +75,11 @@ internal readonly record struct Escala(double Min, double Max, double Passo)
             // Multiplos do passo dentro da faixa: com a escala inteira o Min ja e um deles; recortada pelo
             // zoom, a primeira marca e a proxima "redonda" depois do inicio da janela.
             var primeira = Math.Ceiling(Min / Passo - 1e-9) * Passo;
-            for (var valor = primeira; valor <= Max + Passo * 1e-9; valor += Passo)
+            // Por indice, e nao somando o passo a cada volta: somar acumula erro quando ha muitas marcas.
+            var total = (int)Math.Floor((Max - primeira) / Passo + 1e-9);
+            for (var i = 0; i <= total; i++)
             {
-                yield return Math.Round(valor, 10);
+                yield return Math.Round(primeira + i * Passo, 10);
             }
         }
     }

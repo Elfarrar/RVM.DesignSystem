@@ -131,7 +131,11 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>O grafico sabe onde desenha os dados — so esses aceitam zoom e arrasto.</summary>
     internal virtual (double X, double Y, double Largura, double Altura)? AreaDoPlot => null;
 
-    private bool ZoomLigado => Zoomable && AreaDoPlot is not null;
+    /// <summary>
+    /// O zoom vale mesmo: so os graficos que sabem onde desenham (colunas, linha, area, dispersao) o tem.
+    /// Pedir <c>Zoomable</c> numa rosca nao pode virar promessa de tecla que nao existe.
+    /// </summary>
+    internal bool ZoomLigado => Zoomable && AreaDoPlot is not null;
 
     /// <summary>O que o leitor de tela ouve quando a janela muda.</summary>
     internal string? AvisoDoZoom { get; private set; }
@@ -242,7 +246,8 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>A faixa marcada no momento.</summary>
     internal RvmChartRange? FaixaMarcada => _selecao;
 
-    private bool SelecaoLigada => SelectionMode == RvmChartSelectionMode.Range && AreaDoPlot is not null;
+    /// <summary>A selecao vale mesmo; ver <see cref="ZoomLigado"/>.</summary>
+    internal bool SelecaoLigada => SelectionMode == RvmChartSelectionMode.Range && AreaDoPlot is not null;
 
     /// <summary>Onde a faixa comeca e termina no desenho; cada grafico sabe a largura de um ponto.</summary>
     internal virtual (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim) => null;
@@ -432,7 +437,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     {
         if (_marcandoDe is { } inicio)
         {
-            var atual = PontoEm(e.OffsetX, e.OffsetY) ?? inicio;
+            var atual = PontoDoArrasto(e) ?? inicio;
             await MudarFaixa(new RvmChartRange(Math.Min(inicio, atual), Math.Max(inicio, atual)));
             Ativo = atual;
             return;
@@ -450,6 +455,26 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         }
 
         Ativo = PontoEm(e.OffsetX, e.OffsetY);
+    }
+
+    /// <summary>
+    /// O ponto sob o ponteiro durante um arrasto. Passar da borda do desenho (a camada de eventos cobre a
+    /// figura inteira, com margens) nao pode colapsar a faixa: ali o ponto e o da borda mais proxima.
+    /// </summary>
+    private int? PontoDoArrasto(PointerEventArgs e)
+    {
+        if (PontoEm(e.OffsetX, e.OffsetY) is { } direto)
+        {
+            return direto;
+        }
+
+        if (AreaDoPlot is not { } area)
+        {
+            return null;
+        }
+
+        return PontoEm(Math.Clamp(e.OffsetX, area.X + 0.5, area.X + area.Largura - 0.5),
+                       Math.Clamp(e.OffsetY, area.Y + 0.5, area.Y + area.Altura - 0.5));
     }
 
     internal void AoApertarPonteiro(PointerEventArgs e)
@@ -475,7 +500,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             _marcandoDe = null;
             // Soltar onde apertou e um clique, nao um arrasto: limpa a marcacao (para marcar um ponto so,
             // ha o Enter no teclado).
-            if (PontoEm(e.OffsetX, e.OffsetY) == inicio)
+            if (PontoDoArrasto(e) == inicio)
             {
                 await MudarFaixa(null);
             }
@@ -658,7 +683,10 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
                     return true;
             }
         }
-        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        // ArgumentException: o navegador devolveu uma imagem vazia ou de tamanho zero (grafico ainda sem
+        // layout, Height="0") e o PDF nao tem o que desenhar — recusa, nao estoura.
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException
+                                       or TaskCanceledException or ArgumentException or FormatException)
         {
             return false;
         }
@@ -694,7 +722,10 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     /// <summary>A posicao horizontal de uma fracao do eixo X (0 = primeiro item, 1 = ultimo), ja com o zoom.</summary>
     internal double XDaFracao(double fracao, double esquerda, double largura)
-        => esquerda + largura * (fracao - JanelaX.Inicio) / (JanelaX.Fim - JanelaX.Inicio);
+        // Com um ponto so nao ha o que percorrer no eixo: deslocar a janela o mandaria para fora do recorte.
+        => QuantidadeDePontos <= 1
+            ? esquerda + largura * fracao
+            : esquerda + largura * (fracao - JanelaX.Inicio) / (JanelaX.Fim - JanelaX.Inicio);
 
     /// <summary>O inverso: de que fracao do eixo X aquele pixel veio.</summary>
     internal double FracaoDoX(double x, double esquerda, double largura)
@@ -737,6 +768,8 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     {
         if (!firstRender)
         {
+            // Zoomable pode ser ligado depois (um interruptor na tela): a roda acompanha.
+            await AcertarARoda();
             return;
         }
 
@@ -745,17 +778,40 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             _referencia = DotNetObjectReference.Create(this);
             _modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
             _observador = await _modulo.InvokeAsync<IJSObjectReference?>("observar", _area, _referencia);
-            if (Zoomable)
-            {
-                _roda = await _modulo.InvokeAsync<IJSObjectReference?>("observarRoda", _camada, _referencia);
-            }
-
+            await AcertarARoda();
             _teclado = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
             await _teclado.InvokeVoidAsync("prenderTeclas", _camada, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" });
         }
         catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao, bUnit): o grafico fica na largura padrao, escalado para caber.
+        }
+    }
+
+    /// <summary>Liga o ouvinte da roda quando ha zoom e o desliga quando deixa de haver.</summary>
+    private async Task AcertarARoda()
+    {
+        if (_modulo is null || ZoomLigado == (_roda is not null))
+        {
+            return;
+        }
+
+        try
+        {
+            if (ZoomLigado)
+            {
+                _roda = await _modulo.InvokeAsync<IJSObjectReference?>("observarRoda", _camada, _referencia);
+            }
+            else if (_roda is { } roda)
+            {
+                _roda = null;
+                await roda.InvokeVoidAsync("parar");
+                await roda.DisposeAsync();
+            }
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            // Sem JS o zoom continua pelo teclado.
         }
     }
 

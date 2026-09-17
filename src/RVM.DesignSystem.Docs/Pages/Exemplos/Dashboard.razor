@@ -62,7 +62,7 @@
                 <RvmChartSeries Name="Despesa" Value="f => f.Despesa" Color="RvmColor.Secondary" />
             </RvmColumnChart>
 
-            <RvmTable Items="FluxoFiltrado" Caption="@(_meses is null ? "Fechamento dos 7 meses" : $"Fechamento de {Fluxo[_meses.Start].Mes} a {Fluxo[_meses.End].Mes}")" Dense="true">
+            <RvmTable Items="FluxoFiltrado" Caption="@LegendaDoFechamento" Dense="true">
                 <RvmTableColumn Title="Mes" Value="f => f.Mes" />
                 <RvmTableColumn Title="Receita" Value="f => f.Receita" Align="RvmTableAlign.End">@Formato.Moeda((decimal)context.Receita)</RvmTableColumn>
                 <RvmTableColumn Title="Despesa" Value="f => f.Despesa" Align="RvmTableAlign.End">@Formato.Moeda((decimal)context.Despesa)</RvmTableColumn>
@@ -182,6 +182,12 @@
         => _meses is null ? Fluxo : Fluxo.Where((_, i) => _meses.Contains(i));
 
     private void LimparMeses() => _meses = null;
+
+    // Pela lista ja filtrada, nao pelos indices crus: a faixa pode ser mais velha que os dados.
+    private string LegendaDoFechamento
+        => _meses is null || !FluxoFiltrado.Any()
+            ? "Fechamento dos 7 meses"
+            : $"Fechamento de {FluxoFiltrado.First().Mes} a {FluxoFiltrado.Last().Mes}";
 
     private bool _alertaEstoque = true;
 
