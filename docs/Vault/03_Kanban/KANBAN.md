@@ -10,6 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
+| [[DSGN-012]] | Documentar animacao e exportar nas cinco paginas de grafico que ficaram de fora | em andamento |
 
 ## Concluido
 
