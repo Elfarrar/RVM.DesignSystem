@@ -519,3 +519,12 @@ code {
 .site-links-rodape a {
     color: var(--rvm-color-primary-text);
 }
+
+/* Pagina do seletor de horario: o relogio solto no papel, com a sombra de um dialogo. */
+.site-relogio-solto {
+    align-self: flex-start;
+    overflow: hidden;
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-3);
+}

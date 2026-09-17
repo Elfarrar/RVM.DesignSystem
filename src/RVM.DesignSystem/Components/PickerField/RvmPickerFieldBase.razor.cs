@@ -3,26 +3,26 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using RVM.DesignSystem.Components.Calendar;
 using RVM.DesignSystem.Components.Dialog;
+using RVM.DesignSystem.Icons;
 
-namespace RVM.DesignSystem.Components.DatePicker;
+namespace RVM.DesignSystem.Components.PickerField;
 
 /// <summary>
-/// O que <see cref="RvmDatePicker"/> e <see cref="RvmDateRangePicker"/> tem em comum: o campo, o
-/// dialogo com o calendario, o teclado e a validacao.
+/// O campo que abre um dialogo para escolher o valor: o botao, o dialogo com foco preso, o teclado, a
+/// validacao e o envio. Base dos seletores de data e do relogio do seletor de horario.
 /// </summary>
-public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposable
+public abstract partial class RvmPickerFieldBase : ComponentBase, IAsyncDisposable
 {
     private static int _proximoId;
-    private readonly string _idBase = $"rvm-data-{Interlocked.Increment(ref _proximoId)}";
+    private readonly string _idBase = $"rvm-campo-dialogo-{Interlocked.Increment(ref _proximoId)}";
     private ElementReference _gatilho;
     private ElementReference _popup;
     private Sobreposicao? _sobreposicao;
     private bool _focoPreso;
     private EditContext? _contextoAssinado;
     private bool _aberto;
-    private bool _focarCalendario;
+    private bool _focarConteudo;
 
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
@@ -37,20 +37,11 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
     /// <summary>Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha.</summary>
     [Parameter] public string? ErrorText { get; set; }
 
-    /// <summary>Texto no campo vazio. Padrao: o formato esperado ("dd/mm/aaaa").</summary>
+    /// <summary>Texto no campo vazio. Padrao: o formato esperado ("dd/mm/aaaa", "hh:mm").</summary>
     [Parameter] public string? Placeholder { get; set; }
 
     /// <summary>56 px (padrao) ou 40 px (<see cref="RvmSize.Small"/>), como o campo de texto.</summary>
     [Parameter] public RvmSize Size { get; set; } = RvmSize.Medium;
-
-    /// <summary>Primeira data escolhivel.</summary>
-    [Parameter] public DateOnly? Min { get; set; }
-
-    /// <summary>Ultima data escolhivel.</summary>
-    [Parameter] public DateOnly? Max { get; set; }
-
-    /// <summary>Datas que nao podem ser escolhidas.</summary>
-    [Parameter] public Func<DateOnly, bool>? DateDisabled { get; set; }
 
     /// <summary>Asterisco no rotulo. A validacao em si e do EditForm.</summary>
     [Parameter] public bool Required { get; set; }
@@ -59,13 +50,10 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
     [Parameter] public bool Disabled { get; set; }
 
     /// <summary>
-    /// <c>name</c> para envio de formulario: a data vai em <c>input hidden</c> no formato
-    /// <c>yyyy-MM-dd</c> (no intervalo, <c>{Name}Inicio</c> e <c>{Name}Fim</c>).
+    /// <c>name</c> para envio de formulario: o valor vai em <c>input hidden</c> em formato invariante
+    /// (data em <c>yyyy-MM-dd</c>, com <c>{Name}Inicio</c> e <c>{Name}Fim</c> no intervalo; horario em <c>HH:mm</c>).
     /// </summary>
     [Parameter] public string? Name { get; set; }
-
-    /// <summary>"Hoje" para marcar o dia atual no calendario. Padrao: a data do sistema.</summary>
-    [Parameter] public DateOnly? Today { get; set; }
 
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto no botao do campo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -81,16 +69,30 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
 
     internal abstract string DialogLabel { get; }
 
-    internal virtual string PlaceholderPadrao => "dd/mm/aaaa";
+    internal abstract string PlaceholderPadrao { get; }
+
+    /// <summary>Icone a direita do campo.</summary>
+    internal abstract RvmIconName IconeDoCampo { get; }
 
     internal string PlaceholderEfetivo => string.IsNullOrWhiteSpace(Placeholder) ? PlaceholderPadrao : Placeholder;
 
-    /// <summary>O calendario do dialogo, no modo certo (data ou intervalo).</summary>
-    internal abstract RenderFragment Calendario { get; }
+    /// <summary>O que o dialogo mostra (calendario, relogio).</summary>
+    internal abstract RenderFragment ConteudoDoDialogo { get; }
+
+    /// <summary>Leva o foco para dentro do conteudo aberto. Falso enquanto ele ainda nao existe.</summary>
+    internal abstract Task<bool> FocarConteudoAsync();
+
+    /// <summary>Chamado ao abrir, antes do render: o relogio copia o valor para o rascunho aqui.</summary>
+    internal virtual void AoAbrir()
+    {
+    }
+
+    /// <summary>Chamado ao fechar: solta a referencia ao conteudo que saiu da tela.</summary>
+    internal virtual void AoFechar()
+    {
+    }
 
     internal bool Aberto => _aberto;
-
-    internal RvmCalendar? CalendarioAberto { get; set; }
 
     internal FieldIdentifier? Campo { get; private set; }
 
@@ -101,10 +103,6 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
     internal string IdValor => $"{_idBase}-valor";
 
     internal string IdApoio => $"{_idBase}-apoio";
-
-    internal static string Formatar(DateOnly d) => $"{d.Day:00}/{d.Month:00}/{d.Year:0000}";
-
-    internal static string Invariante(DateOnly d) => $"{d.Year:0000}-{d.Month:00}-{d.Day:00}";
 
     internal string? MensagemDeErro
         => !string.IsNullOrWhiteSpace(ErrorText)
@@ -176,7 +174,8 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
         }
 
         _aberto = true;
-        _focarCalendario = true;
+        _focarConteudo = true;
+        AoAbrir();
         StateHasChanged();
         return Task.CompletedTask;
     }
@@ -196,7 +195,8 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
     internal Task FecharAsync()
     {
         _aberto = false;
-        CalendarioAberto = null;
+        _focarConteudo = false;
+        AoFechar();
         StateHasChanged();
         return Task.CompletedTask;
     }
@@ -229,10 +229,9 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
             }
         }
 
-        if (_focarCalendario && CalendarioAberto is not null)
+        if (_focarConteudo && await FocarConteudoAsync())
         {
-            _focarCalendario = false;
-            await CalendarioAberto.FocusAsync();
+            _focarConteudo = false;
         }
     }
 

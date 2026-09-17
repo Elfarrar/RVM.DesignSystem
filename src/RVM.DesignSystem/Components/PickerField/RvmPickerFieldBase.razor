@@ -1,12 +1,11 @@
-@namespace RVM.DesignSystem.Components.DatePicker
-@using RVM.DesignSystem.Components.Calendar
+@namespace RVM.DesignSystem.Components.PickerField
 @using RVM.DesignSystem.Components.Icon
 @using RVM.DesignSystem.Icons
 
-@* O campo e um botao que abre um DIALOGO com o calendario (padrao "Date Picker Dialog" do APG):
-   aria-haspopup="dialog", foco vai para o dia ao abrir, Esc fecha e devolve o foco ao botao. O valor
-   aparece no proprio botao e entra no nome acessivel junto com o rotulo. Fechado, o calendario nao
-   existe no DOM: o estado inicial sai pronto sem JS. *@
+@* O campo e um botao que abre um DIALOGO (padrao "Date Picker Dialog" do APG), com o calendario ou
+   o relogio dentro: aria-haspopup="dialog", foco vai para o conteudo ao abrir, Esc fecha e devolve o
+   foco ao botao. O valor aparece no proprio botao e entra no nome acessivel junto com o rotulo.
+   Fechado, o conteudo nao existe no DOM: o estado inicial sai pronto sem JS. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
     <div class="rvm-caixa">
         <button @ref="_gatilho"
@@ -35,7 +34,7 @@
         </span>
 
         <span class="rvm-icone-campo" aria-hidden="true">
-            <RvmIcon Name="RvmIconName.Calendar" Size="RvmSize.Small" />
+            <RvmIcon Name="IconeDoCampo" Size="RvmSize.Small" />
         </span>
     </div>
 
@@ -57,7 +56,7 @@
         <div class="rvm-fundo" @onclick="() => FecharAsync()"></div>
         <div @ref="_popup" class="rvm-popup" role="dialog" aria-modal="true" aria-label="@DialogLabel" tabindex="-1"
              @onkeydown="AoTeclarNoDialogoAsync" @onkeydown:stopPropagation="true">
-            @Calendario
+            @ConteudoDoDialogo
         </div>
     }
 </div>
