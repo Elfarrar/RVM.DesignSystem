@@ -1,0 +1,57 @@
+@namespace RVM.DesignSystem.Components.Timeline
+
+<li @attributes="AdditionalAttributes" class="@ClassesDoItem">
+    <div class="rvm-oposto">@OppositeContent</div>
+    <div class="rvm-separador" aria-hidden="true">
+        <span class="rvm-ponto"></span>
+        <span class="rvm-trilho"></span>
+    </div>
+    <div class="rvm-principal">@ChildContent</div>
+</li>
+
+@code {
+    /// <summary>Papel de cor do ponto. Sem valor, o ponto e neutro ("Standard" no kit).</summary>
+    [Parameter] public RvmColor? Color { get; set; }
+
+    /// <summary>Ponto cheio (padrao) ou so o contorno.</summary>
+    [Parameter] public bool Outlined { get; set; }
+
+    /// <summary>O acontecimento.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>O outro lado da linha — normalmente a data ou a hora ("Opposing" no kit).</summary>
+    [Parameter] public RenderFragment? OppositeContent { get; set; }
+
+    /// <summary>Atributos extras, repassados ao <c>li</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string ClassesDoItem
+    {
+        get
+        {
+            var proprias = string.Join(' ',
+                "rvm-item-tempo",
+                Outlined ? "rvm-contorno" : "rvm-cheio",
+                Color switch
+                {
+                    null => "rvm-neutro",
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
+                });
+
+            if (OppositeContent is not null) proprias += " rvm-com-oposto";
+
+            return AdditionalAttributes is not null
+                   && AdditionalAttributes.TryGetValue("class", out var informada)
+                   && informada is string texto
+                   && !string.IsNullOrWhiteSpace(texto)
+                ? $"{proprias} {texto}"
+                : proprias;
+        }
+    }
+}

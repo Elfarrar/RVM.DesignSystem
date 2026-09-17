@@ -1,0 +1,44 @@
+@namespace RVM.DesignSystem.Components.Stepper
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Lista ordenada: o leitor de tela anuncia "lista, 3 itens". Cada etapa diz o proprio estado em texto
+   ("concluida", "etapa atual", "com erro") — o check e a cor sao desenho. A etapa atual leva
+   aria-current="step". *@
+<ol @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@AriaLabel">
+    @for (var i = 0; i < Steps.Count; i++)
+    {
+        var etapa = Steps[i];
+        var estado = EstadoDe(i, etapa);
+        <li class="@($"rvm-etapa rvm-{estado}")" aria-current="@(i == ActiveStep ? "step" : null)">
+            <span class="rvm-cabeca">
+                <span class="rvm-marcador" aria-hidden="true">
+                    @if (estado == "erro")
+                    {
+                        <RvmIcon Name="RvmIconName.AlertCircle" Size="RvmSize.Small" />
+                    }
+                    else if (estado == "concluida")
+                    {
+                        <RvmIcon Name="RvmIconName.Check" Size="RvmSize.Small" />
+                    }
+                </span>
+                @if (Placement == RvmStepperLabelPlacement.End)
+                {
+                    <span class="rvm-numero" aria-hidden="true">@((i + 1).ToString("00", System.Globalization.CultureInfo.InvariantCulture))</span>
+                }
+                <span class="rvm-textos">
+                    <span class="rvm-titulo">@etapa.Title</span>
+                    @if (!string.IsNullOrWhiteSpace(etapa.Description))
+                    {
+                        <span class="rvm-descricao">@etapa.Description</span>
+                    }
+                    <span class="rvm-so-leitor">@TextoDoEstado(estado)</span>
+                </span>
+            </span>
+            @if (i < Steps.Count - 1)
+            {
+                <span class="rvm-conector" aria-hidden="true"></span>
+            }
+        </li>
+    }
+</ol>
