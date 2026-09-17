@@ -1,0 +1,288 @@
+@page "/exemplos/crm"
+
+<PageTitle>CRM — Exemplos — RVM Design System</PageTitle>
+
+<div class="ex-cabecalho">
+    <div>
+        <RvmBreadcrumbs Items="@Trilha" AriaLabel="Trilha do CRM" />
+        <h1 class="rvm-text-h4">Funil de vendas</h1>
+        <RvmTypography Color="RvmTextColor.Secondary">Oportunidades de venda de graos e insumos, por etapa.</RvmTypography>
+    </div>
+    <div class="ex-linha">
+        <RvmTextField @bind-Value="_busca" Type="RvmInputType.Search" Label="Buscar cliente" Size="RvmSize.Small" />
+        <RvmButton StartIcon="RvmIconName.Plus" OnClick="AbrirNova">Nova oportunidade</RvmButton>
+    </div>
+</div>
+
+<div class="ex-grade" style="margin-block-end: var(--rvm-space-6)">
+    <RvmCard class="ex-col-4">
+        <div class="ex-kpi">
+            <RvmAvatar Icon="RvmIconName.Filter" Color="RvmColor.Primary" Variant="RvmAvatarVariant.Soft" Shape="RvmAvatarShape.Rounded" />
+            <div>
+                <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">Em aberto no funil</RvmTypography>
+                <p class="ex-valor">@Formato.Moeda(_oportunidades.Where(o => o.Etapa != "Ganho").Sum(o => o.Valor))</p>
+            </div>
+        </div>
+    </RvmCard>
+    <RvmCard class="ex-col-4">
+        <div class="ex-kpi">
+            <RvmAvatar Icon="RvmIconName.CircleCheck" Color="RvmColor.Success" Variant="RvmAvatarVariant.Soft" Shape="RvmAvatarShape.Rounded" />
+            <div>
+                <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">Ganhos no mes</RvmTypography>
+                <p class="ex-valor">@Formato.Moeda(_oportunidades.Where(o => o.Etapa == "Ganho").Sum(o => o.Valor))</p>
+            </div>
+        </div>
+    </RvmCard>
+    <RvmCard class="ex-col-4">
+        <div class="ex-kpi">
+            <RvmAvatar Icon="RvmIconName.Star" Color="RvmColor.Warning" Variant="RvmAvatarVariant.Soft" Shape="RvmAvatarShape.Rounded" />
+            <div>
+                <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">Taxa de conversao</RvmTypography>
+                <p class="ex-valor">@Conversao%</p>
+            </div>
+        </div>
+    </RvmCard>
+</div>
+
+<div class="ex-quadro">
+    @foreach (var etapa in Etapas)
+    {
+        var cartoes = Visiveis.Where(o => o.Etapa == etapa).ToList();
+        <section class="ex-coluna" aria-labelledby="@($"etapa-{etapa}")">
+            <h2 id="@($"etapa-{etapa}")" class="rvm-text-subtitle1">
+                <span>@etapa</span>
+                <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@CorDaEtapa(etapa)">@cartoes.Count</RvmChip>
+            </h2>
+            @if (cartoes.Count == 0)
+            {
+                <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">Nenhuma oportunidade nesta etapa.</RvmTypography>
+            }
+            @foreach (var o in cartoes)
+            {
+                <article @key="o.Id" class="ex-cartao">
+                    <h3 class="rvm-text-subtitle2">@o.Empresa</h3>
+                    <div class="ex-linha">
+                        <RvmAvatar Initials="@o.Iniciais" Size="RvmSize.Small" />
+                        <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">@o.Contato</RvmTypography>
+                    </div>
+                    <div class="ex-linha ex-entre">
+                        <strong>@Formato.Moeda(o.Valor)</strong>
+                        <RvmRating Value="@o.Potencial" ReadOnly="true" Size="RvmSize.Small" Label="Potencial" />
+                    </div>
+                    <RvmTypography Variant="RvmTypographyVariant.Caption" Color="RvmTextColor.Secondary">@(o.Dias switch { 0 => "Entrou hoje nesta etapa", 1 => "Nesta etapa ha 1 dia", _ => $"Nesta etapa ha {o.Dias} dias" })</RvmTypography>
+                    <div class="ex-linha ex-entre">
+                        <RvmMenu Label="Mover" ButtonVariant="RvmButtonVariant.Text" Size="RvmSize.Small" aria-label="@($"Mover {o.Empresa} para outra etapa")">
+                            @foreach (var destino in Etapas.Where(e => e != o.Etapa))
+                            {
+                                <RvmMenuItem Icon="RvmIconName.ArrowRight" OnClick="@(() => Mover(o, destino))">@destino</RvmMenuItem>
+                            }
+                        </RvmMenu>
+                        <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small" OnClick="@(() => AbrirFicha(o))" aria-label="@($"Ver ficha de {o.Empresa}")">Ficha</RvmButton>
+                    </div>
+                </article>
+            }
+        </section>
+    }
+</div>
+
+<RvmDrawer @bind-Open="_fichaAberta" Anchor="RvmDrawerAnchor.Right" Size="420px" AriaLabel="Ficha do cliente">
+    @if (_selecionada is { } s)
+    {
+        <div class="ex-gaveta">
+            <div class="ex-linha ex-entre">
+                <h2 class="rvm-text-h6">@s.Empresa</h2>
+                <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@CorDaEtapa(s.Etapa)">@s.Etapa</RvmChip>
+            </div>
+            <div class="ex-linha">
+                <RvmAvatar Initials="@s.Iniciais" />
+                <div class="ex-pilha" style="gap: 0">
+                    <span>@s.Contato</span>
+                    <RvmTypography Variant="RvmTypographyVariant.Caption" Color="RvmTextColor.Secondary">@s.Email · @s.Telefone</RvmTypography>
+                </div>
+            </div>
+            <div class="ex-linha">
+                <RvmButton Variant="RvmButtonVariant.Outlined" StartIcon="RvmIconName.Phone" OnClick="@(() => Registrar(s, "Ligacao realizada"))">Ligar</RvmButton>
+                <RvmButton Variant="RvmButtonVariant.Outlined" StartIcon="RvmIconName.Mail" OnClick="@(() => Registrar(s, "E-mail enviado"))">E-mail</RvmButton>
+            </div>
+            <RvmDivider />
+            <RvmTypography Variant="RvmTypographyVariant.Subtitle2">Historico</RvmTypography>
+            <RvmTimeline AriaLabel="@($"Historico de {s.Empresa}")">
+                @foreach (var (quando, texto) in Enumerable.Reverse(s.Historico))
+                {
+                    <RvmTimelineItem Color="RvmColor.Primary">
+                        <OppositeContent>@quando</OppositeContent>
+                        <ChildContent>@texto</ChildContent>
+                    </RvmTimelineItem>
+                }
+            </RvmTimeline>
+            @* O campo grava ao sair dele: um botao desabilitado "ate ter texto" continuaria desabilitado no
+               clique, porque o texto so chega quando o foco sai para o botao. Valida no clique. *@
+            <RvmTextField @bind-Value="_nota" Label="Registrar contato" HelperText="Ex.: pediu nova proposta com frete CIF"
+                          ErrorText="@(_notaVazia ? "Escreva o que foi conversado antes de registrar." : null)" />
+            <div class="ex-linha" style="justify-content: flex-end">
+                <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => _fichaAberta = false)">Fechar</RvmButton>
+                <RvmButton OnClick="@(() => Registrar(s, _nota))">Registrar</RvmButton>
+            </div>
+        </div>
+    }
+</RvmDrawer>
+
+<RvmDialog @bind-Open="_novaAberta" Title="Nova oportunidade" ShowCloseButton="true">
+    <ChildContent>
+        <div class="ex-formulario">
+            <RvmTextField @bind-Value="_novaEmpresa" Label="Empresa" Required="true"
+                          ErrorText="@(_tentou && string.IsNullOrWhiteSpace(_novaEmpresa) ? "Informe a empresa." : null)" />
+            <RvmTextField @bind-Value="_novoContato" Label="Contato" />
+            <RvmTextField @bind-Value="_novoValor" Label="Valor estimado" Prefix="R$" Type="RvmInputType.Number"
+                          ErrorText="@(_tentou && ValorNovo is null ? "Informe um valor em reais, so numeros." : null)" />
+        </div>
+    </ChildContent>
+    <Actions>
+        <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => _novaAberta = false)">Cancelar</RvmButton>
+        <RvmButton OnClick="CriarNova">Criar</RvmButton>
+    </Actions>
+</RvmDialog>
+
+@code {
+    [Inject] private RvmSnackbarService Avisos { get; set; } = default!;
+
+    private static readonly IReadOnlyList<RvmBreadcrumbItem> Trilha =
+        [new("Exemplos", "exemplos/dashboard", RvmIconName.Home), new("CRM")];
+
+    private static readonly string[] Etapas = ["Prospeccao", "Proposta", "Negociacao", "Ganho"];
+
+    private sealed class Oportunidade
+    {
+        public int Id { get; init; }
+        public string Empresa { get; init; } = "";
+        public string Contato { get; init; } = "";
+        public string Iniciais => string.Concat(Contato.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => p[0]));
+        public string Email { get; init; } = "";
+        public string Telefone { get; init; } = "";
+        public decimal Valor { get; init; }
+        public double Potencial { get; init; }
+        public string Etapa { get; set; } = "Prospeccao";
+        public int Dias { get; set; }
+        public List<(string Quando, string Texto)> Historico { get; } = [];
+    }
+
+    private readonly List<Oportunidade> _oportunidades = Criar();
+
+    private static List<Oportunidade> Criar()
+    {
+        Oportunidade Nova(int id, string empresa, string contato, decimal valor, double potencial, string etapa, int dias)
+        {
+            var o = new Oportunidade
+            {
+                Id = id, Empresa = empresa, Contato = contato, Valor = valor, Potencial = potencial, Etapa = etapa, Dias = dias,
+                Email = contato.Split(' ')[0].ToLowerInvariant() + "@" + empresa.Split(' ')[0].ToLowerInvariant() + ".com.br",
+                Telefone = "(62) 99" + (100 + id * 37) + "-" + (4000 + id * 211)
+            };
+            o.Historico.Add(("10/09", "Primeiro contato na feira regional"));
+            o.Historico.Add(("12/09", "Visita tecnica na fazenda"));
+            return o;
+        }
+
+        return
+        [
+            Nova(1, "Cooperativa Vale", "Leticia Kulas", 480_000m, 4.5, "Negociacao", 6),
+            Nova(2, "Agro Sul Graos", "Dallas Adams", 215_000m, 3.5, "Proposta", 3),
+            Nova(3, "Cerealista Horizonte", "Theodore Stiedemann", 96_000m, 3, "Prospeccao", 12),
+            Nova(4, "Fazenda Santa Luzia", "Hilda Rath", 58_000m, 2.5, "Prospeccao", 2),
+            Nova(5, "Grupo Terra Nova", "Bertha Heller", 730_000m, 5, "Ganho", 1),
+            Nova(6, "Armazens Planalto", "Veronica Raynor", 140_000m, 4, "Proposta", 8),
+            Nova(7, "Sementes Aurora", "Krista Gerlach", 67_500m, 2, "Negociacao", 15)
+        ];
+    }
+
+    private string? _busca;
+    private bool _fichaAberta;
+    private Oportunidade? _selecionada;
+    private string? _nota;
+    private bool _novaAberta;
+    private bool _tentou;
+    private string? _novaEmpresa;
+    private string? _novoContato;
+    private string? _novoValor;
+
+    private IEnumerable<Oportunidade> Visiveis
+        => string.IsNullOrWhiteSpace(_busca)
+            ? _oportunidades
+            : _oportunidades.Where(o => o.Empresa.Contains(_busca.Trim(), StringComparison.OrdinalIgnoreCase)
+                                        || o.Contato.Contains(_busca.Trim(), StringComparison.OrdinalIgnoreCase));
+
+    private int Conversao => (int)Math.Round(100d * _oportunidades.Count(o => o.Etapa == "Ganho") / _oportunidades.Count);
+
+    private decimal? ValorNovo => decimal.TryParse(_novoValor, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var v) && v > 0 ? v : null;
+
+    private static RvmColor CorDaEtapa(string etapa) => etapa switch
+    {
+        "Prospeccao" => RvmColor.Secondary,
+        "Proposta" => RvmColor.Info,
+        "Negociacao" => RvmColor.Warning,
+        _ => RvmColor.Success
+    };
+
+    private void Mover(Oportunidade o, string destino)
+    {
+        o.Etapa = destino;
+        o.Dias = 0;
+        o.Historico.Add(("17/09", $"Movida para {destino}"));
+        Avisos.Show(destino == "Ganho" ? $"Negocio com {o.Empresa} ganho!" : $"{o.Empresa} movida para {destino}.",
+            new RvmSnackbarOptions { Color = destino == "Ganho" ? RvmColor.Success : null });
+    }
+
+    private void AbrirFicha(Oportunidade o)
+    {
+        _selecionada = o;
+        _nota = null;
+        _notaVazia = false;
+        _fichaAberta = true;
+    }
+
+    private bool _notaVazia;
+
+    private void Registrar(Oportunidade o, string? texto)
+    {
+        _notaVazia = string.IsNullOrWhiteSpace(texto);
+        if (_notaVazia)
+        {
+            return;
+        }
+
+        o.Historico.Add(("17/09", texto!.Trim()));
+        _nota = null;
+        Avisos.Show("Contato registrado no historico.");
+    }
+
+    private void AbrirNova()
+    {
+        _novaEmpresa = _novoContato = _novoValor = null;
+        _tentou = false;
+        _novaAberta = true;
+    }
+
+    private void CriarNova()
+    {
+        _tentou = true;
+        if (string.IsNullOrWhiteSpace(_novaEmpresa) || ValorNovo is not { } valor)
+        {
+            return;
+        }
+
+        var o = new Oportunidade
+        {
+            Id = _oportunidades.Max(x => x.Id) + 1,
+            Empresa = _novaEmpresa.Trim(),
+            Contato = string.IsNullOrWhiteSpace(_novoContato) ? "Sem contato" : _novoContato.Trim(),
+            Valor = valor,
+            Potencial = 3,
+            Email = "contato@exemplo.com.br",
+            Telefone = "(62) 3000-0000"
+        };
+        o.Historico.Add(("17/09", "Oportunidade criada"));
+        _oportunidades.Add(o);
+        _novaAberta = false;
+        Avisos.Show($"Oportunidade com {o.Empresa} criada em Prospeccao.", new RvmSnackbarOptions { Color = RvmColor.Success });
+    }
+}

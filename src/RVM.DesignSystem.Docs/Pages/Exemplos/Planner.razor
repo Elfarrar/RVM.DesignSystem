@@ -1,0 +1,253 @@
+@page "/exemplos/planner"
+
+<PageTitle>Planner — Exemplos — RVM Design System</PageTitle>
+
+<div class="ex-cabecalho">
+    <div>
+        <RvmBreadcrumbs Items="@Trilha" AriaLabel="Trilha do planner" />
+        <h1 class="rvm-text-h4">Planner de tarefas</h1>
+        <RvmTypography Color="RvmTextColor.Secondary">
+            @_tarefas.Count(t => t.Coluna != "Concluido") abertas · @_tarefas.Count(t => t.Coluna == "Concluido") concluidas · @Atrasadas atrasada(s)
+        </RvmTypography>
+    </div>
+    <RvmButton StartIcon="RvmIconName.Plus" OnClick="AbrirNova">Nova tarefa</RvmButton>
+</div>
+
+<div class="ex-grade">
+    <div class="ex-col-4 ex-pilha">
+        <RvmCard>
+            <RvmCalendar @bind-Value="_dia" Today="@Hoje" aria-label="Escolher o dia" />
+        </RvmCard>
+
+        <RvmCard Title="@($"Tarefas de {Formato.DiaMes(DiaEscolhido)}")" Subheader="@(DiaEscolhido == Hoje ? "Hoje" : null)">
+            @{ var doDia = Filtradas.Where(t => t.Prazo == DiaEscolhido).OrderBy(t => t.Hora ?? TimeOnly.MaxValue).ToList(); }
+            @if (doDia.Count == 0)
+            {
+                <RvmEmptyState Icon="RvmIconName.CircleCheck" Title="Dia livre" Description="Nenhuma tarefa com prazo neste dia." HeadingLevel="3" />
+            }
+            else
+            {
+                <RvmList AriaLabel="@($"Tarefas de {Formato.DiaMes(DiaEscolhido)}")" Dense="true">
+                    @foreach (var t in doDia)
+                    {
+                        <RvmListItem SecondaryText="@($"{(t.Hora is { } h ? Formato.Hora(h) : "Sem hora")} · {t.Responsavel}")">
+                            <StartContent>
+                                <RvmCheckbox Value="@(t.Coluna == "Concluido")" ValueChanged="@((bool v) => Concluir(t, v))" aria-label="@($"Concluir {t.Titulo}")" />
+                            </StartContent>
+                            <ChildContent>@t.Titulo</ChildContent>
+                        </RvmListItem>
+                    }
+                </RvmList>
+            }
+        </RvmCard>
+
+        <RvmCard Title="Filtros">
+            <div class="ex-pilha">
+                <RvmSelect Items="Responsaveis" @bind-Value="_filtroResponsavel" Label="Responsavel" />
+                <RvmSwitch @bind-Value="_soMinhasAtrasadas" Label="So atrasadas" />
+            </div>
+        </RvmCard>
+    </div>
+
+    <div class="ex-col-8 ex-quadro">
+        @foreach (var coluna in Colunas)
+        {
+            var cartoes = Filtradas.Where(t => t.Coluna == coluna).OrderBy(t => t.Prazo).ThenBy(t => t.Hora ?? TimeOnly.MaxValue).ToList();
+            <section class="ex-coluna" aria-labelledby="@($"coluna-{coluna.Replace(' ', '-')}")">
+                <h2 id="@($"coluna-{coluna.Replace(' ', '-')}")" class="rvm-text-subtitle1">
+                    <span>@coluna</span>
+                    <RvmBadge Count="@cartoes.Count" Max="99" Color="@(coluna == "Concluido" ? RvmColor.Success : RvmColor.Primary)" Label="@($"{cartoes.Count} tarefas")" />
+                </h2>
+                @if (cartoes.Count == 0)
+                {
+                    <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">Nada por aqui.</RvmTypography>
+                }
+                @foreach (var t in cartoes)
+                {
+                    var atrasada = t.Coluna != "Concluido" && t.Prazo < Hoje;
+                    <article @key="t.Id" class="ex-cartao">
+                        <div class="ex-linha ex-entre" style="flex-wrap: nowrap; align-items: flex-start">
+                            <h3 class="rvm-text-subtitle2" style="@(t.Coluna == "Concluido" ? "text-decoration: line-through" : null)">@t.Titulo</h3>
+                            <RvmAvatar Initials="@Iniciais(t.Responsavel)" Size="RvmSize.Small" Alt="@t.Responsavel" />
+                        </div>
+                        <div class="ex-linha">
+                            <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@CorDaPrioridade(t.Prioridade)">@t.Prioridade</RvmChip>
+                            <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Outlined" StartIcon="RvmIconName.Calendar" Color="@(atrasada ? RvmColor.Error : null)">
+                                @Formato.DiaMes(t.Prazo)@(t.Hora is { } h ? $" {Formato.Hora(h)}" : "")@(atrasada ? " · atrasada" : "")
+                            </RvmChip>
+                        </div>
+                        <div class="ex-linha ex-entre">
+                            <RvmCheckbox Value="@(t.Coluna == "Concluido")" ValueChanged="@((bool v) => Concluir(t, v))" Label="Concluida" Size="RvmSize.Small" />
+                            <RvmMenu Label="Acoes" Icon="RvmIconName.DotsVertical" ButtonVariant="RvmButtonVariant.Text" Size="RvmSize.Small" AlignEnd="true"
+                                     aria-label="@($"Acoes de {t.Titulo}")">
+                                @foreach (var destino in Colunas.Where(c => c != t.Coluna))
+                                {
+                                    <RvmMenuItem Icon="RvmIconName.ArrowRight" OnClick="@(() => Mover(t, destino))">Mover para @destino</RvmMenuItem>
+                                }
+                                <RvmMenuDivider />
+                                <RvmMenuItem Icon="RvmIconName.Trash" OnClick="@(() => Excluir(t))">Excluir</RvmMenuItem>
+                            </RvmMenu>
+                        </div>
+                    </article>
+                }
+            </section>
+        }
+    </div>
+</div>
+
+<RvmDialog @bind-Open="_novaAberta" Title="Nova tarefa" Size="RvmSize.Medium" ShowCloseButton="true">
+    <ChildContent>
+        <div class="ex-formulario">
+            <RvmTextField @bind-Value="_titulo" Label="O que precisa ser feito" Required="true"
+                          ErrorText="@(_tentou && string.IsNullOrWhiteSpace(_titulo) ? "Descreva a tarefa." : null)" />
+            <RvmSelect Items="Pessoas" @bind-Value="_responsavel" Label="Responsavel" />
+            <RvmRadioGroup @bind-Value="_prioridade" Label="Prioridade" Orientation="RvmOrientation.Horizontal">
+                <RvmRadio Value="@("Alta")" Label="Alta" />
+                <RvmRadio Value="@("Media")" Label="Media" />
+                <RvmRadio Value="@("Baixa")" Label="Baixa" />
+            </RvmRadioGroup>
+            <div class="grade-campos">
+                <RvmDatePicker @bind-Value="_prazo" Label="Prazo" Today="@Hoje" Required="true"
+                               ErrorText="@(_tentou && _prazo is null ? "Escolha o prazo." : null)" />
+                <RvmTimePicker Mode="RvmTimePickerMode.Clock" @bind-Value="_hora" Label="Hora (opcional)" Step="5" />
+            </div>
+            <RvmSwitch @bind-Value="_lembrete" Label="Lembrar 30 minutos antes" Disabled="@(_hora is null)" />
+        </div>
+    </ChildContent>
+    <Actions>
+        <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => _novaAberta = false)">Cancelar</RvmButton>
+        <RvmButton OnClick="Criar">Criar tarefa</RvmButton>
+    </Actions>
+</RvmDialog>
+
+@code {
+    [Inject] private RvmSnackbarService Avisos { get; set; } = default!;
+
+    private static readonly DateOnly Hoje = new(2026, 9, 17);
+
+    private static readonly IReadOnlyList<RvmBreadcrumbItem> Trilha =
+        [new("Exemplos", "exemplos/dashboard", RvmIconName.Home), new("Planner")];
+
+    private static readonly string[] Colunas = ["A fazer", "Em andamento", "Concluido"];
+
+    private static readonly string[] Pessoas = ["Leticia Kulas", "Dallas Adams", "Hilda Rath", "Bertha Heller"];
+
+    private static readonly string[] Responsaveis = ["Todos", .. Pessoas];
+
+    private sealed class Tarefa
+    {
+        public int Id { get; init; }
+        public string Titulo { get; init; } = "";
+        public string Responsavel { get; init; } = "";
+        public string Prioridade { get; init; } = "Media";
+        public DateOnly Prazo { get; init; }
+        public TimeOnly? Hora { get; init; }
+        public string Coluna { get; set; } = "A fazer";
+    }
+
+    private readonly List<Tarefa> _tarefas =
+    [
+        new() { Id = 1, Titulo = "Calibrar pulverizador 2", Responsavel = "Dallas Adams", Prioridade = "Alta", Prazo = new(2026, 9, 16), Hora = new(8, 0) },
+        new() { Id = 2, Titulo = "Comprar fungicida (40 L restantes)", Responsavel = "Hilda Rath", Prioridade = "Alta", Prazo = new(2026, 9, 17), Hora = new(10, 30) },
+        new() { Id = 3, Titulo = "Amostragem de solo no Talhao Sede", Responsavel = "Leticia Kulas", Prioridade = "Media", Prazo = new(2026, 9, 17), Hora = new(14, 0), Coluna = "Em andamento" },
+        new() { Id = 4, Titulo = "Revisar contrato de frete", Responsavel = "Bertha Heller", Prioridade = "Media", Prazo = new(2026, 9, 18) },
+        new() { Id = 5, Titulo = "Plantio do Talhao Norte", Responsavel = "Leticia Kulas", Prioridade = "Alta", Prazo = new(2026, 9, 15), Coluna = "Concluido" },
+        new() { Id = 6, Titulo = "Treinamento de seguranca com a equipe", Responsavel = "Dallas Adams", Prioridade = "Baixa", Prazo = new(2026, 9, 22), Hora = new(16, 0) },
+        new() { Id = 7, Titulo = "Enviar relatorio da safra ao banco", Responsavel = "Hilda Rath", Prioridade = "Media", Prazo = new(2026, 9, 19), Coluna = "Em andamento" }
+    ];
+
+    private DateOnly? _dia = Hoje;
+    private string? _filtroResponsavel = "Todos";
+    private bool _soMinhasAtrasadas;
+
+    private bool _novaAberta;
+    private bool _tentou;
+    private string? _titulo;
+    private string? _responsavel;
+    private string? _prioridade;
+    private DateOnly? _prazo;
+    private TimeOnly? _hora;
+    private bool _lembrete;
+
+    private DateOnly DiaEscolhido => _dia ?? Hoje;
+
+    private int Atrasadas => _tarefas.Count(t => t.Coluna != "Concluido" && t.Prazo < Hoje);
+
+    private IEnumerable<Tarefa> Filtradas
+        => _tarefas.Where(t => (_filtroResponsavel is null or "Todos" || t.Responsavel == _filtroResponsavel)
+                               && (!_soMinhasAtrasadas || (t.Coluna != "Concluido" && t.Prazo < Hoje)));
+
+    private static string Iniciais(string nome)
+        => string.Concat(nome.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => p[0]));
+
+    private static RvmColor CorDaPrioridade(string prioridade) => prioridade switch
+    {
+        "Alta" => RvmColor.Error,
+        "Media" => RvmColor.Warning,
+        _ => RvmColor.Secondary
+    };
+
+    private void Concluir(Tarefa t, bool concluida)
+    {
+        t.Coluna = concluida ? "Concluido" : "A fazer";
+        if (concluida)
+        {
+            Avisos.Show($"\"{t.Titulo}\" concluida.", new RvmSnackbarOptions { Color = RvmColor.Success });
+        }
+    }
+
+    private void Mover(Tarefa t, string destino) => t.Coluna = destino;
+
+    private void Excluir(Tarefa t)
+    {
+        var posicao = _tarefas.IndexOf(t);
+        _tarefas.Remove(t);
+        Avisos.Show($"\"{t.Titulo}\" excluida.", new RvmSnackbarOptions
+        {
+            ActionText = "Desfazer",
+            OnAction = () =>
+            {
+                _tarefas.Insert(Math.Min(posicao, _tarefas.Count), t);
+                StateHasChanged();
+                return Task.CompletedTask;
+            }
+        });
+    }
+
+    private void AbrirNova()
+    {
+        _titulo = null;
+        _responsavel = Pessoas[0];
+        _prioridade = "Media";
+        _prazo = DiaEscolhido;
+        _hora = null;
+        _lembrete = false;
+        _tentou = false;
+        _novaAberta = true;
+    }
+
+    private void Criar()
+    {
+        _tentou = true;
+        if (string.IsNullOrWhiteSpace(_titulo) || _prazo is not { } prazo)
+        {
+            return;
+        }
+
+        var tarefa = new Tarefa
+        {
+            Id = _tarefas.Count == 0 ? 1 : _tarefas.Max(t => t.Id) + 1,
+            Titulo = _titulo.Trim(),
+            Responsavel = _responsavel ?? Pessoas[0],
+            Prioridade = _prioridade ?? "Media",
+            Prazo = prazo,
+            Hora = _hora
+        };
+        _tarefas.Add(tarefa);
+        _novaAberta = false;
+        _dia = prazo;
+        Avisos.Show($"Tarefa criada para {Formato.DiaMes(prazo)}"
+                    + (_hora is { } h ? $" as {Formato.Hora(h)}" + (_lembrete ? ", com lembrete." : ".") : "."),
+            new RvmSnackbarOptions { Color = RvmColor.Success });
+    }
+}

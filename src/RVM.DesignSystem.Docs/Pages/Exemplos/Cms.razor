@@ -1,0 +1,223 @@
+@page "/exemplos/cms"
+
+<PageTitle>CMS — Exemplos — RVM Design System</PageTitle>
+
+<div class="ex-cabecalho">
+    <div>
+        <RvmBreadcrumbs Items="@Trilha" AriaLabel="Trilha do CMS" />
+        <h1 class="rvm-text-h4">Publicacoes</h1>
+        <RvmTypography Color="RvmTextColor.Secondary">Noticias e boletins do portal da cooperativa.</RvmTypography>
+    </div>
+    <RvmButton StartIcon="RvmIconName.Plus" OnClick="Nova">Nova publicacao</RvmButton>
+</div>
+
+<RvmCard>
+    <RvmTabs @bind-ActiveIndex="_aba" AriaLabel="Situacao das publicacoes">
+        @foreach (var (titulo, _) in Abas)
+        {
+            <RvmTab Title="@($"{titulo} ({Contar(titulo)})")">
+                @{ var lista = Filtrar(titulo); }
+                @if (lista.Count == 0)
+                {
+                    <RvmEmptyState Icon="RvmIconName.File" Title="@($"Nenhuma publicacao {titulo.ToLowerInvariant()}")"
+                                   Description="Quando houver, ela aparece aqui.">
+                        <Actions><RvmButton Variant="RvmButtonVariant.Outlined" OnClick="Nova">Criar publicacao</RvmButton></Actions>
+                    </RvmEmptyState>
+                }
+                else
+                {
+                    <RvmDataGrid Items="lista" Caption="@($"Publicacoes: {titulo}")" PageSize="5" ItemKey="p => p.Id">
+                        <RvmTableColumn Title="Titulo" Value="p => p.Titulo" Sortable="true">
+                            <div class="ex-pilha" style="gap: 0">
+                                <span>@context.Titulo</span>
+                                <RvmTypography Variant="RvmTypographyVariant.Caption" Color="RvmTextColor.Secondary">por @context.Autor</RvmTypography>
+                            </div>
+                        </RvmTableColumn>
+                        <RvmTableColumn Title="Categoria" Value="p => p.Categoria" Sortable="true">
+                            <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Outlined">@context.Categoria</RvmChip>
+                        </RvmTableColumn>
+                        <RvmTableColumn Title="Data" Value="p => p.Data" Sortable="true" InitialSort="RvmSortDirection.Descending" Filterable="false">
+                            @Formato.Data(context.Data)
+                        </RvmTableColumn>
+                        <RvmTableColumn Title="Leituras" Value="p => p.Leituras" Sortable="true" Filterable="false" Align="RvmTableAlign.End">
+                            @Formato.Numero(context.Leituras)
+                        </RvmTableColumn>
+                        <RvmTableColumn Title="Situacao" Value="p => p.Situacao" Filterable="false">
+                            <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@CorDaSituacao(context.Situacao)">@context.Situacao</RvmChip>
+                        </RvmTableColumn>
+                        <RvmTableColumn Title="Acoes" Filterable="false" Align="RvmTableAlign.End">
+                            <div class="ex-linha" style="justify-content: flex-end">
+                                <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small" StartIcon="RvmIconName.Pencil"
+                                           OnClick="@(() => Editar(context))" aria-label="@($"Editar {context.Titulo}")">Editar</RvmButton>
+                            </div>
+                        </RvmTableColumn>
+                    </RvmDataGrid>
+                }
+            </RvmTab>
+        }
+    </RvmTabs>
+</RvmCard>
+
+<RvmDialog @bind-Open="_editorAberto" Title="@(_editando is null ? "Nova publicacao" : "Editar publicacao")" Size="RvmSize.Medium" ShowCloseButton="true">
+    <ChildContent>
+        <div class="ex-formulario">
+            <RvmTextField @bind-Value="_titulo" Label="Titulo" Required="true"
+                          ErrorText="@(_tentouSalvar && string.IsNullOrWhiteSpace(_titulo) ? "Escreva um titulo para a publicacao." : null)" />
+            <div class="grade-campos">
+                <RvmSelect Items="Categorias" @bind-Value="_categoria" Label="Categoria" />
+                <RvmSelect Items="Autores" @bind-Value="_autor" Label="Autor" />
+            </div>
+            <RvmDatePicker @bind-Value="_agendarPara" Label="Publicar em" HelperText="Vazio publica agora; data futura agenda." Min="@Hoje" Today="@Hoje" />
+            <RvmSwitch @bind-Value="_destaque" Label="Destacar na pagina inicial" />
+        </div>
+    </ChildContent>
+    <Actions>
+        @if (_editando is not null)
+        {
+            <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Error" StartIcon="RvmIconName.Trash" OnClick="Excluir">Excluir</RvmButton>
+            <span class="site-espaco"></span>
+        }
+        <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => Salvar(publicar: false))">Salvar rascunho</RvmButton>
+        <RvmButton OnClick="@(() => Salvar(publicar: true))">@(_agendarPara > Hoje ? "Agendar" : "Publicar")</RvmButton>
+    </Actions>
+</RvmDialog>
+
+@code {
+    [Inject] private RvmSnackbarService Avisos { get; set; } = default!;
+
+    private static readonly DateOnly Hoje = new(2026, 9, 17);
+
+    private static readonly IReadOnlyList<RvmBreadcrumbItem> Trilha =
+        [new("Exemplos", "exemplos/dashboard", RvmIconName.Home), new("CMS")];
+
+    private static readonly (string Titulo, string? Situacao)[] Abas =
+        [("Todas", null), ("Publicadas", "Publicada"), ("Rascunhos", "Rascunho"), ("Agendadas", "Agendada"), ("Arquivadas", "Arquivada")];
+
+    private static readonly string[] Categorias = ["Mercado", "Tecnica", "Clima", "Cooperativa"];
+
+    private static readonly string[] Autores = ["Leticia Kulas", "Dallas Adams", "Hilda Rath", "Bertha Heller"];
+
+    private sealed class Publicacao
+    {
+        public int Id { get; init; }
+        public string Titulo { get; set; } = "";
+        public string Autor { get; set; } = "";
+        public string Categoria { get; set; } = "";
+        public DateOnly Data { get; set; }
+        public int Leituras { get; set; }
+        public string Situacao { get; set; } = "Rascunho";
+        public bool Destaque { get; set; }
+    }
+
+    private readonly List<Publicacao> _publicacoes =
+    [
+        new() { Id = 1, Titulo = "Soja fecha a semana em alta nos portos", Autor = "Leticia Kulas", Categoria = "Mercado", Data = new(2026, 9, 16), Leituras = 4820, Situacao = "Publicada", Destaque = true },
+        new() { Id = 2, Titulo = "Janela de plantio: o que diz o zoneamento", Autor = "Dallas Adams", Categoria = "Tecnica", Data = new(2026, 9, 15), Leituras = 2310, Situacao = "Publicada" },
+        new() { Id = 3, Titulo = "Previsao de chuva para outubro", Autor = "Hilda Rath", Categoria = "Clima", Data = new(2026, 9, 17), Leituras = 0, Situacao = "Rascunho" },
+        new() { Id = 4, Titulo = "Assembleia geral: pauta e horarios", Autor = "Bertha Heller", Categoria = "Cooperativa", Data = new(2026, 9, 22), Leituras = 0, Situacao = "Agendada" },
+        new() { Id = 5, Titulo = "Manejo de ferrugem asiatica na safra", Autor = "Dallas Adams", Categoria = "Tecnica", Data = new(2026, 9, 10), Leituras = 6120, Situacao = "Publicada" },
+        new() { Id = 6, Titulo = "Frete de graos sobe 6% no mes", Autor = "Leticia Kulas", Categoria = "Mercado", Data = new(2026, 9, 9), Leituras = 1980, Situacao = "Publicada" },
+        new() { Id = 7, Titulo = "Calendario de recebimento de milho", Autor = "Bertha Heller", Categoria = "Cooperativa", Data = new(2026, 9, 12), Leituras = 0, Situacao = "Rascunho" }
+    ];
+
+    private int _aba;
+    private bool _editorAberto;
+    private Publicacao? _editando;
+    private bool _tentouSalvar;
+    private string? _titulo;
+    private string? _categoria;
+    private string? _autor;
+    private DateOnly? _agendarPara;
+    private bool _destaque;
+
+    private List<Publicacao> Filtrar(string aba)
+    {
+        var situacao = Abas.First(a => a.Titulo == aba).Situacao;
+        return [.. _publicacoes.Where(p => situacao is null ? p.Situacao != "Arquivada" : p.Situacao == situacao)];
+    }
+
+    private int Contar(string aba) => Filtrar(aba).Count;
+
+    private static RvmColor CorDaSituacao(string situacao) => situacao switch
+    {
+        "Publicada" => RvmColor.Success,
+        "Agendada" => RvmColor.Info,
+        "Rascunho" => RvmColor.Warning,
+        _ => RvmColor.Secondary
+    };
+
+    private void Nova()
+    {
+        _editando = null;
+        _titulo = null;
+        _categoria = Categorias[0];
+        _autor = Autores[0];
+        _agendarPara = null;
+        _destaque = false;
+        _tentouSalvar = false;
+        _editorAberto = true;
+    }
+
+    private void Editar(Publicacao p)
+    {
+        _editando = p;
+        _titulo = p.Titulo;
+        _categoria = p.Categoria;
+        _autor = p.Autor;
+        _agendarPara = p.Situacao == "Agendada" ? p.Data : null;
+        _destaque = p.Destaque;
+        _tentouSalvar = false;
+        _editorAberto = true;
+    }
+
+    private void Salvar(bool publicar)
+    {
+        _tentouSalvar = true;
+        if (string.IsNullOrWhiteSpace(_titulo))
+        {
+            return;
+        }
+
+        var p = _editando ?? new Publicacao { Id = _publicacoes.Max(x => x.Id) + 1 };
+        p.Titulo = _titulo.Trim();
+        p.Categoria = _categoria ?? Categorias[0];
+        p.Autor = _autor ?? Autores[0];
+        p.Destaque = _destaque;
+        p.Data = _agendarPara ?? Hoje;
+        p.Situacao = !publicar ? "Rascunho" : _agendarPara > Hoje ? "Agendada" : "Publicada";
+        if (_editando is null)
+        {
+            _publicacoes.Add(p);
+        }
+
+        _editorAberto = false;
+        Avisos.Show(p.Situacao switch
+        {
+            "Publicada" => $"\"{p.Titulo}\" foi publicada.",
+            "Agendada" => $"\"{p.Titulo}\" sera publicada em {Formato.Data(p.Data)}.",
+            _ => $"Rascunho \"{p.Titulo}\" salvo."
+        }, new RvmSnackbarOptions { Color = p.Situacao == "Rascunho" ? null : RvmColor.Success });
+    }
+
+    private void Excluir()
+    {
+        if (_editando is not { } p)
+        {
+            return;
+        }
+
+        var situacaoAnterior = p.Situacao;
+        p.Situacao = "Arquivada";
+        _editorAberto = false;
+        Avisos.Show($"\"{p.Titulo}\" foi arquivada.", new RvmSnackbarOptions
+        {
+            ActionText = "Desfazer",
+            OnAction = () =>
+            {
+                p.Situacao = situacaoAnterior;
+                StateHasChanged();
+                return Task.CompletedTask;
+            }
+        });
+    }
+}
