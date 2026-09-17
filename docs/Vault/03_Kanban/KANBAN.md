@@ -15,6 +15,7 @@
 
 | Card | O que |
 |---|---|
+| [[DSGN-009]] | Paginas de exemplo (17/09): dashboard, CMS, CRM, ERP e planner montados so com a biblioteca. Em producao |
 | [[DSGN-008]] | Site com menu lateral (17/09): o proprio RvmAppShell, os 35 componentes nas quatro secoes, gaveta no celular. Em producao |
 | [[DSGN-007]] | `1.0.0` e producao (17/09): `design.rvmit.com.br` no GitHub Pages com HTTPS, pacote `1.0.0` no BaGet, monitor 25 do Kuma retomado |
 | [[DSGN-006]] | Onda 4 (17/09): os 8 de dados e shell em quatro fatias, relogio circular a pedido, dois reviews independentes. Aprovada — fecham as quatro ondas |

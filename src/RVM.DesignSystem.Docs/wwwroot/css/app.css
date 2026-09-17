@@ -66,6 +66,10 @@ h1[tabindex="-1"]:focus {
     padding: 0 0 var(--rvm-space-8);
 }
 
+.site-largo {
+    max-width: 90rem;
+}
+
 .site-conteudo section {
     margin-block: var(--rvm-space-10);
 }
@@ -514,4 +518,147 @@ code {
 /* Credito no rodape da moldura: links no tom de texto do primary, como no resto do site. */
 .pagina footer a {
     color: var(--rvm-color-primary-text);
+}
+
+/* --- Telas de exemplo (/exemplos/*): so layout; o visual vem dos componentes --- */
+.ex-cabecalho {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--rvm-space-4);
+    margin-block-end: var(--rvm-space-6);
+}
+
+.ex-cabecalho h1 {
+    margin: var(--rvm-space-1) 0 0;
+}
+
+.ex-alerta {
+    margin-block-end: var(--rvm-space-6);
+}
+
+.ex-linha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.ex-entre {
+    justify-content: space-between;
+}
+
+.ex-pilha {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-4);
+}
+
+.ex-grade {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--rvm-space-6);
+    align-items: start;
+}
+
+.ex-col-3 { grid-column: span 3; }
+.ex-col-4 { grid-column: span 4; }
+.ex-col-5 { grid-column: span 5; }
+.ex-col-7 { grid-column: span 7; }
+.ex-col-8 { grid-column: span 8; }
+.ex-col-12 { grid-column: span 12; }
+
+@media (max-width: 1280px) {
+    .ex-col-3 { grid-column: span 6; }
+}
+
+@media (max-width: 960px) {
+    .ex-grade > * { grid-column: span 12; }
+}
+
+.ex-secundario {
+    color: var(--rvm-color-text-secondary);
+}
+
+.ex-valor {
+    margin: 0;
+    font-size: var(--rvm-text-h5-size);
+    line-height: 1.2;
+    font-weight: 500;
+}
+
+.ex-kpi {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-4);
+}
+
+.ex-kpi > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    min-width: 0;
+}
+
+/* Quadro em colunas (funil do CRM, planner). */
+.ex-quadro {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: var(--rvm-space-4);
+    align-items: start;
+}
+
+.ex-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-3);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-action-hover);
+}
+
+/* .site-conteudo section da documentacao da 40 px de margem a toda <section>; a coluna do quadro nao quer. */
+.site-conteudo .ex-coluna {
+    margin: 0;
+}
+
+.ex-coluna > h2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: var(--rvm-space-1) var(--rvm-space-1) 0;
+}
+
+.ex-cartao {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-4);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-1);
+}
+
+.ex-cartao h3 {
+    margin: 0;
+}
+
+.ex-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-4);
+    padding-block-start: var(--rvm-space-2);
+}
+
+.ex-gaveta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-4);
+    padding: var(--rvm-space-6);
+}
+
+.ex-gaveta h2 {
+    margin: 0;
 }
