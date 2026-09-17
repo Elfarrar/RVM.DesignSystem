@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using RVM.DesignSystem.Icons;
 
 namespace RVM.DesignSystem.Components.EmptyState;
@@ -40,6 +39,8 @@ public partial class RvmEmptyState : ComponentBase
 
     internal string IdTitulo => $"{_idGerado}-titulo";
 
+    internal int NivelDoTitulo => Math.Clamp(HeadingLevel, 2, 6);
+
     internal string ClassesDaRaiz
         => AdditionalAttributes is not null
            && AdditionalAttributes.TryGetValue("class", out var informada)
@@ -47,13 +48,4 @@ public partial class RvmEmptyState : ComponentBase
            && !string.IsNullOrWhiteSpace(texto)
             ? $"vazio {texto}"
             : "vazio";
-
-    private RenderFragment TituloRenderizado => builder =>
-    {
-        builder.OpenElement(0, $"h{Math.Clamp(HeadingLevel, 2, 6)}");
-        builder.AddAttribute(1, "id", IdTitulo);
-        builder.AddAttribute(2, "class", "titulo");
-        builder.AddContent(3, Title);
-        builder.CloseElement();
-    };
 }

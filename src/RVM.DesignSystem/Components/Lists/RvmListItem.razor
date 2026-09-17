@@ -1,0 +1,75 @@
+@namespace RVM.DesignSystem.Components.Lists
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* O item e um <li> com duas areas lado a lado: a principal (link, botao ou texto parado) e a acao
+   da direita. A acao fica FORA da principal de proposito — botao dentro de botao e HTML invalido e o
+   leitor de tela so enxerga um dos dois. *@
+<li @attributes="AdditionalAttributes" class="@ClassesDoItem">
+    <div class="linha">
+        @if (!string.IsNullOrWhiteSpace(Href))
+        {
+            <a class="principal interativo" href="@(Disabled ? null : Href)"
+               aria-current="@(Selected ? "page" : null)"
+               aria-disabled="@(Disabled ? "true" : null)">
+                @Conteudo
+            </a>
+        }
+        else if (Aninhado)
+        {
+            <button type="button" class="principal interativo"
+                    aria-expanded="@(_aberto ? "true" : "false")"
+                    aria-controls="@(_aberto ? IdAninhada : null)"
+                    disabled="@Disabled"
+                    @onclick="AlternarAsync">
+                @Conteudo
+                <span class="seta" aria-hidden="true">
+                    <RvmIcon Name="@(_aberto ? RvmIconName.ChevronUp : RvmIconName.ChevronDown)" Size="RvmSize.Small" />
+                </span>
+            </button>
+        }
+        else if (OnClick.HasDelegate)
+        {
+            <button type="button" class="principal interativo"
+                    aria-pressed="@(Selected ? "true" : "false")"
+                    disabled="@Disabled"
+                    @onclick="AoClicarAsync">
+                @Conteudo
+            </button>
+        }
+        else
+        {
+            <div class="principal">@Conteudo</div>
+        }
+
+        @if (EndContent is not null)
+        {
+            <div class="fim">@EndContent</div>
+        }
+    </div>
+
+    @if (Aninhado && _aberto)
+    {
+        <div id="@IdAninhada" class="aninhada">@NestedContent</div>
+    }
+</li>
+
+@code {
+    private RenderFragment Conteudo => @<text>
+        @if (StartContent is not null)
+        {
+            <span class="inicio">@StartContent</span>
+        }
+        else if (Icon is { } icone)
+        {
+            <span class="inicio icone" aria-hidden="true"><RvmIcon Name="icone" /></span>
+        }
+        <span class="textos">
+            <span class="primario">@ChildContent</span>
+            @if (!string.IsNullOrWhiteSpace(SecondaryText))
+            {
+                <span class="secundario">@SecondaryText</span>
+            }
+        </span>
+    </text>;
+}

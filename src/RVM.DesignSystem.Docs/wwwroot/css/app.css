@@ -415,3 +415,8 @@ code {
 .esqueleto-textos {
     flex: 1;
 }
+
+.exemplo-lista {
+    width: 100%;
+    max-width: 24rem;
+}

@@ -32,6 +32,7 @@ dialogo aberto no primeiro render tem de aparecer aberto sem JS; mover e prender
 ## Andamento
 
 - [x] **Fatia 1**: `RvmProgress`, `RvmSkeleton`, `RvmEmptyState`
+- [x] **Fatia 2**: `RvmList` + `RvmListItem`, `RvmAccordion` + `RvmAccordionPanel`
 
 ## Decisoes e medicoes
 
@@ -43,6 +44,14 @@ dialogo aberto no primeiro render tem de aparecer aberto sem JS; mover e prender
 | **Indeterminado sem `aria-valuenow`; esqueleto sempre `aria-hidden`** | E como o leitor de tela sabe que nao ha previsao. Quem avisa "carregando" e a regiao com `aria-busy`, nao cada bloco cinza |
 | **Movimento reduzido: progresso desacelera, brilho do esqueleto some** | Parar o indeterminado faria parecer travado; o brilho e so enfeite |
 | 🔴 **Numero decimal em atributo de markup sai na cultura corrente** | `r="@Raio"` virou `r="20,2"` no site em pt-BR: atributo invalido, anel invisivel, sem erro nenhum. O bUnit roda em en-US e passou. Pego na foto; agora literal + teste bUnit em pt-BR + E2E medindo a geometria |
+| **Medidas da fatia 2**: item de lista 48 px (40 denso), hover no `action-hover`; painel de acordeao 52 px com 20 px de recuo, aberto descolado 16 px no "Simple", cabecalho preenchido no "Customized" | Varredura de linha em `List.png` e `Accordion.png` |
+| **Namespace `Components.Lists`, no plural** | Um namespace `List` dentro de `Components` faz todo `List<T>` dos outros componentes resolver para o namespace e quebra o build |
+| **Selecionado da lista: `action-selected` + barra de 3 px no `-text`, nao o cinza forte do kit** | O kit poe texto claro sobre #797992, abaixo de 4.5:1. A barra carrega o estado com 3:1 |
+| **Item de lista: acao do fim FORA da area clicavel** | Botao dentro de botao (ou de link) e HTML invalido e o leitor de tela so ve um. O `StartContent` fica dentro — documentado que nao aceita controle interativo |
+| **Acordeao no padrao APG: botao dentro de cabecalho (h3 por padrao), regiao ligada; fechado nao renderiza** | Quem navega por titulos acha cada painel. `aria-controls` so existe junto com a regiao |
+| **Painel e sublista seguem o `Expanded` so quando o parametro MUDA** | Senao um re-render do pai fecharia o que a pessoa abriu sem `@bind` |
+| **Variantes do acordeao no CSS do PAI, com `::deep`** | A classe da variante esta no elemento do `RvmAccordion`; o CSS isolado do painel nao enxerga o pai |
+| 🔴 **Elemento criado por `RenderTreeBuilder.OpenElement` nao recebe o escopo do CSS isolado** | O `h{n}` dinamico do painel e do estado vazio ficou sem `b-xxxx`: `.cabecalho { margin: 0 }` nao pegou e o painel saiu com 85 px. Pego na foto; agora `@switch` em marcacao Razor + teste bUnit que exige o atributo `b-` |
 
 ## Verifica (cada fatia)
 

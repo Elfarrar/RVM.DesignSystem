@@ -178,12 +178,22 @@ public class RvmEmptyStateTests : BunitContext
     [Theory]
     [InlineData(1, "h2")]
     [InlineData(3, "h3")]
+    [InlineData(4, "h4")]
+    [InlineData(5, "h5")]
     [InlineData(9, "h6")]
     public void Nivel_do_titulo_fica_entre_h2_e_h6(int nivel, string elemento)
     {
         var cortado = Render<RvmEmptyState>(p => p.Add(x => x.Title, "Vazio").Add(x => x.HeadingLevel, nivel));
 
         Assert.Equal("Vazio", cortado.Find($"{elemento}.titulo").TextContent);
+    }
+
+    [Fact]
+    public void Titulo_recebe_o_escopo_do_css_isolado()
+    {
+        var cortado = Render<RvmEmptyState>(p => p.Add(x => x.Title, "Vazio").Add(x => x.HeadingLevel, 5));
+
+        Assert.Contains(cortado.Find("h5.titulo").Attributes, a => a.Name.StartsWith("b-", StringComparison.Ordinal));
     }
 
     [Fact]

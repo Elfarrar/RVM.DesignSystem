@@ -1,0 +1,81 @@
+/* CSS isolado do RvmAccordionPanel. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Accordion.png: cabecalho de 52 px com 20 px de recuo; no "Simple", o
+   painel aberto se descola dos vizinhos com 16 px de vao; no "Customized", o cabecalho e preenchido
+   (action-selected) e o conteudo fica no papel. */
+
+.painel {
+    background-color: var(--rvm-color-background-paper);
+    transition: margin var(--rvm-transition-fast);
+}
+
+.cabecalho {
+    margin: 0;
+    font: inherit;
+}
+
+.gatilho {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 var(--rvm-space-5);
+    border: none;
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    text-align: start;
+    cursor: pointer;
+}
+
+.gatilho:hover:not(:disabled) {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.gatilho:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
+
+.icone {
+    display: inline-flex;
+    color: var(--rvm-color-text-secondary);
+}
+
+/* O subtitulo comeca numa coluna fixa, como no kit, e nao colado ao titulo. */
+.titulo {
+    flex: 0 0 auto;
+    min-width: 30%;
+}
+
+.subtitulo {
+    flex: 1;
+    color: var(--rvm-color-text-secondary);
+}
+
+.marca {
+    display: inline-flex;
+    margin-inline-start: auto;
+    color: var(--rvm-color-text-secondary);
+}
+
+.conteudo {
+    padding: 0 var(--rvm-space-5) var(--rvm-space-5);
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.desabilitado .gatilho,
+.desabilitado .icone,
+.desabilitado .subtitulo,
+.desabilitado .marca {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* As variantes (Standard e Filled) moram no RvmAccordion.razor.css: a classe que as escolhe esta no
+   elemento do pai, e o CSS isolado deste painel nao enxerga o pai. */
