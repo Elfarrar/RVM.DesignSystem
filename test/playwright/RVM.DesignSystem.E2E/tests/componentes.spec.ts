@@ -14,6 +14,7 @@ const PAGINAS = [
     { rota: '/componentes/chip', titulo: 'RvmChip' },
     { rota: '/componentes/alert', titulo: 'RvmAlert' },
     { rota: '/componentes/card', titulo: 'RvmCard' },
+    { rota: '/componentes/text-field', titulo: 'RvmTextField' },
 ];
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
@@ -121,3 +122,32 @@ for (const tema of ['claro', 'escuro'] as const) {
         expect(contraste(anel, fundo)).toBeGreaterThanOrEqual(3);
     });
 }
+
+test('campo de texto: validacao do EditForm aparece no lugar do apoio e marca aria-invalid', async ({ page }) => {
+    await page.goto('/componentes/text-field');
+    await expect(page.getByRole('heading', { name: 'RvmTextField', level: 1 })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Enviar' }).click();
+
+    const nome = page.getByLabel('Nome completo');
+    await expect(nome).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByText('Informe o nome completo para continuar.')).toBeVisible();
+});
+
+test('campo de texto: clicar no rotulo foca o campo e o rotulo flutua', async ({ page }) => {
+    await page.goto('/componentes/text-field');
+    await expect(page.getByRole('heading', { name: 'RvmTextField', level: 1 })).toBeVisible();
+
+    const campo = page.getByLabel('Peso da carga');
+    // `force`: o rotulo tem pointer-events: none (para o clique atravessar ate o input quando ele
+    // esta por cima), e sem isto o Playwright recusaria o clique. O que se testa aqui e a ligacao
+    // <label for> -> input: ativar o rotulo tem de focar o campo.
+    await page.locator('label', { hasText: 'Peso da carga' }).click({ force: true });
+
+    await expect(campo).toBeFocused();
+});
+
+// O `name` do RvmTextField NAO e testado aqui, de proposito: este site e WebAssembly, e no navegador o
+// EditContext desliga a geracao de nomes de campo (nao existe POST). O cenario que importa — formulario
+// em SSR estatico — e coberto no bUnit, que roda fora do navegador pelo mesmo caminho do Blazor Server
+// (RvmTextFieldTests.Renderiza_name_que_o_formulario_em_SSR_estatico_exige).

@@ -137,6 +137,11 @@
     --rvm-color-divider: #E7E6E8;
     --rvm-color-outline: #D1D0D3;
     --rvm-color-input-line: #D4D3D5;
+    /* Contorno de CAMPO em repouso. Desvio consciente: o `input-line` do kit da 1.49:1 sobre o papel
+       claro e 1.85:1 no escuro, e o contorno de um campo e informacao necessaria para identificar o
+       controle (WCAG 1.4.11 pede 3:1). Usa o secondary-main do proprio kit: 3.33:1 no claro, 3.93:1
+       no escuro. O `input-line` fiel continua valendo para linha decorativa. */
+    --rvm-color-input-border: var(--rvm-color-secondary-main);
     --rvm-color-overlay: #9D9AA0;
     --rvm-color-snackbar-background: #212121;
     --rvm-color-snackbar-text: #FFFFFF;
