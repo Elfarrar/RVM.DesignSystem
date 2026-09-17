@@ -47,6 +47,8 @@ const PAGINAS = [
     { rota: '/componentes/line-chart', titulo: 'RvmLineChart' },
     { rota: '/componentes/area-chart', titulo: 'RvmAreaChart' },
     { rota: '/componentes/scatter-chart', titulo: 'RvmScatterChart' },
+    { rota: '/componentes/pie-chart', titulo: 'RvmPieChart' },
+    { rota: '/componentes/radar-chart', titulo: 'RvmRadarChart' },
 ];
 
 // Graficos que o kit nao desenhou: seguem o visual das colunas (DSGN-010).

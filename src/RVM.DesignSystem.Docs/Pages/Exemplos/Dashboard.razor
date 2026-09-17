@@ -46,6 +46,24 @@
         </RvmCard>
     }
 
+    <RvmCard Title="Receita e despesa" Subheader="Ultimos 7 meses" class="ex-col-8">
+        <RvmColumnChart Items="Fluxo" Label="f => f.Mes" AriaLabel="Receita e despesa por mes" Height="260"
+                        ValueFormat="@(v => $"R$ {RvmChartFormat.Compact(v)}")">
+            <RvmChartSeries Name="Receita" Value="f => f.Receita" />
+            <RvmChartSeries Name="Despesa" Value="f => f.Despesa" Color="RvmColor.Secondary" />
+        </RvmColumnChart>
+    </RvmCard>
+
+    <RvmCard Title="Area plantada" Subheader="Por cultura" class="ex-col-4">
+        <RvmPieChart Items="Culturas" Label="c => c.Nome" Value="c => c.Hectares" AriaLabel="Area plantada por cultura"
+                     Donut="true" Height="220" ValueFormat="@(v => $"{RvmChartFormat.Number(v)} ha")">
+            <CenterContent>
+                <span class="rvm-text-h5">@RvmChartFormat.Number(Culturas.Sum(c => c.Hectares))</span>
+                <span class="rvm-text-caption ex-secundario">hectares</span>
+            </CenterContent>
+        </RvmPieChart>
+    </RvmCard>
+
     <RvmCard Title="Metas da safra" Subheader="Safra 2026/27" class="ex-col-5">
         <HeaderAction>
             <RvmTooltip Text="Meta definida no planejamento de agosto">
@@ -78,6 +96,14 @@
                 </RvmTimelineItem>
             }
         </RvmTimeline>
+    </RvmCard>
+
+    <RvmCard Title="Vendas contratadas" Subheader="Acumulado da safra, em sacas" class="ex-col-12">
+        <RvmAreaChart Items="Contratos" Label="c => c.Semana" AriaLabel="Vendas contratadas acumuladas por semana" Height="220"
+                      ValueFormat="@(v => $"{RvmChartFormat.Compact(v)} sc")">
+            <RvmChartSeries Name="Contratado" Value="c => c.Sacas" Color="RvmColor.Success" />
+            <RvmChartSeries Name="Meta" Value="c => c.Meta" Color="RvmColor.Secondary" />
+        </RvmAreaChart>
     </RvmCard>
 
     <RvmCard Title="Ultimos pedidos" class="ex-col-8">
@@ -140,6 +166,21 @@
         new("Pedidos", "342", "8%", true, RvmIconName.File, RvmColor.Primary),
         new("Area plantada", "1.240 ha", "94% da meta", true, RvmIconName.Home, RvmColor.Info),
         new("Chamados abertos", "7", "3 a mais", false, RvmIconName.AlertTriangle, RvmColor.Warning)
+    ];
+
+    private static readonly (string Mes, double Receita, double Despesa)[] Fluxo =
+    [
+        ("Mar", 820_000, 610_000), ("Abr", 940_000, 700_000), ("Mai", 1_120_000, 690_000), ("Jun", 760_000, 640_000),
+        ("Jul", 880_000, 720_000), ("Ago", 1_050_000, 760_000), ("Set", 1_280_000, 810_000)
+    ];
+
+    private static readonly (string Nome, double Hectares)[] Culturas =
+        [("Soja", 620), ("Milho", 340), ("Algodao", 180), ("Feijao", 100)];
+
+    private static readonly (string Semana, double Sacas, double Meta)[] Contratos =
+    [
+        ("S1", 4_000, 8_000), ("S2", 9_500, 16_000), ("S3", 17_000, 24_000), ("S4", 26_500, 32_000), ("S5", 33_000, 40_000),
+        ("S6", 41_000, 48_000), ("S7", 49_500, 56_000), ("S8", 61_000, 64_000)
     ];
 
     private sealed record Meta(string Nome, string Detalhe, double Percentual, RvmColor Cor);

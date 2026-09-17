@@ -1,0 +1,72 @@
+@page "/componentes/pie-chart"
+
+<PageTitle>RvmPieChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmPieChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Um circulo dividido em fatias para mostrar proporcoes de um total. Pizza ou rosca, com o percentual de cada
+    fatia na legenda e na dica. Na rosca, o centro pode trazer um conteudo livre, como o total do kit
+    ("100% Weekly Visits"). A fatia ativa se afasta um pouco do centro.
+</p>
+
+<BlocoExemplo Titulo="Rosca com o total no centro"
+              Descricao="O Total Visitors do kit: area plantada por cultura."
+              Codigo="@CodigoRosca">
+    <RvmPieChart Items="Culturas" Label="c => c.Nome" Value="c => c.Hectares" AriaLabel="Area plantada por cultura"
+                 Donut="true" Height="260" ValueFormat="@(v => $"{RvmChartFormat.Number(v)} ha")">
+        <CenterContent>
+            <span class="rvm-text-h5">@RvmChartFormat.Number(Culturas.Sum(c => c.Hectares))</span>
+            <span class="rvm-text-caption site-apoio">hectares</span>
+        </CenterContent>
+    </RvmPieChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Pizza com cores escolhidas"
+              Descricao="Situacao dos pedidos do mes, com a cor de cada situacao."
+              Codigo="@CodigoPizza">
+    <RvmPieChart Items="Situacoes" Label="s => s.Nome" Value="s => s.Quantidade" AriaLabel="Pedidos do mes por situacao"
+                 SliceColor="s => s.Cor" Height="240" ValueFormat="@(v => $"{RvmChartFormat.Number(v)} pedidos")" />
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/pie-chart.png"
+              Arquivo="referencia-neatlab/Chart Card.png (recorte)"
+              Descricao="O cartao Total Visitors: rosca com o total no centro e legenda abaixo."
+              Alt="Recorte do kit NEATLAB com um grafico de rosca" />
+
+@code {
+    private static readonly (string Nome, double Hectares)[] Culturas =
+        [("Soja", 620), ("Milho", 340), ("Algodao", 180), ("Feijao", 100)];
+
+    private static readonly (string Nome, double Quantidade, RvmColor Cor)[] Situacoes =
+        [("Faturados", 212, RvmColor.Success), ("Aprovados", 78, RvmColor.Info), ("Em analise", 39, RvmColor.Warning), ("Cancelados", 13, RvmColor.Error)];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items / Label / Value", "IEnumerable<TItem> / Func<TItem, string>? / Func<TItem, double>", "—", "Dados, nome e valor de cada fatia."),
+        new("AriaLabel", "string", "—", "Nome do grafico para o leitor de tela. Obrigatorio."),
+        new("Donut", "bool", "false", "Rosca em vez de pizza."),
+        new("DonutThickness", "double", "0,35", "Espessura do anel, em fracao do raio."),
+        new("CenterContent", "RenderFragment?", "—", "Conteudo no centro da rosca."),
+        new("SliceColor", "Func<TItem, RvmColor>?", "paleta", "Cor de cada fatia."),
+        new("Height / ShowLegend", "int / bool", "300 / true", "Altura e legenda com percentuais."),
+        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores.")
+    ];
+
+    private const string CodigoRosca = """
+        <RvmPieChart Items="culturas" Label="c => c.Nome" Value="c => c.Hectares"
+                     AriaLabel="Area plantada por cultura" Donut="true">
+            <CenterContent>
+                <span class="rvm-text-h5">1.240</span>
+                <span class="rvm-text-caption">hectares</span>
+            </CenterContent>
+        </RvmPieChart>
+        """;
+
+    private const string CodigoPizza = """
+        <RvmPieChart Items="situacoes" Label="s => s.Nome" Value="s => s.Quantidade"
+                     AriaLabel="Pedidos por situacao" SliceColor="s => s.Cor" />
+        """;
+}

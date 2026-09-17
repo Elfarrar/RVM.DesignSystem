@@ -129,6 +129,10 @@
     stroke-width: 2;
 }
 
+.rvm-grafico ::deep .rvm-grafico-eixo-ativo {
+    stroke: var(--rvm-color-text-secondary);
+}
+
 .rvm-grafico ::deep .rvm-grafico-teia {
     fill: none;
     stroke: var(--rvm-color-divider);

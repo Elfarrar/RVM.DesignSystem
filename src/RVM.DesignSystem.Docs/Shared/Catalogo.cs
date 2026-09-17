@@ -84,7 +84,9 @@ public static class Catalogo
             new("componentes/histogram", "RvmHistogram", "Distribuicao de valores em faixas."),
             new("componentes/line-chart", "RvmLineChart", "Evolucao no tempo, reta ou suave."),
             new("componentes/area-chart", "RvmAreaChart", "Linha com o volume preenchido em degrade."),
-            new("componentes/scatter-chart", "RvmScatterChart", "Relacao entre duas variaveis numericas.")
+            new("componentes/scatter-chart", "RvmScatterChart", "Relacao entre duas variaveis numericas."),
+            new("componentes/pie-chart", "RvmPieChart", "Pizza e rosca, com percentuais."),
+            new("componentes/radar-chart", "RvmRadarChart", "Varias variaveis a partir de um centro.")
         ])
     ];
 }

@@ -65,7 +65,8 @@ public class CssDosComponentesTests
         // Os graficos derivados so desenham SVG dentro da figura da RvmChartBase, que tem o CSS (::deep).
         string[] semCssPorProjeto = ["RvmNavGroup.razor", "RvmNavItem.razor", "RvmNavSection.razor",
             "RvmColumnChart.razor", "RvmBarChart.razor", "RvmHistogram.razor",
-            "RvmLineChart.razor", "RvmAreaChart.razor", "RvmScatterChart.razor"];
+            "RvmLineChart.razor", "RvmAreaChart.razor", "RvmScatterChart.razor",
+            "RvmPieChart.razor", "RvmRadarChart.razor"];
 
         var faltando = Directory.Exists(PastaDeComponentes)
             ? Directory.GetFiles(PastaDeComponentes, "*.razor", SearchOption.AllDirectories)

@@ -33,7 +33,7 @@ seguem o mesmo visual.
 
 1. [x] Base + `RvmColumnChart` (agrupado e empilhado), `RvmBarChart`, `RvmHistogram`
 2. [x] `RvmLineChart` (reta e suave), `RvmAreaChart`, `RvmScatterChart`
-3. [ ] `RvmPieChart` (pizza e rosca), `RvmRadarChart`; Dashboard de exemplo com graficos
+3. [x] `RvmPieChart` (pizza e rosca), `RvmRadarChart`; Dashboard de exemplo com graficos
 
 ## Fora da v1 dos graficos
 
@@ -52,3 +52,6 @@ Zoom, arrastar, animacao, eixo duplo, exportar imagem.
 | **Curva suave monotona (Fritsch-Carlson, o `monotoneX` do d3)** | Passa por todos os pontos sem subir alem do maior nem descer abaixo do menor entre vizinhos; Catmull-Rom inventava picos. Teste confere que nenhum ponto de controle passa do topo |
 | **Area: degrade `linearGradient` por serie, com a cor herdada pela variavel CSS; eixo sempre do zero** | Area cortada no meio exagera o volume |
 | 🔴 **Campo estatico em classe generica repetia ids** (`RvmChartBase<TItem>`, e ja antes `RvmSelectBase<TValue>` e `RvmTable<TItem>`) | Existe um campo por tipo: dois graficos com tipos de dado diferentes nasciam "rvm-grafico-1" e o degrade da area verde saiu azul (o do outro grafico). Selects `string` e `TimeOnly?` na mesma pagina repetiam o id do combobox. `GeradorDeIds` unico na biblioteca + teste de regressao |
+| **Pizza: valor por item (`Value` no proprio grafico), fatias a partir do alto no sentido horario; 100% vira arco de 359,999 graus; zero e negativo nao desenham fatia mas ficam na tabela** | O arco de 360 graus nao existe no SVG. A fatia ativa se afasta 6 px, como no Chart Card do kit |
+| **Radar: pelo menos 3 eixos; `Max` para escala comum** | Com 2 eixos nao ha poligono; sem `Max`, o maior valor arredondado |
+| **Dashboard de exemplo ganhou colunas, rosca e area** | Os graficos na tela que motivou o pedido |
