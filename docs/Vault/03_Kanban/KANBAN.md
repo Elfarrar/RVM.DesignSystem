@@ -10,7 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-011]] | Graficos: animacao, exportar, eixo duplo, zoom, arrastar e selecao | em andamento |
+| [[DSGN-011]] | Graficos: animacao, exportar, eixo duplo, zoom, arrastar e selecao | em review |
 
 ## Concluido
 

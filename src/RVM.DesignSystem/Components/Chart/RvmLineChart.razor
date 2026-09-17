@@ -52,6 +52,13 @@
     internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
         => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
 
+    // Meio intervalo para cada lado: a faixa de "Fev a Mai" cobre os quatro meses, nao so o traco entre eles.
+    internal override (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim)
+    {
+        var meio = Dados.Count <= 1 ? LarguraDoPlot / 2 : (XDe(1) - XDe(0)) / 2;
+        return (XDe(inicio) - meio, XDe(fim) + meio);
+    }
+
     private double Y(Escala escala, double valor) => escala.Posicao(valor, MargemTopo + AlturaDoPlot, MargemTopo);
 
     private List<(double X, double Y)> PontosDa(RvmChartSeries<TItem> serie, Escala escala)

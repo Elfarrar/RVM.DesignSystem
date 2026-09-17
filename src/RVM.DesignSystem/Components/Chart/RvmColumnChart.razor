@@ -68,6 +68,9 @@
     internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
         => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
 
+    internal override (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim)
+        => (CentroDe(inicio) - Faixa / 2, CentroDe(fim) + Faixa / 2);
+
     private List<Coluna> Colunas => Memo("Colunas", () =>
         {
             var lista = new List<Coluna>();

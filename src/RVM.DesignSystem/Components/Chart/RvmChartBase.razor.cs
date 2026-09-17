@@ -88,6 +88,17 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// </summary>
     [Parameter] public bool Zoomable { get; set; }
 
+    /// <summary>
+    /// Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao.
+    /// </summary>
+    [Parameter] public RvmChartSelectionMode SelectionMode { get; set; }
+
+    /// <summary>A faixa marcada, em indices dos itens. <c>null</c> quando nao ha nada marcado.</summary>
+    [Parameter] public RvmChartRange? Selection { get; set; }
+
+    /// <summary>Avisa que a faixa mudou (inclusive quando foi limpa, com <c>null</c>).</summary>
+    [Parameter] public EventCallback<RvmChartRange?> SelectionChanged { get; set; }
+
     /// <summary>Atributos extras, repassados a figura.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -104,6 +115,9 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     private const double JanelaMinima = 0.02;
 
     private (double X, double Y)? _arrastando;
+    private int? _marcandoDe;
+    private RvmChartRange? _selecao;
+    private RvmChartRange? _selecaoRecebida;
 
     /// <summary>A parte do eixo X que esta a vista, em fracao do total (0 a 1).</summary>
     internal (double Inicio, double Fim) JanelaX { get; private set; } = (0, 1);
@@ -208,7 +222,70 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     }
 
     /// <inheritdoc />
-    protected override void OnParametersSet() => _versaoDoLayout++;
+    protected override void OnParametersSet()
+    {
+        _versaoDoLayout++;
+
+        // Adota a faixa de fora so quando ela e outra: sem isso, um render do pai desfazia o que o
+        // leitor acabou de marcar (a mesma armadilha da selecao da RvmTable).
+        if (!ReferenceEquals(Selection, _selecaoRecebida))
+        {
+            _selecaoRecebida = Selection;
+            if (Selection != _selecao)
+            {
+                _selecao = Selection;
+                AnunciarFaixa();
+            }
+        }
+    }
+
+    /// <summary>A faixa marcada no momento.</summary>
+    internal RvmChartRange? FaixaMarcada => _selecao;
+
+    private bool SelecaoLigada => SelectionMode == RvmChartSelectionMode.Range && AreaDoPlot is not null;
+
+    /// <summary>Onde a faixa comeca e termina no desenho; cada grafico sabe a largura de um ponto.</summary>
+    internal virtual (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim) => null;
+
+    internal string? EstiloDaFaixa
+    {
+        get
+        {
+            if (_selecao is not { } faixa || LadosDaFaixa(faixa.Start, faixa.End) is not { } lados)
+            {
+                return null;
+            }
+
+            var esquerda = Math.Clamp(lados.Inicio, 0, Largura);
+            var direita = Math.Clamp(lados.Fim, 0, Largura);
+            return string.Create(CultureInfo.InvariantCulture,
+                $"left: {esquerda / Largura * 100:0.##}%; width: {Math.Max(0, direita - esquerda) / Largura * 100:0.##}%");
+        }
+    }
+
+    private async Task MudarFaixa(RvmChartRange? faixa)
+    {
+        if (faixa == _selecao)
+        {
+            return;
+        }
+
+        _selecao = faixa;
+        AnunciarFaixa();
+        if (SelectionChanged.HasDelegate)
+        {
+            await SelectionChanged.InvokeAsync(faixa);
+        }
+    }
+
+    private void AnunciarFaixa()
+        => AvisoDaFaixa = _selecao is not { } faixa || QuantidadeDePontos == 0
+            ? "Selecao limpa."
+            : $"Selecionado de {TituloDoPonto(Math.Clamp(faixa.Start, 0, QuantidadeDePontos - 1))} "
+              + $"a {TituloDoPonto(Math.Clamp(faixa.End, 0, QuantidadeDePontos - 1))}: {faixa.Count} de {QuantidadeDePontos}.";
+
+    /// <summary>O que o leitor de tela ouve quando a faixa muda.</summary>
+    internal string? AvisoDaFaixa { get; private set; }
 
     internal string Formatar(double valor) => (ValueFormat ?? RvmChartFormat.Compact)(valor);
 
@@ -351,8 +428,16 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         }
     }
 
-    internal void AoMoverPonteiro(PointerEventArgs e)
+    internal async Task AoMoverPonteiro(PointerEventArgs e)
     {
+        if (_marcandoDe is { } inicio)
+        {
+            var atual = PontoEm(e.OffsetX, e.OffsetY) ?? inicio;
+            await MudarFaixa(new RvmChartRange(Math.Min(inicio, atual), Math.Max(inicio, atual)));
+            Ativo = atual;
+            return;
+        }
+
         if (_arrastando is { } origem && AreaDoPlot is { } area)
         {
             // Arrastar leva o desenho junto: o conteudo vai para onde o dedo foi, o que significa mover a
@@ -369,13 +454,33 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     internal void AoApertarPonteiro(PointerEventArgs e)
     {
+        // Com selecao ligada, arrastar marca e Shift+arrastar desloca; sem ela, arrastar desloca.
+        if (SelecaoLigada && !e.ShiftKey)
+        {
+            _marcandoDe = PontoEm(e.OffsetX, e.OffsetY);
+            return;
+        }
+
         if (ZoomLigado && Aproximado)
         {
             _arrastando = (e.OffsetX, e.OffsetY);
         }
     }
 
-    internal void AoSoltarPonteiro() => _arrastando = null;
+    internal async Task AoSoltarPonteiro(PointerEventArgs e)
+    {
+        _arrastando = null;
+        if (_marcandoDe is { } inicio)
+        {
+            _marcandoDe = null;
+            // Soltar onde apertou e um clique, nao um arrasto: limpa a marcacao (para marcar um ponto so,
+            // ha o Enter no teclado).
+            if (PontoEm(e.OffsetX, e.OffsetY) == inicio)
+            {
+                await MudarFaixa(null);
+            }
+        }
+    }
 
     /// <summary>
     /// A roda do mouse, vinda do JS (o ouvinte precisa poder cancelar a rolagem da pagina, e para isso
@@ -401,9 +506,10 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     {
         Ativo = null;
         _arrastando = null;
+        _marcandoDe = null;
     }
 
-    internal void AoTeclar(KeyboardEventArgs e)
+    internal async Task AoTeclar(KeyboardEventArgs e)
     {
         var total = QuantidadeDePontos;
         if (ZoomLigado && TeclaDeZoom(e))
@@ -412,6 +518,11 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         }
 
         if (total == 0)
+        {
+            return;
+        }
+
+        if (SelecaoLigada && await TeclaDeSelecao(e, total))
         {
             return;
         }
@@ -425,6 +536,36 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             "Escape" => null,
             _ => Ativo
         };
+    }
+
+    // Shift com as setas estende a faixa a partir do ponto que esta sendo lido; Esc limpa. Enter marca
+    // so o ponto atual — util para escolher uma categoria sem arrastar.
+    private async Task<bool> TeclaDeSelecao(KeyboardEventArgs e, int total)
+    {
+        if (e.Key == "Escape" && _selecao is not null)
+        {
+            await MudarFaixa(null);
+            return true;
+        }
+
+        if (e.Key == "Enter" && Ativo is { } atual)
+        {
+            await MudarFaixa(new RvmChartRange(atual, atual));
+            return true;
+        }
+
+        if (!e.ShiftKey || e.Key is not ("ArrowRight" or "ArrowLeft" or "ArrowDown" or "ArrowUp"))
+        {
+            return false;
+        }
+
+        var passo = e.Key is "ArrowRight" or "ArrowDown" ? 1 : -1;
+        // A ponta que anda e a que esta sendo lida; a outra extremidade da faixa fica ancorada.
+        var ponta = Math.Clamp((Ativo ?? _selecao?.End ?? 0) + passo, 0, total - 1);
+        var ancora = _selecao is null ? Ativo ?? ponta : Ativo == _selecao.End ? _selecao.Start : _selecao.End;
+        Ativo = ponta;
+        await MudarFaixa(new RvmChartRange(Math.Min(ancora, ponta), Math.Max(ancora, ponta)));
+        return true;
     }
 
     // As setas sozinhas continuam percorrendo os pontos: com Ctrl elas deslocam a janela, e o zoom fica

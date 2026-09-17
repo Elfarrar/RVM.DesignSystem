@@ -57,6 +57,19 @@
     internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
         => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
 
+    internal override (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim)
+    {
+        var pontos = Pontos;
+        if (pontos.Count == 0)
+        {
+            return null;
+        }
+
+        var i = Math.Clamp(inicio, 0, pontos.Count - 1);
+        var f = Math.Clamp(fim, 0, pontos.Count - 1);
+        return (PX(pontos[i].X) - PointRadius, PX(pontos[f].X) + PointRadius);
+    }
+
     internal override RenderFragment Desenho => @<g>
         @{
             var pontos = Pontos;

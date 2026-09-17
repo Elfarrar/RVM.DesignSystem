@@ -71,6 +71,7 @@
         new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
         new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
         new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
         new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita (nao herda o ValueFormat, que descreve a unidade da esquerda)."),
         new("Animated", "bool", "true", "Anima o desenho; silenciada sozinha em \"reduzir movimento\"."),
         new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV ou PDF."),

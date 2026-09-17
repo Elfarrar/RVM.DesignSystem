@@ -25,6 +25,16 @@
     overflow: visible;
 }
 
+/* A faixa marcada por arrasto: veu da cor primaria, sob a camada que recebe os eventos. */
+.rvm-grafico-faixa-marcada {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: color-mix(in srgb, var(--rvm-color-primary-text) 12%, transparent);
+    border-inline: 1px solid var(--rvm-color-primary-text);
+    pointer-events: none;
+}
+
 .rvm-grafico-camada {
     position: absolute;
     inset: 0;

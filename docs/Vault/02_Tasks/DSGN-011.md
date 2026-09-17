@@ -20,7 +20,7 @@ de faixa por arrasto para filtrar outros componentes, e exportar PDF ou CSV tamb
 2. [x] **Eixo duplo**: `RvmChartAxis.Secondary` na serie, escala e rotulos a direita, legenda dizendo o eixo
 3. [x] **Zoom em X e em Y** e **arrastar**: roda do mouse (Shift para Y), arrastar para deslocar, duplo
        clique para voltar, `+`/`-` e setas no teclado, janela anunciada em `aria-live`
-4. [ ] **Selecao de faixa por arrasto** (`SelectionMode`, `Selection`/`SelectionChanged`) para filtrar outros
+4. [x] **Selecao de faixa por arrasto** (`SelectionMode`, `Selection`/`SelectionChanged`) para filtrar outros
        componentes, com teclado (Shift+setas, Enter, Esc) e exemplo no Dashboard filtrando a tabela
 
 ## Decisoes de partida
@@ -48,6 +48,20 @@ Zoom por caixa desenhada (brush-to-zoom), exportar Excel nativo (.xlsx), imprimi
 | PDF montado em C# com o JPEG do `canvas` (`DCTDecode`) | sem biblioteca de terceiros (decisao do projeto) e a montagem fica testavel sem navegador |
 | `pathLength="1"` na linha para animar o traco | dispensa medir o caminho em JS: a animacao roda so em CSS e morre sozinha em "reduzir movimento" |
 | Eixo escreve `0`, nao `0 mil` | achado na foto da entrega; `CompactForAxis` colocava o sufixo do passo na base do eixo |
+
+## Fatia 4 — entregue em 17/09/2026
+
+- `SelectionMode="RvmChartSelectionMode.Range"`, `Selection` (`RvmChartRange`) e `SelectionChanged`.
+  A faixa e de **indices** dos itens: quem recebe filtra os proprios dados, o grafico so diz qual e.
+- Arrastar marca; com `Zoomable` junto, Shift+arrastar passa a ser o que desloca. Clicar sem arrastar
+  limpa. No teclado: Shift+setas estendem a partir do ponto que esta sendo lido, Enter marca so ele e
+  Esc limpa — as setas sozinhas continuam a leitura ponto a ponto.
+- `Selection` de fora e adotado pelo mesmo criterio da `RvmTable` (compara a referencia), para um
+  render do pai nao desfazer o que o leitor acabou de marcar.
+- Exemplo no **Dashboard**: a faixa no grafico de receita filtra a tabela de fechamento, com "Limpar
+  filtro" no cabecalho do cartao.
+- O veu da faixa usa `--rvm-color-primary-text` (a primeira tentativa, `--rvm-primary`, nao existe e
+  saiu invisivel — achado na foto).
 
 ## Fatia 3 — entregue em 17/09/2026
 
