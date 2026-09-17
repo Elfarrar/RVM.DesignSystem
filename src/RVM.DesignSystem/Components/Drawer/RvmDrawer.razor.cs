@@ -8,6 +8,10 @@ namespace RVM.DesignSystem.Components.Drawer;
 /// <summary>
 /// Painel que sai de um lado da tela: menu de navegacao, filtros, detalhe de um item.
 /// </summary>
+/// <remarks>
+/// A temporaria renderiza onde foi declarada (sem portal): fora de ancestral com <c>transform</c>,
+/// <c>filter</c>, <c>perspective</c> ou <c>contain</c>, senao ela nao cobre a tela.
+/// </remarks>
 public partial class RvmDrawer : ComponentBase, IAsyncDisposable
 {
     private ElementReference _caixa;

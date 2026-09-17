@@ -4,7 +4,10 @@
 
 @* role="dialog" (ou "alertdialog", para confirmacao) com aria-modal e nome pelo titulo. Aberto no
    primeiro render, aparece aberto sem JS; o JS so prende o foco e devolve ao fechar.
-   Esc fecha pelo evento do Blazor; clicar no fundo fecha se CloseOnBackdropClick. *@
+   Esc fecha pelo evento do Blazor, que NAO sobe para o dialogo de fora: com um dialogo aberto sobre
+   outro, o Esc fechava os dois (review da onda 3). Clicar no fundo fecha se CloseOnBackdropClick.
+   ⚠️ Sem portal: o dialogo fica onde foi declarado, e position: fixed passa a valer em relacao a um
+   ancestral com transform, filter, perspective ou contain. Declare-o fora desses containers. *@
 @if (Open)
 {
     <div class="@ClassesDaRaiz">
@@ -18,7 +21,8 @@
              aria-labelledby="@(string.IsNullOrWhiteSpace(Title) ? null : IdTitulo)"
              aria-describedby="@(Alert ? IdConteudo : null)"
              tabindex="-1"
-             @onkeydown="AoTeclarAsync">
+             @onkeydown="AoTeclarAsync"
+             @onkeydown:stopPropagation="true">
             @if (!string.IsNullOrWhiteSpace(Title) || ShowCloseButton)
             {
                 <div class="topo">

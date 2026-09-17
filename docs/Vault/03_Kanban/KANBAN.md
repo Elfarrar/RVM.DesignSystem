@@ -10,7 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-005]] | Onda 3: feedback e sobreposicao (8 componentes) | em andamento |
+| [[DSGN-005]] | Onda 3: feedback e sobreposicao — os 8 no dev, review feito | espera o Rafael aprovar as comparacoes |
 
 ## A fazer — ondas 2 a 4
 

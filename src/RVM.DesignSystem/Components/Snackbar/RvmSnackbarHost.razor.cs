@@ -13,6 +13,10 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
 
     [Inject] private RvmSnackbarService Servico { get; set; } = default!;
 
+    [Inject] private IServiceProvider Provedor { get; set; } = default!;
+
+    private TimeProvider Relogio => Provedor.GetService(typeof(TimeProvider)) as TimeProvider ?? TimeProvider.System;
+
     /// <summary>Nome acessivel do botao de fechar de cada mensagem. Padrao: "Fechar mensagem".</summary>
     [Parameter] public string CloseLabel { get; set; } = "Fechar mensagem";
 
@@ -100,7 +104,7 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
     {
         try
         {
-            await Task.Delay(duracao, token);
+            await Task.Delay(duracao, Relogio, token);
         }
         catch (TaskCanceledException)
         {
