@@ -3,7 +3,7 @@ id: DSGN-005
 titulo: Onda 3 — feedback e sobreposicao (8 componentes)
 repo: RVM.DesignSystem
 tipo: feature
-status: em revisao
+status: concluido
 criada: 2026-09-17
 ---
 
@@ -104,9 +104,15 @@ As 159 classes internas dos 27 componentes das ondas 1 a 3 passaram a `rvm-*` (`
 - **Conferido visualmente:** 54 fotos (27 paginas x 2 temas) da versao anterior e da nova, comparadas
   pixel a pixel — zero diferenca. bUnit 386 e E2E 128 verdes
 
-## Portal de dialogo e gaveta — explicado ao Rafael em 17/09, sem decisao ainda
+## Portal de dialogo e gaveta — decidido: fica documentado, sem portal
 
 Hoje dialogo e gaveta renderizam onde foram declarados; um ancestral com `transform`, `filter`,
 `perspective` ou `contain` faz o `position: fixed` deixar de cobrir a tela. Documentado no componente
 e na pagina. Portal (mover o no para o fim do `body`) exigiria JS, o que conflita com "aberto no
 primeiro render sem JS".
+
+## Fechamento
+
+Comparacoes da onda 3 aprovadas pelo Rafael em 17/09/2026. Portal: segue a recomendacao — sem portal,
+limitacao documentada; so reabrir se aparecer caso real que declarar o dialogo fora do container nao
+resolva.
