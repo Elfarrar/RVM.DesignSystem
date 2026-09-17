@@ -1,0 +1,70 @@
+@page "/componentes/histogram"
+
+<PageTitle>RvmHistogram — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmHistogram</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Distribuicao de valores numericos: <code>Items</code> recebe os numeros soltos, o componente agrupa em faixas
+    de mesma largura e conta quantos caem em cada uma. Sem <code>Bins</code> nem <code>BinWidth</code>, o numero
+    de faixas segue a regra de Sturges.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ O kit nao tem histograma: o visual segue o das colunas, com as faixas encostadas.
+</p>
+
+<BlocoExemplo Titulo="Faixas automaticas"
+              Descricao="Peso de 200 bovinos na pesagem de setembro, em kg."
+              Codigo="@CodigoAutomatico">
+    <RvmHistogram Items="Pesos" AriaLabel="Distribuicao do peso dos bovinos" SeriesName="Animais"
+                  BinFormat="@(v => $"{RvmChartFormat.Number(Math.Round(v))} kg")" />
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Largura de faixa fixa"
+              Descricao="Umidade dos graos na recepcao, de 1 em 1 ponto percentual."
+              Codigo="@CodigoLargura">
+    <RvmHistogram Items="Umidades" AriaLabel="Distribuicao da umidade dos graos" BinWidth="1" Color="RvmColor.Info" Height="240"
+                  SeriesName="Cargas" BinFormat="@(v => $"{RvmChartFormat.Number(v)}%")" />
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+@code {
+    private static readonly double[] Pesos = Gerar(200, 420, 45, 7);
+
+    private static readonly double[] Umidades = Gerar(120, 14.5, 1.6, 11);
+
+    // Distribuicao normal por Box-Muller com semente fixa: o grafico e o mesmo a cada carga.
+    private static double[] Gerar(int quantidade, double media, double desvio, int semente)
+    {
+        var aleatorio = new Random(semente);
+        return [.. Enumerable.Range(0, quantidade).Select(_ =>
+        {
+            var u1 = 1 - aleatorio.NextDouble();
+            var u2 = aleatorio.NextDouble();
+            return Math.Round(media + desvio * Math.Sqrt(-2 * Math.Log(u1)) * Math.Cos(2 * Math.PI * u2), 1);
+        })];
+    }
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items", "IEnumerable<double>", "—", "Os valores soltos."),
+        new("AriaLabel", "string", "—", "Nome do grafico para o leitor de tela. Obrigatorio."),
+        new("Bins", "int?", "Sturges", "Numero de faixas."),
+        new("BinWidth", "double?", "—", "Largura de cada faixa; vence Bins."),
+        new("BinFormat", "Func<double, string>?", "ValueFormat", "Formato dos limites das faixas."),
+        new("SeriesName", "string", "\"Frequencia\"", "Nome da contagem na dica e na tabela."),
+        new("Color", "RvmColor", "Primary", "Cor das colunas."),
+        new("Height / ShowGrid", "int / bool", "300 / true", "Altura e grade.")
+    ];
+
+    private const string CodigoAutomatico = """
+        <RvmHistogram Items="pesos" AriaLabel="Distribuicao do peso dos bovinos" SeriesName="Animais"
+                      BinFormat="@(v => $"{RvmChartFormat.Number(Math.Round(v))} kg")" />
+        """;
+
+    private const string CodigoLargura = """
+        <RvmHistogram Items="umidades" AriaLabel="Umidade dos graos" BinWidth="1" Color="RvmColor.Info" />
+        """;
+}

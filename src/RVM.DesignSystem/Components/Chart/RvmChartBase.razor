@@ -1,0 +1,108 @@
+@namespace RVM.DesignSystem.Components.Chart
+@typeparam TItem
+
+@* A figura de todo grafico. As series vem primeiro e se apresentam; a figura sai depois (RvmAdiado), ja
+   com os parametros novos delas. O SVG e so desenho (aria-hidden): quem le e a tabela de dados escondida
+   e a camada focavel por cima, onde as setas percorrem os pontos e a regiao aria-live anuncia o valor. *@
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+@DepoisDasSeries(Figura)
+
+@code {
+    private RenderFragment Figura => @<figure @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+        <div @ref="_area" class="rvm-grafico-area" style="@($"height: {Height}px")">
+            <svg class="rvm-grafico-svg" width="100%" height="@Height" viewBox="@($"0 0 {N(Largura)} {Height}")"
+                 preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+                @Desenho
+            </svg>
+
+            @if (Centro is not null)
+            {
+                <div class="rvm-grafico-centro" aria-hidden="true">@Centro</div>
+            }
+
+            <div @ref="_camada"
+                 class="rvm-grafico-camada"
+                 tabindex="0"
+                 role="group"
+                 aria-roledescription="grafico"
+                 aria-label="@AriaLabel"
+                 aria-describedby="@($"{IdBase}-instrucao")"
+                 @onpointermove="AoMoverPonteiro"
+                 @onpointerleave="AoSairPonteiro"
+                 @onkeydown="AoTeclar"
+                 @onblur="AoSairPonteiro"></div>
+
+            @if (Ativo is { } ativo && ativo < QuantidadeDePontos)
+            {
+                <div class="@ClassesDaDica" style="@EstiloDaDica" aria-hidden="true">
+                    <div class="rvm-grafico-dica-titulo">@TituloDoPonto(ativo)</div>
+                    @foreach (var linha in LinhasDoPonto(ativo))
+                    {
+                        <div class="rvm-grafico-dica-linha @ClasseDaCor(linha.Cor)">
+                            <span class="rvm-grafico-marca"></span>
+                            @if (!string.IsNullOrEmpty(linha.Nome))
+                            {
+                                <span>@linha.Nome</span>
+                            }
+                            <strong>@linha.Valor</strong>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <span id="@($"{IdBase}-instrucao")" class="rvm-so-leitor">Use as setas para ler os valores, um ponto por vez.</span>
+        <span class="rvm-so-leitor" aria-live="polite">@TextoDoAtivo</span>
+
+        @if (ShowLegend && Legenda.Count > 0)
+        {
+            <ul class="rvm-grafico-legenda" aria-hidden="true">
+                @foreach (var item in Legenda)
+                {
+                    <li class="@ClasseDaCor(item.Cor)">
+                        <span class="rvm-grafico-marca"></span>
+                        <span>@item.Nome</span>
+                        @if (item.Detalhe is not null)
+                        {
+                            <strong>@item.Detalhe</strong>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+
+        @{ var tabela = Tabela; }
+        <table class="rvm-so-leitor">
+            <caption>Dados do grafico: @AriaLabel</caption>
+            <thead>
+                <tr>
+                    @foreach (var titulo in tabela.Cabecalho)
+                    {
+                        <th scope="col">@titulo</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var linha in tabela.Linhas)
+                {
+                    <tr>
+                        @for (var c = 0; c < linha.Count; c++)
+                        {
+                            if (c == 0)
+                            {
+                                <th scope="row">@linha[c]</th>
+                            }
+                            else
+                            {
+                                <td>@linha[c]</td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </figure>;
+}

@@ -1,0 +1,84 @@
+@page "/componentes/column-chart"
+
+<PageTitle>RvmColumnChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmColumnChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Colunas verticais para comparar valores entre categorias. Uma ou varias series, lado a lado ou empilhadas.
+    O grafico e SVG desenhado pelo proprio componente: sai pronto no primeiro render, com grade tracejada,
+    colunas de cantos arredondados e legenda como no kit.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Acessivel sem depender do desenho: a figura tem nome, os mesmos dados ficam numa tabela para leitor de tela
+    e, com o foco no grafico, as setas percorrem as categorias e anunciam os valores. A dica aparece no mouse e
+    no teclado.
+</p>
+
+<BlocoExemplo Titulo="Series lado a lado"
+              Descricao="O Total Profit do kit: receita e despesa por ano."
+              Codigo="@CodigoAgrupado">
+    <RvmColumnChart Items="Anos" Label="a => a.Ano" AriaLabel="Receita e despesa por ano">
+        <RvmChartSeries Name="Receita" Value="a => a.Receita" />
+        <RvmChartSeries Name="Despesa" Value="a => a.Despesa" Color="RvmColor.Secondary" />
+    </RvmColumnChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Empilhadas"
+              Descricao="O Analytics do kit: a composicao de cada mes."
+              Codigo="@CodigoEmpilhado">
+    <RvmColumnChart Items="Meses" Label="m => m.Mes" AriaLabel="Colheita por cultura em cada mes" Stacked="true" Height="260">
+        <RvmChartSeries Name="Soja" Value="m => m.Soja" Color="RvmColor.Success" />
+        <RvmChartSeries Name="Milho" Value="m => m.Milho" Color="RvmColor.Warning" />
+        <RvmChartSeries Name="Sorgo" Value="m => m.Sorgo" Color="RvmColor.Secondary" />
+    </RvmColumnChart>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/column-chart.png"
+              Arquivo="referencia-neatlab/Chart Card.png (recorte)"
+              Descricao="Os cartoes Total Profit e Weekly Sales: colunas arredondadas, grade tracejada e rotulos do eixo."
+              Alt="Recorte do kit NEATLAB com dois graficos de colunas" />
+
+@code {
+    private static readonly (string Ano, double Receita, double Despesa)[] Anos =
+    [
+        ("2019", 28_000, 18_000), ("2020", 34_000, 21_000), ("2021", 31_000, 24_500),
+        ("2022", 45_000, 26_000), ("2023", 39_500, 23_000), ("2024", 52_000, 30_000), ("2025", 58_500, 31_500)
+    ];
+
+    private static readonly (string Mes, double Soja, double Milho, double Sorgo)[] Meses =
+    [
+        ("Jan", 1200, 300, 100), ("Fev", 2400, 500, 150), ("Mar", 1800, 900, 200), ("Abr", 600, 1400, 350),
+        ("Mai", 200, 1700, 420), ("Jun", 0, 1100, 380)
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items", "IEnumerable<TItem>", "—", "Os dados."),
+        new("Label", "Func<TItem, string>?", "—", "A categoria de cada item (eixo horizontal)."),
+        new("AriaLabel", "string", "—", "Nome do grafico para o leitor de tela. Obrigatorio."),
+        new("Stacked", "bool", "false", "Series empilhadas em vez de lado a lado."),
+        new("MaxBarWidth", "int", "28", "Largura maxima da coluna, em px."),
+        new("Height", "int", "300", "Altura, em px. A largura acompanha o container."),
+        new("ShowLegend / ShowGrid", "bool", "true / true", "Legenda (com mais de uma serie) e grade."),
+        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores no eixo e na dica (\"60 mil\")."),
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Nome, valor e cor de cada serie.")
+    ];
+
+    private const string CodigoAgrupado = """
+        <RvmColumnChart Items="anos" Label="a => a.Ano" AriaLabel="Receita e despesa por ano">
+            <RvmChartSeries Name="Receita" Value="a => a.Receita" />
+            <RvmChartSeries Name="Despesa" Value="a => a.Despesa" Color="RvmColor.Secondary" />
+        </RvmColumnChart>
+        """;
+
+    private const string CodigoEmpilhado = """
+        <RvmColumnChart Items="meses" Label="m => m.Mes" AriaLabel="Colheita por cultura" Stacked="true">
+            <RvmChartSeries Name="Soja" Value="m => m.Soja" Color="RvmColor.Success" />
+            <RvmChartSeries Name="Milho" Value="m => m.Milho" Color="RvmColor.Warning" />
+        </RvmColumnChart>
+        """;
+}

@@ -10,6 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
+| [[DSGN-010]] | Graficos: colunas, barras, linha, area, pizza, histograma, dispersao e radar | em andamento |
 
 ## Concluido
 

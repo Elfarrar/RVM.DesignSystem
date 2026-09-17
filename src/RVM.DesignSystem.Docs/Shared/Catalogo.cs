@@ -76,6 +76,12 @@ public static class Catalogo
             new("componentes/table", "RvmTable", "Basica, ordenavel, com selecao, densa."),
             new("componentes/data-grid", "RvmDataGrid", "Paginacao, ordenacao, filtro por coluna."),
             new("componentes/app-shell", "RvmAppShell", "Topo, menu lateral e conteudo, responsivo.")
+        ]),
+        new("Graficos",
+        [
+            new("componentes/column-chart", "RvmColumnChart", "Colunas lado a lado ou empilhadas."),
+            new("componentes/bar-chart", "RvmBarChart", "Barras horizontais para nomes longos."),
+            new("componentes/histogram", "RvmHistogram", "Distribuicao de valores em faixas.")
         ])
     ];
 }
