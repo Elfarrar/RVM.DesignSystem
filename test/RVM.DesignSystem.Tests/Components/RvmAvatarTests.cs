@@ -54,6 +54,18 @@ public class RvmAvatarTests : BunitContext
     }
 
     [Fact]
+    public void Avatar_sem_nome_nenhum_e_decorativo_e_nao_uma_imagem_muda()
+    {
+        // `role="img"` sem nome faz o leitor de tela anunciar so "imagem".
+        var cortado = Render<RvmAvatar>(p => p.Add(x => x.Icon, RvmIconName.User));
+
+        var raiz = cortado.Find("span.avatar");
+        Assert.False(raiz.HasAttribute("role"));
+        Assert.False(raiz.HasAttribute("aria-label"));
+        Assert.Equal("true", raiz.GetAttribute("aria-hidden"));
+    }
+
+    [Fact]
     public void Icone_vence_as_iniciais()
     {
         var cortado = Render<RvmAvatar>(p => p
@@ -174,8 +186,20 @@ public class RvmAvatarGroupTests : BunitContext
         var cortado = Render<RvmAvatarGroup>(p => p.Add(x => x.Surplus, 3));
 
         var mais = cortado.Find("span.avatar");
-        Assert.Equal("+3", cortado.Find("span.iniciais").TextContent);
+        Assert.Equal("+3", mais.TextContent.Trim());
         Assert.Equal("Mais 3", mais.GetAttribute("aria-label"));
+    }
+
+    [Theory]
+    [InlineData(10, "+10")]
+    [InlineData(128, "+128")]
+    public void Excedente_de_varios_digitos_nao_e_cortado(int excedente, string esperado)
+    {
+        // "+10" passava pelo corte de iniciais em duas letras e virava "+1": contagem errada, calada.
+        var cortado = Render<RvmAvatarGroup>(p => p.Add(x => x.Surplus, excedente));
+
+        Assert.Equal(esperado, cortado.Find("span.avatar").TextContent.Trim());
+        Assert.Equal($"Mais {excedente}", cortado.Find("span.avatar").GetAttribute("aria-label"));
     }
 
     [Fact]

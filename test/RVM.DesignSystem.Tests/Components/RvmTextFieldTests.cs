@@ -256,6 +256,31 @@ public class RvmTextFieldTests : BunitContext
     }
 
     [Fact]
+    public void Style_do_consumidor_vai_para_a_raiz_onde_largura_faz_efeito()
+    {
+        // No input, o `flex: 1` engolia o `max-width` do consumidor sem erro nenhum.
+        var cortado = Campo(new Cadastro(), p => p.AddUnmatched("style", "max-width: 240px;"));
+
+        Assert.Equal("max-width: 240px;", cortado.Find("div.campo").GetAttribute("style"));
+        Assert.False(cortado.Find("input").HasAttribute("style"));
+    }
+
+    [Fact]
+    public void Atributos_de_campo_chegam_ao_input()
+    {
+        var cortado = Campo(new Cadastro(), p => p
+            .AddUnmatched("autocomplete", "postal-code")
+            .AddUnmatched("maxlength", "9")
+            .AddUnmatched("inputmode", "numeric"));
+
+        var input = cortado.Find("input");
+        Assert.Equal("postal-code", input.GetAttribute("autocomplete"));
+        Assert.Equal("9", input.GetAttribute("maxlength"));
+        Assert.Equal("numeric", input.GetAttribute("inputmode"));
+        Assert.False(cortado.Find("div.campo").HasAttribute("autocomplete"));
+    }
+
+    [Fact]
     public void Classe_do_consumidor_vai_para_a_raiz()
     {
         var cortado = Campo(new Cadastro(), p => p.AddUnmatched("class", "minha"));

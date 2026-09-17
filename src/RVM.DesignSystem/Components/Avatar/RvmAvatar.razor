@@ -11,7 +11,12 @@
 }
 else
 {
-    <span @attributes="AdditionalAttributes" class="@CssClass" role="img" aria-label="@NomeAcessivel">
+    @* Sem nome nenhum (so icone, sem Alt nem Initials), o avatar e decorativo: `role="img"` sem nome
+       faria o leitor de tela anunciar so "imagem". Entao sai escondido, e nao mudo. *@
+    <span @attributes="AdditionalAttributes" class="@CssClass"
+          role="@(NomeAcessivel is null ? null : "img")"
+          aria-label="@NomeAcessivel"
+          aria-hidden="@(NomeAcessivel is null ? "true" : null)">
         @if (Icon is not null)
         {
             <RvmIcon Name="Icon.Value" Size="@TamanhoDoIcone" />

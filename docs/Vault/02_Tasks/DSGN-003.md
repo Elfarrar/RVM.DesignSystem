@@ -73,6 +73,21 @@ componentes ninguem revisa, e o primeiro erro de padrao se repetiria nove vezes.
 | **Rotulo flutuante so com CSS (`:placeholder-shown`)** | Estado inicial certo sem JS, nos dois modos de hospedagem. O retalho que "corta" a borda assume o papel como fundo; `--rvm-textfield-notch-background` troca |
 | **Clique ignorado em `Disabled` e `Loading` tambem no C#** | O `disabled` do elemento barra o navegador, mas nao chamada programatica — clique que escapa enquanto carrega vira requisicao duplicada |
 
+## Review independente (Sonnet) — achados corrigidos
+
+| Sev | Achado | Correcao |
+|---|---|---|
+| P1 | `RvmTextField` mandava todo `AdditionalAttributes` para o `<input>`: o `style="max-width"` do consumidor era engolido pelo `flex: 1`, sem erro | `class` e `style` vao para a raiz; o resto (`autocomplete`, `maxlength`, `aria-*`) segue no input, onde atributo de campo precisa chegar. Desvio consciente do "tudo na raiz", comentado no componente |
+| P1 | `RvmAvatarGroup` com excedente de 2+ digitos mostrava "+1" no lugar de "+10": o "+N" passava pelo corte de iniciais em duas letras | "+N" vai como conteudo livre, sem corte. Teste com 10 e 128 |
+| P2 | `RvmAvatar` so com icone, sem `Alt` nem `Initials`, virava `role="img"` sem nome — leitor de tela diz so "imagem" | Sem nome, sai `aria-hidden` (decorativo), e nao imagem muda |
+
+## Rede runner -> Rivendell e intermitente
+
+Dois episodios no mesmo dia: um E2E com todos os testes estourando em 40 s e um deploy que morreu no
+`ssh-keyscan` em 5 s. Nos dois, a tentativa seguinte **sem mudanca nenhuma** passou. O
+`deploy-development.yml` ganhou retry com timeout no keyscan (5x) e no rsync (3x) — a mesma licao que
+o publish no BaGet ja tinha pago.
+
 ## Divida herdada da DSGN-002
 
 - [x] Guarda automatica contra **hex literal** em `Components/**/*.razor.css` — teste
