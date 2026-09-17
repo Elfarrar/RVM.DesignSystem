@@ -1,0 +1,58 @@
+@page "/componentes/tooltip"
+
+<PageTitle>RvmTooltip — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTooltip</h1>
+
+<p class="rvm-text-body1 apoio">
+    Dica curta ao passar o mouse ou focar. Mostrar e esconder e <strong>so CSS</strong> — funciona antes
+    do Blazor ficar interativo. Esc dispensa. A dica entra como descricao: repasse o
+    <code>context</code> como <code>aria-describedby</code> ao elemento focavel.
+</p>
+
+<BlocoExemplo Titulo="Quatro posicoes"
+              Descricao="As linhas Down, Up, Right e Left do kit. Passe o mouse ou use Tab. O balao e escuro nos dois temas, como no kit."
+              Codigo="@CodigoPosicoes">
+    <div class="linha-exemplos exemplo-dicas">
+        <RvmTooltip Text="Dica a direita" Placement="RvmTooltipPlacement.Right">
+            <RvmButton Variant="RvmButtonVariant.Outlined" aria-describedby="@context">Direita</RvmButton>
+        </RvmTooltip>
+        <RvmTooltip Text="Dica acima" Placement="RvmTooltipPlacement.Top">
+            <RvmButton Variant="RvmButtonVariant.Outlined" aria-describedby="@context">Acima</RvmButton>
+        </RvmTooltip>
+        <RvmTooltip Text="Sem seta" Arrow="false">
+            <RvmButton Variant="RvmButtonVariant.Outlined" aria-describedby="@context">Sem seta</RvmButton>
+        </RvmTooltip>
+        <RvmTooltip Text="Dica abaixo" Placement="RvmTooltipPlacement.Bottom">
+            <RvmButton Variant="RvmButtonVariant.Outlined" aria-describedby="@context">Abaixo</RvmButton>
+        </RvmTooltip>
+        <RvmTooltip Text="Dica a esquerda" Placement="RvmTooltipPlacement.Left">
+            <RvmButton Variant="RvmButtonVariant.Outlined" aria-describedby="@context">Esquerda</RvmButton>
+        </RvmTooltip>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/tooltip.png"
+              Arquivo="referencia-neatlab/Tooltip.png (recorte)"
+              Descricao="O balao sem seta e com a seta em cada uma das quatro direcoes."
+              Alt="Recorte do kit NEATLAB mostrando o balao de dica sem seta e com seta nas quatro direcoes" />
+
+@code {
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Text", "string", "—", "O texto da dica."),
+        new("Placement", "RvmTooltipPlacement", "Top", "Top, Bottom, Left ou Right."),
+        new("Arrow", "bool", "true", "Seta apontando para o conteudo."),
+        new("Id", "string?", "gerado", "Id da dica."),
+        new("ChildContent", "RenderFragment<string>", "—", "O conteudo. O contexto e o id da dica, para o aria-describedby."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoPosicoes = """
+        <RvmTooltip Text="Copiar link" Placement="RvmTooltipPlacement.Bottom">
+            <RvmButton aria-describedby="@context">Copiar</RvmButton>
+        </RvmTooltip>
+        """;
+}

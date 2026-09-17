@@ -1,0 +1,57 @@
+@namespace RVM.DesignSystem.Components.Breadcrumbs
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* <nav> + <ol> com aria-current no ultimo: o padrao do APG para trilha. O leitor de tela anuncia
+   "trilha de navegacao, lista, 3 itens" e sabe qual e a pagina atual. Os separadores sao desenho. *@
+<nav @attributes="AdditionalAttributes" aria-label="@AriaLabel" class="@ClassesDaRaiz">
+    <ol class="passos">
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            var item = Items[i];
+            var atual = i == Items.Count - 1;
+            <li class="passo">
+                @if (i > 0)
+                {
+                    <span class="separador" aria-hidden="true">
+                        @if (Separator == RvmBreadcrumbSeparator.Chevron)
+                        {
+                            <RvmIcon Name="RvmIconName.ChevronRight" Size="RvmSize.Small" />
+                        }
+                        else
+                        {
+                            @("/")
+                        }
+                    </span>
+                }
+
+                @if (atual)
+                {
+                    <span class="rotulo atual" aria-current="page">@Conteudo(item)</span>
+                }
+                else if (item.Disabled)
+                {
+                    <span class="rotulo desabilitado" aria-disabled="true">@Conteudo(item)</span>
+                }
+                else if (!string.IsNullOrWhiteSpace(item.Href))
+                {
+                    <a class="rotulo ligacao" href="@item.Href">@Conteudo(item)</a>
+                }
+                else
+                {
+                    <span class="rotulo">@Conteudo(item)</span>
+                }
+            </li>
+        }
+    </ol>
+</nav>
+
+@code {
+    private static RenderFragment Conteudo(RvmBreadcrumbItem item) => @<text>
+        @if (item.Icon is { } icone)
+        {
+            <RvmIcon Name="icone" Size="RvmSize.Small" />
+        }
+        <span>@item.Text</span>
+    </text>;
+}

@@ -371,3 +371,24 @@ code {
     align-items: flex-start;
     gap: var(--rvm-space-10);
 }
+
+.pilha-exemplos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--rvm-space-4);
+}
+
+/* Folga para os baloes do tooltip nao cortarem na borda do bloco de exemplo. */
+/* Direita primeiro e esquerda por ultimo: cada balao lateral abre para dentro do bloco. */
+.exemplo-dicas {
+    justify-content: space-between;
+    row-gap: var(--rvm-space-12);
+    padding: var(--rvm-space-10) var(--rvm-space-4);
+}
+
+/* O badge sobreposto passa da quina do icone: sem folga, um invade o outro. */
+.exemplo-badges {
+    gap: var(--rvm-space-8);
+    padding-top: var(--rvm-space-2);
+}

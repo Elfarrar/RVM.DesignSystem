@@ -1,0 +1,79 @@
+/* CSS isolado do RvmBadge. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Badge.png: pilula de 20 px de altura, ponto de 8 px. */
+
+.badge-raiz,
+.badge-ancora {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.badge-ancora {
+    position: relative;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: var(--rvm-radius-pill);
+    font-family: var(--rvm-font-family);
+    white-space: nowrap;
+}
+
+.pilula {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: var(--rvm-text-badge-size);
+    line-height: var(--rvm-text-badge-line);
+    font-weight: var(--rvm-text-badge-weight);
+}
+
+.ponto {
+    width: 8px;
+    height: 8px;
+}
+
+/* Por cima do canto superior direito do conteudo, com o centro da marca na quina — como o
+   envelope do kit. */
+.sobreposto {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+}
+
+.ponto.sobreposto {
+    transform: translate(25%, -25%);
+}
+
+/* Pilula: fundo -main com texto -contrast, o mesmo par ja medido do chip preenchido (4.5:1 nos
+   dois temas). O kit poe texto branco em todas; branco no warning e no info reprovava. */
+.pilula.primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.pilula.secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.pilula.info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.pilula.success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.pilula.warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.pilula.error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+
+/* Ponto: sem texto dentro, ele MESMO e a informacao — precisa de 3:1 contra o fundo (WCAG 1.4.11).
+   O -main do warning da 1.7:1 no branco; o -text passa nos dois temas. */
+.ponto.primary { background-color: var(--rvm-color-primary-text); }
+.ponto.secondary { background-color: var(--rvm-color-secondary-text); }
+.ponto.info { background-color: var(--rvm-color-info-text); }
+.ponto.success { background-color: var(--rvm-color-success-text); }
+.ponto.warning { background-color: var(--rvm-color-warning-text); }
+.ponto.error { background-color: var(--rvm-color-error-text); }
+
+.so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

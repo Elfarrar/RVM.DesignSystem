@@ -1,0 +1,59 @@
+/* CSS isolado do RvmBreadcrumbs. So custom properties — hex literal aqui quebra o tema escuro.
+   Cores do referencia-neatlab/Breadcrumbs.png: passo comum no texto secundario, atual no primario,
+   desabilitado no desabilitado. */
+
+.passos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    font-weight: var(--rvm-text-body1-weight);
+}
+
+.passo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.separador {
+    display: inline-flex;
+    align-items: center;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rotulo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+}
+
+.ligacao {
+    border-radius: var(--rvm-radius-sm);
+    text-decoration: none;
+}
+
+.ligacao:hover {
+    color: var(--rvm-color-text-primary);
+    text-decoration: underline;
+}
+
+.ligacao:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.atual {
+    color: var(--rvm-color-text-primary);
+}
+
+.desabilitado {
+    color: var(--rvm-color-text-disabled);
+}
