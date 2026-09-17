@@ -18,9 +18,7 @@
 
     private const int CaracteresPorPx = 7;
 
-    private Escala EscalaDosValores
-    {
-        get
+    private Escala EscalaDosValores => Memo("EscalaDosValores", () =>
         {
             double min = 0, max = 0;
             foreach (var item in Dados)
@@ -41,13 +39,11 @@
             }
 
             return Escala.Arredondada(min, max);
-        }
-    }
+        });
 
     private double LimiteDosRotulos => Largura * 0.35;
 
-    private double Esquerda
-        => Math.Min(LimiteDosRotulos, LarguraDosRotulos(Dados.Select((item, i) => NomeDe(item, i)), 48));
+    private double Esquerda => Memo("Esquerda", () => Math.Min(LimiteDosRotulos, LarguraDosRotulos(Dados.Select((item, i) => NomeDe(item, i)), 48)));
 
     private string Rotulo(int indice)
     {
@@ -64,9 +60,7 @@
 
     private double X(Escala escala, double valor) => escala.Posicao(valor, Esquerda, Esquerda + LarguraDoPlot);
 
-    private List<Barra> Barras
-    {
-        get
+    private List<Barra> Barras => Memo("Barras", () =>
         {
             var escala = EscalaDosValores;
             var lista = new List<Barra>();
@@ -113,8 +107,7 @@
             }
 
             return lista;
-        }
-    }
+        });
 
     internal override RenderFragment Desenho => @<g>
         @{ var escala = EscalaDosValores; }
@@ -125,7 +118,7 @@
             {
                 <line class="rvm-grafico-grade" x1="@N(x)" y1="@N(MargemTopo)" x2="@N(x)" y2="@N(MargemTopo + AlturaDoPlot)" />
             }
-            @Texto(x, Height - 10, Formatar(marca))
+            @Texto(x, Height - 10, FormatarMarca(marca, escala.Passo))
         }
         @if (Ativo is { } ativo && ativo < Dados.Count)
         {

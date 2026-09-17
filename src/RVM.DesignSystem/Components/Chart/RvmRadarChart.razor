@@ -12,7 +12,10 @@
     /// <summary>Numero de niveis da grade. Padrao: 5.</summary>
     [Parameter] public int GridLevels { get; set; } = 5;
 
-    /// <summary>Valor na ponta dos eixos. Sem valor, o maior valor arredondado para cima.</summary>
+    /// <summary>
+    /// Valor na ponta dos eixos. Sem valor, o maior valor arredondado para cima. O centro e o zero: valores
+    /// negativos ficam no centro (o radar nao tem eixo negativo) e valores acima do Max ficam na ponta.
+    /// </summary>
     [Parameter] public double? Max { get; set; }
 
     private int Eixos => Dados.Count;

@@ -433,7 +433,7 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
         {
             await acao();
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao, circuito caindo): abre, fecha e escolhe; so foco e rolagem nao andam.
         }
