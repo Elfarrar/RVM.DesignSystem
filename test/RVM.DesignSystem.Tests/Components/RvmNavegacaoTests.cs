@@ -521,6 +521,17 @@ public class RvmSelectTests : BunitContext
     }
 
     [Fact]
+    public void Clicar_no_rotulo_abre_a_lista_como_clicar_no_campo()
+    {
+        // Com o campo vazio o rotulo fica por cima do combobox: antes o clique ali so dava foco.
+        var cortado = Select(new Plantio());
+
+        cortado.Find(".rvm-rotulo").Click();
+
+        Assert.NotEmpty(cortado.FindAll("[role=listbox]"));
+    }
+
+    [Fact]
     public void Clicar_fora_ou_no_gatilho_fecha()
     {
         var cortado = Select(new Plantio());

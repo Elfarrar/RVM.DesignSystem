@@ -1,0 +1,187 @@
+/* CSS isolado do RvmDatePicker e do RvmDateRangePicker. So custom properties — hex literal aqui
+   quebra o tema escuro.
+   O campo e o do RvmTextField em contorno (56 e 40 px, medidos no kit), com o calendario num dialogo
+   logo abaixo. So o estilo contorno: o kit nao mostra seletor de data em outro estilo. */
+
+.rvm-campo-data {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    min-width: 0;
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-caixa {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 13px;
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-sm);
+    transition: border-color var(--rvm-transition-fast);
+}
+
+.rvm-medio .rvm-caixa { min-height: 56px; }
+.rvm-pequeno .rvm-caixa { min-height: 40px; }
+
+.rvm-caixa:hover {
+    border-color: var(--rvm-color-text-primary);
+}
+
+/* Ativo: 2 px no token do anel — a borda E o indicador de foco do botao do campo. */
+.rvm-caixa:focus-within,
+.rvm-aberto .rvm-caixa {
+    padding: 0 12px;
+    border-width: 2px;
+    border-color: var(--rvm-focus-ring-color);
+}
+
+.rvm-entrada {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+    padding: 0 var(--rvm-space-6) 0 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-input-size);
+    line-height: var(--rvm-text-input-line);
+    text-align: start;
+    cursor: pointer;
+}
+
+.rvm-valor {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Vazio, o placeholder so aparece com o rotulo em cima (aberto); senao o rotulo ocupa o lugar. */
+.rvm-campo-data:not(.rvm-rotulo-fixo) .rvm-valor {
+    visibility: hidden;
+}
+
+.rvm-rotulo {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    padding: 0 4px;
+    margin-inline-start: -4px;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-input-size);
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateY(-50%);
+    transform-origin: left top;
+    pointer-events: none;
+    transition: transform var(--rvm-transition-fast), top var(--rvm-transition-fast), color var(--rvm-transition-fast);
+}
+
+.rvm-rotulo-fixo .rvm-rotulo,
+.rvm-caixa:focus-within .rvm-rotulo {
+    top: 0;
+    transform: translateY(-50%) scale(0.75);
+    background-color: var(--rvm-textfield-notch-background, var(--rvm-color-background-paper));
+}
+
+.rvm-caixa:focus-within .rvm-rotulo,
+.rvm-aberto .rvm-rotulo {
+    left: 12px;
+    color: var(--rvm-color-primary-text);
+}
+
+/* Vazio e com foco: o placeholder aparece quando o rotulo sobe. */
+.rvm-caixa:focus-within .rvm-valor {
+    visibility: visible;
+}
+
+.rvm-campo-data:not(.rvm-rotulo-fixo) .rvm-caixa:focus-within .rvm-valor,
+.rvm-aberto:not(.rvm-com-valor) .rvm-valor {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-obrigatorio {
+    margin-inline-start: 2px;
+}
+
+.rvm-icone-campo {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    display: inline-flex;
+    color: var(--rvm-color-text-secondary);
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.rvm-apoio {
+    padding: 0 14px;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-erro .rvm-caixa,
+.rvm-erro .rvm-caixa:hover,
+.rvm-erro .rvm-caixa:focus-within {
+    border-color: var(--rvm-color-error-main);
+}
+
+.rvm-erro .rvm-rotulo,
+.rvm-erro .rvm-apoio,
+.rvm-erro .rvm-caixa:focus-within .rvm-rotulo {
+    color: var(--rvm-color-error-text);
+}
+
+.rvm-desabilitado .rvm-caixa,
+.rvm-desabilitado .rvm-caixa:hover {
+    border-color: var(--rvm-color-action-disabled);
+}
+
+.rvm-desabilitado .rvm-entrada,
+.rvm-desabilitado .rvm-rotulo,
+.rvm-desabilitado .rvm-icone-campo,
+.rvm-desabilitado .rvm-apoio {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* --- O dialogo --- */
+.rvm-fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 1299;
+}
+
+.rvm-popup {
+    position: absolute;
+    top: calc(100% + var(--rvm-space-1));
+    left: 0;
+    z-index: 1300;
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-3);
+}
+
+.rvm-campo-data:has(> .rvm-apoio) .rvm-popup {
+    top: 60px;
+}
+
+.rvm-pequeno:has(> .rvm-apoio) .rvm-popup {
+    top: 44px;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

@@ -30,6 +30,7 @@ exit code; arquivo novo pela ferramenta Write.
 ## Andamento
 
 - [x] **Fatia 1**: `RvmRating`, `RvmStepper` (+ `RvmStep`), `RvmTimeline` + `RvmTimelineItem`
+- [x] **Fatia 2**: `RvmCalendar`, `RvmDatePicker`, `RvmDateRangePicker`, `RvmTimePicker`
 
 ## Decisoes e medicoes
 
@@ -41,6 +42,15 @@ exit code; arquivo novo pela ferramenta Write.
 | **Etapa diz o estado em texto** (concluida, etapa atual, pendente, com erro) e a atual leva `aria-current="step"` | Check e cor sao desenho. "Com validacao" do catalogo = `HasError` na etapa |
 | **Numero da etapa pendente no tom secundario, nao no desabilitado** | O axe reprovou o desabilitado (texto visivel, mesmo com `aria-hidden`) |
 | **Estrela desenhada no proprio componente (star-filled do Tabler), nao pelo `RvmIcon`** | O catalogo de icones tem so a estrela em contorno; a avaliacao precisa da cheia e de recorte parcial |
+| **Medidas da fatia 2**: calendario de 310 px no papel, colunas de 42 px, linhas de 38 px, dia escolhido num circulo de 36 px | Varredura em `Date & TIme Picker.png` |
+| **`RvmCalendar` publico, usavel solto; `RvmDatePicker`/`RvmDateRangePicker` abrem ele num dialogo** | Padrao "Date Picker Dialog" do APG: `role="grid"`, tabindex movel, setas, Home/End, Page Up/Down (Shift = ano), Esc fecha, foco preso e devolvido pela `Sobreposicao` da onda 3 |
+| **Campo do seletor de data e um BOTAO com o valor no nome acessivel** (`aria-labelledby` = rotulo + valor), so no estilo contorno | Popup e dialogo, nao listbox. `aria-required` nao vale em botao: o obrigatorio vai em texto so para leitor de tela |
+| **`RvmTimePicker` = lista de horarios sobre o `RvmSelect`**; o relogio circular do kit ficou de fora | Lista e melhor pelo teclado e pelo leitor de tela; campo, busca, teclado e validacao vem prontos. 24 h e 12 h, `Step`, `Min`/`Max` |
+| **Nomes de mes e dia da semana fixos em PT-BR, datas formatadas a mao** (`dd/mm/aaaa`; envio em `yyyy-MM-dd`) | Nao depender da cultura do servidor ou do navegador |
+| **Ajudante `CampoDoFormulario` extraido do select** | Seletor de data e select acham o campo do EditForm pela expressao do `@bind` do mesmo jeito |
+| 🔴 **Armadilha de foco deixava o Tab escapar do dialogo** | O `rvm-sobreposicao.js` contava botoes com `tabindex=-1` (dias nao focados) como focaveis: o "ultimo" virava o dia 31. Filtra `tabIndex >= 0`. Pego no E2E; vale para qualquer dialogo com tabindex movel dentro |
+| 🔴 **Clicar no meio do select vazio nao abria a lista** (onda 2) | O rotulo fica por cima do combobox e so dava foco. Agora ele deixa o clique passar enquanto esta dentro do campo e abre a lista quando flutua. Pego no E2E do seletor de horario |
+| 🔴 **Foco do calendario ia para o dia errado ao trocar de mes** | Sem `@key`, o Blazor reaproveitava o botao pela posicao e nao recapturava o `@ref`. `@key` com a data em cada celula. Pego no E2E; o teste manual passou por sorte (mesma celula) |
 
 ## Verifica (cada fatia)
 

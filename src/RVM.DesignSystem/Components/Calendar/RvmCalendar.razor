@@ -1,0 +1,65 @@
+@namespace RVM.DesignSystem.Components.Calendar
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* O padrao "Date Picker Dialog" do APG, na parte da grade: tabela com role="grid", um so dia na ordem
+   de tabulacao (tabindex movel), setas andam um dia ou uma semana, Home e End vao ao inicio e ao fim
+   da semana, Page Up e Page Down trocam de mes (com Shift, de ano). Cada dia e um <button>: Enter e
+   Espaco escolhem sem codigo. O mes exibido e anunciado (aria-live) quando muda. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <div class="rvm-cabecalho-mes">
+        <h2 id="@IdTitulo" class="rvm-mes" aria-live="polite">@TituloDoMes</h2>
+        <button type="button" class="rvm-navegar" aria-label="Mes anterior" disabled="@(!PodeIrPara(-1))" @onclick="() => MudarMesAsync(-1, focar: false)">
+            <RvmIcon Name="RvmIconName.ChevronLeft" Size="RvmSize.Small" />
+        </button>
+        <button type="button" class="rvm-navegar" aria-label="Proximo mes" disabled="@(!PodeIrPara(+1))" @onclick="() => MudarMesAsync(+1, focar: false)">
+            <RvmIcon Name="RvmIconName.ChevronRight" Size="RvmSize.Small" />
+        </button>
+    </div>
+
+    <table @ref="_grade" role="grid" class="rvm-grade" aria-labelledby="@IdTitulo" @onkeydown="AoTeclarAsync">
+        <thead>
+            <tr>
+                @foreach (var (curto, completo) in DiasDaSemana)
+                {
+                    <th scope="col" abbr="@completo" class="rvm-dia-semana">@curto</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @* @key com a data em cada celula: sem ele, ao trocar de mes o Blazor reaproveitava os botoes
+               pela posicao, e o @ref de um botao reaproveitado NAO e capturado de novo — _dias[i] ficava
+               apontando para o botao antigo daquela celula e o foco ia para o dia errado (pego no E2E). *@
+            @foreach (var (semana, linha) in Semanas.Select((s, i) => (s, i)))
+            {
+                <tr @key="@($"{_foco.Year}-{_foco.Month}-{linha}")">
+                    @foreach (var (dia, coluna) in semana.Select((d, i) => (d, i)))
+                    {
+                        if (dia is not { } d)
+                        {
+                            <td @key="@($"vazio-{coluna}")" class="rvm-vazio"></td>
+                            continue;
+                        }
+
+                        var indice = IndiceDe(d);
+                        var escolhido = EstaEscolhido(d);
+                        var bloqueado = EstaBloqueado(d);
+                        <td @key="d" role="gridcell" class="@ClassesDoDia(d)" aria-selected="@(escolhido ? "true" : "false")">
+                            <button @ref="_dias[indice]"
+                                    type="button"
+                                    class="rvm-dia"
+                                    tabindex="@(d == _foco ? "0" : "-1")"
+                                    aria-label="@NomeCompleto(d)"
+                                    aria-current="@(d == Hoje ? "date" : null)"
+                                    aria-disabled="@(bloqueado ? "true" : null)"
+                                    @onclick="() => EscolherAsync(d)"
+                                    @onfocus="() => _foco = d">
+                                @d.Day
+                            </button>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
