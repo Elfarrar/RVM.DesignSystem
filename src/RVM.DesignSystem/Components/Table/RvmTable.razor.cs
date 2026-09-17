@@ -12,6 +12,7 @@ public partial class RvmTable<TItem> : ComponentBase
     private static int _proximoId;
     private readonly List<RvmTableColumn<TItem>> _colunas = [];
     private IReadOnlyCollection<TItem>? _selecaoRecebida;
+    private Func<TItem, object>? _chaveRecebida;
     private HashSet<TItem> _selecionados = [];
 
     /// <summary>Base dos ids gerados (o select de linhas por pagina precisa de um).</summary>
@@ -40,6 +41,13 @@ public partial class RvmTable<TItem> : ComponentBase
 
     /// <summary>Disparado quando a marcacao muda.</summary>
     [Parameter] public EventCallback<IReadOnlyCollection<TItem>> SelectedItemsChanged { get; set; }
+
+    /// <summary>
+    /// A identidade da linha para a selecao (<c>t =&gt; t.Id</c>). Sem ela vale o <c>Equals</c> do item:
+    /// numa classe comum e a referencia, e recarregar <see cref="Items"/> com instancias novas das mesmas
+    /// linhas apaga a marcacao sem aviso. Records ja comparam pelo valor.
+    /// </summary>
+    [Parameter] public Func<TItem, object>? ItemKey { get; set; }
 
     /// <summary>
     /// Nome da caixa de marcar de cada linha. Padrao: "Selecionar" + o texto da primeira coluna — o
@@ -95,12 +103,16 @@ public partial class RvmTable<TItem> : ComponentBase
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        // So recria a marcacao quando chega uma colecao nova: a mesma referencia de volta pelo @bind
-        // nao apaga o que a pessoa acabou de marcar.
-        if (!ReferenceEquals(SelectedItems, _selecaoRecebida))
+        // So adota a selecao de fora quando o PARAMETRO muda. Comparar com o que a tabela acabou de
+        // avisar apagava a marcacao sem @bind: o pai re-renderizava com o SelectedItems de sempre (null),
+        // diferente da colecao avisada (achado ao testar o ItemKey do review da onda 4).
+        var selecaoMudou = !ReferenceEquals(SelectedItems, _selecaoRecebida);
+        if (selecaoMudou || ItemKey != _chaveRecebida)
         {
+            IEnumerable<TItem> atuais = selecaoMudou ? SelectedItems ?? [] : _selecionados;
             _selecaoRecebida = SelectedItems;
-            _selecionados = SelectedItems is null ? [] : [.. SelectedItems];
+            _chaveRecebida = ItemKey;
+            _selecionados = new HashSet<TItem>(atuais, ItemKey is null ? null : new ComparadorPorChave(ItemKey));
         }
     }
 
@@ -198,8 +210,15 @@ public partial class RvmTable<TItem> : ComponentBase
     private async Task AvisarSelecaoAsync()
     {
         IReadOnlyCollection<TItem> nova = [.. _selecionados];
-        _selecaoRecebida = nova;
         await SelectedItemsChanged.InvokeAsync(nova);
+    }
+
+    private sealed class ComparadorPorChave(Func<TItem, object> chave) : IEqualityComparer<TItem>
+    {
+        public bool Equals(TItem? x, TItem? y)
+            => x is null || y is null ? x is null && y is null : Object.Equals(chave(x), chave(y));
+
+        public int GetHashCode(TItem obj) => chave(obj)?.GetHashCode() ?? 0;
     }
 
     internal string RotuloDaLinha(TItem item)

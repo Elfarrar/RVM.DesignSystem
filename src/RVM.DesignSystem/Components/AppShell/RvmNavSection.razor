@@ -1,0 +1,25 @@
+@namespace RVM.DesignSystem.Components.AppShell
+
+@* Titulo de secao do menu ("APPS & PAGES" no kit) com os itens dele numa lista nomeada pelo titulo.
+   Recolhido, o titulo vira o traco curto do kit e continua lido pelo leitor de tela. *@
+<li class="@(Casca?.Collapsed == true ? "rvm-nav-secao rvm-recolhida" : "rvm-nav-secao")">
+    <span id="@_id" class="rvm-nav-titulo">
+        <span class="rvm-nav-titulo-texto">@Title</span>
+    </span>
+    <ul class="rvm-nav-lista" aria-labelledby="@_id">
+        @ChildContent
+    </ul>
+</li>
+
+@code {
+    private static int _proximoId;
+    private readonly string _id = $"rvm-nav-secao-{Interlocked.Increment(ref _proximoId)}";
+
+    [CascadingParameter] private RvmAppShell? Casca { get; set; }
+
+    /// <summary>Titulo da secao.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+
+    /// <summary>Os itens da secao.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

@@ -175,3 +175,58 @@ for (const tema of ['claro', 'escuro'] as const) {
         await semViolacaoSeria(page);
     });
 }
+
+test('moldura: recolher deixa so os icones com o nome dos links intacto', async ({ page }) => {
+    await page.goto('/componentes/app-shell');
+    const menu = page.getByRole('navigation', { name: 'Menu do exemplo', exact: true });
+    const inicio = menu.getByRole('link', { name: 'Inicio' });
+    await expect(inicio).toHaveAttribute('aria-current', 'page');
+    const larguraAberta = (await inicio.boundingBox())!.width;
+
+    const recolher = page.getByRole('button', { name: 'Recolher menu' });
+    await recolher.click();
+    await expect(recolher).toHaveAttribute('aria-pressed', 'true');
+    await expect(inicio).toHaveAccessibleName('Inicio');
+    await expect.poll(async () => (await inicio.boundingBox())!.width).toBeLessThan(larguraAberta / 2);
+
+    await menu.getByRole('button', { name: 'Lavouras' }).click();
+    await expect(recolher).toHaveAttribute('aria-pressed', 'false');
+    await expect(menu.getByRole('link', { name: 'Talhoes' })).toBeVisible();
+});
+
+test('moldura estreita: a gaveta prende o foco, fecha com Esc e devolve o foco', async ({ page }) => {
+    await page.goto('/componentes/app-shell');
+    const menu = page.getByRole('navigation', { name: 'Menu do exemplo estreito' });
+    await expect(menu).toBeHidden();
+
+    const abrir = page.getByRole('button', { name: 'Abrir menu' });
+    await abrir.click();
+    await expect(abrir).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu).toBeVisible();
+    const lateral = page.locator('aside', { has: menu });
+    await expect(lateral).toBeFocused();
+
+    for (let i = 0; i < 12; i++) {
+        await page.keyboard.press('Tab');
+        await expect.poll(() => lateral.evaluate(el => el.contains(document.activeElement))).toBe(true);
+    }
+
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await expect(abrir).toBeFocused();
+});
+
+for (const tema of ['claro', 'escuro'] as const) {
+    test(`moldura recolhida e gaveta aberta sem violacao seria no tema ${tema}`, async ({ page }) => {
+        await page.goto('/componentes/app-shell');
+        await expect(page.getByRole('heading', { name: 'RvmAppShell', level: 1 })).toBeVisible();
+        if (tema === 'escuro') {
+            await page.getByRole('button', { name: /Tema/ }).click();
+        }
+
+        await page.getByRole('button', { name: 'Recolher menu' }).click();
+        await page.getByRole('button', { name: 'Abrir menu' }).click();
+        await expect(page.getByRole('navigation', { name: 'Menu do exemplo estreito' })).toBeVisible();
+        await semViolacaoSeria(page);
+    });
+}

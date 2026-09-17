@@ -171,6 +171,60 @@ public class RvmTableTests : BunitContext
         Assert.Equal(2, cortado.FindAll("tr.rvm-marcada").Count);
     }
 
+    private sealed class Entidade(int id, string nome)
+    {
+        public int Id { get; } = id;
+        public string Nome { get; } = nome;
+    }
+
+    [Fact]
+    public void Com_ItemKey_a_marcacao_sobrevive_a_recarga_com_instancias_novas()
+    {
+        IReadOnlyCollection<Entidade>? recebidos = null;
+        Entidade[] Carregar() => [new(1, "Alfa"), new(2, "Bravo")];
+        var cortado = Render<RvmTable<Entidade>>(p => p
+            .Add(x => x.Items, Carregar())
+            .Add(x => x.Caption, "Entidades")
+            .Add(x => x.Selectable, true)
+            .Add(x => x.ItemKey, e => e.Id)
+            .Add(x => x.SelectedItemsChanged, EventCallback.Factory.Create<IReadOnlyCollection<Entidade>>(this, s => recebidos = s))
+            .AddChildContent<RvmTableColumn<Entidade>>(c => c.Add(x => x.Title, "Nome").Add(x => x.Value, e => e.Nome)));
+
+        cortado.FindAll("tbody input[type=checkbox]")[1].Change(true);
+        cortado.Render(p => p.Add(x => x.Items, Carregar()));
+
+        Assert.Single(recebidos!);
+        Assert.Contains("rvm-marcada", cortado.FindAll("tbody tr")[1].ClassName);
+        cortado.FindAll("tbody input[type=checkbox]")[1].Change(false);
+        Assert.Empty(recebidos!);
+    }
+
+    [Fact]
+    public void Novo_render_sem_bind_nao_apaga_a_marcacao()
+    {
+        var cortado = Tabela(p => p.Add(x => x.Selectable, true));
+        cortado.FindAll("tbody input[type=checkbox]")[0].Change(true);
+
+        cortado.Render(p => p.Add(x => x.Caption, "Talhoes da fazenda"));
+
+        Assert.Single(cortado.FindAll("tr.rvm-marcada"));
+    }
+
+    [Fact]
+    public void Sem_ItemKey_classe_comum_compara_pela_referencia()
+    {
+        var cortado = Render<RvmTable<Entidade>>(p => p
+            .Add(x => x.Items, [new Entidade(1, "Alfa")])
+            .Add(x => x.Caption, "Entidades")
+            .Add(x => x.Selectable, true)
+            .Add(x => x.SelectedItems, [new Entidade(1, "Alfa")])
+            .AddChildContent<RvmTableColumn<Entidade>>(c => c.Add(x => x.Title, "Nome").Add(x => x.Value, e => e.Nome)));
+
+        Assert.Empty(cortado.FindAll("tr.rvm-marcada"));
+        cortado.Render(p => p.Add(x => x.ItemKey, e => e.Id));
+        Assert.Single(cortado.FindAll("tr.rvm-marcada"));
+    }
+
     [Fact]
     public void Sem_linhas_mostra_o_aviso_ocupando_todas_as_colunas()
     {
