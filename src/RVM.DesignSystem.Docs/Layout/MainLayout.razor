@@ -1,5 +1,7 @@
 @inherits LayoutComponentBase
 @inject IJSRuntime JS
+@inject NavigationManager Navegacao
+@implements IDisposable
 
 @* O site usa a propria moldura da biblioteca: menu lateral com as secoes e os componentes das quatro
    ondas, barra do topo com o seletor de tema e o credito no rodape. Estreito, o menu vira gaveta. *@
@@ -16,6 +18,12 @@
             <RvmNavItem Href="" Text="Inicio" Icon="RvmIconName.Home" Match="RvmNavMatch.All" />
             <RvmNavItem Href="fundamentos" Text="Fundamentos" Icon="RvmIconName.Pencil" />
             <RvmNavItem Href="componentes" Text="Componentes" Icon="RvmIconName.Copy" Match="RvmNavMatch.All" />
+            <RvmNavSection Title="Exemplos">
+                @foreach (var exemplo in Catalogo.Exemplos)
+                {
+                    <RvmNavItem @key="exemplo.Rota" Href="@exemplo.Rota" Text="@exemplo.Nome" Icon="@exemplo.Icone" />
+                }
+            </RvmNavSection>
             @foreach (var grupo in Catalogo.Grupos)
             {
                 <RvmNavSection @key="grupo.Titulo" Title="@grupo.Titulo">
@@ -38,7 +46,8 @@
         </TopBar>
 
         <ChildContent>
-            <div class="site-conteudo">
+            @* As telas de exemplo usam a largura toda; as paginas de componente leem melhor estreitas. *@
+            <div class="@(EhExemplo ? "site-conteudo site-largo" : "site-conteudo")">
                 @Body
             </div>
         </ChildContent>
@@ -64,8 +73,12 @@
     private RvmTheme _tema = RvmTheme.Light;
     private bool _recolhido;
 
+    private bool EhExemplo => Navegacao.ToBaseRelativePath(Navegacao.Uri).StartsWith("exemplos/", StringComparison.OrdinalIgnoreCase);
+
     protected override void OnInitialized()
     {
+        Navegacao.LocationChanged += AoNavegar;
+
         // WebAssembly tem interop sincrono, entao da para comecar ja com o tema guardado e nao
         // piscar claro antes de trocar. O <script> inline do index.html faz o mesmo no <html>.
         if (JS is IJSInProcessRuntime sincrono && sincrono.Invoke<string?>("rvmTheme.read") == "dark")
@@ -73,6 +86,10 @@
             _tema = RvmTheme.Dark;
         }
     }
+
+    private void AoNavegar(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e) => StateHasChanged();
+
+    public void Dispose() => Navegacao.LocationChanged -= AoNavegar;
 
     private void TrocarTema()
         => _tema = _tema == RvmTheme.Dark ? RvmTheme.Light : RvmTheme.Dark;

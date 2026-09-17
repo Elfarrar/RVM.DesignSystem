@@ -1,3 +1,5 @@
+using RVM.DesignSystem.Icons;
+
 namespace RVM.DesignSystem.Docs.Shared;
 
 /// <summary>
@@ -13,6 +15,18 @@ public static class Catalogo
     }
 
     public sealed record Grupo(string Titulo, IReadOnlyList<Componente> Componentes);
+
+    public sealed record Exemplo(string Rota, string Nome, RvmIconName Icone, string Resumo);
+
+    /// <summary>As telas completas montadas com a biblioteca (secao Exemplos do menu).</summary>
+    public static readonly IReadOnlyList<Exemplo> Exemplos =
+    [
+        new("exemplos/dashboard", "Dashboard", RvmIconName.Eye, "Indicadores, metas, atividade e pedidos da safra."),
+        new("exemplos/cms", "CMS", RvmIconName.Pencil, "Publicacoes com abas, grade, acoes e editor em dialogo."),
+        new("exemplos/crm", "CRM", RvmIconName.User, "Funil de oportunidades e ficha do cliente em gaveta."),
+        new("exemplos/erp", "ERP", RvmIconName.File, "Pedidos, estoque e financeiro, com pedido em etapas."),
+        new("exemplos/planner", "Planner", RvmIconName.CircleCheck, "Quadro de tarefas com calendario e nova tarefa.")
+    ];
 
     public static readonly IReadOnlyList<Grupo> Grupos =
     [

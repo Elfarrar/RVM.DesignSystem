@@ -1,0 +1,325 @@
+@page "/exemplos/erp"
+
+<PageTitle>ERP — Exemplos — RVM Design System</PageTitle>
+
+<div class="ex-cabecalho">
+    <div>
+        <RvmBreadcrumbs Items="@Trilha" AriaLabel="Trilha do ERP" />
+        <h1 class="rvm-text-h4">Operacao</h1>
+        <RvmTypography Color="RvmTextColor.Secondary">Pedidos de venda, estoque de insumos e contas da Fazenda Boa Vista.</RvmTypography>
+    </div>
+    <RvmButton StartIcon="RvmIconName.Plus" OnClick="AbrirNovoPedido">Novo pedido</RvmButton>
+</div>
+
+<RvmCard>
+    <RvmTabs @bind-ActiveIndex="_aba" AriaLabel="Areas da operacao">
+        <RvmTab Title="Pedidos" Icon="RvmIconName.File">
+            <div class="ex-pilha" style="padding-block-start: var(--rvm-space-4)">
+                <div class="ex-linha ex-entre">
+                    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+                        @(_selecionados.Count == 0 ? "Marque pedidos aprovados para faturar." : $"{_selecionados.Count} pedido(s) marcado(s), {Formato.Moeda(_selecionados.Sum(p => p.Total))}.")
+                    </RvmTypography>
+                    <RvmButton Variant="RvmButtonVariant.Outlined" StartIcon="RvmIconName.Check" Disabled="@(!_selecionados.Any(PodeFaturar))" OnClick="Faturar">
+                        Faturar marcados
+                    </RvmButton>
+                </div>
+                <RvmDataGrid Items="_pedidos" Caption="Pedidos de venda" PageSize="5" Selectable="true" ItemKey="p => p.Numero"
+                             @bind-SelectedItems="_selecionados" RowLabel="@(p => $"Marcar pedido {p.Numero}")">
+                    <RvmTableColumn Title="Pedido" Value="p => p.Numero" Sortable="true" InitialSort="RvmSortDirection.Descending" />
+                    <RvmTableColumn Title="Cliente" Value="p => p.Cliente" Sortable="true" />
+                    <RvmTableColumn Title="Emissao" Value="p => p.Emissao" Sortable="true" Filterable="false">@Formato.Data(context.Emissao)</RvmTableColumn>
+                    <RvmTableColumn Title="Produto" Value="p => p.Produto" />
+                    <RvmTableColumn Title="Total" Value="p => p.Total" Sortable="true" Filterable="false" Align="RvmTableAlign.End">@Formato.Moeda(context.Total)</RvmTableColumn>
+                    <RvmTableColumn Title="Situacao" Value="p => p.Situacao">
+                        <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@CorDoPedido(context.Situacao)">@context.Situacao</RvmChip>
+                    </RvmTableColumn>
+                </RvmDataGrid>
+            </div>
+        </RvmTab>
+
+        <RvmTab Title="Estoque" Icon="RvmIconName.Download">
+            <div class="ex-pilha" style="padding-block-start: var(--rvm-space-4)">
+                @if (Estoque.Count(e => e.Saldo < e.Minimo) is > 0 and var abaixo)
+                {
+                    <RvmAlert Severity="RvmColor.Error" Variant="RvmAlertVariant.Outlined" Title="@($"{abaixo} item(ns) abaixo do minimo")">
+                        Faca a reposicao antes da proxima aplicacao programada.
+                    </RvmAlert>
+                }
+                <RvmTable Items="Estoque" Caption="Estoque de insumos">
+                    <RvmTableColumn Title="Produto" Value="e => e.Produto" Sortable="true" />
+                    <RvmTableColumn Title="Deposito" Value="e => e.Deposito" Sortable="true" />
+                    <RvmTableColumn Title="Saldo" Value="e => e.Saldo" Sortable="true" Align="RvmTableAlign.End">@Formato.Numero(context.Saldo) @context.Unidade</RvmTableColumn>
+                    <RvmTableColumn Title="Minimo" Value="e => e.Minimo" Align="RvmTableAlign.End">@Formato.Numero(context.Minimo) @context.Unidade</RvmTableColumn>
+                    <RvmTableColumn Title="Nivel" Width="180px">
+                        <RvmProgress Value="@Nivel(context)" Color="@CorDoNivel(context)" Size="RvmSize.Small" Label="@($"Nivel de {context.Produto}: {Nivel(context):0}%")" />
+                    </RvmTableColumn>
+                    <RvmTableColumn Title="Situacao" Value="e => SituacaoDoEstoque(e)">
+                        <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@CorDoNivel(context)">@SituacaoDoEstoque(context)</RvmChip>
+                    </RvmTableColumn>
+                </RvmTable>
+            </div>
+        </RvmTab>
+
+        <RvmTab Title="Financeiro" Icon="RvmIconName.Copy">
+            <div class="ex-pilha" style="padding-block-start: var(--rvm-space-4)">
+                <div class="ex-grade">
+                    @foreach (var (titulo, valor, cor, icone) in Resumo)
+                    {
+                        <div class="ex-col-4 ex-cartao">
+                            <div class="ex-kpi">
+                                <RvmAvatar Icon="icone" Color="cor" Variant="RvmAvatarVariant.Soft" Shape="RvmAvatarShape.Rounded" />
+                                <div>
+                                    <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">@titulo</RvmTypography>
+                                    <p class="ex-valor">@Formato.Moeda(valor)</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="ex-linha ex-entre">
+                    <RvmTypography Variant="RvmTypographyVariant.Subtitle1">Titulos dos proximos 30 dias</RvmTypography>
+                    <RvmSwitch Value="_soVencidos" ValueChanged="@((bool v) => { _soVencidos = v; _paginaTitulos = 1; })" Label="So vencidos" />
+                </div>
+                <RvmTable Items="PaginaDeTitulos" Caption="Titulos a pagar e a receber" Dense="true" NoRecordsText="Nenhum titulo vencido. Tudo em dia.">
+                    <RvmTableColumn Title="Vencimento" Value="t => t.Vencimento">@Formato.DiaMes(context.Vencimento)</RvmTableColumn>
+                    <RvmTableColumn Title="Descricao" Value="t => t.Descricao" />
+                    <RvmTableColumn Title="Tipo" Value="t => t.Receber">
+                        <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Outlined" Color="@(context.Receber ? RvmColor.Success : RvmColor.Error)">@(context.Receber ? "A receber" : "A pagar")</RvmChip>
+                    </RvmTableColumn>
+                    <RvmTableColumn Title="Valor" Value="t => t.Valor" Align="RvmTableAlign.End">@Formato.Moeda(context.Valor)</RvmTableColumn>
+                    <RvmTableColumn Title="Situacao" Value="t => t.Vencimento">
+                        @if (context.Vencimento < Hoje)
+                        {
+                            <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="RvmColor.Error">Vencido</RvmChip>
+                        }
+                        else
+                        {
+                            <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft">Em aberto</RvmChip>
+                        }
+                    </RvmTableColumn>
+                </RvmTable>
+                @if (PaginasDeTitulos > 1)
+                {
+                    <RvmPagination @bind-Page="_paginaTitulos" Count="@PaginasDeTitulos" AriaLabel="Paginas de titulos" style="align-self: flex-end" />
+                }
+            </div>
+        </RvmTab>
+    </RvmTabs>
+</RvmCard>
+
+<RvmDialog @bind-Open="_novoAberto" Title="Novo pedido de venda" Size="RvmSize.Medium" ShowCloseButton="true">
+    <ChildContent>
+        <div class="ex-formulario">
+            <RvmStepper Steps="Passos" ActiveStep="_passo" AriaLabel="Etapas do pedido" />
+            @switch (_passo)
+            {
+                case 0:
+                    <RvmSelect Items="Clientes" @bind-Value="_cliente" Label="Cliente" Searchable="true" Required="true"
+                               ErrorText="@(_tentou && _cliente is null ? "Escolha o cliente do pedido." : null)" />
+                    <RvmRadioGroup @bind-Value="_pagamento" Label="Condicao de pagamento" Orientation="RvmOrientation.Horizontal">
+                        <RvmRadio Value="@("A vista")" Label="A vista" />
+                        <RvmRadio Value="@("30 dias")" Label="30 dias" />
+                        <RvmRadio Value="@("Safra")" Label="Na safra" />
+                    </RvmRadioGroup>
+                    break;
+                case 1:
+                    <RvmSelect Items="Produtos" @bind-Value="_produto" Label="Produto" />
+                    <RvmTextField @bind-Value="_quantidade" Label="Quantidade" Suffix="sacas" Type="RvmInputType.Number"
+                                  ErrorText="@(_tentou && Quantidade is null ? "Informe a quantidade em sacas, so numeros." : null)" />
+                    <RvmTypography Color="RvmTextColor.Secondary">
+                        Total estimado: @(Quantidade is { } q ? Formato.Moeda(q * PrecoPorSaca) : "—") (R$ @PrecoPorSaca por saca)
+                    </RvmTypography>
+                    break;
+                default:
+                    <RvmDatePicker @bind-Value="_entrega" Label="Entrega" Min="@Hoje" Today="@Hoje" Required="true"
+                                   ErrorText="@(_tentou && _entrega is null ? "Escolha a data de entrega." : null)" />
+                    <RvmCheckbox @bind-Value="_freteCif" Label="Frete por conta da fazenda (CIF)" />
+                    <RvmAlert Severity="RvmColor.Info" Title="Resumo">
+                        @_cliente · @_produto · @(_quantidade) sacas · @_pagamento · entrega @(_entrega is { } e ? Formato.Data(e) : "—")
+                    </RvmAlert>
+                    break;
+            }
+        </div>
+    </ChildContent>
+    <Actions>
+        <RvmButton Variant="RvmButtonVariant.Text" Disabled="@(_passo == 0)" OnClick="@(() => { _passo--; _tentou = false; })">Voltar</RvmButton>
+        <RvmButton EndIcon="@(_passo < 2 ? RvmIconName.ArrowRight : RvmIconName.Check)" OnClick="Avancar">@(_passo < 2 ? "Proximo" : "Emitir pedido")</RvmButton>
+    </Actions>
+</RvmDialog>
+
+@code {
+    [Inject] private RvmSnackbarService Avisos { get; set; } = default!;
+
+    private static readonly DateOnly Hoje = new(2026, 9, 17);
+    private const decimal PrecoPorSaca = 128m;
+
+    private static readonly IReadOnlyList<RvmBreadcrumbItem> Trilha =
+        [new("Exemplos", "exemplos/dashboard", RvmIconName.Home), new("ERP")];
+
+    private static readonly string[] Clientes = ["Cooperativa Vale", "Agro Sul Graos", "Cerealista Horizonte", "Armazens Planalto", "Grupo Terra Nova"];
+
+    private static readonly string[] Produtos = ["Soja em grao", "Milho em grao", "Sorgo"];
+
+    private static readonly IReadOnlyList<RvmStep> Passos = [new("Cliente"), new("Itens"), new("Entrega")];
+
+    private sealed class Pedido
+    {
+        public string Numero { get; init; } = "";
+        public string Cliente { get; init; } = "";
+        public DateOnly Emissao { get; init; }
+        public string Produto { get; init; } = "";
+        public decimal Total { get; init; }
+        public string Situacao { get; set; } = "Aprovado";
+    }
+
+    private readonly List<Pedido> _pedidos =
+    [
+        new() { Numero = "#1041", Cliente = "Grupo Terra Nova", Emissao = new(2026, 9, 10), Produto = "Soja em grao", Total = 384_000m, Situacao = "Faturado" },
+        new() { Numero = "#1042", Cliente = "Armazens Planalto", Emissao = new(2026, 9, 11), Produto = "Milho em grao", Total = 128_000m, Situacao = "Faturado" },
+        new() { Numero = "#1043", Cliente = "Cooperativa Vale", Emissao = new(2026, 9, 13), Produto = "Soja em grao", Total = 210_000m, Situacao = "Aprovado" },
+        new() { Numero = "#1044", Cliente = "Fazenda Santa Luzia", Emissao = new(2026, 9, 14), Produto = "Sorgo", Total = 12_800m, Situacao = "Cancelado" },
+        new() { Numero = "#1045", Cliente = "Cerealista Horizonte", Emissao = new(2026, 9, 15), Produto = "Milho em grao", Total = 45_900m, Situacao = "Em analise" },
+        new() { Numero = "#1046", Cliente = "Agro Sul Graos", Emissao = new(2026, 9, 16), Produto = "Soja em grao", Total = 92_300m, Situacao = "Aprovado" },
+        new() { Numero = "#1047", Cliente = "Cooperativa Vale", Emissao = new(2026, 9, 16), Produto = "Soja em grao", Total = 184_500m, Situacao = "Aprovado" }
+    ];
+
+    private sealed record ItemDeEstoque(string Produto, string Deposito, decimal Saldo, decimal Minimo, string Unidade);
+
+    private static readonly ItemDeEstoque[] Estoque =
+    [
+        new("Fungicida triazol", "Sede", 40, 120, "L"),
+        new("Herbicida glifosato", "Sede", 860, 400, "L"),
+        new("Semente de soja", "Armazem 2", 1_150, 900, "sc"),
+        new("Adubo 04-14-08", "Armazem 1", 38, 60, "t"),
+        new("Oleo diesel", "Posto interno", 7_800, 5_000, "L")
+    ];
+
+    private static readonly (string Titulo, decimal Valor, RvmColor Cor, RvmIconName Icone)[] Resumo =
+    [
+        ("A receber em 30 dias", 1_184_000m, RvmColor.Success, RvmIconName.ArrowDown),
+        ("A pagar em 30 dias", 642_300m, RvmColor.Error, RvmIconName.ArrowUp),
+        ("Saldo projetado", 541_700m, RvmColor.Primary, RvmIconName.Star)
+    ];
+
+    private sealed record Titulo(DateOnly Vencimento, string Descricao, bool Receber, decimal Valor);
+
+    private static readonly Titulo[] Titulos =
+    [
+        new(new(2026, 9, 12), "Parcela trator John Deere", false, 38_400m),
+        new(new(2026, 9, 15), "Cooperativa Vale — pedido #1039", true, 96_000m),
+        new(new(2026, 9, 20), "Folha de pagamento", false, 74_900m),
+        new(new(2026, 9, 22), "Grupo Terra Nova — pedido #1041", true, 384_000m),
+        new(new(2026, 9, 25), "Adubo — Fertisul", false, 212_000m),
+        new(new(2026, 9, 28), "Armazens Planalto — pedido #1042", true, 128_000m),
+        new(new(2026, 10, 2), "Energia eletrica — pivos", false, 18_600m),
+        new(new(2026, 10, 5), "Agro Sul Graos — pedido #1046", true, 92_300m),
+        new(new(2026, 10, 10), "Seguro agricola", false, 41_200m)
+    ];
+
+    private int _aba;
+    private IReadOnlyCollection<Pedido> _selecionados = [];
+    private bool _soVencidos;
+    private int _paginaTitulos = 1;
+    private const int TitulosPorPagina = 5;
+
+    private bool _novoAberto;
+    private int _passo;
+    private bool _tentou;
+    private string? _cliente;
+    private string? _pagamento = "30 dias";
+    private string? _produto = "Soja em grao";
+    private string? _quantidade;
+    private DateOnly? _entrega;
+    private bool _freteCif;
+
+    private IEnumerable<Titulo> TitulosFiltrados => _soVencidos ? Titulos.Where(t => t.Vencimento < Hoje) : Titulos;
+
+    private int PaginasDeTitulos => Math.Max(1, (int)Math.Ceiling(TitulosFiltrados.Count() / (double)TitulosPorPagina));
+
+    private IEnumerable<Titulo> PaginaDeTitulos
+        => TitulosFiltrados.Skip((Math.Min(_paginaTitulos, PaginasDeTitulos) - 1) * TitulosPorPagina).Take(TitulosPorPagina);
+
+    private decimal? Quantidade
+        => decimal.TryParse(_quantidade, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var q) && q > 0 ? q : null;
+
+    private static bool PodeFaturar(Pedido p) => p.Situacao == "Aprovado";
+
+    private static RvmColor CorDoPedido(string situacao) => situacao switch
+    {
+        "Faturado" => RvmColor.Success,
+        "Aprovado" => RvmColor.Info,
+        "Em analise" => RvmColor.Warning,
+        _ => RvmColor.Error
+    };
+
+    private static double Nivel(ItemDeEstoque e) => Math.Min(100, (double)(e.Saldo / (e.Minimo * 2)) * 100);
+
+    private static RvmColor CorDoNivel(ItemDeEstoque e)
+        => e.Saldo < e.Minimo ? RvmColor.Error : e.Saldo < e.Minimo * 1.5m ? RvmColor.Warning : RvmColor.Success;
+
+    private static string SituacaoDoEstoque(ItemDeEstoque e)
+        => e.Saldo < e.Minimo ? "Repor" : e.Saldo < e.Minimo * 1.5m ? "Atencao" : "Normal";
+
+    private void Faturar()
+    {
+        var faturaveis = _selecionados.Where(PodeFaturar).ToList();
+        foreach (var p in faturaveis)
+        {
+            p.Situacao = "Faturado";
+        }
+
+        var ignorados = _selecionados.Count - faturaveis.Count;
+        _selecionados = [];
+        Avisos.Show(
+            $"{faturaveis.Count} pedido(s) faturado(s), {Formato.Moeda(faturaveis.Sum(p => p.Total))}."
+            + (ignorados > 0 ? $" {ignorados} nao estavam aprovados e ficaram de fora." : ""),
+            new RvmSnackbarOptions { Color = RvmColor.Success });
+    }
+
+    private void AbrirNovoPedido()
+    {
+        _passo = 0;
+        _tentou = false;
+        _cliente = null;
+        _quantidade = null;
+        _entrega = null;
+        _freteCif = false;
+        _novoAberto = true;
+    }
+
+    private void Avancar()
+    {
+        _tentou = true;
+        var valido = _passo switch
+        {
+            0 => _cliente is not null,
+            1 => Quantidade is not null,
+            _ => _entrega is not null
+        };
+        if (!valido)
+        {
+            return;
+        }
+
+        _tentou = false;
+        if (_passo < 2)
+        {
+            _passo++;
+            return;
+        }
+
+        var numero = "#" + (_pedidos.Max(p => int.Parse(p.Numero[1..], System.Globalization.CultureInfo.InvariantCulture)) + 1);
+        _pedidos.Add(new Pedido
+        {
+            Numero = numero,
+            Cliente = _cliente!,
+            Emissao = Hoje,
+            Produto = _produto ?? Produtos[0],
+            Total = Quantidade!.Value * PrecoPorSaca,
+            Situacao = "Em analise"
+        });
+        _novoAberto = false;
+        _aba = 0;
+        Avisos.Show($"Pedido {numero} emitido para {_cliente}. Ele entra em analise de credito.", new RvmSnackbarOptions { Color = RvmColor.Success });
+    }
+}

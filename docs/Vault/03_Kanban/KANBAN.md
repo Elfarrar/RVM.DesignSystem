@@ -10,6 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
+| [[DSGN-009]] | Paginas de exemplo: dashboard, CMS, CRM, ERP e planner | em andamento |
 
 ## Concluido
 

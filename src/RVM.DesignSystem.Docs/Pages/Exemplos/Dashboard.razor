@@ -1,0 +1,197 @@
+@page "/exemplos/dashboard"
+
+<PageTitle>Dashboard — Exemplos — RVM Design System</PageTitle>
+
+<div class="ex-cabecalho">
+    <div>
+        <RvmBreadcrumbs Items="@Trilha" AriaLabel="Trilha do dashboard" />
+        <h1 class="rvm-text-h4">Painel da safra</h1>
+        <RvmTypography Color="RvmTextColor.Secondary">Resumo @Contracao(_periodo) da Fazenda Boa Vista.</RvmTypography>
+    </div>
+    <div class="ex-linha">
+        <RvmMenu Label="@_periodo" Icon="RvmIconName.Calendar" ButtonVariant="RvmButtonVariant.Outlined" AlignEnd="true">
+            @foreach (var periodo in Periodos)
+            {
+                <RvmMenuItem OnClick="@(() => _periodo = periodo)">@periodo</RvmMenuItem>
+            }
+        </RvmMenu>
+        <RvmButton StartIcon="RvmIconName.Download" OnClick="Exportar">Exportar</RvmButton>
+    </div>
+</div>
+
+@if (_alertaEstoque)
+{
+    <RvmAlert Severity="RvmColor.Warning" Title="Estoque de defensivo abaixo do minimo" OnClose="@(() => _alertaEstoque = false)" class="ex-alerta">
+        <ChildContent>Restam 40 L de fungicida para 180 ha programados na semana. Faca o pedido ate quinta-feira.</ChildContent>
+        <Action><RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Warning" Size="RvmSize.Small" OnClick="Exportar">Pedir agora</RvmButton></Action>
+    </RvmAlert>
+}
+
+<div class="ex-grade">
+    @foreach (var kpi in Indicadores)
+    {
+        <RvmCard class="ex-col-3">
+            <div class="ex-kpi">
+                <RvmAvatar Icon="@kpi.Icone" Color="@kpi.Cor" Variant="RvmAvatarVariant.Soft" Shape="RvmAvatarShape.Rounded" />
+                <div>
+                    <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">@kpi.Titulo</RvmTypography>
+                    <p class="ex-valor">@kpi.Valor</p>
+                    <div class="ex-linha">
+                        <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@(kpi.Subiu ? RvmColor.Success : RvmColor.Error)"
+                                 StartIcon="@(kpi.Subiu ? RvmIconName.ArrowUp : RvmIconName.ArrowDown)">@kpi.Variacao</RvmChip>
+                        <RvmTypography Variant="RvmTypographyVariant.Caption" Color="RvmTextColor.Secondary">vs. periodo anterior</RvmTypography>
+                    </div>
+                </div>
+            </div>
+        </RvmCard>
+    }
+
+    <RvmCard Title="Metas da safra" Subheader="Safra 2026/27" class="ex-col-5">
+        <HeaderAction>
+            <RvmTooltip Text="Meta definida no planejamento de agosto">
+                <RvmIcon Name="RvmIconName.InfoCircle" Color="RvmColor.Secondary" Title="Sobre as metas" />
+            </RvmTooltip>
+        </HeaderAction>
+        <ChildContent>
+            <div class="ex-pilha">
+                @foreach (var meta in Metas)
+                {
+                    <div class="ex-pilha" style="gap: var(--rvm-space-1)">
+                        <div class="ex-linha ex-entre">
+                            <RvmTypography Variant="RvmTypographyVariant.Subtitle2">@meta.Nome</RvmTypography>
+                            <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">@meta.Detalhe</RvmTypography>
+                        </div>
+                        <RvmProgress Value="@meta.Percentual" Color="@meta.Cor" Label="@($"{meta.Nome}: {meta.Percentual}%")" ShowValue="true" />
+                    </div>
+                }
+            </div>
+        </ChildContent>
+    </RvmCard>
+
+    <RvmCard Title="Atividade recente" Subheader="Ultimas 24 horas" class="ex-col-7">
+        <RvmTimeline AriaLabel="Atividade recente">
+            @foreach (var (hora, texto, cor) in Atividades)
+            {
+                <RvmTimelineItem Color="cor">
+                    <OppositeContent>@hora</OppositeContent>
+                    <ChildContent>@texto</ChildContent>
+                </RvmTimelineItem>
+            }
+        </RvmTimeline>
+    </RvmCard>
+
+    <RvmCard Title="Ultimos pedidos" class="ex-col-8">
+        <HeaderAction>
+            <RvmButton Variant="RvmButtonVariant.Text" EndIcon="RvmIconName.ArrowRight" Size="RvmSize.Small" OnClick="@(() => Navegacao.NavigateTo("exemplos/erp"))">Ver todos</RvmButton>
+        </HeaderAction>
+        <ChildContent>
+            <RvmTable Items="Pedidos" Caption="Ultimos pedidos" Dense="true">
+                <RvmTableColumn Title="Pedido" Value="p => p.Numero" />
+                <RvmTableColumn Title="Cliente" Value="p => p.Cliente" Sortable="true" />
+                <RvmTableColumn Title="Data" Value="p => p.Data" Sortable="true">@Formato.DiaMes(context.Data)</RvmTableColumn>
+                <RvmTableColumn Title="Valor" Value="p => p.Valor" Sortable="true" Align="RvmTableAlign.End">@Formato.Moeda(context.Valor)</RvmTableColumn>
+                <RvmTableColumn Title="Situacao" Value="p => p.Situacao">
+                    <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@CorDaSituacao(context.Situacao)">@context.Situacao</RvmChip>
+                </RvmTableColumn>
+            </RvmTable>
+        </ChildContent>
+    </RvmCard>
+
+    <RvmCard Title="Equipe em campo" class="ex-col-4">
+        <RvmList AriaLabel="Equipe em campo">
+            @foreach (var pessoa in Equipe)
+            {
+                <RvmListItem SecondaryText="@pessoa.Local">
+                    <StartContent>
+                        <span aria-hidden="true">
+                            <RvmBadge Dot="true" Color="@(pessoa.Online ? RvmColor.Success : RvmColor.Secondary)">
+                                <RvmAvatar Initials="@pessoa.Iniciais" Size="RvmSize.Medium" />
+                            </RvmBadge>
+                        </span>
+                    </StartContent>
+                    <ChildContent>@pessoa.Nome</ChildContent>
+                    <EndContent>
+                        <RvmTypography Variant="RvmTypographyVariant.Caption" Color="RvmTextColor.Secondary">@(pessoa.Online ? "em campo" : "fora")</RvmTypography>
+                    </EndContent>
+                </RvmListItem>
+            }
+        </RvmList>
+    </RvmCard>
+</div>
+
+@code {
+    [Inject] private RvmSnackbarService Avisos { get; set; } = default!;
+
+    [Inject] private NavigationManager Navegacao { get; set; } = default!;
+
+    private static readonly string[] Periodos = ["Esta semana", "Este mes", "Esta safra"];
+
+    private string _periodo = "Este mes";
+    private bool _alertaEstoque = true;
+
+    private static readonly IReadOnlyList<RvmBreadcrumbItem> Trilha =
+        [new("Exemplos", "exemplos/dashboard", RvmIconName.Home), new("Dashboard")];
+
+    private sealed record Indicador(string Titulo, string Valor, string Variacao, bool Subiu, RvmIconName Icone, RvmColor Cor);
+
+    private static readonly Indicador[] Indicadores =
+    [
+        new("Receita", "R$ 1,28 mi", "12%", true, RvmIconName.ArrowUp, RvmColor.Success),
+        new("Pedidos", "342", "8%", true, RvmIconName.File, RvmColor.Primary),
+        new("Area plantada", "1.240 ha", "94% da meta", true, RvmIconName.Home, RvmColor.Info),
+        new("Chamados abertos", "7", "3 a mais", false, RvmIconName.AlertTriangle, RvmColor.Warning)
+    ];
+
+    private sealed record Meta(string Nome, string Detalhe, double Percentual, RvmColor Cor);
+
+    private static readonly Meta[] Metas =
+    [
+        new("Plantio", "1.240 de 1.320 ha", 94, RvmColor.Success),
+        new("Colheita", "470 de 1.240 ha", 38, RvmColor.Primary),
+        new("Vendas contratadas", "61 mil de 100 mil sc", 61, RvmColor.Info),
+        new("Orcamento de insumos", "R$ 890 mil de R$ 1 mi", 89, RvmColor.Warning)
+    ];
+
+    private static readonly (string Hora, string Texto, RvmColor Cor)[] Atividades =
+    [
+        ("08:40", "Plantio do Talhao Norte concluido (120 ha)", RvmColor.Success),
+        ("10:15", "Pedido #1043 da Cooperativa Vale faturado", RvmColor.Primary),
+        ("13:02", "Pulverizador 2 entrou em manutencao", RvmColor.Warning),
+        ("16:30", "Chuva de 18 mm registrada na Sede", RvmColor.Info)
+    ];
+
+    private sealed record Pedido(string Numero, string Cliente, DateOnly Data, decimal Valor, string Situacao);
+
+    private static readonly Pedido[] Pedidos =
+    [
+        new("#1047", "Cooperativa Vale", new DateOnly(2026, 9, 16), 184_500m, "Faturado"),
+        new("#1046", "Agro Sul Graos", new DateOnly(2026, 9, 16), 92_300m, "Separando"),
+        new("#1045", "Cerealista Horizonte", new DateOnly(2026, 9, 15), 45_900m, "Aguardando"),
+        new("#1044", "Fazenda Santa Luzia", new DateOnly(2026, 9, 14), 12_800m, "Cancelado"),
+        new("#1043", "Cooperativa Vale", new DateOnly(2026, 9, 13), 210_000m, "Faturado")
+    ];
+
+    private sealed record Pessoa(string Nome, string Iniciais, string Local, bool Online);
+
+    private static readonly Pessoa[] Equipe =
+    [
+        new("Leticia Kulas", "LK", "Talhao Norte", true),
+        new("Dallas Adams", "DA", "Oficina", true),
+        new("Hilda Rath", "HR", "Escritorio", false),
+        new("Bertha Heller", "BH", "Talhao Varzea", true)
+    ];
+
+    private static RvmColor CorDaSituacao(string situacao) => situacao switch
+    {
+        "Faturado" => RvmColor.Success,
+        "Separando" => RvmColor.Info,
+        "Aguardando" => RvmColor.Warning,
+        _ => RvmColor.Error
+    };
+
+    // "Esta semana" -> "desta semana"; "Este mes" -> "deste mes".
+    private static string Contracao(string periodo) => "d" + periodo.ToLowerInvariant();
+
+    private void Exportar()
+        => Avisos.Show("Relatorio enviado para o seu e-mail.", new RvmSnackbarOptions { Color = RvmColor.Success });
+}
