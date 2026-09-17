@@ -56,7 +56,10 @@
         new("BinFormat", "Func<double, string>?", "ValueFormat", "Formato dos limites das faixas."),
         new("SeriesName", "string", "\"Frequencia\"", "Nome da contagem na dica e na tabela."),
         new("Color", "RvmColor", "Primary", "Cor das colunas."),
-        new("Height / ShowGrid", "int / bool", "300 / true", "Altura e grade.")
+        new("Height / ShowGrid", "int / bool", "300 / true", "Altura e grade."),
+        new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
+        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O nome padrao vem do AriaLabel."),
+        new("Zoomable / SelectionMode / RvmChartSeries.Axis", "bool / RvmChartSelectionMode / RvmChartAxis", "false / None / Primary", "Aparecem por heranca, mas NAO valem aqui: zoom, arrasto, selecao de faixa e eixo duplo pedem eixos cartesianos — use RvmColumnChart, RvmLineChart, RvmAreaChart ou RvmScatterChart.")
     ];
 
     private const string CodigoAutomatico = """

@@ -39,7 +39,10 @@
         new("GridLevels", "int", "5", "Niveis da grade."),
         new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
         new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie (um poligono).")
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie (um poligono)."),
+        new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
+        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O nome padrao vem do AriaLabel."),
+        new("Zoomable / SelectionMode / RvmChartSeries.Axis", "bool / RvmChartSelectionMode / RvmChartAxis", "false / None / Primary", "Aparecem por heranca, mas NAO valem aqui: zoom, arrasto, selecao de faixa e eixo duplo pedem eixos cartesianos — use RvmColumnChart, RvmLineChart, RvmAreaChart ou RvmScatterChart.")
     ];
 
     private const string CodigoSeries = """
