@@ -597,6 +597,21 @@ public class RvmSelectTests : BunitContext
     }
 
     [Fact]
+    public void Tipo_valor_nao_anulavel_comeca_com_o_default_escolhido_e_o_anulavel_vazio()
+    {
+        // Contrato documentado (review da onda 2): 0 nas opcoes e escolha legitima. Vazio = tipo anulavel.
+        var naoAnulavel = Render<RvmSelect<Cultura>>(p => p
+            .Add(x => x.Items, new[] { Cultura.Soja, Cultura.Milho })
+            .Add(x => x.Placeholder, "Escolha"));
+        Assert.Equal("Soja", naoAnulavel.Find(".valor").TextContent);
+
+        var anulavel = Render<RvmSelect<Cultura?>>(p => p
+            .Add(x => x.Items, Culturas)
+            .Add(x => x.Placeholder, "Escolha"));
+        Assert.Equal("Escolha", anulavel.Find(".valor").TextContent);
+    }
+
+    [Fact]
     public void Sem_itemtext_usa_tostring_e_escolher_a_mesma_nao_dispara()
     {
         var disparos = 0;
