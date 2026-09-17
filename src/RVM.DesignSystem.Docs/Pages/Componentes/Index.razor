@@ -5,68 +5,28 @@
 <h1 class="rvm-text-h4">Componentes</h1>
 
 <p class="rvm-text-body1 site-apoio">
-    A onda 1 traz a fundacao — os nove estao prontos. As ondas 2 (formulario e navegacao) e 3 (feedback e sobreposicao) tambem estao prontas, e a onda 4 (dados e shell) esta chegando. Cada pagina tem o exemplo rodando, as
-    variacoes, os estados, a tabela de parametros e o recorte do kit ao lado.
+    Os 35 componentes da versao 1.0, nas quatro ondas em que foram construidos. Cada pagina tem o exemplo
+    rodando, as variacoes, os estados, a tabela de parametros e o recorte do kit ao lado. O menu lateral
+    leva a qualquer um deles de qualquer pagina.
 </p>
 
-<ul class="lista-componentes">
-    @foreach (var (rota, nome, resumo, pronto) in Componentes)
-    {
-        <li class="cartao-componente">
-            @if (pronto)
+@foreach (var grupo in Catalogo.Grupos)
+{
+    <section aria-labelledby="@IdDoGrupo(grupo)">
+        <h2 id="@IdDoGrupo(grupo)" class="rvm-text-h6">@grupo.Titulo</h2>
+        <ul class="lista-componentes">
+            @foreach (var componente in grupo.Componentes)
             {
-                <a class="rvm-text-subtitle1" href="@rota">@nome</a>
+                <li class="cartao-componente">
+                    <a class="rvm-text-subtitle1" href="@componente.Rota">@componente.Nome</a>
+                    <span class="rvm-text-body2 site-apoio">@componente.Resumo</span>
+                </li>
             }
-            else
-            {
-                <span class="rvm-text-subtitle1 site-apoio">@nome</span>
-            }
-            <span class="rvm-text-body2 site-apoio">@resumo</span>
-            @if (!pronto)
-            {
-                <span class="rvm-text-caption site-apoio">ainda nao construido</span>
-            }
-        </li>
-    }
-</ul>
+        </ul>
+    </section>
+}
 
 @code {
-    private static readonly (string Rota, string Nome, string Resumo, bool Pronto)[] Componentes =
-    [
-        ("componentes/typography", "RvmTypography", "Toda a escala tipografica do kit, em 24 estilos.", true),
-        ("componentes/divider", "RvmDivider", "Linha que separa blocos, com ou sem rotulo no meio.", true),
-        ("componentes/icon", "RvmIcon", "Icones Tabler, em tres tamanhos e por papel de cor.", true),
-        ("componentes/button", "RvmButton", "Contained, outlined e text; tres tamanhos; icone e carregando.", true),
-        ("componentes/avatar", "RvmAvatar", "Imagem, iniciais ou icone, em tres tamanhos.", true),
-        ("componentes/chip", "RvmChip", "Filled e outlined, com avatar, removivel.", true),
-        ("componentes/alert", "RvmAlert", "Seis papeis, contained e outlined, fechavel.", true),
-        ("componentes/card", "RvmCard", "Basico, com cabecalho, com acoes, com midia.", true),
-        ("componentes/text-field", "RvmTextField", "Outlined e filled, com rotulo, apoio e erro.", true),
-        ("componentes/checkbox", "RvmCheckbox", "Nativo, com rotulo e indeterminado.", true),
-        ("componentes/radio", "RvmRadio", "Grupo empilhado ou em linha; setas movem a escolha.", true),
-        ("componentes/switch", "RvmSwitch", "Liga e desliga, em dois tamanhos.", true),
-        ("componentes/select", "RvmSelect", "Simples, multiplo e com busca, com validacao.", true),
-        ("componentes/tabs", "RvmTabs", "Sublinhadas e preenchidas, horizontal e vertical, com teclado.", true),
-        ("componentes/breadcrumbs", "RvmBreadcrumbs", "Trilha de navegacao, com barra ou seta.", true),
-        ("componentes/menu", "RvmMenu", "Botao que abre acoes, com icone, divisor e teclado.", true),
-        ("componentes/pagination", "RvmPagination", "Numerica, com setas, reticencias e tres tamanhos.", true),
-        ("componentes/badge", "RvmBadge", "Contador e ponto, sozinho ou sobre um icone.", true),
-        ("componentes/tooltip", "RvmTooltip", "Dica em quatro posicoes, so com CSS.", true),
-        ("componentes/progress", "RvmProgress", "Barra e anel, determinado e indeterminado.", true),
-        ("componentes/skeleton", "RvmSkeleton", "Texto, retangulo e circulo enquanto carrega.", true),
-        ("componentes/empty-state", "RvmEmptyState", "O vazio que ensina o proximo passo.", true),
-        ("componentes/list", "RvmList", "Simples, com icone, com acao e aninhada.", true),
-        ("componentes/accordion", "RvmAccordion", "Simples, exclusivo e com icone.", true),
-        ("componentes/dialog", "RvmDialog", "Simples, confirmacao, formulario e tela cheia.", true),
-        ("componentes/drawer", "RvmDrawer", "Quatro lados, temporario e permanente.", true),
-        ("componentes/snackbar", "RvmSnackbar", "Seis papeis, com acao e fila.", true),
-        ("componentes/rating", "RvmRating", "Leitura e edicao, meia estrela.", true),
-        ("componentes/stepper", "RvmStepper", "Horizontal, vertical, com validacao.", true),
-        ("componentes/timeline", "RvmTimeline", "Alternada, alinhada, com data.", true),
-        ("componentes/date-picker", "RvmDatePicker", "Data e intervalo.", true),
-        ("componentes/time-picker", "RvmTimePicker", "12 h e 24 h.", true),
-        ("componentes/table", "RvmTable", "Basica, ordenavel, com selecao, densa.", true),
-        ("componentes/data-grid", "RvmDataGrid", "Paginacao, ordenacao, filtro por coluna.", true),
-        ("componentes/app-shell", "RvmAppShell", "Topo, menu lateral e conteudo, responsivo.", true)
-    ];
+    private static string IdDoGrupo(Catalogo.Grupo grupo)
+        => "grupo-" + grupo.Titulo.ToLowerInvariant().Replace(' ', '-');
 }

@@ -37,3 +37,32 @@ test('pagina inicial sem violacao seria de acessibilidade', async ({ page }) => 
   const serias = resultado.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
   expect(serias.flatMap(v => v.nodes.map(n => `${v.id} em ${n.target.join(' ')}`))).toEqual([]);
 });
+
+test('@smoke o menu lateral leva a um componente e marca a pagina atual', async ({ page }) => {
+  await page.goto('/');
+  const menu = page.getByRole('navigation', { name: 'Menu do site' });
+
+  await menu.getByRole('link', { name: 'DataGrid', exact: true }).click();
+
+  await expect(page.getByRole('heading', { name: 'RvmDataGrid', level: 1 })).toBeVisible();
+  await expect(menu.getByRole('link', { name: 'DataGrid', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(menu.getByRole('link', { name: 'Inicio', exact: true })).not.toHaveAttribute('aria-current', 'page');
+});
+
+test('no celular o menu e uma gaveta que fecha ao navegar', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/componentes/rating');
+  const menu = page.getByRole('navigation', { name: 'Menu do site' });
+  await expect(page.getByRole('heading', { name: 'RvmRating', level: 1 })).toBeVisible();
+  await expect(menu).toBeHidden();
+
+  const abrir = page.getByRole('banner').first().getByRole('button', { name: 'Abrir menu' });
+  await abrir.click();
+  await expect(menu).toBeVisible();
+  // O item atual ja esta a vista dentro da gaveta.
+  await expect(menu.getByRole('link', { name: 'Rating', exact: true })).toBeInViewport();
+
+  await menu.getByRole('link', { name: 'Stepper', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'RvmStepper', level: 1 })).toBeVisible();
+  await expect(menu).toBeHidden();
+});

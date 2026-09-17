@@ -20,3 +20,19 @@ export function prenderTeclas(elemento, teclas) {
 export function rolarParaVer(id) {
     document.getElementById(id)?.scrollIntoView({ block: 'nearest' });
 }
+
+// Traz o item da pagina atual (aria-current="page") para a vista DENTRO da caixa que rola (o menu
+// lateral). So mexe no scrollTop da caixa: scrollIntoView rolaria tambem a pagina em volta — num
+// exemplo de moldura dentro do site, a pagina pulava ate o exemplo ao abrir.
+export function rolarAtualParaVer(caixa) {
+    const atual = caixa?.querySelector('[aria-current="page"]');
+    if (!atual) {
+        return;
+    }
+
+    const item = atual.getBoundingClientRect();
+    const area = caixa.getBoundingClientRect();
+    if (item.top < area.top || item.bottom > area.bottom) {
+        caixa.scrollTop += item.top - area.top - (area.height - item.height) / 2;
+    }
+}

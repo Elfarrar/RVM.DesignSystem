@@ -183,7 +183,7 @@ test('moldura: recolher deixa so os icones com o nome dos links intacto', async 
     await expect(inicio).toHaveAttribute('aria-current', 'page');
     const larguraAberta = (await inicio.boundingBox())!.width;
 
-    const recolher = page.getByRole('button', { name: 'Recolher menu' });
+    const recolher = page.getByRole('region', { name: 'Menu fixo, recolhivel' }).getByRole('button', { name: 'Recolher menu' });
     await recolher.click();
     await expect(recolher).toHaveAttribute('aria-pressed', 'true');
     await expect(inicio).toHaveAccessibleName('Inicio');
@@ -199,7 +199,7 @@ test('moldura estreita: a gaveta prende o foco, fecha com Esc e devolve o foco',
     const menu = page.getByRole('navigation', { name: 'Menu do exemplo estreito' });
     await expect(menu).toBeHidden();
 
-    const abrir = page.getByRole('button', { name: 'Abrir menu' });
+    const abrir = page.getByRole('region', { name: 'Tela estreita' }).getByRole('button', { name: 'Abrir menu' });
     await abrir.click();
     await expect(abrir).toHaveAttribute('aria-expanded', 'true');
     await expect(menu).toBeVisible();
@@ -224,8 +224,8 @@ for (const tema of ['claro', 'escuro'] as const) {
             await page.getByRole('button', { name: /Tema/ }).click();
         }
 
-        await page.getByRole('button', { name: 'Recolher menu' }).click();
-        await page.getByRole('button', { name: 'Abrir menu' }).click();
+        await page.getByRole('region', { name: 'Menu fixo, recolhivel' }).getByRole('button', { name: 'Recolher menu' }).click();
+        await page.getByRole('region', { name: 'Tela estreita' }).getByRole('button', { name: 'Abrir menu' }).click();
         await expect(page.getByRole('navigation', { name: 'Menu do exemplo estreito' })).toBeVisible();
         await semViolacaoSeria(page);
     });

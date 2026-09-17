@@ -23,8 +23,11 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     private static int _proximoId;
     private readonly string _idBase = $"rvm-casca-{Interlocked.Increment(ref _proximoId)}";
     private ElementReference _lateral;
+    private ElementReference _navegacao;
     private Sobreposicao? _sobreposicao;
     private bool _focoPreso;
+    private IJSObjectReference? _teclado;
+    private bool _rolarParaAtual = true;
 
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
@@ -88,13 +91,22 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     /// <inheritdoc />
     protected override void OnInitialized() => Navegacao.LocationChanged += AoNavegar;
 
-    // Escolher um item na gaveta leva a outra pagina: a gaveta fecha sozinha, como no MUI.
+    // Escolher um item na gaveta leva a outra pagina: a gaveta fecha sozinha, como no MUI. E o menu
+    // rola ate o item da pagina nova, que pode estar abaixo da dobra (chegou por link no conteudo).
     private void AoNavegar(object? sender, LocationChangedEventArgs e)
     {
-        if (MenuOpen)
+        _rolarParaAtual = true;
+        _ = InvokeAsync(async () =>
         {
-            _ = InvokeAsync(() => DefinirMenuAbertoAsync(false));
-        }
+            if (MenuOpen)
+            {
+                await DefinirMenuAbertoAsync(false);
+            }
+            else
+            {
+                StateHasChanged();
+            }
+        });
     }
 
     internal async Task DefinirMenuAbertoAsync(bool aberto)
@@ -147,6 +159,20 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
                 await _sobreposicao.FecharAsync();
             }
         }
+
+        if (_rolarParaAtual)
+        {
+            _rolarParaAtual = false;
+            try
+            {
+                _teclado ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
+                await _teclado.InvokeVoidAsync("rolarAtualParaVer", _navegacao);
+            }
+            catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+            {
+                // Sem JS (pre-renderizacao): o menu so nao rola ate o item atual.
+            }
+        }
     }
 
     /// <inheritdoc />
@@ -156,6 +182,18 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
         if (_sobreposicao is not null)
         {
             await _sobreposicao.DisposeAsync();
+        }
+
+        if (_teclado is not null)
+        {
+            try
+            {
+                await _teclado.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // Circuito ja caiu no Blazor Server: nao ha o que liberar do lado do navegador.
+            }
         }
 
         GC.SuppressFinalize(this);

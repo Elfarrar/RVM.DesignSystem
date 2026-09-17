@@ -49,8 +49,12 @@ test('@smoke o indice de componentes lista o que ja existe', async ({ page }) =>
     await page.goto('/componentes');
 
     await expect(page.getByRole('heading', { name: 'Componentes', level: 1 })).toBeVisible();
+    const indice = page.getByRole('main');
+    const menu = page.getByRole('navigation', { name: 'Menu do site' });
     for (const { titulo } of PAGINAS) {
-        await expect(page.getByRole('link', { name: titulo })).toBeVisible();
+        await expect(indice.getByRole('link', { name: titulo, exact: true })).toBeVisible();
+        // O menu lateral leva a toda pagina, com o nome sem o prefixo Rvm.
+        await expect(menu.getByRole('link', { name: titulo.slice(3), exact: true })).toBeVisible();
     }
 });
 
