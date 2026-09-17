@@ -175,3 +175,40 @@ test('zoom: roda aproxima sem rolar a pagina, teclado tambem, e o duplo clique v
     await expect.poll(meses).toBe(inteiro);
     await expect(figura.locator('[aria-live=polite]').filter({ hasText: 'Grafico inteiro a vista' })).toBeVisible();
 });
+
+// Selecao de faixa (DSGN-011): arrastar sobre o grafico filtra a tabela ao lado — e o mesmo existe pelo
+// teclado, que e onde a maioria das bibliotecas de grafico deixa o usuario de fora.
+test('selecao: arrastar no grafico filtra a tabela, e o teclado faz o mesmo', async ({ page }) => {
+    await page.goto('/exemplos/dashboard');
+    const grafico = page.getByRole('group', { name: 'Receita e despesa por mes' });
+    const fechamento = page.getByRole('table', { name: /Fechamento/ });
+    await expect(grafico).toBeVisible();
+    await expect(fechamento.getByRole('row')).toHaveCount(8); // cabecalho + 7 meses
+
+    // O mouse do Playwright nao rola a pagina: o grafico precisa estar na viewport antes do arrasto.
+    await grafico.scrollIntoViewIfNeeded();
+    const caixa = (await grafico.boundingBox())!;
+    await page.mouse.move(caixa.x + caixa.width * 0.35, caixa.y + caixa.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(caixa.x + caixa.width * 0.65, caixa.y + caixa.height / 2, { steps: 8 });
+    await page.mouse.up();
+
+    // Quantos meses caem na faixa depende da largura da tela; o que importa e a tabela encolher.
+    await expect.poll(() => fechamento.getByRole('row').count()).toBeLessThan(8);
+    await expect(page.locator('.rvm-grafico-faixa-marcada')).toBeVisible();
+    await expect(page.getByText(/Fechamento de \w+ a \w+/)).toBeVisible();
+
+    await page.getByRole('button', { name: 'Limpar filtro' }).click();
+    await expect(fechamento.getByRole('row')).toHaveCount(8);
+
+    // Pelo teclado: Shift com as setas marca, e o leitor de tela ouve o que ficou selecionado.
+    await grafico.focus();
+    await page.keyboard.press('Home');
+    await page.keyboard.press('Shift+ArrowRight');
+    await expect(fechamento.getByRole('row')).toHaveCount(3);
+    await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Selecionado de' }))
+        .toHaveText(/Selecionado de \w+ a \w+: 2 de 7\./);
+
+    await page.keyboard.press('Escape');
+    await expect(fechamento.getByRole('row')).toHaveCount(8);
+});

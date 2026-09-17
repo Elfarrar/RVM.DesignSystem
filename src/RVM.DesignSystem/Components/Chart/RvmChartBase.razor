@@ -23,6 +23,11 @@
                 <div class="rvm-grafico-centro" aria-hidden="true">@Centro</div>
             }
 
+            @if (EstiloDaFaixa is { } faixa)
+            {
+                <div class="rvm-grafico-faixa-marcada" style="@faixa" aria-hidden="true"></div>
+            }
+
             <div @ref="_camada"
                  class="@(Aproximado ? "rvm-grafico-camada rvm-grafico-arrastavel" : "rvm-grafico-camada")"
                  tabindex="0"
@@ -34,6 +39,7 @@
                  @onpointerdown="AoApertarPonteiro"
                  @onpointerup="AoSoltarPonteiro"
                  @onpointercancel="AoSoltarPonteiro"
+                 @onpointerdown:preventDefault="SelectionMode == RvmChartSelectionMode.Range"
                  @onpointerleave="AoSairPonteiro"
                  @ondblclick="ResetZoom"
                  @onkeydown="AoTeclar"
@@ -64,11 +70,19 @@
             {
                 @: Mais e menos aproximam (com Shift, o eixo vertical), Ctrl com as setas desloca e zero volta ao grafico inteiro.
             }
+            @if (SelectionMode == RvmChartSelectionMode.Range)
+            {
+                @: Shift com as setas marca uma faixa, Enter marca so o ponto atual e Esc limpa.
+            }
         </span>
         <span class="rvm-so-leitor" aria-live="polite">@TextoDoAtivo</span>
         @if (Zoomable)
         {
             <span class="rvm-so-leitor" aria-live="polite">@AvisoDoZoom</span>
+        }
+        @if (SelectionMode == RvmChartSelectionMode.Range)
+        {
+            <span class="rvm-so-leitor" aria-live="polite">@AvisoDaFaixa</span>
         }
 
         @if (ShowLegend && Legenda.Count > 0)

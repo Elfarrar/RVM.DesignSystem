@@ -39,6 +39,7 @@
     [
         new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, nome de cada ponto e nome do grafico (obrigatorio)."),
         new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
         new("XLabel / YLabel", "string", "\"X\" / \"Y\"", "Nomes dos eixos na dica e na tabela de dados."),
         new("XFormat / ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato de X e de Y."),
         new("PointRadius", "int", "5", "Raio de cada ponto, em px."),

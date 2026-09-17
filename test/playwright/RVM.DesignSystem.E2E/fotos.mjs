@@ -29,6 +29,17 @@ for (const tema of ['claro', 'escuro']) {
     await pagina.keyboard.press('+');
     await pagina.keyboard.press('+');
     await pagina.screenshot({ path: `${destino}/zoom-${tema}.png` });
+
+    await pagina.goto(`${base}/exemplos/dashboard`);
+    const fluxo = pagina.getByRole('group', { name: 'Receita e despesa por mes' });
+    await fluxo.waitFor();
+    await fluxo.scrollIntoViewIfNeeded();
+    const caixa = await fluxo.boundingBox();
+    await pagina.mouse.move(caixa.x + caixa.width * 0.3, caixa.y + caixa.height / 2);
+    await pagina.mouse.down();
+    await pagina.mouse.move(caixa.x + caixa.width * 0.62, caixa.y + caixa.height / 2, { steps: 8 });
+    await pagina.mouse.up();
+    await pagina.screenshot({ path: `${destino}/selecao-${tema}.png` });
     await pagina.close();
 }
 
