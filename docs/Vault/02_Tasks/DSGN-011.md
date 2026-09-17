@@ -17,7 +17,7 @@ de faixa por arrasto para filtrar outros componentes, e exportar PDF ou CSV tamb
 
 1. [x] **Animacao** (`Animated`, desligada sozinha em "reduzir movimento") e **exportar** em PNG, SVG, CSV
        e PDF (`ExportAsync`), com menu de exportar no exemplo
-2. [ ] **Eixo duplo**: `RvmChartAxis.Secondary` na serie, escala e rotulos a direita, legenda dizendo o eixo
+2. [x] **Eixo duplo**: `RvmChartAxis.Secondary` na serie, escala e rotulos a direita, legenda dizendo o eixo
 3. [ ] **Zoom em X e em Y** e **arrastar**: roda do mouse (Shift para Y), arrastar para deslocar, duplo
        clique para voltar, `+`/`-` e setas no teclado, janela anunciada em `aria-live`
 4. [ ] **Selecao de faixa por arrasto** (`SelectionMode`, `Selection`/`SelectionChanged`) para filtrar outros
@@ -48,6 +48,20 @@ Zoom por caixa desenhada (brush-to-zoom), exportar Excel nativo (.xlsx), imprimi
 | PDF montado em C# com o JPEG do `canvas` (`DCTDecode`) | sem biblioteca de terceiros (decisao do projeto) e a montagem fica testavel sem navegador |
 | `pathLength="1"` na linha para animar o traco | dispensa medir o caminho em JS: a animacao roda so em CSS e morre sozinha em "reduzir movimento" |
 | Eixo escreve `0`, nao `0 mil` | achado na foto da entrega; `CompactForAxis` colocava o sufixo do passo na base do eixo |
+
+## Fatia 2 — entregue em 17/09/2026
+
+- `RvmChartAxis` e `RvmChartSeries.Axis`: a serie escolhe o eixo da esquerda (padrao) ou o da direita,
+  com escala propria. `SecondaryValueFormat` da a unidade do eixo novo.
+- Vale em **colunas, linha e area** — os graficos de eixo Y vertical. Em barras o eixo de valor e o
+  horizontal, e em pizza, radar, histograma e dispersao nao ha duas series de unidades diferentes para
+  comparar: ali a serie continua lida no eixo unico, mesmo pedindo o secundario.
+- Se **todas** as series pedirem o secundario, o grafico segue com um eixo so: dois eixos identicos
+  ocupariam as duas bordas para dizer a mesma coisa.
+- A legenda diz "eixo esquerdo"/"eixo direito" e a tabela do leitor de tela marca "(eixo direito)" no
+  cabecalho da serie — quem nao ve o desenho tambem sabe de que escala o numero veio.
+- Empilhado com dois eixos: cada lado tem a sua pilha.
+- Exemplo novo na pagina do `RvmLineChart` (receita em reais x margem em porcento).
 
 ## Fatia 1 — entregue em 17/09/2026
 

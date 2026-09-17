@@ -18,6 +18,10 @@ for (const tema of ['claro', 'escuro']) {
     await pagina.getByRole('button', { name: 'Exportar' }).click();
     await pagina.getByRole('menuitem', { name: 'Dados CSV' }).waitFor();
     await pagina.screenshot({ path: `${destino}/exportar-${tema}.png` });
+    await pagina.goto(`${base}/componentes/line-chart`);
+    await pagina.getByRole('heading', { name: 'RvmLineChart', level: 1 }).waitFor();
+    await pagina.locator('figure.rvm-grafico').filter({ hasText: 'eixo direito' }).scrollIntoViewIfNeeded();
+    await pagina.screenshot({ path: `${destino}/eixo-duplo-${tema}.png` });
     await pagina.close();
 }
 
