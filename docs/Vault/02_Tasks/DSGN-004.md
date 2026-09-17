@@ -3,7 +3,7 @@ id: DSGN-004
 titulo: Onda 2 — formulario e navegacao (10 componentes)
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: em revisao
 criada: 2026-09-17
 ---
 
@@ -32,6 +32,7 @@ biblioteca de posicionamento.
 
 - [x] **Fatia 1**: `RvmCheckbox`, `RvmRadioGroup` + `RvmRadio`, `RvmSwitch`
 - [x] **Fatia 2**: `RvmBadge`, `RvmBreadcrumbs`, `RvmPagination`, `RvmTooltip`
+- [x] **Fatia 3**: `RvmTabs` + `RvmTab`, `RvmMenu` + `RvmMenuItem` + `RvmMenuDivider`, `RvmSelect` e `RvmMultiSelect`
 
 ## Decisoes e medicoes
 
@@ -54,6 +55,16 @@ biblioteca de posicionamento.
 | **Tooltip entrega o id pelo contexto do `ChildContent`** | A dica e descricao (`aria-describedby`), nao nome; o atributo tem de ir no elemento focavel, que e do consumidor |
 | **Paginacao: reticencias so onde pula mais de uma pagina; `Page` fora da faixa vale como a borda** | "…" no lugar de um unico numero esconde sem economizar espaco; sem o clamp, `Page=99` deixava a seta anterior sem efeito |
 | 🔴 **Classe generica no componente colide com CSS global** | A trilha usava `.link`, e o `app.css` do site tem `.link` com padding: o isolamento de CSS protege o componente de vazar, nao de receber. Pego na foto lado a lado; a classe virou `.ligacao` |
+| **Medidas da fatia 3**: aba 48 px (72 com icone), indicador 2 px, aba preenchida 130x48; item de menu 36 px sobre o `paper`; select 56/40 px | Busca de regioes azuis e varredura de linha em `Tabs.png`, `Menu.png` e `Select.png` — o select tem as medidas do campo de texto |
+| **Tabs: selecao segue o foco; so o painel ativo e renderizado** | Padrao APG com tabindex movel. `aria-controls` so na aba ativa, porque so o painel dela existe no DOM |
+| **Rolagem por overflow no lugar das setas de rolagem do kit** | A seta do teclado ja traz a aba focada a vista; botoes de rolagem seriam controles a mais sem ganho de acesso |
+| **`rvm-teclado.js`: impedir a rolagem da pagina so para as teclas usadas** | O Blazor so barra o padrao de TODAS as teclas do evento, e barrar Tab tira o foco da ordem de tabulacao. O modulo e importado sob demanda e nada do estado inicial depende dele |
+| **Menu: itens sao `<button role=menuitem>`; clicar fora fecha por camada transparente** | Enter e Espaco acionam sem codigo; clicar fora dispensa ouvir o documento por JS. `RvmButton` ganhou `FocusAsync()` para o menu devolver o foco |
+| **Select: `RvmSelect` e `RvmMultiSelect` sobre uma base comum, sem `InputBase`** | Os dois tem tipo de valor diferente (`TValue` e `IReadOnlyList<TValue>`); a base acha o campo pela expressao e fala com o `EditContext` direto (validacao, `modified`) |
+| **Select-only combobox: foco no campo, opcao ativa por `aria-activedescendant`, anel por dentro** | Padrao APG. A opcao ativa nao tem foco real, entao o anel e o que mostra onde o teclado esta |
+| **Select: valor fora das opcoes nao conta como escolhido** | Sem isso, um enum ou int sem valor (o `default`, 0) aparecia escolhido |
+| **Busca ignora maiusculas e acentos** (`CompareOptions.IgnoreNonSpace`) | luis acha Luís |
+| 🔴 **Item de menu focado: fundo de hover, nao `action-focus`** | No tema claro o texto sobre `action-focus` dava 4.2:1 — so aparece com o menu ABERTO, e o axe de pagina roda com tudo fechado. Virou teste E2E com menu e select abertos nos dois temas |
 
 ## Verifica (cada fatia)
 

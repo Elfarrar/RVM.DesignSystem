@@ -1,0 +1,21 @@
+@namespace RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Icon
+
+<li role="none">
+    <button @ref="_elemento"
+            @attributes="AdditionalAttributes"
+            type="button"
+            role="menuitem"
+            tabindex="-1"
+            class="@ClassesDoItem"
+            disabled="@Disabled"
+            @onclick="AoClicarAsync"
+            @onfocus="() => TemFoco = true"
+            @onblur="() => TemFoco = false">
+        @if (Icon is { } icone)
+        {
+            <RvmIcon Name="icone" Size="RvmSize.Medium" />
+        }
+        <span class="texto">@ChildContent</span>
+    </button>
+</li>

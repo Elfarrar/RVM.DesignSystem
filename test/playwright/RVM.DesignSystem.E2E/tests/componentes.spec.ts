@@ -22,6 +22,9 @@ const PAGINAS = [
     { rota: '/componentes/breadcrumbs', titulo: 'RvmBreadcrumbs' },
     { rota: '/componentes/pagination', titulo: 'RvmPagination' },
     { rota: '/componentes/tooltip', titulo: 'RvmTooltip' },
+    { rota: '/componentes/tabs', titulo: 'RvmTabs' },
+    { rota: '/componentes/menu', titulo: 'RvmMenu' },
+    { rota: '/componentes/select', titulo: 'RvmSelect' },
 ];
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {

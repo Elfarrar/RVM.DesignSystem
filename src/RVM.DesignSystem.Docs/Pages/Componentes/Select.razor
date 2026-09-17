@@ -1,0 +1,121 @@
+@page "/componentes/select"
+
+<PageTitle>RvmSelect — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmSelect</h1>
+
+<p class="rvm-text-body1 apoio">
+    Escolha numa lista, no padrao "Select-Only Combobox" do APG: o foco fica no campo e as setas andam
+    pelas opcoes. <code>RvmSelect</code> escolhe uma, <code>RvmMultiSelect</code> escolhe varias; os dois
+    aceitam busca e entram na validacao do <code>EditForm</code>. Mesmas medidas do campo de texto: 56 e
+    40 px, <strong>medidas no kit</strong>.
+</p>
+
+<BlocoExemplo Titulo="Estilos"
+              Descricao="Os tres estilos da secao Select Variant do kit."
+              Codigo="@CodigoEstilos">
+    <div class="grade-campos">
+        <RvmSelect Items="@Culturas" @bind-Value="_contorno" Label="Cultura" HelperText="A principal do talhao" />
+        <RvmSelect Items="@Culturas" @bind-Value="_preenchido" Label="Cultura" Variant="RvmTextFieldVariant.Filled" />
+        <RvmSelect Items="@Culturas" @bind-Value="_padrao" Label="Cultura" Variant="RvmTextFieldVariant.Standard" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Busca e multipla escolha"
+              Descricao="Com Searchable, o foco vai para a busca ao abrir; a busca ignora maiusculas e acentos. No multiplo, a lista fica aberta enquanto se marca."
+              Codigo="@CodigoBusca">
+    <div class="grade-campos">
+        <RvmSelect Items="@Municipios" @bind-Value="_municipio" Label="Municipio" Searchable="true" SearchPlaceholder="Buscar municipio" />
+        <RvmMultiSelect Items="@Talhoes" @bind-Values="_talhoes" Label="Talhoes" Searchable="true" ItemDisabled="@(t => t == "Talhao 4")" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+        Talhoes escolhidos: @(_talhoes.Count == 0 ? "nenhum" : string.Join(", ", _talhoes)).
+    </RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanho, validacao e estados"
+              Descricao="Dentro de um EditForm, a mensagem do [Required] aparece no lugar do apoio e o campo ganha aria-invalid."
+              Codigo="@CodigoValidacao">
+    <EditForm Model="@_modelo" OnValidSubmit="@(() => _enviado = true)">
+        <DataAnnotationsValidator />
+        <div class="grade-campos">
+            <RvmSelect Items="@Culturas" @bind-Value="_modelo.Cultura" Label="Cultura do plantio" Required="true" />
+            <RvmSelect Items="@Culturas" @bind-Value="_pequeno" Label="Pequeno" Size="RvmSize.Small" />
+            <RvmSelect Items="@Culturas" Value="@("Soja")" Label="Desabilitado" Disabled="true" />
+        </div>
+        <RvmButton Type="RvmButtonType.Submit">Salvar plantio</RvmButton>
+        @if (_enviado)
+        {
+            <RvmTypography Color="RvmTextColor.Secondary" role="status">Plantio salvo.</RvmTypography>
+        }
+    </EditForm>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/select.png"
+              Arquivo="referencia-neatlab/Select.png (recorte)"
+              Descricao="Os estilos standard, outline e filled, os dois tamanhos e os estados normal, ativo, erro e desabilitado."
+              Alt="Recorte do kit NEATLAB mostrando campos de selecao em tres estilos, dois tamanhos e quatro estados" />
+
+@code {
+    private static readonly string[] Culturas = ["Soja", "Milho", "Cafe", "Algodao", "Trigo"];
+
+    private static readonly string[] Municipios =
+        ["Campo Verde", "Cristalina", "Luis Eduardo Magalhaes", "Rio Verde", "Sinop", "Sorriso", "Uberaba"];
+
+    private static readonly string[] Talhoes = ["Talhao 1", "Talhao 2", "Talhao 3", "Talhao 4", "Talhao 5"];
+
+    private string? _contorno = "Soja";
+    private string? _preenchido;
+    private string? _padrao;
+    private string? _municipio;
+    private string? _pequeno;
+    private IReadOnlyList<string> _talhoes = [];
+    private bool _enviado;
+    private readonly Plantio _modelo = new();
+
+    private sealed class Plantio
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Escolha a cultura para salvar o plantio.")]
+        public string? Cultura { get; set; }
+    }
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items", "IEnumerable<TValue>", "—", "As opcoes."),
+        new("Value / Values", "TValue? / IReadOnlyList<TValue>", "—", "@bind-Value no RvmSelect; @bind-Values no RvmMultiSelect."),
+        new("ItemText", "Func<TValue, string>?", "ToString()", "Texto de cada opcao."),
+        new("ItemDisabled", "Func<TValue, bool>?", "—", "Opcoes visiveis mas nao escolhiveis."),
+        new("Label", "string?", "—", "Rotulo. Nome acessivel do campo e da lista."),
+        new("HelperText / ErrorText", "string?", "—", "Apoio abaixo; o erro vence o apoio."),
+        new("Placeholder", "string?", "—", "Texto no campo vazio."),
+        new("Variant", "RvmTextFieldVariant", "Outlined", "Outlined, Filled ou Standard."),
+        new("Size", "RvmSize", "Medium", "56 px ou 40 px (Small)."),
+        new("Searchable", "bool", "false", "Busca no topo da lista."),
+        new("SearchPlaceholder", "string", "\"Buscar\"", "Dica e nome acessivel da busca."),
+        new("NoResultsText", "string", "—", "Mensagem quando a busca nao acha nada."),
+        new("Required", "bool", "false", "Asterisco e aria-required. A validacao e do EditForm."),
+        new("Disabled", "bool", "false", "Indisponivel."),
+        new("Name", "string?", "—", "Gera input hidden com cada valor, para envio de formulario."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no combobox.")
+    ];
+
+    private const string CodigoEstilos = """
+        <RvmSelect Items="@Culturas" @bind-Value="_cultura" Label="Cultura" HelperText="A principal do talhao" />
+        <RvmSelect Items="@Culturas" @bind-Value="_cultura" Label="Cultura" Variant="RvmTextFieldVariant.Filled" />
+        """;
+
+    private const string CodigoBusca = """
+        <RvmSelect Items="@Municipios" @bind-Value="_municipio" Label="Municipio" Searchable="true" />
+        <RvmMultiSelect Items="@Talhoes" @bind-Values="_talhoes" Label="Talhoes" Searchable="true" />
+        """;
+
+    private const string CodigoValidacao = """
+        <EditForm Model="@_modelo" OnValidSubmit="Salvar">
+            <DataAnnotationsValidator />
+            <RvmSelect Items="@Culturas" @bind-Value="_modelo.Cultura" Label="Cultura do plantio" Required="true" />
+            <RvmButton Type="RvmButtonType.Submit">Salvar plantio</RvmButton>
+        </EditForm>
+        """;
+}

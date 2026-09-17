@@ -5,7 +5,8 @@
 @* `disabled` de verdade, e nao so aparencia: botao desabilitado tem de sair da ordem de tabulacao e
    ignorar clique. Enquanto carrega, `aria-busy` avisa quem usa leitor de tela que a acao esta em
    curso — o rotulo continua o mesmo, entao sem isso a espera e silenciosa. *@
-<button @attributes="AdditionalAttributes"
+<button @ref="_elemento"
+        @attributes="AdditionalAttributes"
         class="@CssClass"
         type="@TipoHtml"
         disabled="@(Disabled || Loading)"

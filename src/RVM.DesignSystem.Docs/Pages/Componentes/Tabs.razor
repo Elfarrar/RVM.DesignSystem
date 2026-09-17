@@ -1,0 +1,95 @@
+@page "/componentes/tabs"
+
+<PageTitle>RvmTabs — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTabs</h1>
+
+<p class="rvm-text-body1 apoio">
+    Abas no padrao do APG: so a aba ativa entra na tabulacao, as setas trocam de aba e Home e End vao
+    as pontas. Aba de 48 px (72 px com icone), <strong>medida no kit</strong>. So o painel ativo e
+    renderizado.
+</p>
+
+<BlocoExemplo Titulo="Sublinhada"
+              Descricao="A linha Basic Tabs do kit. O indicador usa a variante -text do primary, que passa 3:1 nos dois temas."
+              Codigo="@CodigoBasico">
+    <RvmTabs @bind-ActiveIndex="_basica" AriaLabel="Dados do talhao">
+        <RvmTab Title="Resumo"><RvmTypography>Area, cultura e safra do talhao.</RvmTypography></RvmTab>
+        <RvmTab Title="Aplicacoes"><RvmTypography>Historico de defensivos aplicados.</RvmTypography></RvmTab>
+        <RvmTab Title="Arquivado" Disabled="true"><RvmTypography>Indisponivel.</RvmTypography></RvmTab>
+        <RvmTab Title="Colheita"><RvmTypography>Produtividade por hectare.</RvmTypography></RvmTab>
+    </RvmTabs>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Preenchida, largura total e com icone"
+              Descricao="A linha Customized Tabs e as colunas Full Width e With Icon."
+              Codigo="@CodigoPreenchida">
+    <div class="pilha-exemplos largura-cheia">
+        <RvmTabs Variant="RvmTabsVariant.Contained" FullWidth="true" AriaLabel="Periodo">
+            <RvmTab Title="Dia"><RvmTypography>Hoje.</RvmTypography></RvmTab>
+            <RvmTab Title="Semana"><RvmTypography>Ultimos 7 dias.</RvmTypography></RvmTab>
+            <RvmTab Title="Mes"><RvmTypography>Ultimos 30 dias.</RvmTypography></RvmTab>
+        </RvmTabs>
+        <RvmTabs AriaLabel="Canais de aviso">
+            <RvmTab Title="Avisos" Icon="RvmIconName.Bell"><RvmTypography>Avisos do sistema.</RvmTypography></RvmTab>
+            <RvmTab Title="E-mail" Icon="RvmIconName.Mail"><RvmTypography>Mensagens por e-mail.</RvmTypography></RvmTab>
+            <RvmTab Title="Agenda" Icon="RvmIconName.Calendar"><RvmTypography>Compromissos.</RvmTypography></RvmTab>
+        </RvmTabs>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Vertical"
+              Descricao="A secao Vertical do kit: setas para cima e para baixo."
+              Codigo="@CodigoVertical">
+    <RvmTabs Orientation="RvmOrientation.Vertical" AriaLabel="Configuracoes da conta">
+        <RvmTab Title="Conta" Icon="RvmIconName.User"><RvmTypography>Nome, e-mail e foto.</RvmTypography></RvmTab>
+        <RvmTab Title="Seguranca" Icon="RvmIconName.Lock"><RvmTypography>Senha e sessoes abertas.</RvmTypography></RvmTab>
+        <RvmTab Title="Avisos" Icon="RvmIconName.Bell"><RvmTypography>O que chega e por onde.</RvmTypography></RvmTab>
+    </RvmTabs>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/tabs.png"
+              Arquivo="referencia-neatlab/Tabs.png (recorte)"
+              Descricao="Abas sublinhadas e preenchidas, largura total, com icone, horizontais e verticais."
+              Alt="Recorte do kit NEATLAB mostrando abas sublinhadas e preenchidas, horizontais e verticais" />
+
+@code {
+    private int _basica;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("ActiveIndex", "int", "0", "Indice da aba ativa. Aceita @bind-ActiveIndex."),
+        new("Variant", "RvmTabsVariant", "Standard", "Standard (sublinhada) ou Contained (preenchida)."),
+        new("Orientation", "RvmOrientation", "Horizontal", "Horizontal ou Vertical."),
+        new("FullWidth", "bool", "false", "As abas dividem a largura. So na horizontal."),
+        new("AriaLabel", "string?", "—", "Nome da lista de abas para o leitor de tela."),
+        new("RvmTab.Title", "string", "—", "Texto da aba."),
+        new("RvmTab.Icon", "RvmIconName?", "—", "Icone acima do texto."),
+        new("RvmTab.Disabled", "bool", "false", "Visivel, mas pulada pelo teclado e pelo clique."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto na lista de abas.")
+    ];
+
+    private const string CodigoBasico = """
+        <RvmTabs @bind-ActiveIndex="_aba" AriaLabel="Dados do talhao">
+            <RvmTab Title="Resumo">...</RvmTab>
+            <RvmTab Title="Arquivado" Disabled="true">...</RvmTab>
+        </RvmTabs>
+        """;
+
+    private const string CodigoPreenchida = """
+        <RvmTabs Variant="RvmTabsVariant.Contained" FullWidth="true" AriaLabel="Periodo">
+            <RvmTab Title="Dia">...</RvmTab>
+        </RvmTabs>
+        <RvmTabs AriaLabel="Canais de aviso">
+            <RvmTab Title="Avisos" Icon="RvmIconName.Bell">...</RvmTab>
+        </RvmTabs>
+        """;
+
+    private const string CodigoVertical = """
+        <RvmTabs Orientation="RvmOrientation.Vertical" AriaLabel="Configuracoes da conta">
+            <RvmTab Title="Conta" Icon="RvmIconName.User">...</RvmTab>
+        </RvmTabs>
+        """;
+}

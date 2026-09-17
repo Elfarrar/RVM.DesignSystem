@@ -47,6 +47,14 @@ public partial class RvmButton : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
+    private ElementReference _elemento;
+
+    /// <summary>
+    /// Leva o foco ao botao. Serve a quem abre algo a partir dele (um menu) e precisa devolver o foco
+    /// ao fechar.
+    /// </summary>
+    public ValueTask FocusAsync() => _elemento.FocusAsync();
+
     internal string TipoHtml => Type switch
     {
         RvmButtonType.Submit => "submit",
