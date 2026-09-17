@@ -31,6 +31,7 @@ biblioteca de posicionamento.
 ## Andamento
 
 - [x] **Fatia 1**: `RvmCheckbox`, `RvmRadioGroup` + `RvmRadio`, `RvmSwitch`
+- [x] **Fatia 2**: `RvmBadge`, `RvmBreadcrumbs`, `RvmPagination`, `RvmTooltip`
 
 ## Decisoes e medicoes
 
@@ -46,6 +47,13 @@ biblioteca de posicionamento.
 | 🔴 **Expressao padrao quando nao ha `@bind-Value`** | Pego no navegador: `InputCheckbox` exige `ValueExpression`, que so o `@bind` fornece. `<RvmCheckbox Value="true" Disabled="true" />` e `Value` + `ValueChanged` faziam o controle estourar e sumir, com o `#blazor-error-ui` no ar. O bUnit sempre passava a expressao e nao viu |
 | **`aria-disabled` na raiz do controle desabilitado** | O axe reprovava o contraste do texto do controle desabilitado (isento pela WCAG 1.4.3) porque nao liga o texto do `<label>` ao input |
 | **Indexador no `@bind-Value` quebra** | `@bind-Value="dicionario[chave]"` gera expressao que o `FieldIdentifier` nao aceita. As paginas usam objeto com propriedade |
+| **Medidas da fatia 2**: badge pilula 20 px e ponto 8 px; paginacao 26/32/40 px com 6 px de vao; tooltip 24 px | Varredura de linha em `Badge.png`, `Pagination.png` e `Tooltip.png` |
+| **Tooltip escuro (`#212121`) nos dois temas** | Medido igual em `Tooltip.png` e `Tooltip-1.png`. Tokens `--rvm-color-tooltip-background/-text` (branco da 16:1) |
+| **Ponto do badge usa `-text`; a pilula usa `-main` + `-contrast`** | O ponto nao tem texto: ele mesmo e a informacao e precisa de 3:1 (o `-main` do warning da 1.7 no branco). A pilula e o par ja medido do chip preenchido |
+| **Tooltip: mostrar/esconder so por CSS (`:hover`, `:focus-within`)** | Funciona antes da interatividade. Esc dispensa por evento do Blazor (WCAG 1.4.13); ponte invisivel sobre a folga deixa passar o mouse para o balao |
+| **Tooltip entrega o id pelo contexto do `ChildContent`** | A dica e descricao (`aria-describedby`), nao nome; o atributo tem de ir no elemento focavel, que e do consumidor |
+| **Paginacao: reticencias so onde pula mais de uma pagina; `Page` fora da faixa vale como a borda** | "…" no lugar de um unico numero esconde sem economizar espaco; sem o clamp, `Page=99` deixava a seta anterior sem efeito |
+| 🔴 **Classe generica no componente colide com CSS global** | A trilha usava `.link`, e o `app.css` do site tem `.link` com padding: o isolamento de CSS protege o componente de vazar, nao de receber. Pego na foto lado a lado; a classe virou `.ligacao` |
 
 ## Verifica (cada fatia)
 

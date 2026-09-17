@@ -1,0 +1,78 @@
+@page "/componentes/badge"
+
+<PageTitle>RvmBadge — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmBadge</h1>
+
+<p class="rvm-text-body1 apoio">
+    Contador ou ponto de aviso, sozinho ou por cima de um icone. Pilula de 20 px e ponto de 8 px,
+    <strong>medidos no kit</strong>. O <code>Label</code> diz ao leitor de tela o que o numero significa.
+</p>
+
+<BlocoExemplo Titulo="Ponto e pilula"
+              Descricao="As duas linhas da pagina Badge do kit, nos seis papeis de cor. O ponto, sem texto, usa a variante -text da cor para ter 3:1 contra o fundo."
+              Codigo="@CodigoVariantes">
+    <div class="linha-exemplos">
+        @foreach (var cor in Cores)
+        {
+            <RvmBadge Dot="true" Color="cor" Label="@($"Aviso {cor}")" />
+        }
+    </div>
+    <div class="linha-exemplos">
+        @foreach (var cor in Cores)
+        {
+            <RvmBadge Color="cor" Content="Badge" />
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Sobre um icone"
+              Descricao="Com conteudo, o badge vai para o canto superior direito. Count respeita Max: acima dele, aparece Max+."
+              Codigo="@CodigoIcone">
+    <div class="linha-exemplos exemplo-badges">
+        <RvmBadge Dot="true" Label="Mensagens novas">
+            <RvmIcon Name="RvmIconName.Mail" />
+        </RvmBadge>
+        <RvmBadge Count="999" Max="999" Label="999 mensagens nao lidas">
+            <RvmIcon Name="RvmIconName.Mail" />
+        </RvmBadge>
+        <RvmBadge Count="120" Color="RvmColor.Error" Label="Mais de 99 notificacoes">
+            <RvmIcon Name="RvmIconName.Bell" />
+        </RvmBadge>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/badge.png"
+              Arquivo="referencia-neatlab/Badge.png (recorte)"
+              Descricao="Ponto e pilula nas seis cores, e as duas formas sobre o icone de envelope."
+              Alt="Recorte do kit NEATLAB mostrando badges em ponto e pilula, em seis cores, e sobre um icone" />
+
+@code {
+    private static readonly RvmColor[] Cores =
+        [RvmColor.Primary, RvmColor.Secondary, RvmColor.Error, RvmColor.Warning, RvmColor.Info, RvmColor.Success];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Content", "string?", "—", "Texto dentro da pilula. Ignorado com Dot."),
+        new("Count", "int?", "—", "Contador. Vence Content e respeita Max."),
+        new("Max", "int", "99", "Acima deste valor, mostra Max+."),
+        new("Dot", "bool", "false", "So o ponto, sem texto."),
+        new("Color", "RvmColor", "Primary", "Papel de cor."),
+        new("Label", "string?", "—", "O que o badge significa, para o leitor de tela. Use sempre com Dot."),
+        new("ChildContent", "RenderFragment?", "—", "Conteudo sob o badge (icone, avatar)."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoVariantes = """
+        <RvmBadge Dot="true" Color="RvmColor.Error" Label="Aviso" />
+        <RvmBadge Color="RvmColor.Success" Content="Badge" />
+        """;
+
+    private const string CodigoIcone = """
+        <RvmBadge Count="999" Max="999" Label="999 mensagens nao lidas">
+            <RvmIcon Name="RvmIconName.Mail" />
+        </RvmBadge>
+        """;
+}

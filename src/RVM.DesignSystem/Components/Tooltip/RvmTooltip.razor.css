@@ -1,0 +1,74 @@
+/* CSS isolado do RvmTooltip. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Tooltip.png: balao de 24 px de altura, fundo escuro nos dois temas. */
+
+.com-dica {
+    position: relative;
+    display: inline-flex;
+}
+
+.dica {
+    position: absolute;
+    z-index: 1500;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: 16rem;
+    min-height: 24px;
+    padding: 5px var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-tooltip-background);
+    color: var(--rvm-color-tooltip-text);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-tooltip-size);
+    line-height: var(--rvm-text-tooltip-line);
+    font-weight: var(--rvm-text-tooltip-weight);
+    text-align: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity var(--rvm-transition-fast), visibility var(--rvm-transition-fast);
+}
+
+/* Aparece no hover e no foco — o :focus-within cobre o foco por teclado dentro do conteudo. */
+.com-dica:hover > .dica,
+.com-dica:focus-within > .dica {
+    visibility: visible;
+    opacity: 1;
+}
+
+.com-dica.dispensada > .dica {
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* Posicoes: 8 px de folga ate o conteudo, onde a seta de 5 px cabe. */
+.acima { bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
+.abaixo { top: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
+.esquerda { right: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
+.direita { left: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
+
+/* Ponte invisivel sobre a folga de 8 px: o mouse vai do conteudo ate o balao sem sair do :hover,
+   e a dica continua na tela enquanto e lida (WCAG 1.4.13, "passavel o mouse"). */
+.dica::before {
+    content: "";
+    position: absolute;
+}
+
+.acima::before { top: 100%; left: 0; right: 0; height: 8px; }
+.abaixo::before { bottom: 100%; left: 0; right: 0; height: 8px; }
+.esquerda::before { left: 100%; top: 0; bottom: 0; width: 8px; }
+.direita::before { right: 100%; top: 0; bottom: 0; width: 8px; }
+
+/* A seta: um triangulo de borda na cor do balao. */
+.com-seta::after {
+    content: "";
+    position: absolute;
+    border: 5px solid transparent;
+}
+
+.acima.com-seta::after { top: 100%; left: 50%; margin-left: -5px; border-top-color: var(--rvm-color-tooltip-background); }
+.abaixo.com-seta::after { bottom: 100%; left: 50%; margin-left: -5px; border-bottom-color: var(--rvm-color-tooltip-background); }
+.esquerda.com-seta::after { left: 100%; top: 50%; margin-top: -5px; border-left-color: var(--rvm-color-tooltip-background); }
+.direita.com-seta::after { right: 100%; top: 50%; margin-top: -5px; border-right-color: var(--rvm-color-tooltip-background); }
+
+@media (prefers-reduced-motion: reduce) {
+    .dica { transition: none; }
+}

@@ -1,0 +1,35 @@
+@namespace RVM.DesignSystem.Components.Badge
+
+@* Com ChildContent, o badge fica por cima do canto superior direito do conteudo (o envelope com o
+   "999" do kit). Sem ChildContent, fica solto, no fluxo do texto. *@
+@if (ChildContent is null)
+{
+    <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz">@Marca</span>
+}
+else
+{
+    <span @attributes="AdditionalAttributes" class="@ClassesDaAncora">
+        @ChildContent
+        @Marca
+    </span>
+}
+
+@code {
+    // O numero e o ponto sao desenho: quem le a tela ouve o Label, que diz o que o numero significa
+    // ("3 mensagens nao lidas"). Sem Label, o numero solto e lido como esta.
+    private RenderFragment Marca => @<text>
+        @if (TemRotulo)
+        {
+            <span class="@ClassesDaMarca" aria-hidden="true">@TextoVisivel</span>
+            <span class="so-leitor">@Label</span>
+        }
+        else if (Dot)
+        {
+            <span class="@ClassesDaMarca" aria-hidden="true"></span>
+        }
+        else
+        {
+            <span class="@ClassesDaMarca">@TextoVisivel</span>
+        }
+    </text>;
+}

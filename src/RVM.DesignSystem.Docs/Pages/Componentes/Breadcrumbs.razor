@@ -1,0 +1,62 @@
+@page "/componentes/breadcrumbs"
+
+<PageTitle>RvmBreadcrumbs — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmBreadcrumbs</h1>
+
+<p class="rvm-text-body1 apoio">
+    Trilha de navegacao: onde a pessoa esta e o atalho para cada nivel acima. E um <code>nav</code>
+    com lista ordenada; o ultimo passo e a pagina atual (<code>aria-current="page"</code>) e nao vira link.
+</p>
+
+<BlocoExemplo Titulo="Barra ou seta, com ou sem icone"
+              Descricao="As colunas Text e Icon da pagina do kit. Os separadores sao desenho: o leitor de tela nao os anuncia."
+              Codigo="@CodigoSeparadores">
+    <div class="pilha-exemplos">
+        <RvmBreadcrumbs Items="@SemIcone" AriaLabel="Trilha com barra" />
+        <RvmBreadcrumbs Items="@ComIcone" AriaLabel="Trilha com barra e icone" />
+        <RvmBreadcrumbs Items="@SemIcone" Separator="RvmBreadcrumbSeparator.Chevron" AriaLabel="Trilha com seta" />
+        <RvmBreadcrumbs Items="@ComIcone" Separator="RvmBreadcrumbSeparator.Chevron" AriaLabel="Trilha com seta e icone" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Estados"
+              Descricao="Passo comum no texto secundario, atual no primario, desabilitado esmaecido e sem link."
+              Codigo="@CodigoEstados">
+    <RvmBreadcrumbs Items="@Estados" AriaLabel="Trilha com passo desabilitado" />
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/breadcrumbs.png"
+              Arquivo="referencia-neatlab/Breadcrumbs.png (recorte)"
+              Descricao="Separador barra e seta, com e sem icone, e os estados normal, ativo e desabilitado."
+              Alt="Recorte do kit NEATLAB mostrando trilhas de navegacao com barra e com seta" />
+
+@code {
+    private static readonly RvmBreadcrumbItem[] SemIcone =
+        [new("Inicio", "./"), new("Componentes", "componentes"), new("Breadcrumbs")];
+
+    private static readonly RvmBreadcrumbItem[] ComIcone =
+        [new("Inicio", "./", RvmIconName.Home), new("Componentes", "componentes", RvmIconName.Star), new("Breadcrumbs", Icon: RvmIconName.Star)];
+
+    private static readonly RvmBreadcrumbItem[] Estados =
+        [new("Inicio", "./"), new("Relatorios", Disabled: true), new("Safra 2026")];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items", "IReadOnlyList<RvmBreadcrumbItem>", "[]", "Os passos, do mais alto ao atual. Cada um: Text, Href, Icon, Disabled."),
+        new("Separator", "RvmBreadcrumbSeparator", "Slash", "Slash (/) ou Chevron (seta)."),
+        new("AriaLabel", "string", "\"Trilha de navegacao\"", "Nome da regiao. Troque quando houver mais de uma trilha na pagina."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao nav.")
+    ];
+
+    private const string CodigoSeparadores = """
+        <RvmBreadcrumbs Separator="RvmBreadcrumbSeparator.Chevron"
+                        Items="@([new("Inicio", "/", RvmIconName.Home), new("Componentes", "/componentes"), new("Breadcrumbs")])" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmBreadcrumbs Items="@([new("Inicio", "/"), new("Relatorios", Disabled: true), new("Safra 2026")])" />
+        """;
+}

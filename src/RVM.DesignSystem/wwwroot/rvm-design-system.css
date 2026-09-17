@@ -148,6 +148,10 @@
     /* Polegar do switch: branco nos DOIS temas, como no kit (a pagina Switch escura desenha o polegar
        inativo branco). Fica fora do bloco escuro de proposito. */
     --rvm-color-switch-thumb: #FFFFFF;
+    /* Tooltip: escuro nos DOIS temas — medido #212121 tambem na pagina Tooltip do tema escuro. O texto
+       branco da 16:1. O balao nao precisa de 3:1 contra o fundo: nao e controle, e o texto e que e lido. */
+    --rvm-color-tooltip-background: #212121;
+    --rvm-color-tooltip-text: #FFFFFF;
 
     /* --- Texto ---
        O primario e o valor MEDIDO no swatch do kit. ⚠️ Ele nao segue o modelo base+alpha do

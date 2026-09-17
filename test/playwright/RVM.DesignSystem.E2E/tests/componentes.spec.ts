@@ -18,6 +18,10 @@ const PAGINAS = [
     { rota: '/componentes/checkbox', titulo: 'RvmCheckbox' },
     { rota: '/componentes/radio', titulo: 'RvmRadio' },
     { rota: '/componentes/switch', titulo: 'RvmSwitch' },
+    { rota: '/componentes/badge', titulo: 'RvmBadge' },
+    { rota: '/componentes/breadcrumbs', titulo: 'RvmBreadcrumbs' },
+    { rota: '/componentes/pagination', titulo: 'RvmPagination' },
+    { rota: '/componentes/tooltip', titulo: 'RvmTooltip' },
 ];
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
@@ -212,4 +216,42 @@ test('switch: anuncia o papel de switch e liga pelo espaco', async ({ page }) =>
     await page.keyboard.press('Space');
 
     await expect(chave).toBeChecked();
+});
+
+test('paginacao: clicar e usar as setas move a pagina atual', async ({ page }) => {
+    await page.goto('/componentes/pagination');
+    const paginacao = page.getByRole('navigation', { name: 'Paginacao texto circular' });
+    await expect(paginacao.getByRole('button', { name: 'Pagina 1', exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(paginacao.getByRole('button', { name: 'Pagina anterior' })).toBeDisabled();
+
+    await paginacao.getByRole('button', { name: 'Pagina 2', exact: true }).click();
+    await expect(paginacao.getByRole('button', { name: 'Pagina 2', exact: true })).toHaveAttribute('aria-current', 'page');
+
+    await paginacao.getByRole('button', { name: 'Proxima pagina' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(paginacao.getByRole('button', { name: 'Pagina 3', exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(page.getByText('Pagina 3 de 13.')).toBeVisible();
+});
+
+test('trilha: o ultimo passo e a pagina atual e os anteriores sao links', async ({ page }) => {
+    await page.goto('/componentes/breadcrumbs');
+    const trilha = page.getByRole('navigation', { name: 'Trilha com barra', exact: true });
+
+    await expect(trilha.getByRole('listitem')).toHaveCount(3);
+    await expect(trilha.locator('[aria-current="page"]')).toHaveText('Breadcrumbs');
+    await expect(trilha.getByRole('link', { name: 'Componentes' })).toBeVisible();
+});
+
+test('tooltip: aparece no foco, vira descricao do botao e some com Esc', async ({ page }) => {
+    await page.goto('/componentes/tooltip');
+    const botao = page.getByRole('button', { name: 'Abaixo' });
+    const dica = page.getByRole('tooltip', { name: 'Dica abaixo' });
+    await expect(botao).toHaveAccessibleDescription('Dica abaixo');
+    await expect(dica).toBeHidden();
+
+    await botao.focus();
+    await expect(dica).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(dica).toBeHidden();
 });

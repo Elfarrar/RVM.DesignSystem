@@ -1,0 +1,13 @@
+@namespace RVM.DesignSystem.Components.Tooltip
+
+@* So CSS mostra e esconde: a dica aparece no :hover e no :focus-within, sem JS e sem esperar o
+   Blazor ficar interativo. O Esc (WCAG 1.4.13, "dispensavel") e o unico pedaco que precisa de
+   evento — sem interatividade, a dica ainda some ao tirar o mouse ou o foco.
+
+   A dica NAO e o nome acessivel: o conteudo precisa do proprio nome, e o tooltip entra como
+   descricao pelo aria-describedby. O id chega ao conteudo pelo contexto do ChildContent. *@
+<span @attributes="AdditionalAttributes" class="@ClassesDaRaiz"
+      @onkeydown="AoTeclar" @onmouseleave="Rearmar" @onfocusout="Rearmar">
+    @ChildContent?.Invoke(IdDaDica)
+    <span id="@IdDaDica" role="tooltip" class="@ClassesDaDica">@Text</span>
+</span>
