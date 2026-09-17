@@ -3,7 +3,7 @@ id: DSGN-009
 titulo: Paginas de exemplo — dashboard, CMS, CRM, ERP e planner
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: concluido
 criada: 2026-09-17
 ---
 
@@ -47,3 +47,4 @@ ficticios e interacao na memoria — mostram como os 35 componentes se combinam 
   periodo do dashboard, publicar no CMS, mover e registrar no CRM, faturar e emitir pedido em 3 etapas
   no ERP, criar tarefa com relogio e concluir no planner)
 - Fotos: `ex-<tela>-claro/escuro.png` (scratchpad de 17/09)
+- Dev: PR #38. Producao: sinal verde do Rafael em 17/09 ("pode promover e deployar")
