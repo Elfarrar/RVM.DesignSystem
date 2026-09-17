@@ -3,7 +3,7 @@ id: DSGN-012
 titulo: Documentar animacao e exportar nas cinco paginas de grafico que ficaram de fora
 repo: RVM.DesignSystem
 tipo: docs
-status: em andamento
+status: concluida
 criada: 2026-09-17
 ---
 
@@ -26,6 +26,12 @@ Pedido do Rafael em 17/09, depois de perguntar o que estava pendente.
 Essa ultima linha existe por causa do review da `DSGN-011`: a rosca com `Zoomable` chegou a **anunciar
 teclas que nao funcionam** para o leitor de tela. O codigo ja foi corrigido; a documentacao fechava o
 mesmo buraco pelo lado de quem le.
+
+## Entregue em 17/09/2026
+
+PR #54 no dev: as cinco paginas com as linhas novas, 591 testes unitarios e 229 E2E verdes, fotos das
+tabelas nos dois temas em `docs/fotos/dsgn-012`. **Producao continua na `1.2.0`** — como e so texto do
+site, a promocao pode ir junto da proxima entrega.
 
 ## Fora
 
