@@ -15,9 +15,9 @@ concurrency:
 
 env:
   # Prefixo das alphas da fase atual. O estavel vem da tag, nao daqui.
-  # Depois do 1.0.0 as alphas sao 1.1.0-alpha.N: com 0.1.0-alpha.N elas ordenariam ANTES do estavel e o
-  # consumidor que pede a mais nova pegaria a 1.0.0 (DSGN-007).
-  VERSION_PREFIX: '1.1.0'
+  # A cada estavel publicado, este prefixo sobe uma minor: alpha com o MESMO numero do estavel ordena ANTES
+  # dele, e quem pede a mais nova pegaria o estavel. 1.0.0 -> 1.1.0 (DSGN-007); 1.1.0 -> 1.2.0 (DSGN-010).
+  VERSION_PREFIX: '1.2.0'
 
 jobs:
   publicar:
