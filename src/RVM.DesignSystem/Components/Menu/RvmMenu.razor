@@ -1,0 +1,43 @@
+@namespace RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Icons
+
+@* O padrao "Menu Button" do APG: o botao anuncia que abre um menu (aria-haspopup, aria-expanded),
+   o menu recebe o foco no primeiro item, setas andam entre os itens, Esc fecha e devolve o foco ao
+   botao. Os itens sao <button role="menuitem">: Enter e Espaco ja os acionam sem codigo.
+   Fechado, o menu nao existe no DOM — o estado inicial nao depende de JS nenhum. *@
+<div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
+    <RvmButton @ref="_botao"
+               @attributes="AtributosDoBotao"
+               id="@IdDoBotao"
+               Variant="ButtonVariant"
+               Color="ButtonColor"
+               Size="Size"
+               StartIcon="Icon"
+               EndIcon="RvmIconName.ChevronDown"
+               Disabled="Disabled"
+               aria-haspopup="menu"
+               aria-expanded="@(_aberto ? "true" : "false")"
+               aria-controls="@(_aberto ? IdDoMenu : null)"
+               OnClick="AoClicarNoBotaoAsync"
+               @onkeydown="AoTeclarNoBotaoAsync">
+        @Label
+    </RvmButton>
+
+    @if (_aberto)
+    {
+        @* Clicar fora fecha: uma camada transparente por baixo do menu, sem ouvir o documento por JS. *@
+        <div class="fundo" @onclick="() => FecharAsync(devolverFoco: false)"></div>
+
+        <ul @ref="_lista"
+            id="@IdDoMenu"
+            role="menu"
+            aria-labelledby="@IdDoBotao"
+            class="@(AlignEnd ? "lista fim" : "lista")"
+            @onkeydown="AoTeclarNoMenuAsync">
+            <CascadingValue Value="this" IsFixed="true">
+                @ChildContent
+            </CascadingValue>
+        </ul>
+    }
+</div>

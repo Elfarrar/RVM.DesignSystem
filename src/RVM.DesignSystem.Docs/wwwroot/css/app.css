@@ -392,3 +392,14 @@ code {
     gap: var(--rvm-space-8);
     padding-top: var(--rvm-space-2);
 }
+
+/* O menu aberto precisa de altura para aparecer inteiro dentro do bloco na foto e no axe. */
+.exemplo-menus {
+    justify-content: space-between;
+    min-height: 18rem;
+    align-items: flex-start;
+}
+
+.largura-cheia {
+    align-items: stretch;
+}

@@ -1,0 +1,327 @@
+/* CSS isolado do RvmSelect e do RvmMultiSelect. So custom properties — hex literal aqui quebra o
+   tema escuro.
+   MEDIDO no referencia-neatlab/Select.png: 56 px (padrao) e 40 px (pequeno), as mesmas medidas do
+   campo de texto. A caixa repete o CSS do RvmTextField com duas diferencas: "tem valor" vem da
+   classe `rotulo-fixo` (o combobox nao e um <input> com placeholder), e o estado ativo vale tambem
+   com a lista aberta (`aberto`), quando o foco pode estar na busca. */
+
+.campo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family);
+    min-width: 0;
+}
+
+.caixa {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    transition: border-color var(--rvm-transition-fast), background-color var(--rvm-transition-fast);
+}
+
+.entrada {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+    box-sizing: border-box;
+    padding-inline-end: var(--rvm-space-6);
+    outline: none;
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-input-size);
+    line-height: var(--rvm-text-input-line);
+    font-weight: var(--rvm-text-input-weight);
+    cursor: pointer;
+}
+
+.valor {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rotulo {
+    position: absolute;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-input-size);
+    line-height: 1;
+    white-space: nowrap;
+    transform-origin: left top;
+    cursor: pointer;
+    transition: transform var(--rvm-transition-fast), color var(--rvm-transition-fast), top var(--rvm-transition-fast);
+}
+
+.obrigatorio {
+    margin-inline-start: 2px;
+}
+
+.seta {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    display: inline-flex;
+    transform: translateY(-50%);
+    color: var(--rvm-color-text-secondary);
+    pointer-events: none;
+    transition: transform var(--rvm-transition-fast);
+}
+
+.aberto .seta {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* --- Contorno (Outlined) --- */
+.contorno .caixa {
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-sm);
+    padding: 0 13px;
+}
+
+.contorno.medio .caixa { min-height: 56px; }
+.contorno.pequeno .caixa { min-height: 40px; }
+
+.contorno .rotulo {
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 4px;
+    margin-inline-start: -4px;
+}
+
+/* Flutuando: sobe para cima da borda com o retalho de fundo, como o campo de texto. */
+.contorno .entrada:focus ~ .rotulo,
+.contorno.rotulo-fixo .rotulo {
+    top: 0;
+    transform: translateY(-50%) scale(0.75);
+    background-color: var(--rvm-textfield-notch-background, var(--rvm-color-background-paper));
+}
+
+.contorno .caixa:hover {
+    border-color: var(--rvm-color-text-primary);
+}
+
+/* Ativo: 2 px no token do anel — a borda E o indicador de foco do combobox. */
+.contorno .caixa:focus-within,
+.contorno.aberto .caixa {
+    border-width: 2px;
+    border-color: var(--rvm-focus-ring-color);
+    padding: 0 12px;
+}
+
+.contorno .caixa:focus-within .rotulo,
+.contorno.aberto .rotulo {
+    left: 12px;
+}
+
+/* --- Preenchido (Filled) e Padrao (Standard): so a linha de baixo --- */
+.preenchido .caixa,
+.padrao .caixa {
+    border-bottom: 1px solid var(--rvm-color-input-border);
+}
+
+.preenchido .caixa {
+    background-color: var(--rvm-color-action-hover);
+    border-radius: var(--rvm-radius-sm) var(--rvm-radius-sm) 0 0;
+    padding: 0 12px;
+}
+
+.preenchido.medio .caixa { min-height: 56px; }
+.preenchido.pequeno .caixa { min-height: 48px; }
+
+.padrao.medio .caixa { min-height: 48px; }
+.padrao.pequeno .caixa { min-height: 40px; }
+
+.preenchido .entrada,
+.padrao .entrada {
+    align-items: flex-end;
+    padding-bottom: 6px;
+}
+
+.preenchido .rotulo { left: 12px; top: 50%; transform: translateY(-50%); }
+.padrao .rotulo { left: 0; top: 60%; transform: translateY(-50%); }
+
+.preenchido .entrada:focus ~ .rotulo,
+.preenchido.rotulo-fixo .rotulo {
+    top: 8px;
+    transform: scale(0.75);
+}
+
+.padrao .entrada:focus ~ .rotulo,
+.padrao.rotulo-fixo .rotulo {
+    top: 2px;
+    transform: scale(0.75);
+}
+
+.preenchido .caixa:focus-within,
+.padrao .caixa:focus-within,
+.preenchido.aberto .caixa,
+.padrao.aberto .caixa {
+    border-bottom-width: 2px;
+    border-bottom-color: var(--rvm-focus-ring-color);
+}
+
+.preenchido .caixa:focus-within .entrada,
+.padrao .caixa:focus-within .entrada,
+.preenchido.aberto .entrada,
+.padrao.aberto .entrada {
+    padding-bottom: 5px;
+}
+
+/* --- Rotulo ativo: -text, e nao -main --- */
+.caixa:focus-within .rotulo,
+.aberto .rotulo {
+    color: var(--rvm-color-primary-text);
+}
+
+/* --- Apoio --- */
+.apoio {
+    color: var(--rvm-color-text-secondary);
+    padding: 0 14px;
+}
+
+.padrao .apoio {
+    padding: 0;
+}
+
+/* --- Erro --- */
+.erro .caixa,
+.erro .caixa:hover,
+.erro .caixa:focus-within,
+.erro.aberto .caixa {
+    border-color: var(--rvm-color-error-main);
+}
+
+.erro .rotulo,
+.erro .caixa:focus-within .rotulo,
+.erro.aberto .rotulo,
+.erro .apoio {
+    color: var(--rvm-color-error-text);
+}
+
+/* --- Desabilitado --- */
+.desabilitado .caixa,
+.desabilitado .caixa:hover {
+    border-color: var(--rvm-color-action-disabled);
+}
+
+.desabilitado .entrada,
+.desabilitado .rotulo,
+.desabilitado .seta,
+.desabilitado .apoio {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* --- A lista --- */
+.fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 1299;
+}
+
+.popup {
+    position: absolute;
+    top: calc(100% + var(--rvm-space-1));
+    left: 0;
+    right: 0;
+    z-index: 1300;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: var(--rvm-space-2) 0;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-3);
+}
+
+.busca {
+    margin: 0 var(--rvm-space-2) var(--rvm-space-2);
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-sm);
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.busca::placeholder {
+    color: var(--rvm-color-text-secondary);
+    opacity: 1;
+}
+
+.busca:focus {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: -1px;
+}
+
+.vazio {
+    padding: var(--rvm-space-2) var(--rvm-space-4);
+    color: var(--rvm-color-text-secondary);
+}
+
+.opcoes {
+    max-height: 264px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+/* Mesmo item do RvmMenu: 36 px, hover no action-hover. */
+.opcao {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    min-height: 36px;
+    padding: 0 var(--rvm-space-4);
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    cursor: pointer;
+}
+
+.opcao:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.opcao.selecionada {
+    background-color: var(--rvm-color-action-selected);
+}
+
+/* A opcao ativa nao tem foco de verdade (o foco fica no combobox ou na busca): o anel por dentro e o
+   que mostra onde o teclado esta, com 3:1 contra a superficie. */
+.opcao.ativa {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
+
+.opcao.desabilitada {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* A caixinha do multiplo: a mesma do RvmCheckbox (borda no token de campo, marcada no -text). */
+.marca {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--rvm-color-input-border);
+    border-radius: 2px;
+}
+
+.selecionada .marca {
+    border-color: var(--rvm-color-primary-text);
+    background-color: var(--rvm-color-primary-text);
+    color: var(--rvm-color-background-paper);
+}

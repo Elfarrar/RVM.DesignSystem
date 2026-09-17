@@ -1,0 +1,41 @@
+@namespace RVM.DesignSystem.Components.Tabs
+@using RVM.DesignSystem.Components.Icon
+
+@* O padrao "Tabs" do APG: role=tablist com role=tab, so a aba ativa na ordem de tabulacao (tabindex
+   movel), setas trocam de aba, Home e End vao as pontas. A selecao segue o foco — a aba muda ao
+   chegar nela, que e o comportamento esperado quando trocar de painel e barato. *@
+<div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
+    <div @ref="_lista" @attributes="AtributosDaLista" role="tablist" class="lista"
+         aria-label="@AriaLabel"
+         aria-orientation="@(Orientation == RvmOrientation.Vertical ? "vertical" : "horizontal")">
+        @for (var i = 0; i < _abas.Count; i++)
+        {
+            var aba = _abas[i];
+            var indice = i;
+            var ativa = indice == IndiceAtivo;
+            <button @ref="aba.Botao"
+                    type="button"
+                    role="tab"
+                    id="@IdDaAba(aba)"
+                    class="@(ativa ? "aba ativa" : "aba")"
+                    aria-selected="@(ativa ? "true" : "false")"
+                    aria-controls="@(ativa ? IdDoPainel(aba) : null)"
+                    tabindex="@(ativa ? "0" : "-1")"
+                    disabled="@aba.Disabled"
+                    @onclick="() => AtivarAsync(indice, focar: false)"
+                    @onkeydown="AoTeclarAsync">
+                @if (aba.Icon is { } icone)
+                {
+                    <RvmIcon Name="icone" />
+                }
+                <span>@aba.Title</span>
+            </button>
+        }
+    </div>
+
+    <div class="paineis">
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+/* CSS isolado do RvmMenu. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Menu.png: superficie no fundo "paper", 8 px de recuo vertical,
+   itens de 36 px (no RvmMenuItem). */
+
+.menu {
+    position: relative;
+    display: inline-block;
+}
+
+.fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 1299;
+}
+
+.lista {
+    position: absolute;
+    top: calc(100% + var(--rvm-space-1));
+    left: 0;
+    z-index: 1300;
+    box-sizing: border-box;
+    min-width: max(100%, 140px);
+    max-height: 60vh;
+    margin: 0;
+    padding: var(--rvm-space-2) 0;
+    overflow-y: auto;
+    list-style: none;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-3);
+}
+
+.fim {
+    left: auto;
+    right: 0;
+}
