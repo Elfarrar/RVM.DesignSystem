@@ -13,7 +13,7 @@
 @code {
     private RenderFragment Figura => @<figure @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
         <div @ref="_area" class="rvm-grafico-area" style="@($"height: {Height}px")">
-            <svg class="rvm-grafico-svg" width="100%" height="@Height" viewBox="@($"0 0 {N(Largura)} {Height}")"
+            <svg @ref="_svg" class="rvm-grafico-svg" width="100%" height="@Height" viewBox="@($"0 0 {N(Largura)} {Height}")"
                  preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
                 @Desenho
             </svg>
@@ -23,15 +23,25 @@
                 <div class="rvm-grafico-centro" aria-hidden="true">@Centro</div>
             }
 
+            @if (EstiloDaFaixa is { } faixa)
+            {
+                <div class="rvm-grafico-faixa-marcada" style="@faixa" aria-hidden="true"></div>
+            }
+
             <div @ref="_camada"
-                 class="rvm-grafico-camada"
+                 class="@(Aproximado ? "rvm-grafico-camada rvm-grafico-arrastavel" : "rvm-grafico-camada")"
                  tabindex="0"
                  role="group"
                  aria-roledescription="grafico"
                  aria-label="@AriaLabel"
                  aria-describedby="@($"{IdBase}-instrucao")"
                  @onpointermove="AoMoverPonteiro"
+                 @onpointerdown="AoApertarPonteiro"
+                 @onpointerup="AoSoltarPonteiro"
+                 @onpointercancel="AoSoltarPonteiro"
+                 @onpointerdown:preventDefault="SelecaoLigada || ZoomLigado"
                  @onpointerleave="AoSairPonteiro"
+                 @ondblclick="ResetZoom"
                  @onkeydown="AoTeclar"
                  @onblur="AoSairPonteiro"></div>
 
@@ -54,8 +64,26 @@
             }
         </div>
 
-        <span id="@($"{IdBase}-instrucao")" class="rvm-so-leitor">Use as setas para ler os valores, um ponto por vez.</span>
+        <span id="@($"{IdBase}-instrucao")" class="rvm-so-leitor">
+            Use as setas para ler os valores, um ponto por vez.
+            @if (ZoomLigado)
+            {
+                @: Mais e menos aproximam (com Shift, o eixo vertical), Ctrl com as setas desloca e zero volta ao grafico inteiro.
+            }
+            @if (SelecaoLigada)
+            {
+                @: Shift com as setas marca uma faixa, Enter marca so o ponto atual e Esc limpa.
+            }
+        </span>
         <span class="rvm-so-leitor" aria-live="polite">@TextoDoAtivo</span>
+        @if (ZoomLigado)
+        {
+            <span class="rvm-so-leitor" aria-live="polite">@AvisoDoZoom</span>
+        }
+        @if (SelecaoLigada)
+        {
+            <span class="rvm-so-leitor" aria-live="polite">@AvisoDaFaixa</span>
+        }
 
         @if (ShowLegend && Legenda.Count > 0)
         {

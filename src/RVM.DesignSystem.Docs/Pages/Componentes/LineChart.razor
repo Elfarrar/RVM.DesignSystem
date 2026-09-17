@@ -19,14 +19,24 @@
     </RvmLineChart>
 </BlocoExemplo>
 
-<BlocoExemplo Titulo="Varias series com pontos"
-              Descricao="Chuva mensal em tres fazendas, em mm."
+<BlocoExemplo Titulo="Varias series com pontos, aproximavel"
+              Descricao="Chuva mensal em tres fazendas, em mm. Com Zoomable, a roda do mouse aproxima o eixo dos meses (Shift para o dos milimetros), o arrasto desloca e o duplo clique volta; pelo teclado, + - 0 e Ctrl com as setas."
               Codigo="@CodigoSeries">
-    <RvmLineChart Items="Chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true"
+    <RvmLineChart Items="Chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true" Zoomable="true"
                   ValueFormat="@(v => $"{RvmChartFormat.Number(v)} mm")">
         <RvmChartSeries Name="Boa Vista" Value="c => c.BoaVista" />
         <RvmChartSeries Name="Santa Luzia" Value="c => c.SantaLuzia" Color="RvmColor.Warning" />
         <RvmChartSeries Name="Terra Nova" Value="c => c.TerraNova" Color="RvmColor.Info" />
+    </RvmLineChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Eixo duplo"
+              Descricao="Receita em reais a esquerda e margem em porcento a direita: cada serie na escala do seu eixo, e a legenda diz qual."
+              Codigo="@CodigoEixoDuplo">
+    <RvmLineChart Items="Resultados" Label="r => r.Mes" AriaLabel="Receita e margem por mes" ShowPoints="true"
+                  SecondaryValueFormat="@(v => RvmChartFormat.Number(v) + "%")">
+        <RvmChartSeries Name="Receita" Value="r => r.Receita" />
+        <RvmChartSeries Name="Margem" Value="r => r.Margem" Color="RvmColor.Warning" Axis="RvmChartAxis.Secondary" />
     </RvmLineChart>
 </BlocoExemplo>
 
@@ -47,6 +57,12 @@
         ("Jan", 262, 238, 250), ("Fev", 210, 198, 186), ("Mar", 170, 150, 190)
     ];
 
+    private static readonly (string Mes, double Receita, double Margem)[] Resultados =
+    [
+        ("Jan", 128_000, 11.5), ("Fev", 164_000, 14.2), ("Mar", 142_000, 9.8),
+        ("Abr", 186_000, 16.4), ("Mai", 172_000, 15.1), ("Jun", 204_000, 18.7)
+    ];
+
     private static readonly TabelaParametros.Parametro[] Parametros =
     [
         new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
@@ -54,7 +70,13 @@
         new("ShowPoints", "bool", "false", "Marca todos os pontos; sem isso, so os da categoria ativa."),
         new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
         new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie.")
+        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
+        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita (nao herda o ValueFormat, que descreve a unidade da esquerda)."),
+        new("Animated", "bool", "true", "Anima o desenho; silenciada sozinha em \"reduzir movimento\"."),
+        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV ou PDF."),
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie."),
+        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida: o da esquerda ou o da direita, com escala propria.")
     ];
 
     private const string CodigoSuave = """
@@ -63,8 +85,16 @@
         </RvmLineChart>
         """;
 
+    private const string CodigoEixoDuplo = """
+        <RvmLineChart Items="resultados" Label="r => r.Mes" AriaLabel="Receita e margem por mes"
+                      SecondaryValueFormat="@(v => v + "%")">
+            <RvmChartSeries Name="Receita" Value="r => r.Receita" />
+            <RvmChartSeries Name="Margem" Value="r => r.Margem" Axis="RvmChartAxis.Secondary" />
+        </RvmLineChart>
+        """;
+
     private const string CodigoSeries = """
-        <RvmLineChart Items="chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true">
+        <RvmLineChart Items="chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true" Zoomable="true">
             <RvmChartSeries Name="Boa Vista" Value="c => c.BoaVista" />
             <RvmChartSeries Name="Santa Luzia" Value="c => c.SantaLuzia" Color="RvmColor.Warning" />
         </RvmLineChart>

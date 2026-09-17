@@ -22,7 +22,7 @@
 
     internal sealed record Ponto(int Serie, TItem Item, double X, double Y);
 
-    private string FormatarX(double valor) => (XFormat ?? RvmChartFormat.Compact)(valor);
+    private string FormatarX(double valor, Func<double, string>? padrao = null) => (XFormat ?? padrao ?? RvmChartFormat.Compact)(valor);
 
     private List<Ponto> Pontos => Memo<List<Ponto>>("Pontos", () => [.. Series.SelectMany((s, i) => Dados.Select(item => new Ponto(i, item, s.X?.Invoke(item) ?? 0, s.ValorDe(item))))
                      .OrderBy(p => p.X).ThenBy(p => p.Y)]);
@@ -45,9 +45,30 @@
 
     private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
 
-    private double PX(double x) => EscalaX.Posicao(x, Esquerda, Esquerda + LarguraDoPlot);
+    // Os dois eixos sao numericos: o zoom recorta cada um na sua fracao.
+    private Escala EscalaXVisivel => EscalaX.Recortada(JanelaX.Inicio, JanelaX.Fim);
 
-    private double PY(double y) => EscalaY.Posicao(y, MargemTopo + AlturaDoPlot, MargemTopo);
+    private Escala EscalaYVisivel => NaJanela(EscalaY);
+
+    private double PX(double x) => EscalaXVisivel.Posicao(x, Esquerda, Esquerda + LarguraDoPlot);
+
+    private double PY(double y) => EscalaYVisivel.Posicao(y, MargemTopo + AlturaDoPlot, MargemTopo);
+
+    internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
+        => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
+
+    internal override (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim)
+    {
+        var pontos = Pontos;
+        if (pontos.Count == 0)
+        {
+            return null;
+        }
+
+        var i = Math.Clamp(inicio, 0, pontos.Count - 1);
+        var f = Math.Clamp(fim, 0, pontos.Count - 1);
+        return (PX(pontos[i].X) - PointRadius, PX(pontos[f].X) + PointRadius);
+    }
 
     internal override RenderFragment Desenho => @<g>
         @{
@@ -124,7 +145,7 @@
         return melhor;
     }
 
-    internal override TabelaDeDados Tabela
+    internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
         => new([Label is null ? "Serie" : "Item", XLabel, YLabel],
-               [.. Pontos.Select((p, i) => (IReadOnlyList<string>)[TituloDoPonto(i), FormatarX(p.X), Formatar(p.Y)])]);
+               [.. Pontos.Select((p, i) => (IReadOnlyList<string>)[TituloDoPonto(i), FormatarX(p.X, formatar), formatar(p.Y)])]);
 }

@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 
 // Graficos (DSGN-010): o SVG e so desenho; a prova e o que o leitor de tela e o teclado recebem.
@@ -80,4 +81,134 @@ test('rosca, radar e area anunciam o ponto ativo', async ({ page }) => {
     await page.getByRole('group', { name: 'Vendas acumuladas no ano' }).focus();
     await page.keyboard.press('ArrowLeft');
     await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Jul' })).toHaveText('Jul: Vendas R$ 42,6 mil');
+});
+
+// Exportar (DSGN-011): o arquivo so existe depois de passar pelo navegador — canvas, Blob e download.
+// Nenhum teste unitario alcanca isso; aqui a prova e o arquivo que cai no disco.
+test('exportar entrega os quatro arquivos do grafico', async ({ page }) => {
+    await page.goto('/componentes/column-chart');
+    await expect(page.getByRole('heading', { name: 'RvmColumnChart', level: 1 })).toBeVisible();
+
+    const baixar = async (item: string) => {
+        await page.getByRole('button', { name: 'Exportar' }).click();
+        const espera = page.waitForEvent('download');
+        await page.getByRole('menuitem', { name: item }).click();
+        const arquivo = await espera;
+        const caminho = await arquivo.path();
+        return { nome: arquivo.suggestedFilename(), bytes: readFileSync(caminho!) };
+    };
+
+    const csv = await baixar('Dados CSV');
+    expect(csv.nome).toBe('receita-e-despesa-por-ano.csv');
+    expect(csv.bytes.toString('utf8')).toContain('Categoria;Receita;Despesa');
+    expect(csv.bytes.toString('utf8')).toContain('2022;45.000;26.000');
+
+    const svg = await baixar('Vetor SVG');
+    expect(svg.nome).toBe('receita-e-despesa-por-ano.svg');
+    // Cores embutidas: um SVG salvo sem elas abre sem tema em qualquer editor.
+    expect(svg.bytes.toString('utf8')).toMatch(/<svg[^>]+xmlns="http:\/\/www.w3.org\/2000\/svg"/);
+    expect(svg.bytes.toString('utf8')).toContain('style="fill:rgb(');
+
+    const png = await baixar('Imagem PNG');
+    expect(png.nome).toBe('receita-e-despesa-por-ano.png');
+    expect(png.bytes.subarray(0, 8)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+
+    const pdf = await baixar('PDF');
+    expect(pdf.nome).toBe('receita-e-despesa-por-ano.pdf');
+    expect(pdf.bytes.subarray(0, 8).toString('latin1')).toBe('%PDF-1.4');
+    expect(pdf.bytes.toString('latin1')).toContain('/Filter /DCTDecode');
+    expect(pdf.bytes.toString('latin1')).toContain('%%EOF');
+
+    await expect(page.getByRole('status').filter({ hasText: 'PDF' })).toBeVisible();
+});
+
+// Eixo duplo (DSGN-011): duas unidades no mesmo grafico sem que a serie pequena vire um risco no chao.
+test('eixo duplo: escala propria a direita, e a legenda diz qual serie le onde', async ({ page }) => {
+    await page.goto('/componentes/line-chart');
+    const figura = page.locator('figure.rvm-grafico').filter({ hasText: 'eixo direito' });
+
+    await expect(figura.getByText('eixo esquerdo')).toBeVisible();
+    const rotulosEmPorcento = figura.locator('text', { hasText: /^\d+(,\d+)?%$/ });
+    await expect(rotulosEmPorcento.first()).toBeVisible();
+
+    // Os rotulos em porcento ficam a direita dos rotulos em reais (x no sistema do proprio SVG).
+    const direita = Number(await rotulosEmPorcento.first().getAttribute('x'));
+    const esquerda = Number(await figura.locator('text', { hasText: /mil$/ }).first().getAttribute('x'));
+    expect(esquerda).toBeLessThan(direita);
+
+    // A tabela do leitor de tela diz de que eixo o numero veio.
+    await expect(figura.getByRole('columnheader', { name: 'Margem (eixo direito)' })).toBeAttached();
+
+    await page.getByRole('group', { name: 'Receita e margem por mes' }).focus();
+    await page.keyboard.press('Home');
+    await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Margem' })).toHaveText('Jan: Receita 128 mil; Margem 11,5%');
+});
+
+// Zoom e arrastar (DSGN-011): a roda so cancela a rolagem da pagina num ouvinte nao passivo, coisa que
+// nenhum teste unitario alcanca. Aqui a prova e o desenho mudar e a pagina ficar parada.
+test('zoom: roda aproxima sem rolar a pagina, teclado tambem, e o duplo clique volta', async ({ page }) => {
+    await page.goto('/componentes/line-chart');
+    const grafico = page.getByRole('group', { name: 'Chuva mensal por fazenda' });
+    const figura = page.locator('figure.rvm-grafico').filter({ hasText: 'Boa Vista' });
+    const meses = () => figura.locator('text').filter({ hasText: /^[A-Z][a-z]{2}$/ }).count();
+
+    await expect(grafico).toBeVisible();
+    await expect.poll(meses).toBeGreaterThan(0);
+    const inteiro = await meses();
+    const rolagem = await page.evaluate(() => window.scrollY);
+    await grafico.hover();
+    await page.mouse.wheel(0, -200);
+
+    await expect.poll(meses).toBeLessThan(inteiro);
+    expect(await page.evaluate(() => window.scrollY)).toBe(rolagem);
+    await expect(figura.locator('[aria-live=polite]').filter({ hasText: 'Mostrando de' })).toBeVisible();
+
+    // Duplo clique volta ao grafico inteiro.
+    await grafico.dblclick();
+    await expect.poll(meses).toBe(inteiro);
+
+    // E o mesmo pelo teclado, sem mouse nenhum.
+    await grafico.focus();
+    await page.keyboard.press('+');
+    await expect.poll(meses).toBeLessThan(inteiro);
+    await page.keyboard.press('0');
+    await expect.poll(meses).toBe(inteiro);
+    await expect(figura.locator('[aria-live=polite]').filter({ hasText: 'Grafico inteiro a vista' })).toBeVisible();
+});
+
+// Selecao de faixa (DSGN-011): arrastar sobre o grafico filtra a tabela ao lado — e o mesmo existe pelo
+// teclado, que e onde a maioria das bibliotecas de grafico deixa o usuario de fora.
+test('selecao: arrastar no grafico filtra a tabela, e o teclado faz o mesmo', async ({ page }) => {
+    await page.goto('/exemplos/dashboard');
+    const grafico = page.getByRole('group', { name: 'Receita e despesa por mes' });
+    const fechamento = page.getByRole('table', { name: /Fechamento/ });
+    await expect(grafico).toBeVisible();
+    await expect(fechamento.getByRole('row')).toHaveCount(8); // cabecalho + 7 meses
+
+    // O mouse do Playwright nao rola a pagina: o grafico precisa estar na viewport antes do arrasto.
+    await grafico.scrollIntoViewIfNeeded();
+    const caixa = (await grafico.boundingBox())!;
+    await page.mouse.move(caixa.x + caixa.width * 0.35, caixa.y + caixa.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(caixa.x + caixa.width * 0.65, caixa.y + caixa.height / 2, { steps: 8 });
+    await page.mouse.up();
+
+    // Quantos meses caem na faixa depende da largura da tela; o que importa e a tabela encolher.
+    await expect.poll(() => fechamento.getByRole('row').count()).toBeLessThan(8);
+    await expect(page.locator('.rvm-grafico-faixa-marcada')).toBeVisible();
+    await expect(page.getByText(/Fechamento de \w+ a \w+/)).toBeVisible();
+
+    await page.getByRole('button', { name: 'Limpar filtro' }).click();
+    await expect(fechamento.getByRole('row')).toHaveCount(8);
+
+    // Pelo teclado: Shift com as setas marca, e o leitor de tela ouve o que ficou selecionado.
+    await grafico.focus();
+    await page.keyboard.press('Home');
+    await page.keyboard.press('Shift+ArrowRight');
+    await expect(fechamento.getByRole('row')).toHaveCount(3);
+    await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Selecionado de' }))
+        .toHaveText(/Selecionado de \w+ a \w+: 2 de 7\./);
+
+    await page.keyboard.press('Escape');
+    await expect(fechamento.getByRole('row')).toHaveCount(8);
 });

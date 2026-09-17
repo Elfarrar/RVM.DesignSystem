@@ -17,7 +17,7 @@
 <BlocoExemplo Titulo="Duas variaveis"
               Descricao="Adubacao (kg/ha) contra produtividade (sc/ha), por talhao, em duas safras."
               Codigo="@CodigoSeries">
-    <RvmScatterChart Items="Talhoes" Label="t => t.Nome" AriaLabel="Adubacao e produtividade por talhao" Height="320"
+    <RvmScatterChart Items="Talhoes" Label="t => t.Nome" AriaLabel="Adubacao e produtividade por talhao" Height="320" Zoomable="true"
                      XLabel="Adubacao" YLabel="Produtividade"
                      XFormat="@(v => $"{RvmChartFormat.Number(v)} kg/ha")" ValueFormat="@(v => $"{RvmChartFormat.Number(v)} sc/ha")">
         <RvmChartSeries Name="Safra 2025" X="t => t.Adubo2025" Value="t => t.Produtividade2025" />
@@ -38,6 +38,8 @@
     private static readonly TabelaParametros.Parametro[] Parametros =
     [
         new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, nome de cada ponto e nome do grafico (obrigatorio)."),
+        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
         new("XLabel / YLabel", "string", "\"X\" / \"Y\"", "Nomes dos eixos na dica e na tabela de dados."),
         new("XFormat / ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato de X e de Y."),
         new("PointRadius", "int", "5", "Raio de cada ponto, em px."),

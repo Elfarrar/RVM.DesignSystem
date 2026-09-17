@@ -25,10 +25,32 @@
     overflow: visible;
 }
 
+/* A faixa marcada por arrasto: veu da cor primaria, sob a camada que recebe os eventos. */
+.rvm-grafico-faixa-marcada {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: color-mix(in srgb, var(--rvm-color-primary-text) 12%, transparent);
+    border-inline: 1px solid var(--rvm-color-primary-text);
+    pointer-events: none;
+}
+
 .rvm-grafico-camada {
     position: absolute;
     inset: 0;
     border-radius: var(--rvm-radius-sm);
+    /* Arrastar para deslocar ou marcar nao pode virar selecao de texto da pagina. */
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Aproximado, o grafico pode ser arrastado: a mao aberta e a unica pista visual de que da. */
+.rvm-grafico-arrastavel {
+    cursor: grab;
+}
+
+.rvm-grafico-arrastavel:active {
+    cursor: grabbing;
 }
 
 .rvm-grafico-camada:focus-visible {
@@ -236,9 +258,38 @@
     border: 0;
 }
 
+/* Animacao: so com Animated e so para quem nao pediu "reduzir movimento". A linha se desenha pelo traco
+   (os paths levam pathLength="1", entao 1 = o comprimento inteiro); o resto aparece. */
 @media (prefers-reduced-motion: no-preference) {
     .rvm-grafico ::deep .rvm-grafico-barra,
     .rvm-grafico ::deep .rvm-grafico-fatia {
         transition: opacity var(--rvm-transition-fast);
+    }
+
+    .rvm-animado ::deep .rvm-grafico-barra {
+        transition: x var(--rvm-transition-medium), y var(--rvm-transition-medium),
+                    width var(--rvm-transition-medium), height var(--rvm-transition-medium),
+                    opacity var(--rvm-transition-fast);
+    }
+
+    .rvm-animado ::deep .rvm-grafico-linha {
+        animation: rvm-grafico-desenhar 600ms ease-out both;
+    }
+
+    .rvm-animado ::deep .rvm-grafico-preenchimento,
+    .rvm-animado ::deep .rvm-grafico-fatia,
+    .rvm-animado ::deep .rvm-grafico-poligono,
+    .rvm-animado ::deep .rvm-grafico-ponto-cheio {
+        animation: rvm-grafico-aparecer 450ms ease-out both;
+    }
+
+    @keyframes rvm-grafico-desenhar {
+        from { stroke-dasharray: 1; stroke-dashoffset: 1; }
+        to { stroke-dasharray: 1; stroke-dashoffset: 0; }
+    }
+
+    @keyframes rvm-grafico-aparecer {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 }

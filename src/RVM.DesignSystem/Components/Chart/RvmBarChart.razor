@@ -159,7 +159,7 @@
         return Math.Clamp((int)((y - MargemTopo) / Faixa), 0, Dados.Count - 1);
     }
 
-    internal override TabelaDeDados Tabela
+    internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
         => new(["Categoria", .. Series.Select(s => s.Name)],
-               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => Formatar(s.ValorDe(item)))])]);
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => formatar(s.ValorDe(item)))])]);
 }

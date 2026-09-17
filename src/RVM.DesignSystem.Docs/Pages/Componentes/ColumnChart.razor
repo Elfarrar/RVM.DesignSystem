@@ -16,10 +16,18 @@
     no teclado.
 </p>
 
-<BlocoExemplo Titulo="Series lado a lado"
-              Descricao="O Total Profit do kit: receita e despesa por ano."
+<BlocoExemplo Titulo="Series lado a lado, com exportar"
+              Descricao="O Total Profit do kit: receita e despesa por ano. O menu baixa o grafico em imagem, vetor, dados ou PDF."
               Codigo="@CodigoAgrupado">
-    <RvmColumnChart Items="Anos" Label="a => a.Ano" AriaLabel="Receita e despesa por ano">
+    <div class="ex-linha" style="justify-content: flex-end">
+        <RvmMenu Label="Exportar" Icon="RvmIconName.Download" ButtonVariant="RvmButtonVariant.Outlined" Size="RvmSize.Small" AlignEnd="true">
+            <RvmMenuItem Icon="RvmIconName.Eye" OnClick="@(() => Exportar(RvmChartExportFormat.Png))">Imagem PNG</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.File" OnClick="@(() => Exportar(RvmChartExportFormat.Svg))">Vetor SVG</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.Copy" OnClick="@(() => Exportar(RvmChartExportFormat.Csv))">Dados CSV</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.Download" OnClick="@(() => Exportar(RvmChartExportFormat.Pdf))">PDF</RvmMenuItem>
+        </RvmMenu>
+    </div>
+    <RvmColumnChart @ref="_grafico" Items="Anos" Label="a => a.Ano" AriaLabel="Receita e despesa por ano">
         <RvmChartSeries Name="Receita" Value="a => a.Receita" />
         <RvmChartSeries Name="Despesa" Value="a => a.Despesa" Color="RvmColor.Secondary" />
     </RvmColumnChart>
@@ -43,6 +51,22 @@
               Alt="Recorte do kit NEATLAB com dois graficos de colunas" />
 
 @code {
+    [Inject] private RvmSnackbarService Avisos { get; set; } = default!;
+
+    private RvmColumnChart<(string Ano, double Receita, double Despesa)>? _grafico;
+
+    private async Task Exportar(RvmChartExportFormat formato)
+    {
+        if (_grafico is null)
+        {
+            return;
+        }
+
+        var ok = await _grafico.ExportAsync(formato);
+        Avisos.Show(ok ? $"Grafico exportado em {formato.ToString().ToUpperInvariant()}." : "Nao foi possivel exportar aqui.",
+            new RvmSnackbarOptions { Color = ok ? RvmColor.Success : RvmColor.Warning });
+    }
+
     private static readonly (string Ano, double Receita, double Despesa)[] Anos =
     [
         ("2019", 28_000, 18_000), ("2020", 34_000, 21_000), ("2021", 31_000, 24_500),
@@ -65,7 +89,14 @@
         new("Height", "int", "300", "Altura, em px. A largura acompanha o container."),
         new("ShowLegend / ShowGrid", "bool", "true / true", "Legenda (com mais de uma serie) e grade."),
         new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores no eixo e na dica (\"60 mil\")."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Nome, valor e cor de cada serie.")
+        new("Animated", "bool", "true", "Anima ao aparecer e ao mudar; desliga sozinha em \"reduzir movimento\"."),
+        new("ExportAsync(format)", "Task<bool>", "—", "Baixa PNG, SVG, CSV ou PDF do grafico."),
+        new("ExportFileName", "string?", "AriaLabel em minusculas", "Nome do arquivo exportado, sem extensao."),
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Nome, valor e cor de cada serie."),
+        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
+        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita."),
+        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida; com duas escalas, o exemplo de eixo duplo esta no RvmLineChart.")
     ];
 
     private const string CodigoAgrupado = """

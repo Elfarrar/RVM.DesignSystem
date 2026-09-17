@@ -19,6 +19,12 @@ public sealed class RvmChartSeries<TItem> : ComponentBase, IDisposable
     /// <summary>So no grafico de dispersao: o X de cada item.</summary>
     [Parameter] public Func<TItem, double>? X { get; set; }
 
+    /// <summary>
+    /// Em qual eixo de valores a serie e lida. Padrao: o da esquerda. Vale no grafico de colunas, de linha
+    /// e de area; nos outros a serie e sempre lida no eixo unico.
+    /// </summary>
+    [Parameter] public RvmChartAxis Axis { get; set; }
+
     /// <summary>Papel de cor. Sem valor, segue a ordem: primary, success, warning, info, error, secondary.</summary>
     [Parameter] public RvmColor? Color { get; set; }
 

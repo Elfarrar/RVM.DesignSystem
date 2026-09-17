@@ -26,6 +26,13 @@ public static class RvmChartFormat
     /// </summary>
     internal static string CompactForAxis(double valor, double passo)
     {
+        // O zero nao ganha sufixo: um eixo de 0 a 60 mil escrevia "0 mil" na base (achado na foto da entrega).
+        // Aproximado, a marca da base cai em -1e-14 em vez de zero cravado e saia "-0" (achado na foto do zoom).
+        if (Math.Abs(valor) <= Math.Abs(passo) * 1e-9)
+        {
+            return "0";
+        }
+
         var abs = Math.Max(Math.Abs(valor), Math.Abs(passo));
         var (divisor, sufixo) = abs switch
         {
@@ -43,8 +50,12 @@ public static class RvmChartFormat
 
     /// <summary>Numero com separador de milhar e ate duas casas: "1.250,5".</summary>
     public static string Number(double valor)
-        => valor.ToString("#,0.##", CultureInfo.InvariantCulture).Replace(',', '').Replace('.', ',').Replace('', '.');
+        => SemZeroNegativo(valor.ToString("#,0.##", CultureInfo.InvariantCulture).Replace(',', '').Replace('.', ',').Replace('', '.'));
 
     private static string Decimal(double valor, string formato)
-        => valor.ToString(formato, CultureInfo.InvariantCulture).Replace('.', ',');
+        => SemZeroNegativo(valor.ToString(formato, CultureInfo.InvariantCulture).Replace('.', ','));
+
+    /// <summary>"-0" e "-0,0" sao zero com um sinal de sobra: o arredondamento comeu o que havia de negativo.</summary>
+    private static string SemZeroNegativo(string texto)
+        => texto.StartsWith('-') && !texto.AsSpan(1).ContainsAnyExcept('0', ',', '.') ? texto[1..] : texto;
 }

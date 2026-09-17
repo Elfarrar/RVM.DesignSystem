@@ -46,12 +46,33 @@
         </RvmCard>
     }
 
-    <RvmCard Title="Receita e despesa" Subheader="Ultimos 7 meses" class="ex-col-8">
-        <RvmColumnChart Items="Fluxo" Label="f => f.Mes" AriaLabel="Receita e despesa por mes" Height="260"
-                        ValueFormat="@(v => $"R$ {RvmChartFormat.Compact(v)}")">
-            <RvmChartSeries Name="Receita" Value="f => f.Receita" />
-            <RvmChartSeries Name="Despesa" Value="f => f.Despesa" Color="RvmColor.Secondary" />
-        </RvmColumnChart>
+    <RvmCard Title="Receita e despesa" Subheader="Arraste sobre o grafico para filtrar o fechamento" class="ex-col-8">
+        <HeaderAction>
+            @if (_meses is not null)
+            {
+                <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small" StartIcon="RvmIconName.Close" OnClick="LimparMeses">Limpar filtro</RvmButton>
+            }
+        </HeaderAction>
+        <ChildContent>
+            <RvmColumnChart Items="Fluxo" Label="f => f.Mes" AriaLabel="Receita e despesa por mes" Height="260"
+                            ValueFormat="@(v => $"R$ {RvmChartFormat.Compact(v)}")"
+                            SelectionMode="RvmChartSelectionMode.Range"
+                            Selection="_meses" SelectionChanged="@(f => _meses = f)">
+                <RvmChartSeries Name="Receita" Value="f => f.Receita" />
+                <RvmChartSeries Name="Despesa" Value="f => f.Despesa" Color="RvmColor.Secondary" />
+            </RvmColumnChart>
+
+            <RvmTable Items="FluxoFiltrado" Caption="@LegendaDoFechamento" Dense="true">
+                <RvmTableColumn Title="Mes" Value="f => f.Mes" />
+                <RvmTableColumn Title="Receita" Value="f => f.Receita" Align="RvmTableAlign.End">@Formato.Moeda((decimal)context.Receita)</RvmTableColumn>
+                <RvmTableColumn Title="Despesa" Value="f => f.Despesa" Align="RvmTableAlign.End">@Formato.Moeda((decimal)context.Despesa)</RvmTableColumn>
+                <RvmTableColumn Title="Saldo" Value="f => f.Receita - f.Despesa" Align="RvmTableAlign.End">
+                    <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="@(context.Receita >= context.Despesa ? RvmColor.Success : RvmColor.Error)">
+                        @Formato.Moeda((decimal)(context.Receita - context.Despesa))
+                    </RvmChip>
+                </RvmTableColumn>
+            </RvmTable>
+        </ChildContent>
     </RvmCard>
 
     <RvmCard Title="Area plantada" Subheader="Por cultura" class="ex-col-4">
@@ -153,6 +174,21 @@
     private static readonly string[] Periodos = ["Esta semana", "Este mes", "Esta safra"];
 
     private string _periodo = "Este mes";
+
+    // A faixa marcada no grafico filtra a tabela de fechamento: o grafico so diz quais itens entraram.
+    private RvmChartRange? _meses;
+
+    private IEnumerable<(string Mes, double Receita, double Despesa)> FluxoFiltrado
+        => _meses is null ? Fluxo : Fluxo.Where((_, i) => _meses.Contains(i));
+
+    private void LimparMeses() => _meses = null;
+
+    // Pela lista ja filtrada, nao pelos indices crus: a faixa pode ser mais velha que os dados.
+    private string LegendaDoFechamento
+        => _meses is null || !FluxoFiltrado.Any()
+            ? "Fechamento dos 7 meses"
+            : $"Fechamento de {FluxoFiltrado.First().Mes} a {FluxoFiltrado.Last().Mes}";
+
     private bool _alertaEstoque = true;
 
     private static readonly IReadOnlyList<RvmBreadcrumbItem> Trilha =
