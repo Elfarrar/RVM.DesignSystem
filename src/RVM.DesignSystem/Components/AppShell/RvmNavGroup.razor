@@ -4,12 +4,13 @@
 
 @* Item que abre subitens (o "Dashboards" do kit). E um botao com aria-expanded; os subitens so existem
    no DOM quando aberto. Recolhido, clicar expande o menu e abre o grupo — com o menu nos icones nao ha
-   onde mostrar os subitens. *@
+   onde mostrar os subitens. aria-controls so sai com a lista no DOM: apontar para id inexistente e ARIA
+   invalido (achado do review da onda 4). *@
 <li class="rvm-nav-item">
     <button type="button"
             class="@ClassesDoBotao"
             aria-expanded="@(Expanded && !Recolhido ? "true" : "false")"
-            aria-controls="@_id"
+            aria-controls="@(Expanded && !Recolhido ? _id : null)"
             title="@(Recolhido ? Text : null)"
             @onclick="AlternarAsync">
         <RvmIcon Name="Icon" Size="RvmSize.Large" class="rvm-nav-icone" />

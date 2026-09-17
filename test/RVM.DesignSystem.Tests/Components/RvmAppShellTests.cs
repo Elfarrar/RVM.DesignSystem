@@ -139,6 +139,7 @@ public class RvmAppShellTests : BunitContext
 
         var grupo = cortado.Find("button.rvm-nav-grupo");
         Assert.Equal("false", grupo.GetAttribute("aria-expanded"));
+        Assert.False(grupo.HasAttribute("aria-controls"));
         Assert.Empty(cortado.FindAll("a[href='lavouras/soja']"));
 
         grupo.Click();

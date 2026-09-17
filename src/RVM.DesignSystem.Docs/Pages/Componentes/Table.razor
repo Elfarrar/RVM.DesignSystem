@@ -87,6 +87,7 @@
         new("Dense", "bool", "false", "Linhas de 36 px."),
         new("Selectable", "bool", "false", "Caixa de marcar por linha e no cabecalho."),
         new("SelectedItems", "IReadOnlyCollection<TItem>?", "—", "Linhas marcadas. Aceita @bind-SelectedItems."),
+        new("ItemKey", "Func<TItem, object>?", "—", "Identidade da linha para a selecao (t => t.Id). Use com classe comum: sem ela, recarregar os itens apaga a marcacao."),
         new("RowLabel", "Func<TItem, string>?", "\"Selecionar\" + 1ª coluna", "Nome da caixa de marcar de cada linha."),
         new("NoRecordsText", "string", "\"Nenhum registro para mostrar.\"", "Texto sem linhas."),
         new("RvmTableColumn.Title", "string", "—", "Titulo da coluna."),

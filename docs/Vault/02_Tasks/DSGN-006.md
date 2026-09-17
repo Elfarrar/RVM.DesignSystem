@@ -65,6 +65,9 @@ exit code; arquivo novo pela ferramenta Write.
 | **Um so menu no DOM**; dois botoes no topo, um por modo, escondidos por CSS | Estreito abre a gaveta (`aria-expanded`), com foco preso pela `Sobreposicao`, Esc (tambem no botao), fundo e navegacao fechando. Largo recolhe (`aria-pressed`); recolhido, o texto sai da tela mas segue como nome do link |
 | **Itens do menu sem CSS proprio** (excecao nomeada na guarda) | Sao pecas da moldura; o estilo precisa ver recolhido e modo estreito juntos, entao mora no CSS dela via `::deep` |
 | **Pagina atual pelo criterio do `NavLink`** (`Prefix`/`All`), com `aria-current="page"`; grupo com menu recolhido expande o menu | Com o menu nos icones nao ha onde mostrar subitens |
+| 🔴 **Review independente (Sonnet) da onda 4: dois P1 corrigidos** | (1) `aria-controls` do `RvmNavGroup` apontava para a lista que so existe aberta: agora so sai com ela no DOM. (2) Selecao da tabela comparava pela referencia: recarregar `Items` com instancias novas apagava a marcacao. Novo `ItemKey` (`t => t.Id`) |
+| 🔴 **Sem `@bind`, qualquer novo render do pai apagava a selecao da tabela** | A tabela comparava o `SelectedItems` recebido com a colecao que ela mesma avisou. Agora adota de fora so quando o parametro muda (o mesmo cuidado do `Page` da grade). Pego pelo teste do `ItemKey` |
+| **P2 do review registrados, sem mudanca**: valor otimista antes do `ValueChanged` (padrao de todos os campos), reflexao do `CampoDoFormulario` por render, `InvokeAsync` descartado na navegacao (mesmo padrao do `NavLink`), linhas da tabela sem `@key` (chave duplicada estouraria) | Riscos baixos e conhecidos; nenhum com cenario real no uso atual |
 
 ## Verifica (cada fatia)
 
