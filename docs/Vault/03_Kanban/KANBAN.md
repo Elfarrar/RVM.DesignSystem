@@ -10,12 +10,12 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-008]] | Site de documentacao com menu lateral (RvmAppShell) | em andamento |
 
 ## Concluido
 
 | Card | O que |
 |---|---|
+| [[DSGN-008]] | Site com menu lateral (17/09): o proprio RvmAppShell, os 35 componentes nas quatro secoes, gaveta no celular. Em producao |
 | [[DSGN-007]] | `1.0.0` e producao (17/09): `design.rvmit.com.br` no GitHub Pages com HTTPS, pacote `1.0.0` no BaGet, monitor 25 do Kuma retomado |
 | [[DSGN-006]] | Onda 4 (17/09): os 8 de dados e shell em quatro fatias, relogio circular a pedido, dois reviews independentes. Aprovada — fecham as quatro ondas |
 | [[DSGN-005]] | Onda 3 (17/09): os 8 de feedback e sobreposicao, review independente, prefixo rvm- nas classes internas. Aprovada |
