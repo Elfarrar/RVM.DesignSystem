@@ -10,13 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-
-## A fazer — ondas 2 a 4
-
-| Card | O que |
-|---|---|
-
-Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
+| [[DSGN-007]] | `1.0.0` e producao em design.rvmit.com.br | em andamento |
 
 ## Concluido
 
