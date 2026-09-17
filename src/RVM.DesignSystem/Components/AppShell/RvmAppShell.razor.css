@@ -42,8 +42,7 @@
     width: 260px;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     background-color: var(--rvm-color-background-body);
     transition: width var(--rvm-transition-medium), flex-basis var(--rvm-transition-medium);
 }
@@ -66,7 +65,12 @@
     white-space: nowrap;
 }
 
+/* So a lista rola: a marca fica no alto, como no kit. */
 .rvm-navegacao {
+    flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding-block: var(--rvm-space-1) var(--rvm-space-4);
 }
 

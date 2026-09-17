@@ -10,6 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
+| [[DSGN-008]] | Site de documentacao com menu lateral (RvmAppShell) | em andamento |
 
 ## Concluido
 
