@@ -17,8 +17,8 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 >
 > Depois da `1.0.0`, tudo aprovado e em produção: `DSGN-008` (o site passou a usar o próprio
 > `RvmAppShell`, com menu lateral), `DSGN-009` (cinco telas de exemplo) e `DSGN-010` (os oito
-> gráficos, publicados na `1.1.0`). A `DSGN-011` está **no dev** e fecha a `1.2.0` — alphas de `dev`
-> são `1.2.0-alpha.N`.
+> gráficos, publicados na `1.1.0`) e `DSGN-011` (exportar, eixo duplo, zoom, arrastar e seleção nos
+> gráficos, publicada na **`1.2.0`** em 17/09). Alphas de `dev` são `1.3.0-alpha.N`.
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 
