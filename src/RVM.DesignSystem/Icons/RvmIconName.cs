@@ -23,6 +23,12 @@ public enum RvmIconName
     /// <summary>Icone <c>ArrowRight</c> do conjunto Tabler.</summary>
     ArrowRight,
 
+    /// <summary>Icone <c>ArrowUp</c> do conjunto Tabler.</summary>
+    ArrowUp,
+
+    /// <summary>Icone <c>ArrowDown</c> do conjunto Tabler.</summary>
+    ArrowDown,
+
     /// <summary>Icone <c>Bell</c> do conjunto Tabler.</summary>
     Bell,
 

@@ -38,6 +38,8 @@ const PAGINAS = [
     { rota: '/componentes/timeline', titulo: 'RvmTimeline' },
     { rota: '/componentes/date-picker', titulo: 'RvmDatePicker' },
     { rota: '/componentes/time-picker', titulo: 'RvmTimePicker' },
+    { rota: '/componentes/table', titulo: 'RvmTable' },
+    { rota: '/componentes/data-grid', titulo: 'RvmDataGrid' },
 ];
 
 const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton']);
@@ -57,7 +59,7 @@ for (const { rota, titulo } of PAGINAS) {
 
         await expect(page.getByRole('heading', { name: titulo, level: 1 })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Parametros' })).toBeVisible();
-        await expect(page.getByRole('table')).toBeVisible();
+        await expect(page.getByRole('table').last()).toBeVisible();
 
         // O recorte do kit ao lado do exemplo e criterio do 07-site-de-documentacao: sem ele,
         // "parece o NEATLAB?" vira discussao de memoria. Excecoes declaradas: RvmIcon (o kit exportou

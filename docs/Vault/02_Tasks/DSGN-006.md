@@ -31,6 +31,7 @@ exit code; arquivo novo pela ferramenta Write.
 
 - [x] **Fatia 1**: `RvmRating`, `RvmStepper` (+ `RvmStep`), `RvmTimeline` + `RvmTimelineItem`
 - [x] **Fatia 2**: `RvmCalendar`, `RvmDatePicker`, `RvmDateRangePicker`, `RvmTimePicker`
+- [x] **Fatia 3**: `RvmTable` + `RvmTableColumn`, `RvmDataGrid`
 
 ## Decisoes e medicoes
 
@@ -51,6 +52,12 @@ exit code; arquivo novo pela ferramenta Write.
 | 🔴 **Armadilha de foco deixava o Tab escapar do dialogo** | O `rvm-sobreposicao.js` contava botoes com `tabindex=-1` (dias nao focados) como focaveis: o "ultimo" virava o dia 31. Filtra `tabIndex >= 0`. Pego no E2E; vale para qualquer dialogo com tabindex movel dentro |
 | 🔴 **Clicar no meio do select vazio nao abria a lista** (onda 2) | O rotulo fica por cima do combobox e so dava foco. Agora ele deixa o clique passar enquanto esta dentro do campo e abre a lista quando flutua. Pego no E2E do seletor de horario |
 | 🔴 **Foco do calendario ia para o dia errado ao trocar de mes** | Sem `@key`, o Blazor reaproveitava o botao pela posicao e nao recapturava o `@ref`. `@key` com a data em cada celula. Pego no E2E; o teste manual passou por sorte (mesma celula) |
+| **Medidas da fatia 3**: linha de 52 px (36 densa), cabecalho de 56 px em caixa alta, sem divisoria entre linhas, hover no `action-hover` (igual ao kit); a grade poe o cabecalho no fundo do corpo, com separadores curtos, e rodape em 14 px | Varredura em `Table.png` e `Data Grid.png` |
+| **Tabela nativa (`<table>`, `th scope=col`, `aria-sort`), nao `role="grid"`** | Nada pede navegacao celula a celula; o leitor de tela ja anda por tabela. Celula focavel/editavel, menu da coluna e multiordenacao do kit ficaram de fora |
+| **Colunas declaradas (`RvmTableColumn`) e a tabela desenhada DEPOIS delas num componente interno (`RvmAdiado`)** | Parametro novo da coluna (titulo, formato) aparece no mesmo render, sem a coluna pedir outro render a tabela (laco). E o truque do QuickGrid |
+| **Linha selecionada no `action-selected`, nao no #797992 do kit** | O cinza do kit nao chega a 4.5:1 com o texto; quem diz "marcada" e a caixa de marcar, que tem nome "Selecionar" + primeira coluna |
+| **`RvmDataGrid` herda da `RvmTable`**: filtro visivel numa linha propria (`type=search`), "Linhas por pagina" num `select` nativo, intervalo em `role=status`; marcar todas vale para a pagina | Dados na memoria. Page/PageSize so sao adotados de fora quando mudam: sem `@bind`, um novo render nao volta a pessoa para a pagina 1 |
+| 🔴 **Esc logo depois de abrir o seletor de data nao fechava no dev** (fatia 2) | O foco so entra no dialogo quando o `rvm-sobreposicao.js` carrega; servido de longe, o Esc chegava antes, no botao, e ninguem ouvia. O botao tambem trata o Esc. Pego no E2E do dev; local passava |
 
 ## Verifica (cada fatia)
 

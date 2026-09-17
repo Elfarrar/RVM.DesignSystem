@@ -1,0 +1,250 @@
+/* MEDIDO no referencia-neatlab/Table.png e Data Grid.png: linha de 52 px (36 px densa), cabecalho de
+   56 px em caixa alta e negrito, sem divisoria entre linhas, hover no action-hover (#383452 no escuro, igual ao kit). O selecionado
+   do kit (#797992 no escuro) nao chega a 4.5:1 com o texto: aqui ele e o action-selected, e quem diz
+   "marcada" e a caixa de marcar. A grade poe o cabecalho no fundo do corpo, com separadores. */
+
+.rvm-tabela {
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+    background-color: var(--rvm-color-background-paper);
+    border-radius: var(--rvm-radius-md);
+    overflow: hidden;
+}
+
+.rvm-rolagem {
+    overflow-x: auto;
+}
+
+.rvm-rolagem:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(-1 * var(--rvm-focus-ring-width));
+}
+
+.rvm-tabela-nativa {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+th,
+td {
+    height: 52px;
+    padding: 0 var(--rvm-space-4);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.rvm-densa td {
+    height: 36px;
+}
+
+.rvm-linha-cabecalho th {
+    position: relative;
+    height: 56px;
+    font-size: var(--rvm-text-caption-size);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-densa .rvm-linha-cabecalho th {
+    height: 40px;
+}
+
+.rvm-inicio { text-align: start; }
+.rvm-centro { text-align: center; }
+.rvm-fim { text-align: end; }
+
+.rvm-linha:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-marcada,
+.rvm-marcada:hover {
+    background-color: var(--rvm-color-action-selected);
+}
+
+.rvm-linha-vazia td {
+    text-align: center;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-celula-marcar {
+    width: 1px;
+    padding-inline-end: 0;
+}
+
+/* Titulo que ordena: o botao herda a aparencia do cabecalho e ocupa a celula. A seta aparece so na
+   coluna ordenada; nas outras surge no hover e no foco, para mostrar que da para ordenar. */
+.rvm-ordenar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    max-width: 100%;
+    margin: 0;
+    padding: var(--rvm-space-1) 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+}
+
+.rvm-fim .rvm-ordenar {
+    flex-direction: row-reverse;
+}
+
+.rvm-ordenar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-ordenar ::deep .rvm-seta {
+    opacity: 0;
+    transition: opacity var(--rvm-transition-fast);
+}
+
+.rvm-ordenar:hover ::deep .rvm-seta,
+.rvm-ordenar:focus-visible ::deep .rvm-seta {
+    opacity: 0.6;
+}
+
+.rvm-ordenada ::deep .rvm-seta,
+.rvm-ordenada:hover ::deep .rvm-seta {
+    opacity: 1;
+}
+
+/* Grade: cabecalho no fundo do corpo, separador curto entre titulos (o "Separator" do kit). */
+.rvm-grade-dados .rvm-linha-cabecalho th {
+    background-color: var(--rvm-color-background-body);
+}
+
+.rvm-grade-dados .rvm-linha-cabecalho th:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: 0;
+    top: 50%;
+    height: 14px;
+    width: 1px;
+    transform: translateY(-50%);
+    background-color: var(--rvm-color-divider);
+}
+
+.rvm-linha-filtro td {
+    height: auto;
+    padding-block: var(--rvm-space-2);
+}
+
+.rvm-filtro {
+    width: 100%;
+    min-width: 6rem;
+    box-sizing: border-box;
+    height: 32px;
+    padding: 0 var(--rvm-space-2);
+    border: 1px solid var(--rvm-color-outline);
+    border-radius: var(--rvm-radius-sm);
+    background-color: transparent;
+    color: var(--rvm-color-text-primary);
+    font: inherit;
+}
+
+.rvm-filtro::placeholder {
+    color: var(--rvm-color-text-secondary);
+    opacity: 1;
+}
+
+.rvm-filtro:hover {
+    border-color: var(--rvm-color-text-primary);
+}
+
+.rvm-filtro:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 0;
+    border-color: var(--rvm-color-primary-main);
+}
+
+/* Rodape da grade: "Linhas por pagina", intervalo e setas, alinhados a direita como no kit. */
+.rvm-rodape {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--rvm-space-2) var(--rvm-space-6);
+    min-height: 52px;
+    padding: 0 var(--rvm-space-2) 0 var(--rvm-space-4);
+    font-size: var(--rvm-text-body2-size);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-rotulo-tamanho {
+    margin-inline-end: calc(-1 * var(--rvm-space-4));
+}
+
+.rvm-tamanho {
+    height: 32px;
+    padding: 0 var(--rvm-space-1);
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.rvm-tamanho option {
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-tamanho:focus-visible,
+.rvm-pagina:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-pagina {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-inline-start: calc(-1 * var(--rvm-space-4));
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+}
+
+.rvm-pagina:hover:not(:disabled) {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-pagina:disabled {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-ordenar ::deep .rvm-seta {
+        transition: none;
+    }
+}
