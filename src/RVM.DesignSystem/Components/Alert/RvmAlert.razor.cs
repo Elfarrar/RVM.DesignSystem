@@ -59,16 +59,16 @@ public partial class RvmAlert : ComponentBase
         get
         {
             var proprias = string.Join(' ',
-                "alerta",
-                Variant switch { RvmAlertVariant.Filled => "preenchido", RvmAlertVariant.Outlined => "contorno", _ => "padrao" },
+                "rvm-alerta",
+                Variant switch { RvmAlertVariant.Filled => "rvm-preenchido", RvmAlertVariant.Outlined => "rvm-contorno", _ => "rvm-padrao" },
                 Severity switch
                 {
-                    RvmColor.Primary => "primary",
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "info"
+                    RvmColor.Primary => "rvm-primary",
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-info"
                 });
 
             return AdditionalAttributes is not null

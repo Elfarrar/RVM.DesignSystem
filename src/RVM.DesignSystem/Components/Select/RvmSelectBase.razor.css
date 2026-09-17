@@ -5,7 +5,7 @@
    classe `rotulo-fixo` (o combobox nao e um <input> com placeholder), e o estado ativo vale tambem
    com a lista aberta (`aberto`), quando o foco pode estar na busca. */
 
-.campo {
+.rvm-campo {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@
     min-width: 0;
 }
 
-.caixa {
+.rvm-caixa {
     position: relative;
     display: flex;
     align-items: center;
@@ -22,7 +22,7 @@
     transition: border-color var(--rvm-transition-fast), background-color var(--rvm-transition-fast);
 }
 
-.entrada {
+.rvm-entrada {
     display: flex;
     align-items: center;
     flex: 1;
@@ -38,13 +38,13 @@
     cursor: pointer;
 }
 
-.valor {
+.rvm-valor {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.rotulo {
+.rvm-rotulo {
     position: absolute;
     color: var(--rvm-color-text-secondary);
     font-size: var(--rvm-text-input-size);
@@ -55,11 +55,11 @@
     transition: transform var(--rvm-transition-fast), color var(--rvm-transition-fast), top var(--rvm-transition-fast);
 }
 
-.obrigatorio {
+.rvm-obrigatorio {
     margin-inline-start: 2px;
 }
 
-.seta {
+.rvm-seta {
     position: absolute;
     right: 12px;
     top: 50%;
@@ -70,21 +70,21 @@
     transition: transform var(--rvm-transition-fast);
 }
 
-.aberto .seta {
+.rvm-aberto .rvm-seta {
     transform: translateY(-50%) rotate(180deg);
 }
 
 /* --- Contorno (Outlined) --- */
-.contorno .caixa {
+.rvm-contorno .rvm-caixa {
     border: 1px solid var(--rvm-color-input-border);
     border-radius: var(--rvm-radius-sm);
     padding: 0 13px;
 }
 
-.contorno.medio .caixa { min-height: 56px; }
-.contorno.pequeno .caixa { min-height: 40px; }
+.rvm-contorno.rvm-medio .rvm-caixa { min-height: 56px; }
+.rvm-contorno.rvm-pequeno .rvm-caixa { min-height: 40px; }
 
-.contorno .rotulo {
+.rvm-contorno .rvm-rotulo {
     left: 13px;
     top: 50%;
     transform: translateY(-50%);
@@ -93,137 +93,137 @@
 }
 
 /* Flutuando: sobe para cima da borda com o retalho de fundo, como o campo de texto. */
-.contorno .entrada:focus ~ .rotulo,
-.contorno.rotulo-fixo .rotulo {
+.rvm-contorno .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-contorno.rvm-rotulo-fixo .rvm-rotulo {
     top: 0;
     transform: translateY(-50%) scale(0.75);
     background-color: var(--rvm-textfield-notch-background, var(--rvm-color-background-paper));
 }
 
-.contorno .caixa:hover {
+.rvm-contorno .rvm-caixa:hover {
     border-color: var(--rvm-color-text-primary);
 }
 
 /* Ativo: 2 px no token do anel — a borda E o indicador de foco do combobox. */
-.contorno .caixa:focus-within,
-.contorno.aberto .caixa {
+.rvm-contorno .rvm-caixa:focus-within,
+.rvm-contorno.rvm-aberto .rvm-caixa {
     border-width: 2px;
     border-color: var(--rvm-focus-ring-color);
     padding: 0 12px;
 }
 
-.contorno .caixa:focus-within .rotulo,
-.contorno.aberto .rotulo {
+.rvm-contorno .rvm-caixa:focus-within .rvm-rotulo,
+.rvm-contorno.rvm-aberto .rvm-rotulo {
     left: 12px;
 }
 
 /* --- Preenchido (Filled) e Padrao (Standard): so a linha de baixo --- */
-.preenchido .caixa,
-.padrao .caixa {
+.rvm-preenchido .rvm-caixa,
+.rvm-padrao .rvm-caixa {
     border-bottom: 1px solid var(--rvm-color-input-border);
 }
 
-.preenchido .caixa {
+.rvm-preenchido .rvm-caixa {
     background-color: var(--rvm-color-action-hover);
     border-radius: var(--rvm-radius-sm) var(--rvm-radius-sm) 0 0;
     padding: 0 12px;
 }
 
-.preenchido.medio .caixa { min-height: 56px; }
-.preenchido.pequeno .caixa { min-height: 48px; }
+.rvm-preenchido.rvm-medio .rvm-caixa { min-height: 56px; }
+.rvm-preenchido.rvm-pequeno .rvm-caixa { min-height: 48px; }
 
-.padrao.medio .caixa { min-height: 48px; }
-.padrao.pequeno .caixa { min-height: 40px; }
+.rvm-padrao.rvm-medio .rvm-caixa { min-height: 48px; }
+.rvm-padrao.rvm-pequeno .rvm-caixa { min-height: 40px; }
 
-.preenchido .entrada,
-.padrao .entrada {
+.rvm-preenchido .rvm-entrada,
+.rvm-padrao .rvm-entrada {
     align-items: flex-end;
     padding-bottom: 6px;
 }
 
-.preenchido .rotulo { left: 12px; top: 50%; transform: translateY(-50%); }
-.padrao .rotulo { left: 0; top: 60%; transform: translateY(-50%); }
+.rvm-preenchido .rvm-rotulo { left: 12px; top: 50%; transform: translateY(-50%); }
+.rvm-padrao .rvm-rotulo { left: 0; top: 60%; transform: translateY(-50%); }
 
-.preenchido .entrada:focus ~ .rotulo,
-.preenchido.rotulo-fixo .rotulo {
+.rvm-preenchido .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-preenchido.rvm-rotulo-fixo .rvm-rotulo {
     top: 8px;
     transform: scale(0.75);
 }
 
-.padrao .entrada:focus ~ .rotulo,
-.padrao.rotulo-fixo .rotulo {
+.rvm-padrao .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-padrao.rvm-rotulo-fixo .rvm-rotulo {
     top: 2px;
     transform: scale(0.75);
 }
 
-.preenchido .caixa:focus-within,
-.padrao .caixa:focus-within,
-.preenchido.aberto .caixa,
-.padrao.aberto .caixa {
+.rvm-preenchido .rvm-caixa:focus-within,
+.rvm-padrao .rvm-caixa:focus-within,
+.rvm-preenchido.rvm-aberto .rvm-caixa,
+.rvm-padrao.rvm-aberto .rvm-caixa {
     border-bottom-width: 2px;
     border-bottom-color: var(--rvm-focus-ring-color);
 }
 
-.preenchido .caixa:focus-within .entrada,
-.padrao .caixa:focus-within .entrada,
-.preenchido.aberto .entrada,
-.padrao.aberto .entrada {
+.rvm-preenchido .rvm-caixa:focus-within .rvm-entrada,
+.rvm-padrao .rvm-caixa:focus-within .rvm-entrada,
+.rvm-preenchido.rvm-aberto .rvm-entrada,
+.rvm-padrao.rvm-aberto .rvm-entrada {
     padding-bottom: 5px;
 }
 
 /* --- Rotulo ativo: -text, e nao -main --- */
-.caixa:focus-within .rotulo,
-.aberto .rotulo {
+.rvm-caixa:focus-within .rvm-rotulo,
+.rvm-aberto .rvm-rotulo {
     color: var(--rvm-color-primary-text);
 }
 
 /* --- Apoio --- */
-.apoio {
+.rvm-apoio {
     color: var(--rvm-color-text-secondary);
     padding: 0 14px;
 }
 
-.padrao .apoio {
+.rvm-padrao .rvm-apoio {
     padding: 0;
 }
 
 /* --- Erro --- */
-.erro .caixa,
-.erro .caixa:hover,
-.erro .caixa:focus-within,
-.erro.aberto .caixa {
+.rvm-erro .rvm-caixa,
+.rvm-erro .rvm-caixa:hover,
+.rvm-erro .rvm-caixa:focus-within,
+.rvm-erro.rvm-aberto .rvm-caixa {
     border-color: var(--rvm-color-error-main);
 }
 
-.erro .rotulo,
-.erro .caixa:focus-within .rotulo,
-.erro.aberto .rotulo,
-.erro .apoio {
+.rvm-erro .rvm-rotulo,
+.rvm-erro .rvm-caixa:focus-within .rvm-rotulo,
+.rvm-erro.rvm-aberto .rvm-rotulo,
+.rvm-erro .rvm-apoio {
     color: var(--rvm-color-error-text);
 }
 
 /* --- Desabilitado --- */
-.desabilitado .caixa,
-.desabilitado .caixa:hover {
+.rvm-desabilitado .rvm-caixa,
+.rvm-desabilitado .rvm-caixa:hover {
     border-color: var(--rvm-color-action-disabled);
 }
 
-.desabilitado .entrada,
-.desabilitado .rotulo,
-.desabilitado .seta,
-.desabilitado .apoio {
+.rvm-desabilitado .rvm-entrada,
+.rvm-desabilitado .rvm-rotulo,
+.rvm-desabilitado .rvm-seta,
+.rvm-desabilitado .rvm-apoio {
     color: var(--rvm-color-text-disabled);
     cursor: not-allowed;
 }
 
 /* --- A lista --- */
-.fundo {
+.rvm-fundo {
     position: fixed;
     inset: 0;
     z-index: 1299;
 }
 
-.popup {
+.rvm-popup {
     position: absolute;
     top: calc(100% + var(--rvm-space-1));
     left: 0;
@@ -238,7 +238,7 @@
     box-shadow: var(--rvm-shadow-3);
 }
 
-.busca {
+.rvm-busca {
     margin: 0 var(--rvm-space-2) var(--rvm-space-2);
     padding: var(--rvm-space-2) var(--rvm-space-3);
     border: 1px solid var(--rvm-color-input-border);
@@ -250,22 +250,22 @@
     line-height: var(--rvm-text-body2-line);
 }
 
-.busca::placeholder {
+.rvm-busca::placeholder {
     color: var(--rvm-color-text-secondary);
     opacity: 1;
 }
 
-.busca:focus {
+.rvm-busca:focus {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: -1px;
 }
 
-.vazio {
+.rvm-vazio {
     padding: var(--rvm-space-2) var(--rvm-space-4);
     color: var(--rvm-color-text-secondary);
 }
 
-.opcoes {
+.rvm-opcoes {
     max-height: 264px;
     margin: 0;
     padding: 0;
@@ -274,7 +274,7 @@
 }
 
 /* Mesmo item do RvmMenu: 36 px, hover no action-hover. */
-.opcao {
+.rvm-opcao {
     display: flex;
     align-items: center;
     gap: var(--rvm-space-3);
@@ -287,28 +287,28 @@
     cursor: pointer;
 }
 
-.opcao:hover {
+.rvm-opcao:hover {
     background-color: var(--rvm-color-action-hover);
 }
 
-.opcao.selecionada {
+.rvm-opcao.rvm-selecionada {
     background-color: var(--rvm-color-action-selected);
 }
 
 /* A opcao ativa nao tem foco de verdade (o foco fica no combobox ou na busca): o anel por dentro e o
    que mostra onde o teclado esta, com 3:1 contra a superficie. */
-.opcao.ativa {
+.rvm-opcao.rvm-ativa {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: calc(var(--rvm-focus-ring-width) * -1);
 }
 
-.opcao.desabilitada {
+.rvm-opcao.rvm-desabilitada {
     color: var(--rvm-color-text-disabled);
     cursor: not-allowed;
 }
 
 /* A caixinha do multiplo: a mesma do RvmCheckbox (borda no token de campo, marcada no -text). */
-.marca {
+.rvm-marca {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -320,7 +320,7 @@
     border-radius: 2px;
 }
 
-.selecionada .marca {
+.rvm-selecionada .rvm-marca {
     border-color: var(--rvm-color-primary-text);
     background-color: var(--rvm-color-primary-text);
     color: var(--rvm-color-background-paper);

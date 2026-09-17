@@ -338,8 +338,8 @@
     --rvm-color-outline: #5B5774;
     --rvm-color-input-line: #595572;
     --rvm-color-overlay: #2C2A43;
-    --rvm-color-snackbar-background: #FFFFFF;
-    --rvm-color-snackbar-text: #212121;
+    --rvm-color-snackbar-background: #212121; /* igual ao claro: medido no Snackbar.png escuro; decisao do Rafael em 17/09 */
+    --rvm-color-snackbar-text: #FFFFFF;
 
     /* Texto: base #E7E3FC com os alphas do kit. Aqui o PNG nao ajuda — os TRES swatches do tema
        escuro sao o mesmo `#CFCBE5` solido, porque o bitmap perdeu a opacidade. O que fecha a

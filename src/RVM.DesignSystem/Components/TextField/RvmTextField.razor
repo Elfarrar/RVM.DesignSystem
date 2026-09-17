@@ -19,16 +19,16 @@
    `maxlength`, `inputmode`, `aria-*`, `data-*`) vai para o <input>, que e onde atributo de campo
    precisa chegar para funcionar. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
-    <div class="caixa">
+    <div class="rvm-caixa">
         @if (!string.IsNullOrWhiteSpace(Prefix))
         {
-            <span id="@IdPrefixo" class="afixo prefixo">@Prefix</span>
+            <span id="@IdPrefixo" class="rvm-afixo rvm-prefixo">@Prefix</span>
         }
 
         <input @attributes="AtributosDoInput"
                id="@IdEfetivo"
                name="@NomeDoCampo"
-               class="entrada"
+               class="rvm-entrada"
                type="@TipoHtml"
                value="@CurrentValueAsString"
                placeholder="@PlaceholderEfetivo"
@@ -40,24 +40,24 @@
 
         @if (!string.IsNullOrWhiteSpace(Label))
         {
-            <label for="@IdEfetivo" class="rotulo">
+            <label for="@IdEfetivo" class="rvm-rotulo">
                 @Label
                 @if (Required)
                 {
                     @* O asterisco e visual; a obrigatoriedade ja vai no `aria-required` do input. *@
-                    <span class="obrigatorio" aria-hidden="true">*</span>
+                    <span class="rvm-obrigatorio" aria-hidden="true">*</span>
                 }
             </label>
         }
 
         @if (!string.IsNullOrWhiteSpace(Suffix))
         {
-            <span id="@IdSufixo" class="afixo sufixo">@Suffix</span>
+            <span id="@IdSufixo" class="rvm-afixo rvm-sufixo">@Suffix</span>
         }
     </div>
 
     @if (MensagemDeApoio is not null)
     {
-        <div id="@IdApoio" class="apoio rvm-text-helper">@MensagemDeApoio</div>
+        <div id="@IdApoio" class="rvm-apoio rvm-text-helper">@MensagemDeApoio</div>
     }
 </div>

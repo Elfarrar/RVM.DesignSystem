@@ -109,7 +109,7 @@ public class RvmTextFieldTests : BunitContext
     {
         var cortado = Campo(new Cadastro(), p => p.Add(x => x.HelperText, "Como no documento."));
 
-        var apoio = cortado.Find("div.apoio");
+        var apoio = cortado.Find("div.rvm-apoio");
         Assert.Equal("Como no documento.", apoio.TextContent);
         Assert.Contains(apoio.GetAttribute("id")!, cortado.Find("input").GetAttribute("aria-describedby"));
     }
@@ -123,8 +123,8 @@ public class RvmTextFieldTests : BunitContext
             .Add(x => x.Suffix, "Kg"));
 
         var descrito = cortado.Find("input").GetAttribute("aria-describedby")!;
-        Assert.Contains(cortado.Find("span.prefixo").GetAttribute("id")!, descrito);
-        Assert.Contains(cortado.Find("span.sufixo").GetAttribute("id")!, descrito);
+        Assert.Contains(cortado.Find("span.rvm-prefixo").GetAttribute("id")!, descrito);
+        Assert.Contains(cortado.Find("span.rvm-sufixo").GetAttribute("id")!, descrito);
     }
 
     [Fact]
@@ -144,8 +144,8 @@ public class RvmTextFieldTests : BunitContext
 
         var input = cortado.Find("input");
         Assert.Equal("true", input.GetAttribute("aria-invalid"));
-        Assert.Equal("Este CPF ja esta cadastrado.", cortado.Find("div.apoio").TextContent);
-        Assert.Contains("erro", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.Equal("Este CPF ja esta cadastrado.", cortado.Find("div.rvm-apoio").TextContent);
+        Assert.Contains("rvm-erro", cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class RvmTextFieldTests : BunitContext
         cortado.InvokeAsync(() => contexto.Validate());
         cortado.Render();
 
-        Assert.Equal("Informe o nome para continuar.", cortado.Find("div.apoio").TextContent);
+        Assert.Equal("Informe o nome para continuar.", cortado.Find("div.rvm-apoio").TextContent);
         Assert.Equal("true", cortado.Find("input").GetAttribute("aria-invalid"));
     }
 
@@ -184,7 +184,7 @@ public class RvmTextFieldTests : BunitContext
         var input = cortado.Find("input");
         Assert.False(input.HasAttribute("required"));
         Assert.Equal("true", input.GetAttribute("aria-required"));
-        Assert.Equal("true", cortado.Find("span.obrigatorio").GetAttribute("aria-hidden"));
+        Assert.Equal("true", cortado.Find("span.rvm-obrigatorio").GetAttribute("aria-hidden"));
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class RvmTextFieldTests : BunitContext
         var cortado = Campo(new Cadastro(), p => p.Add(x => x.Disabled, true));
 
         Assert.True(cortado.Find("input").HasAttribute("disabled"));
-        Assert.Contains("desabilitado", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.Contains("rvm-desabilitado", cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Theory]
@@ -228,7 +228,7 @@ public class RvmTextFieldTests : BunitContext
         var cortado = Campo(new Cadastro(), p => p.Add(x => x.Label, "Nome"));
 
         Assert.Equal(" ", cortado.Find("input").GetAttribute("placeholder"));
-        Assert.DoesNotContain("rotulo-fixo", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.DoesNotContain("rvm-rotulo-fixo", cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Fact]
@@ -239,20 +239,20 @@ public class RvmTextFieldTests : BunitContext
             .Add(x => x.Placeholder, "Como no documento"));
 
         Assert.Equal("Como no documento", cortado.Find("input").GetAttribute("placeholder"));
-        Assert.Contains("rotulo-fixo", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.Contains("rvm-rotulo-fixo", cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Theory]
-    [InlineData(RvmTextFieldVariant.Outlined, RvmSize.Medium, "contorno medio")]
-    [InlineData(RvmTextFieldVariant.Filled, RvmSize.Small, "preenchido pequeno")]
-    [InlineData(RvmTextFieldVariant.Standard, RvmSize.Large, "padrao medio")]
+    [InlineData(RvmTextFieldVariant.Outlined, RvmSize.Medium, "rvm-contorno rvm-medio")]
+    [InlineData(RvmTextFieldVariant.Filled, RvmSize.Small, "rvm-preenchido rvm-pequeno")]
+    [InlineData(RvmTextFieldVariant.Standard, RvmSize.Large, "rvm-padrao rvm-medio")]
     public void Estilo_e_tamanho_viram_classe(RvmTextFieldVariant estilo, RvmSize tamanho, string esperado)
     {
         var cortado = Campo(new Cadastro(), p => p
             .Add(x => x.Variant, estilo)
             .Add(x => x.Size, tamanho));
 
-        Assert.StartsWith("campo " + esperado, cortado.Find("div.campo").GetAttribute("class"));
+        Assert.StartsWith("rvm-campo " + esperado, cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Fact]
@@ -261,7 +261,7 @@ public class RvmTextFieldTests : BunitContext
         // No input, o `flex: 1` engolia o `max-width` do consumidor sem erro nenhum.
         var cortado = Campo(new Cadastro(), p => p.AddUnmatched("style", "max-width: 240px;"));
 
-        Assert.Equal("max-width: 240px;", cortado.Find("div.campo").GetAttribute("style"));
+        Assert.Equal("max-width: 240px;", cortado.Find("div.rvm-campo").GetAttribute("style"));
         Assert.False(cortado.Find("input").HasAttribute("style"));
     }
 
@@ -277,7 +277,7 @@ public class RvmTextFieldTests : BunitContext
         Assert.Equal("postal-code", input.GetAttribute("autocomplete"));
         Assert.Equal("9", input.GetAttribute("maxlength"));
         Assert.Equal("numeric", input.GetAttribute("inputmode"));
-        Assert.False(cortado.Find("div.campo").HasAttribute("autocomplete"));
+        Assert.False(cortado.Find("div.rvm-campo").HasAttribute("autocomplete"));
     }
 
     [Fact]
@@ -285,7 +285,7 @@ public class RvmTextFieldTests : BunitContext
     {
         var cortado = Campo(new Cadastro(), p => p.AddUnmatched("class", "minha"));
 
-        Assert.Contains("minha", cortado.Find("div.campo").GetAttribute("class"));
-        Assert.Equal("entrada", cortado.Find("input").GetAttribute("class"));
+        Assert.Contains("minha", cortado.Find("div.rvm-campo").GetAttribute("class"));
+        Assert.Equal("rvm-entrada", cortado.Find("input").GetAttribute("class"));
     }
 }

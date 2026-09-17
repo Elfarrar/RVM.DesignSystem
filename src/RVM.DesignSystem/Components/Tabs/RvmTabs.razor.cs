@@ -65,13 +65,13 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
         get
         {
             var proprias = string.Join(' ',
-                "abas",
-                Variant == RvmTabsVariant.Contained ? "preenchidas" : "sublinhadas",
-                Orientation == RvmOrientation.Vertical ? "vertical" : "horizontal");
+                "rvm-abas",
+                Variant == RvmTabsVariant.Contained ? "rvm-preenchidas" : "rvm-sublinhadas",
+                Orientation == RvmOrientation.Vertical ? "rvm-vertical" : "rvm-horizontal");
 
             if (FullWidth && Orientation == RvmOrientation.Horizontal)
             {
-                proprias += " largura-total";
+                proprias += " rvm-largura-total";
             }
 
             return AdditionalAttributes is not null

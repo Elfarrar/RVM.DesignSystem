@@ -54,23 +54,23 @@ public partial class RvmChip : ComponentBase
         get
         {
             var proprias = string.Join(' ',
-                "chip",
-                Size == RvmSize.Small ? "pequeno" : "medio",
-                Variant switch { RvmChipVariant.Outlined => "contorno", RvmChipVariant.Soft => "suave", _ => "preenchido" },
+                "rvm-chip",
+                Size == RvmSize.Small ? "rvm-pequeno" : "rvm-medio",
+                Variant switch { RvmChipVariant.Outlined => "rvm-contorno", RvmChipVariant.Soft => "rvm-suave", _ => "rvm-preenchido" },
                 Color switch
                 {
-                    RvmColor.Primary => "primary",
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Info => "info",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "neutro"
+                    RvmColor.Primary => "rvm-primary",
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-neutro"
                 });
 
             if (Disabled)
             {
-                proprias += " desabilitado";
+                proprias += " rvm-desabilitado";
             }
 
             return AdditionalAttributes is not null

@@ -29,7 +29,7 @@ public partial class RvmAccordion : ComponentBase
     {
         get
         {
-            var proprias = Variant == RvmAccordionVariant.Filled ? "acordeao preenchido" : "acordeao padrao";
+            var proprias = Variant == RvmAccordionVariant.Filled ? "rvm-acordeao rvm-preenchido" : "rvm-acordeao rvm-padrao";
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)
                    && informada is string texto

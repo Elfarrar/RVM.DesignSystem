@@ -30,7 +30,7 @@ public partial class RvmAvatarGroup : ComponentBase
     {
         get
         {
-            const string propria = "grupo";
+            const string propria = "rvm-grupo";
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)
                    && informada is string texto

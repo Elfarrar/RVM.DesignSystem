@@ -1,17 +1,17 @@
 /* CSS isolado do RvmAvatarGroup. So custom properties. */
 
-.grupo {
+.rvm-grupo {
     display: inline-flex;
     align-items: center;
 }
 
-/* `::deep` porque o .avatar e renderizado pelo RvmAvatar, outro componente — sem ele o CSS isolado
+/* `::deep` porque o .rvm-avatar e renderizado pelo RvmAvatar, outro componente — sem ele o CSS isolado
    do grupo nao alcanca os filhos. O anel na cor do papel e o que separa um avatar do outro na
    sobreposicao; sem ele, as fotos se fundem. */
-.grupo ::deep .avatar {
+.rvm-grupo ::deep .rvm-avatar {
     box-shadow: 0 0 0 2px var(--rvm-color-background-paper);
 }
 
-.grupo ::deep .avatar + .avatar {
+.rvm-grupo ::deep .rvm-avatar + .rvm-avatar {
     margin-inline-start: calc(var(--rvm-space-2) * -1);
 }

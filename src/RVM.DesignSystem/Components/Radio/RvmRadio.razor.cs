@@ -29,19 +29,19 @@ public partial class RvmRadio<TValue> : ComponentBase
             var tamanho = Grupo?.Size ?? RvmSize.Medium;
             var cor = Grupo?.Color ?? RvmColor.Primary;
             var classes = string.Join(' ',
-                "controle radio",
-                tamanho switch { RvmSize.Small => "pequeno", RvmSize.Large => "grande", _ => "medio" },
+                "rvm-controle rvm-radio",
+                tamanho switch { RvmSize.Small => "rvm-pequeno", RvmSize.Large => "rvm-grande", _ => "rvm-medio" },
                 cor switch
                 {
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Info => "info",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "primary"
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
                 });
 
-            return Grupo?.Disabled == true ? classes + " desabilitado" : classes;
+            return Grupo?.Disabled == true ? classes + " rvm-desabilitado" : classes;
         }
     }
 

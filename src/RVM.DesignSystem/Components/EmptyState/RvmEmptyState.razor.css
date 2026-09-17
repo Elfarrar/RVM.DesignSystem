@@ -2,7 +2,7 @@
    Composicao da tela Error.png do kit: tudo centralizado, titulo em peso medio, apoio no texto
    secundario e a acao embaixo. */
 
-.vazio {
+.rvm-vazio {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,19 +13,19 @@
     font-family: var(--rvm-font-family);
 }
 
-.ilustracao {
+.rvm-ilustracao {
     max-width: 16rem;
     margin-bottom: var(--rvm-space-4);
 }
 
-.ilustracao ::deep img,
-.ilustracao ::deep svg {
+.rvm-ilustracao ::deep img,
+.rvm-ilustracao ::deep svg {
     display: block;
     max-width: 100%;
     height: auto;
 }
 
-.icone {
+.rvm-icone {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -37,7 +37,7 @@
     color: var(--rvm-color-primary-text);
 }
 
-.titulo {
+.rvm-titulo {
     margin: 0;
     color: var(--rvm-color-text-primary);
     font-size: var(--rvm-text-h5-size);
@@ -45,7 +45,7 @@
     font-weight: var(--rvm-text-h5-weight);
 }
 
-.descricao {
+.rvm-descricao {
     max-width: 32rem;
     margin: 0;
     color: var(--rvm-color-text-secondary);
@@ -53,11 +53,11 @@
     line-height: var(--rvm-text-body2-line);
 }
 
-.detalhe {
+.rvm-detalhe {
     max-width: 32rem;
 }
 
-.acoes {
+.rvm-acoes {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

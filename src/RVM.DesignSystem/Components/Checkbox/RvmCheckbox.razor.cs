@@ -73,20 +73,20 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
         get
         {
             var proprias = string.Join(' ',
-                "controle checkbox",
-                Size switch { RvmSize.Small => "pequeno", RvmSize.Large => "grande", _ => "medio" },
+                "rvm-controle rvm-checkbox",
+                Size switch { RvmSize.Small => "rvm-pequeno", RvmSize.Large => "rvm-grande", _ => "rvm-medio" },
                 Color switch
                 {
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Info => "info",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "primary"
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
                 });
 
-            if (Indeterminate) proprias += " indeterminado";
-            if (Disabled) proprias += " desabilitado";
+            if (Indeterminate) proprias += " rvm-indeterminado";
+            if (Disabled) proprias += " rvm-desabilitado";
 
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)

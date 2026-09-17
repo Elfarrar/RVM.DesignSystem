@@ -26,7 +26,7 @@
     {
         get
         {
-            var proprias = Dense ? "lista densa" : "lista";
+            var proprias = Dense ? "rvm-lista rvm-densa" : "rvm-lista";
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)
                    && informada is string texto

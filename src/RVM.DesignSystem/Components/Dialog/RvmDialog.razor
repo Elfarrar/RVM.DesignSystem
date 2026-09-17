@@ -11,11 +11,11 @@
 @if (Open)
 {
     <div class="@ClassesDaRaiz">
-        <div class="fundo" aria-hidden="true" @onclick="AoClicarNoFundoAsync"></div>
+        <div class="rvm-fundo" aria-hidden="true" @onclick="AoClicarNoFundoAsync"></div>
 
         <div @ref="_caixa"
              @attributes="AdditionalAttributes"
-             class="caixa"
+             class="rvm-caixa"
              role="@(Alert ? "alertdialog" : "dialog")"
              aria-modal="true"
              aria-labelledby="@(string.IsNullOrWhiteSpace(Title) ? null : IdTitulo)"
@@ -25,25 +25,25 @@
              @onkeydown:stopPropagation="true">
             @if (!string.IsNullOrWhiteSpace(Title) || ShowCloseButton)
             {
-                <div class="topo">
+                <div class="rvm-topo">
                     @if (!string.IsNullOrWhiteSpace(Title))
                     {
-                        <h2 id="@IdTitulo" class="titulo">@Title</h2>
+                        <h2 id="@IdTitulo" class="rvm-titulo">@Title</h2>
                     }
                     @if (ShowCloseButton)
                     {
-                        <button type="button" class="fechar" aria-label="@CloseLabel" @onclick="FecharAsync">
+                        <button type="button" class="rvm-fechar" aria-label="@CloseLabel" @onclick="FecharAsync">
                             <RvmIcon Name="RvmIconName.Close" />
                         </button>
                     }
                 </div>
             }
 
-            <div id="@IdConteudo" class="conteudo">@ChildContent</div>
+            <div id="@IdConteudo" class="rvm-conteudo">@ChildContent</div>
 
             @if (Actions is not null)
             {
-                <div class="acoes">@Actions</div>
+                <div class="rvm-acoes">@Actions</div>
             }
         </div>
     </div>

@@ -144,14 +144,14 @@ public class RvmTabsTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Horizontal, false, "abas sublinhadas horizontal")]
-    [InlineData(RvmTabsVariant.Contained, RvmOrientation.Horizontal, true, "abas preenchidas horizontal largura-total")]
-    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Vertical, true, "abas sublinhadas vertical")]
+    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Horizontal, false, "rvm-abas rvm-sublinhadas rvm-horizontal")]
+    [InlineData(RvmTabsVariant.Contained, RvmOrientation.Horizontal, true, "rvm-abas rvm-preenchidas rvm-horizontal rvm-largura-total")]
+    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Vertical, true, "rvm-abas rvm-sublinhadas rvm-vertical")]
     public void Estilo_orientacao_e_largura_viram_classes(RvmTabsVariant variante, RvmOrientation orientacao, bool larguraTotal, string esperado)
     {
         var cortado = Abas(extra: p => p.Add(x => x.Variant, variante).Add(x => x.Orientation, orientacao).Add(x => x.FullWidth, larguraTotal));
 
-        Assert.Equal(esperado, cortado.Find("div.abas").GetAttribute("class"));
+        Assert.Equal(esperado, cortado.Find("div.rvm-abas").GetAttribute("class"));
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public class RvmTabsTests : BunitContext
     {
         var cortado = Abas(extra: p => p.AddUnmatched("class", "minha").AddUnmatched("style", "margin: 0").AddUnmatched("data-teste", "x"));
 
-        var raiz = cortado.Find("div.abas");
+        var raiz = cortado.Find("div.rvm-abas");
         Assert.EndsWith("minha", raiz.GetAttribute("class"));
         Assert.Equal("margin: 0", raiz.GetAttribute("style"));
         Assert.Equal("x", cortado.Find("[role=tablist]").GetAttribute("data-teste"));
@@ -247,14 +247,14 @@ public class RvmMenuTests : BunitContext
 
         cortado.Find("button").Click();
         var menu = cortado.Find("[role=menu]");
-        var botao = cortado.Find("button.botao");
+        var botao = cortado.Find("button.rvm-botao");
         Assert.Equal("true", botao.GetAttribute("aria-expanded"));
         Assert.Equal(menu.Id, botao.GetAttribute("aria-controls"));
         Assert.Equal(botao.Id, menu.GetAttribute("aria-labelledby"));
         Assert.Equal(3, cortado.FindAll("[role=menuitem]").Count);
         Assert.Single(cortado.FindAll("[role=separator]"));
 
-        cortado.Find("button.botao").Click();
+        cortado.Find("button.rvm-botao").Click();
         Assert.Empty(cortado.FindAll("[role=menu]"));
     }
 
@@ -338,7 +338,7 @@ public class RvmMenuTests : BunitContext
         var cortado = Menu();
         cortado.Find("button").Click();
 
-        cortado.Find(".fundo").Click();
+        cortado.Find(".rvm-fundo").Click();
 
         Assert.Empty(cortado.FindAll("[role=menu]"));
     }
@@ -353,8 +353,8 @@ public class RvmMenuTests : BunitContext
             .AddUnmatched("style", "margin: 0")
             .AddUnmatched("data-teste", "x"));
 
-        var raiz = cortado.Find("div.menu");
-        Assert.Equal("menu minha", raiz.GetAttribute("class"));
+        var raiz = cortado.Find("div.rvm-menu");
+        Assert.Equal("rvm-menu minha", raiz.GetAttribute("class"));
         Assert.Equal("margin: 0", raiz.GetAttribute("style"));
         var botao = cortado.Find("button");
         Assert.Equal("x", botao.GetAttribute("data-teste"));
@@ -369,7 +369,7 @@ public class RvmMenuTests : BunitContext
         var cortado = Menu(p => p.Add(x => x.AlignEnd, true));
         cortado.Find("button").Click();
 
-        Assert.Contains("fim", cortado.Find("[role=menu]").GetAttribute("class"));
+        Assert.Contains("rvm-fim", cortado.Find("[role=menu]").GetAttribute("class"));
     }
 
     [Fact]
@@ -429,10 +429,10 @@ public class RvmSelectTests : BunitContext
         Assert.Equal("listbox", combo.GetAttribute("aria-haspopup"));
         Assert.Equal("false", combo.GetAttribute("aria-expanded"));
         Assert.Equal("0", combo.GetAttribute("tabindex"));
-        var rotulo = cortado.Find(".rotulo");
+        var rotulo = cortado.Find(".rvm-rotulo");
         Assert.Equal(rotulo.Id, combo.GetAttribute("aria-labelledby"));
         Assert.Empty(cortado.FindAll("[role=listbox]"));
-        Assert.DoesNotContain("rotulo-fixo", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.DoesNotContain("rvm-rotulo-fixo", cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Fact]
@@ -451,8 +451,8 @@ public class RvmSelectTests : BunitContext
 
         Assert.Equal(Cultura.Cafe, modelo.Principal);
         Assert.Empty(cortado.FindAll("[role=listbox]"));
-        Assert.Equal("Café", cortado.Find(".valor").TextContent);
-        Assert.Contains("rotulo-fixo", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.Equal("Café", cortado.Find(".rvm-valor").TextContent);
+        Assert.Contains("rvm-rotulo-fixo", cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Fact]
@@ -467,7 +467,7 @@ public class RvmSelectTests : BunitContext
         Assert.Equal("true", cortado.FindAll("[role=option]")[1].GetAttribute("aria-disabled"));
 
         cortado.Find("[role=combobox]").KeyDown(key: "ArrowDown");
-        Assert.Contains("ativa", cortado.FindAll("[role=option]")[2].GetAttribute("class"));
+        Assert.Contains("rvm-ativa", cortado.FindAll("[role=option]")[2].GetAttribute("class"));
 
         cortado.Find("[role=combobox]").KeyDown(key: "End");
         cortado.Find("[role=combobox]").KeyDown(key: "ArrowUp");
@@ -490,7 +490,7 @@ public class RvmSelectTests : BunitContext
 
         cortado.Find("[role=combobox]").KeyDown(key: tecla);
 
-        Assert.Contains("ativa", cortado.FindAll("[role=option]")[ativa].GetAttribute("class"));
+        Assert.Contains("rvm-ativa", cortado.FindAll("[role=option]")[ativa].GetAttribute("class"));
     }
 
     [Fact]
@@ -501,7 +501,7 @@ public class RvmSelectTests : BunitContext
         cortado.Find("[role=combobox]").Click();
 
         var opcao = cortado.FindAll("[role=option]")[2];
-        Assert.Contains("ativa", opcao.GetAttribute("class"));
+        Assert.Contains("rvm-ativa", opcao.GetAttribute("class"));
         Assert.Equal("true", opcao.GetAttribute("aria-selected"));
     }
 
@@ -525,7 +525,7 @@ public class RvmSelectTests : BunitContext
     {
         var cortado = Select(new Plantio());
         cortado.Find("[role=combobox]").Click();
-        cortado.Find(".fundo").Click();
+        cortado.Find(".rvm-fundo").Click();
         Assert.Empty(cortado.FindAll("[role=listbox]"));
 
         cortado.Find("[role=combobox]").Click();
@@ -557,15 +557,15 @@ public class RvmSelectTests : BunitContext
         var cortado = Select(modelo, p => p.Add(x => x.Searchable, true));
         cortado.Find("[role=combobox]").Click();
 
-        var busca = cortado.Find("input.busca");
+        var busca = cortado.Find("input.rvm-busca");
         Assert.Equal("Buscar", busca.GetAttribute("aria-label"));
         Assert.Null(cortado.Find("[role=combobox]").GetAttribute("aria-activedescendant"));
 
         busca.Input("cafe");
         Assert.Single(cortado.FindAll("[role=option]"));
-        Assert.Equal(cortado.Find("[role=option]").Id, cortado.Find("input.busca").GetAttribute("aria-activedescendant"));
+        Assert.Equal(cortado.Find("[role=option]").Id, cortado.Find("input.rvm-busca").GetAttribute("aria-activedescendant"));
 
-        cortado.Find("input.busca").KeyDown(key: "Enter");
+        cortado.Find("input.rvm-busca").KeyDown(key: "Enter");
         Assert.Equal(Cultura.Cafe, modelo.Principal);
     }
 
@@ -575,15 +575,15 @@ public class RvmSelectTests : BunitContext
         var cortado = Select(new Plantio(), p => p.Add(x => x.Searchable, true).Add(x => x.NoResultsText, "Nada aqui."));
         cortado.Find("[role=combobox]").Click();
 
-        cortado.Find("input.busca").Input("trigo");
-        cortado.Find("input.busca").KeyDown(key: "ArrowDown");
-        cortado.Find("input.busca").KeyDown(key: "ArrowUp");
-        cortado.Find("input.busca").KeyDown(key: "Enter");
+        cortado.Find("input.rvm-busca").Input("trigo");
+        cortado.Find("input.rvm-busca").KeyDown(key: "ArrowDown");
+        cortado.Find("input.rvm-busca").KeyDown(key: "ArrowUp");
+        cortado.Find("input.rvm-busca").KeyDown(key: "Enter");
 
-        Assert.Equal("Nada aqui.", cortado.Find(".vazio").TextContent);
+        Assert.Equal("Nada aqui.", cortado.Find(".rvm-vazio").TextContent);
         Assert.Empty(cortado.FindAll("[role=option]"));
 
-        cortado.Find("input.busca").KeyDown(key: "Escape");
+        cortado.Find("input.rvm-busca").KeyDown(key: "Escape");
         Assert.Empty(cortado.FindAll("[role=listbox]"));
     }
 
@@ -592,8 +592,8 @@ public class RvmSelectTests : BunitContext
     {
         var cortado = Render<RvmSelect<int>>(p => p.Add(x => x.Items, new[] { 1, 2, 3 }).Add(x => x.Value, 0).Add(x => x.Placeholder, "Escolha"));
 
-        Assert.Equal("Escolha", cortado.Find(".valor").TextContent);
-        Assert.Contains("rotulo-fixo", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.Equal("Escolha", cortado.Find(".rvm-valor").TextContent);
+        Assert.Contains("rvm-rotulo-fixo", cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Fact]
@@ -603,12 +603,12 @@ public class RvmSelectTests : BunitContext
         var naoAnulavel = Render<RvmSelect<Cultura>>(p => p
             .Add(x => x.Items, new[] { Cultura.Soja, Cultura.Milho })
             .Add(x => x.Placeholder, "Escolha"));
-        Assert.Equal("Soja", naoAnulavel.Find(".valor").TextContent);
+        Assert.Equal("Soja", naoAnulavel.Find(".rvm-valor").TextContent);
 
         var anulavel = Render<RvmSelect<Cultura?>>(p => p
             .Add(x => x.Items, Culturas)
             .Add(x => x.Placeholder, "Escolha"));
-        Assert.Equal("Escolha", anulavel.Find(".valor").TextContent);
+        Assert.Equal("Escolha", anulavel.Find(".rvm-valor").TextContent);
     }
 
     [Fact]
@@ -620,7 +620,7 @@ public class RvmSelectTests : BunitContext
             .Add(x => x.Value, 2)
             .Add(x => x.ValueChanged, EventCallback.Factory.Create<int>(this, _ => disparos++)));
 
-        Assert.Equal("2", cortado.Find(".valor").TextContent);
+        Assert.Equal("2", cortado.Find(".rvm-valor").TextContent);
         cortado.Find("[role=combobox]").Click();
         cortado.FindAll("[role=option]")[1].Click();
 
@@ -645,7 +645,7 @@ public class RvmSelectTests : BunitContext
         var mensagens = new ValidationMessageStore(contexto);
         var cortado = Select(modelo, p => p.Add(x => x.Required, true).Add(x => x.HelperText, "A principal do talhao"), contexto);
 
-        Assert.Equal("A principal do talhao", cortado.Find(".apoio").TextContent);
+        Assert.Equal("A principal do talhao", cortado.Find(".rvm-apoio").TextContent);
         Assert.Equal("true", cortado.Find("[role=combobox]").GetAttribute("aria-required"));
 
         mensagens.Add(contexto.Field(nameof(Plantio.Principal)), "Escolha a cultura.");
@@ -653,9 +653,9 @@ public class RvmSelectTests : BunitContext
 
         var combo = cortado.Find("[role=combobox]");
         Assert.Equal("true", combo.GetAttribute("aria-invalid"));
-        Assert.Equal(cortado.Find(".apoio").Id, combo.GetAttribute("aria-describedby"));
-        Assert.Equal("Escolha a cultura.", cortado.Find(".apoio").TextContent);
-        Assert.Contains("erro", cortado.Find("div.campo").GetAttribute("class"));
+        Assert.Equal(cortado.Find(".rvm-apoio").Id, combo.GetAttribute("aria-describedby"));
+        Assert.Equal("Escolha a cultura.", cortado.Find(".rvm-apoio").TextContent);
+        Assert.Contains("rvm-erro", cortado.Find("div.rvm-campo").GetAttribute("class"));
 
         cortado.Find("[role=combobox]").Click();
         cortado.FindAll("[role=option]")[0].Click();
@@ -667,7 +667,7 @@ public class RvmSelectTests : BunitContext
     {
         var cortado = Select(new Plantio(), p => p.Add(x => x.HelperText, "apoio").Add(x => x.ErrorText, "Servico fora do ar."));
 
-        Assert.Equal("Servico fora do ar.", cortado.Find(".apoio").TextContent);
+        Assert.Equal("Servico fora do ar.", cortado.Find(".rvm-apoio").TextContent);
     }
 
     [Fact]
@@ -684,14 +684,14 @@ public class RvmSelectTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmTextFieldVariant.Outlined, RvmSize.Medium, "campo contorno medio")]
-    [InlineData(RvmTextFieldVariant.Filled, RvmSize.Small, "campo preenchido pequeno")]
-    [InlineData(RvmTextFieldVariant.Standard, RvmSize.Medium, "campo padrao medio")]
+    [InlineData(RvmTextFieldVariant.Outlined, RvmSize.Medium, "rvm-campo rvm-contorno rvm-medio")]
+    [InlineData(RvmTextFieldVariant.Filled, RvmSize.Small, "rvm-campo rvm-preenchido rvm-pequeno")]
+    [InlineData(RvmTextFieldVariant.Standard, RvmSize.Medium, "rvm-campo rvm-padrao rvm-medio")]
     public void Estilo_e_tamanho_viram_classes(RvmTextFieldVariant variante, RvmSize tamanho, string esperado)
     {
         var cortado = Select(new Plantio(), p => p.Add(x => x.Variant, variante).Add(x => x.Size, tamanho));
 
-        Assert.StartsWith(esperado, cortado.Find("div.campo").GetAttribute("class"));
+        Assert.StartsWith(esperado, cortado.Find("div.rvm-campo").GetAttribute("class"));
     }
 
     [Fact]
@@ -703,7 +703,7 @@ public class RvmSelectTests : BunitContext
             .AddUnmatched("id", "cultura")
             .AddUnmatched("data-teste", "x"));
 
-        var raiz = cortado.Find("div.campo");
+        var raiz = cortado.Find("div.rvm-campo");
         Assert.EndsWith("minha", raiz.GetAttribute("class"));
         Assert.Equal("width: 200px", raiz.GetAttribute("style"));
         var combo = cortado.Find("[role=combobox]");
@@ -732,8 +732,8 @@ public class RvmSelectTests : BunitContext
 
         Assert.Equal(["T1", "T3"], modelo.Talhoes);
         Assert.NotEmpty(cortado.FindAll("[role=listbox]"));
-        Assert.Equal(2, cortado.FindAll(".marca svg").Count);
-        Assert.Equal("T1, T3", cortado.Find(".valor").TextContent);
+        Assert.Equal(2, cortado.FindAll(".rvm-marca svg").Count);
+        Assert.Equal("T1, T3", cortado.Find(".rvm-valor").TextContent);
         Assert.Equal(["T1", "T3"], cortado.FindAll("input[type=hidden]").Select(i => i.GetAttribute("value")));
 
         cortado.FindAll("[role=option]")[0].Click();

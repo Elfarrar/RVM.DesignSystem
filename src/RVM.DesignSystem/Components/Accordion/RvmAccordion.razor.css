@@ -1,7 +1,7 @@
 /* CSS isolado do RvmAccordion. So custom properties — hex literal aqui quebra o tema escuro.
    MEDIDO no referencia-neatlab/Accordion.png: o grupo e um bloco de papel com sombra e raio. */
 
-.acordeao {
+.rvm-acordeao {
     display: flex;
     flex-direction: column;
     font-family: var(--rvm-font-family);
@@ -11,62 +11,62 @@
    componente, e sem ::deep o seletor nao casaria (armadilha ja paga na onda 2). */
 
 /* --- Padrao ("Simple"): um bloco de papel com divisores; o painel aberto vira cartao solto --- */
-.padrao ::deep .painel {
+.rvm-padrao ::deep .rvm-painel {
     box-shadow: var(--rvm-shadow-1);
 }
 
-.padrao ::deep .painel + .painel {
+.rvm-padrao ::deep .rvm-painel + .rvm-painel {
     border-top: 1px solid var(--rvm-color-divider);
 }
 
-.padrao ::deep .painel:first-child,
-.padrao ::deep .painel.aberto,
-.padrao ::deep .painel.aberto + .painel {
+.rvm-padrao ::deep .rvm-painel:first-child,
+.rvm-padrao ::deep .rvm-painel.rvm-aberto,
+.rvm-padrao ::deep .rvm-painel.rvm-aberto + .rvm-painel {
     border-top-left-radius: var(--rvm-radius-sm);
     border-top-right-radius: var(--rvm-radius-sm);
 }
 
-.padrao ::deep .painel:last-child,
-.padrao ::deep .painel.aberto,
-.padrao ::deep .painel:has(+ .painel.aberto) {
+.rvm-padrao ::deep .rvm-painel:last-child,
+.rvm-padrao ::deep .rvm-painel.rvm-aberto,
+.rvm-padrao ::deep .rvm-painel:has(+ .rvm-painel.rvm-aberto) {
     border-bottom-left-radius: var(--rvm-radius-sm);
     border-bottom-right-radius: var(--rvm-radius-sm);
 }
 
 /* O aberto se descola: 16 px de vao em cima e embaixo, e sem divisor encostado nele. */
-.padrao ::deep .painel.aberto {
+.rvm-padrao ::deep .rvm-painel.rvm-aberto {
     margin: var(--rvm-space-4) 0;
     border-top: none;
 }
 
-.padrao ::deep .painel.aberto:first-child {
+.rvm-padrao ::deep .rvm-painel.rvm-aberto:first-child {
     margin-top: 0;
 }
 
-.padrao ::deep .painel.aberto:last-child {
+.rvm-padrao ::deep .rvm-painel.rvm-aberto:last-child {
     margin-bottom: 0;
 }
 
-.padrao ::deep .painel.aberto + .painel {
+.rvm-padrao ::deep .rvm-painel.rvm-aberto + .rvm-painel {
     border-top: none;
 }
 
 /* --- Preenchido ("Customized"): cabecalhos preenchidos, conteudo no papel --- */
-.preenchido {
+.rvm-preenchido {
     overflow: hidden;
     border-radius: var(--rvm-radius-sm);
     box-shadow: var(--rvm-shadow-1);
 }
 
-.preenchido ::deep .gatilho {
+.rvm-preenchido ::deep .rvm-gatilho {
     background-color: var(--rvm-color-action-selected);
 }
 
-.preenchido ::deep .painel + .painel,
-.preenchido ::deep .conteudo {
+.rvm-preenchido ::deep .rvm-painel + .rvm-painel,
+.rvm-preenchido ::deep .rvm-conteudo {
     border-top: 1px solid var(--rvm-color-divider);
 }
 
-.preenchido ::deep .conteudo {
+.rvm-preenchido ::deep .rvm-conteudo {
     padding-top: var(--rvm-space-4);
 }

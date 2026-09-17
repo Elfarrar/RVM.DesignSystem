@@ -15,7 +15,7 @@ public class RvmButtonTests : BunitContext
         var cortado = Render<RvmButton>(p => p.AddChildContent("Salvar"));
 
         var botao = cortado.Find("button");
-        Assert.Equal("botao preenchido medio primary", botao.GetAttribute("class"));
+        Assert.Equal("rvm-botao rvm-preenchido rvm-medio rvm-primary", botao.GetAttribute("class"));
         Assert.Equal("Salvar", botao.TextContent.Trim());
     }
 
@@ -39,9 +39,9 @@ public class RvmButtonTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmButtonVariant.Contained, "preenchido")]
-    [InlineData(RvmButtonVariant.Outlined, "contorno")]
-    [InlineData(RvmButtonVariant.Text, "texto")]
+    [InlineData(RvmButtonVariant.Contained, "rvm-preenchido")]
+    [InlineData(RvmButtonVariant.Outlined, "rvm-contorno")]
+    [InlineData(RvmButtonVariant.Text, "rvm-texto")]
     public void O_peso_visual_vira_classe(RvmButtonVariant variante, string classe)
     {
         var cortado = Render<RvmButton>(p => p.Add(x => x.Variant, variante).AddChildContent("x"));
@@ -50,9 +50,9 @@ public class RvmButtonTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmSize.Small, "pequeno")]
-    [InlineData(RvmSize.Medium, "medio")]
-    [InlineData(RvmSize.Large, "grande")]
+    [InlineData(RvmSize.Small, "rvm-pequeno")]
+    [InlineData(RvmSize.Medium, "rvm-medio")]
+    [InlineData(RvmSize.Large, "rvm-grande")]
     public void O_tamanho_vira_classe(RvmSize tamanho, string classe)
     {
         var cortado = Render<RvmButton>(p => p.Add(x => x.Size, tamanho).AddChildContent("x"));
@@ -61,9 +61,9 @@ public class RvmButtonTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmColor.Primary, "primary")]
-    [InlineData(RvmColor.Secondary, "secondary")]
-    [InlineData(RvmColor.Error, "error")]
+    [InlineData(RvmColor.Primary, "rvm-primary")]
+    [InlineData(RvmColor.Secondary, "rvm-secondary")]
+    [InlineData(RvmColor.Error, "rvm-error")]
     public void O_papel_de_cor_vira_classe(RvmColor cor, string classe)
     {
         var cortado = Render<RvmButton>(p => p.Add(x => x.Color, cor).AddChildContent("x"));
@@ -115,7 +115,7 @@ public class RvmButtonTests : BunitContext
         var botao = cortado.Find("button");
         Assert.True(botao.HasAttribute("disabled"));
         Assert.Equal("true", botao.GetAttribute("aria-busy"));
-        Assert.NotEmpty(cortado.FindAll("span.girando svg"));
+        Assert.NotEmpty(cortado.FindAll("span.rvm-girando svg"));
 
         await botao.ClickAsync(new MouseEventArgs());
 
@@ -152,7 +152,7 @@ public class RvmButtonTests : BunitContext
             .AddChildContent("Salvando"));
 
         Assert.Single(cortado.FindAll("svg"));
-        Assert.NotEmpty(cortado.FindAll("span.girando"));
+        Assert.NotEmpty(cortado.FindAll("span.rvm-girando"));
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class RvmButtonTests : BunitContext
             .AddChildContent("x"));
 
         var botao = cortado.Find("button");
-        Assert.Equal("botao preenchido medio primary minha", botao.GetAttribute("class"));
+        Assert.Equal("rvm-botao rvm-preenchido rvm-medio rvm-primary minha", botao.GetAttribute("class"));
         Assert.Equal("1", botao.GetAttribute("data-teste"));
     }
 }

@@ -6,7 +6,7 @@
 @if (TemImagem && !_imagemFalhou)
 {
     <span @attributes="AdditionalAttributes" class="@CssClass">
-        <img src="@Src" alt="@Alt" class="foto" @onerror="AoFalharImagem" />
+        <img src="@Src" alt="@Alt" class="rvm-foto" @onerror="AoFalharImagem" />
     </span>
 }
 else
@@ -23,7 +23,7 @@ else
         }
         else if (!string.IsNullOrWhiteSpace(Initials))
         {
-            <span class="iniciais" aria-hidden="true">@IniciaisExibidas</span>
+            <span class="rvm-iniciais" aria-hidden="true">@IniciaisExibidas</span>
         }
         else
         {

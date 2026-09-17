@@ -5,7 +5,7 @@
    movel), setas trocam de aba, Home e End vao as pontas. A selecao segue o foco — a aba muda ao
    chegar nela, que e o comportamento esperado quando trocar de painel e barato. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
-    <div @ref="_lista" @attributes="AtributosDaLista" role="tablist" class="lista"
+    <div @ref="_lista" @attributes="AtributosDaLista" role="tablist" class="rvm-lista"
          aria-label="@AriaLabel"
          aria-orientation="@(Orientation == RvmOrientation.Vertical ? "vertical" : "horizontal")">
         @for (var i = 0; i < _abas.Count; i++)
@@ -17,7 +17,7 @@
                     type="button"
                     role="tab"
                     id="@IdDaAba(aba)"
-                    class="@(ativa ? "aba ativa" : "aba")"
+                    class="@(ativa ? "rvm-aba rvm-ativa" : "rvm-aba")"
                     aria-selected="@(ativa ? "true" : "false")"
                     aria-controls="@(ativa ? IdDoPainel(aba) : null)"
                     tabindex="@(ativa ? "0" : "-1")"
@@ -33,7 +33,7 @@
         }
     </div>
 
-    <div class="paineis">
+    <div class="rvm-paineis">
         <CascadingValue Value="this" IsFixed="true">
             @ChildContent
         </CascadingValue>

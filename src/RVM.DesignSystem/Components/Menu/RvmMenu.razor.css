@@ -2,18 +2,18 @@
    MEDIDO no referencia-neatlab/Menu.png: superficie no fundo "paper", 8 px de recuo vertical,
    itens de 36 px (no RvmMenuItem). */
 
-.menu {
+.rvm-menu {
     position: relative;
     display: inline-block;
 }
 
-.fundo {
+.rvm-fundo {
     position: fixed;
     inset: 0;
     z-index: 1299;
 }
 
-.lista {
+.rvm-lista {
     position: absolute;
     top: calc(100% + var(--rvm-space-1));
     left: 0;
@@ -30,7 +30,7 @@
     box-shadow: var(--rvm-shadow-3);
 }
 
-.fim {
+.rvm-fim {
     left: auto;
     right: 0;
 }

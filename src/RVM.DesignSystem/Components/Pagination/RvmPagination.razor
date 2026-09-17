@@ -6,9 +6,9 @@
    pagina atual leva aria-current. As reticencias sao desenho — o leitor de tela ouve "Pagina 11"
    logo depois de "Pagina 3" e entende o salto. *@
 <nav @attributes="AdditionalAttributes" aria-label="@AriaLabel" class="@ClassesDaRaiz">
-    <ul class="itens">
+    <ul class="rvm-itens">
         <li>
-            <button type="button" class="item seta" aria-label="Pagina anterior"
+            <button type="button" class="rvm-item rvm-seta" aria-label="Pagina anterior"
                     disabled="@(Disabled || PaginaAtual <= 1)" @onclick="() => Ir(PaginaAtual - 1)">
                 <RvmIcon Name="RvmIconName.ChevronLeft" Size="RvmSize.Small" />
             </button>
@@ -18,14 +18,14 @@
         {
             @if (numero is null)
             {
-                <li><span class="item reticencias" aria-hidden="true">…</span></li>
+                <li><span class="rvm-item rvm-reticencias" aria-hidden="true">…</span></li>
             }
             else
             {
                 var pagina = numero.Value;
                 var atual = pagina == PaginaAtual;
                 <li>
-                    <button type="button" class="@(atual ? "item numero atual" : "item numero")"
+                    <button type="button" class="@(atual ? "rvm-item rvm-numero rvm-atual" : "rvm-item rvm-numero")"
                             aria-label="@($"Pagina {pagina}")" aria-current="@(atual ? "page" : null)"
                             disabled="@Disabled" @onclick="() => Ir(pagina)">
                         @pagina
@@ -35,7 +35,7 @@
         }
 
         <li>
-            <button type="button" class="item seta" aria-label="Proxima pagina"
+            <button type="button" class="rvm-item rvm-seta" aria-label="Proxima pagina"
                     disabled="@(Disabled || PaginaAtual >= Count)" @onclick="() => Ir(PaginaAtual + 1)">
                 <RvmIcon Name="RvmIconName.ChevronRight" Size="RvmSize.Small" />
             </button>

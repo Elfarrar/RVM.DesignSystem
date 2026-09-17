@@ -10,6 +10,6 @@ else
     @* Com texto no meio o <hr> nao serve (elemento vazio), entao o papel vai explicito. As duas
        linhas laterais sao ::before/::after — decoracao, nao conteudo para o leitor de tela. *@
     <div @attributes="AdditionalAttributes" class="@CssClass" role="separator" aria-orientation="horizontal">
-        <span class="texto rvm-text-caption">@ChildContent</span>
+        <span class="rvm-texto rvm-text-caption">@ChildContent</span>
     </div>
 }

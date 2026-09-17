@@ -16,9 +16,9 @@ public class RvmBadgeTests : BunitContext
     {
         var cortado = Render<RvmBadge>(p => p.Add(x => x.Content, "Novo"));
 
-        Assert.Equal("badge-raiz", cortado.Find("span").GetAttribute("class"));
-        var marca = cortado.Find(".badge");
-        Assert.Equal("badge pilula primary solto", marca.GetAttribute("class"));
+        Assert.Equal("rvm-badge-raiz", cortado.Find("span").GetAttribute("class"));
+        var marca = cortado.Find(".rvm-badge");
+        Assert.Equal("rvm-badge rvm-pilula rvm-primary rvm-solto", marca.GetAttribute("class"));
         Assert.Equal("Novo", marca.TextContent);
     }
 
@@ -31,7 +31,7 @@ public class RvmBadgeTests : BunitContext
     {
         var cortado = Render<RvmBadge>(p => p.Add(x => x.Count, contagem).Add(x => x.Max, maximo).Add(x => x.Content, "ignorado"));
 
-        Assert.Equal(esperado, cortado.Find(".badge").TextContent);
+        Assert.Equal(esperado, cortado.Find(".rvm-badge").TextContent);
     }
 
     [Fact]
@@ -39,8 +39,8 @@ public class RvmBadgeTests : BunitContext
     {
         var cortado = Render<RvmBadge>(p => p.Add(x => x.Dot, true).Add(x => x.Content, "3"));
 
-        var marca = cortado.Find(".badge");
-        Assert.Contains("ponto", marca.GetAttribute("class"));
+        var marca = cortado.Find(".rvm-badge");
+        Assert.Contains("rvm-ponto", marca.GetAttribute("class"));
         Assert.Equal(string.Empty, marca.TextContent);
         Assert.Equal("true", marca.GetAttribute("aria-hidden"));
     }
@@ -50,22 +50,22 @@ public class RvmBadgeTests : BunitContext
     {
         var cortado = Render<RvmBadge>(p => p.Add(x => x.Count, 3).Add(x => x.Label, "3 mensagens nao lidas"));
 
-        Assert.Equal("true", cortado.Find(".badge").GetAttribute("aria-hidden"));
-        Assert.Equal("3 mensagens nao lidas", cortado.Find(".so-leitor").TextContent);
+        Assert.Equal("true", cortado.Find(".rvm-badge").GetAttribute("aria-hidden"));
+        Assert.Equal("3 mensagens nao lidas", cortado.Find(".rvm-so-leitor").TextContent);
     }
 
     [Theory]
-    [InlineData(RvmColor.Primary, "primary")]
-    [InlineData(RvmColor.Secondary, "secondary")]
-    [InlineData(RvmColor.Info, "info")]
-    [InlineData(RvmColor.Success, "success")]
-    [InlineData(RvmColor.Warning, "warning")]
-    [InlineData(RvmColor.Error, "error")]
+    [InlineData(RvmColor.Primary, "rvm-primary")]
+    [InlineData(RvmColor.Secondary, "rvm-secondary")]
+    [InlineData(RvmColor.Info, "rvm-info")]
+    [InlineData(RvmColor.Success, "rvm-success")]
+    [InlineData(RvmColor.Warning, "rvm-warning")]
+    [InlineData(RvmColor.Error, "rvm-error")]
     public void Papel_de_cor_vira_classe(RvmColor cor, string classe)
     {
         var cortado = Render<RvmBadge>(p => p.Add(x => x.Color, cor).Add(x => x.Content, "1"));
 
-        Assert.Contains(classe, cortado.Find(".badge").GetAttribute("class"));
+        Assert.Contains(classe, cortado.Find(".rvm-badge").GetAttribute("class"));
     }
 
     [Fact]
@@ -78,11 +78,11 @@ public class RvmBadgeTests : BunitContext
             .AddUnmatched("class", "minha")
             .AddUnmatched("data-teste", "x"));
 
-        var ancora = cortado.Find("span.badge-ancora");
-        Assert.Equal("badge-ancora minha", ancora.GetAttribute("class"));
+        var ancora = cortado.Find("span.rvm-badge-ancora");
+        Assert.Equal("rvm-badge-ancora minha", ancora.GetAttribute("class"));
         Assert.Equal("x", ancora.GetAttribute("data-teste"));
         Assert.NotNull(ancora.QuerySelector("svg.envelope"));
-        Assert.Contains("sobreposto", cortado.Find(".badge").GetAttribute("class"));
+        Assert.Contains("rvm-sobreposto", cortado.Find(".rvm-badge").GetAttribute("class"));
     }
 }
 
@@ -103,7 +103,7 @@ public class RvmBreadcrumbsTests : BunitContext
 
         var nav = cortado.Find("nav");
         Assert.Equal("Trilha de navegacao", nav.GetAttribute("aria-label"));
-        Assert.Equal("trilha", nav.GetAttribute("class"));
+        Assert.Equal("rvm-trilha", nav.GetAttribute("class"));
         Assert.Equal(4, cortado.FindAll("ol > li").Count);
     }
 
@@ -123,9 +123,9 @@ public class RvmBreadcrumbsTests : BunitContext
     {
         var cortado = Render<RvmBreadcrumbs>(p => p.Add(x => x.Items, Trilha));
 
-        var links = cortado.FindAll("a.ligacao");
+        var links = cortado.FindAll("a.rvm-ligacao");
         Assert.Equal(["/", "/safra"], links.Select(a => a.GetAttribute("href")));
-        var desabilitado = cortado.Find(".desabilitado");
+        var desabilitado = cortado.Find(".rvm-desabilitado");
         Assert.Equal("true", desabilitado.GetAttribute("aria-disabled"));
         Assert.Equal("Relatorios", desabilitado.TextContent.Trim());
     }
@@ -135,8 +135,8 @@ public class RvmBreadcrumbsTests : BunitContext
     {
         var cortado = Render<RvmBreadcrumbs>(p => p.Add(x => x.Items, new RvmBreadcrumbItem[] { new("Solto"), new("Atual") }));
 
-        var primeiro = cortado.FindAll("li")[0].QuerySelector(".rotulo")!;
-        Assert.Equal("rotulo", primeiro.GetAttribute("class"));
+        var primeiro = cortado.FindAll("li")[0].QuerySelector(".rvm-rotulo")!;
+        Assert.Equal("rvm-rotulo", primeiro.GetAttribute("class"));
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class RvmBreadcrumbsTests : BunitContext
     {
         var cortado = Render<RvmBreadcrumbs>(p => p.Add(x => x.Items, Trilha));
 
-        var separadores = cortado.FindAll(".separador");
+        var separadores = cortado.FindAll(".rvm-separador");
         Assert.Equal(3, separadores.Count);
         Assert.All(separadores, s => Assert.Equal("true", s.GetAttribute("aria-hidden")));
         Assert.All(separadores, s => Assert.Equal("/", s.TextContent.Trim()));
@@ -159,9 +159,9 @@ public class RvmBreadcrumbsTests : BunitContext
             .Add(x => x.AriaLabel, "Onde voce esta")
             .AddUnmatched("class", "minha"));
 
-        Assert.All(cortado.FindAll(".separador"), s => Assert.NotNull(s.QuerySelector("svg")));
+        Assert.All(cortado.FindAll(".rvm-separador"), s => Assert.NotNull(s.QuerySelector("svg")));
         Assert.Equal("Onde voce esta", cortado.Find("nav").GetAttribute("aria-label"));
-        Assert.Equal("trilha minha", cortado.Find("nav").GetAttribute("class"));
+        Assert.Equal("rvm-trilha minha", cortado.Find("nav").GetAttribute("class"));
     }
 
     [Fact]
@@ -177,7 +177,7 @@ public class RvmBreadcrumbsTests : BunitContext
 public class RvmPaginationTests : BunitContext
 {
     private static string Sequencia(IRenderedComponent<RvmPagination> cortado)
-        => string.Join(' ', cortado.FindAll("li > .numero, li > .reticencias").Select(e => e.TextContent.Trim()));
+        => string.Join(' ', cortado.FindAll("li > .rvm-numero, li > .rvm-reticencias").Select(e => e.TextContent.Trim()));
 
     [Theory]
     [InlineData(1, 4, "1 2 3 4")]
@@ -209,8 +209,8 @@ public class RvmPaginationTests : BunitContext
     {
         var cortado = Render<RvmPagination>(p => p.Add(x => x.Count, 0));
 
-        Assert.Empty(cortado.FindAll(".numero"));
-        Assert.All(cortado.FindAll("button.seta"), b => Assert.True(b.HasAttribute("disabled")));
+        Assert.Empty(cortado.FindAll(".rvm-numero"));
+        Assert.All(cortado.FindAll("button.rvm-seta"), b => Assert.True(b.HasAttribute("disabled")));
     }
 
     [Fact]
@@ -220,7 +220,7 @@ public class RvmPaginationTests : BunitContext
 
         var atual = cortado.Find("[aria-current=page]");
         Assert.Equal("Pagina 2", atual.GetAttribute("aria-label"));
-        Assert.Contains("atual", atual.GetAttribute("class"));
+        Assert.Contains("rvm-atual", atual.GetAttribute("class"));
         Assert.Single(cortado.FindAll("[aria-current]"));
         Assert.Equal("Paginacao", cortado.Find("nav").GetAttribute("aria-label"));
     }
@@ -293,12 +293,12 @@ public class RvmPaginationTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Primary, "paginacao texto circular medio primary")]
-    [InlineData(RvmPaginationVariant.Outlined, RvmPaginationShape.Rounded, RvmSize.Small, RvmColor.Secondary, "paginacao contorno arredondado pequeno secondary")]
-    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Large, RvmColor.Info, "paginacao texto circular grande info")]
-    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Success, "paginacao texto circular medio success")]
-    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Warning, "paginacao texto circular medio warning")]
-    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Error, "paginacao texto circular medio error")]
+    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Primary, "rvm-paginacao rvm-texto rvm-circular rvm-medio rvm-primary")]
+    [InlineData(RvmPaginationVariant.Outlined, RvmPaginationShape.Rounded, RvmSize.Small, RvmColor.Secondary, "rvm-paginacao rvm-contorno rvm-arredondado rvm-pequeno rvm-secondary")]
+    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Large, RvmColor.Info, "rvm-paginacao rvm-texto rvm-circular rvm-grande rvm-info")]
+    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Success, "rvm-paginacao rvm-texto rvm-circular rvm-medio rvm-success")]
+    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Warning, "rvm-paginacao rvm-texto rvm-circular rvm-medio rvm-warning")]
+    [InlineData(RvmPaginationVariant.Text, RvmPaginationShape.Circular, RvmSize.Medium, RvmColor.Error, "rvm-paginacao rvm-texto rvm-circular rvm-medio rvm-error")]
     public void Estilo_forma_tamanho_e_cor_viram_classes(
         RvmPaginationVariant variante, RvmPaginationShape forma, RvmSize tamanho, RvmColor cor, string esperado)
     {
@@ -317,7 +317,7 @@ public class RvmPaginationTests : BunitContext
             .AddUnmatched("class", "minha").AddUnmatched("data-teste", "x"));
 
         var nav = cortado.Find("nav");
-        Assert.Equal("paginacao texto circular medio neutro minha", nav.GetAttribute("class"));
+        Assert.Equal("rvm-paginacao rvm-texto rvm-circular rvm-medio rvm-neutro minha", nav.GetAttribute("class"));
         Assert.Equal("x", nav.GetAttribute("data-teste"));
     }
 }
@@ -341,7 +341,7 @@ public class RvmTooltipTests : BunitContext
         Assert.Equal("Copiar link", dica.TextContent);
         Assert.StartsWith("rvm-dica-", dica.Id);
         Assert.Equal(dica.Id, cortado.Find("button").GetAttribute("aria-describedby"));
-        Assert.Equal("dica acima com-seta", dica.GetAttribute("class"));
+        Assert.Equal("rvm-dica rvm-acima rvm-com-seta", dica.GetAttribute("class"));
     }
 
     [Fact]
@@ -362,10 +362,10 @@ public class RvmTooltipTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmTooltipPlacement.Top, true, "dica acima com-seta")]
-    [InlineData(RvmTooltipPlacement.Bottom, true, "dica abaixo com-seta")]
-    [InlineData(RvmTooltipPlacement.Left, false, "dica esquerda sem-seta")]
-    [InlineData(RvmTooltipPlacement.Right, true, "dica direita com-seta")]
+    [InlineData(RvmTooltipPlacement.Top, true, "rvm-dica rvm-acima rvm-com-seta")]
+    [InlineData(RvmTooltipPlacement.Bottom, true, "rvm-dica rvm-abaixo rvm-com-seta")]
+    [InlineData(RvmTooltipPlacement.Left, false, "rvm-dica rvm-esquerda rvm-sem-seta")]
+    [InlineData(RvmTooltipPlacement.Right, true, "rvm-dica rvm-direita rvm-com-seta")]
     public void Posicao_e_seta_viram_classes(RvmTooltipPlacement posicao, bool seta, string esperado)
     {
         var cortado = Render<RvmTooltip>(p => p.Add(x => x.Text, "x").Add(x => x.Placement, posicao).Add(x => x.Arrow, seta));
@@ -377,20 +377,20 @@ public class RvmTooltipTests : BunitContext
     public void Esc_dispensa_e_sair_rearma()
     {
         var cortado = Render<RvmTooltip>(p => p.Add(x => x.Text, "x").AddUnmatched("class", "minha"));
-        var raiz = cortado.Find("span.com-dica");
-        Assert.Equal("com-dica minha", raiz.GetAttribute("class"));
+        var raiz = cortado.Find("span.rvm-com-dica");
+        Assert.Equal("rvm-com-dica minha", raiz.GetAttribute("class"));
 
         raiz.KeyDown(key: "a");
-        Assert.DoesNotContain("dispensada", cortado.Find("span.com-dica").GetAttribute("class"));
+        Assert.DoesNotContain("rvm-dispensada", cortado.Find("span.rvm-com-dica").GetAttribute("class"));
 
-        cortado.Find("span.com-dica").KeyDown(key: "Escape");
-        Assert.Contains("dispensada", cortado.Find("span.com-dica").GetAttribute("class"));
+        cortado.Find("span.rvm-com-dica").KeyDown(key: "Escape");
+        Assert.Contains("rvm-dispensada", cortado.Find("span.rvm-com-dica").GetAttribute("class"));
 
-        cortado.Find("span.com-dica").MouseLeave();
-        Assert.DoesNotContain("dispensada", cortado.Find("span.com-dica").GetAttribute("class"));
+        cortado.Find("span.rvm-com-dica").MouseLeave();
+        Assert.DoesNotContain("rvm-dispensada", cortado.Find("span.rvm-com-dica").GetAttribute("class"));
 
-        cortado.Find("span.com-dica").KeyDown(key: "Escape");
-        cortado.Find("span.com-dica").FocusOut();
-        Assert.DoesNotContain("dispensada", cortado.Find("span.com-dica").GetAttribute("class"));
+        cortado.Find("span.rvm-com-dica").KeyDown(key: "Escape");
+        cortado.Find("span.rvm-com-dica").FocusOut();
+        Assert.DoesNotContain("rvm-dispensada", cortado.Find("span.rvm-com-dica").GetAttribute("class"));
     }
 }

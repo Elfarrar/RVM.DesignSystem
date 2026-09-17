@@ -26,6 +26,6 @@ public partial class RvmBreadcrumbs : ComponentBase
            && AdditionalAttributes.TryGetValue("class", out var informada)
            && informada is string texto
            && !string.IsNullOrWhiteSpace(texto)
-            ? $"trilha {texto}"
-            : "trilha";
+            ? $"rvm-trilha {texto}"
+            : "rvm-trilha";
 }

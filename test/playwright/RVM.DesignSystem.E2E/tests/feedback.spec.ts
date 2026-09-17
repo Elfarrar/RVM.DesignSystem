@@ -101,7 +101,7 @@ for (const tema of ['claro', 'escuro'] as const) {
         await page.getByRole('button', { name: 'Excluir aplicacao' }).click();
         await page.getByRole('button', { name: 'Sucesso' }).click();
         await page.getByRole('button', { name: 'Erro', exact: true }).click();
-        await expect(page.locator('.mensagem')).toHaveCount(3);
+        await expect(page.locator('.rvm-mensagem')).toHaveCount(3);
         await semViolacaoSeria(page);
 
         await page.goto('/componentes/dialog');
@@ -126,14 +126,14 @@ test('progresso: o valor anunciado acompanha a barra', async ({ page }) => {
     await page.getByRole('button', { name: 'Mais 10%' }).click();
 
     await expect(barra).toHaveAttribute('aria-valuenow', '50');
-    await expect(barra.locator('.barra')).toHaveAttribute('style', 'width: 50%');
+    await expect(barra.locator('.rvm-barra')).toHaveAttribute('style', 'width: 50%');
     await expect(page.getByRole('progressbar', { name: 'Buscando cotacoes' })).not.toHaveAttribute('aria-valuenow', /.*/);
 });
 
 test('progresso: o anel tem geometria valida no site em pt-BR', async ({ page }) => {
     // O site formata numero em pt-BR: r="20,2" era atributo invalido e o anel sumia sem erro nenhum.
     await page.goto('/componentes/progress');
-    const arco = page.getByRole('progressbar', { name: 'Sincronizando medio' }).locator('.arco');
+    const arco = page.getByRole('progressbar', { name: 'Sincronizando medio' }).locator('.rvm-arco');
 
     await expect(arco).toHaveAttribute('r', '20.2');
     const largura = await arco.evaluate(el => (el as SVGGraphicsElement).getBBox().width);
@@ -145,7 +145,7 @@ test('esqueleto: a regiao avisa que carrega e os blocos ficam fora da arvore ace
     const regiao = page.getByRole('group', { name: 'Carregando o card do produtor' });
 
     await expect(regiao).toHaveAttribute('aria-busy', 'true');
-    await expect(regiao.locator('.esqueleto').first()).toHaveAttribute('aria-hidden', 'true');
+    await expect(regiao.locator('.rvm-esqueleto').first()).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('lista: item abre a sublista pelo teclado e a acao do fim nao aciona o item', async ({ page }) => {

@@ -9,12 +9,12 @@
    O visual e o do RvmTextField (mesmas medidas do kit: 56 e 40 px). Fechado, a lista nao existe no
    DOM: o estado inicial sai pronto sem JS. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
-    <div class="caixa">
+    <div class="rvm-caixa">
         <div @ref="_gatilho"
              @attributes="AtributosDoGatilho"
              id="@IdGatilho"
              role="combobox"
-             class="entrada"
+             class="rvm-entrada"
              tabindex="@(Disabled ? "-1" : "0")"
              aria-haspopup="listbox"
              aria-expanded="@(_aberto ? "true" : "false")"
@@ -27,28 +27,28 @@
              aria-describedby="@(MensagemDeApoio is null ? null : IdApoio)"
              @onclick="AoClicarNoGatilhoAsync"
              @onkeydown="AoTeclarNoGatilhoAsync">
-            <span class="valor">@(TemValor ? TextoExibido : Placeholder)</span>
+            <span class="rvm-valor">@(TemValor ? TextoExibido : Placeholder)</span>
         </div>
 
         @if (!string.IsNullOrWhiteSpace(Label))
         {
-            <span id="@IdRotulo" class="rotulo" @onclick="FocarGatilhoAsync">
+            <span id="@IdRotulo" class="rvm-rotulo" @onclick="FocarGatilhoAsync">
                 @Label
                 @if (Required)
                 {
-                    <span class="obrigatorio" aria-hidden="true">*</span>
+                    <span class="rvm-obrigatorio" aria-hidden="true">*</span>
                 }
             </span>
         }
 
-        <span class="seta" aria-hidden="true">
+        <span class="rvm-seta" aria-hidden="true">
             <RvmIcon Name="RvmIconName.ChevronDown" Size="RvmSize.Small" />
         </span>
     </div>
 
     @if (MensagemDeApoio is not null)
     {
-        <div id="@IdApoio" class="apoio rvm-text-helper">@MensagemDeApoio</div>
+        <div id="@IdApoio" class="rvm-apoio rvm-text-helper">@MensagemDeApoio</div>
     }
 
     @if (!string.IsNullOrWhiteSpace(Name))
@@ -61,14 +61,14 @@
 
     @if (_aberto)
     {
-        <div class="fundo" @onclick="() => FecharAsync(devolverFoco: false)"></div>
+        <div class="rvm-fundo" @onclick="() => FecharAsync(devolverFoco: false)"></div>
 
-        <div class="popup">
+        <div class="rvm-popup">
             @if (Searchable)
             {
                 <input @ref="_busca"
                        type="text"
-                       class="busca"
+                       class="rvm-busca"
                        autocomplete="off"
                        placeholder="@SearchPlaceholder"
                        aria-label="@SearchPlaceholder"
@@ -81,12 +81,12 @@
 
             @if (Filtradas.Count == 0)
             {
-                <div class="vazio rvm-text-body2" role="status">@NoResultsText</div>
+                <div class="rvm-vazio rvm-text-body2" role="status">@NoResultsText</div>
             }
 
             <ul id="@IdLista"
                 role="listbox"
-                class="opcoes"
+                class="rvm-opcoes"
                 aria-labelledby="@(string.IsNullOrWhiteSpace(Label) ? null : IdRotulo)"
                 aria-multiselectable="@(Multiplo ? "true" : null)">
                 @for (var i = 0; i < Filtradas.Count; i++)
@@ -104,14 +104,14 @@
                         @onclick="() => EscolherAsync(indice)">
                         @if (Multiplo)
                         {
-                            <span class="marca" aria-hidden="true">
+                            <span class="rvm-marca" aria-hidden="true">
                                 @if (selecionada)
                                 {
                                     <RvmIcon Name="RvmIconName.Check" Size="RvmSize.Small" />
                                 }
                             </span>
                         }
-                        <span class="texto-opcao">@TextoDe(item)</span>
+                        <span class="rvm-texto-opcao">@TextoDe(item)</span>
                     </li>
                 }
             </ul>

@@ -61,8 +61,8 @@ dialogo aberto no primeiro render tem de aparecer aberto sem JS; mover e prender
 | **Snackbar por servico (`AddRvmDesignSystem()` + `RvmSnackbarHost` no layout), fila com no maximo 3 na tela** | Chamar de qualquer lugar (depois de salvar, num catch) sem passar referencia de componente |
 | **Duas regioes vivas SEMPRE no DOM: `status` para o resto, `alert` so para erro** | Leitor de tela so anuncia o que entra numa regiao que ja existia |
 | **O tempo da mensagem para com mouse ou foco em cima e recomeca inteiro ao sair** | WCAG 2.2.1. Recomecar inteiro evita sumir no meio da leitura |
-| ⚠️ **Snackbar neutro no tema escuro: o token diz `#FFFFFF`, o `Snackbar.png` escuro mostra `#212121`** | Mantido o token do `06-tokens` (aprovado na DSGN-002). **Decisao para o Rafael** |
-| 🔴 **Classes genericas do CSS GLOBAL do site vazavam para 11 componentes** (`.conteudo`, `.topo`, `.marca`, `.menu`, `.apoio`, `.barra`, `.quadrado`) | O isolamento de CSS protege o componente de vazar, nao de RECEBER regra global. Pego no dialogo (linha sob o titulo); a varredura achou card, avatar quadrado, checkbox, select e outros atingidos. O site agora usa prefixo `site-`. **O risco para o consumidor continua — decisao para o Rafael:** prefixar as classes internas dos componentes antes do `1.0.0` |
+| **Snackbar neutro no tema escuro: `#212121` com texto branco, como o kit** | O token dizia `#FFFFFF`, mas o `Snackbar.png` escuro mostra `#212121`. **Rafael decidiu em 17/09: vale o kit.** Token e `06-tokens` corrigidos |
+| 🔴 **Classes genericas do CSS GLOBAL do site vazavam para 11 componentes** (`.conteudo`, `.topo`, `.marca`, `.menu`, `.apoio`, `.barra`, `.quadrado`) | O isolamento de CSS protege o componente de vazar, nao de RECEBER regra global. Pego no dialogo (linha sob o titulo); a varredura achou card, avatar quadrado, checkbox, select e outros atingidos. O site agora usa prefixo `site-`. **Rafael decidiu em 17/09: prefixar.** Ver a secao "Prefixo rvm-" abaixo |
 
 ## Verifica (cada fatia)
 
@@ -88,3 +88,25 @@ Sonnet, 17/09. Achados e o que foi feito:
 Verificado OK pelo reviewer: fila e lock do servico de snackbar, dispatcher no host, escopo por circuito,
 nenhum outro numero em atributo na cultura corrente, nenhum outro `OpenElement` com CSS isolado, padroes
 ARIA de dialogo, acordeao, disclosure e progresso, regioes vivas, contraste dos pares novos.
+
+## Prefixo `rvm-` nas classes internas (decisao do Rafael, 17/09/2026)
+
+As 159 classes internas dos 27 componentes das ondas 1 a 3 passaram a `rvm-*` (`.caixa` virou
+`.rvm-caixa`). Motivo: CSS isolado impede o componente de vazar, nao de receber regra global — o
+`app.css` do proprio site ja tinha acertado 11 componentes.
+
+- Feito por script (CSS, atributos `class` da marcacao, membros C# que montam classe), com ensaio antes
+  de aplicar; sobras em string interpolada e em `@code` de `.razor` corrigidas a mao
+- Ficam de fora de proposito: `modified`/`invalid`/`valid` (convencao do Blazor que o consumidor
+  estiliza) e as classes globais `rvm-text-*`
+- **Guarda:** teste `Toda_classe_de_componente_tem_o_prefixo_rvm` reprova classe sem prefixo em CSS
+  de componente; regra registrada no `CLAUDE.md`
+- **Conferido visualmente:** 54 fotos (27 paginas x 2 temas) da versao anterior e da nova, comparadas
+  pixel a pixel — zero diferenca. bUnit 386 e E2E 128 verdes
+
+## Portal de dialogo e gaveta — explicado ao Rafael em 17/09, sem decisao ainda
+
+Hoje dialogo e gaveta renderizam onde foram declarados; um ancestral com `transform`, `filter`,
+`perspective` ou `contain` faz o `position: fixed` deixar de cobrir a tela. Documentado no componente
+e na pagina. Portal (mover o no para o fim do `body`) exigiria JS, o que conflita com "aberto no
+primeiro render sem JS".

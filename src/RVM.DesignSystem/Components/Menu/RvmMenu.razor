@@ -27,13 +27,13 @@
     @if (_aberto)
     {
         @* Clicar fora fecha: uma camada transparente por baixo do menu, sem ouvir o documento por JS. *@
-        <div class="fundo" @onclick="() => FecharAsync(devolverFoco: false)"></div>
+        <div class="rvm-fundo" @onclick="() => FecharAsync(devolverFoco: false)"></div>
 
         <ul @ref="_lista"
             id="@IdDoMenu"
             role="menu"
             aria-labelledby="@IdDoBotao"
-            class="@(AlignEnd ? "lista fim" : "lista")"
+            class="@(AlignEnd ? "rvm-lista rvm-fim" : "rvm-lista")"
             @onkeydown="AoTeclarNoMenuAsync">
             <CascadingValue Value="this" IsFixed="true">
                 @ChildContent

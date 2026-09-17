@@ -26,6 +26,23 @@ public class CssDosComponentesTests
     }
 
     [Fact]
+    public void Toda_classe_de_componente_tem_o_prefixo_rvm()
+    {
+        // CSS isolado impede o componente de VAZAR, mas nao de RECEBER regra global: uma classe
+        // `.conteudo` no CSS do consumidor casava com o `.conteudo` do dialogo e do card (mordeu duas
+        // vezes no proprio site). Prefixo `rvm-` em toda classe interna — decisao do Rafael, 17/09/2026.
+        var infratores = Arquivos()
+            .SelectMany(arquivo => Regex.Matches(SemComentarios(File.ReadAllText(arquivo)), @"\.([a-zA-Z][\w-]*)")
+                .Select(m => m.Groups[1].Value)
+                .Where(classe => !classe.StartsWith("rvm-", StringComparison.Ordinal))
+                .Select(classe => $"{Path.GetFileName(arquivo)} -> .{classe}"))
+            .Distinct()
+            .ToArray();
+
+        Assert.Empty(infratores);
+    }
+
+    [Fact]
     public void A_guarda_ignora_hex_em_comentario_mas_continua_pegando_hex_em_declaracao()
     {
         // Prova nos dois sentidos: ignorar comentario nao pode ter cegado a guarda.

@@ -7,11 +7,11 @@
 <section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-labelledby="@IdTitulo">
     @if (Illustration is not null)
     {
-        <div class="ilustracao" aria-hidden="true">@Illustration</div>
+        <div class="rvm-ilustracao" aria-hidden="true">@Illustration</div>
     }
     else if (Icon is { } icone)
     {
-        <span class="icone" aria-hidden="true">
+        <span class="rvm-icone" aria-hidden="true">
             <RvmIcon Name="icone" Size="RvmSize.Large" />
         </span>
     }
@@ -20,25 +20,25 @@
        atributo de escopo do CSS isolado, e o estilo do .titulo nao pegava. *@
     @switch (NivelDoTitulo)
     {
-        case 3: <h3 id="@IdTitulo" class="titulo">@Title</h3> break;
-        case 4: <h4 id="@IdTitulo" class="titulo">@Title</h4> break;
-        case 5: <h5 id="@IdTitulo" class="titulo">@Title</h5> break;
-        case 6: <h6 id="@IdTitulo" class="titulo">@Title</h6> break;
-        default: <h2 id="@IdTitulo" class="titulo">@Title</h2> break;
+        case 3: <h3 id="@IdTitulo" class="rvm-titulo">@Title</h3> break;
+        case 4: <h4 id="@IdTitulo" class="rvm-titulo">@Title</h4> break;
+        case 5: <h5 id="@IdTitulo" class="rvm-titulo">@Title</h5> break;
+        case 6: <h6 id="@IdTitulo" class="rvm-titulo">@Title</h6> break;
+        default: <h2 id="@IdTitulo" class="rvm-titulo">@Title</h2> break;
     }
 
     @if (!string.IsNullOrWhiteSpace(Description))
     {
-        <p class="descricao">@Description</p>
+        <p class="rvm-descricao">@Description</p>
     }
 
     @if (ChildContent is not null)
     {
-        <div class="detalhe">@ChildContent</div>
+        <div class="rvm-detalhe">@ChildContent</div>
     }
 
     @if (Actions is not null)
     {
-        <div class="acoes">@Actions</div>
+        <div class="rvm-acoes">@Actions</div>
     }
 </section>

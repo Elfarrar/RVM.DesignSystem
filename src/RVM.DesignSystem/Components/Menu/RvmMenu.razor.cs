@@ -64,8 +64,8 @@ public partial class RvmMenu : ComponentBase, IAsyncDisposable
            && AdditionalAttributes.TryGetValue("class", out var informada)
            && informada is string texto
            && !string.IsNullOrWhiteSpace(texto)
-            ? $"menu {texto}"
-            : "menu";
+            ? $"rvm-menu {texto}"
+            : "rvm-menu";
 
     internal string? EstiloDoConsumidor
         => AdditionalAttributes is not null

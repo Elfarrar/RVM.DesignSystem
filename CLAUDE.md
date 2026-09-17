@@ -57,6 +57,10 @@ ecossistema, e sem sentido numa biblioteca de UI).
 ## Convenções
 
 - Prefixo `Rvm` em todo componente público.
+- ⚠️ **Prefixo `rvm-` em toda classe CSS interna** (`.rvm-caixa`, nunca `.caixa`). CSS isolado
+  impede o componente de vazar, **não** de receber regra global: `.conteudo` do consumidor casava
+  com o `.conteudo` do diálogo. Decisão do Rafael em 17/09/2026; o teste
+  `Toda_classe_de_componente_tem_o_prefixo_rvm` barra classe nova sem prefixo.
 - **API em inglês, texto ao usuário final em PT-BR** explicativo.
 - Enum, nunca string mágica. `AdditionalAttributes` sempre repassado ao elemento raiz.
 - ⚠️ **Componente de formulário renderiza `name`, `id` e `aria-*`.** O `RvmTextField` anterior não
