@@ -25,7 +25,12 @@ const PAGINAS = [
     { rota: '/componentes/tabs', titulo: 'RvmTabs' },
     { rota: '/componentes/menu', titulo: 'RvmMenu' },
     { rota: '/componentes/select', titulo: 'RvmSelect' },
+    { rota: '/componentes/progress', titulo: 'RvmProgress' },
+    { rota: '/componentes/skeleton', titulo: 'RvmSkeleton' },
+    { rota: '/componentes/empty-state', titulo: 'RvmEmptyState' },
 ];
+
+const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton']);
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
     await page.goto('/componentes');
@@ -45,9 +50,9 @@ for (const { rota, titulo } of PAGINAS) {
         await expect(page.getByRole('table')).toBeVisible();
 
         // O recorte do kit ao lado do exemplo e criterio do 07-site-de-documentacao: sem ele,
-        // "parece o NEATLAB?" vira discussao de memoria. O RvmIcon e a excecao declarada — os
-        // icones nao vem do kit, que exportou os dele rasterizados (ADR-005).
-        if (titulo !== 'RvmIcon') {
+        // "parece o NEATLAB?" vira discussao de memoria. Excecoes declaradas: RvmIcon (o kit exportou
+        // os icones rasterizados, ADR-005) e RvmProgress/RvmSkeleton (o kit nao tem pagina deles).
+        if (!SEM_PAGINA_NO_KIT.has(titulo)) {
             await expect(page.getByRole('img').first()).toBeVisible();
         }
     });

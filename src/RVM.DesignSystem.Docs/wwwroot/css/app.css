@@ -403,3 +403,15 @@ code {
 .largura-cheia {
     align-items: stretch;
 }
+
+.exemplo-esqueleto {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    width: 100%;
+    max-width: 24rem;
+}
+
+.esqueleto-textos {
+    flex: 1;
+}

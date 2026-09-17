@@ -1,0 +1,128 @@
+/* CSS isolado do RvmProgress. So custom properties — hex literal aqui quebra o tema escuro.
+   O kit nao tem pagina de progresso: barra de 4 px e anel com os tamanhos do avatar (24/40/56 px).
+   A parte preenchida e um indicador sem texto, entao usa -text. O trilho e NEUTRO (action-selected):
+   com o -outlined-resting de cada cor, o preenchido dava 2.3 a 3.1:1 contra o trilho no tema escuro,
+   abaixo dos 3:1 da WCAG 1.4.11. Contra o neutro passa de 5:1 nos dois temas (medido). */
+
+.progresso {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    font-family: var(--rvm-font-family);
+}
+
+.circular {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+}
+
+.valor {
+    flex: none;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- Barra --- */
+.trilho {
+    position: relative;
+    flex: 1;
+    height: 4px;
+    overflow: hidden;
+    border-radius: var(--rvm-radius-pill);
+}
+
+.barra {
+    height: 100%;
+    border-radius: inherit;
+    transition: width var(--rvm-transition-medium);
+}
+
+.linear.indeterminado .barra {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    animation: rvm-progresso-vai-e-vem 1.4s ease-in-out infinite;
+}
+
+@keyframes rvm-progresso-vai-e-vem {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
+}
+
+/* --- Anel --- */
+.pequeno .anel { width: 24px; height: 24px; }
+.medio .anel { width: 40px; height: 40px; }
+.grande .anel { width: 56px; height: 56px; }
+
+.arco {
+    stroke-linecap: round;
+    transform-origin: 44px 44px;
+    transform: rotate(-90deg);
+    transition: stroke-dashoffset var(--rvm-transition-medium);
+}
+
+.circular.indeterminado .anel {
+    animation: rvm-progresso-gira 1.4s linear infinite;
+}
+
+.circular.indeterminado .arco {
+    stroke-dasharray: 80 127;
+    stroke-dashoffset: 0;
+}
+
+@keyframes rvm-progresso-gira {
+    100% { transform: rotate(360deg); }
+}
+
+.circular .valor {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+}
+
+.grande.circular .valor { font-size: var(--rvm-text-caption-size); }
+
+/* O anel pequeno nao tem espaco para o numero: fica ao lado. */
+.pequeno.circular .valor {
+    position: static;
+    margin-inline-start: var(--rvm-space-2);
+}
+
+/* --- Trilho neutro; preenchido na cor escolhida, em -text --- */
+.trilho { background-color: var(--rvm-color-action-selected); }
+.trilho-anel { stroke: var(--rvm-color-action-selected); }
+
+.primary .barra { background-color: var(--rvm-color-primary-text); }
+.secondary .barra { background-color: var(--rvm-color-secondary-text); }
+.info .barra { background-color: var(--rvm-color-info-text); }
+.success .barra { background-color: var(--rvm-color-success-text); }
+.warning .barra { background-color: var(--rvm-color-warning-text); }
+.error .barra { background-color: var(--rvm-color-error-text); }
+
+.primary .arco { stroke: var(--rvm-color-primary-text); }
+.secondary .arco { stroke: var(--rvm-color-secondary-text); }
+.info .arco { stroke: var(--rvm-color-info-text); }
+.success .arco { stroke: var(--rvm-color-success-text); }
+.warning .arco { stroke: var(--rvm-color-warning-text); }
+.error .arco { stroke: var(--rvm-color-error-text); }
+
+/* Movimento reduzido: o indeterminado continua dizendo "andando", so que devagar. Parar de vez
+   faria o indicador parecer travado. */
+@media (prefers-reduced-motion: reduce) {
+    .linear.indeterminado .barra,
+    .circular.indeterminado .anel {
+        animation-duration: 4s;
+    }
+
+    .barra,
+    .arco {
+        transition: none;
+    }
+}

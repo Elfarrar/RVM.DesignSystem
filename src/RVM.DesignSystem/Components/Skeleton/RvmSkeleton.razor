@@ -1,0 +1,5 @@
+@namespace RVM.DesignSystem.Components.Skeleton
+
+@* O esqueleto e desenho: aria-hidden sempre. Quem avisa "carregando" ao leitor de tela e a regiao que
+   o contem (aria-busy) ou um RvmProgress — repetir o aviso em cada bloco cinza seria ruido. *@
+<span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" style="@Estilo" aria-hidden="true"></span>

@@ -1,0 +1,67 @@
+@page "/componentes/skeleton"
+
+<PageTitle>RvmSkeleton — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmSkeleton</h1>
+
+<p class="rvm-text-body1 apoio">
+    Espaco reservado com a forma do conteudo que ainda vai chegar, para a tela nao pular quando os dados
+    aparecem. E desenho: fica escondido do leitor de tela. Quem avisa "carregando" e a regiao que o
+    contem, com <code>aria-busy="true"</code>.
+</p>
+
+<p class="rvm-text-body2 apoio">
+    ⚠️ O kit <strong>nao tem pagina de esqueleto</strong>: o fundo usa o token de selecao, visivel nos
+    dois temas. Com movimento reduzido no sistema, o brilho some.
+</p>
+
+<BlocoExemplo Titulo="Um card carregando"
+              Descricao="Circulo no lugar do avatar, linhas no lugar do texto e retangulo no lugar da imagem."
+              Codigo="@CodigoCard">
+    <div class="exemplo-esqueleto" aria-busy="true" aria-label="Carregando o card do produtor" role="group">
+        <div class="linha-exemplos">
+            <RvmSkeleton Variant="RvmSkeletonVariant.Circular" />
+            <div class="esqueleto-textos">
+                <RvmSkeleton Width="60%" />
+                <RvmSkeleton Width="40%" />
+            </div>
+        </div>
+        <RvmSkeleton Variant="RvmSkeletonVariant.Rectangular" Height="140px" />
+        <RvmSkeleton />
+        <RvmSkeleton Width="80%" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Parado"
+              Descricao="Animated=false para listas longas, onde muitos brilhos juntos distraem."
+              Codigo="@CodigoParado">
+    <div class="pilha-exemplos largura-cheia">
+        <RvmSkeleton Animated="false" />
+        <RvmSkeleton Animated="false" Width="70%" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+@code {
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Variant", "RvmSkeletonVariant", "Text", "Text (linha), Rectangular ou Circular."),
+        new("Width", "string?", "100% / 40px", "Largura em CSS. Circulo: 40 px."),
+        new("Height", "string?", "linha / 120px", "Altura em CSS. Circulo: igual a largura."),
+        new("Animated", "bool", "true", "Brilho passando."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style somados aos proprios.")
+    ];
+
+    private const string CodigoCard = """
+        <div aria-busy="true" aria-label="Carregando o card do produtor" role="group">
+            <RvmSkeleton Variant="RvmSkeletonVariant.Circular" />
+            <RvmSkeleton Width="60%" />
+            <RvmSkeleton Variant="RvmSkeletonVariant.Rectangular" Height="140px" />
+        </div>
+        """;
+
+    private const string CodigoParado = """
+        <RvmSkeleton Animated="false" Width="70%" />
+        """;
+}

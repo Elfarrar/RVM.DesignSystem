@@ -3,7 +3,7 @@ id: DSGN-004
 titulo: Onda 2 — formulario e navegacao (10 componentes)
 repo: RVM.DesignSystem
 tipo: feature
-status: em revisao
+status: concluido
 criada: 2026-09-17
 ---
 
@@ -82,3 +82,7 @@ vez por `OnParametersSet`; `Items` percorrido a cada render — documentado que 
 Verificado OK pelo reviewer: ids por contador estatico, dispose das abas, `CriarCampo` com modelo
 aninhado, CSS sem hex e com `::deep` onde precisa, atributos repassados, nada de JS no estado inicial,
 padroes APG de tabs, menu e combobox.
+
+## Fechamento
+
+Comparacoes lado a lado com o kit aprovadas pelo Rafael em 17/09/2026. Onda 2 fechada no dev.
