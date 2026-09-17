@@ -50,9 +50,11 @@
 }
 
 /* --- Rotulo --- */
+/* Sem `pointer-events: none`, de proposito: o rotulo e um <label for>, entao clicar nele ja foca o
+   campo — esteja ele dentro da caixa ou flutuando em cima da borda. Com `none`, o clique no rotulo
+   flutuante caia na borda e o campo nao recebia foco (pego pelo E2E). */
 .rotulo {
     position: absolute;
-    pointer-events: none;
     color: var(--rvm-color-text-secondary);
     font-size: var(--rvm-text-input-size);
     line-height: 1;
