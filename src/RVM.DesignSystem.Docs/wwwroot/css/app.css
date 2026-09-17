@@ -13,41 +13,27 @@ body {
     min-height: 100vh;
 }
 
-.site-topo {
-    display: flex;
-    align-items: center;
-    gap: var(--rvm-space-6);
-    padding: var(--rvm-space-4) var(--rvm-space-6);
-    background: var(--rvm-color-background-paper);
-    border-bottom: 1px solid var(--rvm-color-divider);
-}
-
+/* Marca no alto do menu lateral: logo primeiro, para o menu recolhido mostrar so ele. */
 .site-marca {
-    color: var(--rvm-color-primary-text);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-h6-size);
+    font-weight: 600;
     text-decoration: none;
+    white-space: nowrap;
 }
 
-.site-menu {
-    display: flex;
-    gap: var(--rvm-space-4);
-    margin-inline-end: auto;
-}
-
-.site-link {
-    color: var(--rvm-color-text-secondary);
-    text-decoration: none;
-    padding: var(--rvm-space-1) var(--rvm-space-2);
+.site-marca img {
+    flex: none;
     border-radius: var(--rvm-radius-sm);
 }
 
-.site-link:hover {
-    background: var(--rvm-color-action-hover);
-    color: var(--rvm-color-text-primary);
-}
-
-.site-link.active {
-    color: var(--rvm-color-primary-text);
-    background: var(--rvm-color-action-selected);
+.site-marca:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+    border-radius: var(--rvm-radius-sm);
 }
 
 .seletor-tema {
@@ -65,13 +51,19 @@ body {
     background: var(--rvm-color-action-hover);
 }
 
+/* O roteador poe o foco no h1 (tabindex=-1) a cada navegacao, para o leitor de tela anunciar a pagina
+   nova; o contorno de foco num titulo nao clicavel so confunde quem enxerga. O [tabindex] e para vencer
+   a regra global .rvm-root :focus-visible. */
+h1[tabindex="-1"]:focus {
+    outline: none;
+}
+
 .site-conteudo {
-    flex: 1;
     width: 100%;
     max-width: 62rem;
     box-sizing: border-box;
     margin: 0 auto;
-    padding: var(--rvm-space-8) var(--rvm-space-6);
+    padding: 0 0 var(--rvm-space-8);
 }
 
 .site-conteudo section {
@@ -82,11 +74,6 @@ body {
     color: var(--rvm-color-text-secondary);
 }
 
-.rodape {
-    padding: var(--rvm-space-4) var(--rvm-space-6);
-    border-top: 1px solid var(--rvm-color-divider);
-    color: var(--rvm-color-text-secondary);
-}
 
 a {
     color: var(--rvm-color-primary-text);
@@ -203,11 +190,6 @@ code {
 }
 
 @media (max-width: 40rem) {
-    .site-topo {
-        flex-wrap: wrap;
-        gap: var(--rvm-space-3);
-    }
-
     .linha-escala {
         grid-template-columns: 1fr;
         gap: var(--rvm-space-1);
@@ -527,4 +509,9 @@ code {
     border-radius: var(--rvm-radius-md);
     background-color: var(--rvm-color-background-paper);
     box-shadow: var(--rvm-shadow-3);
+}
+
+/* Credito no rodape da moldura: links no tom de texto do primary, como no resto do site. */
+.pagina footer a {
+    color: var(--rvm-color-primary-text);
 }
