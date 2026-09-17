@@ -152,7 +152,8 @@
                     </defs>
                     <path class="rvm-grafico-preenchimento" d="@PreenchimentoDa(serie)" fill="@($"url(#{id})")" />
                 }
-                <path class="rvm-grafico-linha" d="@CaminhoDa(serie)" />
+                @* pathLength="1" faz o stroke-dasharray da animacao valer o comprimento inteiro da linha. *@
+                <path class="rvm-grafico-linha" pathLength="1" d="@CaminhoDa(serie)" />
                 @for (var i = 0; i < Dados.Count; i++)
                 {
                     @if (ShowPoints || Ativo == i || Dados.Count == 1)
@@ -192,7 +193,7 @@
         return Dados.Count == 1 ? 0 : Math.Clamp((int)Math.Round((x - Esquerda) / (LarguraDoPlot / (Dados.Count - 1))), 0, Dados.Count - 1);
     }
 
-    internal override TabelaDeDados Tabela
+    internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
         => new(["Categoria", .. Series.Select(s => s.Name)],
-               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => Formatar(s.ValorDe(item)))])]);
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => formatar(s.ValorDe(item)))])]);
 }

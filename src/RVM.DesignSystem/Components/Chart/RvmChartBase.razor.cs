@@ -29,6 +29,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     private readonly List<RvmChartSeries<TItem>> _series = [];
     private ElementReference _area;
+    private ElementReference _svg;
     private ElementReference _camada;
     private IJSObjectReference? _modulo;
     private IJSObjectReference? _observador;
@@ -63,6 +64,15 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     /// <summary>Formato dos valores no eixo e na dica. Padrao: <see cref="RvmChartFormat.Compact"/>.</summary>
     [Parameter] public Func<double, string>? ValueFormat { get; set; }
+
+    /// <summary>
+    /// Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu
+    /// "reduzir movimento" no sistema.
+    /// </summary>
+    [Parameter] public bool Animated { get; set; } = true;
+
+    /// <summary>Nome do arquivo exportado, sem extensao. Padrao: o <see cref="AriaLabel"/> em minusculas com hifens.</summary>
+    [Parameter] public string? ExportFileName { get; set; }
 
     /// <summary>Atributos extras, repassados a figura.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -150,8 +160,11 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     internal virtual IReadOnlyList<ItemDaLegenda> Legenda
         => _series.Count > 1 ? [.. _series.Select(s => new ItemDaLegenda(s.Name, CorDa(s), null))] : [];
 
-    /// <summary>A tabela de dados para leitor de tela.</summary>
-    internal abstract TabelaDeDados Tabela { get; }
+    /// <summary>A tabela de dados, com os valores passados pelo formatador informado.</summary>
+    internal abstract TabelaDeDados MontarTabela(Func<double, string> formatar);
+
+    /// <summary>A tabela de dados para leitor de tela, no formato da dica e do eixo.</summary>
+    internal TabelaDeDados Tabela => MontarTabela(Formatar);
 
     /// <summary>Conteudo sobre o centro do desenho (o total da rosca).</summary>
     internal virtual RenderFragment? Centro => null;
@@ -225,13 +238,76 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         };
     }
 
+    private string NomeDoArquivo
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(ExportFileName))
+            {
+                return ExportFileName.Trim();
+            }
+
+            var semAcento = AriaLabel.Normalize(System.Text.NormalizationForm.FormD)
+                .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark);
+            var limpo = new string([.. semAcento.Select(c => char.IsLetterOrDigit(c) ? char.ToLowerInvariant(c) : '-')]);
+            var nome = string.Join('-', limpo.Split('-', StringSplitOptions.RemoveEmptyEntries));
+            return string.IsNullOrEmpty(nome) ? "grafico" : nome;
+        }
+    }
+
+    /// <summary>
+    /// Baixa o grafico: imagem PNG, o proprio SVG com as cores embutidas, os dados em CSV ou um PDF de uma
+    /// pagina com a imagem. Devolve <c>false</c> quando o navegador nao deixou (sem JS, aba fechando).
+    /// </summary>
+    public async Task<bool> ExportAsync(RvmChartExportFormat format)
+    {
+        try
+        {
+            _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
+            switch (format)
+            {
+                case RvmChartExportFormat.Csv:
+                    // Numero inteiro, nao o compacto do eixo: "45.000" o Excel soma, "45 mil" e texto.
+                    var tabela = MontarTabela(RvmChartFormat.Number);
+                    await _modulo.InvokeVoidAsync("baixar", $"{NomeDoArquivo}.csv", "text/csv;charset=utf-8",
+                        RvmChartCsv.Gerar(tabela.Cabecalho, tabela.Linhas), false);
+                    return true;
+
+                case RvmChartExportFormat.Svg:
+                    var svg = await _modulo.InvokeAsync<string>("serializar", _svg);
+                    await _modulo.InvokeVoidAsync("baixar", $"{NomeDoArquivo}.svg", "image/svg+xml;charset=utf-8", svg, false);
+                    return true;
+
+                case RvmChartExportFormat.Png:
+                    var png = await _modulo.InvokeAsync<string>("paraImagem", _svg, "image/png", 2);
+                    await _modulo.InvokeVoidAsync("baixar", $"{NomeDoArquivo}.png", "image/png", png, true);
+                    return true;
+
+                default:
+                    // O PDF aceita JPEG direto (DCTDecode); o PNG teria de ser descomprimido e reescrito.
+                    var jpeg = await _modulo.InvokeAsync<string>("paraImagem", _svg, "image/jpeg", 2);
+                    // [largura, altura] em vez de um objeto: menos um tipo publico so para o interop.
+                    var tamanho = await _modulo.InvokeAsync<int[]>("tamanho", _svg, 2);
+                    var pdf = RvmChartPdf.Criar(Convert.FromBase64String(jpeg), tamanho[0], tamanho[1]);
+                    await _modulo.InvokeVoidAsync("baixar", $"{NomeDoArquivo}.pdf", "application/pdf", Convert.ToBase64String(pdf), true);
+                    return true;
+            }
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            return false;
+        }
+    }
+
     internal string ClassesDaRaiz
         => AdditionalAttributes is not null
            && AdditionalAttributes.TryGetValue("class", out var informada)
            && informada is string texto
            && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-grafico {texto}"
-            : "rvm-grafico";
+            ? $"{ClassesProprias} {texto}"
+            : ClassesProprias;
+
+    private string ClassesProprias => Animated ? "rvm-grafico rvm-animado" : "rvm-grafico";
 
     // --- Layout cartesiano, comum a colunas, barras, linha, area, histograma e dispersao ---
 

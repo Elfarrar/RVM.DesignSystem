@@ -159,7 +159,7 @@
     internal override IReadOnlyList<ItemDaLegenda> Legenda
         => [.. Fatias.Select(f => new ItemDaLegenda(NomeDe(Dados[f.Indice], f.Indice), CorDe(f.Indice), Percentual(f.Valor)))];
 
-    internal override TabelaDeDados Tabela
+    internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
         => new(["Fatia", "Valor", "Percentual"],
-               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), Formatar(ValorDe(item)), Percentual(Math.Max(0, ValorDe(item)))])]);
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), formatar(ValorDe(item)), Percentual(Math.Max(0, ValorDe(item)))])]);
 }

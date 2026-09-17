@@ -226,7 +226,7 @@ public class RvmColumnChartTests : BunitContext
     {
         var cortado = Grafico(p => p.AddUnmatched("class", "meu").AddUnmatched("data-teste", "x"));
 
-        Assert.Equal("rvm-grafico meu", cortado.Find("figure[data-teste=x]").ClassName);
+        Assert.Equal("rvm-grafico rvm-animado meu", cortado.Find("figure[data-teste=x]").ClassName);
     }
 }
 

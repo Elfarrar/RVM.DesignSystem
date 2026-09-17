@@ -13,7 +13,7 @@
 @code {
     private RenderFragment Figura => @<figure @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
         <div @ref="_area" class="rvm-grafico-area" style="@($"height: {Height}px")">
-            <svg class="rvm-grafico-svg" width="100%" height="@Height" viewBox="@($"0 0 {N(Largura)} {Height}")"
+            <svg @ref="_svg" class="rvm-grafico-svg" width="100%" height="@Height" viewBox="@($"0 0 {N(Largura)} {Height}")"
                  preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
                 @Desenho
             </svg>

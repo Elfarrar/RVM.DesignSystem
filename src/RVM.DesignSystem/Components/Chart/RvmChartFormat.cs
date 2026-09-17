@@ -26,6 +26,12 @@ public static class RvmChartFormat
     /// </summary>
     internal static string CompactForAxis(double valor, double passo)
     {
+        // O zero nao ganha sufixo: um eixo de 0 a 60 mil escrevia "0 mil" na base (achado na foto da entrega).
+        if (valor == 0)
+        {
+            return "0";
+        }
+
         var abs = Math.Max(Math.Abs(valor), Math.Abs(passo));
         var (divisor, sufixo) = abs switch
         {

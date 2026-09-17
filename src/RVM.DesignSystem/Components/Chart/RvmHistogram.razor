@@ -135,7 +135,8 @@
 
     internal override IReadOnlyList<ItemDaLegenda> Legenda => [];
 
-    internal override TabelaDeDados Tabela
+    // A contagem de cada faixa ja e um inteiro: o formatador do chamador nao muda nada aqui.
+    internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
         => new(["Faixa", SeriesName],
                [.. Faixas.Select((f, i) => (IReadOnlyList<string>)[TituloDoPonto(i), RvmChartFormat.Number(f.Contagem)])]);
 }
