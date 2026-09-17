@@ -3,7 +3,7 @@ id: DSGN-011
 titulo: Graficos — animacao, exportar, eixo duplo, zoom, arrastar e selecao
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: concluida
 criada: 2026-09-17
 ---
 
@@ -48,6 +48,21 @@ Zoom por caixa desenhada (brush-to-zoom), exportar Excel nativo (.xlsx), imprimi
 | PDF montado em C# com o JPEG do `canvas` (`DCTDecode`) | sem biblioteca de terceiros (decisao do projeto) e a montagem fica testavel sem navegador |
 | `pathLength="1"` na linha para animar o traco | dispensa medir o caminho em JS: a animacao roda so em CSS e morre sozinha em "reduzir movimento" |
 | Eixo escreve `0`, nao `0 mil` | achado na foto da entrega; `CompactForAxis` colocava o sufixo do passo na base do eixo |
+
+## Review independente (Sonnet, 17/09/2026) — 2 P1 e 5 menores, todos corrigidos
+
+| # | O que | Correcao |
+|---|---|---|
+| P1 | Arrastar a selecao ate passar da borda do desenho COLAPSAVA a faixa (a camada de eventos cobre a figura inteira; `PontoEm` devolvia nulo na margem e o codigo caia de volta no ponto inicial) | `PontoDoArrasto` prende o ponteiro na area do desenho antes de perguntar o ponto |
+| P1 | `ExportAsync(Pdf)` estourava `ArgumentException` (imagem de altura zero) em vez de devolver `false`, quebrando o contrato que os outros formatos cumprem | `ArgumentException` e `FormatException` entraram no filtro do catch |
+| P2 | Instrucao e `aria-live` de zoom/selecao apareciam pelo parametro cru: uma rosca com `Zoomable` prometia teclas que nao existem | a marcacao passou a perguntar por `ZoomLigado`/`SelecaoLigada` |
+| P2 | Arrastar para deslocar comecava selecao de texto do navegador | `user-select: none` na camada e `preventDefault` tambem no zoom |
+| P2 | Ligar `Zoomable` depois do primeiro render nao ligava a roda do mouse (e desligar deixava o ouvinte pendurado) | `AcertarARoda` roda a cada render |
+| P2 | Zoom num grafico de um ponto so podia empurrar o ponto para fora do recorte | com um ponto, `XDaFracao` ignora a janela |
+| P2 | `RvmChartRange(4, 2)` passava, com `Count` negativo | o construtor recusa fim antes do inicio |
+| P3 | `Escala.Marcas` somava o passo a cada volta (erro acumulado); `LadosDaFaixa` nao prendia indices velhos; o exemplo do Dashboard indexava o array pelo indice cru | marcas por indice, clamp nos tres graficos, legenda pela lista ja filtrada |
+
+591 testes unitarios (6 novos so destes achados) e 229 E2E verdes depois das correcoes.
 
 ## Fatia 4 — entregue em 17/09/2026
 

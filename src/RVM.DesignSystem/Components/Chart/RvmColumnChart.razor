@@ -69,7 +69,11 @@
         => (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot);
 
     internal override (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim)
-        => (CentroDe(inicio) - Faixa / 2, CentroDe(fim) + Faixa / 2);
+    {
+        // A faixa pode ter sido marcada antes de Items encolher: os indices sao presos ao que existe agora.
+        var ultimo = Math.Max(0, Dados.Count - 1);
+        return (CentroDe(Math.Clamp(inicio, 0, ultimo)) - Faixa / 2, CentroDe(Math.Clamp(fim, 0, ultimo)) + Faixa / 2);
+    }
 
     private List<Coluna> Colunas => Memo("Colunas", () =>
         {

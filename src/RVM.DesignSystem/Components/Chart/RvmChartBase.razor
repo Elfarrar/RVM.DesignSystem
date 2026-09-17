@@ -39,7 +39,7 @@
                  @onpointerdown="AoApertarPonteiro"
                  @onpointerup="AoSoltarPonteiro"
                  @onpointercancel="AoSoltarPonteiro"
-                 @onpointerdown:preventDefault="SelectionMode == RvmChartSelectionMode.Range"
+                 @onpointerdown:preventDefault="SelecaoLigada || ZoomLigado"
                  @onpointerleave="AoSairPonteiro"
                  @ondblclick="ResetZoom"
                  @onkeydown="AoTeclar"
@@ -66,21 +66,21 @@
 
         <span id="@($"{IdBase}-instrucao")" class="rvm-so-leitor">
             Use as setas para ler os valores, um ponto por vez.
-            @if (Zoomable)
+            @if (ZoomLigado)
             {
                 @: Mais e menos aproximam (com Shift, o eixo vertical), Ctrl com as setas desloca e zero volta ao grafico inteiro.
             }
-            @if (SelectionMode == RvmChartSelectionMode.Range)
+            @if (SelecaoLigada)
             {
                 @: Shift com as setas marca uma faixa, Enter marca so o ponto atual e Esc limpa.
             }
         </span>
         <span class="rvm-so-leitor" aria-live="polite">@TextoDoAtivo</span>
-        @if (Zoomable)
+        @if (ZoomLigado)
         {
             <span class="rvm-so-leitor" aria-live="polite">@AvisoDoZoom</span>
         }
-        @if (SelectionMode == RvmChartSelectionMode.Range)
+        @if (SelecaoLigada)
         {
             <span class="rvm-so-leitor" aria-live="polite">@AvisoDaFaixa</span>
         }
