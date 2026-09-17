@@ -10,13 +10,12 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-004]] | Onda 2: formulario e navegacao — os 10 no dev, review feito | espera o Rafael aprovar as comparacoes |
+| [[DSGN-005]] | Onda 3: feedback e sobreposicao (8 componentes) | em andamento |
 
 ## A fazer — ondas 2 a 4
 
 | Card | O que |
 |---|---|
-| DSGN-005 | Onda 3 — feedback e sobreposicao (8 componentes) |
 | DSGN-006 | Onda 4 — dados e shell (8 componentes) |
 
 Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
@@ -25,6 +24,7 @@ Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
 
 | Card | O que |
 |---|---|
+| [[DSGN-004]] | Onda 2 (17/09): os 10 de formulario e navegacao, em tres fatias, com review independente. Aprovada |
 | [[DSGN-003]] | Onda 1 (17/09): os 9 componentes da fundacao, medidos do kit, com review independente. Aprovada |
 | [[DSGN-002]] | Tokens e tematizacao (16/09): paleta, tipografia, espacamento, raio, elevacao, tema claro/escuro, pagina Fundamentos. Fidelidade conferida pixel a pixel contra o PNG e aprovada |
 | [[DSGN-001]] | Bootstrap (16/09): repo publico, esqueleto, 5 workflows, dev no ar, `0.1.0-alpha.*` no BaGet, monitor no Kuma. Prod espera autorizacao |
