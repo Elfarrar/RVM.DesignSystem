@@ -67,3 +67,4 @@ Zoom, arrastar, animacao, eixo duplo, exportar imagem.
 - Comparacoes com o kit no scratchpad de 17/09: `comparacao-column-chart.png`, `-line-chart`, `-area-chart`,
   `-pie-chart`, `-radar-chart`; fotos `graf-*-{0,1}-{claro,escuro}.png`
 - Producao: sinal verde do Rafael em 17/09 ("pode promover e deployar")
+- `1.1.0` publicada no BaGet a pedido do Rafael (17/09), conferida no feed; alphas de `dev` passam a `1.2.0`
