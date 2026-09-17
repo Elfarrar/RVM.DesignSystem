@@ -6,14 +6,14 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 **Prefixo de task:** `DSGN-NNN` · contador próprio, **reiniciado em `DSGN-001`** · card em
 `docs/Vault/02_Tasks/`, índice em `docs/Vault/03_Kanban/KANBAN.md`.
 
-> **Estado em 17/09/2026 — as quatro ondas fechadas, `1.0.0` e producao em curso (`DSGN-007`).**
-> O projeto foi **recriado** em 16/09: a encarnação anterior (07–16/09) foi apagada por inteiro a mando
-> do Rafael, sem backup. **Nada foi herdado**.
+> **Estado em 17/09/2026 — `1.0.0` publicado e producao no ar (`DSGN-007`).** O projeto foi
+> **recriado** em 16/09: a encarnação anterior (07–16/09) foi apagada por inteiro a mando do Rafael,
+> sem backup. **Nada foi herdado**.
 >
 > `DSGN-001` a `DSGN-006`: bootstrap, tokens e os 35 componentes das quatro ondas (mais o relógio
-> circular do `RvmTimePicker`), todos aprovados pelo Rafael e no ar em `design.dev.rvmtech.com.br`.
-> O `1.0.0` congela o contrato da API. Produção (`design.rvmit.com.br`, GitHub Pages) sobe com o sinal
-> verde dado em 17/09.
+> circular do `RvmTimePicker`), todos aprovados pelo Rafael. **O contrato da API está congelado no
+> `1.0.0`**: mudança que quebra consumidor é major. Dev em `design.dev.rvmtech.com.br` (alphas
+> `1.1.0-alpha.N`), produção em `design.rvmit.com.br` (GitHub Pages, monitor 25 do Kuma).
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 
