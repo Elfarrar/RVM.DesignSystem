@@ -1,0 +1,72 @@
+@page "/componentes/line-chart"
+
+<PageTitle>RvmLineChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmLineChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Pontos ligados por linhas para mostrar como os valores mudam ao longo do tempo. Reta ou suave: a curva suave
+    e monotona — passa por todos os pontos sem inventar picos entre eles. Os pontos aparecem na categoria ativa
+    (mouse ou teclado) ou em todas, com <code>ShowPoints</code>.
+</p>
+
+<BlocoExemplo Titulo="Suave, uma serie"
+              Descricao="O Total Sales do kit: vendas mes a mes."
+              Codigo="@CodigoSuave">
+    <RvmLineChart Items="Vendas" Label="v => v.Mes" AriaLabel="Vendas por mes" Smooth="true" Height="260"
+                  ValueFormat="@(v => $"R$ {RvmChartFormat.Compact(v)}")">
+        <RvmChartSeries Name="Vendas" Value="v => v.Valor" Color="RvmColor.Success" />
+    </RvmLineChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Varias series com pontos"
+              Descricao="Chuva mensal em tres fazendas, em mm."
+              Codigo="@CodigoSeries">
+    <RvmLineChart Items="Chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true"
+                  ValueFormat="@(v => $"{RvmChartFormat.Number(v)} mm")">
+        <RvmChartSeries Name="Boa Vista" Value="c => c.BoaVista" />
+        <RvmChartSeries Name="Santa Luzia" Value="c => c.SantaLuzia" Color="RvmColor.Warning" />
+        <RvmChartSeries Name="Terra Nova" Value="c => c.TerraNova" Color="RvmColor.Info" />
+    </RvmLineChart>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/line-chart.png"
+              Arquivo="referencia-neatlab/Chart Card.png (recorte)"
+              Descricao="O cartao Total Sales: linha suave e rotulos dos meses."
+              Alt="Recorte do kit NEATLAB com um grafico de linha suave" />
+
+@code {
+    private static readonly (string Mes, double Valor)[] Vendas =
+        [("Jan", 12_400), ("Fev", 31_800), ("Mar", 14_200), ("Abr", 28_900), ("Mai", 17_500), ("Jun", 38_200)];
+
+    private static readonly (string Mes, double BoaVista, double SantaLuzia, double TerraNova)[] Chuvas =
+    [
+        ("Set", 45, 30, 62), ("Out", 128, 110, 140), ("Nov", 196, 172, 210), ("Dez", 240, 260, 228),
+        ("Jan", 262, 238, 250), ("Fev", 210, 198, 186), ("Mar", 170, 150, 190)
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
+        new("Smooth", "bool?", "false", "Curva suave (monotona) em vez de segmentos retos."),
+        new("ShowPoints", "bool", "false", "Marca todos os pontos; sem isso, so os da categoria ativa."),
+        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
+        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie.")
+    ];
+
+    private const string CodigoSuave = """
+        <RvmLineChart Items="vendas" Label="v => v.Mes" AriaLabel="Vendas por mes" Smooth="true">
+            <RvmChartSeries Name="Vendas" Value="v => v.Valor" Color="RvmColor.Success" />
+        </RvmLineChart>
+        """;
+
+    private const string CodigoSeries = """
+        <RvmLineChart Items="chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true">
+            <RvmChartSeries Name="Boa Vista" Value="c => c.BoaVista" />
+            <RvmChartSeries Name="Santa Luzia" Value="c => c.SantaLuzia" Color="RvmColor.Warning" />
+        </RvmLineChart>
+        """;
+}

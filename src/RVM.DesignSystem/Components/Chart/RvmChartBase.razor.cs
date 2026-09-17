@@ -27,7 +27,6 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     private static readonly RvmColor[] Paleta =
         [RvmColor.Primary, RvmColor.Success, RvmColor.Warning, RvmColor.Info, RvmColor.Error, RvmColor.Secondary];
 
-    private static int _proximoId;
     private readonly List<RvmChartSeries<TItem>> _series = [];
     private ElementReference _area;
     private ElementReference _camada;
@@ -39,7 +38,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
     /// <summary>Base dos ids gerados (gradientes, instrucoes).</summary>
-    internal string IdBase { get; } = $"rvm-grafico-{Interlocked.Increment(ref _proximoId)}";
+    internal string IdBase { get; } = GeradorDeIds.Novo("rvm-grafico");
 
     /// <summary>Os dados.</summary>
     [Parameter, EditorRequired] public IEnumerable<TItem>? Items { get; set; }

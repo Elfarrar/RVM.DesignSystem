@@ -1,0 +1,71 @@
+@page "/componentes/area-chart"
+
+<PageTitle>RvmAreaChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmAreaChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A linha com o espaco abaixo preenchido por um degrade da cor da serie, para destacar o volume ou a evolucao.
+    Suave por padrao, como o "Sales State" do kit. O eixo de valores sempre comeca no zero: area cortada no
+    meio exageraria a diferenca.
+</p>
+
+<BlocoExemplo Titulo="Evolucao acumulada"
+              Descricao="O Sales State do kit: vendas acumuladas no ano."
+              Codigo="@CodigoSimples">
+    <RvmAreaChart Items="Acumulado" Label="a => a.Mes" AriaLabel="Vendas acumuladas no ano" Height="260"
+                  ValueFormat="@(v => $"R$ {RvmChartFormat.Compact(v)}")">
+        <RvmChartSeries Name="Vendas" Value="a => a.Valor" />
+    </RvmAreaChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Duas series"
+              Descricao="Estoque do armazem em toneladas: soja e milho ao longo da safra."
+              Codigo="@CodigoSeries">
+    <RvmAreaChart Items="Estoque" Label="e => e.Semana" AriaLabel="Estoque do armazem por semana"
+                  ValueFormat="@(v => $"{RvmChartFormat.Number(v)} t")">
+        <RvmChartSeries Name="Soja" Value="e => e.Soja" Color="RvmColor.Success" />
+        <RvmChartSeries Name="Milho" Value="e => e.Milho" Color="RvmColor.Warning" />
+    </RvmAreaChart>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/area-chart.png"
+              Arquivo="referencia-neatlab/Chart Card.png (recorte)"
+              Descricao="O cartao Sales State: area suave com degrade e ponto final marcado."
+              Alt="Recorte do kit NEATLAB com um grafico de area" />
+
+@code {
+    private static readonly (string Mes, double Valor)[] Acumulado =
+        [("Jan", 8_000), ("Fev", 14_500), ("Mar", 13_800), ("Abr", 19_200), ("Mai", 31_400), ("Jun", 29_900), ("Jul", 42_580)];
+
+    private static readonly (string Semana, double Soja, double Milho)[] Estoque =
+    [
+        ("S1", 1200, 300), ("S2", 2600, 380), ("S3", 3900, 520), ("S4", 4200, 900), ("S5", 3600, 1500),
+        ("S6", 2900, 2300), ("S7", 2100, 2900), ("S8", 1400, 3100)
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
+        new("Smooth", "bool?", "true", "Curva suave; false desenha segmentos retos."),
+        new("ShowPoints", "bool", "false", "Marca todos os pontos."),
+        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
+        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie.")
+    ];
+
+    private const string CodigoSimples = """
+        <RvmAreaChart Items="acumulado" Label="a => a.Mes" AriaLabel="Vendas acumuladas no ano">
+            <RvmChartSeries Name="Vendas" Value="a => a.Valor" />
+        </RvmAreaChart>
+        """;
+
+    private const string CodigoSeries = """
+        <RvmAreaChart Items="estoque" Label="e => e.Semana" AriaLabel="Estoque do armazem por semana">
+            <RvmChartSeries Name="Soja" Value="e => e.Soja" Color="RvmColor.Success" />
+            <RvmChartSeries Name="Milho" Value="e => e.Milho" Color="RvmColor.Warning" />
+        </RvmAreaChart>
+        """;
+}

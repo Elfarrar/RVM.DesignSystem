@@ -32,7 +32,7 @@ seguem o mesmo visual.
 ## Fatias
 
 1. [x] Base + `RvmColumnChart` (agrupado e empilhado), `RvmBarChart`, `RvmHistogram`
-2. [ ] `RvmLineChart` (reta e suave), `RvmAreaChart`, `RvmScatterChart`
+2. [x] `RvmLineChart` (reta e suave), `RvmAreaChart`, `RvmScatterChart`
 3. [ ] `RvmPieChart` (pizza e rosca), `RvmRadarChart`; Dashboard de exemplo com graficos
 
 ## Fora da v1 dos graficos
@@ -49,3 +49,6 @@ Zoom, arrastar, animacao, eixo duplo, exportar imagem.
 | **Leitura acessivel: camada focavel `role=group` + setas + `aria-live`; tabela de dados escondida; SVG `aria-hidden`** | O desenho nao e navegavel por leitor de tela; a tabela entrega tudo, e o teclado percorre ponto a ponto com a dica visivel |
 | **Formato padrao `RvmChartFormat.Compact` em PT-BR fixo** ("60 mil", "1,2 mi") | Nao depender da cultura do navegador; o kit escreve "60k" |
 | **Barras horizontais e histograma sem recorte do kit** (lista de excecoes do E2E) | O kit so desenha colunas; os dois seguem o visual delas |
+| **Curva suave monotona (Fritsch-Carlson, o `monotoneX` do d3)** | Passa por todos os pontos sem subir alem do maior nem descer abaixo do menor entre vizinhos; Catmull-Rom inventava picos. Teste confere que nenhum ponto de controle passa do topo |
+| **Area: degrade `linearGradient` por serie, com a cor herdada pela variavel CSS; eixo sempre do zero** | Area cortada no meio exagera o volume |
+| 🔴 **Campo estatico em classe generica repetia ids** (`RvmChartBase<TItem>`, e ja antes `RvmSelectBase<TValue>` e `RvmTable<TItem>`) | Existe um campo por tipo: dois graficos com tipos de dado diferentes nasciam "rvm-grafico-1" e o degrade da area verde saiu azul (o do outro grafico). Selects `string` e `TimeOnly?` na mesma pagina repetiam o id do combobox. `GeradorDeIds` unico na biblioteca + teste de regressao |

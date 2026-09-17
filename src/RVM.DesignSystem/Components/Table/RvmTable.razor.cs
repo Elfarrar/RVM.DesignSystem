@@ -9,14 +9,13 @@ namespace RVM.DesignSystem.Components.Table;
 [CascadingTypeParameter(nameof(TItem))]
 public partial class RvmTable<TItem> : ComponentBase
 {
-    private static int _proximoId;
     private readonly List<RvmTableColumn<TItem>> _colunas = [];
     private IReadOnlyCollection<TItem>? _selecaoRecebida;
     private Func<TItem, object>? _chaveRecebida;
     private HashSet<TItem> _selecionados = [];
 
     /// <summary>Base dos ids gerados (o select de linhas por pagina precisa de um).</summary>
-    private string IdBase { get; } = $"rvm-tabela-{Interlocked.Increment(ref _proximoId)}";
+    private string IdBase { get; } = GeradorDeIds.Novo("rvm-tabela");
 
     /// <summary>As linhas.</summary>
     [Parameter, EditorRequired] public IEnumerable<TItem>? Items { get; set; }

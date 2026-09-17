@@ -1,0 +1,12 @@
+@namespace RVM.DesignSystem.Components.Chart
+@typeparam TItem
+@inherits RvmLineChart<TItem>
+@attribute [CascadingTypeParameter(nameof(TItem))]
+
+@* A linha com o espaco abaixo preenchido por um degrade da cor da serie (o "Sales State" do kit). Suave por
+   padrao; o eixo de valores sempre inclui o zero, para a area nao mentir sobre o volume. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    internal override bool Preenchida => true;
+}
