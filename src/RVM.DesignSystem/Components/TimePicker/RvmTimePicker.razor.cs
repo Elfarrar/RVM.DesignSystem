@@ -22,10 +22,10 @@ public partial class RvmTimePicker : ComponentBase
     /// <summary>Lista ou relogio. Padrao: <see cref="RvmTimePickerMode.List"/>.</summary>
     [Parameter] public RvmTimePickerMode Mode { get; set; } = RvmTimePickerMode.List;
 
-    /// <summary>Minutos entre um horario e o proximo. Padrao: 30 na lista, 1 no relogio.</summary>
+    /// <summary>Minutos entre um horario e o proximo. Padrao: 30 na lista, 1 no relogio (que aceita ate 30).</summary>
     [Parameter] public int? Step { get; set; }
 
-    /// <summary>Primeiro horario da lista. Padrao: 00:00.</summary>
+    /// <summary>Primeiro horario escolhivel. Padrao: 00:00. Maior que <see cref="Max"/>, a janela cruza a meia-noite.</summary>
     [Parameter] public TimeOnly Min { get; set; } = TimeOnly.MinValue;
 
     /// <summary>Ultimo horario da lista (inclusive). Padrao: 23:59.</summary>
@@ -75,9 +75,17 @@ public partial class RvmTimePicker : ComponentBase
         {
             var passo = Math.Clamp(Step ?? 30, 1, 720);
             var lista = new List<TimeOnly?>();
-            for (var minutos = Min.Hour * 60 + Min.Minute; minutos <= Max.Hour * 60 + Max.Minute; minutos += passo)
+            var inicio = Min.Hour * 60 + Min.Minute;
+            var fim = Max.Hour * 60 + Max.Minute;
+            // Janela que cruza a meia-noite (22:00 a 06:00): segue pelo dia seguinte.
+            if (fim < inicio)
             {
-                lista.Add(new TimeOnly(minutos / 60, minutos % 60));
+                fim += 24 * 60;
+            }
+
+            for (var minutos = inicio; minutos <= fim; minutos += passo)
+            {
+                lista.Add(new TimeOnly(minutos % (24 * 60) / 60, minutos % 60));
             }
 
             return lista;

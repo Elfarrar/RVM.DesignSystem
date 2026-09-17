@@ -73,6 +73,7 @@ exit code; arquivo novo pela ferramenta Write.
 | **Base comum `RvmPickerFieldBase` extraida do seletor de data** | Botao do campo, dialogo com foco preso, Esc, validacao e envio servem ao calendario e ao relogio. `RvmDatePickerBase` ficou so com os limites de data; API dos seletores de data nao mudou. `Step` do horario virou `int?` (30 na lista, 1 no relogio) |
 | **Texto fora de destaque no topo azul a 80% do branco** | 5.17:1 sobre o primary; AM/PM e texto pequeno e precisa de 4.5:1 |
 | 🔴 **Enter nos minutos fechava e REABRIA o relogio** | O dialogo fecha e o foco volta ao botao ainda no `keydown`; o `keypress` do mesmo Enter clicava no botao. Enter entra no `prenderTeclas` do mostrador. Pego no E2E; o bUnit passava |
+| 🔴 **Review Sonnet do relogio: dois P1 corrigidos** | (1) `Min` > `Max` (plantao 22:00 a 06:00) desabilitava o relogio inteiro: agora a janela cruza a meia-noite, no relogio e na lista. (2) Valor gravado fora do passo (09:47 com `Step` 15) ficava sem opcao ativa: ganha a propria opcao, e as setas voltam ao passo. P2: `@key` nas opcoes; teto de 30 min do passo no relogio documentado |
 
 ## Verifica (cada fatia)
 

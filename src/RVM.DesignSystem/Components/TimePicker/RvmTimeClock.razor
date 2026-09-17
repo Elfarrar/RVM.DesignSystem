@@ -54,7 +54,8 @@
             <span class="rvm-ponteiro" style="@EstiloDoPonteiro" aria-hidden="true"></span>
             @foreach (var o in opcoes)
             {
-                <div id="@IdOpcao(o.Valor)"
+                <div @key="o.Valor"
+                     id="@IdOpcao(o.Valor)"
                      role="option"
                      class="@ClassesDaOpcao(o)"
                      style="@EstiloDaOpcao(o)"

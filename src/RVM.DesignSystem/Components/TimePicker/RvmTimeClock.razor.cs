@@ -42,10 +42,13 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
     /// <summary>24 h (padrao, com 13 a 00 no anel de dentro) ou 12 h com AM e PM.</summary>
     [Parameter] public bool Use24Hours { get; set; } = true;
 
-    /// <summary>Minutos entre uma opcao e a proxima. Padrao: 1.</summary>
+    /// <summary>Minutos entre uma opcao e a proxima, de 1 a 30. Padrao: 1.</summary>
     [Parameter] public int Step { get; set; } = 1;
 
-    /// <summary>Primeiro horario escolhivel. Padrao: 00:00.</summary>
+    /// <summary>
+    /// Primeiro horario escolhivel. Padrao: 00:00. Maior que <see cref="Max"/>, a janela cruza a meia-noite
+    /// (22:00 a 06:00, um plantao noturno).
+    /// </summary>
     [Parameter] public TimeOnly Min { get; set; } = TimeOnly.MinValue;
 
     /// <summary>Ultimo horario escolhivel (inclusive). Padrao: 23:59.</summary>
@@ -87,7 +90,9 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
 
     internal static int Hora12(int hora24) => hora24 % 12 == 0 ? 12 : hora24 % 12;
 
-    internal bool Fora(TimeOnly t) => t < Min || t > Max;
+    // Min > Max e janela que cruza a meia-noite: fora e so o que fica entre o fim e o comeco. Tratar como
+    // janela linear desabilitava o relogio inteiro (achado do review).
+    internal bool Fora(TimeOnly t) => Min <= Max ? t < Min || t > Max : t < Min && t > Max;
 
     /// <summary>Os minutos escolhiveis numa hora, de <see cref="Passo"/> em <see cref="Passo"/>.</summary>
     internal IEnumerable<int> MinutosValidos(int hora)
@@ -99,8 +104,16 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
 
     private TimeOnly Limitar(TimeOnly t)
     {
-        if (t < Min) t = Min;
-        if (t > Max) t = Max;
+        if (Min <= Max)
+        {
+            if (t < Min) t = Min;
+            if (t > Max) t = Max;
+        }
+        else if (Fora(t))
+        {
+            t = Min;
+        }
+
         var validos = MinutosValidos(t.Hour).ToList();
         if (validos.Count == 0 || validos.Contains(t.Minute))
         {
@@ -155,7 +168,10 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
     private List<Opcao> OpcoesDeMinuto()
     {
         var lista = new List<Opcao>();
-        for (var m = 0; m < 60; m += Passo)
+        // Valor gravado fora do passo (09:47 com Step 15) ganha a opcao dele: sem ela nao havia opcao ativa
+        // para o leitor de tela, e o ponteiro apontava para o vazio (achado do review). As setas seguem o passo.
+        var minutos = Enumerable.Range(0, 60).Where(m => m % Passo == 0 || m == Atual.Minute);
+        foreach (var m in minutos)
         {
             var (x, y) = Posicao(m * 6, RaioDeFora);
             var texto = m.ToString("00", CultureInfo.InvariantCulture);

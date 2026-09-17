@@ -71,8 +71,8 @@
     [
         new("Value", "TimeOnly?", "—", "O horario. Aceita @bind-Value."),
         new("Mode", "RvmTimePickerMode", "List", "List (lista com busca) ou Clock (relogio num dialogo)."),
-        new("Step", "int?", "30 na lista, 1 no relogio", "Minutos entre um horario e o proximo."),
-        new("Min / Max", "TimeOnly", "00:00 / 23:59", "Janela de horarios escolhiveis."),
+        new("Step", "int?", "30 na lista, 1 no relogio", "Minutos entre um horario e o proximo (no relogio, ate 30)."),
+        new("Min / Max", "TimeOnly", "00:00 / 23:59", "Janela de horarios escolhiveis. Min maior que Max cruza a meia-noite (22:00 a 06:00)."),
         new("Use24Hours", "bool", "true", "18:30 ou 6:30 PM."),
         new("Label / HelperText / ErrorText / Placeholder", "string?", "—", "Como no campo de texto."),
         new("Variant / Size", "RvmTextFieldVariant / RvmSize", "Outlined / Medium", "Estilo (so na lista) e tamanho do campo."),

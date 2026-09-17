@@ -268,6 +268,47 @@ public class RvmTimeClockTests : BunitContext
     }
 
     [Fact]
+    public void Janela_que_cruza_a_meia_noite_libera_a_noite_e_a_madrugada()
+    {
+        TimeOnly? valor = null;
+        var cortado = Relogio(p => p
+            .Add(x => x.Min, new TimeOnly(22, 0))
+            .Add(x => x.Max, new TimeOnly(6, 0))
+            .Add(x => x.ValueChanged, EventCallback.Factory.Create<TimeOnly?>(this, v => valor = v)));
+
+        var liberadas = cortado.FindAll("[role=option]:not([aria-disabled])").Select(o => o.TextContent.Trim()).Order().ToArray();
+        Assert.Equal(["00", "1", "2", "22", "23", "3", "4", "5", "6"], liberadas);
+        Assert.Equal("22", cortado.Find("[aria-selected=true]").TextContent.Trim());
+
+        cortado.Find("[role=listbox]").KeyDown(key: "ArrowUp");
+        cortado.Find("[role=listbox]").KeyDown(key: "ArrowUp");
+        cortado.Find("[role=listbox]").KeyDown(key: "ArrowUp");
+        Assert.Equal(new TimeOnly(0, 0), valor);
+        cortado.Find("[role=listbox]").KeyDown(key: "End");
+        Assert.Equal(new TimeOnly(23, 0), valor);
+    }
+
+    [Fact]
+    public void Valor_fora_do_passo_continua_ativo_e_as_setas_voltam_ao_passo()
+    {
+        TimeOnly? valor = new TimeOnly(9, 47);
+        var cortado = Relogio(p => p
+            .Add(x => x.Value, valor)
+            .Add(x => x.Step, 15)
+            .Add(x => x.View, RvmTimeClockView.Minutes)
+            .Add(x => x.ValueChanged, EventCallback.Factory.Create<TimeOnly?>(this, v => valor = v)));
+
+        Assert.Equal(["00", "15", "30", "45", "47"], Textos(cortado));
+        var ativa = cortado.Find("[aria-selected=true]");
+        Assert.Equal("47", ativa.TextContent.Trim());
+        Assert.Equal(ativa.Id, cortado.Find("[role=listbox]").GetAttribute("aria-activedescendant"));
+
+        cortado.Find("[role=listbox]").KeyDown(key: "ArrowDown");
+        Assert.Equal(new TimeOnly(9, 45), valor);
+        Assert.Equal(["00", "15", "30", "45"], Textos(cortado));
+    }
+
+    [Fact]
     public void Acoes_e_atributos_extras()
     {
         var cortado = Relogio(p => p
