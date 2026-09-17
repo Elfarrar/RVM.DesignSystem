@@ -1,0 +1,34 @@
+@namespace RVM.DesignSystem.Components.Progress
+
+@* role="progressbar" com nome acessivel. Determinado leva aria-valuenow (0 a 100); indeterminado nao
+   leva valor nenhum, que e como o leitor de tela sabe que "esta carregando, sem previsao". *@
+<div @attributes="AdditionalAttributes"
+     class="@ClassesDaRaiz"
+     role="progressbar"
+     aria-label="@Label"
+     aria-valuemin="@(Indeterminado ? null : "0")"
+     aria-valuemax="@(Indeterminado ? null : "100")"
+     aria-valuenow="@(Indeterminado ? null : ValorArredondado)">
+    @if (Variant == RvmProgressVariant.Circular)
+    {
+        @* Raio e espessura LITERAIS, e nao @Raio: o Razor formata double na cultura corrente, e em pt-BR
+           saia r="20,2" — atributo invalido, anel invisivel. Pego na foto do site; o bUnit roda em en-US.
+           Os valores tem de bater com as constantes Raio e Espessura do .cs. *@
+        <svg class="rvm-anel" viewBox="22 22 44 44" aria-hidden="true" focusable="false">
+            <circle class="rvm-trilho-anel" cx="44" cy="44" r="20.2" fill="none" stroke-width="3.6" />
+            <circle class="rvm-arco" cx="44" cy="44" r="20.2" fill="none" stroke-width="3.6"
+                    style="@EstiloDoArco" />
+        </svg>
+    }
+    else
+    {
+        <div class="rvm-trilho" aria-hidden="true">
+            <div class="rvm-barra" style="@EstiloDaBarra"></div>
+        </div>
+    }
+
+    @if (ShowValue && !Indeterminado)
+    {
+        <span class="rvm-valor" aria-hidden="true">@($"{ValorArredondado}%")</span>
+    }
+</div>

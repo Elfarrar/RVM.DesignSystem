@@ -1,0 +1,234 @@
+/* CSS isolado do RvmTextField. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Text Field.png: contorno de 56 px (padrao) e 40 px (pequeno),
+   borda em repouso de 1 px, borda ativa de 2 px na cor primary.
+
+   O rotulo flutua SO com CSS: o input sempre tem placeholder (um espaco, quando o consumidor nao
+   manda outro), e `:placeholder-shown` diz se o campo esta vazio. Assim o estado inicial sai certo
+   sem JS, em Server e em WebAssembly. */
+
+.rvm-campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family);
+    min-width: 0;
+}
+
+.rvm-caixa {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    transition: border-color var(--rvm-transition-fast), background-color var(--rvm-transition-fast);
+}
+
+.rvm-entrada {
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-input-size);
+    line-height: var(--rvm-text-input-line);
+    font-weight: var(--rvm-text-input-weight);
+}
+
+/* Placeholder so de verdade quando o consumidor mandou um; o espaco tecnico nao deve pintar nada. */
+.rvm-entrada::placeholder {
+    color: var(--rvm-color-text-secondary);
+    opacity: 1;
+}
+
+.rvm-afixo {
+    flex: none;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-input-size);
+    line-height: var(--rvm-text-input-line);
+}
+
+/* --- Rotulo --- */
+/* Sem `pointer-events: none`, de proposito: o rotulo e um <label for>, entao clicar nele ja foca o
+   campo — esteja ele dentro da caixa ou flutuando em cima da borda. Com `none`, o clique no rotulo
+   flutuante caia na borda e o campo nao recebia foco (pego pelo E2E). */
+.rvm-rotulo {
+    position: absolute;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-input-size);
+    line-height: 1;
+    white-space: nowrap;
+    transform-origin: left top;
+    transition: transform var(--rvm-transition-fast), color var(--rvm-transition-fast), top var(--rvm-transition-fast);
+}
+
+.rvm-obrigatorio {
+    margin-inline-start: 2px;
+}
+
+/* --- Contorno (Outlined) --- */
+.rvm-contorno .rvm-caixa {
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-sm);
+    padding: 0 13px;
+}
+
+.rvm-contorno.rvm-medio .rvm-caixa { min-height: 56px; }
+.rvm-contorno.rvm-pequeno .rvm-caixa { min-height: 40px; }
+
+.rvm-contorno .rvm-entrada { padding: 0; height: 100%; }
+.rvm-contorno.rvm-medio .rvm-entrada { min-height: 54px; }
+.rvm-contorno.rvm-pequeno .rvm-entrada { min-height: 38px; }
+
+.rvm-contorno .rvm-rotulo {
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 4px;
+    margin-inline-start: -4px;
+}
+
+/* Flutuando: sobe para cima da borda e pinta um retalho de fundo para "cortar" a linha, como no kit.
+   ⚠️ O retalho assume que o campo esta sobre o PAPEL (card, dialogo). Sobre o fundo do corpo ele
+   apareceria como uma mancha — por isso a cor vem de uma variavel que o consumidor pode trocar:
+   `--rvm-textfield-notch-background: var(--rvm-color-background-body)`. */
+.rvm-contorno .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-contorno .rvm-entrada:not(:placeholder-shown) ~ .rvm-rotulo,
+.rvm-contorno.rvm-rotulo-fixo .rvm-rotulo,
+.rvm-contorno.rvm-com-prefixo .rvm-rotulo {
+    top: 0;
+    transform: translateY(-50%) scale(0.75);
+    background-color: var(--rvm-textfield-notch-background, var(--rvm-color-background-paper));
+}
+
+.rvm-contorno .rvm-caixa:hover:not(:has(.rvm-entrada:disabled)) {
+    border-color: var(--rvm-color-text-primary);
+}
+
+/* Ativo: 2 px, e o recuo interno perde 1 px para o texto nao pular de lugar.
+   A borda ativa E o indicador de foco do campo (o input tem outline: none), entao ela usa o token do
+   anel e nao o primary-main: no tema escuro o primary-main da 1.84:1 sobre o papel e o foco some
+   (mesma armadilha medida no botao). No claro os dois sao a mesma cor, fiel ao kit. */
+.rvm-contorno .rvm-caixa:focus-within {
+    border-width: 2px;
+    border-color: var(--rvm-focus-ring-color);
+    padding: 0 12px;
+}
+
+.rvm-contorno .rvm-caixa:focus-within .rvm-rotulo {
+    left: 12px;
+}
+
+/* --- Preenchido (Filled) e Padrao (Standard): so a linha de baixo --- */
+.rvm-preenchido .rvm-caixa,
+.rvm-padrao .rvm-caixa {
+    border-bottom: 1px solid var(--rvm-color-input-border);
+}
+
+.rvm-preenchido .rvm-caixa {
+    background-color: var(--rvm-color-action-hover);
+    border-radius: var(--rvm-radius-sm) var(--rvm-radius-sm) 0 0;
+    padding: 0 12px;
+}
+
+.rvm-preenchido.rvm-medio .rvm-caixa { min-height: 56px; }
+.rvm-preenchido.rvm-pequeno .rvm-caixa { min-height: 48px; }
+
+.rvm-padrao.rvm-medio .rvm-caixa { min-height: 48px; }
+.rvm-padrao.rvm-pequeno .rvm-caixa { min-height: 40px; }
+
+/* O texto desce para abrir espaco ao rotulo flutuando em cima. */
+.rvm-preenchido .rvm-entrada,
+.rvm-padrao .rvm-entrada {
+    align-self: flex-end;
+    padding: 0 0 6px;
+}
+
+.rvm-preenchido .rvm-afixo,
+.rvm-padrao .rvm-afixo {
+    align-self: flex-end;
+    padding-bottom: 6px;
+}
+
+.rvm-preenchido .rvm-rotulo { left: 12px; top: 50%; transform: translateY(-50%); }
+.rvm-padrao .rvm-rotulo { left: 0; top: 60%; transform: translateY(-50%); }
+
+.rvm-preenchido .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-preenchido .rvm-entrada:not(:placeholder-shown) ~ .rvm-rotulo,
+.rvm-preenchido.rvm-rotulo-fixo .rvm-rotulo,
+.rvm-preenchido.rvm-com-prefixo .rvm-rotulo {
+    top: 8px;
+    transform: scale(0.75);
+}
+
+.rvm-padrao .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-padrao .rvm-entrada:not(:placeholder-shown) ~ .rvm-rotulo,
+.rvm-padrao.rvm-rotulo-fixo .rvm-rotulo,
+.rvm-padrao.rvm-com-prefixo .rvm-rotulo {
+    top: 2px;
+    transform: scale(0.75);
+}
+
+.rvm-preenchido .rvm-caixa:focus-within,
+.rvm-padrao .rvm-caixa:focus-within {
+    border-bottom-width: 2px;
+    border-bottom-color: var(--rvm-focus-ring-color);
+}
+
+/* A linha de 2 px empurraria o conteudo 1 px para cima; o recuo de baixo compensa. */
+.rvm-preenchido .rvm-caixa:focus-within .rvm-entrada,
+.rvm-padrao .rvm-caixa:focus-within .rvm-entrada,
+.rvm-preenchido .rvm-caixa:focus-within .rvm-afixo,
+.rvm-padrao .rvm-caixa:focus-within .rvm-afixo {
+    padding-bottom: 5px;
+}
+
+/* --- Rotulo ativo: -text, e nao -main. No tema escuro o primary-main como texto da 1.84:1. --- */
+.rvm-caixa:focus-within .rvm-rotulo {
+    color: var(--rvm-color-primary-text);
+}
+
+/* --- Apoio --- */
+.rvm-apoio {
+    color: var(--rvm-color-text-secondary);
+    padding: 0 14px;
+}
+
+.rvm-padrao .rvm-apoio {
+    padding: 0;
+}
+
+/* --- Erro: borda, rotulo e apoio no papel de erro. A mensagem usa -text (passa 4.5:1). --- */
+.rvm-erro .rvm-caixa,
+.rvm-erro .rvm-caixa:hover:not(:has(.rvm-entrada:disabled)) {
+    border-color: var(--rvm-color-error-main);
+}
+
+.rvm-erro .rvm-caixa:focus-within {
+    border-color: var(--rvm-color-error-main);
+}
+
+.rvm-erro .rvm-rotulo,
+.rvm-erro .rvm-caixa:focus-within .rvm-rotulo,
+.rvm-erro .rvm-apoio {
+    color: var(--rvm-color-error-text);
+}
+
+/* --- Desabilitado --- */
+.rvm-desabilitado .rvm-caixa {
+    border-color: var(--rvm-color-action-disabled);
+    border-style: dashed;
+}
+
+.rvm-contorno.rvm-desabilitado .rvm-caixa {
+    border-style: solid;
+}
+
+.rvm-desabilitado .rvm-entrada,
+.rvm-desabilitado .rvm-rotulo,
+.rvm-desabilitado .rvm-afixo,
+.rvm-desabilitado .rvm-apoio {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}

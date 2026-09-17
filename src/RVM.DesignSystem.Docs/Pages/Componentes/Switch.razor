@@ -1,0 +1,80 @@
+@page "/componentes/switch"
+
+<PageTitle>RvmSwitch — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmSwitch</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Liga e desliga algo que vale <strong>na hora</strong>. Por baixo e um checkbox nativo com
+    <code>role="switch"</code>: o leitor de tela anuncia "ligado" ou "desligado". Trilho de 34 x 14 px,
+    medido no kit.
+</p>
+
+<BlocoExemplo Titulo="Papel de cor"
+              Descricao="O polegar ligado usa a variante -text (3:1 nos dois temas); o trilho vai para o tom resting, mais suave, como no kit. Desligado, o trilho usa o token de borda de campo para continuar visivel."
+              Codigo="@CodigoCores">
+    <div class="linha-exemplos">
+        @foreach (var item in _ligados)
+        {
+            @* Objeto com propriedade, e nao `dicionario[cor]`: o @bind-Value vira uma expressao, e o
+               FieldIdentifier do Blazor nao aceita indexador — estouraria em tempo de execucao. *@
+            <RvmSwitch @bind-Value="item.Ligado" Color="item.Cor" Label="@item.Cor.ToString()" />
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos e estados"
+              Descricao="Espaco liga e desliga pelo teclado."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos">
+        <RvmSwitch @bind-Value="_notificar" Label="Notificacoes por e-mail" />
+        <RvmSwitch @bind-Value="_compacto" Size="RvmSize.Small" Label="Modo compacto" />
+        <RvmSwitch Value="true" Disabled="true" Label="Ligado desabilitado" />
+        <RvmSwitch Value="false" Disabled="true" Label="Desabilitado" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+        Notificacoes @(_notificar ? "ligadas" : "desligadas").
+    </RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/switch.png"
+              Arquivo="referencia-neatlab/Switch.png (recorte)"
+              Descricao="As variantes do kit: seis cores, dois tamanhos, e os estados ligado, hover e desabilitado."
+              Alt="Recorte do kit NEATLAB mostrando chaves liga-desliga em seis cores, dois tamanhos e varios estados" />
+
+@code {
+    private static readonly RvmColor[] Cores =
+        [RvmColor.Primary, RvmColor.Secondary, RvmColor.Error, RvmColor.Warning, RvmColor.Info, RvmColor.Success];
+
+    private sealed class ItemDeCor
+    {
+        public required RvmColor Cor { get; init; }
+        public bool Ligado { get; set; } = true;
+    }
+
+    private readonly List<ItemDeCor> _ligados = Cores.Select(c => new ItemDeCor { Cor = c }).ToList();
+    private bool _notificar = true;
+    private bool _compacto;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Value / @bind-Value", "bool", "false", "Ligado ou desligado."),
+        new("Label", "string?", "—", "Texto ao lado; tambem e o nome acessivel."),
+        new("ChildContent", "RenderFragment?", "—", "Rotulo livre, quando Label esta vazio."),
+        new("Color", "RvmColor", "Primary", "Papel de cor do ligado."),
+        new("Size", "RvmSize", "Medium", "Trilho 34x14 ou 26x10 (Small). Large sai igual ao medio."),
+        new("Disabled", "bool", "false", "Indisponivel."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no input nativo.")
+    ];
+
+    private const string CodigoCores = """
+        <RvmSwitch @bind-Value="_ligado" Color="RvmColor.Success" Label="Success" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmSwitch @bind-Value="_notificar" Label="Notificacoes por e-mail" />
+        <RvmSwitch @bind-Value="_compacto" Size="RvmSize.Small" Label="Modo compacto" />
+        """;
+}

@@ -1,0 +1,112 @@
+/* CSS isolado do RvmTabs. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Tabs.png: aba de 48 px (72 px com icone), indicador de 2 px, aba
+   preenchida de 130 x 48 px. */
+
+.rvm-abas {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.rvm-vertical {
+    flex-direction: row;
+}
+
+.rvm-lista {
+    display: flex;
+    min-width: 0;
+    /* Muitas abas rolam em vez de quebrar a linha: a navegacao por seta traz a aba focada a vista. */
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.rvm-sublinhadas.rvm-horizontal .rvm-lista { gap: 20px; }
+
+.rvm-vertical .rvm-lista {
+    flex-direction: column;
+    flex: none;
+    overflow-x: visible;
+}
+
+.rvm-paineis {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-aba {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-1);
+    flex: none;
+    box-sizing: border-box;
+    min-height: 48px;
+    min-width: 68px;
+    padding: 0 var(--rvm-space-4);
+    border: 0 solid transparent;
+    background: transparent;
+    color: var(--rvm-color-text-secondary);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-button-md-size);
+    line-height: var(--rvm-text-button-md-line);
+    font-weight: var(--rvm-text-button-md-weight);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--rvm-transition-fast), color var(--rvm-transition-fast);
+}
+
+.rvm-aba:has(> svg) {
+    min-height: 72px;
+}
+
+.rvm-largura-total .rvm-aba {
+    flex: 1;
+}
+
+.rvm-aba:hover:not(:disabled):not(.rvm-ativa) {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-aba:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
+
+.rvm-aba:disabled {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* --- Sublinhada: indicador de 2 px no -text, que passa 3:1 contra o fundo nos dois temas; o -main
+       do kit dava 1.84 no escuro. A borda oposta, transparente, mantem o texto centralizado. --- */
+.rvm-sublinhadas.rvm-horizontal .rvm-aba { border-top-width: 2px; border-bottom-width: 2px; }
+.rvm-sublinhadas.rvm-vertical .rvm-aba { border-left-width: 2px; border-right-width: 2px; }
+
+.rvm-sublinhadas .rvm-aba.rvm-ativa {
+    color: var(--rvm-color-primary-text);
+}
+
+.rvm-sublinhadas.rvm-horizontal .rvm-aba.rvm-ativa { border-bottom-color: var(--rvm-color-primary-text); }
+.rvm-sublinhadas.rvm-vertical .rvm-aba.rvm-ativa { border-right-color: var(--rvm-color-primary-text); }
+
+/* --- Preenchida: o par do botao contained --- */
+.rvm-preenchidas .rvm-aba {
+    min-width: 130px;
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-preenchidas .rvm-aba.rvm-ativa {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-vertical .rvm-paineis { padding-inline-start: var(--rvm-space-6); }
+.rvm-horizontal .rvm-paineis { padding-top: var(--rvm-space-4); }
+
+.rvm-paineis ::deep .rvm-painel-aba:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}

@@ -1,0 +1,38 @@
+@namespace RVM.DesignSystem.Components.Checkbox
+@using Microsoft.AspNetCore.Components.Forms
+
+@* Por baixo e o <InputCheckbox> do Blazor, de proposito: um <input type="checkbox"> de verdade
+   funciona sem JS (inclusive em formulario SSR estatico), traz teclado e semantica de graca e ja
+   gera o `name` certo para o POST. O que e desenhado por cima e so aparencia.
+
+   O <label> envolve tudo: clicar no texto marca a caixa, e o texto vira o nome acessivel. *@
+<label class="@ClassesDaRaiz" style="@EstiloDoConsumidor" aria-disabled="@(Disabled ? "true" : null)">
+    <span class="rvm-alvo">
+        <InputCheckbox @ref="_entrada"
+                       @attributes="AtributosDoInput"
+                       class="rvm-nativo"
+                       Value="Value"
+                       ValueChanged="ValueChanged"
+                       ValueExpression="ExpressaoEfetiva"
+                       disabled="@Disabled" />
+        <span class="rvm-caixa" aria-hidden="true">
+            @if (Indeterminate)
+            {
+                <svg class="rvm-marca" viewBox="0 0 24 24"><path d="M6 12h12" /></svg>
+            }
+            else
+            {
+                <svg class="rvm-marca" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10" /></svg>
+            }
+        </span>
+    </span>
+
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <span class="rvm-rotulo">@Label</span>
+    }
+    else
+    {
+        @ChildContent
+    }
+</label>

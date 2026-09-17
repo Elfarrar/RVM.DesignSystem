@@ -1,0 +1,125 @@
+/* CSS isolado do RvmDialog. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Dailog.png: caixa de 600 px no papel, titulo e acoes com 20 px de
+   recuo, sombra forte e o fundo escurecido. */
+
+.rvm-dialogo {
+    position: fixed;
+    inset: 0;
+    z-index: 1400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: var(--rvm-space-6);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-fundo {
+    position: absolute;
+    inset: 0;
+    background-color: var(--rvm-color-overlay);
+    opacity: 0.6;
+}
+
+.rvm-caixa {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    max-height: 100%;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-5);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-caixa:focus {
+    outline: none;
+}
+
+.rvm-caixa:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-pequeno .rvm-caixa { max-width: 400px; }
+.rvm-medio .rvm-caixa { max-width: 600px; }
+.rvm-grande .rvm-caixa { max-width: 900px; }
+
+.rvm-tela-cheia {
+    padding: 0;
+}
+
+.rvm-tela-cheia .rvm-caixa {
+    height: 100%;
+    max-width: none;
+    border-radius: 0;
+}
+
+.rvm-topo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-5) var(--rvm-space-5) var(--rvm-space-3);
+}
+
+.rvm-titulo {
+    flex: 1;
+    margin: 0;
+    font-size: var(--rvm-text-h6-size);
+    line-height: var(--rvm-text-h6-line);
+    font-weight: var(--rvm-text-h6-weight);
+}
+
+.rvm-fechar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    margin: calc(var(--rvm-space-2) * -1) calc(var(--rvm-space-2) * -1) calc(var(--rvm-space-2) * -1) auto;
+    padding: 0;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: var(--rvm-color-text-secondary);
+    cursor: pointer;
+}
+
+.rvm-fechar:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-fechar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 0;
+}
+
+/* O corpo rola sozinho: titulo e acoes ficam sempre a vista. */
+.rvm-conteudo {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--rvm-space-5) var(--rvm-space-5);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+}
+
+.rvm-caixa:not(:has(.rvm-topo)) .rvm-conteudo {
+    padding-top: var(--rvm-space-5);
+}
+
+.rvm-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--rvm-space-2);
+    padding: 0 var(--rvm-space-5) var(--rvm-space-5);
+}
+
+@media (max-width: 600px) {
+    .rvm-dialogo {
+        padding: var(--rvm-space-4);
+    }
+}

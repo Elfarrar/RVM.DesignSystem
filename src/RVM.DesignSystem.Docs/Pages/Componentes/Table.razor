@@ -1,0 +1,126 @@
+@page "/componentes/table"
+
+<PageTitle>RvmTable — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTable</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Tabela de dados. E um <code>&lt;table&gt;</code> de verdade, com titulos de coluna que o leitor de tela
+    anuncia a cada celula. As colunas sao declaradas com <code>RvmTableColumn</code>: o valor exibido, o
+    formato, se ordena, o alinhamento ou um conteudo livre. Linhas de 52 px (36 px densa) e cabecalho de
+    56 px, <strong>medidos no kit</strong>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ A linha selecionada do kit e cinza claro no escuro e nao chega a 4.5:1 com o texto. Aqui ela usa o
+    fundo de selecao do tema, e quem diz que a linha esta marcada e a caixa de marcar.
+</p>
+
+<BlocoExemplo Titulo="Basica e ordenavel"
+              Descricao="A secao Table Rows do kit. Clique no titulo para ordenar: crescente, decrescente e de volta a ordem original."
+              Codigo="@CodigoBasica">
+    <div class="largura-cheia">
+        <RvmTable Items="Talhoes" Caption="Talhoes da fazenda">
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" Sortable="true" />
+            <RvmTableColumn Title="Cultura" Value="t => t.Cultura" Sortable="true" />
+            <RvmTableColumn Title="Plantio" Value="t => t.Plantio" Format="dd/MM/yyyy" Sortable="true" />
+            <RvmTableColumn Title="Area (ha)" Value="t => t.Hectares" Format="N1" Sortable="true" Align="RvmTableAlign.End" />
+        </RvmTable>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com selecao"
+              Descricao="A coluna With Checkbox do kit. A caixa do cabecalho marca todas; com parte marcada, fica indeterminada."
+              Codigo="@CodigoSelecao">
+    <div class="largura-cheia">
+        <RvmTable Items="Talhoes" Caption="Talhoes para a aplicacao" Selectable="true" @bind-SelectedItems="_marcados">
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" />
+            <RvmTableColumn Title="Cultura" Value="t => t.Cultura" />
+            <RvmTableColumn Title="Area (ha)" Value="t => t.Hectares" Format="N1" Align="RvmTableAlign.End" />
+        </RvmTable>
+        <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+            @(_marcados.Count == 0
+                ? "Nenhum talhao marcado."
+                : $"{_marcados.Count} marcado(s), {_marcados.Sum(t => t.Hectares).ToString("N1")} ha.")
+        </RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Densa e com conteudo livre"
+              Descricao="O tamanho Dense do kit. A ultima coluna desenha um chip em vez do texto."
+              Codigo="@CodigoDensa">
+    <div class="largura-cheia">
+        <RvmTable Items="Talhoes" Caption="Situacao dos talhoes" Dense="true">
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" />
+            <RvmTableColumn Title="Cultura" Value="t => t.Cultura" />
+            <RvmTableColumn Title="Situacao" Value="t => t.Situacao">
+                <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="CorDaSituacao(context.Situacao)">@context.Situacao</RvmChip>
+            </RvmTableColumn>
+        </RvmTable>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/table.png"
+              Arquivo="referencia-neatlab/Table.png (recorte)"
+              Descricao="Linhas com e sem caixa de marcar, os estados normal, hover e selecionado, e o exemplo com paginacao."
+              Alt="Recorte do kit NEATLAB mostrando linhas de tabela com e sem caixa de marcar" />
+
+@code {
+    private IReadOnlyCollection<TalhaoExemplo> _marcados = [];
+
+    private static readonly TalhaoExemplo[] Talhoes = TalhaoExemplo.Lista[..5];
+
+    private static RvmColor CorDaSituacao(string situacao) => situacao switch
+    {
+        "Plantado" => RvmColor.Success,
+        "Em preparo" => RvmColor.Warning,
+        "Colhido" => RvmColor.Info,
+        _ => RvmColor.Error
+    };
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items", "IEnumerable<TItem>", "—", "As linhas."),
+        new("Caption", "string", "—", "Nome da tabela para o leitor de tela. Obrigatorio."),
+        new("Dense", "bool", "false", "Linhas de 36 px."),
+        new("Selectable", "bool", "false", "Caixa de marcar por linha e no cabecalho."),
+        new("SelectedItems", "IReadOnlyCollection<TItem>?", "—", "Linhas marcadas. Aceita @bind-SelectedItems."),
+        new("ItemKey", "Func<TItem, object>?", "—", "Identidade da linha para a selecao (t => t.Id). Use com classe comum: sem ela, recarregar os itens apaga a marcacao."),
+        new("RowLabel", "Func<TItem, string>?", "\"Selecionar\" + 1ª coluna", "Nome da caixa de marcar de cada linha."),
+        new("NoRecordsText", "string", "\"Nenhum registro para mostrar.\"", "Texto sem linhas."),
+        new("RvmTableColumn.Title", "string", "—", "Titulo da coluna."),
+        new("RvmTableColumn.Value", "Func<TItem, object?>?", "—", "Valor exibido, ordenado e filtrado."),
+        new("RvmTableColumn.Format", "string?", "—", "Formato do valor (\"dd/MM/yyyy\", \"N2\")."),
+        new("RvmTableColumn.Sortable", "bool", "false", "Ordena ao clicar no titulo."),
+        new("RvmTableColumn.InitialSort", "RvmSortDirection?", "—", "Ordenacao ao abrir."),
+        new("RvmTableColumn.Align", "RvmTableAlign", "Start", "Start, Center ou End (numeros)."),
+        new("RvmTableColumn.Width", "string?", "—", "Largura em CSS."),
+        new("RvmTableColumn.ChildContent", "RenderFragment<TItem>?", "—", "Conteudo livre da celula."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoBasica = """
+        <RvmTable Items="talhoes" Caption="Talhoes da fazenda">
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" Sortable="true" />
+            <RvmTableColumn Title="Plantio" Value="t => t.Plantio" Format="dd/MM/yyyy" Sortable="true" />
+            <RvmTableColumn Title="Area (ha)" Value="t => t.Hectares" Format="N1" Align="RvmTableAlign.End" />
+        </RvmTable>
+        """;
+
+    private const string CodigoSelecao = """
+        <RvmTable Items="talhoes" Caption="Talhoes para a aplicacao"
+                  Selectable="true" @bind-SelectedItems="marcados">
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" />
+        </RvmTable>
+        """;
+
+    private const string CodigoDensa = """
+        <RvmTable Items="talhoes" Caption="Situacao dos talhoes" Dense="true">
+            <RvmTableColumn Title="Situacao" Value="t => t.Situacao">
+                <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="RvmColor.Success">@context.Situacao</RvmChip>
+            </RvmTableColumn>
+        </RvmTable>
+        """;
+}

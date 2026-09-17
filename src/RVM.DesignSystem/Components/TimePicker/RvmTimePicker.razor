@@ -1,0 +1,32 @@
+@namespace RVM.DesignSystem.Components.TimePicker
+@using RVM.DesignSystem.Components.Select
+@using RVM.DesignSystem.Components.TextField
+
+@* Dois modos. Lista (padrao): a coluna "Time Picker" do kit sobre o RvmSelect — campo, lista, teclado,
+   busca por digitacao e validacao vem dele. Relogio: o "Time Picker (Mobile)" do kit, o RvmTimeClock
+   num dialogo, sobre a mesma base do seletor de data. *@
+@if (Mode == RvmTimePickerMode.Clock)
+{
+    @CampoDeRelogio
+    return;
+}
+
+<RvmSelect TValue="TimeOnly?"
+           @attributes="AdditionalAttributes"
+           Items="@Horarios"
+           ItemText="@Texto"
+           Value="@Value"
+           ValueChanged="@ValueChanged"
+           ValueExpression="@ValueExpression"
+           Label="@Label"
+           HelperText="@HelperText"
+           ErrorText="@ErrorText"
+           Placeholder="@Placeholder"
+           Variant="@Variant"
+           Size="@Size"
+           Searchable="@Searchable"
+           SearchPlaceholder="Buscar horario"
+           NoResultsText="Nenhum horario encontrado para essa busca."
+           Required="@Required"
+           Disabled="@Disabled"
+           Name="@Name" />

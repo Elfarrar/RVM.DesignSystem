@@ -1,0 +1,28 @@
+@* O recorte do PNG do kit ao lado do exemplo vivo: e contra isto que a fidelidade e conferida
+   (`07-site-de-documentacao.md`). Sem a imagem aqui, "parece o NEATLAB?" vira discussao de memoria. *@
+
+<section class="recorte-kit" aria-labelledby="kit">
+    <h3 id="kit" class="rvm-text-subtitle1">A referencia do kit</h3>
+    <p class="rvm-text-body2 site-apoio">
+        @Descricao Do kit <strong>NEATLAB</strong>, de hello.uiworld, sob CC BY 4.0.
+    </p>
+
+    <figure class="figura-kit">
+        <img src="@Origem" alt="@Alt" loading="lazy" width="760" />
+        <figcaption class="rvm-text-caption site-apoio">@Arquivo</figcaption>
+    </figure>
+</section>
+
+@code {
+    /// <summary>Caminho da imagem servida pelo site (ex.: <c>kit/divider.png</c>).</summary>
+    [Parameter, EditorRequired] public string Origem { get; set; } = string.Empty;
+
+    /// <summary>Nome do arquivo original dentro de <c>referencia-neatlab/</c>.</summary>
+    [Parameter, EditorRequired] public string Arquivo { get; set; } = string.Empty;
+
+    /// <summary>Descricao da imagem para quem nao a enxerga.</summary>
+    [Parameter, EditorRequired] public string Alt { get; set; } = string.Empty;
+
+    /// <summary>Uma frase sobre o que a imagem mostra.</summary>
+    [Parameter] public string? Descricao { get; set; }
+}

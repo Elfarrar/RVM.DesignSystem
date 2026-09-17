@@ -1,0 +1,15 @@
+@namespace RVM.DesignSystem.Components.Divider
+
+@if (ChildContent is null)
+{
+    @* Sem texto e um <hr>: o papel de separador ja vem do proprio elemento, sem precisar de role. *@
+    <hr @attributes="AdditionalAttributes" class="@CssClass" aria-orientation="@AriaOrientation" />
+}
+else
+{
+    @* Com texto no meio o <hr> nao serve (elemento vazio), entao o papel vai explicito. As duas
+       linhas laterais sao ::before/::after — decoracao, nao conteudo para o leitor de tela. *@
+    <div @attributes="AdditionalAttributes" class="@CssClass" role="separator" aria-orientation="horizontal">
+        <span class="rvm-texto rvm-text-caption">@ChildContent</span>
+    </div>
+}

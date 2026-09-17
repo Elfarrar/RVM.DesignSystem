@@ -1,0 +1,170 @@
+/* MEDIDO no referencia-neatlab/Date/Time pickers.png ("Time Picker (Mobile)"): 320 px de largura,
+   topo de 128 px no primary com a leitura em 60 px, mostrador de 260 px, numeros a 108 px do centro
+   (72 px no anel de dentro do 24 h), ponteiro de 2 px, centro de 8 px e a bolinha escolhida de 40 px.
+   O que nao esta em destaque no topo fica a 80% do branco: 5.17:1 sobre o primary. */
+
+.rvm-relogio {
+    width: 320px;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-topo-relogio {
+    box-sizing: border-box;
+    min-height: 128px;
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-titulo-relogio {
+    display: block;
+    font-size: var(--rvm-text-caption-size);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.rvm-leitura {
+    display: flex;
+    align-items: center;
+    margin-top: var(--rvm-space-2);
+}
+
+.rvm-segmento,
+.rvm-separador {
+    font-size: 3.75rem;
+    line-height: 1;
+    font-weight: var(--rvm-font-weight-regular);
+}
+
+.rvm-segmento,
+.rvm-periodo {
+    padding: 0 2px;
+    border: 0;
+    border-radius: var(--rvm-radius-sm);
+    background: none;
+    color: inherit;
+    font-family: inherit;
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.rvm-separador {
+    opacity: 0.8;
+}
+
+.rvm-segmento.rvm-atual,
+.rvm-periodo.rvm-atual {
+    opacity: 1;
+}
+
+.rvm-segmento:focus-visible,
+.rvm-periodo:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-color-primary-contrast);
+    outline-offset: 2px;
+}
+
+.rvm-periodos {
+    display: flex;
+    flex-direction: column;
+    margin-inline-start: var(--rvm-space-2);
+}
+
+.rvm-periodo {
+    font-size: var(--rvm-text-body1-size);
+    line-height: 1.5;
+}
+
+.rvm-periodo:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.rvm-area-mostrador {
+    display: flex;
+    justify-content: center;
+    padding: var(--rvm-space-6) var(--rvm-space-4) var(--rvm-space-2);
+}
+
+.rvm-mostrador {
+    position: relative;
+    flex: none;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background-color: var(--rvm-color-action-selected);
+    touch-action: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.rvm-mostrador:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+/* Nada dentro recebe o ponteiro: o clique chega no mostrador, com a posicao em relacao a ele. */
+.rvm-mostrador > * {
+    pointer-events: none;
+}
+
+.rvm-centro {
+    position: absolute;
+    left: 126px;
+    top: 126px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--rvm-color-primary-main);
+}
+
+.rvm-ponteiro {
+    position: absolute;
+    left: 129px;
+    bottom: 130px;
+    width: 2px;
+    background-color: var(--rvm-color-primary-main);
+    transform-origin: center bottom;
+    transition: transform var(--rvm-transition-fast), height var(--rvm-transition-fast);
+}
+
+.rvm-opcao-relogio {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: var(--rvm-text-body1-size);
+}
+
+.rvm-dentro {
+    font-size: var(--rvm-text-body2-size);
+}
+
+.rvm-escolhida {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-desabilitada {
+    color: var(--rvm-color-text-disabled);
+}
+
+/* Minuto sem numero (07, 08...): existe para o teclado e o leitor de tela, sem desenho. */
+.rvm-sem-numero {
+    color: transparent;
+}
+
+.rvm-acoes-relogio {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-2);
+}

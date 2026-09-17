@@ -1,0 +1,62 @@
+@namespace RVM.DesignSystem.Components.PickerField
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* O campo e um botao que abre um DIALOGO (padrao "Date Picker Dialog" do APG), com o calendario ou
+   o relogio dentro: aria-haspopup="dialog", foco vai para o conteudo ao abrir, Esc fecha e devolve o
+   foco ao botao. O valor aparece no proprio botao e entra no nome acessivel junto com o rotulo.
+   Fechado, o conteudo nao existe no DOM: o estado inicial sai pronto sem JS. *@
+<div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
+    <div class="rvm-caixa">
+        <button @ref="_gatilho"
+                @attributes="AtributosDoGatilho"
+                type="button"
+                id="@IdGatilho"
+                class="rvm-entrada"
+                aria-haspopup="dialog"
+                aria-expanded="@(_aberto ? "true" : "false")"
+                aria-labelledby="@($"{IdRotulo} {IdValor}")"
+                aria-invalid="@(TemErro ? "true" : null)"
+                aria-describedby="@(MensagemDeApoio is null ? null : IdApoio)"
+                disabled="@Disabled"
+                @onclick="AbrirOuFechar"
+                @onkeydown="AoTeclarNoDialogoAsync">
+            <span id="@IdValor" class="rvm-valor">@(TemValor ? TextoExibido : PlaceholderEfetivo)</span>
+        </button>
+
+        <span id="@IdRotulo" class="rvm-rotulo">
+            @Label
+            @if (Required)
+            {
+                <span class="rvm-obrigatorio" aria-hidden="true">*</span>
+                <span class="rvm-so-leitor">(obrigatorio)</span>
+            }
+        </span>
+
+        <span class="rvm-icone-campo" aria-hidden="true">
+            <RvmIcon Name="IconeDoCampo" Size="RvmSize.Small" />
+        </span>
+    </div>
+
+    @if (MensagemDeApoio is not null)
+    {
+        <div id="@IdApoio" class="rvm-apoio rvm-text-helper">@MensagemDeApoio</div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Name))
+    {
+        @foreach (var (sufixo, valor) in ValoresParaEnvio)
+        {
+            <input type="hidden" name="@($"{Name}{sufixo}")" value="@valor" />
+        }
+    }
+
+    @if (_aberto)
+    {
+        <div class="rvm-fundo" @onclick="() => FecharAsync()"></div>
+        <div @ref="_popup" class="rvm-popup" role="dialog" aria-modal="true" aria-label="@DialogLabel" tabindex="-1"
+             @onkeydown="AoTeclarNoDialogoAsync" @onkeydown:stopPropagation="true">
+            @ConteudoDoDialogo
+        </div>
+    }
+</div>

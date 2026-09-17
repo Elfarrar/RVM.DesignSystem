@@ -1,0 +1,63 @@
+@namespace RVM.DesignSystem.Components.TextField
+@inherits Microsoft.AspNetCore.Components.Forms.InputBase<string?>
+
+@* Tres coisas que o RvmTextField anterior errou e que aqui sao contrato (05-api-dos-componentes):
+   1. `name` renderizado sempre que o formulario pode fazer POST — o SSR estatico precisa dele para o
+      binding; sem ele, o valor chega vazio no servidor sem erro nenhum. No WebAssembly o proprio
+      EditContext desliga a geracao de nomes (nao ha POST), e ai o atributo e omitido, nao vazio.
+   2. `<label for>` apontando para o `id` do input — clicar no rotulo foca o campo, e o leitor de
+      tela anuncia o rotulo ao entrar.
+   3. Apoio, erro, prefixo e sufixo ligados por `aria-describedby` — senao quem nao enxerga nao
+      ouve a unidade ("Kg") nem o motivo do erro.
+   E um que ESTE componente quase errou: obrigatorio e so `aria-required`, SEM o `required` nativo.
+   O `required` do HTML faz o navegador barrar o envio com o balao dele — em ingles, sem estilo e
+   ANTES da validacao do EditForm rodar —, e a mensagem em PT-BR nunca aparece. Pego no navegador:
+   o evento submit nem disparava. *@
+@* Atributos extras se DIVIDEM, e isso e desvio consciente do "tudo na raiz" do 05-api: `class` e
+   `style` vao para a raiz (e ai que largura e margem fazem efeito — no input, o `flex: 1` engolia o
+   `max-width` do consumidor em silencio, achado do reviewer). Todo o resto (`autocomplete`,
+   `maxlength`, `inputmode`, `aria-*`, `data-*`) vai para o <input>, que e onde atributo de campo
+   precisa chegar para funcionar. *@
+<div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
+    <div class="rvm-caixa">
+        @if (!string.IsNullOrWhiteSpace(Prefix))
+        {
+            <span id="@IdPrefixo" class="rvm-afixo rvm-prefixo">@Prefix</span>
+        }
+
+        <input @attributes="AtributosDoInput"
+               id="@IdEfetivo"
+               name="@NomeDoCampo"
+               class="rvm-entrada"
+               type="@TipoHtml"
+               value="@CurrentValueAsString"
+               placeholder="@PlaceholderEfetivo"
+               disabled="@Disabled"
+               aria-required="@(Required ? "true" : null)"
+               aria-invalid="@(TemErro ? "true" : null)"
+               aria-describedby="@DescritoPor"
+               @onchange="AoMudar" />
+
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label for="@IdEfetivo" class="rvm-rotulo">
+                @Label
+                @if (Required)
+                {
+                    @* O asterisco e visual; a obrigatoriedade ja vai no `aria-required` do input. *@
+                    <span class="rvm-obrigatorio" aria-hidden="true">*</span>
+                }
+            </label>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Suffix))
+        {
+            <span id="@IdSufixo" class="rvm-afixo rvm-sufixo">@Suffix</span>
+        }
+    </div>
+
+    @if (MensagemDeApoio is not null)
+    {
+        <div id="@IdApoio" class="rvm-apoio rvm-text-helper">@MensagemDeApoio</div>
+    }
+</div>

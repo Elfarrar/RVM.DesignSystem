@@ -1,0 +1,96 @@
+/* CSS isolado do RvmRating. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Rating.png: passo de 18, 24 e 30 px por estrela; a estrela vazia no
+   mesmo tom do contorno (#5B5774 no escuro). A cheia usa o -text do warning, e nao o -main amarelo
+   do kit: sem texto junto, a estrela e o proprio indicador e precisa de 3:1 contra o fundo — o -main
+   da 1.7:1 no tema claro. */
+
+.rvm-avaliacao {
+    position: relative;
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+    vertical-align: middle;
+}
+
+.rvm-estrelas {
+    display: inline-flex;
+}
+
+.rvm-estrela {
+    position: relative;
+    display: inline-flex;
+}
+
+.rvm-pequeno .rvm-estrela { width: 18px; height: 18px; }
+.rvm-medio .rvm-estrela { width: 24px; height: 24px; }
+.rvm-grande .rvm-estrela { width: 30px; height: 30px; }
+
+.rvm-estrela svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    flex: none;
+}
+
+.rvm-vazia {
+    fill: var(--rvm-color-outline);
+}
+
+.rvm-cheia {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    fill: var(--rvm-color-warning-text);
+}
+
+.rvm-cheia svg {
+    width: auto;
+    aspect-ratio: 1;
+}
+
+.rvm-pequeno .rvm-cheia svg { width: 18px; }
+.rvm-medio .rvm-cheia svg { width: 24px; }
+.rvm-grande .rvm-cheia svg { width: 30px; }
+
+/* Os radios invisiveis, cada um sobre o trecho da nota que representa. */
+.rvm-alvos {
+    position: absolute;
+    inset: 0;
+}
+
+.rvm-alvo {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-alvo:has(input:focus-visible) {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 1px;
+}
+
+.rvm-desabilitado {
+    opacity: 0.6;
+}
+
+.rvm-desabilitado .rvm-alvo {
+    cursor: not-allowed;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

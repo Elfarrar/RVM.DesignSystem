@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
+    <ProjectReference Include="..\RVM.DesignSystem\RVM.DesignSystem.csproj" />
+  </ItemGroup>
+
+  <!-- Host estatico nao tem try_files: sem um 404.html igual ao index.html, recarregar uma rota
+       profunda da 404 de verdade (07-site-de-documentacao). O `.nojekyll` mora em wwwroot/ e vai
+       junto no publish; sem ele o Pages ignora a pasta _framework. -->
+  <Target Name="CopiarFallbackDeRotaProfunda" AfterTargets="Publish">
+    <Copy SourceFiles="$(PublishDir)wwwroot\index.html" DestinationFiles="$(PublishDir)wwwroot\404.html" />
+  </Target>
+
+</Project>

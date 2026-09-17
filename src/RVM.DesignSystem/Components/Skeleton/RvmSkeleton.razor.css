@@ -1,0 +1,45 @@
+/* CSS isolado do RvmSkeleton. So custom properties — hex literal aqui quebra o tema escuro.
+   Fundo no action-selected: visivel nos dois temas sem competir com o conteudo de verdade. */
+
+.rvm-esqueleto {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background-color: var(--rvm-color-action-selected);
+}
+
+/* A linha de texto tem a altura da fonte e um respiro em cima e embaixo, como uma linha real. */
+.rvm-texto {
+    height: 1em;
+    margin: 0.2em 0;
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-retangulo {
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-circulo {
+    border-radius: var(--rvm-radius-circle);
+}
+
+/* O brilho: uma faixa do fundo do papel atravessando o bloco. */
+.rvm-animado::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--rvm-color-action-hover), transparent);
+    transform: translateX(-100%);
+    animation: rvm-esqueleto-brilho 1.6s ease-in-out infinite;
+}
+
+@keyframes rvm-esqueleto-brilho {
+    100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-animado::after {
+        animation: none;
+        display: none;
+    }
+}

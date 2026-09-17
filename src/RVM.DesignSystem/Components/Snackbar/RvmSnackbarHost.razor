@@ -1,0 +1,51 @@
+@namespace RVM.DesignSystem.Components.Snackbar
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.Progress
+@using RVM.DesignSystem.Icons
+
+@* As duas regioes vivas existem SEMPRE, vazias no primeiro render: leitor de tela so anuncia o que
+   entra numa regiao que ja estava la. Erro vai para a urgente (role="alert"); o resto, para a
+   educada (role="status"). *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <div class="rvm-pilha" role="status">
+        @foreach (var mensagem in Visiveis.Where(m => m.Options.Color != RvmColor.Error))
+        {
+            @Mensagem(mensagem)
+        }
+    </div>
+    <div class="rvm-pilha" role="alert">
+        @foreach (var mensagem in Visiveis.Where(m => m.Options.Color == RvmColor.Error))
+        {
+            @Mensagem(mensagem)
+        }
+    </div>
+</div>
+
+@code {
+    private RenderFragment Mensagem(RvmSnackbarMessage mensagem) => @<div @key="mensagem.Id"
+                                                                          class="@ClassesDaMensagem(mensagem)"
+                                                                          @onmouseenter="() => Pausar(mensagem)"
+                                                                          @onmouseleave="() => Retomar(mensagem)"
+                                                                          @onfocusin="() => Pausar(mensagem)"
+                                                                          @onfocusout="() => Retomar(mensagem)">
+        @if (mensagem.Options.Loading)
+        {
+            <RvmProgress Variant="RvmProgressVariant.Circular" Size="RvmSize.Small" Label="Em andamento" aria-hidden="true" />
+        }
+        else if (IconeDe(mensagem.Options.Color) is { } icone)
+        {
+            <span class="rvm-icone" aria-hidden="true"><RvmIcon Name="icone" /></span>
+        }
+        <span class="rvm-texto">@mensagem.Text</span>
+        @if (mensagem.Options.OnAction is not null && !string.IsNullOrWhiteSpace(mensagem.Options.ActionText))
+        {
+            <button type="button" class="rvm-acao" @onclick="() => AgirAsync(mensagem)">@mensagem.Options.ActionText</button>
+        }
+        @if (mensagem.Options.ShowCloseButton)
+        {
+            <button type="button" class="rvm-fechar" aria-label="@CloseLabel" @onclick="() => Servico.Close(mensagem)">
+                <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+            </button>
+        }
+    </div>;
+}

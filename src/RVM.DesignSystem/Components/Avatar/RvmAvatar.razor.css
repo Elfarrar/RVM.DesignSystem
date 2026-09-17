@@ -1,0 +1,52 @@
+/* CSS isolado do RvmAvatar. So custom properties — hex literal aqui quebra o tema escuro.
+   Tamanhos MEDIDOS no referencia-neatlab/Avatar.png: 24 / 40 / 56 px (o pequeno mede 25 com o
+   antialias da borda do circulo). */
+
+.rvm-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    user-select: none;
+    font-family: var(--rvm-font-family);
+    font-weight: var(--rvm-text-avatar-weight);
+}
+
+.rvm-pequeno { width: 24px; height: 24px; font-size: var(--rvm-text-caption-size); }
+.rvm-medio { width: 40px; height: 40px; font-size: var(--rvm-text-subtitle1-size); line-height: 1; }
+.rvm-grande { width: 56px; height: 56px; font-size: var(--rvm-text-avatar-size); line-height: 1; }
+
+.rvm-circulo { border-radius: var(--rvm-radius-circle); }
+.rvm-arredondado { border-radius: var(--rvm-radius-sm); }
+.rvm-quadrado { border-radius: 0; }
+
+/* --- Preenchido: fundo na cor do papel, conteudo no token de contraste --- */
+.rvm-preenchido.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-preenchido.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-preenchido.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-preenchido.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-preenchido.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-preenchido.rvm-error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+
+/* --- Suave: fundo -soft com conteudo -text. Os seis pares foram medidos antes (DSGN-003):
+       o pior e info no claro, 4.71:1. --- */
+.rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-suave.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+.rvm-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.rvm-iniciais {
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}

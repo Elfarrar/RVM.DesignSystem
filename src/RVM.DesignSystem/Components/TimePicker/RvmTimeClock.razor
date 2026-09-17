@@ -1,0 +1,82 @@
+@namespace RVM.DesignSystem.Components.TimePicker
+
+@* O "Time Picker (Mobile)" do kit. O mostrador e um listbox: um so ponto na ordem de tabulacao, as
+   setas andam pelas opcoes (aria-activedescendant), Enter passa das horas aos minutos e, nos minutos,
+   confirma. O mouse clica ou arrasta em qualquer ponto do circulo. No topo, horas e minutos sao botoes
+   que trocam o mostrador (aria-pressed), e AM/PM so aparece em 12 h. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <div class="rvm-topo-relogio">
+        <span class="rvm-titulo-relogio">@Title</span>
+        <div class="rvm-leitura">
+            <button type="button"
+                    class="@(Visao == RvmTimeClockView.Hours ? "rvm-segmento rvm-atual" : "rvm-segmento")"
+                    aria-label="@($"Horas: {TextoHoras}")"
+                    aria-pressed="@(Visao == RvmTimeClockView.Hours ? "true" : "false")"
+                    @onclick="() => MudarVisaoAsync(RvmTimeClockView.Hours)">@TextoHoras</button>
+            <span class="rvm-separador" aria-hidden="true">:</span>
+            <button type="button"
+                    class="@(Visao == RvmTimeClockView.Minutes ? "rvm-segmento rvm-atual" : "rvm-segmento")"
+                    aria-label="@($"Minutos: {TextoMinutos}")"
+                    aria-pressed="@(Visao == RvmTimeClockView.Minutes ? "true" : "false")"
+                    @onclick="() => MudarVisaoAsync(RvmTimeClockView.Minutes)">@TextoMinutos</button>
+            @if (!Use24Hours)
+            {
+                <div class="rvm-periodos" role="group" aria-label="Periodo">
+                    <button type="button" class="@(Value is not null && !Pm ? "rvm-periodo rvm-atual" : "rvm-periodo")"
+                            aria-pressed="@(Value is not null && !Pm ? "true" : "false")" disabled="@PeriodoDesabilitado(false)"
+                            @onclick="() => EscolherPeriodoAsync(false)">AM</button>
+                    <button type="button" class="@(Value is not null && Pm ? "rvm-periodo rvm-atual" : "rvm-periodo")"
+                            aria-pressed="@(Value is not null && Pm ? "true" : "false")" disabled="@PeriodoDesabilitado(true)"
+                            @onclick="() => EscolherPeriodoAsync(true)">PM</button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="rvm-area-mostrador">
+        @{
+            var opcoes = Opcoes;
+            var ativa = opcoes.FirstOrDefault(o => o.Escolhida);
+        }
+        <div @ref="_mostrador"
+             id="@IdMostrador"
+             class="rvm-mostrador"
+             role="listbox"
+             tabindex="0"
+             aria-label="@(Visao == RvmTimeClockView.Hours ? "Horas" : "Minutos")"
+             aria-activedescendant="@(ativa is null ? null : IdOpcao(ativa.Valor))"
+             @onkeydown="AoTeclarAsync"
+             @onpointerdown="AoApertarAsync"
+             @onpointermove="AoMoverAsync"
+             @onpointerup="AoSoltarAsync"
+             @onpointerleave="AoSairDoMostrador">
+            <span class="rvm-centro" aria-hidden="true"></span>
+            <span class="rvm-ponteiro" style="@EstiloDoPonteiro" aria-hidden="true"></span>
+            @foreach (var o in opcoes)
+            {
+                <div @key="o.Valor"
+                     id="@IdOpcao(o.Valor)"
+                     role="option"
+                     class="@ClassesDaOpcao(o)"
+                     style="@EstiloDaOpcao(o)"
+                     aria-selected="@(o.Escolhida ? "true" : "false")"
+                     aria-disabled="@(o.Desabilitada ? "true" : null)"
+                     aria-label="@o.Rotulo">@o.Texto</div>
+            }
+        </div>
+    </div>
+
+    @if (Actions is not null)
+    {
+        <div class="rvm-acoes-relogio">@Actions</div>
+    }
+</div>
+
+@code {
+    private static string ClassesDaOpcao(Opcao o)
+        => "rvm-opcao-relogio"
+           + (o.Dentro ? " rvm-dentro" : "")
+           + (o.Escolhida ? " rvm-escolhida" : "")
+           + (o.Desabilitada ? " rvm-desabilitada" : "")
+           + (o.Visivel || o.Escolhida ? "" : " rvm-sem-numero");
+}

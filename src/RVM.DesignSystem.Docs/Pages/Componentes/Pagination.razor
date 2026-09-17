@@ -1,0 +1,82 @@
+@page "/componentes/pagination"
+
+<PageTitle>RvmPagination — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmPagination</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Paginacao numerica com setas e reticencias. Itens de 26, 32 e 40 px, <strong>medidos no kit</strong>.
+    Sao botoes de verdade: Tab percorre, Enter escolhe, e a pagina atual leva <code>aria-current</code>.
+</p>
+
+<BlocoExemplo Titulo="Estilo e forma"
+              Descricao="As quatro linhas da secao Pagination Item do kit."
+              Codigo="@CodigoEstilos">
+    <div class="pilha-exemplos">
+        <RvmPagination @bind-Page="_pagina" Count="13" AriaLabel="Paginacao texto circular" />
+        <RvmPagination @bind-Page="_pagina" Count="13" Shape="RvmPaginationShape.Rounded" AriaLabel="Paginacao texto arredondada" />
+        <RvmPagination @bind-Page="_pagina" Count="13" Variant="RvmPaginationVariant.Outlined" AriaLabel="Paginacao contorno circular" />
+        <RvmPagination @bind-Page="_pagina" Count="13" Variant="RvmPaginationVariant.Outlined" Shape="RvmPaginationShape.Rounded" AriaLabel="Paginacao contorno arredondada" />
+        <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Pagina @_pagina de 13.</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Cor e estado"
+              Descricao="Sem Color, a atual ganha so um fundo neutro (a coluna State: Active). Desabilitada, nada responde."
+              Codigo="@CodigoCores">
+    <div class="pilha-exemplos">
+        <RvmPagination @bind-Page="_pagina" Count="13" Color="null" AriaLabel="Paginacao neutra" />
+        <RvmPagination @bind-Page="_pagina" Count="13" Color="RvmColor.Secondary" AriaLabel="Paginacao secundaria" />
+        <RvmPagination Page="3" Count="13" Disabled="true" AriaLabel="Paginacao desabilitada" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos"
+              Descricao="A secao Pagination Size do kit: 26, 32 e 40 px. Aqui com BoundaryCount 3, como no kit: tres paginas em cada ponta."
+              Codigo="@CodigoTamanhos">
+    <div class="pilha-exemplos">
+        <RvmPagination @bind-Page="_pagina" Count="13" Size="RvmSize.Small" BoundaryCount="3" Variant="RvmPaginationVariant.Outlined" AriaLabel="Paginacao pequena" />
+        <RvmPagination @bind-Page="_pagina" Count="13" Size="RvmSize.Medium" BoundaryCount="3" Variant="RvmPaginationVariant.Outlined" AriaLabel="Paginacao media" />
+        <RvmPagination @bind-Page="_pagina" Count="13" Size="RvmSize.Large" BoundaryCount="3" Variant="RvmPaginationVariant.Outlined" AriaLabel="Paginacao grande" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/pagination.png"
+              Arquivo="referencia-neatlab/Pagination.png (recorte)"
+              Descricao="Os itens em texto e contorno, circular e arredondado, e os tres tamanhos."
+              Alt="Recorte do kit NEATLAB mostrando itens de paginacao em varios estilos e tamanhos" />
+
+@code {
+    private int _pagina = 1;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Page", "int", "1", "Pagina atual, a partir de 1. Aceita @bind-Page."),
+        new("Count", "int", "—", "Total de paginas."),
+        new("SiblingCount", "int", "1", "Vizinhas da atual sempre visiveis, de cada lado."),
+        new("BoundaryCount", "int", "1", "Paginas sempre visiveis em cada ponta."),
+        new("Variant", "RvmPaginationVariant", "Text", "Text ou Outlined."),
+        new("Shape", "RvmPaginationShape", "Circular", "Circular ou Rounded."),
+        new("Color", "RvmColor?", "Primary", "Cor da atual. Sem valor, fundo neutro."),
+        new("Size", "RvmSize", "Medium", "26, 32 ou 40 px."),
+        new("Disabled", "bool", "false", "Desabilita tudo."),
+        new("AriaLabel", "string", "\"Paginacao\"", "Nome da regiao. Troque quando houver mais de uma na pagina."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao nav.")
+    ];
+
+    private const string CodigoEstilos = """
+        <RvmPagination @bind-Page="_pagina" Count="13"
+                       Variant="RvmPaginationVariant.Outlined" Shape="RvmPaginationShape.Rounded" />
+        """;
+
+    private const string CodigoCores = """
+        <RvmPagination @bind-Page="_pagina" Count="13" Color="null" />
+        <RvmPagination Page="3" Count="13" Disabled="true" />
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmPagination @bind-Page="_pagina" Count="13" Size="RvmSize.Small" BoundaryCount="3" />
+        """;
+}

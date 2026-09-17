@@ -1,0 +1,97 @@
+name: Publicar pacote
+
+# dev  -> 0.1.0-alpha.<run>, descartavel
+# tag  -> vX.Y.Z estavel, presa ao commit (ADR-004: a versao NUNCA sai de literal no csproj)
+
+on:
+  push:
+    branches: [dev]
+    tags: ['v*']
+  workflow_dispatch:
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Prefixo das alphas da fase atual. O estavel vem da tag, nao daqui.
+  # Depois do 1.0.0 as alphas sao 1.1.0-alpha.N: com 0.1.0-alpha.N elas ordenariam ANTES do estavel e o
+  # consumidor que pede a mais nova pegaria a 1.0.0 (DSGN-007).
+  VERSION_PREFIX: '1.1.0'
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Decidir a versao
+        id: versao
+        run: |
+          set -e
+          if [ "${{ startsWith(github.ref, 'refs/tags/v') }}" = "true" ]; then
+            versao="${GITHUB_REF_NAME#v}"
+          else
+            versao="${VERSION_PREFIX}-alpha.${{ github.run_number }}"
+          fi
+          echo "versao=$versao" >> "$GITHUB_OUTPUT"
+          echo "Versao: $versao"
+
+      - name: Empacotar
+        run: |
+          dotnet pack src/RVM.DesignSystem/RVM.DesignSystem.csproj \
+            -c Release -o ./pacote \
+            -p:Version=${{ steps.versao.outputs.versao }}
+
+      - name: Enviar ao BaGet (com retry e timeout POR FORA)
+        env:
+          FEED: ${{ secrets.BAGET_FEED_URL }}
+          CHAVE: ${{ secrets.BAGET_API_KEY }}
+        run: |
+          set -e
+          # Tres licoes ja pagas (10-infra-e-integracoes.md):
+          #  - a rede runner -> BagEnd e intermitente: retry e obrigatorio;
+          #  - o --timeout do dotnet governa o push, mas quem PENDURA e o fetch do indice do servico.
+          #    Sem um timeout por fora, uma tentativa pendurada consome o job (medido: 1908 s);
+          #  - feed sempre https: em http o push nao da erro, pendura.
+          case "$FEED" in
+            https://*) ;;
+            *) echo "::error::O feed precisa ser https — em http o push pendura sem erro."; exit 1 ;;
+          esac
+
+          enviado=0
+          for tentativa in 1 2 3 4 5; do
+            echo "Tentativa $tentativa de envio..."
+            if timeout 180 dotnet nuget push ./pacote/*.nupkg \
+                 --source "$FEED" --api-key "$CHAVE" \
+                 --skip-duplicate --timeout 120; then
+              enviado=1
+              break
+            fi
+            echo "Falhou ou pendurou; nova tentativa em 30 s."
+            sleep 30
+          done
+          [ "$enviado" -eq 1 ] || { echo "::error::As 5 tentativas de push falharam."; exit 1; }
+
+      - name: Conferir a versao NO FEED
+        env:
+          FEED: ${{ secrets.BAGET_FEED_URL }}
+        run: |
+          set -e
+          # --skip-duplicate sai com sucesso sem publicar nada: o log do push nao e prova.
+          # O flat container fica um nivel acima do index do servico.
+          base=$(dirname "$FEED")
+          alvo="$base/package/rvm.designsystem/index.json"
+          for tentativa in 1 2 3; do
+            if curl -fsS --max-time 30 "$alvo" | grep -q '${{ steps.versao.outputs.versao }}'; then
+              echo "Versao ${{ steps.versao.outputs.versao }} confirmada no feed."
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::A versao ${{ steps.versao.outputs.versao }} nao aparece em $alvo."
+          exit 1

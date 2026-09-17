@@ -1,0 +1,41 @@
+@namespace RVM.DesignSystem.Components.Timeline
+
+@* Lista ordenada: a ordem dos acontecimentos e a informacao. Pontos e linhas sao desenho. *@
+<ol @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@AriaLabel">
+    @ChildContent
+</ol>
+
+@code {
+    /// <summary>Lado do conteudo principal. Padrao: <see cref="RvmTimelinePosition.Right"/>.</summary>
+    [Parameter] public RvmTimelinePosition Position { get; set; } = RvmTimelinePosition.Right;
+
+    /// <summary>Nome da lista para o leitor de tela, quando nao ha titulo visivel antes dela.</summary>
+    [Parameter] public string? AriaLabel { get; set; }
+
+    /// <summary>Os <see cref="RvmTimelineItem"/>.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Atributos extras, repassados ao <c>ol</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string ClassesDaRaiz
+    {
+        get
+        {
+            var proprias = "rvm-linha-do-tempo " + Position switch
+            {
+                RvmTimelinePosition.Left => "rvm-conteudo-a-esquerda",
+                RvmTimelinePosition.Alternate => "rvm-alternada",
+                _ => "rvm-conteudo-a-direita"
+            };
+
+            return AdditionalAttributes is not null
+                   && AdditionalAttributes.TryGetValue("class", out var informada)
+                   && informada is string texto
+                   && !string.IsNullOrWhiteSpace(texto)
+                ? $"{proprias} {texto}"
+                : proprias;
+        }
+    }
+}

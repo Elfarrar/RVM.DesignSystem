@@ -1,0 +1,29 @@
+@namespace RVM.DesignSystem.Components.Drawer
+
+@* Permanente: um <aside> nomeado, no fluxo da pagina — e so um painel lateral.
+   Temporaria: se comporta como dialogo modal (role="dialog", aria-modal, fundo, Esc, foco preso),
+   porque bloqueia a pagina por baixo enquanto aberta. Fechada, nao existe no DOM. *@
+@if (Variant == RvmDrawerVariant.Permanent)
+{
+    <aside @attributes="AdditionalAttributes" class="@ClassesDaGaveta" style="@EstiloDaGaveta" aria-label="@AriaLabel">
+        @ChildContent
+    </aside>
+}
+else if (Open)
+{
+    <div class="@ClassesDaRaizTemporaria">
+        <div class="rvm-fundo" aria-hidden="true" @onclick="FecharAsync"></div>
+        <div @ref="_caixa"
+             @attributes="AdditionalAttributes"
+             class="@ClassesDaGaveta"
+             style="@EstiloDaGaveta"
+             role="dialog"
+             aria-modal="true"
+             aria-label="@AriaLabel"
+             tabindex="-1"
+             @onkeydown="AoTeclarAsync"
+             @onkeydown:stopPropagation="true">
+            @ChildContent
+        </div>
+    </div>
+}

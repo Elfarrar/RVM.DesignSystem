@@ -1,0 +1,112 @@
+@page "/componentes/chip"
+
+<PageTitle>RvmChip — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmChip</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Rotulo compacto: filtro aplicado, etiqueta, destinatario. Tres estilos, um neutro e seis papeis
+    de cor, dois tamanhos <strong>medidos no kit</strong> (32 e 24 px) e remocao por teclado.
+</p>
+
+<BlocoExemplo Titulo="Estilo e papel de cor"
+              Descricao="As tres linhas da pagina Chip do kit. Sem Color, o chip e neutro — a coluna Default."
+              Codigo="@CodigoEstilos">
+    @foreach (var variante in Variantes)
+    {
+        <div class="linha-exemplos">
+            <RvmChip Variant="variante">Neutro</RvmChip>
+            @foreach (var cor in Cores)
+            {
+                <RvmChip Variant="variante" Color="cor">@cor.ToString()</RvmChip>
+            }
+        </div>
+    }
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Removivel, com icone e com miniatura"
+              Descricao="O x e um botao de verdade, com nome acessivel: entra na ordem de tabulacao e e anunciado. Com varios chips lado a lado, vale dar a cada um um RemoveLabel proprio."
+              Codigo="@CodigoRemover">
+    <div class="linha-exemplos">
+        @foreach (var filtro in _filtros)
+        {
+            <RvmChip Color="RvmColor.Primary" Variant="RvmChipVariant.Soft"
+                     OnRemove="@(() => _filtros.Remove(filtro))"
+                     RemoveLabel="@($"Remover filtro {filtro}")">@filtro</RvmChip>
+        }
+        @if (_filtros.Count == 0)
+        {
+            <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small" OnClick="@Restaurar">Restaurar filtros</RvmButton>
+        }
+    </div>
+    <div class="linha-exemplos">
+        <RvmChip StartIcon="RvmIconName.Star" Color="RvmColor.Warning" Variant="RvmChipVariant.Outlined">Favorito</RvmChip>
+        <RvmChip AvatarSrc="@AvatarDeExemplo" Variant="RvmChipVariant.Outlined">Ana Souza</RvmChip>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos e estado"
+              Descricao="O kit so define dois tamanhos; RvmSize.Large sai igual ao medio. Desabilitado esmaece e nao remove."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos">
+        <RvmChip Size="RvmSize.Medium" Color="RvmColor.Info">Medio</RvmChip>
+        <RvmChip Size="RvmSize.Small" Color="RvmColor.Info">Pequeno</RvmChip>
+        <RvmChip Disabled="true" OnRemove="@(() => { })">Desabilitado</RvmChip>
+        <RvmChip Disabled="true" Variant="RvmChipVariant.Outlined" Color="RvmColor.Error">Desabilitado</RvmChip>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/chip.png"
+              Arquivo="referencia-neatlab/Chip.png (recorte)"
+              Descricao="As variantes do kit: filled, outlined e suave, com remover, com miniatura e as duas coisas juntas."
+              Alt="Recorte do kit NEATLAB mostrando chips em tres estilos e sete cores" />
+
+@code {
+    // Miniatura desenhada inline para o exemplo nao depender de imagem externa nem de rede.
+    private const string AvatarDeExemplo =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' fill='%2316B1FF'/><text x='12' y='16' font-size='11' text-anchor='middle' fill='%23212121' font-family='sans-serif'>AS</text></svg>";
+
+    private static readonly RvmChipVariant[] Variantes = [RvmChipVariant.Filled, RvmChipVariant.Outlined, RvmChipVariant.Soft];
+
+    private static readonly RvmColor[] Cores =
+        [RvmColor.Primary, RvmColor.Secondary, RvmColor.Error, RvmColor.Warning, RvmColor.Info, RvmColor.Success];
+
+    private static readonly string[] FiltrosIniciais = ["Status: ativo", "Safra 2026", "Talhao 12"];
+
+    private List<string> _filtros = [.. FiltrosIniciais];
+
+    private void Restaurar() => _filtros = [.. FiltrosIniciais];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Variant", "RvmChipVariant", "Filled", "Filled, Outlined ou Soft."),
+        new("Color", "RvmColor?", "—", "Papel de cor. Sem valor, o chip e neutro."),
+        new("Size", "RvmSize", "Medium", "32 px ou 24 px (Small). Large sai igual ao medio."),
+        new("StartIcon", "RvmIconName?", "—", "Icone antes do rotulo."),
+        new("AvatarSrc", "string?", "—", "Miniatura antes do rotulo. Vence o icone."),
+        new("AvatarAlt", "string?", "—", "Alt da miniatura. Vazio quando o rotulo ja diz quem e."),
+        new("OnRemove", "EventCallback", "—", "Com alguem escutando, aparece o botao de remover."),
+        new("RemoveLabel", "string", "\"Remover\"", "Nome acessivel do botao de remover."),
+        new("Disabled", "bool", "false", "Esmaece e bloqueia a remocao."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoEstilos = """
+        <RvmChip>Neutro</RvmChip>
+        <RvmChip Variant="RvmChipVariant.Outlined" Color="RvmColor.Error">Error</RvmChip>
+        <RvmChip Variant="RvmChipVariant.Soft" Color="RvmColor.Success">Success</RvmChip>
+        """;
+
+    private const string CodigoRemover = """
+        <RvmChip Color="RvmColor.Primary" Variant="RvmChipVariant.Soft"
+                 OnRemove="@(() => _filtros.Remove(filtro))"
+                 RemoveLabel="@($"Remover filtro {filtro}")">@filtro</RvmChip>
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmChip Size="RvmSize.Small" Color="RvmColor.Info">Pequeno</RvmChip>
+        <RvmChip Disabled="true">Desabilitado</RvmChip>
+        """;
+}

@@ -1,0 +1,92 @@
+name: Deploy dev
+
+# Dev = site estatico servido pelo rvmtech-nginx da Rivendell, publicado por rsync.
+# Nao ha container, banco nem /health: a verificacao e por CONTEUDO (ver o passo final).
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: https://design.dev.rvmtech.com.br
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publicar o site
+        run: dotnet publish src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj -c Release -o ./publicado
+
+      - name: Preparar a chave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEV_VPS_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          # A rede runner -> Rivendell e INTERMITENTE: em 17/09/2026 um keyscan morreu em 5 s e a
+          # tentativa seguinte, sem mudar nada, passou. Mesma licao do publish no BaGet: retry e
+          # timeout explicitos, em vez de derrubar o deploy no primeiro solavanco de rede.
+          for tentativa in 1 2 3 4 5; do
+            if ssh-keyscan -T 15 -p ${{ secrets.DEV_VPS_PORT }} -H ${{ secrets.DEV_VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null \
+               && [ -s ~/.ssh/known_hosts ]; then
+              exit 0
+            fi
+            echo "Tentativa $tentativa de alcancar a Rivendell falhou; nova em 15 s."
+            sleep 15
+          done
+          echo "::error::Nao foi possivel alcancar a Rivendell pela porta SSH depois de 5 tentativas."
+          exit 1
+
+      - name: Enviar por rsync
+        env:
+          DESTINO: ${{ secrets.DEV_DEPLOY_PATH }}
+        run: |
+          # Sem `set -e`: o laco trata a falha de cada tentativa. `--timeout` corta tentativa pendurada.
+          # A barra final em ./publicado/wwwroot/ manda o CONTEUDO, nao a pasta.
+          for tentativa in 1 2 3; do
+            if rsync -az --delete --timeout=60 \
+                 -e "ssh -i ~/.ssh/deploy -p ${{ secrets.DEV_VPS_PORT }} -o ConnectTimeout=20" \
+                 ./publicado/wwwroot/ \
+                 ${{ secrets.DEV_VPS_USER }}@${{ secrets.DEV_VPS_HOST }}:"$DESTINO/"; then
+              exit 0
+            fi
+            echo "rsync falhou na tentativa $tentativa; nova em 20 s."
+            sleep 20
+          done
+          echo "::error::rsync para a Rivendell falhou 3 vezes."
+          exit 1
+
+      - name: Verificar por CONTEUDO (status 200 aqui nao prova nada)
+        run: |
+          set -e
+          # O try_files do Nginx devolve a pagina inicial para qualquer caminho: um build quebrado
+          # responde 200 alegremente. Por isso procuramos a string, e nao o codigo HTTP.
+          # ⚠️ Procurar so a string nao basta: em 16/09 um bloco `types` no vhost fez o index.html sair
+          # como application/octet-stream — o navegador BAIXAVA a pagina, e este mesmo curl devolvia
+          # 200 com a string certa. Por isso o content-type entra na verificacao.
+          tipo=$(curl -fsS -o /dev/null --max-time 20 -w '%{content_type}' https://design.dev.rvmtech.com.br/ || true)
+          case "$tipo" in
+            text/html*) ;;
+            *) echo "::error::A pagina inicial saiu como '$tipo' em vez de text/html — o navegador vai baixar em vez de abrir."; exit 1 ;;
+          esac
+          for tentativa in 1 2 3 4 5; do
+            corpo=$(curl -fsS --max-time 20 https://design.dev.rvmtech.com.br/ || true)
+            if echo "$corpo" | grep -q 'RVM Design System'; then
+              echo "Dev no ar com o conteudo esperado."
+              exit 0
+            fi
+            echo "Tentativa $tentativa: string ainda nao encontrada."
+            sleep 10
+          done
+          echo "::error::O site de dev respondeu sem a string 'RVM Design System'."
+          exit 1

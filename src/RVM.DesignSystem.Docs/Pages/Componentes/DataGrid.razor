@@ -1,0 +1,110 @@
+@page "/componentes/data-grid"
+
+<PageTitle>RvmDataGrid — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDataGrid</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A <code>RvmTable</code> com paginacao, filtro por coluna e o cabecalho escuro com separadores do kit. Os
+    dados ficam na memoria: a grade filtra, ordena e pagina sozinha. O intervalo do rodape ("1–5 de 13") e
+    anunciado ao leitor de tela quando muda.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ Ficaram de fora do kit: a celula focavel e editavel (a grade e uma tabela, sem navegacao celula a
+    celula), o menu da coluna e a ordenacao por varias colunas. O filtro fica visivel numa linha propria,
+    em vez de escondido atras do menu.
+</p>
+
+<BlocoExemplo Titulo="Paginacao, ordenacao e filtro"
+              Descricao="O primeiro exemplo da secao Data Grid Example do kit. Filtre por uma coluna e veja o intervalo mudar."
+              Codigo="@CodigoPaginada">
+    <div class="largura-cheia">
+        <RvmDataGrid Items="TalhaoExemplo.Lista" Caption="Talhoes da fazenda" PageSize="5">
+            <RvmTableColumn Title="Id" Value="t => t.Id" Sortable="true" Filterable="false" Width="80px" />
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" Sortable="true" />
+            <RvmTableColumn Title="Cultura" Value="t => t.Cultura" Sortable="true" />
+            <RvmTableColumn Title="Plantio" Value="t => t.Plantio" Format="dd/MM/yyyy" Sortable="true" />
+            <RvmTableColumn Title="Area (ha)" Value="t => t.Hectares" Format="N1" Sortable="true" Filterable="false" Align="RvmTableAlign.End" />
+        </RvmDataGrid>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com selecao, avatar e situacao"
+              Descricao="O segundo exemplo do kit. Marcar todas vale para a pagina atual."
+              Codigo="@CodigoSelecao">
+    <div class="largura-cheia">
+        <RvmDataGrid Items="TalhaoExemplo.Lista" Caption="Responsaveis pelos talhoes" PageSize="5" Selectable="true"
+                     @bind-SelectedItems="_marcados" @bind-Page="_pagina"
+                     RowLabel="t => t.Responsavel">
+            <RvmTableColumn Title="Responsavel" Value="t => t.Responsavel" Sortable="true">
+                <div class="site-pessoa">
+                    <RvmAvatar Initials="@Iniciais(context.Responsavel)" Size="RvmSize.Small" />
+                    <div>
+                        <div>@context.Responsavel</div>
+                        <RvmTypography Variant="RvmTypographyVariant.Caption" Color="RvmTextColor.Secondary">@context.Email</RvmTypography>
+                    </div>
+                </div>
+            </RvmTableColumn>
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" />
+            <RvmTableColumn Title="Plantio" Value="t => t.Plantio" Format="dd/MM/yyyy" Sortable="true" Filterable="false" />
+            <RvmTableColumn Title="Situacao" Value="t => t.Situacao">
+                <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="CorDaSituacao(context.Situacao)">@context.Situacao</RvmChip>
+            </RvmTableColumn>
+        </RvmDataGrid>
+        <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+            Pagina @_pagina · @(_marcados.Count == 0 ? "nenhum responsavel marcado" : string.Join(", ", _marcados.Select(t => t.Responsavel)))
+        </RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/data-grid.png"
+              Arquivo="referencia-neatlab/Data Grid.png (recorte)"
+              Descricao="Os dois exemplos da grade: cabecalho escuro com separadores, linha selecionada e rodape de paginacao."
+              Alt="Recorte do kit NEATLAB mostrando duas grades de dados com paginacao" />
+
+@code {
+    private IReadOnlyCollection<TalhaoExemplo> _marcados = [];
+    private int _pagina = 1;
+
+    private static string Iniciais(string nome)
+        => string.Concat(nome.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => p[0]));
+
+    private static RvmColor CorDaSituacao(string situacao) => situacao switch
+    {
+        "Plantado" => RvmColor.Success,
+        "Em preparo" => RvmColor.Warning,
+        "Colhido" => RvmColor.Info,
+        _ => RvmColor.Error
+    };
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("(tudo da RvmTable)", "—", "—", "Items, Caption, Dense, Selectable, SelectedItems, RowLabel, NoRecordsText e as colunas."),
+        new("Page", "int", "1", "Pagina mostrada. Aceita @bind-Page."),
+        new("PageSize", "int", "10", "Linhas por pagina. Aceita @bind-PageSize."),
+        new("PageSizeOptions", "IReadOnlyList<int>", "5, 10, 25", "Escolhas de \"Linhas por pagina\"."),
+        new("NoResultsText", "string", "\"Nenhum registro encontrado para esse filtro.\"", "Texto quando o filtro nao acha nada."),
+        new("RvmTableColumn.Filterable", "bool", "true", "Campo de filtro na coluna (precisa de Value).")
+    ];
+
+    private const string CodigoPaginada = """
+        <RvmDataGrid Items="talhoes" Caption="Talhoes da fazenda" PageSize="5">
+            <RvmTableColumn Title="Id" Value="t => t.Id" Sortable="true" Filterable="false" />
+            <RvmTableColumn Title="Talhao" Value="t => t.Nome" Sortable="true" />
+            <RvmTableColumn Title="Plantio" Value="t => t.Plantio" Format="dd/MM/yyyy" Sortable="true" />
+        </RvmDataGrid>
+        """;
+
+    private const string CodigoSelecao = """
+        <RvmDataGrid Items="talhoes" Caption="Responsaveis pelos talhoes" PageSize="5"
+                     Selectable="true" @bind-SelectedItems="marcados" @bind-Page="pagina"
+                     RowLabel="t => t.Responsavel">
+            <RvmTableColumn Title="Situacao" Value="t => t.Situacao">
+                <RvmChip Size="RvmSize.Small" Variant="RvmChipVariant.Soft" Color="RvmColor.Success">@context.Situacao</RvmChip>
+            </RvmTableColumn>
+        </RvmDataGrid>
+        """;
+}

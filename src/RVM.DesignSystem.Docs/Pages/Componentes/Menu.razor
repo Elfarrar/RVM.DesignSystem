@@ -1,0 +1,69 @@
+@page "/componentes/menu"
+
+<PageTitle>RvmMenu — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMenu</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Botao que abre uma lista de acoes, no padrao "Menu Button" do APG. Enter, Espaco ou seta para baixo
+    abrem com o foco no primeiro item; as setas andam, Esc fecha e devolve o foco ao botao. Itens de
+    36 px, <strong>medidos no kit</strong>.
+</p>
+
+<BlocoExemplo Titulo="Com icone, divisor e item desabilitado"
+              Descricao="As variacoes Icon True e Icon False da pagina Menu do kit."
+              Codigo="@CodigoMenu">
+    <div class="linha-exemplos exemplo-menus">
+        <RvmMenu Label="Acoes do talhao" Icon="RvmIconName.DotsVertical">
+            <RvmMenuItem Icon="RvmIconName.Pencil" OnClick="@(() => Registrar("Editar"))">Editar</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.Copy" OnClick="@(() => Registrar("Duplicar"))">Duplicar</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.Download" Disabled="true">Exportar</RvmMenuItem>
+            <RvmMenuDivider />
+            <RvmMenuItem Icon="RvmIconName.Trash" OnClick="@(() => Registrar("Excluir"))">Excluir</RvmMenuItem>
+        </RvmMenu>
+
+        <RvmMenu Label="Ordenar" ButtonVariant="RvmButtonVariant.Text" AlignEnd="true">
+            <RvmMenuItem OnClick="@(() => Registrar("Mais recentes"))">Mais recentes</RvmMenuItem>
+            <RvmMenuItem OnClick="@(() => Registrar("Mais antigos"))">Mais antigos</RvmMenuItem>
+            <RvmMenuItem OnClick="@(() => Registrar("Nome"))">Nome</RvmMenuItem>
+        </RvmMenu>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Ultima acao: @_ultima</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/menu.png"
+              Arquivo="referencia-neatlab/Menu.png (recorte)"
+              Descricao="O item nos estados normal, hover e desabilitado, com e sem icone, e o menu aberto."
+              Alt="Recorte do kit NEATLAB mostrando itens de menu e duas listas de opcoes" />
+
+@code {
+    private string _ultima = "nenhuma";
+
+    private void Registrar(string acao) => _ultima = acao;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Label", "string", "—", "Texto do botao."),
+        new("Icon", "RvmIconName?", "—", "Icone antes do texto do botao."),
+        new("ButtonVariant", "RvmButtonVariant", "Outlined", "Estilo do botao."),
+        new("ButtonColor", "RvmColor", "Primary", "Cor do botao."),
+        new("Size", "RvmSize", "Medium", "Tamanho do botao."),
+        new("AlignEnd", "bool", "false", "Alinha o menu pela direita do botao."),
+        new("Disabled", "bool", "false", "Botao indisponivel."),
+        new("RvmMenuItem.OnClick", "EventCallback", "—", "A acao. Escolher fecha o menu."),
+        new("RvmMenuItem.Icon", "RvmIconName?", "—", "Icone antes do texto."),
+        new("RvmMenuItem.Disabled", "bool", "false", "Visivel, mas pulado pelo teclado."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no botao.")
+    ];
+
+    private const string CodigoMenu = """
+        <RvmMenu Label="Acoes do talhao" Icon="RvmIconName.DotsVertical">
+            <RvmMenuItem Icon="RvmIconName.Pencil" OnClick="Editar">Editar</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.Download" Disabled="true">Exportar</RvmMenuItem>
+            <RvmMenuDivider />
+            <RvmMenuItem Icon="RvmIconName.Trash" OnClick="Excluir">Excluir</RvmMenuItem>
+        </RvmMenu>
+        """;
+}

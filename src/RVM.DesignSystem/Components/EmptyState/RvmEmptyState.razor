@@ -1,0 +1,44 @@
+@namespace RVM.DesignSystem.Components.EmptyState
+@using RVM.DesignSystem.Components.Icon
+
+@* O vazio que ensina o proximo passo (11-catalogo, "Estados obrigatorios"): o que aconteceu, por que,
+   e o que fazer. A ilustracao e decorativa; o titulo e um cabecalho de verdade, no nivel que o
+   consumidor escolher, para entrar no esqueleto da pagina. *@
+<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-labelledby="@IdTitulo">
+    @if (Illustration is not null)
+    {
+        <div class="rvm-ilustracao" aria-hidden="true">@Illustration</div>
+    }
+    else if (Icon is { } icone)
+    {
+        <span class="rvm-icone" aria-hidden="true">
+            <RvmIcon Name="icone" Size="RvmSize.Large" />
+        </span>
+    }
+
+    @* Um elemento por nivel, em marcacao Razor: h{n} criado pelo RenderTreeBuilder nao recebe o
+       atributo de escopo do CSS isolado, e o estilo do .titulo nao pegava. *@
+    @switch (NivelDoTitulo)
+    {
+        case 3: <h3 id="@IdTitulo" class="rvm-titulo">@Title</h3> break;
+        case 4: <h4 id="@IdTitulo" class="rvm-titulo">@Title</h4> break;
+        case 5: <h5 id="@IdTitulo" class="rvm-titulo">@Title</h5> break;
+        case 6: <h6 id="@IdTitulo" class="rvm-titulo">@Title</h6> break;
+        default: <h2 id="@IdTitulo" class="rvm-titulo">@Title</h2> break;
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <p class="rvm-descricao">@Description</p>
+    }
+
+    @if (ChildContent is not null)
+    {
+        <div class="rvm-detalhe">@ChildContent</div>
+    }
+
+    @if (Actions is not null)
+    {
+        <div class="rvm-acoes">@Actions</div>
+    }
+</section>

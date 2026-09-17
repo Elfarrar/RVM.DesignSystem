@@ -1,0 +1,74 @@
+@page "/componentes/rating"
+
+<PageTitle>RvmRating — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmRating</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Nota em estrelas. Editavel, e um grupo de radios nativos: Tab entra, as setas mudam a nota e funciona
+    em formulario sem JS. Somente leitura, vira uma imagem com a nota por extenso. Estrelas de 18, 24 e
+    30 px, <strong>medidas no kit</strong>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ A estrela cheia usa o tom de texto do warning, mais escuro que o amarelo do kit no tema claro: sem
+    texto junto, a estrela e o proprio indicador e precisa de 3:1 contra o fundo.
+</p>
+
+<BlocoExemplo Titulo="Editavel, com meia estrela"
+              Descricao="Passe o mouse para ver a previa; use Tab e as setas pelo teclado."
+              Codigo="@CodigoEditavel">
+    <div class="pilha-exemplos">
+        <RvmRating @bind-Value="_nota" Label="Nota do atendimento" />
+        <RvmRating @bind-Value="_notaMeia" AllowHalf="true" Label="Nota da colheita" />
+        <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+            Atendimento: @_nota de 5 · Colheita: @(_notaMeia.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture).Replace('.', ',')) de 5
+        </RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos, somente leitura e desabilitado"
+              Descricao="A secao Sizes e State do kit."
+              Codigo="@CodigoTamanhos">
+    <div class="pilha-exemplos">
+        <RvmRating Value="2.5" ReadOnly="true" Size="RvmSize.Small" Label="Nota pequena" />
+        <RvmRating Value="2.5" ReadOnly="true" Label="Nota media" />
+        <RvmRating Value="2.5" ReadOnly="true" Size="RvmSize.Large" Label="Nota grande" />
+        <RvmRating Value="2.5" AllowHalf="true" Disabled="true" Label="Nota desabilitada" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/rating.png"
+              Arquivo="referencia-neatlab/Rating.png (recorte)"
+              Descricao="Icone vazio, icone personalizado, previa ao passar o mouse, tres tamanhos e desabilitado."
+              Alt="Recorte do kit NEATLAB mostrando avaliacoes em estrelas e coracoes, em tres tamanhos" />
+
+@code {
+    private double _nota = 4;
+    private double _notaMeia = 2.5;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Value", "double", "0", "A nota. Aceita @bind-Value. Zero e sem nota."),
+        new("Max", "int", "5", "Quantas estrelas."),
+        new("AllowHalf", "bool", "false", "Permite meia estrela."),
+        new("Size", "RvmSize", "Medium", "Estrelas de 18, 24 ou 30 px."),
+        new("ReadOnly", "bool", "false", "So mostra, como imagem com a nota por extenso."),
+        new("Disabled", "bool", "false", "Indisponivel."),
+        new("Label", "string", "\"Avaliacao\"", "O que esta sendo avaliado. Nome do grupo."),
+        new("Name", "string?", "gerado", "name dos radios, para envio de formulario."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoEditavel = """
+        <RvmRating @bind-Value="_nota" Label="Nota do atendimento" />
+        <RvmRating @bind-Value="_notaMeia" AllowHalf="true" Label="Nota da colheita" />
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmRating Value="2.5" ReadOnly="true" Size="RvmSize.Large" Label="Nota grande" />
+        <RvmRating Value="2.5" AllowHalf="true" Disabled="true" Label="Nota desabilitada" />
+        """;
+}

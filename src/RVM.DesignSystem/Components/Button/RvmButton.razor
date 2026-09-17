@@ -1,0 +1,32 @@
+@namespace RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* `disabled` de verdade, e nao so aparencia: botao desabilitado tem de sair da ordem de tabulacao e
+   ignorar clique. Enquanto carrega, `aria-busy` avisa quem usa leitor de tela que a acao esta em
+   curso — o rotulo continua o mesmo, entao sem isso a espera e silenciosa. *@
+<button @ref="_elemento"
+        @attributes="AdditionalAttributes"
+        class="@CssClass"
+        type="@TipoHtml"
+        disabled="@(Disabled || Loading)"
+        aria-busy="@(Loading ? "true" : null)"
+        @onclick="AoClicar">
+    @if (Loading)
+    {
+        <span class="rvm-girando">
+            <RvmIcon Name="RvmIconName.Loader" Size="@Size" />
+        </span>
+    }
+    else if (StartIcon is not null)
+    {
+        <RvmIcon Name="StartIcon.Value" Size="@Size" />
+    }
+
+    <span class="rvm-rotulo">@ChildContent</span>
+
+    @if (EndIcon is not null && !Loading)
+    {
+        <RvmIcon Name="EndIcon.Value" Size="@Size" />
+    }
+</button>

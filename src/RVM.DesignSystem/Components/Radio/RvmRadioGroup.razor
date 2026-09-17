@@ -1,0 +1,28 @@
+@namespace RVM.DesignSystem.Components.Radio
+@typeparam TValue
+@using Microsoft.AspNetCore.Components.Forms
+
+@* <fieldset> + <legend> e a semantica nativa de grupo de opcoes: o leitor de tela anuncia a
+   pergunta ao entrar no grupo, sem precisar de role nenhum. E o `disabled` do fieldset desabilita
+   todas as opcoes de uma vez, no proprio navegador.
+
+   Por baixo e o <InputRadioGroup> do Blazor: gera o `name` do grupo, faz as setas moverem a
+   selecao (comportamento nativo de radio) e entra no EditForm. *@
+<fieldset @attributes="AdditionalAttributes" class="@ClassesDaRaiz" disabled="@Disabled">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <legend class="rvm-legenda">@Label</legend>
+    }
+
+    <InputRadioGroup TValue="TValue"
+                     Value="Value"
+                     ValueChanged="ValueChanged"
+                     ValueExpression="ExpressaoEfetiva"
+                     Name="@Name">
+        <CascadingValue TValue="RvmRadioGroup<TValue>" Value="this" IsFixed="false">
+            <div class="rvm-opcoes">
+                @ChildContent
+            </div>
+        </CascadingValue>
+    </InputRadioGroup>
+</fieldset>

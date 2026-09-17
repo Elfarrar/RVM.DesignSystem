@@ -1,0 +1,101 @@
+@page "/componentes/typography"
+
+<PageTitle>RvmTypography — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTypography</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Os 24 estilos da escala do kit. O componente separa <strong>estilo</strong> de
+    <strong>semantica</strong>: <code>Variant</code> decide como o texto se parece,
+    <code>As</code> decide que elemento ele e no documento.
+</p>
+
+<BlocoExemplo Titulo="Uso basico"
+              Descricao="Sem parametro nenhum, sai um paragrafo no estilo Body 1."
+              Codigo="@CodigoBasico">
+    <RvmTypography>Quase todo mundo ja viu um pangrama.</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="A escala"
+              Descricao="Cada linha e um Variant. Tamanho, entrelinha e peso vem dos tokens — o componente nao sabe nenhum numero."
+              Codigo="@CodigoEscala">
+    <div class="escala">
+        @foreach (var v in Escala)
+        {
+            <div class="linha-escala">
+                <span class="rvm-text-caption site-apoio">@v</span>
+                <RvmTypography Variant="v" As="RvmTextElement.Span">Quase todo mundo ja viu um pangrama</RvmTypography>
+            </div>
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Estilo e semantica separados"
+              Descricao="Um titulo de secao que precisa do TAMANHO de h5 e continua sendo o h2 da ordem do documento. Misturar os dois quebra a navegacao por cabecalho no leitor de tela."
+              Codigo="@CodigoSemantica">
+    <RvmTypography Variant="RvmTypographyVariant.H5" As="RvmTextElement.H2">
+        Isto e um h2 com o tamanho de h5
+    </RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Papel do texto"
+              Descricao="Primario para o que o usuario veio ler, secundario para apoio. O desabilitado nao vale para texto que precisa ser lido — WCAG isenta componente inativo de contraste justamente porque ele nao e para ser lido."
+              Codigo="@CodigoCor">
+    <RvmTypography Color="RvmTextColor.Primary">Texto primario</RvmTypography>
+    <RvmTypography Color="RvmTextColor.Secondary">Texto secundario</RvmTypography>
+    @* Esta amostra reprova contraste POR DEFINICAO — e o token de texto desabilitado. A marca
+       `data-rvm-demo` e o que o E2E exclui do exame do axe; WCAG 1.4.3 isenta componente inativo. *@
+    <RvmTypography Color="RvmTextColor.Disabled" aria-disabled="true"
+                   data-rvm-demo="texto-desabilitado">Texto desabilitado</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/typography.png"
+              Arquivo="referencia-neatlab/Typography/Light.png"
+              Descricao="A pagina Typography do kit, com tamanho, entrelinha e peso escritos ao lado de cada estilo."
+              Alt="Pagina de tipografia do kit NEATLAB, listando os estilos da escala com tamanho, entrelinha e peso" />
+
+@code {
+    private static readonly RvmTypographyVariant[] Escala =
+    [
+        RvmTypographyVariant.H4, RvmTypographyVariant.H5, RvmTypographyVariant.H6,
+        RvmTypographyVariant.Subtitle1, RvmTypographyVariant.Subtitle2,
+        RvmTypographyVariant.Body1, RvmTypographyVariant.Body2,
+        RvmTypographyVariant.ButtonMedium, RvmTypographyVariant.Caption, RvmTypographyVariant.Overline
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Variant", "RvmTypographyVariant", "Body1", "O estilo da escala: H1..H6, Subtitle, Body, Caption, Overline, Button, Input, Chip, Tooltip, AlertTitle, TableHeader, BadgeLabel."),
+        new("As", "RvmTextElement", "Auto", "Elemento HTML gerado. Em Auto, H1..H6 viram cabecalho e Body/Subtitle viram paragrafo."),
+        new("Color", "RvmTextColor", "Inherit", "Papel do texto: Inherit, Primary, Secondary ou Disabled."),
+        new("ChildContent", "RenderFragment", "—", "O texto."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao elemento. class e style somam com os do componente.")
+    ];
+
+    private const string CodigoBasico = """
+        <RvmTypography>Quase todo mundo ja viu um pangrama.</RvmTypography>
+        """;
+
+    private const string CodigoEscala = """
+        @foreach (var v in Escala)
+        {
+            <RvmTypography Variant="v" As="RvmTextElement.Span">
+                Quase todo mundo ja viu um pangrama
+            </RvmTypography>
+        }
+        """;
+
+    private const string CodigoSemantica = """
+        <RvmTypography Variant="RvmTypographyVariant.H5" As="RvmTextElement.H2">
+            Isto e um h2 com o tamanho de h5
+        </RvmTypography>
+        """;
+
+    private const string CodigoCor = """
+        <RvmTypography Color="RvmTextColor.Primary">Texto primario</RvmTypography>
+        <RvmTypography Color="RvmTextColor.Secondary">Texto secundario</RvmTypography>
+        <RvmTypography Color="RvmTextColor.Disabled">Texto desabilitado</RvmTypography>
+        """;
+}

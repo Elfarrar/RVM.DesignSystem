@@ -1,0 +1,333 @@
+/* CSS isolado do RvmSelect e do RvmMultiSelect. So custom properties — hex literal aqui quebra o
+   tema escuro.
+   MEDIDO no referencia-neatlab/Select.png: 56 px (padrao) e 40 px (pequeno), as mesmas medidas do
+   campo de texto. A caixa repete o CSS do RvmTextField com duas diferencas: "tem valor" vem da
+   classe `rotulo-fixo` (o combobox nao e um <input> com placeholder), e o estado ativo vale tambem
+   com a lista aberta (`aberto`), quando o foco pode estar na busca. */
+
+.rvm-campo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family);
+    min-width: 0;
+}
+
+.rvm-caixa {
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    transition: border-color var(--rvm-transition-fast), background-color var(--rvm-transition-fast);
+}
+
+.rvm-entrada {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+    box-sizing: border-box;
+    padding-inline-end: var(--rvm-space-6);
+    outline: none;
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-input-size);
+    line-height: var(--rvm-text-input-line);
+    font-weight: var(--rvm-text-input-weight);
+    cursor: pointer;
+}
+
+.rvm-valor {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-rotulo {
+    position: absolute;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-input-size);
+    line-height: 1;
+    white-space: nowrap;
+    transform-origin: left top;
+    cursor: pointer;
+    transition: transform var(--rvm-transition-fast), color var(--rvm-transition-fast), top var(--rvm-transition-fast);
+}
+
+/* Dentro do campo vazio, o rotulo fica por cima do combobox: deixa o clique passar para ele. Flutuando
+   sobre a borda, volta a receber o clique (e abre a lista pelo @onclick). */
+.rvm-campo:not(.rvm-rotulo-fixo) .rvm-rotulo {
+    pointer-events: none;
+}
+
+.rvm-obrigatorio {
+    margin-inline-start: 2px;
+}
+
+.rvm-seta {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    display: inline-flex;
+    transform: translateY(-50%);
+    color: var(--rvm-color-text-secondary);
+    pointer-events: none;
+    transition: transform var(--rvm-transition-fast);
+}
+
+.rvm-aberto .rvm-seta {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* --- Contorno (Outlined) --- */
+.rvm-contorno .rvm-caixa {
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-sm);
+    padding: 0 13px;
+}
+
+.rvm-contorno.rvm-medio .rvm-caixa { min-height: 56px; }
+.rvm-contorno.rvm-pequeno .rvm-caixa { min-height: 40px; }
+
+.rvm-contorno .rvm-rotulo {
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 4px;
+    margin-inline-start: -4px;
+}
+
+/* Flutuando: sobe para cima da borda com o retalho de fundo, como o campo de texto. */
+.rvm-contorno .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-contorno.rvm-rotulo-fixo .rvm-rotulo {
+    top: 0;
+    transform: translateY(-50%) scale(0.75);
+    background-color: var(--rvm-textfield-notch-background, var(--rvm-color-background-paper));
+}
+
+.rvm-contorno .rvm-caixa:hover {
+    border-color: var(--rvm-color-text-primary);
+}
+
+/* Ativo: 2 px no token do anel — a borda E o indicador de foco do combobox. */
+.rvm-contorno .rvm-caixa:focus-within,
+.rvm-contorno.rvm-aberto .rvm-caixa {
+    border-width: 2px;
+    border-color: var(--rvm-focus-ring-color);
+    padding: 0 12px;
+}
+
+.rvm-contorno .rvm-caixa:focus-within .rvm-rotulo,
+.rvm-contorno.rvm-aberto .rvm-rotulo {
+    left: 12px;
+}
+
+/* --- Preenchido (Filled) e Padrao (Standard): so a linha de baixo --- */
+.rvm-preenchido .rvm-caixa,
+.rvm-padrao .rvm-caixa {
+    border-bottom: 1px solid var(--rvm-color-input-border);
+}
+
+.rvm-preenchido .rvm-caixa {
+    background-color: var(--rvm-color-action-hover);
+    border-radius: var(--rvm-radius-sm) var(--rvm-radius-sm) 0 0;
+    padding: 0 12px;
+}
+
+.rvm-preenchido.rvm-medio .rvm-caixa { min-height: 56px; }
+.rvm-preenchido.rvm-pequeno .rvm-caixa { min-height: 48px; }
+
+.rvm-padrao.rvm-medio .rvm-caixa { min-height: 48px; }
+.rvm-padrao.rvm-pequeno .rvm-caixa { min-height: 40px; }
+
+.rvm-preenchido .rvm-entrada,
+.rvm-padrao .rvm-entrada {
+    align-items: flex-end;
+    padding-bottom: 6px;
+}
+
+.rvm-preenchido .rvm-rotulo { left: 12px; top: 50%; transform: translateY(-50%); }
+.rvm-padrao .rvm-rotulo { left: 0; top: 60%; transform: translateY(-50%); }
+
+.rvm-preenchido .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-preenchido.rvm-rotulo-fixo .rvm-rotulo {
+    top: 8px;
+    transform: scale(0.75);
+}
+
+.rvm-padrao .rvm-entrada:focus ~ .rvm-rotulo,
+.rvm-padrao.rvm-rotulo-fixo .rvm-rotulo {
+    top: 2px;
+    transform: scale(0.75);
+}
+
+.rvm-preenchido .rvm-caixa:focus-within,
+.rvm-padrao .rvm-caixa:focus-within,
+.rvm-preenchido.rvm-aberto .rvm-caixa,
+.rvm-padrao.rvm-aberto .rvm-caixa {
+    border-bottom-width: 2px;
+    border-bottom-color: var(--rvm-focus-ring-color);
+}
+
+.rvm-preenchido .rvm-caixa:focus-within .rvm-entrada,
+.rvm-padrao .rvm-caixa:focus-within .rvm-entrada,
+.rvm-preenchido.rvm-aberto .rvm-entrada,
+.rvm-padrao.rvm-aberto .rvm-entrada {
+    padding-bottom: 5px;
+}
+
+/* --- Rotulo ativo: -text, e nao -main --- */
+.rvm-caixa:focus-within .rvm-rotulo,
+.rvm-aberto .rvm-rotulo {
+    color: var(--rvm-color-primary-text);
+}
+
+/* --- Apoio --- */
+.rvm-apoio {
+    color: var(--rvm-color-text-secondary);
+    padding: 0 14px;
+}
+
+.rvm-padrao .rvm-apoio {
+    padding: 0;
+}
+
+/* --- Erro --- */
+.rvm-erro .rvm-caixa,
+.rvm-erro .rvm-caixa:hover,
+.rvm-erro .rvm-caixa:focus-within,
+.rvm-erro.rvm-aberto .rvm-caixa {
+    border-color: var(--rvm-color-error-main);
+}
+
+.rvm-erro .rvm-rotulo,
+.rvm-erro .rvm-caixa:focus-within .rvm-rotulo,
+.rvm-erro.rvm-aberto .rvm-rotulo,
+.rvm-erro .rvm-apoio {
+    color: var(--rvm-color-error-text);
+}
+
+/* --- Desabilitado --- */
+.rvm-desabilitado .rvm-caixa,
+.rvm-desabilitado .rvm-caixa:hover {
+    border-color: var(--rvm-color-action-disabled);
+}
+
+.rvm-desabilitado .rvm-entrada,
+.rvm-desabilitado .rvm-rotulo,
+.rvm-desabilitado .rvm-seta,
+.rvm-desabilitado .rvm-apoio {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* --- A lista --- */
+.rvm-fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 1299;
+}
+
+.rvm-popup {
+    position: absolute;
+    top: calc(100% + var(--rvm-space-1));
+    left: 0;
+    right: 0;
+    z-index: 1300;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: var(--rvm-space-2) 0;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-3);
+}
+
+.rvm-busca {
+    margin: 0 var(--rvm-space-2) var(--rvm-space-2);
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-sm);
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-busca::placeholder {
+    color: var(--rvm-color-text-secondary);
+    opacity: 1;
+}
+
+.rvm-busca:focus {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: -1px;
+}
+
+.rvm-vazio {
+    padding: var(--rvm-space-2) var(--rvm-space-4);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-opcoes {
+    max-height: 264px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+/* Mesmo item do RvmMenu: 36 px, hover no action-hover. */
+.rvm-opcao {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    min-height: 36px;
+    padding: 0 var(--rvm-space-4);
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    cursor: pointer;
+}
+
+.rvm-opcao:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-opcao.rvm-selecionada {
+    background-color: var(--rvm-color-action-selected);
+}
+
+/* A opcao ativa nao tem foco de verdade (o foco fica no combobox ou na busca): o anel por dentro e o
+   que mostra onde o teclado esta, com 3:1 contra a superficie. */
+.rvm-opcao.rvm-ativa {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
+
+.rvm-opcao.rvm-desabilitada {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+/* A caixinha do multiplo: a mesma do RvmCheckbox (borda no token de campo, marcada no -text). */
+.rvm-marca {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--rvm-color-input-border);
+    border-radius: 2px;
+}
+
+.rvm-selecionada .rvm-marca {
+    border-color: var(--rvm-color-primary-text);
+    background-color: var(--rvm-color-primary-text);
+    color: var(--rvm-color-background-paper);
+}

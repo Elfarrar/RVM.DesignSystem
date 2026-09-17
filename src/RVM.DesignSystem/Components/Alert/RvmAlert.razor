@@ -1,0 +1,37 @@
+@namespace RVM.DesignSystem.Components.Alert
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* `role` muda com a gravidade: erro e aviso sao `alert` (o leitor de tela interrompe o que estiver
+   lendo), informacao e sucesso sao `status` (anuncia quando der). Tudo como `alert` vira ruido, e
+   quem usa leitor de tela passa a ignorar. *@
+<div @attributes="AdditionalAttributes" class="@CssClass" role="@Papel">
+    @if (ShowIcon)
+    {
+        <span class="rvm-icone-alerta">
+            <RvmIcon Name="@IconeEfetivo" Size="RvmSize.Medium" />
+        </span>
+    }
+
+    <div class="rvm-corpo">
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <div class="rvm-titulo rvm-text-alert-title">@Title</div>
+        }
+        <div class="rvm-mensagem rvm-text-body2">@ChildContent</div>
+    </div>
+
+    @if (Action is not null || OnClose.HasDelegate)
+    {
+        <div class="rvm-acoes">
+            @Action
+
+            @if (OnClose.HasDelegate)
+            {
+                <button type="button" class="rvm-fechar" aria-label="@CloseLabel" @onclick="Fechar">
+                    <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+                </button>
+            }
+        </div>
+    }
+</div>

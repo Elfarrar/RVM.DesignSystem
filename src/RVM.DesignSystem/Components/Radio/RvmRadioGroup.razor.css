@@ -1,0 +1,35 @@
+/* CSS isolado do RvmRadioGroup. So custom properties. */
+
+.rvm-grupo {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-legenda {
+    padding: 0;
+    margin-bottom: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-opcoes {
+    display: flex;
+    gap: 0 var(--rvm-space-4);
+}
+
+.rvm-vertical .rvm-opcoes {
+    flex-direction: column;
+}
+
+.rvm-horizontal .rvm-opcoes {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.rvm-grupo:disabled .rvm-legenda {
+    color: var(--rvm-color-text-disabled);
+}

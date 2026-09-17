@@ -1,0 +1,361 @@
+/* MEDIDO no referencia-neatlab/Menu Drawer.png e Collapsed Menu.png: menu de 260 px (68 recolhido) no
+   fundo do corpo, marca em 64 px, item de 42 px a cada 48, pilula colada a esquerda e 18 px livre a
+   direita (5 recolhido), icone de 24 px com o texto a 56 px da borda, topo de 64 px, conteudo com 24 px
+   de margem e rodape de 80 px.
+   O ativo do kit e o degrade #31A1F9 -> #274FCA, e branco nao passa de 2.76:1 na ponta clara. Aqui o
+   degrade vai do tom medio dele (--rvm-color-menu-active) ao primary-main: branco passa de 4.5:1 a
+   partir de 10% da largura, e o texto so comeca em 22%. */
+
+.rvm-casca {
+    container-type: inline-size;
+    position: relative;
+    display: flex;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: var(--rvm-color-background-body);
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-pular {
+    position: absolute;
+    top: var(--rvm-space-2);
+    left: var(--rvm-space-2);
+    z-index: 1310;
+    padding: var(--rvm-space-2) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-primary-text);
+    transform: translateY(-200%);
+}
+
+.rvm-pular:focus-visible {
+    transform: none;
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+/* --- Menu lateral --- */
+
+.rvm-lateral {
+    flex: 0 0 260px;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: var(--rvm-color-background-body);
+    transition: width var(--rvm-transition-medium), flex-basis var(--rvm-transition-medium);
+}
+
+.rvm-lateral:focus {
+    outline: none;
+}
+
+.rvm-recolhida .rvm-lateral {
+    flex-basis: 68px;
+    width: 68px;
+}
+
+.rvm-area-marca {
+    display: flex;
+    align-items: center;
+    flex: 0 0 64px;
+    padding-inline: 22px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.rvm-navegacao {
+    padding-block: var(--rvm-space-1) var(--rvm-space-4);
+}
+
+.rvm-nav-lista,
+.rvm-navegacao ::deep .rvm-nav-lista {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Item e grupo: a pilula do kit. */
+.rvm-navegacao ::deep .rvm-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-sizing: border-box;
+    width: calc(100% - 18px);
+    height: 42px;
+    margin-block: 3px;
+    padding-inline: 20px 14px;
+    border: 0;
+    border-radius: 0 var(--rvm-radius-pill) var(--rvm-radius-pill) 0;
+    background: none;
+    color: var(--rvm-color-text-primary);
+    font: inherit;
+    font-size: var(--rvm-text-body1-size);
+    text-align: start;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.rvm-navegacao ::deep .rvm-nav-link:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-navegacao ::deep .rvm-nav-link:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(-1 * var(--rvm-focus-ring-width));
+}
+
+.rvm-navegacao ::deep .rvm-nav-link.rvm-ativo {
+    background: linear-gradient(90deg, var(--rvm-color-menu-active) 0%, var(--rvm-color-primary-main) 100%);
+    color: var(--rvm-color-primary-contrast);
+    box-shadow: var(--rvm-shadow-2);
+}
+
+.rvm-navegacao ::deep .rvm-nav-link.rvm-ativo:focus-visible {
+    outline-color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-navegacao ::deep .rvm-nav-icone {
+    flex: none;
+}
+
+.rvm-navegacao ::deep .rvm-nav-texto {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Subitem sem icone: o circulo vazado do kit, centrado onde fica o icone. */
+.rvm-navegacao ::deep .rvm-nav-ponto {
+    flex: none;
+    box-sizing: border-box;
+    width: 10px;
+    height: 10px;
+    margin-inline: 7px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+
+.rvm-navegacao ::deep .rvm-nav-selo {
+    flex: none;
+    padding: 0 var(--rvm-space-2);
+    border-radius: var(--rvm-radius-pill);
+    background-color: var(--rvm-color-error-main);
+    color: var(--rvm-color-error-contrast);
+    font-size: var(--rvm-text-caption-size);
+    line-height: 20px;
+}
+
+.rvm-navegacao ::deep .rvm-nav-seta {
+    flex: none;
+    transform: rotate(-90deg);
+    transition: transform var(--rvm-transition-fast);
+}
+
+.rvm-navegacao ::deep .rvm-aberto {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-navegacao ::deep .rvm-aberto .rvm-nav-seta {
+    transform: none;
+}
+
+/* Titulo de secao: caixa alta pequena seguida de um fio, como "APPS & PAGES —————" no kit. */
+.rvm-navegacao ::deep .rvm-nav-titulo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    height: 32px;
+    margin-block-start: var(--rvm-space-4);
+    padding-inline: 24px 18px;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.rvm-navegacao ::deep .rvm-nav-titulo::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--rvm-color-divider);
+}
+
+/* Recolhido: so os icones; texto, selo e seta saem da tela mas o texto segue no nome do link. */
+.rvm-navegacao ::deep .rvm-recolhido {
+    width: 63px;
+    padding-inline: 22px 0;
+}
+
+.rvm-navegacao ::deep .rvm-recolhido .rvm-nav-texto,
+.rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo-texto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.rvm-navegacao ::deep .rvm-recolhido .rvm-nav-selo,
+.rvm-navegacao ::deep .rvm-recolhido .rvm-nav-seta {
+    display: none;
+}
+
+.rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo {
+    padding-inline: 20px 26px;
+}
+
+/* --- Topo, conteudo e rodape --- */
+
+.rvm-principal {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.rvm-barra-topo {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    flex: 0 0 64px;
+    padding-inline: var(--rvm-space-4) var(--rvm-space-6);
+    background-color: var(--rvm-color-background-body);
+}
+
+.rvm-barra-conteudo {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    min-width: 0;
+}
+
+.rvm-alternar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+}
+
+.rvm-alternar:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-alternar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-so-estreita {
+    display: none;
+}
+
+.rvm-conteudo {
+    flex: 1 0 auto;
+    padding: var(--rvm-space-6) var(--rvm-space-6) 0;
+}
+
+.rvm-conteudo:focus {
+    outline: none;
+}
+
+.rvm-rodape {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-2) var(--rvm-space-4);
+    min-height: 80px;
+    box-sizing: border-box;
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body1-size);
+}
+
+/* --- Estreito: o menu vira gaveta por cima do conteudo --- */
+
+@container (max-width: 840px) {
+    .rvm-lateral,
+    .rvm-recolhida .rvm-lateral {
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+        z-index: 1300;
+        width: 260px;
+        background-color: var(--rvm-color-background-paper);
+        box-shadow: var(--rvm-shadow-5);
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform var(--rvm-transition-medium), visibility 0s linear var(--rvm-transition-medium);
+    }
+
+    .rvm-menu-aberto .rvm-lateral {
+        transform: none;
+        visibility: visible;
+        transition: transform var(--rvm-transition-medium);
+    }
+
+    .rvm-fundo-menu {
+        position: absolute;
+        inset: 0;
+        z-index: 1299;
+        background-color: var(--rvm-color-overlay);
+        opacity: 0.6;
+    }
+
+    .rvm-so-estreita {
+        display: inline-flex;
+    }
+
+    .rvm-so-larga {
+        display: none;
+    }
+
+    /* Recolher nao existe na gaveta: nela o menu aparece sempre inteiro. */
+    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido {
+        width: calc(100% - 18px);
+        padding-inline: 20px 14px;
+    }
+
+    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido .rvm-nav-texto,
+    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo-texto {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        clip: auto;
+    }
+
+    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido .rvm-nav-selo,
+    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido .rvm-nav-seta {
+        display: inline-flex;
+    }
+
+    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo {
+        padding-inline: 24px 18px;
+    }
+
+    .rvm-conteudo {
+        padding: var(--rvm-space-4) var(--rvm-space-4) 0;
+    }
+}

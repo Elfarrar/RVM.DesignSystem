@@ -1,0 +1,98 @@
+@page "/componentes/alert"
+
+<PageTitle>RvmAlert — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmAlert</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Aviso dentro da pagina: o que aconteceu e o que fazer. Tres estilos, titulo opcional, acao e
+    fechar. <strong>Erro e aviso interrompem o leitor de tela; informacao e sucesso esperam</strong> —
+    tudo interrompendo vira ruido, e quem depende do leitor passa a ignorar.
+</p>
+
+<BlocoExemplo Titulo="Os tres estilos"
+              Descricao="Standard (fundo suave), filled e outlined. A borda do outlined e a cor cheia do papel — medida no kit, e diferente da do botao, que usa o tom resting."
+              Codigo="@CodigoEstilos">
+    @foreach (var variante in Variantes)
+    {
+        <RvmAlert Variant="variante" Severity="RvmColor.Success">O lancamento foi salvo.</RvmAlert>
+    }
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Gravidade"
+              Descricao="O kit desenha quatro. Cada uma tem o seu icone; o papel da acessibilidade (alert ou status) muda junto."
+              Codigo="@CodigoGravidade">
+    <RvmAlert Severity="RvmColor.Info">Sua sessao expira em 5 minutos.</RvmAlert>
+    <RvmAlert Severity="RvmColor.Success">O relatorio foi enviado para o seu e-mail.</RvmAlert>
+    <RvmAlert Severity="RvmColor.Warning">O certificado digital vence em 12 dias. Renove antes para nao parar a emissao.</RvmAlert>
+    <RvmAlert Severity="RvmColor.Error">Nao conseguimos salvar. Confira a sua conexao e tente de novo.</RvmAlert>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com titulo, acao e fechar"
+              Descricao="A variacao With Title e With Action do kit. O fechar tem nome acessivel em portugues."
+              Codigo="@CodigoCompleto">
+    @if (_visivel)
+    {
+        <RvmAlert Severity="RvmColor.Warning" Variant="RvmAlertVariant.Outlined"
+                  Title="Nota fiscal com pendencia"
+                  OnClose="@(() => _visivel = false)">
+            <ChildContent>O CNPJ do destinatario nao confere com o cadastro da Receita.</ChildContent>
+            <Action>
+                <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Warning" Size="RvmSize.Small">Corrigir</RvmButton>
+            </Action>
+        </RvmAlert>
+    }
+    else
+    {
+        <RvmButton Variant="RvmButtonVariant.Outlined" Size="RvmSize.Small" OnClick="@(() => _visivel = true)">Mostrar o aviso de novo</RvmButton>
+    }
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/alert.png"
+              Arquivo="referencia-neatlab/Alert.png (recorte)"
+              Descricao="O bloco Alert With Action do kit: filled, outlined e standard, com e sem titulo, nas quatro gravidades."
+              Alt="Recorte do kit NEATLAB mostrando alertas filled, outlined e standard em quatro cores" />
+
+@code {
+    private bool _visivel = true;
+
+    private static readonly RvmAlertVariant[] Variantes =
+        [RvmAlertVariant.Standard, RvmAlertVariant.Filled, RvmAlertVariant.Outlined];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Severity", "RvmColor", "Info", "Gravidade. Error e Warning viram role=alert; o resto, role=status."),
+        new("Variant", "RvmAlertVariant", "Standard", "Standard, Filled ou Outlined."),
+        new("Title", "string?", "—", "Titulo acima da mensagem."),
+        new("ShowIcon", "bool", "true", "Mostra o icone da gravidade."),
+        new("Icon", "RvmIconName?", "—", "Troca o icone da gravidade."),
+        new("Action", "RenderFragment?", "—", "Acao ao lado da mensagem."),
+        new("OnClose", "EventCallback", "—", "Com alguem escutando, aparece o botao de fechar."),
+        new("CloseLabel", "string", "\"Fechar aviso\"", "Nome acessivel do botao de fechar."),
+        new("ChildContent", "RenderFragment", "—", "A mensagem."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoEstilos = """
+        <RvmAlert Severity="RvmColor.Success">O lancamento foi salvo.</RvmAlert>
+        <RvmAlert Variant="RvmAlertVariant.Filled" Severity="RvmColor.Success">O lancamento foi salvo.</RvmAlert>
+        <RvmAlert Variant="RvmAlertVariant.Outlined" Severity="RvmColor.Success">O lancamento foi salvo.</RvmAlert>
+        """;
+
+    private const string CodigoGravidade = """
+        <RvmAlert Severity="RvmColor.Error">Nao conseguimos salvar. Confira a sua conexao e tente de novo.</RvmAlert>
+        """;
+
+    private const string CodigoCompleto = """
+        <RvmAlert Severity="RvmColor.Warning" Variant="RvmAlertVariant.Outlined"
+                  Title="Nota fiscal com pendencia"
+                  OnClose="@(() => _visivel = false)">
+            <ChildContent>O CNPJ do destinatario nao confere com o cadastro da Receita.</ChildContent>
+            <Action>
+                <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Warning" Size="RvmSize.Small">Corrigir</RvmButton>
+            </Action>
+        </RvmAlert>
+        """;
+}

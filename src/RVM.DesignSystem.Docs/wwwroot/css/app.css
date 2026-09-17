@@ -1,0 +1,530 @@
+/* Chrome do site de documentacao. Nao ha hex aqui de proposito: o site e o primeiro consumidor
+   da biblioteca, entao ele tambem so usa `var(--rvm-...)`. Se faltar um token para montar o site,
+   falta um token na biblioteca. */
+
+html,
+body {
+    margin: 0;
+}
+
+.pagina {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.site-topo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-6);
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    background: var(--rvm-color-background-paper);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.site-marca {
+    color: var(--rvm-color-primary-text);
+    text-decoration: none;
+}
+
+.site-menu {
+    display: flex;
+    gap: var(--rvm-space-4);
+    margin-inline-end: auto;
+}
+
+.site-link {
+    color: var(--rvm-color-text-secondary);
+    text-decoration: none;
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.site-link:hover {
+    background: var(--rvm-color-action-hover);
+    color: var(--rvm-color-text-primary);
+}
+
+.site-link.active {
+    color: var(--rvm-color-primary-text);
+    background: var(--rvm-color-action-selected);
+}
+
+.seletor-tema {
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--rvm-color-text-primary);
+    background: var(--rvm-color-background-paper);
+    border: 1px solid var(--rvm-color-outline);
+    border-radius: var(--rvm-radius-md);
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    transition: background var(--rvm-transition-fast);
+}
+
+.seletor-tema:hover {
+    background: var(--rvm-color-action-hover);
+}
+
+.site-conteudo {
+    flex: 1;
+    width: 100%;
+    max-width: 62rem;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: var(--rvm-space-8) var(--rvm-space-6);
+}
+
+.site-conteudo section {
+    margin-block: var(--rvm-space-10);
+}
+
+.site-apoio {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rodape {
+    padding: var(--rvm-space-4) var(--rvm-space-6);
+    border-top: 1px solid var(--rvm-color-divider);
+    color: var(--rvm-color-text-secondary);
+}
+
+a {
+    color: var(--rvm-color-primary-text);
+}
+
+code {
+    font-size: 0.85em;
+    padding: 0 var(--rvm-space-1);
+    border-radius: var(--rvm-radius-sm);
+    background: var(--rvm-color-action-selected);
+}
+
+/* --- Amostras da pagina Fundamentos --- */
+.grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--rvm-space-3);
+    margin-block: var(--rvm-space-4);
+}
+
+.grade-pequena {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--rvm-space-6);
+    margin-block: var(--rvm-space-6);
+}
+
+.amostra {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    min-height: 4.5rem;
+    padding: var(--rvm-space-3);
+    border-radius: var(--rvm-radius-md);
+}
+
+.amostra.borda {
+    border: 1px solid var(--rvm-color-divider);
+    background: var(--rvm-color-background-paper);
+}
+
+.linha-amostra {
+    height: 3px;
+    margin-top: auto;
+    border-radius: var(--rvm-radius-pill);
+}
+
+.lista-texto,
+.escala {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-4);
+    background: var(--rvm-color-background-paper);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.linha-escala {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    align-items: baseline;
+    gap: var(--rvm-space-4);
+}
+
+.medida {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+.site-barra {
+    height: var(--rvm-space-4);
+    background: var(--rvm-color-primary-main);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.site-quadrado {
+    width: 4rem;
+    height: 4rem;
+    background: var(--rvm-color-primary-soft);
+    border: 1px solid var(--rvm-color-divider);
+}
+
+.site-quadrado.elevado {
+    background: var(--rvm-color-background-paper);
+    border: none;
+    border-radius: var(--rvm-radius-md);
+}
+
+.carregando {
+    padding: var(--rvm-space-8) var(--rvm-space-6);
+    font-family: system-ui, sans-serif;
+}
+
+#blazor-error-ui {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--rvm-space-3) var(--rvm-space-6);
+    background: var(--rvm-color-warning-main);
+    color: var(--rvm-color-warning-contrast);
+    box-shadow: var(--rvm-shadow-3);
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: var(--rvm-space-3);
+    top: var(--rvm-space-3);
+}
+
+@media (max-width: 40rem) {
+    .site-topo {
+        flex-wrap: wrap;
+        gap: var(--rvm-space-3);
+    }
+
+    .linha-escala {
+        grid-template-columns: 1fr;
+        gap: var(--rvm-space-1);
+    }
+}
+
+/* --- Paginas de componente --- */
+.bloco-exemplo {
+    margin-block: var(--rvm-space-8);
+}
+
+.exemplo-vivo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-6);
+    margin-block: var(--rvm-space-3);
+    background: var(--rvm-color-background-paper);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.linha-em-pe {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-4);
+}
+
+.codigo summary {
+    cursor: pointer;
+    color: var(--rvm-color-primary-text);
+    padding: var(--rvm-space-1) 0;
+}
+
+.codigo pre {
+    overflow-x: auto;
+    padding: var(--rvm-space-4);
+    margin: var(--rvm-space-2) 0 0;
+    background: var(--rvm-color-action-selected);
+    border-radius: var(--rvm-radius-md);
+}
+
+.codigo code {
+    background: none;
+    padding: 0;
+    font-size: 0.8125rem;
+    line-height: 1.5rem;
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+    margin-block: var(--rvm-space-4);
+    background: var(--rvm-color-background-paper);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.tabela th,
+.tabela td {
+    text-align: start;
+    vertical-align: top;
+    padding: var(--rvm-space-3) var(--rvm-space-4);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.tabela tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.lista-componentes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--rvm-space-4);
+    padding: 0;
+    margin-block: var(--rvm-space-6);
+    list-style: none;
+}
+
+.cartao-componente {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    padding: var(--rvm-space-4);
+    background: var(--rvm-color-background-paper);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.figura-kit {
+    margin: var(--rvm-space-4) 0 0;
+}
+
+.figura-kit img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.figura-kit figcaption {
+    margin-top: var(--rvm-space-2);
+}
+
+.linha-exemplos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-3);
+}
+
+.grade-icones {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+    gap: var(--rvm-space-4);
+    width: 100%;
+}
+
+.item-icone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    text-align: center;
+}
+
+.grade-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: var(--rvm-space-4);
+}
+
+.grade-cards .bloco-exemplo {
+    margin-block: 0;
+}
+
+.grade-cards .exemplo-vivo {
+    background: var(--rvm-color-background-body);
+}
+
+.grade-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--rvm-space-6) var(--rvm-space-4);
+    width: 100%;
+    margin-bottom: var(--rvm-space-4);
+}
+
+.lista-vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.recuo {
+    display: flex;
+    flex-direction: column;
+    padding-inline-start: var(--rvm-space-8);
+}
+
+.linha-exemplos.alinhado-topo {
+    align-items: flex-start;
+    gap: var(--rvm-space-10);
+}
+
+.pilha-exemplos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--rvm-space-4);
+}
+
+/* Folga para os baloes do tooltip nao cortarem na borda do bloco de exemplo. */
+/* Direita primeiro e esquerda por ultimo: cada balao lateral abre para dentro do bloco. */
+.exemplo-dicas {
+    justify-content: space-between;
+    row-gap: var(--rvm-space-12);
+    padding: var(--rvm-space-10) var(--rvm-space-4);
+}
+
+/* O badge sobreposto passa da quina do icone: sem folga, um invade o outro. */
+.exemplo-badges {
+    gap: var(--rvm-space-8);
+    padding-top: var(--rvm-space-2);
+}
+
+/* O menu aberto precisa de altura para aparecer inteiro dentro do bloco na foto e no axe. */
+.exemplo-menus {
+    justify-content: space-between;
+    min-height: 18rem;
+    align-items: flex-start;
+}
+
+.largura-cheia {
+    align-items: stretch;
+}
+
+.exemplo-esqueleto {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    width: 100%;
+    max-width: 24rem;
+}
+
+.esqueleto-textos {
+    flex: 1;
+}
+
+.exemplo-lista {
+    width: 100%;
+    max-width: 24rem;
+}
+
+.conteudo-gaveta {
+    padding: var(--rvm-space-4) 0;
+}
+
+.conteudo-gaveta > .rvm-text-subtitle2 {
+    padding: 0 var(--rvm-space-4);
+}
+
+.exemplo-gaveta-fixa {
+    display: flex;
+    width: 100%;
+    min-height: 14rem;
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-sm);
+    overflow: hidden;
+}
+
+.exemplo-gaveta-conteudo {
+    flex: 1;
+    padding: var(--rvm-space-4);
+}
+
+/* Celula de pessoa da pagina da grade: avatar ao lado do nome e do e-mail. */
+.site-pessoa {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    line-height: 1.25;
+}
+
+/* Pagina da moldura: o exemplo vive num quadro de altura fixa, com o menu e o conteudo rolando dentro. */
+.site-moldura {
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.site-quadro-estreito {
+    width: 100%;
+    max-width: 400px;
+}
+
+.site-marca-exemplo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    font-size: var(--rvm-text-h6-size);
+    font-weight: 600;
+}
+
+.site-espaco {
+    flex: 1;
+}
+
+.site-botao-icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+}
+
+.site-botao-icone:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.site-botao-icone:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.site-quadro-conteudo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    min-height: 420px;
+    padding: var(--rvm-space-6);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+}
+
+.site-quadro-conteudo > * {
+    margin: 0;
+}
+
+.site-links-rodape {
+    display: inline-flex;
+    gap: var(--rvm-space-4);
+}
+
+.site-links-rodape a {
+    color: var(--rvm-color-primary-text);
+}
+
+/* Pagina do seletor de horario: o relogio solto no papel, com a sombra de um dialogo. */
+.site-relogio-solto {
+    align-self: flex-start;
+    overflow: hidden;
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-3);
+}

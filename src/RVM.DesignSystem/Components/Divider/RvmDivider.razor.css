@@ -1,0 +1,42 @@
+/* CSS isolado do RvmDivider. So custom properties: hex literal aqui quebra o tema escuro. */
+
+.rvm-divisor {
+    border: none;
+    margin: 0;
+    background-color: var(--rvm-color-divider);
+}
+
+.rvm-divisor.rvm-horizontal {
+    width: 100%;
+    height: 1px;
+}
+
+.rvm-divisor.rvm-vertical {
+    width: 1px;
+    /* `align-self: stretch` faz a linha acompanhar a altura dos irmaos num flex; o min-height
+       garante que ela apareca mesmo fora de um flex, em vez de sumir com altura zero. */
+    align-self: stretch;
+    min-height: 1rem;
+}
+
+.rvm-divisor.rvm-com-texto {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    background-color: transparent;
+}
+
+/* As duas linhas laterais do rotulo sao decoracao pura — por isso ::before/::after, e nao
+   elementos: leitor de tela nao anuncia, e o rotulo continua sendo o unico conteudo. */
+.rvm-divisor.rvm-com-texto::before,
+.rvm-divisor.rvm-com-texto::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--rvm-color-divider);
+}
+
+.rvm-texto {
+    color: var(--rvm-color-text-secondary);
+    white-space: nowrap;
+}

@@ -45,7 +45,7 @@ superfície e estado. Quem "escurecer" a paleta no tema escuro está inventando.
 | Borda de contorno | `#D1D0D3` | `#5B5774` |
 | Linha de input | `#D4D3D5` | `#595572` |
 | Overlay | `#9D9AA0` | `#2C2A43` |
-| Fundo do snackbar | `#212121` | `#FFFFFF` |
+| Fundo do snackbar | `#212121` | `#212121` (texto `#FFFFFF`) — conferido no `Snackbar.png` escuro; decidido em 17/09/2026 |
 | Texto primário | `#676C74` | `#CFCBE5` |
 | Texto secundário | `#79767E` | ⏳ ver nota |
 | Texto desabilitado | `#B4B2B7` | ⏳ ver nota |

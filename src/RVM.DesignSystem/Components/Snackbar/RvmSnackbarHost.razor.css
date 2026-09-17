@@ -1,0 +1,138 @@
+/* CSS isolado do RvmSnackbarHost. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Snackbar.png: 320 px de largura, 48 px de altura, fundo do token de
+   snackbar. Toast.png: a versao com papel de cor fica no fundo do papel, com sombra e o icone do papel. */
+
+.rvm-avisos {
+    position: fixed;
+    left: var(--rvm-space-6);
+    bottom: var(--rvm-space-6);
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    max-width: calc(100vw - 2 * var(--rvm-space-6));
+    pointer-events: none;
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-pilha {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-mensagem {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    width: 320px;
+    max-width: 100%;
+    min-height: 48px;
+    padding: var(--rvm-space-2) var(--rvm-space-2) var(--rvm-space-2) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-3);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    pointer-events: auto;
+    animation: rvm-aviso-entra var(--rvm-transition-medium) both;
+}
+
+@keyframes rvm-aviso-entra {
+    from { opacity: 0; transform: translateY(8px); }
+}
+
+.rvm-neutra {
+    background-color: var(--rvm-color-snackbar-background);
+    color: var(--rvm-color-snackbar-text);
+}
+
+.rvm-colorida {
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-icone {
+    display: inline-flex;
+    flex: none;
+}
+
+/* O icone e o que diz o papel sem ler o texto: -text, 3:1 contra o papel nos dois temas. */
+.rvm-primary .rvm-icone { color: var(--rvm-color-primary-text); }
+.rvm-secondary .rvm-icone { color: var(--rvm-color-secondary-text); }
+.rvm-info .rvm-icone { color: var(--rvm-color-info-text); }
+.rvm-success .rvm-icone { color: var(--rvm-color-success-text); }
+.rvm-warning .rvm-icone { color: var(--rvm-color-warning-text); }
+.rvm-error .rvm-icone { color: var(--rvm-color-error-text); }
+
+.rvm-acao,
+.rvm-fechar {
+    flex: none;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.rvm-acao {
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+    font-size: var(--rvm-text-button-sm-size);
+    font-weight: var(--rvm-text-button-sm-weight);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.rvm-colorida.rvm-primary .rvm-acao { color: var(--rvm-color-primary-text); }
+
+.rvm-fechar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: var(--rvm-radius-circle);
+}
+
+.rvm-acao:hover,
+.rvm-fechar:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-neutra .rvm-acao:hover,
+.rvm-neutra .rvm-fechar:hover {
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+.rvm-acao:focus-visible,
+.rvm-fechar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid currentColor;
+    outline-offset: 0;
+}
+
+@media (max-width: 600px) {
+    .rvm-avisos {
+        left: var(--rvm-space-4);
+        right: var(--rvm-space-4);
+        bottom: var(--rvm-space-4);
+        max-width: none;
+    }
+
+    .rvm-mensagem {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-mensagem {
+        animation: none;
+    }
+}

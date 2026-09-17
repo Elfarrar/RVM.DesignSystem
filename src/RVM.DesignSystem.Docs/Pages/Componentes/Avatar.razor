@@ -1,0 +1,120 @@
+@page "/componentes/avatar"
+
+<PageTitle>RvmAvatar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmAvatar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Foto, iniciais ou icone, em tres tamanhos <strong>medidos no kit</strong> (24, 40 e 56 px) e tres
+    formas. Se a foto nao carrega, cai para as iniciais em vez de mostrar imagem quebrada.
+</p>
+
+<BlocoExemplo Titulo="Iniciais, preenchido e suave"
+              Descricao="As duas primeiras linhas da pagina Avatar do kit. O suave poe o texto -text sobre o fundo -soft: os seis pares foram medidos antes de construir, e o pior passa com 4.71:1."
+              Codigo="@CodigoIniciais">
+    <div class="linha-exemplos">
+        @foreach (var (cor, ini) in Iniciais)
+        {
+            <RvmAvatar Color="cor" Initials="@ini" Alt="@cor.ToString()" />
+        }
+    </div>
+    <div class="linha-exemplos">
+        @foreach (var (cor, ini) in Iniciais)
+        {
+            <RvmAvatar Color="cor" Variant="RvmAvatarVariant.Soft" Initials="@ini" Alt="@cor.ToString()" />
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Icone e forma"
+              Descricao="Circulo para pessoa; quadrado arredondado ou de canto vivo para organizacao e produto."
+              Codigo="@CodigoFormas">
+    <div class="linha-exemplos">
+        <RvmAvatar Icon="RvmIconName.User" Alt="Usuario" />
+        <RvmAvatar Icon="RvmIconName.Home" Shape="RvmAvatarShape.Rounded" Color="RvmColor.Success" Alt="Empresa" />
+        <RvmAvatar Icon="RvmIconName.File" Shape="RvmAvatarShape.Square" Color="RvmColor.Warning" Alt="Documento" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos"
+              Descricao="24, 40 e 56 px — o pequeno mede 25 no PNG por causa do antialias da borda do circulo."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos">
+        <RvmAvatar Size="RvmSize.Small" Initials="RV" Alt="Rafael Veneroso" />
+        <RvmAvatar Size="RvmSize.Medium" Initials="RV" Alt="Rafael Veneroso" />
+        <RvmAvatar Size="RvmSize.Large" Initials="RV" Alt="Rafael Veneroso" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Foto que nao carrega"
+              Descricao="O endereco abaixo nao existe. Em vez de icone de imagem quebrada, sai o fallback — e o nome acessivel continua o mesmo."
+              Codigo="@CodigoFallback">
+    <div class="linha-exemplos">
+        <RvmAvatar Src="nao-existe.jpg" Initials="AS" Alt="Ana Souza" Size="RvmSize.Large" />
+        <RvmTypography Color="RvmTextColor.Secondary">Ana Souza</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Grupo"
+              Descricao="Avatares sobrepostos, com um anel na cor do papel separando um do outro e um +N no fim. O grupo tem nome para o leitor de tela."
+              Codigo="@CodigoGrupo">
+    <RvmAvatarGroup Surplus="3" Label="Participantes da reuniao">
+        <RvmAvatar Initials="AS" Alt="Ana Souza" />
+        <RvmAvatar Initials="BR" Alt="Bruno Rocha" Color="RvmColor.Success" />
+        <RvmAvatar Initials="CM" Alt="Carla Mendes" Color="RvmColor.Warning" />
+    </RvmAvatarGroup>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/avatar.png"
+              Arquivo="referencia-neatlab/Avatar.png (recorte)"
+              Descricao="As variantes do kit: letras e icone em cinco estilos, e avatares de imagem em tamanho, com badge e em grupo."
+              Alt="Recorte do kit NEATLAB mostrando avatares de letras, de icone e de imagem" />
+
+@code {
+    private static readonly (RvmColor Cor, string Ini)[] Iniciais =
+    [
+        (RvmColor.Primary, "PR"), (RvmColor.Secondary, "SE"), (RvmColor.Error, "ER"),
+        (RvmColor.Warning, "WA"), (RvmColor.Info, "IN"), (RvmColor.Success, "SU")
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Src", "string?", "—", "Endereco da foto. Tem prioridade sobre icone e iniciais."),
+        new("Alt", "string?", "—", "Quem o avatar representa. Vira o alt da foto ou o nome acessivel."),
+        new("Initials", "string?", "—", "Iniciais, cortadas em duas letras."),
+        new("Icon", "RvmIconName?", "—", "Icone, com prioridade sobre as iniciais."),
+        new("Size", "RvmSize", "Medium", "24, 40 ou 56 px."),
+        new("Shape", "RvmAvatarShape", "Circle", "Circle, Rounded ou Square."),
+        new("Color", "RvmColor", "Primary", "Papel de cor do fundo."),
+        new("Variant", "RvmAvatarVariant", "Filled", "Filled ou Soft."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoIniciais = """
+        <RvmAvatar Color="RvmColor.Primary" Initials="PR" Alt="Primary" />
+        <RvmAvatar Color="RvmColor.Primary" Variant="RvmAvatarVariant.Soft" Initials="PR" Alt="Primary" />
+        """;
+
+    private const string CodigoFormas = """
+        <RvmAvatar Icon="RvmIconName.User" Alt="Usuario" />
+        <RvmAvatar Icon="RvmIconName.Home" Shape="RvmAvatarShape.Rounded" Color="RvmColor.Success" Alt="Empresa" />
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmAvatar Size="RvmSize.Small" Initials="RV" Alt="Rafael Veneroso" />
+        <RvmAvatar Size="RvmSize.Large" Initials="RV" Alt="Rafael Veneroso" />
+        """;
+
+    private const string CodigoFallback = """
+        <RvmAvatar Src="nao-existe.jpg" Initials="AS" Alt="Ana Souza" Size="RvmSize.Large" />
+        """;
+
+    private const string CodigoGrupo = """
+        <RvmAvatarGroup Surplus="3" Label="Participantes da reuniao">
+            <RvmAvatar Initials="AS" Alt="Ana Souza" />
+            <RvmAvatar Initials="BR" Alt="Bruno Rocha" Color="RvmColor.Success" />
+        </RvmAvatarGroup>
+        """;
+}

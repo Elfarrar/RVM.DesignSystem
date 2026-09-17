@@ -1,0 +1,38 @@
+@namespace RVM.DesignSystem.Components.Lists
+
+@* <ul> nativo: o leitor de tela anuncia "lista, 4 itens". O namespace e "Lists", no plural, de
+   proposito: um namespace "List" faria o List<T> dos outros componentes resolver para ele. *@
+<ul @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@AriaLabel">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</ul>
+
+@code {
+    /// <summary>Itens de 40 px em vez de 48 px (o "Small" do kit).</summary>
+    [Parameter] public bool Dense { get; set; }
+
+    /// <summary>Nome da lista para o leitor de tela, quando nao ha um titulo visivel antes dela.</summary>
+    [Parameter] public string? AriaLabel { get; set; }
+
+    /// <summary>Os <see cref="RvmListItem"/>.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Atributos extras, repassados ao <c>ul</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string ClassesDaRaiz
+    {
+        get
+        {
+            var proprias = Dense ? "rvm-lista rvm-densa" : "rvm-lista";
+            return AdditionalAttributes is not null
+                   && AdditionalAttributes.TryGetValue("class", out var informada)
+                   && informada is string texto
+                   && !string.IsNullOrWhiteSpace(texto)
+                ? $"{proprias} {texto}"
+                : proprias;
+        }
+    }
+}

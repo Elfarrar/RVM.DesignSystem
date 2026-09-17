@@ -1,0 +1,50 @@
+/* CSS isolado do RvmMenuItem. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Menu.png: item de 36 px; hover no --rvm-color-action-hover. */
+
+.rvm-item {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 36px;
+    padding: 0 var(--rvm-space-4);
+    border: none;
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    font-weight: var(--rvm-text-body1-weight);
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.rvm-item > svg {
+    flex: none;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-item:hover:not(:disabled) {
+    background-color: var(--rvm-color-action-hover);
+}
+
+/* O foco anda com as setas e precisa ser visivel: o anel por dentro faz o trabalho (3:1). O fundo e o
+   de hover, e nao o action-focus: no tema claro o texto sobre o action-focus dava 4.2:1 (pego pelo axe
+   com o menu aberto). */
+.rvm-item:focus-visible,
+.rvm-item:focus {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-item:disabled {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-item:disabled > svg {
+    color: var(--rvm-color-text-disabled);
+}

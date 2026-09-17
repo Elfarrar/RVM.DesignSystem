@@ -1,0 +1,44 @@
+@namespace RVM.DesignSystem.Components.Pagination
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* <nav> com botoes de verdade: entram na tabulacao, respondem a Enter e Espaco sem codigo, e a
+   pagina atual leva aria-current. As reticencias sao desenho — o leitor de tela ouve "Pagina 11"
+   logo depois de "Pagina 3" e entende o salto. *@
+<nav @attributes="AdditionalAttributes" aria-label="@AriaLabel" class="@ClassesDaRaiz">
+    <ul class="rvm-itens">
+        <li>
+            <button type="button" class="rvm-item rvm-seta" aria-label="Pagina anterior"
+                    disabled="@(Disabled || PaginaAtual <= 1)" @onclick="() => Ir(PaginaAtual - 1)">
+                <RvmIcon Name="RvmIconName.ChevronLeft" Size="RvmSize.Small" />
+            </button>
+        </li>
+
+        @foreach (var numero in Itens)
+        {
+            @if (numero is null)
+            {
+                <li><span class="rvm-item rvm-reticencias" aria-hidden="true">…</span></li>
+            }
+            else
+            {
+                var pagina = numero.Value;
+                var atual = pagina == PaginaAtual;
+                <li>
+                    <button type="button" class="@(atual ? "rvm-item rvm-numero rvm-atual" : "rvm-item rvm-numero")"
+                            aria-label="@($"Pagina {pagina}")" aria-current="@(atual ? "page" : null)"
+                            disabled="@Disabled" @onclick="() => Ir(pagina)">
+                        @pagina
+                    </button>
+                </li>
+            }
+        }
+
+        <li>
+            <button type="button" class="rvm-item rvm-seta" aria-label="Proxima pagina"
+                    disabled="@(Disabled || PaginaAtual >= Count)" @onclick="() => Ir(PaginaAtual + 1)">
+                <RvmIcon Name="RvmIconName.ChevronRight" Size="RvmSize.Small" />
+            </button>
+        </li>
+    </ul>
+</nav>

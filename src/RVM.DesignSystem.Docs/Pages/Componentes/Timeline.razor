@@ -1,0 +1,109 @@
+@page "/componentes/timeline"
+
+<PageTitle>RvmTimeline — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTimeline</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Acontecimentos em ordem, numa linha. E uma lista ordenada; pontos e linhas sao desenho. Conteudo a
+    direita, a esquerda ou alternando, com o outro lado livre para a data. Ponto de 16 px e 70 px entre os
+    itens, <strong>medidos no kit</strong>.
+</p>
+
+<BlocoExemplo Titulo="Cores, cheio e contorno"
+              Descricao="A secao Timeline Item do kit: sem cor e os seis papeis."
+              Codigo="@CodigoCores">
+    <div class="grade-cards">
+        <RvmTimeline AriaLabel="Pontos cheios">
+            <RvmTimelineItem>Sem cor</RvmTimelineItem>
+            @foreach (var cor in Cores)
+            {
+                <RvmTimelineItem Color="cor">@cor.ToString()</RvmTimelineItem>
+            }
+        </RvmTimeline>
+        <RvmTimeline AriaLabel="Pontos em contorno">
+            <RvmTimelineItem Outlined="true">Sem cor</RvmTimelineItem>
+            @foreach (var cor in Cores)
+            {
+                <RvmTimelineItem Color="cor" Outlined="true">@cor.ToString()</RvmTimelineItem>
+            }
+        </RvmTimeline>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Alternada, a esquerda e com data"
+              Descricao="A secao Timeline Example do kit: Standard, Alternating e Right."
+              Codigo="@CodigoPosicoes">
+    <div class="grade-cards">
+        <RvmTimeline AriaLabel="Safra com datas">
+            @foreach (var (data, evento, cor) in Safra)
+            {
+                <RvmTimelineItem Color="cor">
+                    <OppositeContent>@data</OppositeContent>
+                    <ChildContent>@evento</ChildContent>
+                </RvmTimelineItem>
+            }
+        </RvmTimeline>
+        <RvmTimeline Position="RvmTimelinePosition.Alternate" AriaLabel="Safra alternada">
+            @foreach (var (data, evento, cor) in Safra)
+            {
+                <RvmTimelineItem Color="cor" Outlined="true">
+                    <OppositeContent>@data</OppositeContent>
+                    <ChildContent>@evento</ChildContent>
+                </RvmTimelineItem>
+            }
+        </RvmTimeline>
+        <RvmTimeline Position="RvmTimelinePosition.Left" AriaLabel="Safra a esquerda">
+            @foreach (var (_, evento, cor) in Safra)
+            {
+                <RvmTimelineItem Color="cor">@evento</RvmTimelineItem>
+            }
+        </RvmTimeline>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/timeline.png"
+              Arquivo="referencia-neatlab/Timeline.png (recorte)"
+              Descricao="Os pontos cheios e em contorno nas sete cores, e as linhas padrao, alternada e a direita."
+              Alt="Recorte do kit NEATLAB mostrando linhas do tempo com pontos coloridos" />
+
+@code {
+    private static readonly RvmColor[] Cores =
+        [RvmColor.Primary, RvmColor.Secondary, RvmColor.Error, RvmColor.Warning, RvmColor.Info, RvmColor.Success];
+
+    private static readonly (string Data, string Evento, RvmColor Cor)[] Safra =
+    [
+        ("12/10", "Plantio concluido", RvmColor.Primary),
+        ("03/11", "Primeira aplicacao", RvmColor.Success),
+        ("20/02", "Colheita prevista", RvmColor.Warning)
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("RvmTimeline.Position", "RvmTimelinePosition", "Right", "Right, Left ou Alternate."),
+        new("RvmTimeline.AriaLabel", "string?", "—", "Nome da lista, quando nao ha titulo visivel."),
+        new("Color", "RvmColor?", "—", "Papel de cor do ponto. Sem valor, neutro."),
+        new("Outlined", "bool", "false", "Ponto so com o contorno."),
+        new("ChildContent", "RenderFragment?", "—", "O acontecimento."),
+        new("OppositeContent", "RenderFragment?", "—", "O outro lado da linha (data, hora)."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao li.")
+    ];
+
+    private const string CodigoCores = """
+        <RvmTimeline AriaLabel="Pontos cheios">
+            <RvmTimelineItem Color="RvmColor.Success">Plantio concluido</RvmTimelineItem>
+            <RvmTimelineItem Color="RvmColor.Warning" Outlined="true">Colheita prevista</RvmTimelineItem>
+        </RvmTimeline>
+        """;
+
+    private const string CodigoPosicoes = """
+        <RvmTimeline Position="RvmTimelinePosition.Alternate">
+            <RvmTimelineItem Color="RvmColor.Primary">
+                <OppositeContent>12/10</OppositeContent>
+                <ChildContent>Plantio concluido</ChildContent>
+            </RvmTimelineItem>
+        </RvmTimeline>
+        """;
+}

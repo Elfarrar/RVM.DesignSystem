@@ -1,0 +1,26 @@
+@namespace RVM.DesignSystem.Components.AppShell
+@using RVM.DesignSystem.Components.Icon
+
+<li class="rvm-nav-item">
+    @* Recolhido, o texto sai da tela mas fica no link: e o nome dele para o leitor de tela. O title
+       mostra o nome a quem usa mouse. *@
+    <a @attributes="AdditionalAttributes"
+       href="@Href"
+       class="@ClassesDoLink"
+       aria-current="@(Ativo ? "page" : null)"
+       title="@(Recolhido ? Text : null)">
+        @if (Icon is { } icone)
+        {
+            <RvmIcon Name="icone" Size="RvmSize.Large" class="rvm-nav-icone" />
+        }
+        else
+        {
+            <span class="rvm-nav-ponto" aria-hidden="true"></span>
+        }
+        <span class="rvm-nav-texto">@Text</span>
+        @if (!string.IsNullOrWhiteSpace(Badge))
+        {
+            <span class="rvm-nav-selo">@Badge</span>
+        }
+    </a>
+</li>

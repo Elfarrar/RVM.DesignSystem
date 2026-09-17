@@ -17,7 +17,7 @@ Sem estes, nenhuma tela existe.
 | `RvmAlert` | 6 papéis, contained/outlined, com/sem ícone, fechável | `Alert.png` |
 | `RvmChip` | filled, outlined, com avatar, removível | `Chip.png` |
 | `RvmAvatar` | imagem, iniciais, ícone, 3 tamanhos, grupo | `Avatar.png` |
-| `RvmDivider` | horizontal, vertical, com texto | `Border.png` |
+| `RvmDivider` | horizontal, vertical, com texto | `Border.png` ⚠️ **não é uma página de divisores** — é uma tela de dashboard. A referência é o divisor **dentro** dela (a linha em pé entre as duas colunas de saques). Conferido em 16/09/2026, na `DSGN-003` |
 
 ## Onda 2 — formulário e navegação (10)
 

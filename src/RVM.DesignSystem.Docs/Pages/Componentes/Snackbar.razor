@@ -1,0 +1,99 @@
+@page "/componentes/snackbar"
+@inject RvmSnackbarService Avisos
+
+<PageTitle>RvmSnackbar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmSnackbar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Mensagem curta no canto da tela, em fila. Chame <code>RvmSnackbarService.Show</code> de qualquer
+    lugar; as mensagens aparecem no <code>RvmSnackbarHost</code> do layout. Erro e anunciado com
+    urgencia; o resto, sem interromper. O tempo para enquanto o mouse ou o foco estao na mensagem.
+</p>
+
+<BlocoExemplo Titulo="Neutro, com acao"
+              Descricao="A pagina Snackbar do kit: 320 x 48 px. A acao fecha a mensagem depois de rodar."
+              Codigo="@CodigoNeutro">
+    <div class="linha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="MostrarNeutro">Salvar rascunho</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="MostrarComAcao">Excluir aplicacao</RvmButton>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">@_resultado</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Seis papeis, carregando e fila"
+              Descricao="A pagina Toast do kit: fundo do papel e o icone do papel. No maximo tres na tela; as outras esperam a vez."
+              Codigo="@CodigoPapeis">
+    <div class="linha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Success" OnClick="@(() => Mostrar("Talhao salvo.", RvmColor.Success))">Sucesso</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Info" OnClick="@(() => Mostrar("Nova cotacao de soja disponivel.", RvmColor.Info))">Informacao</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Warning" OnClick="@(() => Mostrar("Previsao de chuva forte amanha.", RvmColor.Warning))">Atencao</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Error" OnClick="MostrarErro">Erro</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="MostrarCarregando">Carregando</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Text" OnClick="Avisos.CloseAll">Fechar todas</RvmButton>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/snackbar.png"
+              Arquivo="referencia-neatlab/Snackbar.png e Toast.png (recortes)"
+              Descricao="O snackbar neutro com e sem acao, e as variantes de toast: branca, sucesso, erro, carregando e personalizada."
+              Alt="Recorte do kit NEATLAB mostrando snackbars escuros e toasts com icone de sucesso, erro e carregando" />
+
+@code {
+    private string _resultado = string.Empty;
+
+    private void MostrarNeutro() => Avisos.Show("Rascunho salvo.");
+
+    private void MostrarComAcao()
+        => Avisos.Show("Aplicacao excluida.", new RvmSnackbarOptions
+        {
+            ActionText = "Desfazer",
+            OnAction = () =>
+            {
+                _resultado = "Exclusao desfeita.";
+                StateHasChanged();
+                return Task.CompletedTask;
+            }
+        });
+
+    private void Mostrar(string texto, RvmColor cor) => Avisos.Show(texto, new RvmSnackbarOptions { Color = cor });
+
+    private void MostrarErro()
+        => Avisos.Show("Nao conseguimos salvar o talhao. Tente de novo em alguns minutos.",
+            new RvmSnackbarOptions { Color = RvmColor.Error, Duration = null });
+
+    private void MostrarCarregando()
+        => Avisos.Show("Enviando notas fiscais...", new RvmSnackbarOptions { Color = RvmColor.Primary, Loading = true, Duration = TimeSpan.FromSeconds(4) });
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Show(text, options)", "RvmSnackbarMessage", "—", "Poe uma mensagem na fila."),
+        new("Close(message) / CloseAll()", "void", "—", "Fecha uma ou todas."),
+        new("MaxVisible", "int", "3", "Quantas na tela ao mesmo tempo."),
+        new("Options.Color", "RvmColor?", "—", "Sem valor: neutro. Com valor: icone do papel. Error usa role=alert."),
+        new("Options.ActionText / OnAction", "string? / Func<Task>?", "—", "Botao de acao; a mensagem fecha depois."),
+        new("Options.Duration", "TimeSpan?", "6 s", "null fica ate alguem fechar."),
+        new("Options.ShowCloseButton", "bool", "true", "Botao x."),
+        new("Options.Loading", "bool", "false", "Indicador girando no lugar do icone."),
+        new("RvmSnackbarHost.CloseLabel", "string", "\"Fechar mensagem\"", "Nome acessivel do x.")
+    ];
+
+    private const string CodigoNeutro = """
+        // Program.cs: builder.Services.AddRvmDesignSystem();
+        // MainLayout.razor: <RvmSnackbarHost />
+        @inject RvmSnackbarService Avisos
+
+        Avisos.Show("Aplicacao excluida.", new RvmSnackbarOptions
+        {
+            ActionText = "Desfazer",
+            OnAction = DesfazerAsync
+        });
+        """;
+
+    private const string CodigoPapeis = """
+        Avisos.Show("Talhao salvo.", new RvmSnackbarOptions { Color = RvmColor.Success });
+        Avisos.Show("Nao conseguimos salvar.", new RvmSnackbarOptions { Color = RvmColor.Error, Duration = null });
+        """;
+}

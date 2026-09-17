@@ -1,0 +1,54 @@
+@namespace RVM.DesignSystem.Components.Accordion
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* O padrao "Accordion" do APG: o botao fica DENTRO de um cabecalho (h3 por padrao), para quem navega
+   por titulos achar cada painel, e aponta a regiao que controla. Fechado, o conteudo nao e renderizado
+   — e aria-controls so existe enquanto a regiao existe. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDoPainel">
+    @Cabecalho
+
+    @if (_aberto)
+    {
+        <div id="@IdRegiao" role="region" aria-labelledby="@IdBotao" class="rvm-conteudo">
+            @ChildContent
+        </div>
+    }
+</div>
+
+@code {
+    // Um elemento por nivel, em marcacao Razor, e NAO RenderTreeBuilder.OpenElement($"h{n}"): elemento
+    // criado a mao nao recebe o atributo de escopo do CSS isolado, e o .cabecalho { margin: 0 } nao
+    // pegava — sobrava a margem padrao do titulo (painel de 85 px em vez de 52). Pego na foto.
+    private RenderFragment Cabecalho => @<text>
+        @switch (NivelDoCabecalho)
+        {
+            case 2: <h2 class="rvm-cabecalho">@Botao</h2> break;
+            case 4: <h4 class="rvm-cabecalho">@Botao</h4> break;
+            case 5: <h5 class="rvm-cabecalho">@Botao</h5> break;
+            case 6: <h6 class="rvm-cabecalho">@Botao</h6> break;
+            default: <h3 class="rvm-cabecalho">@Botao</h3> break;
+        }
+    </text>;
+
+    private RenderFragment Botao => @<button type="button"
+                                              id="@IdBotao"
+                                              class="rvm-gatilho"
+                                              aria-expanded="@(_aberto ? "true" : "false")"
+                                              aria-controls="@(_aberto ? IdRegiao : null)"
+                                              disabled="@Disabled"
+                                              @onclick="AlternarAsync">
+        @if (Icon is { } icone)
+        {
+            <span class="rvm-icone" aria-hidden="true"><RvmIcon Name="icone" Size="RvmSize.Small" /></span>
+        }
+        <span class="rvm-titulo">@Title</span>
+        @if (!string.IsNullOrWhiteSpace(SecondaryTitle))
+        {
+            <span class="rvm-subtitulo">@SecondaryTitle</span>
+        }
+        <span class="rvm-marca" aria-hidden="true">
+            <RvmIcon Name="@IconeDeEstado" Size="RvmSize.Small" />
+        </span>
+    </button>;
+}

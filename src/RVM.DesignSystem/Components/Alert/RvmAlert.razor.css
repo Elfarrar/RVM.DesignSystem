@@ -1,0 +1,89 @@
+/* CSS isolado do RvmAlert. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Alert.png: 48 px de altura na linha unica, raio de 6 px (mesmo
+   recuo de canto do botao). */
+
+.rvm-alerta {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    min-height: 48px;
+    padding: var(--rvm-space-3) var(--rvm-space-4);
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-sm);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-icone-alerta {
+    display: inline-flex;
+    flex: none;
+    /* Alinha o icone de 20 px com a primeira linha de texto (entrelinha de 20 px do body2). */
+    padding-block: 2px;
+}
+
+.rvm-corpo {
+    flex: 1;
+    min-width: 0;
+    padding-block: 2px;
+}
+
+.rvm-titulo {
+    margin-bottom: 2px;
+}
+
+.rvm-acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    flex: none;
+    margin-inline-start: auto;
+}
+
+/* --- Padrao (Standard): fundo -soft, conteudo -text. Os seis pares medidos passam 4.5:1. --- */
+.rvm-padrao.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-padrao.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-padrao.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-padrao.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-padrao.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-padrao.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+/* --- Preenchido: fundo -main, conteudo -contrast (branco so no primary; o resto reprova AA). --- */
+.rvm-preenchido.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-preenchido.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-preenchido.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-preenchido.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-preenchido.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-preenchido.rvm-error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+
+/* --- Contorno: a borda e o -main CHEIO, e nao o -outlined-resting do botao. MEDIDO: a borda do
+       alerta outlined de erro no kit e #F74B51, contra o -main #FF4C51. Botao e alerta diferem
+       aqui no proprio kit. Texto no -text, que passa 4.5:1 nos dois temas. --- */
+.rvm-contorno { background-color: transparent; }
+.rvm-contorno.rvm-primary { border-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-text); }
+.rvm-contorno.rvm-secondary { border-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-text); }
+.rvm-contorno.rvm-info { border-color: var(--rvm-color-info-main); color: var(--rvm-color-info-text); }
+.rvm-contorno.rvm-success { border-color: var(--rvm-color-success-main); color: var(--rvm-color-success-text); }
+.rvm-contorno.rvm-warning { border-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-text); }
+.rvm-contorno.rvm-error { border-color: var(--rvm-color-error-main); color: var(--rvm-color-error-text); }
+
+/* --- Fechar --- */
+.rvm-fechar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.rvm-fechar:focus-visible {
+    /* `currentColor`, e nao o token do anel: dentro de um alerta preenchido primary o anel azul
+       some no fundo azul. A cor do conteudo ja foi escolhida para contrastar com o fundo. */
+    outline: var(--rvm-focus-ring-width) solid currentColor;
+    outline-offset: 1px;
+}

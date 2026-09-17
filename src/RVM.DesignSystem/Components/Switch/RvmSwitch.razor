@@ -1,0 +1,27 @@
+@namespace RVM.DesignSystem.Components.Switch
+@using Microsoft.AspNetCore.Components.Forms
+
+@* Um checkbox nativo com role="switch": o leitor de tela anuncia ligado ou desligado, em vez de
+   marcado, que e o que o controle significa. Funciona sem JS e gera o name do POST. *@
+<label class="@ClassesDaRaiz" style="@EstiloDoConsumidor" aria-disabled="@(Disabled ? "true" : null)">
+    <span class="rvm-alvo">
+        <InputCheckbox @attributes="AtributosDoInput"
+                       class="rvm-nativo"
+                       role="switch"
+                       Value="Value"
+                       ValueChanged="ValueChanged"
+                       ValueExpression="ExpressaoEfetiva"
+                       disabled="@Disabled" />
+        <span class="rvm-trilho" aria-hidden="true"></span>
+        <span class="rvm-polegar" aria-hidden="true"></span>
+    </span>
+
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <span class="rvm-rotulo">@Label</span>
+    }
+    else
+    {
+        @ChildContent
+    }
+</label>

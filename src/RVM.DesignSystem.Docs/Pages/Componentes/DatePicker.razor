@@ -1,0 +1,103 @@
+@page "/componentes/date-picker"
+
+<PageTitle>RvmDatePicker — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDatePicker</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Data e intervalo de datas. O campo abre o calendario num dialogo, no padrao "Date Picker Dialog" do
+    APG: o foco vai para o dia, setas andam um dia ou uma semana, Home e End vao ao inicio e ao fim da
+    semana, Page Up e Page Down trocam de mes (com Shift, de ano), Esc fecha. Calendario de 310 px,
+    <strong>medido no kit</strong>. O <code>RvmCalendar</code> tambem pode ficar solto na pagina.
+</p>
+
+<BlocoExemplo Titulo="Data e intervalo"
+              Descricao="O intervalo pede dois cliques: o inicio e o fim, em qualquer ordem."
+              Codigo="@CodigoCampos">
+    <div class="grade-campos">
+        <RvmDatePicker @bind-Value="_entrega" Label="Data de entrega" HelperText="Dia util" DateDisabled="@FimDeSemana" />
+        <RvmDateRangePicker @bind-Value="_periodo" Label="Periodo da safra" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+        Entrega: @(_entrega?.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture) ?? "nenhuma").
+    </RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Calendario solto, com limites"
+              Descricao="A variante Date Picker do kit, sem campo. Min e Max limitam navegacao e escolha."
+              Codigo="@CodigoCalendario">
+    <RvmCalendar @bind-Value="_solta" Min="@(new DateOnly(2026, 9, 1))" Max="@(new DateOnly(2026, 12, 20))" />
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Validacao e estados"
+              Descricao="Dentro de um EditForm, a mensagem do [Required] aparece no lugar do apoio."
+              Codigo="@CodigoValidacao">
+    <EditForm Model="@_modelo" OnValidSubmit="@(() => _enviado = true)">
+        <DataAnnotationsValidator />
+        <div class="grade-campos">
+            <RvmDatePicker @bind-Value="_modelo.Plantio" Label="Data do plantio" Required="true" />
+            <RvmDatePicker Label="Pequeno" Size="RvmSize.Small" />
+            <RvmDatePicker Value="@(new DateOnly(2026, 9, 17))" Label="Desabilitado" Disabled="true" />
+        </div>
+        <RvmButton Type="RvmButtonType.Submit">Salvar plantio</RvmButton>
+        @if (_enviado)
+        {
+            <RvmTypography Color="RvmTextColor.Secondary" role="status">Plantio salvo.</RvmTypography>
+        }
+    </EditForm>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/date-picker.png"
+              Arquivo="referencia-neatlab/Date & TIme Picker.png (recorte)"
+              Descricao="O calendario solto, o calendario com cabecalho e o relogio do seletor de hora."
+              Alt="Recorte do kit NEATLAB mostrando dois calendarios de marco de 2019 e um relogio" />
+
+@code {
+    private DateOnly? _entrega;
+    private RvmDateRange? _periodo;
+    private DateOnly? _solta;
+    private bool _enviado;
+    private readonly Cadastro _modelo = new();
+
+    private sealed class Cadastro
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Escolha a data do plantio para salvar.")]
+        public DateOnly? Plantio { get; set; }
+    }
+
+    private static bool FimDeSemana(DateOnly d) => d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Value", "DateOnly? / RvmDateRange?", "—", "@bind-Value no RvmDatePicker e no RvmDateRangePicker."),
+        new("Label", "string", "—", "Rotulo. Entra no nome acessivel junto com o valor."),
+        new("HelperText / ErrorText", "string?", "—", "Apoio abaixo; o erro vence o apoio."),
+        new("Placeholder", "string?", "\"dd/mm/aaaa\"", "Texto no campo vazio."),
+        new("Min / Max", "DateOnly?", "—", "Limites de navegacao e escolha."),
+        new("DateDisabled", "Func<DateOnly, bool>?", "—", "Datas que nao podem ser escolhidas."),
+        new("Size", "RvmSize", "Medium", "56 px ou 40 px (Small)."),
+        new("Required", "bool", "false", "Asterisco. A validacao e do EditForm."),
+        new("Disabled", "bool", "false", "Indisponivel."),
+        new("Name", "string?", "—", "input hidden em yyyy-MM-dd (intervalo: {Name}Inicio e {Name}Fim)."),
+        new("RvmCalendar", "—", "—", "Value, IsRange, Range, Min, Max, DateDisabled: o calendario solto."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no botao do campo.")
+    ];
+
+    private const string CodigoCampos = """
+        <RvmDatePicker @bind-Value="_entrega" Label="Data de entrega" DateDisabled="@FimDeSemana" />
+        <RvmDateRangePicker @bind-Value="_periodo" Label="Periodo da safra" />
+        """;
+
+    private const string CodigoCalendario = """
+        <RvmCalendar @bind-Value="_data" Min="@(new DateOnly(2026, 9, 1))" Max="@(new DateOnly(2026, 12, 20))" />
+        """;
+
+    private const string CodigoValidacao = """
+        <EditForm Model="@_modelo" OnValidSubmit="Salvar">
+            <DataAnnotationsValidator />
+            <RvmDatePicker @bind-Value="_modelo.Plantio" Label="Data do plantio" Required="true" />
+        </EditForm>
+        """;
+}

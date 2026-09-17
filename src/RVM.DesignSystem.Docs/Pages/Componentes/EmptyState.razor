@@ -1,0 +1,86 @@
+@page "/componentes/empty-state"
+
+<PageTitle>RvmEmptyState — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmEmptyState</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O vazio que ensina o proximo passo: o que aconteceu, por que e o que fazer. Serve para lista vazia,
+    busca sem resultado, erro de carregamento e pagina nao encontrada. Nunca "Nenhum registro encontrado"
+    sozinho.
+</p>
+
+<BlocoExemplo Titulo="Lista vazia, com acao"
+              Descricao="Icone decorativo, titulo como cabecalho de verdade e o botao que resolve o vazio."
+              Codigo="@CodigoLista">
+    <RvmEmptyState Icon="RvmIconName.File"
+                   HeadingLevel="3"
+                   Title="Nenhum talhao cadastrado ainda"
+                   Description="Cadastre o primeiro talhao para acompanhar plantio, aplicacoes e colheita da safra.">
+        <Actions>
+            <RvmButton StartIcon="RvmIconName.Plus">Cadastrar talhao</RvmButton>
+        </Actions>
+    </RvmEmptyState>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Busca sem resultado e erro"
+              Descricao="Mesmo componente, outro texto: diga o que a pessoa pode tentar."
+              Codigo="@CodigoBusca">
+    <div class="grade-cards">
+        <RvmEmptyState Icon="RvmIconName.Search"
+                       HeadingLevel="3"
+                       Title="Nada encontrado para essa busca"
+                       Description="Confira a grafia ou tire algum filtro para ver mais resultados.">
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Outlined">Limpar filtros</RvmButton>
+            </Actions>
+        </RvmEmptyState>
+        <RvmEmptyState Icon="RvmIconName.AlertTriangle"
+                       HeadingLevel="3"
+                       Title="Nao conseguimos carregar as notas"
+                       Description="Tivemos um problema tecnico. Tente de novo em alguns minutos.">
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Outlined" StartIcon="RvmIconName.Refresh">Tentar de novo</RvmButton>
+            </Actions>
+        </RvmEmptyState>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/empty-state.png"
+              Arquivo="referencia-neatlab/Error.png (recorte)"
+              Descricao="O kit nao tem pagina de estado vazio; a composicao vem da tela de erro: titulo, apoio e acao centralizados."
+              Alt="Recorte da tela de erro 404 do kit NEATLAB, com titulo, texto de apoio e botao de voltar" />
+
+@code {
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Title", "string", "—", "O que aconteceu, em uma frase."),
+        new("Description", "string?", "—", "Por que, e o que fazer."),
+        new("Icon", "RvmIconName?", "—", "Icone decorativo acima do titulo."),
+        new("Illustration", "RenderFragment?", "—", "Ilustracao livre. Vence o icone."),
+        new("HeadingLevel", "int", "2", "Nivel do titulo, de 2 a 6."),
+        new("ChildContent", "RenderFragment?", "—", "Conteudo extra entre a descricao e as acoes."),
+        new("Actions", "RenderFragment?", "—", "O botao que resolve o vazio."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoLista = """
+        <RvmEmptyState Icon="RvmIconName.File" Title="Nenhum talhao cadastrado ainda"
+                       Description="Cadastre o primeiro talhao para acompanhar a safra.">
+            <Actions>
+                <RvmButton StartIcon="RvmIconName.Plus">Cadastrar talhao</RvmButton>
+            </Actions>
+        </RvmEmptyState>
+        """;
+
+    private const string CodigoBusca = """
+        <RvmEmptyState Icon="RvmIconName.Search" Title="Nada encontrado para essa busca"
+                       Description="Confira a grafia ou tire algum filtro.">
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Outlined">Limpar filtros</RvmButton>
+            </Actions>
+        </RvmEmptyState>
+        """;
+}

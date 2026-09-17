@@ -1,0 +1,73 @@
+@page "/componentes/divider"
+
+<PageTitle>RvmDivider — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDivider</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A linha que separa blocos. Sem rotulo, e um <code>&lt;hr&gt;</code> — o papel de separador ja vem
+    do proprio elemento. Com rotulo, vira um <code>&lt;div role="separator"&gt;</code>, porque
+    <code>&lt;hr&gt;</code> nao aceita conteudo.
+</p>
+
+<BlocoExemplo Titulo="Deitado"
+              Descricao="O uso mais comum: separa dois blocos empilhados."
+              Codigo="@CodigoHorizontal">
+    <RvmTypography>Bloco de cima</RvmTypography>
+    <RvmDivider />
+    <RvmTypography>Bloco de baixo</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com rotulo no meio"
+              Descricao="Para quando a separacao precisa dizer o que ela separa."
+              Codigo="@CodigoComTexto">
+    <RvmTypography>Entrar com e-mail e senha</RvmTypography>
+    <RvmDivider>ou</RvmDivider>
+    <RvmTypography>Entrar com um codigo enviado por SMS</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Em pe"
+              Descricao="Separa itens lado a lado. A linha acompanha a altura dos irmaos quando esta num flex."
+              Codigo="@CodigoVertical">
+    <div class="linha-em-pe">
+        <RvmTypography>Rascunhos</RvmTypography>
+        <RvmDivider Orientation="RvmOrientation.Vertical" />
+        <RvmTypography>Enviados</RvmTypography>
+        <RvmDivider Orientation="RvmOrientation.Vertical" />
+        <RvmTypography>Arquivados</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/divider.png"
+              Arquivo="referencia-neatlab/Border.png (recorte)"
+              Descricao="O kit nao tem pagina dedicada a divisor. A referencia e o uso dentro das telas: aqui, a linha em pe que separa as duas colunas de um card."
+              Alt="Recorte do kit NEATLAB: dois blocos de saques lado a lado, separados por uma linha vertical" />
+
+@code {
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Orientation", "RvmOrientation", "Horizontal", "Deitado ou em pe. O rotulo so vale no deitado."),
+        new("ChildContent", "RenderFragment", "—", "Rotulo no meio da linha. Sem ele, sai um <hr> simples."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao elemento raiz.")
+    ];
+
+    private const string CodigoHorizontal = """
+        <RvmTypography>Bloco de cima</RvmTypography>
+        <RvmDivider />
+        <RvmTypography>Bloco de baixo</RvmTypography>
+        """;
+
+    private const string CodigoComTexto = """
+        <RvmDivider>ou</RvmDivider>
+        """;
+
+    private const string CodigoVertical = """
+        <div style="display: flex; align-items: center;">
+            <RvmTypography>Rascunhos</RvmTypography>
+            <RvmDivider Orientation="RvmOrientation.Vertical" />
+            <RvmTypography>Enviados</RvmTypography>
+        </div>
+        """;
+}

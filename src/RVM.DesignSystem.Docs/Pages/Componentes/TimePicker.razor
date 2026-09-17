@@ -1,0 +1,104 @@
+@page "/componentes/time-picker"
+
+<PageTitle>RvmTimePicker — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTimePicker</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Horario em 24 h ou 12 h, de dois jeitos. <strong>Lista</strong> (padrao), a coluna "Time Picker" do kit:
+    por dentro e um <code>RvmSelect</code> — setas andam pela lista e digitar "18" acha 18:00 e 18:30.
+    <strong>Relogio</strong>, o "Time Picker (Mobile)" do kit: o campo abre um dialogo com o mostrador
+    circular; escolhe-se a hora, depois os minutos, e OK grava. Os dois entram na validacao do
+    <code>EditForm</code>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    No relogio, o mostrador e alcancavel pelo teclado: Tab chega nele, as setas mudam a hora ou o minuto,
+    Enter passa das horas aos minutos e, nos minutos, confirma. Esc e CANCELAR descartam. Mostrador de
+    260 px, numeros a 108 px do centro, <strong>medidos no kit</strong>; o anel de dentro do 24 h segue o MUI.
+</p>
+
+<BlocoExemplo Titulo="Lista em 24 h e 12 h"
+              Descricao="Step define os minutos entre um horario e o proximo; Min e Max, a janela."
+              Codigo="@CodigoHorarios">
+    <div class="grade-campos">
+        <RvmTimePicker @bind-Value="_inicio" Label="Inicio da aplicacao" Step="15" Min="@(new TimeOnly(5, 0))" Max="@(new TimeOnly(20, 0))" />
+        <RvmTimePicker @bind-Value="_reuniao" Label="Reuniao" Use24Hours="false" />
+        <RvmTimePicker Value="@(new TimeOnly(18, 0))" Label="Desabilitado" Disabled="true" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+        Inicio: @(_inicio?.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture) ?? "nenhum").
+    </RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Relogio num dialogo"
+              Descricao="Mode=Clock. Em 24 h, 13 a 00 ficam no anel de dentro; em 12 h, AM e PM no topo."
+              Codigo="@CodigoRelogio">
+    <div class="grade-campos">
+        <RvmTimePicker Mode="RvmTimePickerMode.Clock" @bind-Value="_colheita" Label="Inicio da colheita" />
+        <RvmTimePicker Mode="RvmTimePickerMode.Clock" @bind-Value="_visita" Label="Visita tecnica" Use24Hours="false" Step="5"
+                       Min="@(new TimeOnly(7, 0))" Max="@(new TimeOnly(18, 0))" HelperText="Das 7:00 AM as 6:00 PM" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+        Colheita: @(_colheita?.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture) ?? "nenhum") ·
+        Visita: @(_visita?.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture) ?? "nenhum").
+    </RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Relogio solto"
+              Descricao="RvmTimeClock fora do dialogo: cada mudanca ja chega no valor ligado."
+              Codigo="@CodigoSolto">
+    <div class="site-relogio-solto">
+        <RvmTimeClock @bind-Value="_solto" Use24Hours="false" Title="Horario da irrigacao" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/time-picker.png"
+              Arquivo="referencia-neatlab/Date & TIme Picker-1.png e Date/Time pickers.png (recortes)"
+              Descricao="A lista de horarios de 15 em 15 minutos e o relogio circular com o ponteiro nas 3."
+              Alt="Recorte do kit NEATLAB mostrando uma lista de horarios e um relogio circular" />
+
+@code {
+    private TimeOnly? _inicio;
+    private TimeOnly? _reuniao;
+    private TimeOnly? _colheita;
+    private TimeOnly? _visita;
+    private TimeOnly? _solto = new(15, 1);
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Value", "TimeOnly?", "—", "O horario. Aceita @bind-Value."),
+        new("Mode", "RvmTimePickerMode", "List", "List (lista com busca) ou Clock (relogio num dialogo)."),
+        new("Step", "int?", "30 na lista, 1 no relogio", "Minutos entre um horario e o proximo (no relogio, ate 30)."),
+        new("Min / Max", "TimeOnly", "00:00 / 23:59", "Janela de horarios escolhiveis. Min maior que Max cruza a meia-noite (22:00 a 06:00)."),
+        new("Use24Hours", "bool", "true", "18:30 ou 6:30 PM."),
+        new("Label / HelperText / ErrorText / Placeholder", "string?", "—", "Como no campo de texto."),
+        new("Variant / Size", "RvmTextFieldVariant / RvmSize", "Outlined / Medium", "Estilo (so na lista) e tamanho do campo."),
+        new("Searchable", "bool", "true", "Busca no topo da lista."),
+        new("Required / Disabled", "bool", "false", "Obrigatorio e indisponivel."),
+        new("Name", "string?", "—", "input hidden com o horario em HH:mm."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Repassados ao campo."),
+        new("RvmTimeClock.View", "RvmTimeClockView", "Hours", "Hours ou Minutes no mostrador. Aceita @bind-View."),
+        new("RvmTimeClock.Title", "string", "\"Selecione o horario\"", "Titulo pequeno no topo."),
+        new("RvmTimeClock.Actions", "RenderFragment?", "—", "Botoes abaixo do mostrador."),
+        new("RvmTimeClock.OnConfirm", "EventCallback", "—", "Enter nos minutos.")
+    ];
+
+    private const string CodigoHorarios = """
+        <RvmTimePicker @bind-Value="_inicio" Label="Inicio da aplicacao" Step="15"
+                       Min="@(new TimeOnly(5, 0))" Max="@(new TimeOnly(20, 0))" />
+        <RvmTimePicker @bind-Value="_reuniao" Label="Reuniao" Use24Hours="false" />
+        """;
+
+    private const string CodigoRelogio = """
+        <RvmTimePicker Mode="RvmTimePickerMode.Clock" @bind-Value="_colheita" Label="Inicio da colheita" />
+        <RvmTimePicker Mode="RvmTimePickerMode.Clock" @bind-Value="_visita" Label="Visita tecnica"
+                       Use24Hours="false" Step="5" Min="@(new TimeOnly(7, 0))" Max="@(new TimeOnly(18, 0))" />
+        """;
+
+    private const string CodigoSolto = """
+        <RvmTimeClock @bind-Value="_solto" Use24Hours="false" Title="Horario da irrigacao" />
+        """;
+}

@@ -1,0 +1,97 @@
+@page "/componentes/icon"
+
+<PageTitle>RvmIcon — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmIcon</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Icones <strong>Tabler</strong> (MIT), copiados para dentro do pacote e desenhados inline. Sem
+    CDN, sem font-icon e sem requisicao por icone: o SVG herda a cor do texto em volta e escala sem
+    borrar.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ Estes icones <strong>nao vem do kit</strong>. Os do NEATLAB foram exportados rasterizados —
+    PNG dentro de uma tag <code>&lt;svg&gt;</code>, sem vetor — entao nao da para reaproveitar
+    (ADR-005). Se o kit for reexportado em vetor, a troca e de arquivo, nao de arquitetura.
+</p>
+
+<BlocoExemplo Titulo="Tamanhos"
+              Descricao="16, 20 e 24 px de lado. Dentro de botao e chip, o icone segue o tamanho do container."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos">
+        <RvmIcon Name="RvmIconName.Bell" Size="RvmSize.Small" />
+        <RvmIcon Name="RvmIconName.Bell" Size="RvmSize.Medium" />
+        <RvmIcon Name="RvmIconName.Bell" Size="RvmSize.Large" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Papel de cor"
+              Descricao="Sem Color, o icone herda a cor do texto — que e o que se quer dentro de botao e alerta, onde o contraste ja foi resolvido pelo container."
+              Codigo="@CodigoCores">
+    <div class="linha-exemplos">
+        <RvmIcon Name="RvmIconName.InfoCircle" Size="RvmSize.Large" Color="RvmColor.Info" />
+        <RvmIcon Name="RvmIconName.CircleCheck" Size="RvmSize.Large" Color="RvmColor.Success" />
+        <RvmIcon Name="RvmIconName.AlertTriangle" Size="RvmSize.Large" Color="RvmColor.Warning" />
+        <RvmIcon Name="RvmIconName.AlertCircle" Size="RvmSize.Large" Color="RvmColor.Error" />
+        <RvmIcon Name="RvmIconName.Settings" Size="RvmSize.Large" Color="RvmColor.Secondary" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Icone que carrega a informacao sozinho"
+              Descricao="Quando nao ha rotulo ao lado, o icone precisa de Title — e so nesse caso. Ao lado de um texto que diz a mesma coisa, o Title faz o leitor de tela repetir."
+              Codigo="@CodigoTitulo">
+    <div class="linha-exemplos">
+        <RvmIcon Name="RvmIconName.Trash" Size="RvmSize.Large" Color="RvmColor.Error" Title="Excluir" />
+        <RvmTypography Color="RvmTextColor.Secondary">
+            Este tem nome acessivel; o do exemplo acima, nao.
+        </RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="O conjunto curado"
+              Descricao="São os icones que os 35 componentes da v1 precisam. A lista cresce sob demanda, e nao por completude — o Tabler tem mais de 5 mil."
+              Codigo="@CodigoCatalogo">
+    <div class="grade-icones">
+        @foreach (var nome in Enum.GetValues<RvmIconName>())
+        {
+            <div class="item-icone">
+                <RvmIcon Name="nome" Size="RvmSize.Large" />
+                <span class="rvm-text-caption site-apoio">@nome</span>
+            </div>
+        }
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+@code {
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Name", "RvmIconName", "—", "Qual icone. Enum: nome errado nao compila."),
+        new("Size", "RvmSize", "Medium", "16, 20 ou 24 px de lado."),
+        new("Color", "RvmColor?", "—", "Papel semantico. Sem valor, herda a cor do texto em volta."),
+        new("Title", "string?", "—", "O que o icone significa. So quando ele for a UNICA fonte da informacao."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao SVG.")
+    ];
+
+    private const string CodigoTamanhos = """
+        <RvmIcon Name="RvmIconName.Bell" Size="RvmSize.Small" />
+        <RvmIcon Name="RvmIconName.Bell" Size="RvmSize.Large" />
+        """;
+
+    private const string CodigoCores = """
+        <RvmIcon Name="RvmIconName.AlertTriangle" Color="RvmColor.Warning" />
+        """;
+
+    private const string CodigoTitulo = """
+        <RvmIcon Name="RvmIconName.Trash" Color="RvmColor.Error" Title="Excluir" />
+        """;
+
+    private const string CodigoCatalogo = """
+        @foreach (var nome in Enum.GetValues<RvmIconName>())
+        {
+            <RvmIcon Name="nome" Size="RvmSize.Large" />
+        }
+        """;
+}

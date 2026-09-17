@@ -1,0 +1,130 @@
+@page "/componentes/text-field"
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>RvmTextField — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTextField</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Campo de texto com rotulo flutuante — que flutua <strong>so com CSS</strong>, sem JS —, apoio,
+    erro, prefixo e sufixo. Herda de <code>InputBase</code>: dentro de um <code>EditForm</code> participa
+    da validacao sozinho, e renderiza <code>name</code> sempre que o formulario faz POST — o que o SSR
+    estatico exige para receber o valor. Neste site, que e WebAssembly, nao ha POST, e o proprio
+    framework deixa o <code>name</code> de fora.
+</p>
+
+<BlocoExemplo Titulo="Os tres estilos"
+              Descricao="Outlined (padrao), filled e standard. 56 px de altura no outlined, medido no kit."
+              Codigo="@CodigoEstilos">
+    <div class="grade-campos">
+        <RvmTextField @bind-Value="_nome" Label="Nome" />
+        <RvmTextField @bind-Value="_nome" Label="Nome" Variant="RvmTextFieldVariant.Filled" />
+        <RvmTextField @bind-Value="_nome" Label="Nome" Variant="RvmTextFieldVariant.Standard" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Apoio, prefixo e sufixo"
+              Descricao="Os tres entram no aria-describedby do input: quem usa leitor de tela ouve a unidade e a explicacao, nao so o rotulo."
+              Codigo="@CodigoAfixos">
+    <div class="grade-campos">
+        <RvmTextField @bind-Value="_peso" Label="Peso da carga" Suffix="Kg" HelperText="Peso liquido, sem a embalagem." />
+        <RvmTextField @bind-Value="_valor" Label="Valor" Prefix="R$" Type="RvmInputType.Number" />
+        <RvmTextField @bind-Value="_email" Label="E-mail" Type="RvmInputType.Email" Placeholder="nome@empresa.com.br" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Validacao de verdade"
+              Descricao="Dentro de um EditForm, a mensagem da validacao aparece sozinha no lugar do apoio, e o campo ganha aria-invalid. Clique em Enviar com os campos vazios."
+              Codigo="@CodigoValidacao">
+    <EditForm Model="_cadastro" OnValidSubmit="@(() => _enviado = true)" FormName="exemplo-cadastro">
+        <DataAnnotationsValidator />
+        <div class="grade-campos">
+            <RvmTextField @bind-Value="_cadastro.Nome" Label="Nome completo" Required="true" HelperText="Como no documento." />
+            <RvmTextField @bind-Value="_cadastro.Cpf" Label="CPF" Required="true" />
+        </div>
+        <div class="linha-exemplos">
+            <RvmButton Type="RvmButtonType.Submit">Enviar</RvmButton>
+            @if (_enviado)
+            {
+                <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Cadastro valido — enviado.</RvmTypography>
+            }
+        </div>
+    </EditForm>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Estados e tamanho"
+              Descricao="Erro informado por fora (a resposta de uma API, por exemplo), desabilitado e pequeno (40 px)."
+              Codigo="@CodigoEstados">
+    <div class="grade-campos">
+        <RvmTextField @bind-Value="_cpfDuplicado" Label="CPF" ErrorText="Este CPF ja esta cadastrado. Entre com a sua conta." />
+        <RvmTextField @bind-Value="_nome" Label="Codigo" Disabled="true" />
+        <RvmTextField @bind-Value="_nome" Label="Busca" Size="RvmSize.Small" Type="RvmInputType.Search" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/text-field.png"
+              Arquivo="referencia-neatlab/Text Field.png (recorte)"
+              Descricao="As variantes do kit (standard, outline, filled) com valor, prefixo, sufixo e apoio, e os estados ativo, erro e desabilitado."
+              Alt="Recorte do kit NEATLAB mostrando campos de texto em tres estilos e quatro estados" />
+
+@code {
+    private string? _nome;
+    private string? _peso = "1250";
+    private string? _valor;
+    private string? _email;
+    private string? _cpfDuplicado = "123.456.789-09";
+    private bool _enviado;
+    private readonly Cadastro _cadastro = new();
+
+    private sealed class Cadastro
+    {
+        [Required(ErrorMessage = "Informe o nome completo para continuar.")]
+        public string? Nome { get; set; }
+
+        [Required(ErrorMessage = "Informe o CPF para continuar.")]
+        public string? Cpf { get; set; }
+    }
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Value / @bind-Value", "string?", "—", "O valor. Herdado do InputBase."),
+        new("Label", "string?", "—", "Rotulo; flutua quando o campo tem valor ou foco."),
+        new("HelperText", "string?", "—", "Apoio abaixo do campo. Da lugar ao erro."),
+        new("ErrorText", "string?", "—", "Erro vindo de fora. Dentro de EditForm, a validacao ja aparece sozinha."),
+        new("Variant", "RvmTextFieldVariant", "Outlined", "Outlined, Filled ou Standard."),
+        new("Size", "RvmSize", "Medium", "56 px ou 40 px (Small). Large sai igual ao medio."),
+        new("Type", "RvmInputType", "Text", "Text, Email, Password, Number, Tel, Url ou Search."),
+        new("Prefix / Suffix", "string?", "—", "Texto antes ou depois do valor; entram no aria-describedby."),
+        new("Placeholder", "string?", "—", "Dica no campo vazio. Com ela, o rotulo fica sempre em cima."),
+        new("Required", "bool", "false", "aria-required e asterisco. Sem o required nativo: ele barraria o EditForm com a mensagem do navegador, em ingles."),
+        new("Disabled", "bool", "false", "Indisponivel."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "id vai para o input; class vai para a raiz.")
+    ];
+
+    private const string CodigoEstilos = """
+        <RvmTextField @bind-Value="_nome" Label="Nome" />
+        <RvmTextField @bind-Value="_nome" Label="Nome" Variant="RvmTextFieldVariant.Filled" />
+        <RvmTextField @bind-Value="_nome" Label="Nome" Variant="RvmTextFieldVariant.Standard" />
+        """;
+
+    private const string CodigoAfixos = """
+        <RvmTextField @bind-Value="_peso" Label="Peso da carga" Suffix="Kg" HelperText="Peso liquido, sem a embalagem." />
+        <RvmTextField @bind-Value="_valor" Label="Valor" Prefix="R$" Type="RvmInputType.Number" />
+        """;
+
+    private const string CodigoValidacao = """
+        <EditForm Model="_cadastro" OnValidSubmit="Enviar" FormName="cadastro">
+            <DataAnnotationsValidator />
+            <RvmTextField @bind-Value="_cadastro.Nome" Label="Nome completo" Required="true" />
+            <RvmButton Type="RvmButtonType.Submit">Enviar</RvmButton>
+        </EditForm>
+        """;
+
+    private const string CodigoEstados = """
+        <RvmTextField @bind-Value="_cpf" Label="CPF" ErrorText="Este CPF ja esta cadastrado. Entre com a sua conta." />
+        <RvmTextField @bind-Value="_codigo" Label="Codigo" Disabled="true" />
+        <RvmTextField @bind-Value="_busca" Label="Busca" Size="RvmSize.Small" />
+        """;
+}

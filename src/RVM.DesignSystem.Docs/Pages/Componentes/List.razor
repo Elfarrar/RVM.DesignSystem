@@ -1,0 +1,145 @@
+@page "/componentes/list"
+
+<PageTitle>RvmList — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmList</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Lista de itens com texto secundario, icone ou avatar no inicio e acao no fim. O item vira link com
+    <code>Href</code>, botao com <code>OnClick</code> e abre uma sublista com <code>NestedContent</code>.
+    Item de 48 px (40 px denso), <strong>medido no kit</strong>. A acao do fim fica fora da area clicavel:
+    botao dentro de botao e HTML invalido.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ O selecionado do kit e um cinza forte com texto claro que nao chega a 4.5:1. Aqui ele usa o fundo
+    de selecao, mais suave, com uma barra no primary como indicador.
+</p>
+
+<BlocoExemplo Titulo="Com texto secundario e avatar"
+              Descricao="A lista List with Secondary Text do exemplo do kit. O avatar e decorativo: o nome ja esta no texto."
+              Codigo="@CodigoSecundario">
+    <div class="exemplo-lista">
+        <RvmList AriaLabel="Produtores">
+            @foreach (var (nome, fazenda, iniciais) in Produtores)
+            {
+                <RvmListItem SecondaryText="@fazenda">
+                    <StartContent><span aria-hidden="true"><RvmAvatar Initials="@iniciais" Size="RvmSize.Medium" /></span></StartContent>
+                    <ChildContent>@nome</ChildContent>
+                </RvmListItem>
+            }
+        </RvmList>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Navegacao, acao no fim e sublista"
+              Descricao="Link com a pagina atual marcada, item que abre sublista (a variante Dropdown do kit) e botao de favoritar fora da area clicavel."
+              Codigo="@CodigoNavegacao">
+    <div class="grade-cards">
+        <RvmList AriaLabel="Menu da fazenda">
+            <RvmListItem Href="componentes/list" Icon="RvmIconName.Home" Selected="true">Visao geral</RvmListItem>
+            <RvmListItem Icon="RvmIconName.Calendar" @bind-Expanded="_safrasAbertas">
+                <ChildContent>Safras</ChildContent>
+                <NestedContent>
+                    <RvmList Dense="true" AriaLabel="Safras">
+                        <RvmListItem Href="componentes/list#2026">Safra 2026</RvmListItem>
+                        <RvmListItem Href="componentes/list#2025">Safra 2025</RvmListItem>
+                    </RvmList>
+                </NestedContent>
+            </RvmListItem>
+            <RvmListItem Icon="RvmIconName.Lock" Disabled="true" Href="componentes/list">Relatorios fiscais</RvmListItem>
+        </RvmList>
+
+        <RvmList AriaLabel="Contatos">
+            @foreach (var contato in _contatos)
+            {
+                var atual = contato;
+                <RvmListItem OnClick="@(() => _escolhido = atual.Nome)" Selected="@(_escolhido == atual.Nome)">
+                    <StartContent><span aria-hidden="true"><RvmAvatar Initials="@atual.Iniciais" Size="RvmSize.Small" Color="RvmColor.Info" /></span></StartContent>
+                    <ChildContent>@atual.Nome</ChildContent>
+                    <EndContent>
+                        <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small"
+                                   aria-label="@($"{(atual.Favorito ? "Desfavoritar" : "Favoritar")} {atual.Nome}")"
+                                   aria-pressed="@(atual.Favorito ? "true" : "false")"
+                                   OnClick="@(() => atual.Favorito = !atual.Favorito)">
+                            <RvmIcon Name="RvmIconName.Star" Color="@(atual.Favorito ? RvmColor.Warning : null)" />
+                        </RvmButton>
+                    </EndContent>
+                </RvmListItem>
+            }
+        </RvmList>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Contato escolhido: @(_escolhido ?? "nenhum").</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/list.png"
+              Arquivo="referencia-neatlab/List.png (recorte)"
+              Descricao="Os itens padrao, com icone, avatar e caixa de marcar; os tamanhos, os estados e as listas de exemplo."
+              Alt="Recorte do kit NEATLAB mostrando itens de lista em varias variantes, tamanhos e estados" />
+
+@code {
+    private static readonly (string Nome, string Fazenda, string Iniciais)[] Produtores =
+    [
+        ("Caroline Black", "Fazenda Santa Clara", "CB"),
+        ("Alfred Copeland", "Sitio Boa Vista", "AC"),
+        ("Celia Schneider", "Fazenda Tres Irmaos", "CS")
+    ];
+
+    private sealed class Contato(string nome, string iniciais, bool favorito)
+    {
+        public string Nome { get; } = nome;
+        public string Iniciais { get; } = iniciais;
+        public bool Favorito { get; set; } = favorito;
+    }
+
+    private readonly List<Contato> _contatos =
+    [
+        new("Rufus Koch", "RK", true),
+        new("Clyde West", "CW", false),
+        new("Jill Ward", "JW", false)
+    ];
+
+    private bool _safrasAbertas;
+    private string? _escolhido;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("RvmList.Dense", "bool", "false", "Itens de 40 px."),
+        new("RvmList.AriaLabel", "string?", "—", "Nome da lista, quando nao ha titulo visivel."),
+        new("ChildContent", "RenderFragment?", "—", "Texto principal do item."),
+        new("SecondaryText", "string?", "—", "Linha de baixo, no tom secundario."),
+        new("Icon", "RvmIconName?", "—", "Icone no inicio."),
+        new("StartContent", "RenderFragment?", "—", "Conteudo livre no inicio (avatar). Nada interativo aqui."),
+        new("EndContent", "RenderFragment?", "—", "Acao na direita, fora da area clicavel."),
+        new("Href", "string?", "—", "Faz do item um link."),
+        new("OnClick", "EventCallback", "—", "Faz do item um botao."),
+        new("Selected", "bool", "false", "aria-current no link, aria-pressed no botao."),
+        new("Disabled", "bool", "false", "Indisponivel."),
+        new("NestedContent", "RenderFragment?", "—", "Sublista que abre pelo item."),
+        new("Expanded", "bool", "false", "Sublista aberta. Aceita @bind-Expanded."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao li.")
+    ];
+
+    private const string CodigoSecundario = """
+        <RvmList AriaLabel="Produtores">
+            <RvmListItem SecondaryText="Fazenda Santa Clara">
+                <StartContent><span aria-hidden="true"><RvmAvatar Initials="CB" /></span></StartContent>
+                <ChildContent>Caroline Black</ChildContent>
+            </RvmListItem>
+        </RvmList>
+        """;
+
+    private const string CodigoNavegacao = """
+        <RvmList AriaLabel="Menu da fazenda">
+            <RvmListItem Href="/visao-geral" Icon="RvmIconName.Home" Selected="true">Visao geral</RvmListItem>
+            <RvmListItem Icon="RvmIconName.Calendar" @bind-Expanded="_safrasAbertas">
+                <ChildContent>Safras</ChildContent>
+                <NestedContent>
+                    <RvmList Dense="true"><RvmListItem Href="/safra/2026">Safra 2026</RvmListItem></RvmList>
+                </NestedContent>
+            </RvmListItem>
+        </RvmList>
+        """;
+}

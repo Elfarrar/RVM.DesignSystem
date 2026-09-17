@@ -1,0 +1,137 @@
+/* CSS isolado do RvmCalendar. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Date & TIme Picker.png: 310 px de largura no papel, colunas de 42 px,
+   linhas de 38 px, dia escolhido num circulo de 36 px no primary. */
+
+.rvm-calendario {
+    display: inline-flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 310px;
+    max-width: 100%;
+    padding: var(--rvm-space-3) var(--rvm-space-4) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-cabecalho-mes {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    min-height: 36px;
+    margin-bottom: var(--rvm-space-2);
+}
+
+.rvm-mes {
+    flex: 1;
+    margin: 0;
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    font-weight: var(--rvm-font-weight-regular);
+}
+
+.rvm-mes::first-letter {
+    text-transform: uppercase;
+}
+
+.rvm-navegar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+}
+
+.rvm-navegar:hover:not(:disabled) {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-navegar:disabled {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-navegar:focus-visible,
+.rvm-dia:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 0;
+}
+
+.rvm-grade {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.rvm-dia-semana {
+    height: 32px;
+    padding: 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    font-weight: var(--rvm-font-weight-regular);
+    text-align: center;
+}
+
+.rvm-celula,
+.rvm-vazio {
+    height: 38px;
+    padding: 0;
+    text-align: center;
+}
+
+.rvm-dia {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: var(--rvm-text-body2-size);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+.rvm-dia:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+/* Hoje: um anel, que e o que o kit sugere na versao clara. */
+.rvm-hoje .rvm-dia {
+    border-color: var(--rvm-color-primary-text);
+}
+
+/* No intervalo: faixa suave atras dos dias, com texto no -text (par ja medido no chip suave). */
+.rvm-no-intervalo {
+    background-color: var(--rvm-color-primary-soft);
+}
+
+.rvm-no-intervalo .rvm-dia {
+    color: var(--rvm-color-primary-text);
+}
+
+.rvm-escolhido .rvm-dia,
+.rvm-escolhido .rvm-dia:hover {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-bloqueado .rvm-dia {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-bloqueado .rvm-dia:hover {
+    background-color: transparent;
+}

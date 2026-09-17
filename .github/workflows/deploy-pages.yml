@@ -1,0 +1,76 @@
+name: Deploy producao (GitHub Pages)
+
+# Prod = GitHub Pages em design.rvmit.com.br. Sobe so de master, e master so recebe merge com
+# sinal verde explicito do Rafael (CLAUDE.md § Workflow).
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publicar o site
+        run: dotnet publish src/RVM.DesignSystem.Docs/RVM.DesignSystem.Docs.csproj -c Release -o ./publicado
+
+      - name: Conferir .nojekyll e 404.html antes de subir
+        run: |
+          set -e
+          [ -f ./publicado/wwwroot/.nojekyll ] || { echo "::error::Sem .nojekyll o Pages ignora _framework."; exit 1; }
+          [ -f ./publicado/wwwroot/404.html ] || { echo "::error::Sem 404.html a rota profunda quebra."; exit 1; }
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./publicado/wwwroot
+
+      - id: pages
+        uses: actions/deploy-pages@v4
+
+      - name: Verificar por CONTEUDO no dominio proprio
+        run: |
+          set -e
+          # ⚠️ O dominio proprio NAO vem do arquivo CNAME no artefato: com actions/deploy-pages ele e
+          # configuracao do repositorio (gh api -X PUT repos/OWNER/REPO/pages -f cname=...), e so pode
+          # ser registrado DEPOIS que existe um deployment. Entao o primeiro run deste workflow falha
+          # aqui por construcao, com o site publicado e funcionando. Nao e regressao.
+          # ⚠️ Procurar so a string nao basta: em 16/09 um bloco `types` no vhost fez o index.html sair
+          # como application/octet-stream — o navegador BAIXAVA a pagina, e este mesmo curl devolvia
+          # 200 com a string certa. Por isso o content-type entra na verificacao.
+          tipo=$(curl -fsS -o /dev/null --max-time 20 -w '%{content_type}' https://design.rvmit.com.br/ || true)
+          case "$tipo" in
+            text/html*) ;;
+            *) echo "::error::A pagina inicial saiu como '$tipo' em vez de text/html — o navegador vai baixar em vez de abrir."; exit 1 ;;
+          esac
+          for tentativa in 1 2 3 4 5 6; do
+            corpo=$(curl -fsS --max-time 20 https://design.rvmit.com.br/ || true)
+            if echo "$corpo" | grep -q 'RVM Design System'; then
+              echo "Producao no ar com o conteudo esperado."
+              exit 0
+            fi
+            echo "Tentativa $tentativa: sem a string (ou TLS ainda propagando)."
+            sleep 20
+          done
+          echo "::error::design.rvmit.com.br respondeu sem a string 'RVM Design System'. Se este for o PRIMEIRO deploy, registre o dominio: gh api -X PUT repos/${{ github.repository }}/pages -f cname=design.rvmit.com.br"
+          exit 1

@@ -1,0 +1,110 @@
+/* CSS isolado do RvmChip. So custom properties — hex literal aqui quebra o tema escuro.
+   Alturas MEDIDAS no referencia-neatlab/Chip.png: 32 px (padrao) e 24 px (pequeno), em pilula. */
+
+.rvm-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    box-sizing: border-box;
+    max-width: 100%;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-pill);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-chip-size);
+    line-height: var(--rvm-text-chip-line);
+    font-weight: var(--rvm-text-chip-weight);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.rvm-medio { height: 32px; padding: 0 var(--rvm-space-3); }
+.rvm-pequeno { height: 24px; padding: 0 var(--rvm-space-2); }
+
+/* Com miniatura ou icone, o recuo da esquerda encolhe: o circulo encosta na borda da pilula, como
+   no kit. */
+.rvm-medio:has(> .rvm-miniatura, > svg) { padding-inline-start: var(--rvm-space-1); }
+.rvm-pequeno:has(> .rvm-miniatura, > svg) { padding-inline-start: 2px; }
+
+.rvm-rotulo {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rvm-miniatura {
+    border-radius: var(--rvm-radius-circle);
+    object-fit: cover;
+    flex: none;
+}
+
+.rvm-medio .rvm-miniatura { width: 24px; height: 24px; }
+.rvm-pequeno .rvm-miniatura { width: 18px; height: 18px; }
+
+/* --- Neutro: a coluna "Default" do kit --- */
+.rvm-preenchido.rvm-neutro { background-color: var(--rvm-color-action-selected); color: var(--rvm-color-text-primary); }
+.rvm-contorno.rvm-neutro { border-color: var(--rvm-color-outline); color: var(--rvm-color-text-primary); }
+.rvm-suave.rvm-neutro { background-color: var(--rvm-color-action-hover); color: var(--rvm-color-text-primary); }
+
+/* --- Preenchido: fundo na cor do papel, texto no token de contraste --- */
+.rvm-preenchido.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-preenchido.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-preenchido.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-preenchido.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-preenchido.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-preenchido.rvm-error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+
+/* --- Contorno: borda no -outlined-resting (medido no botao do kit), texto no -text --- */
+.rvm-contorno.rvm-primary { border-color: var(--rvm-color-primary-outlined-resting); color: var(--rvm-color-primary-text); }
+.rvm-contorno.rvm-secondary { border-color: var(--rvm-color-secondary-outlined-resting); color: var(--rvm-color-secondary-text); }
+.rvm-contorno.rvm-info { border-color: var(--rvm-color-info-outlined-resting); color: var(--rvm-color-info-text); }
+.rvm-contorno.rvm-success { border-color: var(--rvm-color-success-outlined-resting); color: var(--rvm-color-success-text); }
+.rvm-contorno.rvm-warning { border-color: var(--rvm-color-warning-outlined-resting); color: var(--rvm-color-warning-text); }
+.rvm-contorno.rvm-error { border-color: var(--rvm-color-error-outlined-resting); color: var(--rvm-color-error-text); }
+
+/* --- Suave: -soft com -text; os seis pares medidos passam 4.5:1 nos dois temas --- */
+.rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-suave.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+/* --- Botao de remover --- */
+.rvm-remover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    padding: 0;
+    margin-inline-end: calc(var(--rvm-space-1) * -1);
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    /* Cor cheia, sem opacidade: o "x" e um controle, e controle precisa de 3:1 contra o fundo
+       (WCAG 1.4.11). Esmaecer para "parecer secundario" o tiraria disso nas cores claras. */
+    color: inherit;
+    cursor: pointer;
+}
+
+.rvm-remover:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 1px;
+}
+
+/* --- Desabilitado: um so tratamento, qualquer estilo e cor.
+       `.rvm-chip.rvm-desabilitado` e nao so `.rvm-desabilitado`: a regra de cor (`.rvm-preenchido.rvm-primary`) tem
+       especificidade 0,2,0 e venceria a de 0,1,0 — o chip colorido continuaria colorido
+       desabilitado. Empatando em 0,2,0, vale a que vem depois, que e esta. --- */
+.rvm-chip.rvm-desabilitado {
+    color: var(--rvm-color-text-disabled);
+    background-color: var(--rvm-color-action-disabled);
+    border-color: transparent;
+}
+
+.rvm-contorno.rvm-desabilitado {
+    background-color: transparent;
+    border-color: var(--rvm-color-action-disabled);
+}
+
+.rvm-desabilitado .rvm-remover {
+    cursor: not-allowed;
+}
