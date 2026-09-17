@@ -73,6 +73,26 @@ public partial class RvmTextField
     /// </summary>
     internal string? NomeDoCampo => string.IsNullOrEmpty(NameAttributeValue) ? null : NameAttributeValue;
 
+    /// <summary><c>style</c> do consumidor, aplicado na raiz, onde largura e margem fazem efeito.</summary>
+    internal string? EstiloDoConsumidor
+        => AdditionalAttributes is not null
+           && AdditionalAttributes.TryGetValue("style", out var valor)
+           && valor is string texto
+           && !string.IsNullOrWhiteSpace(texto)
+            ? texto
+            : null;
+
+    /// <summary>
+    /// Os atributos extras menos <c>class</c> e <c>style</c>, que ja foram para a raiz.
+    /// </summary>
+    internal IReadOnlyDictionary<string, object>? AtributosDoInput
+        => AdditionalAttributes is null
+            ? null
+            : AdditionalAttributes
+                .Where(a => !string.Equals(a.Key, "class", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(a.Key, "style", StringComparison.OrdinalIgnoreCase))
+                .ToDictionary(a => a.Key, a => a.Value);
+
     internal string IdApoio => $"{IdEfetivo}-apoio";
 
     internal string IdPrefixo => $"{IdEfetivo}-prefixo";

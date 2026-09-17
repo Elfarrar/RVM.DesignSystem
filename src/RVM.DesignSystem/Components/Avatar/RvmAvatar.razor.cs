@@ -53,7 +53,10 @@ public partial class RvmAvatar : ComponentBase
             ? longas[..2].ToUpperInvariant()
             : (Initials ?? string.Empty).Trim().ToUpperInvariant();
 
-    internal string? NomeAcessivel => string.IsNullOrWhiteSpace(Alt) ? Initials : Alt;
+    internal string? NomeAcessivel
+        => !string.IsNullOrWhiteSpace(Alt) ? Alt
+         : !string.IsNullOrWhiteSpace(Initials) ? Initials
+         : null;
 
     internal RvmSize TamanhoDoIcone => Size switch
     {

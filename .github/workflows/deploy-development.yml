@@ -33,18 +33,38 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.DEV_VPS_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/deploy
           chmod 600 ~/.ssh/deploy
-          ssh-keyscan -p ${{ secrets.DEV_VPS_PORT }} -H ${{ secrets.DEV_VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          # A rede runner -> Rivendell e INTERMITENTE: em 17/09/2026 um keyscan morreu em 5 s e a
+          # tentativa seguinte, sem mudar nada, passou. Mesma licao do publish no BaGet: retry e
+          # timeout explicitos, em vez de derrubar o deploy no primeiro solavanco de rede.
+          for tentativa in 1 2 3 4 5; do
+            if ssh-keyscan -T 15 -p ${{ secrets.DEV_VPS_PORT }} -H ${{ secrets.DEV_VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null \
+               && [ -s ~/.ssh/known_hosts ]; then
+              exit 0
+            fi
+            echo "Tentativa $tentativa de alcancar a Rivendell falhou; nova em 15 s."
+            sleep 15
+          done
+          echo "::error::Nao foi possivel alcancar a Rivendell pela porta SSH depois de 5 tentativas."
+          exit 1
 
       - name: Enviar por rsync
         env:
           DESTINO: ${{ secrets.DEV_DEPLOY_PATH }}
         run: |
-          set -e
+          # Sem `set -e`: o laco trata a falha de cada tentativa. `--timeout` corta tentativa pendurada.
           # A barra final em ./publicado/wwwroot/ manda o CONTEUDO, nao a pasta.
-          rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy -p ${{ secrets.DEV_VPS_PORT }}" \
-            ./publicado/wwwroot/ \
-            ${{ secrets.DEV_VPS_USER }}@${{ secrets.DEV_VPS_HOST }}:"$DESTINO/"
+          for tentativa in 1 2 3; do
+            if rsync -az --delete --timeout=60 \
+                 -e "ssh -i ~/.ssh/deploy -p ${{ secrets.DEV_VPS_PORT }} -o ConnectTimeout=20" \
+                 ./publicado/wwwroot/ \
+                 ${{ secrets.DEV_VPS_USER }}@${{ secrets.DEV_VPS_HOST }}:"$DESTINO/"; then
+              exit 0
+            fi
+            echo "rsync falhou na tentativa $tentativa; nova em 20 s."
+            sleep 20
+          done
+          echo "::error::rsync para a Rivendell falhou 3 vezes."
+          exit 1
 
       - name: Verificar por CONTEUDO (status 200 aqui nao prova nada)
         run: |

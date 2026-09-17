@@ -8,7 +8,9 @@
 
     @if (Surplus > 0)
     {
+        @* Conteudo livre, e NAO `Initials`: as iniciais sao cortadas em duas letras, e "+10" virava
+           "+1" — contagem errada, sem erro nenhum. Achado do reviewer independente. *@
         <RvmAvatar Size="@Size" Color="RvmColor.Secondary" Variant="RvmAvatarVariant.Soft"
-                   Initials="@($"+{Surplus}")" Alt="@($"Mais {Surplus}")" />
+                   Alt="@($"Mais {Surplus}")">+@Surplus</RvmAvatar>
     }
 </div>

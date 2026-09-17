@@ -13,14 +13,19 @@
    O `required` do HTML faz o navegador barrar o envio com o balao dele — em ingles, sem estilo e
    ANTES da validacao do EditForm rodar —, e a mensagem em PT-BR nunca aparece. Pego no navegador:
    o evento submit nem disparava. *@
-<div class="@ClassesDaRaiz">
+@* Atributos extras se DIVIDEM, e isso e desvio consciente do "tudo na raiz" do 05-api: `class` e
+   `style` vao para a raiz (e ai que largura e margem fazem efeito — no input, o `flex: 1` engolia o
+   `max-width` do consumidor em silencio, achado do reviewer). Todo o resto (`autocomplete`,
+   `maxlength`, `inputmode`, `aria-*`, `data-*`) vai para o <input>, que e onde atributo de campo
+   precisa chegar para funcionar. *@
+<div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
     <div class="caixa">
         @if (!string.IsNullOrWhiteSpace(Prefix))
         {
             <span id="@IdPrefixo" class="afixo prefixo">@Prefix</span>
         }
 
-        <input @attributes="AdditionalAttributes"
+        <input @attributes="AtributosDoInput"
                id="@IdEfetivo"
                name="@NomeDoCampo"
                class="entrada"
