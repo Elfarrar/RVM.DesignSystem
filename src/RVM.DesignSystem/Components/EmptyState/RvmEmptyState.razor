@@ -16,7 +16,16 @@
         </span>
     }
 
-    @TituloRenderizado
+    @* Um elemento por nivel, em marcacao Razor: h{n} criado pelo RenderTreeBuilder nao recebe o
+       atributo de escopo do CSS isolado, e o estilo do .titulo nao pegava. *@
+    @switch (NivelDoTitulo)
+    {
+        case 3: <h3 id="@IdTitulo" class="titulo">@Title</h3> break;
+        case 4: <h4 id="@IdTitulo" class="titulo">@Title</h4> break;
+        case 5: <h5 id="@IdTitulo" class="titulo">@Title</h5> break;
+        case 6: <h6 id="@IdTitulo" class="titulo">@Title</h6> break;
+        default: <h2 id="@IdTitulo" class="titulo">@Title</h2> break;
+    }
 
     @if (!string.IsNullOrWhiteSpace(Description))
     {

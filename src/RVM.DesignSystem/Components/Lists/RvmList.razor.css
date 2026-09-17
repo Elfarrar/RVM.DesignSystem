@@ -1,0 +1,13 @@
+/* CSS isolado do RvmList. So custom properties — hex literal aqui quebra o tema escuro. */
+
+.lista {
+    margin: 0;
+    padding: var(--rvm-space-2) 0;
+    list-style: none;
+    font-family: var(--rvm-font-family);
+}
+
+/* Lista dentro de item (aninhada): recuada, sem o respiro de cima e de baixo. */
+.lista .lista {
+    padding: 0 0 0 var(--rvm-space-6);
+}
