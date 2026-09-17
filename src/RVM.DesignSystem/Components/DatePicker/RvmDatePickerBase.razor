@@ -20,7 +20,8 @@
                 aria-invalid="@(TemErro ? "true" : null)"
                 aria-describedby="@(MensagemDeApoio is null ? null : IdApoio)"
                 disabled="@Disabled"
-                @onclick="AbrirOuFechar">
+                @onclick="AbrirOuFechar"
+                @onkeydown="AoTeclarNoDialogoAsync">
             <span id="@IdValor" class="rvm-valor">@(TemValor ? TextoExibido : PlaceholderEfetivo)</span>
         </button>
 

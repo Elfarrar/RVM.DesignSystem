@@ -181,9 +181,12 @@ public abstract partial class RvmDatePickerBase : ComponentBase, IAsyncDisposabl
         return Task.CompletedTask;
     }
 
+    // Vale no dialogo e tambem no botao: logo depois de abrir, o foco ainda esta no botao ate o
+    // rvm-sobreposicao.js carregar e move-lo — num site servido de longe, um Esc nesse intervalo nao
+    // fechava nada (pego no E2E do dev; na maquina local o modulo chega antes da tecla).
     private async Task AoTeclarNoDialogoAsync(KeyboardEventArgs e)
     {
-        if (e.Key == "Escape")
+        if (e.Key == "Escape" && _aberto)
         {
             await FecharAsync();
         }

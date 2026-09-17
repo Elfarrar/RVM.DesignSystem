@@ -234,6 +234,13 @@ public class RvmDatePickerTests : BunitContext
         cortado.Find("[role=dialog]").KeyDown(key: "Escape");
         Assert.Empty(cortado.FindAll("[role=dialog]"));
 
+        // Esc com o foco ainda no botao (antes do JS mover o foco para dentro) tambem fecha.
+        cortado.Find("button.rvm-entrada").KeyDown(key: "Escape");
+        Assert.Empty(cortado.FindAll("[role=dialog]"));
+        cortado.Find("button.rvm-entrada").Click();
+        cortado.Find("button.rvm-entrada").KeyDown(key: "Escape");
+        Assert.Empty(cortado.FindAll("[role=dialog]"));
+
         cortado.Find("button.rvm-entrada").Click();
         cortado.Find(".rvm-fundo").Click();
         Assert.Empty(cortado.FindAll("[role=dialog]"));
