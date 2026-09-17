@@ -347,3 +347,11 @@ code {
 .grade-cards .exemplo-vivo {
     background: var(--rvm-color-background-body);
 }
+
+.grade-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--rvm-space-6) var(--rvm-space-4);
+    width: 100%;
+    margin-bottom: var(--rvm-space-4);
+}
