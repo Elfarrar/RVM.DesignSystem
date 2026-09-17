@@ -1,0 +1,23 @@
+@namespace RVM.DesignSystem.Components.Radio
+@typeparam TValue
+@using Microsoft.AspNetCore.Components.Forms
+
+@* Uma opcao do RvmRadioGroup. O input e o <InputRadio> do Blazor, que so funciona dentro de um
+   InputRadioGroup — por isso o RvmRadio precisa estar dentro de um RvmRadioGroup. *@
+<label class="@ClassesDaRaiz">
+    <span class="alvo">
+        <InputRadio TValue="TValue" Value="Value" class="nativo" @attributes="AdditionalAttributes" />
+        <span class="circulo" aria-hidden="true">
+            <span class="ponto"></span>
+        </span>
+    </span>
+
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <span class="rotulo">@Label</span>
+    }
+    else
+    {
+        @ChildContent
+    }
+</label>

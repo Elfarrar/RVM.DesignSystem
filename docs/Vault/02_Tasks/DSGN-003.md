@@ -3,7 +3,7 @@ id: DSGN-003
 titulo: Onda 1 — os nove componentes da fundacao
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: concluido
 criada: 2026-09-16
 ---
 
@@ -102,4 +102,5 @@ o publish no BaGet ja tinha pago.
    **recorte do PNG do kit ao lado** (`07-site-de-documentacao.md`)
 3. axe sem violacao seria, nos dois temas
 4. Teclado: alcancar, ativar e enxergar o foco
-5. Screenshot lado a lado com o PNG do kit, aprovado pelo Rafael
+5. Screenshot lado a lado com o PNG do kit, aprovado pelo Rafael — ✅ **aprovado em 17/09/2026**
+   ("prossiga", depois das seis comparacoes `comparacao-*.png`)

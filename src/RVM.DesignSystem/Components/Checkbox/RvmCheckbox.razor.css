@@ -1,0 +1,125 @@
+/* CSS isolado do RvmCheckbox. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Checkbox.png: caixa visivel de 16 / 18 / 22 px, com halo circular
+   no hover.
+
+   ⚠️ O <input> e renderizado pelo InputCheckbox, OUTRO componente: o CSS isolado deste arquivo so o
+   alcanca com `::deep`. Sem isso as regras de `.nativo` simplesmente nao casam, e o checkbox nativo
+   aparece por cima do desenho. */
+
+.controle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    cursor: pointer;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    color: var(--rvm-color-text-primary);
+    vertical-align: middle;
+}
+
+/* Area de toque e halo: circulo em volta da caixa. */
+.alvo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    border-radius: var(--rvm-radius-circle);
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.pequeno .alvo { width: 34px; height: 34px; }
+.medio .alvo { width: 38px; height: 38px; }
+.grande .alvo { width: 42px; height: 42px; }
+
+/* O input nativo fica POR CIMA, invisivel: e ele que recebe clique, teclado e foco. */
+.alvo ::deep .nativo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+    z-index: 1;
+}
+
+.caixa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 2px solid var(--rvm-color-input-border);
+    border-radius: 2px;
+    background-color: transparent;
+    transition: background-color var(--rvm-transition-fast), border-color var(--rvm-transition-fast);
+}
+
+.pequeno .caixa { width: 16px; height: 16px; }
+.medio .caixa { width: 18px; height: 18px; }
+.grande .caixa { width: 22px; height: 22px; }
+
+.marca {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: var(--rvm-color-background-paper);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+}
+
+/* --- Marcado e indeterminado: preenchimento no -text (3:1 contra o fundo nos dois temas; o -main
+       reprova — primary no escuro da 1.84:1, warning no claro 1.78:1). O "✓" vai na cor do papel,
+       que passa 3:1 sobre as seis cores nos dois temas (medido na DSGN-004). --- */
+.primary .alvo ::deep .nativo:checked + .caixa,
+.primary.indeterminado .caixa { background-color: var(--rvm-color-primary-text); border-color: var(--rvm-color-primary-text); }
+.secondary .alvo ::deep .nativo:checked + .caixa,
+.secondary.indeterminado .caixa { background-color: var(--rvm-color-secondary-text); border-color: var(--rvm-color-secondary-text); }
+.info .alvo ::deep .nativo:checked + .caixa,
+.info.indeterminado .caixa { background-color: var(--rvm-color-info-text); border-color: var(--rvm-color-info-text); }
+.success .alvo ::deep .nativo:checked + .caixa,
+.success.indeterminado .caixa { background-color: var(--rvm-color-success-text); border-color: var(--rvm-color-success-text); }
+.warning .alvo ::deep .nativo:checked + .caixa,
+.warning.indeterminado .caixa { background-color: var(--rvm-color-warning-text); border-color: var(--rvm-color-warning-text); }
+.error .alvo ::deep .nativo:checked + .caixa,
+.error.indeterminado .caixa { background-color: var(--rvm-color-error-text); border-color: var(--rvm-color-error-text); }
+
+.alvo ::deep .nativo:checked + .caixa .marca,
+.indeterminado .marca {
+    opacity: 1;
+}
+
+/* --- Hover e foco: o halo do kit. O foco ganha tambem o anel, que e o que passa 3:1. --- */
+.controle:hover:not(.desabilitado) .alvo {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.alvo:has(.nativo:focus-visible) {
+    background-color: var(--rvm-color-action-focus);
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: -2px;
+}
+
+.rotulo {
+    padding-inline-end: var(--rvm-space-2);
+}
+
+/* --- Desabilitado --- */
+.desabilitado {
+    cursor: not-allowed;
+    color: var(--rvm-color-text-disabled);
+}
+
+.desabilitado .caixa,
+.desabilitado .alvo ::deep .nativo:checked + .caixa,
+.desabilitado.indeterminado .caixa {
+    border-color: var(--rvm-color-action-disabled);
+}
+
+.desabilitado .alvo ::deep .nativo:checked + .caixa,
+.desabilitado.indeterminado .caixa {
+    background-color: var(--rvm-color-action-disabled);
+}

@@ -1,0 +1,115 @@
+/* CSS isolado do RvmRadio. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Radio.png: circulo de 18 / 20 / 22 px, com ponto no meio e halo no
+   hover. O input vem do InputRadio, outro componente: por isso ::deep nas regras de .nativo. */
+
+.controle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    cursor: pointer;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    color: var(--rvm-color-text-primary);
+}
+
+.alvo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    border-radius: var(--rvm-radius-circle);
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.pequeno .alvo { width: 34px; height: 34px; }
+.medio .alvo { width: 38px; height: 38px; }
+.grande .alvo { width: 42px; height: 42px; }
+
+.alvo ::deep .nativo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+    z-index: 1;
+}
+
+.circulo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 2px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-circle);
+    transition: border-color var(--rvm-transition-fast);
+}
+
+.pequeno .circulo { width: 18px; height: 18px; }
+.medio .circulo { width: 20px; height: 20px; }
+.grande .circulo { width: 22px; height: 22px; }
+
+.ponto {
+    border-radius: var(--rvm-radius-circle);
+    transform: scale(0);
+    transition: transform var(--rvm-transition-fast);
+}
+
+.pequeno .ponto { width: 8px; height: 8px; }
+.medio .ponto { width: 10px; height: 10px; }
+.grande .ponto { width: 12px; height: 12px; }
+
+.alvo ::deep .nativo:checked + .circulo .ponto {
+    transform: scale(1);
+}
+
+/* Escolhido: contorno e ponto no -text, que passa 3:1 contra o fundo nos dois temas. */
+.primary .alvo ::deep .nativo:checked + .circulo { border-color: var(--rvm-color-primary-text); }
+.primary .ponto { background-color: var(--rvm-color-primary-text); }
+.secondary .alvo ::deep .nativo:checked + .circulo { border-color: var(--rvm-color-secondary-text); }
+.secondary .ponto { background-color: var(--rvm-color-secondary-text); }
+.info .alvo ::deep .nativo:checked + .circulo { border-color: var(--rvm-color-info-text); }
+.info .ponto { background-color: var(--rvm-color-info-text); }
+.success .alvo ::deep .nativo:checked + .circulo { border-color: var(--rvm-color-success-text); }
+.success .ponto { background-color: var(--rvm-color-success-text); }
+.warning .alvo ::deep .nativo:checked + .circulo { border-color: var(--rvm-color-warning-text); }
+.warning .ponto { background-color: var(--rvm-color-warning-text); }
+.error .alvo ::deep .nativo:checked + .circulo { border-color: var(--rvm-color-error-text); }
+.error .ponto { background-color: var(--rvm-color-error-text); }
+
+.controle:hover:not(.desabilitado) .alvo {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.alvo:has(.nativo:focus-visible) {
+    background-color: var(--rvm-color-action-focus);
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: -2px;
+}
+
+.rotulo {
+    padding-inline-end: var(--rvm-space-2);
+}
+
+.desabilitado {
+    cursor: not-allowed;
+    color: var(--rvm-color-text-disabled);
+}
+
+.desabilitado .circulo,
+.desabilitado .alvo ::deep .nativo:checked + .circulo {
+    border-color: var(--rvm-color-action-disabled);
+}
+
+.desabilitado .ponto {
+    background-color: var(--rvm-color-action-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ponto {
+        transition: none;
+    }
+}

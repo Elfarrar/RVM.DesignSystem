@@ -15,6 +15,9 @@ const PAGINAS = [
     { rota: '/componentes/alert', titulo: 'RvmAlert' },
     { rota: '/componentes/card', titulo: 'RvmCard' },
     { rota: '/componentes/text-field', titulo: 'RvmTextField' },
+    { rota: '/componentes/checkbox', titulo: 'RvmCheckbox' },
+    { rota: '/componentes/radio', titulo: 'RvmRadio' },
+    { rota: '/componentes/switch', titulo: 'RvmSwitch' },
 ];
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
@@ -150,3 +153,63 @@ test('campo de texto: clicar no rotulo foca o campo e o rotulo flutua', async ({
 // EditContext desliga a geracao de nomes de campo (nao existe POST). O cenario que importa — formulario
 // em SSR estatico — e coberto no bUnit, que roda fora do navegador pelo mesmo caminho do Blazor Server
 // (RvmTextFieldTests.Renderiza_name_que_o_formulario_em_SSR_estatico_exige).
+
+// --- Controles: o padrao de teclado de cada um, testado de verdade ---
+
+test('checkbox: espaco marca e desmarca, e clicar no texto tambem', async ({ page }) => {
+    await page.goto('/componentes/checkbox');
+    await expect(page.getByRole('heading', { name: 'RvmCheckbox', level: 1 })).toBeVisible();
+
+    const medio = page.getByRole('checkbox', { name: 'Medio' });
+    await expect(medio).toBeChecked();
+    await medio.focus();
+    await page.keyboard.press('Space');
+    await expect(medio).not.toBeChecked();
+
+    await page.getByText('Medio', { exact: true }).click();
+    await expect(medio).toBeChecked();
+});
+
+test('checkbox: a caixa-mae fica indeterminada quando so alguns filhos estao marcados', async ({ page }) => {
+    await page.goto('/componentes/checkbox');
+    const mae = page.getByRole('checkbox', { name: 'Todos os talhoes' });
+    await expect(mae).toBeVisible();
+
+    // Espera por SINAL: a propriedade `indeterminate` e aplicada pelo modulo JS depois do render.
+    await expect.poll(() => mae.evaluate(el => (el as HTMLInputElement).indeterminate)).toBe(true);
+
+    await page.getByRole('checkbox', { name: 'Talhao 12' }).check();
+    await expect(mae).toBeChecked();
+    await expect.poll(() => mae.evaluate(el => (el as HTMLInputElement).indeterminate)).toBe(false);
+});
+
+test('radio: as setas movem a escolha dentro do grupo', async ({ page }) => {
+    await page.goto('/componentes/radio');
+    const grupo = page.getByRole('group', { name: 'Forma de pagamento' });
+    await expect(grupo).toBeVisible();
+
+    await grupo.getByRole('radio', { name: 'Pix' }).focus();
+    await page.keyboard.press('ArrowDown');
+
+    await expect(grupo.getByRole('radio', { name: 'Boleto' })).toBeChecked();
+    await expect(page.getByText(/Escolhido: Boleto/)).toBeVisible();
+});
+
+test('radio: grupo desabilitado nao deixa escolher', async ({ page }) => {
+    await page.goto('/componentes/radio');
+    const grupo = page.getByRole('group', { name: 'Desabilitado' });
+
+    await expect(grupo.getByRole('radio', { name: 'Pix' })).toBeDisabled();
+    await expect(grupo.getByRole('radio', { name: 'Boleto' })).toBeDisabled();
+});
+
+test('switch: anuncia o papel de switch e liga pelo espaco', async ({ page }) => {
+    await page.goto('/componentes/switch');
+    const chave = page.getByRole('switch', { name: 'Modo compacto' });
+    await expect(chave).not.toBeChecked();
+
+    await chave.focus();
+    await page.keyboard.press('Space');
+
+    await expect(chave).toBeChecked();
+});

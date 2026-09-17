@@ -1,0 +1,89 @@
+@page "/componentes/radio"
+
+<PageTitle>RvmRadio — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmRadio</h1>
+
+<p class="rvm-text-body1 apoio">
+    Grupo de opcoes em que so uma vale: <code>RvmRadioGroup</code> com <code>RvmRadio</code> dentro. O
+    grupo e um <code>&lt;fieldset&gt;</code> com a pergunta na <code>&lt;legend&gt;</code> — o leitor de
+    tela anuncia a pergunta ao entrar —, e por baixo sao radios nativos: as <strong>setas</strong> movem a
+    escolha, sem uma linha de JS.
+</p>
+
+<BlocoExemplo Titulo="Empilhado e em linha"
+              Descricao="Use Tab para entrar no grupo e as setas para trocar de opcao."
+              Codigo="@CodigoGrupos">
+    <div class="linha-exemplos alinhado-topo">
+        <RvmRadioGroup @bind-Value="_pagamento" Label="Forma de pagamento">
+            <RvmRadio Value="Pagamento.Pix" Label="Pix" />
+            <RvmRadio Value="Pagamento.Boleto" Label="Boleto" />
+            <RvmRadio Value="Pagamento.Cartao" Label="Cartao de credito" />
+        </RvmRadioGroup>
+
+        <RvmRadioGroup @bind-Value="_entrega" Label="Entrega" Orientation="RvmOrientation.Horizontal" Color="RvmColor.Success">
+            <RvmRadio Value="Entrega.Retirada" Label="Retirar na fazenda" />
+            <RvmRadio Value="Entrega.Frete" Label="Frete" />
+        </RvmRadioGroup>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Escolhido: @_pagamento e @_entrega.</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos e desabilitado"
+              Descricao="Tamanho e cor vem do grupo e descem para as opcoes. Disabled no grupo desabilita o fieldset inteiro, no proprio navegador."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos alinhado-topo">
+        <RvmRadioGroup @bind-Value="_tamanho" Label="Pequeno" Size="RvmSize.Small">
+            <RvmRadio Value="Pagamento.Pix" Label="Pix" />
+            <RvmRadio Value="Pagamento.Boleto" Label="Boleto" />
+        </RvmRadioGroup>
+        <RvmRadioGroup @bind-Value="_tamanho" Label="Grande" Size="RvmSize.Large" Color="RvmColor.Warning">
+            <RvmRadio Value="Pagamento.Pix" Label="Pix" />
+            <RvmRadio Value="Pagamento.Boleto" Label="Boleto" />
+        </RvmRadioGroup>
+        <RvmRadioGroup @bind-Value="_tamanho" Label="Desabilitado" Disabled="true">
+            <RvmRadio Value="Pagamento.Pix" Label="Pix" />
+            <RvmRadio Value="Pagamento.Boleto" Label="Boleto" />
+        </RvmRadioGroup>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/radio.png"
+              Arquivo="referencia-neatlab/Radio.png (recorte)"
+              Descricao="As variantes do kit: seis cores, tres tamanhos, e os estados escolhido, hover e desabilitado."
+              Alt="Recorte do kit NEATLAB mostrando botoes de radio em seis cores, tres tamanhos e varios estados" />
+
+@code {
+    private enum Pagamento { Pix, Boleto, Cartao }
+    private enum Entrega { Retirada, Frete }
+
+    private Pagamento _pagamento = Pagamento.Pix;
+    private Pagamento _tamanho = Pagamento.Boleto;
+    private Entrega _entrega = Entrega.Frete;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("RvmRadioGroup: Value / @bind-Value", "TValue", "—", "O valor escolhido. Um enum costuma ser o mais claro."),
+        new("RvmRadioGroup: Label", "string?", "—", "A pergunta do grupo; vira a legenda do fieldset."),
+        new("RvmRadioGroup: Orientation", "RvmOrientation", "Vertical", "Empilhado ou em linha."),
+        new("RvmRadioGroup: Color / Size / Disabled", "—", "Primary / Medium / false", "Descem para as opcoes."),
+        new("RvmRadioGroup: Name", "string?", "—", "name dos radios; sem ele, sai do @bind-Value."),
+        new("RvmRadio: Value", "TValue", "—", "O valor que a opcao representa. MESMO tipo do grupo."),
+        new("RvmRadio: Label", "string?", "—", "Texto da opcao; tambem e o nome acessivel.")
+    ];
+
+    private const string CodigoGrupos = """
+        <RvmRadioGroup @bind-Value="_pagamento" Label="Forma de pagamento">
+            <RvmRadio Value="Pagamento.Pix" Label="Pix" />
+            <RvmRadio Value="Pagamento.Boleto" Label="Boleto" />
+        </RvmRadioGroup>
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmRadioGroup @bind-Value="_x" Label="Grande" Size="RvmSize.Large" Color="RvmColor.Warning">
+            <RvmRadio Value="Pagamento.Pix" Label="Pix" />
+        </RvmRadioGroup>
+        """;
+}
