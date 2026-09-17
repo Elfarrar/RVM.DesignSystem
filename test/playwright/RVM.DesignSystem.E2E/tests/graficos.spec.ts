@@ -121,3 +121,25 @@ test('exportar entrega os quatro arquivos do grafico', async ({ page }) => {
 
     await expect(page.getByRole('status').filter({ hasText: 'PDF' })).toBeVisible();
 });
+
+// Eixo duplo (DSGN-011): duas unidades no mesmo grafico sem que a serie pequena vire um risco no chao.
+test('eixo duplo: escala propria a direita, e a legenda diz qual serie le onde', async ({ page }) => {
+    await page.goto('/componentes/line-chart');
+    const figura = page.locator('figure.rvm-grafico').filter({ hasText: 'eixo direito' });
+
+    await expect(figura.getByText('eixo esquerdo')).toBeVisible();
+    const rotulosEmPorcento = figura.locator('text', { hasText: /^\d+(,\d+)?%$/ });
+    await expect(rotulosEmPorcento.first()).toBeVisible();
+
+    // Os rotulos em porcento ficam a direita dos rotulos em reais (x no sistema do proprio SVG).
+    const direita = Number(await rotulosEmPorcento.first().getAttribute('x'));
+    const esquerda = Number(await figura.locator('text', { hasText: /mil$/ }).first().getAttribute('x'));
+    expect(esquerda).toBeLessThan(direita);
+
+    // A tabela do leitor de tela diz de que eixo o numero veio.
+    await expect(figura.getByRole('columnheader', { name: 'Margem (eixo direito)' })).toBeAttached();
+
+    await page.getByRole('group', { name: 'Receita e margem por mes' }).focus();
+    await page.keyboard.press('Home');
+    await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Margem' })).toHaveText('Jan: Receita 128 mil; Margem 11,5%');
+});

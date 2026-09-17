@@ -15,20 +15,22 @@
 
     private sealed record Coluna(int Categoria, int Serie, double X, double Y, double Largura, double Altura);
 
-    private Escala EscalaDosValores => Memo("EscalaDosValores", () =>
+    // Uma escala por eixo: com eixo duplo, cada lado le so as suas series (empilhadas, cada lado tem a
+    // sua pilha) e a coluna e desenhada na escala do eixo da sua serie.
+    private Escala EscalaDe(RvmChartAxis eixo) => Memo($"Escala{eixo}", () =>
         {
-            var dados = Dados;
+            var series = SeriesDo(eixo);
             double min = 0, max = 0;
-            foreach (var item in dados)
+            foreach (var item in Dados)
             {
                 if (Stacked)
                 {
-                    max = Math.Max(max, Series.Sum(s => Math.Max(0, s.ValorDe(item))));
-                    min = Math.Min(min, Series.Sum(s => Math.Min(0, s.ValorDe(item))));
+                    max = Math.Max(max, series.Sum(s => Math.Max(0, s.ValorDe(item))));
+                    min = Math.Min(min, series.Sum(s => Math.Min(0, s.ValorDe(item))));
                 }
                 else
                 {
-                    foreach (var s in Series)
+                    foreach (var s in series)
                     {
                         max = Math.Max(max, s.ValorDe(item));
                         min = Math.Min(min, s.ValorDe(item));
@@ -38,6 +40,15 @@
 
             return Escala.Arredondada(min, max);
         });
+
+    private Escala EscalaDosValores => EscalaDe(RvmChartAxis.Primary);
+
+    private Escala EscalaSecundaria => EscalaDe(RvmChartAxis.Secondary);
+
+    internal override IEnumerable<string>? RotulosDoEixoSecundario
+        => TemEixoSecundario
+            ? EscalaSecundaria.Marcas.Select(m => FormatarMarca(m, EscalaSecundaria.Passo, RvmChartAxis.Secondary))
+            : null;
 
     private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaDosValores.Marcas.Select(m => FormatarMarca(m, EscalaDosValores.Passo))));
 
@@ -51,21 +62,22 @@
 
     private List<Coluna> Colunas => Memo("Colunas", () =>
         {
-            var escala = EscalaDosValores;
             var lista = new List<Coluna>();
             var faixa = Faixa;
             var grupo = faixa * 0.6;
             var quantas = Math.Max(1, Series.Count);
             var largura = Math.Max(2, Math.Min(MaxBarWidth, Stacked ? grupo : (grupo - (quantas - 1) * 4) / quantas));
-            var zero = Y(escala, 0);
 
             for (var c = 0; c < Dados.Count; c++)
             {
                 var item = Dados[c];
                 var centro = Esquerda + faixa * (c + 0.5);
-                double positivo = 0, negativo = 0;
+                var positivo = new Dictionary<RvmChartAxis, double>();
+                var negativo = new Dictionary<RvmChartAxis, double>();
                 for (var s = 0; s < Series.Count; s++)
                 {
+                    var eixo = EixoDa(Series[s]);
+                    var escala = EscalaDe(eixo);
                     var valor = Series[s].ValorDe(item);
                     double y0, y1, x;
                     if (Stacked)
@@ -73,22 +85,24 @@
                         x = centro - largura / 2;
                         if (valor >= 0)
                         {
-                            y0 = Y(escala, positivo);
-                            positivo += valor;
-                            y1 = Y(escala, positivo);
+                            positivo.TryGetValue(eixo, out var acumulado);
+                            y0 = Y(escala, acumulado);
+                            positivo[eixo] = acumulado + valor;
+                            y1 = Y(escala, positivo[eixo]);
                         }
                         else
                         {
-                            y0 = Y(escala, negativo);
-                            negativo += valor;
-                            y1 = Y(escala, negativo);
+                            negativo.TryGetValue(eixo, out var acumulado);
+                            y0 = Y(escala, acumulado);
+                            negativo[eixo] = acumulado + valor;
+                            y1 = Y(escala, negativo[eixo]);
                         }
                     }
                     else
                     {
                         var total = quantas * largura + (quantas - 1) * 4;
                         x = centro - total / 2 + s * (largura + 4);
-                        y0 = zero;
+                        y0 = Y(escala, 0);
                         y1 = Y(escala, valor);
                     }
 
@@ -114,6 +128,15 @@
             }
             @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle")
         }
+        @if (TemEixoSecundario)
+        {
+            // A grade e so do eixo esquerdo: duas grades no mesmo desenho viram teia.
+            var secundaria = EscalaSecundaria;
+            foreach (var marca in secundaria.Marcas)
+            {
+                @Texto(Largura - MargemDireita + 8, Y(secundaria, marca), FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary), "start", "middle")
+            }
+        }
         @if (Ativo is { } ativo && ativo < Dados.Count)
         {
             <rect class="rvm-grafico-faixa-ativa" x="@N(esquerda + Faixa * ativo)" y="@N(MargemTopo)" width="@N(Faixa)" height="@N(AlturaDoPlot)" rx="4" />
@@ -135,7 +158,7 @@
     internal override string TituloDoPonto(int indice) => NomeDe(Dados[indice], indice);
 
     internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
-        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice])), CorDa(s)))];
+        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice]), EixoDa(s)), CorDa(s)))];
 
     internal override (double X, double Y) AncoraDoPonto(int indice)
     {
@@ -154,6 +177,6 @@
     }
 
     internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
-        => new(["Categoria", .. Series.Select(s => s.Name)],
+        => new(["Categoria", .. Series.Select(NomeNaTabela)],
                [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => formatar(s.ValorDe(item)))])]);
 }

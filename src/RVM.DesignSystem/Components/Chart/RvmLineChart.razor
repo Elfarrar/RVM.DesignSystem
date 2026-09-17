@@ -20,13 +20,24 @@
 
     private bool Suave => Smooth ?? Preenchida;
 
-    private Escala EscalaDosValores => Memo("EscalaDosValores", () =>
+    // Uma escala por eixo: com eixo duplo, cada lado le so as suas series.
+    private Escala EscalaDe(RvmChartAxis eixo) => Memo($"Escala{eixo}", () =>
         {
-            var valores = Dados.SelectMany(item => Series.Select(s => s.ValorDe(item))).DefaultIfEmpty(0).ToList();
+            var series = SeriesDo(eixo);
+            var valores = Dados.SelectMany(item => series.Select(s => s.ValorDe(item))).DefaultIfEmpty(0).ToList();
             // So a area parte do zero (area cortada exagera o volume); a linha usa a faixa dos dados, senao
             // valores entre 950 e 1050 ficavam espremidos no topo (achado do review: os dois ramos eram iguais).
             return Escala.Arredondada(Preenchida ? Math.Min(0, valores.Min()) : valores.Min(), valores.Max());
         });
+
+    private Escala EscalaDosValores => EscalaDe(RvmChartAxis.Primary);
+
+    private Escala EscalaSecundaria => EscalaDe(RvmChartAxis.Secondary);
+
+    internal override IEnumerable<string>? RotulosDoEixoSecundario
+        => TemEixoSecundario
+            ? EscalaSecundaria.Marcas.Select(m => FormatarMarca(m, EscalaSecundaria.Passo, RvmChartAxis.Secondary))
+            : null;
 
     private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaDosValores.Marcas.Select(m => FormatarMarca(m, EscalaDosValores.Passo))));
 
@@ -42,11 +53,11 @@
         => [.. Dados.Select((item, i) => (XDe(i), Y(escala, serie.ValorDe(item))))];
 
     internal string CaminhoDa(RvmChartSeries<TItem> serie)
-        => Caminho(PontosDa(serie, EscalaDosValores), Suave);
+        => Caminho(PontosDa(serie, EscalaDe(EixoDa(serie))), Suave);
 
     internal string PreenchimentoDa(RvmChartSeries<TItem> serie)
     {
-        var escala = EscalaDosValores;
+        var escala = EscalaDe(EixoDa(serie));
         var pontos = PontosDa(serie, escala);
         if (pontos.Count == 0)
         {
@@ -132,6 +143,15 @@
             }
             @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle")
         }
+        @if (TemEixoSecundario)
+        {
+            // A grade e so do eixo esquerdo: duas grades no mesmo desenho viram teia.
+            var secundaria = EscalaSecundaria;
+            foreach (var marca in secundaria.Marcas)
+            {
+                @Texto(Largura - MargemDireita + 8, Y(secundaria, marca), FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary), "start", "middle")
+            }
+        }
         @if (Ativo is { } ativo && ativo < Dados.Count)
         {
             <line class="rvm-grafico-eixo" x1="@N(XDe(ativo))" y1="@N(MargemTopo)" x2="@N(XDe(ativo))" y2="@N(MargemTopo + AlturaDoPlot)" />
@@ -158,7 +178,7 @@
                 {
                     @if (ShowPoints || Ativo == i || Dados.Count == 1)
                     {
-                        <circle class="rvm-grafico-ponto" cx="@N(XDe(i))" cy="@N(Y(escala, serie.ValorDe(Dados[i])))" r="@(Ativo == i ? "6" : "4")" />
+                        <circle class="rvm-grafico-ponto" cx="@N(XDe(i))" cy="@N(Y(EscalaDe(EixoDa(serie)), serie.ValorDe(Dados[i])))" r="@(Ativo == i ? "6" : "4")" />
                     }
                 }
             </g>
@@ -174,12 +194,11 @@
     internal override string TituloDoPonto(int indice) => NomeDe(Dados[indice], indice);
 
     internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
-        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice])), CorDa(s)))];
+        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice]), EixoDa(s)), CorDa(s)))];
 
     internal override (double X, double Y) AncoraDoPonto(int indice)
     {
-        var escala = EscalaDosValores;
-        var topo = Series.Select(s => Y(escala, s.ValorDe(Dados[indice]))).DefaultIfEmpty(MargemTopo).Min();
+        var topo = Series.Select(s => Y(EscalaDe(EixoDa(s)), s.ValorDe(Dados[indice]))).DefaultIfEmpty(MargemTopo).Min();
         return (XDe(indice), topo);
     }
 
@@ -194,6 +213,6 @@
     }
 
     internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
-        => new(["Categoria", .. Series.Select(s => s.Name)],
+        => new(["Categoria", .. Series.Select(NomeNaTabela)],
                [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => formatar(s.ValorDe(item)))])]);
 }

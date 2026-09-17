@@ -21,7 +21,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 {
     internal const double LarguraPadrao = 600;
     internal const double MargemTopo = 16;
-    internal const double MargemDireita = 16;
+    internal const double MargemDireitaPadrao = 16;
     internal const double MargemBaixo = 32;
 
     private static readonly RvmColor[] Paleta =
@@ -64,6 +64,12 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     /// <summary>Formato dos valores no eixo e na dica. Padrao: <see cref="RvmChartFormat.Compact"/>.</summary>
     [Parameter] public Func<double, string>? ValueFormat { get; set; }
+
+    /// <summary>
+    /// Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o
+    /// <see cref="ValueFormat"/>, que descreve a unidade do eixo primario.
+    /// </summary>
+    [Parameter] public Func<double, string>? SecondaryValueFormat { get; set; }
 
     /// <summary>
     /// Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu
@@ -111,9 +117,41 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     internal string Formatar(double valor) => (ValueFormat ?? RvmChartFormat.Compact)(valor);
 
+    /// <summary>O valor no formato do eixo em que a serie e lida.</summary>
+    internal string Formatar(double valor, RvmChartAxis eixo)
+        => eixo == RvmChartAxis.Secondary ? (SecondaryValueFormat ?? RvmChartFormat.Compact)(valor) : Formatar(valor);
+
+    /// <summary>
+    /// Ha duas escalas de valor a desenhar: alguma serie pediu o eixo da direita e alguma ficou na
+    /// esquerda. Se TODAS pedirem o secundario, o grafico segue com um eixo so — dois eixos iguais
+    /// ocupariam as duas bordas para dizer a mesma coisa.
+    /// </summary>
+    internal bool TemEixoSecundario
+        => _series.Any(s => s.Axis == RvmChartAxis.Secondary) && _series.Any(s => s.Axis == RvmChartAxis.Primary);
+
+    /// <summary>As series lidas naquele eixo (todas, quando o grafico tem um eixo so).</summary>
+    internal IReadOnlyList<RvmChartSeries<TItem>> SeriesDo(RvmChartAxis eixo)
+        => !TemEixoSecundario
+            ? eixo == RvmChartAxis.Primary ? _series : []
+            : [.. _series.Where(s => s.Axis == eixo)];
+
+    /// <summary>Em qual eixo a serie e lida de fato (o primario, se o grafico so tem um).</summary>
+    internal RvmChartAxis EixoDa(RvmChartSeries<TItem> serie)
+        => TemEixoSecundario ? serie.Axis : RvmChartAxis.Primary;
+
+    /// <summary>O nome da serie na tabela de dados, dizendo o eixo quando ha dois.</summary>
+    internal string NomeNaTabela(RvmChartSeries<TItem> serie)
+        => TemEixoSecundario && serie.Axis == RvmChartAxis.Secondary ? $"{serie.Name} (eixo direito)" : serie.Name;
+
     /// <summary>Rotulo de uma marca de eixo: o formato do consumidor, ou o compacto na precisao do passo.</summary>
     internal string FormatarMarca(double marca, double passo)
         => ValueFormat is { } formato ? formato(marca) : RvmChartFormat.CompactForAxis(marca, passo);
+
+    /// <summary>Rotulo de uma marca, no formato do eixo a que ela pertence.</summary>
+    internal string FormatarMarca(double marca, double passo, RvmChartAxis eixo)
+        => eixo == RvmChartAxis.Secondary
+            ? SecondaryValueFormat is { } formato ? formato(marca) : RvmChartFormat.CompactForAxis(marca, passo)
+            : FormatarMarca(marca, passo);
 
     internal string NomeDe(TItem item, int indice) => Label?.Invoke(item) ?? (indice + 1).ToString(CultureInfo.InvariantCulture);
 
@@ -156,9 +194,12 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>O ponto sob o ponteiro, em coordenadas do desenho.</summary>
     internal abstract int? PontoEm(double x, double y);
 
-    /// <summary>Itens da legenda.</summary>
+    /// <summary>Itens da legenda. Com dois eixos, cada serie diz em qual delas e lida.</summary>
     internal virtual IReadOnlyList<ItemDaLegenda> Legenda
-        => _series.Count > 1 ? [.. _series.Select(s => new ItemDaLegenda(s.Name, CorDa(s), null))] : [];
+        => _series.Count > 1
+            ? [.. _series.Select(s => new ItemDaLegenda(s.Name, CorDa(s),
+                TemEixoSecundario ? (s.Axis == RvmChartAxis.Secondary ? "eixo direito" : "eixo esquerdo") : null))]
+            : [];
 
     /// <summary>A tabela de dados, com os valores passados pelo formatador informado.</summary>
     internal abstract TabelaDeDados MontarTabela(Func<double, string> formatar);
@@ -310,6 +351,19 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     private string ClassesProprias => Animated ? "rvm-grafico rvm-animado" : "rvm-grafico";
 
     // --- Layout cartesiano, comum a colunas, barras, linha, area, histograma e dispersao ---
+
+    /// <summary>
+    /// Espaco a direita do desenho: a margem de sempre, ou o que os rotulos do eixo secundario precisam.
+    /// </summary>
+    internal double MargemDireita
+        => Memo("MargemDireita", () => RotulosDoEixoSecundario is { } rotulos
+            ? LarguraDosRotulos(rotulos, MargemDireitaPadrao)
+            : MargemDireitaPadrao);
+
+    /// <summary>
+    /// Os rotulos do eixo secundario, nos graficos que o desenham; <c>null</c> quando nao ha segundo eixo.
+    /// </summary>
+    internal virtual IEnumerable<string>? RotulosDoEixoSecundario => null;
 
     /// <summary>Largura reservada aos rotulos do eixo de valores, pelo maior texto.</summary>
     internal static double LarguraDosRotulos(IEnumerable<string> textos, double minimo = 32)

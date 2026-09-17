@@ -92,7 +92,9 @@
         new("Animated", "bool", "true", "Anima ao aparecer e ao mudar; desliga sozinha em \"reduzir movimento\"."),
         new("ExportAsync(format)", "Task<bool>", "—", "Baixa PNG, SVG, CSV ou PDF do grafico."),
         new("ExportFileName", "string?", "AriaLabel em minusculas", "Nome do arquivo exportado, sem extensao."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Nome, valor e cor de cada serie.")
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Nome, valor e cor de cada serie."),
+        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita."),
+        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida; com duas escalas, o exemplo de eixo duplo esta no RvmLineChart.")
     ];
 
     private const string CodigoAgrupado = """
