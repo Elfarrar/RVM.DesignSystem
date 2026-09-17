@@ -32,7 +32,10 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
 
     [CascadingParameter] private EditContext? EditContext { get; set; }
 
-    /// <summary>As opcoes.</summary>
+    /// <summary>
+    /// As opcoes. Passe uma lista ja materializada: a colecao e percorrida a cada render do pai, e um
+    /// <c>IQueryable</c> iria ao banco toda vez.
+    /// </summary>
     [Parameter, EditorRequired] public IEnumerable<TValue> Items { get; set; } = [];
 
     /// <summary>Texto de cada opcao. Padrao: <c>ToString()</c>.</summary>
@@ -132,28 +135,11 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
     internal IEnumerable<string> ValoresParaEnvio
         => Selecionados.Select(v => Convert.ToString(v, CultureInfo.InvariantCulture) ?? string.Empty);
 
-    private LambdaExpression? _expressaoDoCampoEmCache;
-    private FieldIdentifier _campoEmCache;
-
-    /// <summary>O campo no EditForm. Compilar a expressao custa: so refaz quando ela muda.</summary>
-    private FieldIdentifier? Campo
-    {
-        get
-        {
-            if (ExpressaoDoCampo is not { } expressao || EditContext is null)
-            {
-                return null;
-            }
-
-            if (!ReferenceEquals(expressao, _expressaoDoCampoEmCache))
-            {
-                _campoEmCache = CriarCampo(expressao);
-                _expressaoDoCampoEmCache = expressao;
-            }
-
-            return _campoEmCache;
-        }
-    }
+    /// <summary>
+    /// O campo no EditForm, resolvido uma vez por <see cref="OnParametersSet"/>. Cachear pela instancia
+    /// da expressao nao adiantava: o <c>@bind-Value</c> gera uma expressao nova a cada render do pai.
+    /// </summary>
+    private FieldIdentifier? Campo { get; set; }
 
     internal string? MensagemDeErro
         => !string.IsNullOrWhiteSpace(ErrorText)
@@ -222,6 +208,7 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
             _contextoAssinado = EditContext;
         }
 
+        Campo = ExpressaoDoCampo is { } expressao && EditContext is not null ? CriarCampo(expressao) : null;
         Filtrar();
     }
 

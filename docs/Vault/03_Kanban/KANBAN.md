@@ -10,7 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-004]] | Onda 2: formulario e navegacao (10 componentes) | em andamento |
+| [[DSGN-004]] | Onda 2: formulario e navegacao — os 10 no dev, review feito | espera o Rafael aprovar as comparacoes |
 
 ## A fazer — ondas 2 a 4
 

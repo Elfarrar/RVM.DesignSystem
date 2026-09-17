@@ -62,7 +62,7 @@ biblioteca de posicionamento.
 | **Menu: itens sao `<button role=menuitem>`; clicar fora fecha por camada transparente** | Enter e Espaco acionam sem codigo; clicar fora dispensa ouvir o documento por JS. `RvmButton` ganhou `FocusAsync()` para o menu devolver o foco |
 | **Select: `RvmSelect` e `RvmMultiSelect` sobre uma base comum, sem `InputBase`** | Os dois tem tipo de valor diferente (`TValue` e `IReadOnlyList<TValue>`); a base acha o campo pela expressao e fala com o `EditContext` direto (validacao, `modified`) |
 | **Select-only combobox: foco no campo, opcao ativa por `aria-activedescendant`, anel por dentro** | Padrao APG. A opcao ativa nao tem foco real, entao o anel e o que mostra onde o teclado esta |
-| **Select: valor fora das opcoes nao conta como escolhido** | Sem isso, um enum ou int sem valor (o `default`, 0) aparecia escolhido |
+| 🔴 **Select de tipo valor nao anulavel comeca com o `default` escolhido — contrato, nao bug a esconder** | Review independente (P1): `Value is not null` e sempre verdadeiro para `int`/enum, e 0 costuma ser opcao legitima. Nao da para distinguir "escolheu 0" de "nao escolheu": para comecar vazio, `TValue` anulavel (`Status?`), como no `InputSelect`. Documentado e testado. Valor fora das opcoes continua nao contando |
 | **Busca ignora maiusculas e acentos** (`CompareOptions.IgnoreNonSpace`) | luis acha Luís |
 | 🔴 **Item de menu focado: fundo de hover, nao `action-focus`** | No tema claro o texto sobre `action-focus` dava 4.2:1 — so aparece com o menu ABERTO, e o axe de pagina roda com tudo fechado. Virou teste E2E com menu e select abertos nos dois temas |
 
@@ -73,3 +73,12 @@ biblioteca de posicionamento.
 3. axe local nos dois temas; E2E local e no dev
 4. Teclado: o padrao ARIA de cada componente, testado de verdade
 5. Comparacao lado a lado com o PNG do kit, aprovada pelo Rafael
+
+## Review independente (onda 2 inteira)
+
+Sonnet, 17/09. Um P1 (o de cima, select com tipo valor) e dois P2: cache do `FieldIdentifier` por
+instancia da expressao era inutil (o `@bind` gera expressao nova a cada render) — agora resolve uma
+vez por `OnParametersSet`; `Items` percorrido a cada render — documentado que deve vir materializado.
+Verificado OK pelo reviewer: ids por contador estatico, dispose das abas, `CriarCampo` com modelo
+aninhado, CSS sem hex e com `::deep` onde precisa, atributos repassados, nada de JS no estado inicial,
+padroes APG de tabs, menu e combobox.
