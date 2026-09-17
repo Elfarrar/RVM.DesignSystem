@@ -1,0 +1,106 @@
+@page "/componentes/drawer"
+
+<PageTitle>RvmDrawer — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDrawer</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Painel que sai de um lado da tela. A <strong>temporaria</strong> se comporta como dialogo modal
+    (fundo, Esc, foco preso); a <strong>permanente</strong> e um <code>aside</code> no fluxo da pagina.
+    320 px de largura, <strong>medida no kit</strong>.
+</p>
+
+<BlocoExemplo Titulo="Temporaria, nos quatro lados"
+              Descricao="Esc ou clicar fora fecham, e o foco volta para o botao que abriu."
+              Codigo="@CodigoTemporaria">
+    <div class="linha-exemplos">
+        @foreach (var lado in Lados)
+        {
+            <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="@(() => Abrir(lado))">@NomeDoLado(lado)</RvmButton>
+        }
+    </div>
+
+    <RvmDrawer @bind-Open="_aberta" Anchor="_lado" AriaLabel="Caixas de mensagem">
+        <div class="conteudo-gaveta">
+            <RvmTypography Variant="RvmTypographyVariant.Subtitle2" Color="RvmTextColor.Secondary">Caixas de mensagem</RvmTypography>
+            <RvmList AriaLabel="Caixas">
+                <RvmListItem Icon="RvmIconName.Mail" OnClick="@(() => _aberta = false)">Entrada</RvmListItem>
+                <RvmListItem Icon="RvmIconName.Upload" OnClick="@(() => _aberta = false)">Enviadas</RvmListItem>
+                <RvmListItem Icon="RvmIconName.File" OnClick="@(() => _aberta = false)">Rascunhos</RvmListItem>
+            </RvmList>
+            <RvmDivider />
+            <RvmList AriaLabel="Outras caixas">
+                <RvmListItem Icon="RvmIconName.Trash" OnClick="@(() => _aberta = false)">Lixeira</RvmListItem>
+            </RvmList>
+        </div>
+    </RvmDrawer>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Permanente"
+              Descricao="Menu lateral fixo ao lado do conteudo, sem fundo nem foco preso."
+              Codigo="@CodigoPermanente">
+    <div class="exemplo-gaveta-fixa">
+        <RvmDrawer Variant="RvmDrawerVariant.Permanent" AriaLabel="Menu da fazenda" Size="220px">
+            <RvmList AriaLabel="Secoes da fazenda">
+                <RvmListItem Href="componentes/drawer" Icon="RvmIconName.Home" Selected="true">Visao geral</RvmListItem>
+                <RvmListItem Href="componentes/drawer#talhoes" Icon="RvmIconName.File">Talhoes</RvmListItem>
+                <RvmListItem Href="componentes/drawer#equipe" Icon="RvmIconName.Users">Equipe</RvmListItem>
+            </RvmList>
+        </RvmDrawer>
+        <div class="exemplo-gaveta-conteudo">
+            <RvmTypography>O conteudo da pagina fica aqui, ao lado da gaveta.</RvmTypography>
+        </div>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/drawer.png"
+              Arquivo="referencia-neatlab/Drawer.png (recorte)"
+              Descricao="A gaveta de 320 px com as caixas de mensagem e um divisor."
+              Alt="Recorte do kit NEATLAB mostrando uma gaveta lateral com lista de caixas de mensagem" />
+
+@code {
+    private static readonly RvmDrawerAnchor[] Lados = [RvmDrawerAnchor.Left, RvmDrawerAnchor.Right, RvmDrawerAnchor.Top, RvmDrawerAnchor.Bottom];
+
+    private bool _aberta;
+    private RvmDrawerAnchor _lado = RvmDrawerAnchor.Left;
+
+    private void Abrir(RvmDrawerAnchor lado)
+    {
+        _lado = lado;
+        _aberta = true;
+    }
+
+    private static string NomeDoLado(RvmDrawerAnchor lado) => lado switch
+    {
+        RvmDrawerAnchor.Right => "Da direita",
+        RvmDrawerAnchor.Top => "Do topo",
+        RvmDrawerAnchor.Bottom => "Da base",
+        _ => "Da esquerda"
+    };
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Open", "bool", "false", "Aberta (so na temporaria). Aceita @bind-Open."),
+        new("Anchor", "RvmDrawerAnchor", "Left", "Left, Right, Top ou Bottom."),
+        new("Variant", "RvmDrawerVariant", "Temporary", "Temporary (modal) ou Permanent (no fluxo)."),
+        new("Size", "string", "\"320px\"", "Largura (lados) ou altura (topo e base)."),
+        new("AriaLabel", "string", "—", "Nome da gaveta para o leitor de tela."),
+        new("ChildContent", "RenderFragment?", "—", "O conteudo."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Repassados a gaveta.")
+    ];
+
+    private const string CodigoTemporaria = """
+        <RvmButton OnClick="@(() => _aberta = true)">Abrir</RvmButton>
+        <RvmDrawer @bind-Open="_aberta" Anchor="RvmDrawerAnchor.Right" AriaLabel="Filtros">
+            ...
+        </RvmDrawer>
+        """;
+
+    private const string CodigoPermanente = """
+        <RvmDrawer Variant="RvmDrawerVariant.Permanent" AriaLabel="Menu da fazenda" Size="220px">
+            <RvmList>...</RvmList>
+        </RvmDrawer>
+        """;
+}

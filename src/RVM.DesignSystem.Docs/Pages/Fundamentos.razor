@@ -4,14 +4,14 @@
 
 <h1 class="rvm-text-h4">Fundamentos</h1>
 
-<p class="rvm-text-body1 apoio">
+<p class="rvm-text-body1 site-apoio">
     Os tokens renderizados pelo proprio navegador, nos dois temas. Troque o tema no topo: nada
     nesta pagina tem cor escrita a mao — tudo sai de <code>var(--rvm-...)</code>.
 </p>
 
 <section aria-labelledby="cores-de-marca">
     <h2 id="cores-de-marca" class="rvm-text-h6">Cores de marca</h2>
-    <p class="rvm-text-body2 apoio">
+    <p class="rvm-text-body2 site-apoio">
         Nao mudam entre claro e escuro. O texto de cada amostra usa o token
         <code>-contrast</code> do papel, escolhido para passar 4.5:1 sobre o fundo.
     </p>
@@ -25,7 +25,7 @@
             </div>
         }
     </div>
-    <p class="rvm-text-body2 apoio">
+    <p class="rvm-text-body2 site-apoio">
         Para escrever <strong>com</strong> a cor do papel — link, texto de destaque — existe a
         variante <code>-text</code>, que muda por tema. O <code>-main</code> nao serve: no claro ele
         reprova AA em cinco papeis, e no escuro o primary da 1.84:1.
@@ -43,7 +43,7 @@
 
 <section aria-labelledby="fundos-suaves">
     <h2 id="fundos-suaves" class="rvm-text-h6">Fundos suaves e contorno</h2>
-    <p class="rvm-text-body2 apoio">
+    <p class="rvm-text-body2 site-apoio">
         O <code>primary-soft</code> do tema claro e roxo com um primary azul. Nao e erro de
         medicao: e assim no kit, e esta mantido fiel ate o Rafael decidir harmonizar.
     </p>
@@ -86,7 +86,7 @@
         {
             <div class="amostra borda">
                 <span class="rvm-text-subtitle2">@rotulo</span>
-                <span class="rvm-text-caption apoio">--rvm-color-@token</span>
+                <span class="rvm-text-caption site-apoio">--rvm-color-@token</span>
                 <div class="linha-amostra" style="background: var(--rvm-color-@token);"></div>
             </div>
         }
@@ -110,7 +110,7 @@
 
 <section aria-labelledby="tipografia">
     <h2 id="tipografia" class="rvm-text-h6">Tipografia</h2>
-    <p class="rvm-text-body2 apoio">
+    <p class="rvm-text-body2 site-apoio">
         Fonte <strong>Inter</strong>, servida pelo proprio pacote. A escala veio escrita na pagina
         <code>Typography</code> do kit, entao nao depende de medicao.
     </p>
@@ -119,7 +119,7 @@
         @foreach (var (classe, rotulo) in Estilos)
         {
             <div class="linha-escala">
-                <span class="rvm-text-caption apoio">@rotulo</span>
+                <span class="rvm-text-caption site-apoio">@rotulo</span>
                 <span class="@classe">Quase todo mundo ja viu um pangrama</span>
             </div>
         }
@@ -128,7 +128,7 @@
 
 <section aria-labelledby="espacamento">
     <h2 id="espacamento" class="rvm-text-h6">Espacamento, raio e elevacao</h2>
-    <p class="rvm-text-body2 apoio">
+    <p class="rvm-text-body2 site-apoio">
         Espacamento em base 4 px. As cinco elevacoes sao <strong>aproximacao</strong> — o kit mostra
         24 quadrados e nao escreve os valores; os numeros exatos dependem de ler o kit pela API do Figma.
     </p>
@@ -137,8 +137,8 @@
         @foreach (var passo in Espacos)
         {
             <div class="medida">
-                <div class="barra" style="width: var(--rvm-space-@passo);"></div>
-                <span class="rvm-text-caption apoio">--rvm-space-@passo</span>
+                <div class="site-barra" style="width: var(--rvm-space-@passo);"></div>
+                <span class="rvm-text-caption site-apoio">--rvm-space-@passo</span>
             </div>
         }
     </div>
@@ -147,8 +147,8 @@
         @foreach (var raio in Raios)
         {
             <div class="medida">
-                <div class="quadrado" style="border-radius: var(--rvm-radius-@raio);"></div>
-                <span class="rvm-text-caption apoio">--rvm-radius-@raio</span>
+                <div class="site-quadrado" style="border-radius: var(--rvm-radius-@raio);"></div>
+                <span class="rvm-text-caption site-apoio">--rvm-radius-@raio</span>
             </div>
         }
     </div>
@@ -157,8 +157,8 @@
         @for (var nivel = 1; nivel <= 5; nivel++)
         {
             <div class="medida">
-                <div class="quadrado elevado" style="box-shadow: var(--rvm-shadow-@nivel);"></div>
-                <span class="rvm-text-caption apoio">--rvm-shadow-@nivel</span>
+                <div class="site-quadrado elevado" style="box-shadow: var(--rvm-shadow-@nivel);"></div>
+                <span class="rvm-text-caption site-apoio">--rvm-shadow-@nivel</span>
             </div>
         }
     </div>

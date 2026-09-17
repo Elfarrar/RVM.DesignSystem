@@ -13,7 +13,7 @@ body {
     min-height: 100vh;
 }
 
-.topo {
+.site-topo {
     display: flex;
     align-items: center;
     gap: var(--rvm-space-6);
@@ -22,30 +22,30 @@ body {
     border-bottom: 1px solid var(--rvm-color-divider);
 }
 
-.marca {
+.site-marca {
     color: var(--rvm-color-primary-text);
     text-decoration: none;
 }
 
-.menu {
+.site-menu {
     display: flex;
     gap: var(--rvm-space-4);
     margin-inline-end: auto;
 }
 
-.link {
+.site-link {
     color: var(--rvm-color-text-secondary);
     text-decoration: none;
     padding: var(--rvm-space-1) var(--rvm-space-2);
     border-radius: var(--rvm-radius-sm);
 }
 
-.link:hover {
+.site-link:hover {
     background: var(--rvm-color-action-hover);
     color: var(--rvm-color-text-primary);
 }
 
-.link.active {
+.site-link.active {
     color: var(--rvm-color-primary-text);
     background: var(--rvm-color-action-selected);
 }
@@ -65,7 +65,7 @@ body {
     background: var(--rvm-color-action-hover);
 }
 
-.conteudo {
+.site-conteudo {
     flex: 1;
     width: 100%;
     max-width: 62rem;
@@ -74,11 +74,11 @@ body {
     padding: var(--rvm-space-8) var(--rvm-space-6);
 }
 
-.conteudo section {
+.site-conteudo section {
     margin-block: var(--rvm-space-10);
 }
 
-.apoio {
+.site-apoio {
     color: var(--rvm-color-text-secondary);
 }
 
@@ -159,20 +159,20 @@ code {
     gap: var(--rvm-space-2);
 }
 
-.barra {
+.site-barra {
     height: var(--rvm-space-4);
     background: var(--rvm-color-primary-main);
     border-radius: var(--rvm-radius-sm);
 }
 
-.quadrado {
+.site-quadrado {
     width: 4rem;
     height: 4rem;
     background: var(--rvm-color-primary-soft);
     border: 1px solid var(--rvm-color-divider);
 }
 
-.quadrado.elevado {
+.site-quadrado.elevado {
     background: var(--rvm-color-background-paper);
     border: none;
     border-radius: var(--rvm-radius-md);
@@ -203,7 +203,7 @@ code {
 }
 
 @media (max-width: 40rem) {
-    .topo {
+    .site-topo {
         flex-wrap: wrap;
         gap: var(--rvm-space-3);
     }
@@ -419,4 +419,26 @@ code {
 .exemplo-lista {
     width: 100%;
     max-width: 24rem;
+}
+
+.conteudo-gaveta {
+    padding: var(--rvm-space-4) 0;
+}
+
+.conteudo-gaveta > .rvm-text-subtitle2 {
+    padding: 0 var(--rvm-space-4);
+}
+
+.exemplo-gaveta-fixa {
+    display: flex;
+    width: 100%;
+    min-height: 14rem;
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-sm);
+    overflow: hidden;
+}
+
+.exemplo-gaveta-conteudo {
+    flex: 1;
+    padding: var(--rvm-space-4);
 }

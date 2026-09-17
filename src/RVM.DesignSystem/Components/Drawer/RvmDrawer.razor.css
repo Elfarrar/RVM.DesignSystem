@@ -1,0 +1,61 @@
+/* CSS isolado do RvmDrawer. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Drawer.png: 320 px de largura, no papel, com sombra. */
+
+.gaveta {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto;
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+}
+
+.gaveta:focus {
+    outline: none;
+}
+
+/* --- Permanente: no fluxo, com uma borda do lado do conteudo --- */
+.permanente.esquerda { border-inline-end: 1px solid var(--rvm-color-divider); }
+.permanente.direita { border-inline-start: 1px solid var(--rvm-color-divider); }
+.permanente.topo { border-bottom: 1px solid var(--rvm-color-divider); width: 100%; }
+.permanente.base { border-top: 1px solid var(--rvm-color-divider); width: 100%; }
+
+/* --- Temporaria: por cima de tudo, presa a um lado --- */
+.camada {
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+}
+
+.fundo {
+    position: absolute;
+    inset: 0;
+    background-color: var(--rvm-color-overlay);
+    opacity: 0.6;
+}
+
+.temporaria {
+    position: absolute;
+    box-shadow: var(--rvm-shadow-5);
+    animation-duration: var(--rvm-transition-medium);
+    animation-fill-mode: both;
+}
+
+.temporaria.esquerda { top: 0; bottom: 0; left: 0; animation-name: rvm-gaveta-da-esquerda; }
+.temporaria.direita { top: 0; bottom: 0; right: 0; animation-name: rvm-gaveta-da-direita; }
+.temporaria.topo { top: 0; left: 0; right: 0; animation-name: rvm-gaveta-do-topo; }
+.temporaria.base { bottom: 0; left: 0; right: 0; animation-name: rvm-gaveta-da-base; }
+
+@keyframes rvm-gaveta-da-esquerda { from { transform: translateX(-100%); } }
+@keyframes rvm-gaveta-da-direita { from { transform: translateX(100%); } }
+@keyframes rvm-gaveta-do-topo { from { transform: translateY(-100%); } }
+@keyframes rvm-gaveta-da-base { from { transform: translateY(100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .temporaria {
+        animation: none;
+    }
+}

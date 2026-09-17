@@ -30,6 +30,9 @@ const PAGINAS = [
     { rota: '/componentes/empty-state', titulo: 'RvmEmptyState' },
     { rota: '/componentes/list', titulo: 'RvmList' },
     { rota: '/componentes/accordion', titulo: 'RvmAccordion' },
+    { rota: '/componentes/dialog', titulo: 'RvmDialog' },
+    { rota: '/componentes/drawer', titulo: 'RvmDrawer' },
+    { rota: '/componentes/snackbar', titulo: 'RvmSnackbar' },
 ];
 
 const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton']);
