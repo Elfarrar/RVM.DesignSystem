@@ -1,0 +1,80 @@
+@namespace RVM.DesignSystem.Components.AppShell
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Item que abre subitens (o "Dashboards" do kit). E um botao com aria-expanded; os subitens so existem
+   no DOM quando aberto. Recolhido, clicar expande o menu e abre o grupo — com o menu nos icones nao ha
+   onde mostrar os subitens. *@
+<li class="rvm-nav-item">
+    <button type="button"
+            class="@ClassesDoBotao"
+            aria-expanded="@(Expanded && !Recolhido ? "true" : "false")"
+            aria-controls="@_id"
+            title="@(Recolhido ? Text : null)"
+            @onclick="AlternarAsync">
+        <RvmIcon Name="Icon" Size="RvmSize.Large" class="rvm-nav-icone" />
+        <span class="rvm-nav-texto">@Text</span>
+        @if (!string.IsNullOrWhiteSpace(Badge))
+        {
+            <span class="rvm-nav-selo">@Badge</span>
+        }
+        <RvmIcon Name="RvmIconName.ChevronDown" Size="RvmSize.Small" class="rvm-nav-seta" />
+    </button>
+    @if (Expanded && !Recolhido)
+    {
+        <CascadingValue Name="@NomeDaCascata" Value="this" IsFixed="true">
+            <ul id="@_id" class="rvm-nav-lista rvm-nav-subitens">
+                @ChildContent
+            </ul>
+        </CascadingValue>
+    }
+</li>
+
+@code {
+    internal const string NomeDaCascata = "RvmNavGroup";
+
+    private static int _proximoId;
+    private readonly string _id = $"rvm-nav-grupo-{Interlocked.Increment(ref _proximoId)}";
+
+    [CascadingParameter] private RvmAppShell? Casca { get; set; }
+
+    /// <summary>Texto do grupo.</summary>
+    [Parameter, EditorRequired] public string Text { get; set; } = "";
+
+    /// <summary>Icone do grupo.</summary>
+    [Parameter, EditorRequired] public RvmIconName Icon { get; set; }
+
+    /// <summary>Selo ao lado do texto ("Novo").</summary>
+    [Parameter] public string? Badge { get; set; }
+
+    /// <summary>Subitens a mostra. Aceita <c>@bind-Expanded</c>.</summary>
+    [Parameter] public bool Expanded { get; set; }
+
+    /// <summary>Disparado quando o grupo abre ou fecha.</summary>
+    [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
+
+    /// <summary>Os subitens: <see cref="RvmNavItem"/> sem icone.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private bool Recolhido => Casca?.Collapsed == true;
+
+    private string ClassesDoBotao
+        => "rvm-nav-link rvm-nav-grupo"
+           + (Expanded && !Recolhido ? " rvm-aberto" : "")
+           + (Recolhido ? " rvm-recolhido" : "");
+
+    private async Task AlternarAsync()
+    {
+        if (Recolhido)
+        {
+            await Casca!.DefinirRecolhidoAsync(false);
+            if (Expanded)
+            {
+                return;
+            }
+        }
+
+        Expanded = !Expanded;
+        await ExpandedChanged.InvokeAsync(Expanded);
+    }
+}

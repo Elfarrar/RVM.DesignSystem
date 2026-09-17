@@ -450,3 +450,72 @@ code {
     gap: var(--rvm-space-3);
     line-height: 1.25;
 }
+
+/* Pagina da moldura: o exemplo vive num quadro de altura fixa, com o menu e o conteudo rolando dentro. */
+.site-moldura {
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+}
+
+.site-quadro-estreito {
+    width: 100%;
+    max-width: 400px;
+}
+
+.site-marca-exemplo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    font-size: var(--rvm-text-h6-size);
+    font-weight: 600;
+}
+
+.site-espaco {
+    flex: 1;
+}
+
+.site-botao-icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+}
+
+.site-botao-icone:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.site-botao-icone:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.site-quadro-conteudo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    min-height: 420px;
+    padding: var(--rvm-space-6);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+}
+
+.site-quadro-conteudo > * {
+    margin: 0;
+}
+
+.site-links-rodape {
+    display: inline-flex;
+    gap: var(--rvm-space-4);
+}
+
+.site-links-rodape a {
+    color: var(--rvm-color-primary-text);
+}

@@ -32,6 +32,7 @@ exit code; arquivo novo pela ferramenta Write.
 - [x] **Fatia 1**: `RvmRating`, `RvmStepper` (+ `RvmStep`), `RvmTimeline` + `RvmTimelineItem`
 - [x] **Fatia 2**: `RvmCalendar`, `RvmDatePicker`, `RvmDateRangePicker`, `RvmTimePicker`
 - [x] **Fatia 3**: `RvmTable` + `RvmTableColumn`, `RvmDataGrid`
+- [x] **Fatia 4**: `RvmAppShell` + `RvmNavItem`, `RvmNavGroup`, `RvmNavSection`
 
 ## Decisoes e medicoes
 
@@ -58,6 +59,12 @@ exit code; arquivo novo pela ferramenta Write.
 | **Linha selecionada no `action-selected`, nao no #797992 do kit** | O cinza do kit nao chega a 4.5:1 com o texto; quem diz "marcada" e a caixa de marcar, que tem nome "Selecionar" + primeira coluna |
 | **`RvmDataGrid` herda da `RvmTable`**: filtro visivel numa linha propria (`type=search`), "Linhas por pagina" num `select` nativo, intervalo em `role=status`; marcar todas vale para a pagina | Dados na memoria. Page/PageSize so sao adotados de fora quando mudam: sem `@bind`, um novo render nao volta a pessoa para a pagina 1 |
 | 🔴 **Esc logo depois de abrir o seletor de data nao fechava no dev** (fatia 2) | O foco so entra no dialogo quando o `rvm-sobreposicao.js` carrega; servido de longe, o Esc chegava antes, no botao, e ninguem ouvia. O botao tambem trata o Esc. Pego no E2E do dev; local passava |
+| **Medidas da fatia 4**: menu de 260 px (68 recolhido), marca em 64 px, item de 42 px a cada 48 com pilula colada a esquerda e 18 px livres a direita, topo de 64 px, conteudo com 24 px de margem, rodape de 80 px | Varredura em `Menu Drawer.png` e `Collapsed Menu.png` (o `Vertical Menu.png` saiu com o menu vazio no export) |
+| **Degrade do item ativo escurecido**: do tom medio do kit (`--rvm-color-menu-active`) ao `primary-main` | O degrade do kit comeca em #31A1F9, onde branco da 2.76:1. Com o novo, branco passa de 4.5:1 a partir de 10% da largura e o texto comeca em 22%. Era a pendencia deixada na camada de tokens |
+| **Modo estreito por container query (ate 840 px da propria moldura)**, nao por media query | A moldura ocupa a tela, entao da no mesmo; e os exemplos do site mostram os dois modos pelo tamanho do quadro. 900 px deixava o exemplo largo do site (894 px) no modo estreito |
+| **Um so menu no DOM**; dois botoes no topo, um por modo, escondidos por CSS | Estreito abre a gaveta (`aria-expanded`), com foco preso pela `Sobreposicao`, Esc (tambem no botao), fundo e navegacao fechando. Largo recolhe (`aria-pressed`); recolhido, o texto sai da tela mas segue como nome do link |
+| **Itens do menu sem CSS proprio** (excecao nomeada na guarda) | Sao pecas da moldura; o estilo precisa ver recolhido e modo estreito juntos, entao mora no CSS dela via `::deep` |
+| **Pagina atual pelo criterio do `NavLink`** (`Prefix`/`All`), com `aria-current="page"`; grupo com menu recolhido expande o menu | Com o menu nos icones nao ha onde mostrar subitens |
 
 ## Verifica (cada fatia)
 

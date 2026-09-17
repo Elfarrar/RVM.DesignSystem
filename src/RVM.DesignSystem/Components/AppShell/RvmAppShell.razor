@@ -1,0 +1,55 @@
+@namespace RVM.DesignSystem.Components.AppShell
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Um so menu no DOM para os dois tamanhos: largo, ele e uma coluna fixa; estreito, o CSS o tira da
+   tela e ele entra por cima quando aberto. Dois botoes no topo, um por tamanho, escondidos pelo CSS:
+   o do estreito abre a gaveta (aria-expanded), o do largo recolhe o menu (aria-pressed). O Esc vale
+   tambem no botao: logo depois de abrir, o foco ainda esta nele ate o JS move-lo para a gaveta (a
+   mesma corrida que o E2E do dev pegou no seletor de data). *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <a class="rvm-pular" href="#@IdConteudo">Pular para o conteudo</a>
+
+    <CascadingValue Value="this">
+        <aside @ref="_lateral" id="@IdLateral" class="rvm-lateral" tabindex="-1" @onkeydown="AoTeclarNaLateralAsync">
+            @if (Brand is not null)
+            {
+                <div class="rvm-area-marca">@Brand</div>
+            }
+            <nav class="rvm-navegacao" aria-label="@NavigationLabel">
+                <ul class="rvm-nav-lista">
+                    @Navigation
+                </ul>
+            </nav>
+        </aside>
+    </CascadingValue>
+
+    @if (MenuOpen)
+    {
+        <div class="rvm-fundo-menu" @onclick="() => DefinirMenuAbertoAsync(false)"></div>
+    }
+
+    <div class="rvm-principal">
+        <header class="rvm-barra-topo">
+            <button type="button" class="rvm-alternar rvm-so-estreita" aria-label="Abrir menu" aria-controls="@IdLateral"
+                    aria-expanded="@(MenuOpen ? "true" : "false")" @onclick="() => DefinirMenuAbertoAsync(!MenuOpen)"
+                    @onkeydown="AoTeclarNaLateralAsync">
+                <RvmIcon Name="RvmIconName.Menu" />
+            </button>
+            <button type="button" class="rvm-alternar rvm-so-larga" aria-label="Recolher menu" aria-controls="@IdLateral"
+                    aria-pressed="@(Collapsed ? "true" : "false")" @onclick="() => DefinirRecolhidoAsync(!Collapsed)">
+                <RvmIcon Name="RvmIconName.Menu" />
+            </button>
+            <div class="rvm-barra-conteudo">@TopBar</div>
+        </header>
+
+        <main id="@IdConteudo" class="rvm-conteudo" tabindex="-1">
+            @ChildContent
+        </main>
+
+        @if (Footer is not null)
+        {
+            <footer class="rvm-rodape">@Footer</footer>
+        }
+    </div>
+</div>

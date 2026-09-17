@@ -40,6 +40,7 @@ const PAGINAS = [
     { rota: '/componentes/time-picker', titulo: 'RvmTimePicker' },
     { rota: '/componentes/table', titulo: 'RvmTable' },
     { rota: '/componentes/data-grid', titulo: 'RvmDataGrid' },
+    { rota: '/componentes/app-shell', titulo: 'RvmAppShell' },
 ];
 
 const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton']);

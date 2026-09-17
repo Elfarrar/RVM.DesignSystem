@@ -1,0 +1,138 @@
+@page "/componentes/app-shell"
+
+<PageTitle>RvmAppShell — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmAppShell</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A moldura da aplicacao: menu lateral, barra do topo, conteudo e rodape. Largo, o menu fica fixo e o
+    botao do topo o recolhe aos icones; estreito (ate 840 px), ele vira uma gaveta por cima do conteudo, que
+    prende o foco, fecha com Esc e fecha sozinha ao navegar. Menu de 260 px (68 recolhido), item de 42 px e
+    topo de 64 px, <strong>medidos no kit</strong>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ O degrade do item ativo foi escurecido na ponta clara: o do kit comeca num azul em que o texto branco
+    fica em 2.76:1. A largura que decide o modo e a da propria moldura, nao a da janela — por isso os
+    exemplos abaixo mudam de modo pelo tamanho do quadro.
+</p>
+
+<BlocoExemplo Titulo="Menu fixo, recolhivel"
+              Descricao="O Vertical Menu e o Collapsed Menu do kit. Use o botao do topo para recolher e expandir."
+              Codigo="@CodigoMoldura">
+    <div class="largura-cheia">
+        <RvmAppShell class="site-moldura" style="height: 520px" @bind-Collapsed="_recolhida" NavigationLabel="Menu do exemplo">
+            <Brand>@Marca</Brand>
+            <Navigation>@Menu</Navigation>
+            <TopBar>@Topo</TopBar>
+            <ChildContent>@Conteudo</ChildContent>
+            <Footer>@Rodape</Footer>
+        </RvmAppShell>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tela estreita"
+              Descricao="O mesmo menu num quadro de 400 px: o botao do topo abre a gaveta."
+              Codigo="@CodigoEstreita">
+    <div class="site-quadro-estreito">
+        <RvmAppShell class="site-moldura" style="height: 520px" NavigationLabel="Menu do exemplo estreito">
+            <Brand>@Marca</Brand>
+            <Navigation>@Menu</Navigation>
+            <TopBar>@Topo</TopBar>
+            <ChildContent>@Conteudo</ChildContent>
+        </RvmAppShell>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/app-shell.png"
+              Arquivo="referencia-neatlab/Menu Drawer.png e Collapsed Menu.png (recortes)"
+              Descricao="O menu aberto com secoes, grupo e item ativo, e a moldura com o menu recolhido aos icones."
+              Alt="Recorte do kit NEATLAB mostrando o menu lateral aberto e a moldura com o menu recolhido" />
+
+@code {
+    private bool _recolhida;
+    private bool _grupoAberto = true;
+
+    private RenderFragment Marca => @<span class="site-marca-exemplo">
+        <RvmIcon Name="RvmIconName.Home" Size="RvmSize.Large" Color="RvmColor.Primary" />
+        <span>RVM Agro</span>
+    </span>;
+
+    private RenderFragment Menu => @<text>
+        <RvmNavItem Href="componentes/app-shell" Text="Inicio" Icon="RvmIconName.Home" Match="RvmNavMatch.All" />
+        <RvmNavGroup Text="Lavouras" Icon="RvmIconName.File" Badge="Novo" @bind-Expanded="_grupoAberto">
+            <RvmNavItem Href="componentes/table" Text="Talhoes" />
+            <RvmNavItem Href="componentes/data-grid" Text="Responsaveis" />
+        </RvmNavGroup>
+        <RvmNavSection Title="Operacao">
+            <RvmNavItem Href="componentes/date-picker" Text="Calendario" Icon="RvmIconName.Calendar" />
+            <RvmNavItem Href="componentes/snackbar" Text="Avisos" Icon="RvmIconName.Bell" />
+            <RvmNavItem Href="componentes/dialog" Text="Mensagens" Icon="RvmIconName.Mail" />
+        </RvmNavSection>
+        <RvmNavSection Title="Conta">
+            <RvmNavItem Href="componentes/text-field" Text="Perfil" Icon="RvmIconName.User" />
+            <RvmNavItem Href="componentes/switch" Text="Configuracoes" Icon="RvmIconName.Settings" />
+        </RvmNavSection>
+    </text>;
+
+    private RenderFragment Topo => @<text>
+        <button type="button" class="site-botao-icone" aria-label="Buscar"><RvmIcon Name="RvmIconName.Search" /></button>
+        <span class="site-espaco"></span>
+        <button type="button" class="site-botao-icone" aria-label="Notificacoes"><RvmIcon Name="RvmIconName.Bell" /></button>
+        <RvmAvatar Initials="RV" Size="RvmSize.Small" />
+    </text>;
+
+    private RenderFragment Conteudo => @<div class="site-quadro-conteudo">
+        <h2 class="rvm-text-h6">Conteudo da pagina</h2>
+        <p class="rvm-text-body2">A pagina rola aqui dentro; o topo fica preso.</p>
+    </div>;
+
+    private RenderFragment Rodape => @<text>
+        <span>© 2026, RVM Agro</span>
+        <span class="site-links-rodape"><a href="componentes">Componentes</a><a href="fundamentos">Fundamentos</a></span>
+    </text>;
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Brand", "RenderFragment?", "—", "Marca no alto do menu. Recolhido, aparece o inicio dela."),
+        new("Navigation", "RenderFragment?", "—", "Os itens: RvmNavItem, RvmNavGroup e RvmNavSection."),
+        new("TopBar", "RenderFragment?", "—", "Barra do topo, depois do botao do menu."),
+        new("ChildContent", "RenderFragment?", "—", "O conteudo da pagina (no <main>)."),
+        new("Footer", "RenderFragment?", "—", "Rodape."),
+        new("Collapsed", "bool", "false", "Menu nos icones (tela larga). Aceita @bind-Collapsed."),
+        new("MenuOpen", "bool", "false", "Gaveta aberta (tela estreita). Aceita @bind-MenuOpen."),
+        new("NavigationLabel", "string", "\"Menu principal\"", "Nome do <nav>."),
+        new("RvmNavItem.Href / Text / Icon", "string / string / RvmIconName?", "—", "Link, texto e icone. Sem icone, e subitem."),
+        new("RvmNavItem.Match", "RvmNavMatch", "Prefix", "Prefix ou All (pagina inicial)."),
+        new("RvmNavItem.Badge", "string?", "—", "Selo ao lado do texto."),
+        new("RvmNavGroup.Expanded", "bool", "false", "Subitens a mostra. Aceita @bind-Expanded."),
+        new("RvmNavSection.Title", "string", "—", "Titulo da secao."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
+    ];
+
+    private const string CodigoMoldura = """
+        <RvmAppShell @bind-Collapsed="recolhida">
+            <Brand><img src="logo.svg" alt="" /> RVM Agro</Brand>
+            <Navigation>
+                <RvmNavItem Href="" Text="Inicio" Icon="RvmIconName.Home" Match="RvmNavMatch.All" />
+                <RvmNavGroup Text="Lavouras" Icon="RvmIconName.File">
+                    <RvmNavItem Href="talhoes" Text="Talhoes" />
+                </RvmNavGroup>
+                <RvmNavSection Title="Operacao">
+                    <RvmNavItem Href="calendario" Text="Calendario" Icon="RvmIconName.Calendar" />
+                </RvmNavSection>
+            </Navigation>
+            <TopBar>...</TopBar>
+            <ChildContent>@Body</ChildContent>
+            <Footer>© 2026, RVM Agro</Footer>
+        </RvmAppShell>
+        """;
+
+    private const string CodigoEstreita = """
+        <RvmAppShell @bind-MenuOpen="menuAberto">
+            ...
+        </RvmAppShell>
+        """;
+}
