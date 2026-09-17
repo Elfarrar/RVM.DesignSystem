@@ -208,32 +208,11 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
             _contextoAssinado = EditContext;
         }
 
-        Campo = ExpressaoDoCampo is { } expressao && EditContext is not null ? CriarCampo(expressao) : null;
+        Campo = ExpressaoDoCampo is { } expressao && EditContext is not null ? CampoDoFormulario.Criar(expressao) : null;
         Filtrar();
     }
 
     private void AoMudarValidacao(object? sender, ValidationStateChangedEventArgs e) => StateHasChanged();
-
-    private static FieldIdentifier CriarCampo(LambdaExpression expressao)
-    {
-        // FieldIdentifier.Create so aceita Expression<Func<T>>; a lambda chega sem o tipo concreto.
-        var corpo = expressao.Body is UnaryExpression { NodeType: ExpressionType.Convert } conversao
-            ? conversao.Operand
-            : expressao.Body;
-
-        if (corpo is MemberExpression membro)
-        {
-            var dono = membro.Expression is null
-                ? null
-                : Expression.Lambda(membro.Expression).Compile().DynamicInvoke();
-            if (dono is not null)
-            {
-                return new FieldIdentifier(dono, membro.Member.Name);
-            }
-        }
-
-        throw new ArgumentException("A expressao do valor precisa ser um acesso a propriedade ou campo (modelo.Propriedade).");
-    }
 
     private void Filtrar()
     {
@@ -251,6 +230,17 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
 
     private Task AoClicarNoGatilhoAsync()
         => Disabled ? Task.CompletedTask : _aberto ? FecharAsync(devolverFoco: true) : AbrirAsync(-1);
+
+    /// <summary>
+    /// Clicar no rotulo faz o mesmo que clicar no campo. Com o campo vazio o rotulo fica POR CIMA do
+    /// combobox, e antes ele so dava foco — o clique no meio do campo nao abria a lista (pego no E2E
+    /// do seletor de horario).
+    /// </summary>
+    private async Task AoClicarNoRotuloAsync()
+    {
+        await FocarGatilhoAsync();
+        await AoClicarNoGatilhoAsync();
+    }
 
     private async Task FocarGatilhoAsync()
     {

@@ -36,6 +36,8 @@ const PAGINAS = [
     { rota: '/componentes/rating', titulo: 'RvmRating' },
     { rota: '/componentes/stepper', titulo: 'RvmStepper' },
     { rota: '/componentes/timeline', titulo: 'RvmTimeline' },
+    { rota: '/componentes/date-picker', titulo: 'RvmDatePicker' },
+    { rota: '/componentes/time-picker', titulo: 'RvmTimePicker' },
 ];
 
 const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton']);

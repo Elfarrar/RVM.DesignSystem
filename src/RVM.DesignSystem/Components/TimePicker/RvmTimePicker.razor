@@ -1,0 +1,26 @@
+@namespace RVM.DesignSystem.Components.TimePicker
+@using RVM.DesignSystem.Components.Select
+@using RVM.DesignSystem.Components.TextField
+
+@* Horario como lista de opcoes (a coluna "Time Picker" do kit) sobre o RvmSelect: campo, lista,
+   teclado, busca por digitacao e validacao do EditForm vem dele. O relogio circular do kit fica de
+   fora de proposito — e pior pelo teclado e pelo leitor de tela que uma lista. *@
+<RvmSelect TValue="TimeOnly?"
+           @attributes="AdditionalAttributes"
+           Items="@Horarios"
+           ItemText="@Texto"
+           Value="@Value"
+           ValueChanged="@ValueChanged"
+           ValueExpression="@ValueExpression"
+           Label="@Label"
+           HelperText="@HelperText"
+           ErrorText="@ErrorText"
+           Placeholder="@Placeholder"
+           Variant="@Variant"
+           Size="@Size"
+           Searchable="@Searchable"
+           SearchPlaceholder="Buscar horario"
+           NoResultsText="Nenhum horario encontrado para essa busca."
+           Required="@Required"
+           Disabled="@Disabled"
+           Name="@Name" />

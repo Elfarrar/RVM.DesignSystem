@@ -55,6 +55,12 @@
     transition: transform var(--rvm-transition-fast), color var(--rvm-transition-fast), top var(--rvm-transition-fast);
 }
 
+/* Dentro do campo vazio, o rotulo fica por cima do combobox: deixa o clique passar para ele. Flutuando
+   sobre a borda, volta a receber o clique (e abre a lista pelo @onclick). */
+.rvm-campo:not(.rvm-rotulo-fixo) .rvm-rotulo {
+    pointer-events: none;
+}
+
 .rvm-obrigatorio {
     margin-inline-start: 2px;
 }

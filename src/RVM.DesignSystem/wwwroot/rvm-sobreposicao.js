@@ -13,7 +13,10 @@ let abertos = 0;
 let overflowOriginal = '';
 
 function focaveis(caixa) {
-    return [...caixa.querySelectorAll(FOCAVEIS)].filter(el => el.getClientRects().length > 0);
+    // So o que entra na tabulacao: um botao com tabindex=-1 (dia nao focado da grade do calendario,
+    // aba inativa) casa com o seletor, mas o Tab nao para nele. Sem este filtro o "ultimo focavel" era
+    // o dia 31 e o Tab escapava do dialogo a partir do dia em foco (pego no E2E do seletor de data).
+    return [...caixa.querySelectorAll(FOCAVEIS)].filter(el => el.tabIndex >= 0 && el.getClientRects().length > 0);
 }
 
 export function abrir(caixa) {
