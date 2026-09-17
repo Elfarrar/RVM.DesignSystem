@@ -2,13 +2,13 @@
 @inject IJSRuntime JS
 
 <RvmThemeProvider @bind-Theme="_tema" class="pagina">
-    <header class="topo">
-        <a class="marca rvm-text-h6" href="">RVM Design System</a>
+    <header class="site-topo">
+        <a class="site-marca rvm-text-h6" href="">RVM Design System</a>
 
-        <nav class="menu" aria-label="Secoes do site">
-            <NavLink class="link" href="" Match="NavLinkMatch.All">Inicio</NavLink>
-            <NavLink class="link" href="fundamentos">Fundamentos</NavLink>
-            <NavLink class="link" href="componentes">Componentes</NavLink>
+        <nav class="site-menu" aria-label="Secoes do site">
+            <NavLink class="site-link" href="" Match="NavLinkMatch.All">Inicio</NavLink>
+            <NavLink class="site-link" href="fundamentos">Fundamentos</NavLink>
+            <NavLink class="site-link" href="componentes">Componentes</NavLink>
         </nav>
 
         @* Seletor de tema no topo, visivel em toda pagina: e o jeito de conferir claro/escuro sem F5.
@@ -22,7 +22,7 @@
         </button>
     </header>
 
-    <main class="conteudo">
+    <main class="site-conteudo">
         @Body
     </main>
 
@@ -35,6 +35,9 @@
         <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.
         Codigo sob licenca MIT.
     </footer>
+
+    @* Onde as mensagens do RvmSnackbarService aparecem: um so, dentro do provedor de tema. *@
+    <RvmSnackbarHost />
 </RvmThemeProvider>
 
 @code {

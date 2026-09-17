@@ -33,6 +33,7 @@ dialogo aberto no primeiro render tem de aparecer aberto sem JS; mover e prender
 
 - [x] **Fatia 1**: `RvmProgress`, `RvmSkeleton`, `RvmEmptyState`
 - [x] **Fatia 2**: `RvmList` + `RvmListItem`, `RvmAccordion` + `RvmAccordionPanel`
+- [x] **Fatia 3**: `RvmDialog`, `RvmDrawer`, `RvmSnackbarService` + `RvmSnackbarHost` (com `AddRvmDesignSystem()`)
 
 ## Decisoes e medicoes
 
@@ -52,6 +53,16 @@ dialogo aberto no primeiro render tem de aparecer aberto sem JS; mover e prender
 | **Painel e sublista seguem o `Expanded` so quando o parametro MUDA** | Senao um re-render do pai fecharia o que a pessoa abriu sem `@bind` |
 | **Variantes do acordeao no CSS do PAI, com `::deep`** | A classe da variante esta no elemento do `RvmAccordion`; o CSS isolado do painel nao enxerga o pai |
 | 🔴 **Elemento criado por `RenderTreeBuilder.OpenElement` nao recebe o escopo do CSS isolado** | O `h{n}` dinamico do painel e do estado vazio ficou sem `b-xxxx`: `.cabecalho { margin: 0 }` nao pegou e o painel saiu com 85 px. Pego na foto; agora `@switch` em marcacao Razor + teste bUnit que exige o atributo `b-` |
+| **Medidas da fatia 3**: dialogo de 600 px (400/900 nos outros tamanhos) no papel; gaveta de 320 px; snackbar de 320 x 48 px; toast no papel com o icone do papel | Varredura em `Dailog.png`, `Drawer.png`, `Snackbar.png` e `Toast.png` |
+| **Dialogo e gaveta temporaria: sem JS abrem e fecham; o `rvm-sobreposicao.js` so prende o foco, trava a rolagem e devolve o foco** | Regra da onda: estado inicial sem JS. O foco vai para a propria caixa (`tabindex=-1`), para o leitor de tela ler o titulo; o primeiro Tab chega no primeiro controle |
+| **Confirmacao = `alertdialog`, corpo em `aria-describedby`, fundo nao fecha** | Padrao APG: a pessoa precisa responder |
+| **Gaveta temporaria e dialogo modal; a permanente e `aside` no fluxo** | A temporaria bloqueia a pagina enquanto aberta; a permanente e so um painel lateral |
+| **Snackbar e toast viraram um componente: `Color` nulo e o neutro do kit; com cor, o toast com icone do papel** | O catalogo pede "6 papeis"; o kit tem as duas paginas. Uma API so |
+| **Snackbar por servico (`AddRvmDesignSystem()` + `RvmSnackbarHost` no layout), fila com no maximo 3 na tela** | Chamar de qualquer lugar (depois de salvar, num catch) sem passar referencia de componente |
+| **Duas regioes vivas SEMPRE no DOM: `status` para o resto, `alert` so para erro** | Leitor de tela so anuncia o que entra numa regiao que ja existia |
+| **O tempo da mensagem para com mouse ou foco em cima e recomeca inteiro ao sair** | WCAG 2.2.1. Recomecar inteiro evita sumir no meio da leitura |
+| ⚠️ **Snackbar neutro no tema escuro: o token diz `#FFFFFF`, o `Snackbar.png` escuro mostra `#212121`** | Mantido o token do `06-tokens` (aprovado na DSGN-002). **Decisao para o Rafael** |
+| 🔴 **Classes genericas do CSS GLOBAL do site vazavam para 11 componentes** (`.conteudo`, `.topo`, `.marca`, `.menu`, `.apoio`, `.barra`, `.quadrado`) | O isolamento de CSS protege o componente de vazar, nao de RECEBER regra global. Pego no dialogo (linha sob o titulo); a varredura achou card, avatar quadrado, checkbox, select e outros atingidos. O site agora usa prefixo `site-`. **O risco para o consumidor continua — decisao para o Rafael:** prefixar as classes internas dos componentes antes do `1.0.0` |
 
 ## Verifica (cada fatia)
 

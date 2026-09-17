@@ -4,8 +4,8 @@
 
 <h1 class="rvm-text-h4">Componentes</h1>
 
-<p class="rvm-text-body1 apoio">
-    A onda 1 traz a fundacao — os nove estao prontos. A onda 2, formulario e navegacao, tambem esta pronta, e a onda 3, feedback e sobreposicao, esta chegando. Cada pagina tem o exemplo rodando, as
+<p class="rvm-text-body1 site-apoio">
+    A onda 1 traz a fundacao — os nove estao prontos. As ondas 2 (formulario e navegacao) e 3 (feedback e sobreposicao) tambem estao prontas. Cada pagina tem o exemplo rodando, as
     variacoes, os estados, a tabela de parametros e o recorte do kit ao lado.
 </p>
 
@@ -19,12 +19,12 @@
             }
             else
             {
-                <span class="rvm-text-subtitle1 apoio">@nome</span>
+                <span class="rvm-text-subtitle1 site-apoio">@nome</span>
             }
-            <span class="rvm-text-body2 apoio">@resumo</span>
+            <span class="rvm-text-body2 site-apoio">@resumo</span>
             @if (!pronto)
             {
-                <span class="rvm-text-caption apoio">ainda nao construido</span>
+                <span class="rvm-text-caption site-apoio">ainda nao construido</span>
             }
         </li>
     }
@@ -57,8 +57,8 @@
         ("componentes/empty-state", "RvmEmptyState", "O vazio que ensina o proximo passo.", true),
         ("componentes/list", "RvmList", "Simples, com icone, com acao e aninhada.", true),
         ("componentes/accordion", "RvmAccordion", "Simples, exclusivo e com icone.", true),
-        ("componentes/dialog", "RvmDialog", "Simples, confirmacao, formulario e tela cheia.", false),
-        ("componentes/drawer", "RvmDrawer", "Quatro lados, temporario e permanente.", false),
-        ("componentes/snackbar", "RvmSnackbar", "Seis papeis, com acao e fila.", false)
+        ("componentes/dialog", "RvmDialog", "Simples, confirmacao, formulario e tela cheia.", true),
+        ("componentes/drawer", "RvmDrawer", "Quatro lados, temporario e permanente.", true),
+        ("componentes/snackbar", "RvmSnackbar", "Seis papeis, com acao e fila.", true)
     ];
 }

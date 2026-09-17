@@ -1,0 +1,138 @@
+/* CSS isolado do RvmSnackbarHost. So custom properties — hex literal aqui quebra o tema escuro.
+   MEDIDO no referencia-neatlab/Snackbar.png: 320 px de largura, 48 px de altura, fundo do token de
+   snackbar. Toast.png: a versao com papel de cor fica no fundo do papel, com sombra e o icone do papel. */
+
+.avisos {
+    position: fixed;
+    left: var(--rvm-space-6);
+    bottom: var(--rvm-space-6);
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    max-width: calc(100vw - 2 * var(--rvm-space-6));
+    pointer-events: none;
+    font-family: var(--rvm-font-family);
+}
+
+.pilha {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+.mensagem {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    width: 320px;
+    max-width: 100%;
+    min-height: 48px;
+    padding: var(--rvm-space-2) var(--rvm-space-2) var(--rvm-space-2) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-3);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    pointer-events: auto;
+    animation: rvm-aviso-entra var(--rvm-transition-medium) both;
+}
+
+@keyframes rvm-aviso-entra {
+    from { opacity: 0; transform: translateY(8px); }
+}
+
+.neutra {
+    background-color: var(--rvm-color-snackbar-background);
+    color: var(--rvm-color-snackbar-text);
+}
+
+.colorida {
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+}
+
+.texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.icone {
+    display: inline-flex;
+    flex: none;
+}
+
+/* O icone e o que diz o papel sem ler o texto: -text, 3:1 contra o papel nos dois temas. */
+.primary .icone { color: var(--rvm-color-primary-text); }
+.secondary .icone { color: var(--rvm-color-secondary-text); }
+.info .icone { color: var(--rvm-color-info-text); }
+.success .icone { color: var(--rvm-color-success-text); }
+.warning .icone { color: var(--rvm-color-warning-text); }
+.error .icone { color: var(--rvm-color-error-text); }
+
+.acao,
+.fechar {
+    flex: none;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.acao {
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+    font-size: var(--rvm-text-button-sm-size);
+    font-weight: var(--rvm-text-button-sm-weight);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.colorida.primary .acao { color: var(--rvm-color-primary-text); }
+
+.fechar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: var(--rvm-radius-circle);
+}
+
+.acao:hover,
+.fechar:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.neutra .acao:hover,
+.neutra .fechar:hover {
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+.acao:focus-visible,
+.fechar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid currentColor;
+    outline-offset: 0;
+}
+
+@media (max-width: 600px) {
+    .avisos {
+        left: var(--rvm-space-4);
+        right: var(--rvm-space-4);
+        bottom: var(--rvm-space-4);
+        max-width: none;
+    }
+
+    .mensagem {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mensagem {
+        animation: none;
+    }
+}

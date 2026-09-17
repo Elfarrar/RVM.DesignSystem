@@ -1,0 +1,129 @@
+@page "/componentes/dialog"
+
+<PageTitle>RvmDialog — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDialog</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Janela modal por cima da pagina: <code>role="dialog"</code> com <code>aria-modal</code> e nome pelo
+    titulo. Ao abrir, o foco entra e fica preso la dentro; Esc fecha e o foco volta para quem abriu.
+    Caixa de 600 px, <strong>medida no kit</strong>. Aberto no primeiro render, aparece aberto sem JS.
+</p>
+
+<BlocoExemplo Titulo="Simples e confirmacao"
+              Descricao="A confirmacao (Alert) vira alertdialog: o corpo e lido junto com o titulo e clicar fora nao fecha — a pessoa precisa responder."
+              Codigo="@CodigoConfirmacao">
+    <div class="linha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="@(() => _simples = true)">Ver detalhes da safra</RvmButton>
+        <RvmButton Color="RvmColor.Error" OnClick="@(() => _confirmar = true)">Excluir talhao</RvmButton>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">@_resultado</RvmTypography>
+
+    <RvmDialog @bind-Open="_simples" Title="Safra 2026" ShowCloseButton="true">
+        <ChildContent>Soja em 120 ha, plantio entre 10 e 25 de outubro, colheita prevista para fevereiro.</ChildContent>
+        <Actions>
+            <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => _simples = false)">Fechar</RvmButton>
+        </Actions>
+    </RvmDialog>
+
+    <RvmDialog @bind-Open="_confirmar" Title="Excluir o Talhao 12?" Alert="true" Size="RvmSize.Small">
+        <ChildContent>O historico de plantio e de aplicacoes deste talhao tambem sera apagado. Nao da para desfazer.</ChildContent>
+        <Actions>
+            <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => Responder("Exclusao cancelada."))">Cancelar</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Error" OnClick="@(() => Responder("Talhao excluido."))">Excluir</RvmButton>
+        </Actions>
+    </RvmDialog>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Formulario"
+              Descricao="O EditForm vai dentro do corpo; o botao de enviar pode ficar nas acoes com o atributo form."
+              Codigo="@CodigoFormulario">
+    <RvmButton OnClick="@(() => _formulario = true)" StartIcon="RvmIconName.Plus">Novo talhao</RvmButton>
+
+    <RvmDialog @bind-Open="_formulario" Title="Novo talhao">
+        <ChildContent>
+            <EditForm id="form-talhao" Model="@_talhao" OnValidSubmit="Salvar">
+                <DataAnnotationsValidator />
+                <RvmTextField @bind-Value="_talhao.Nome" Label="Nome do talhao" Required="true" />
+            </EditForm>
+        </ChildContent>
+        <Actions>
+            <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => _formulario = false)">Cancelar</RvmButton>
+            <RvmButton Type="RvmButtonType.Submit" form="form-talhao">Salvar</RvmButton>
+        </Actions>
+    </RvmDialog>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+<RecorteDoKit Origem="kit/dialog.png"
+              Arquivo="referencia-neatlab/Dailog.png (recorte)"
+              Descricao="O dialogo padrao: titulo, conteudo e duas acoes em texto."
+              Alt="Recorte do kit NEATLAB mostrando um dialogo com titulo, conteudo e duas acoes" />
+
+@code {
+    private bool _simples;
+    private bool _confirmar;
+    private bool _formulario;
+    private string _resultado = string.Empty;
+    private Talhao _talhao = new();
+
+    private sealed class Talhao
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "De um nome ao talhao para salvar.")]
+        public string? Nome { get; set; }
+    }
+
+    private void Responder(string resultado)
+    {
+        _resultado = resultado;
+        _confirmar = false;
+    }
+
+    private void Salvar()
+    {
+        _resultado = $"Talhao {_talhao.Nome} salvo.";
+        _talhao = new Talhao();
+        _formulario = false;
+    }
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Open", "bool", "false", "Aberto. Aceita @bind-Open."),
+        new("Title", "string?", "—", "Titulo e nome acessivel."),
+        new("ChildContent", "RenderFragment?", "—", "O corpo. Rola sozinho se for longo."),
+        new("Actions", "RenderFragment?", "—", "Botoes do rodape."),
+        new("Size", "RvmSize", "Medium", "400, 600 ou 900 px de largura maxima."),
+        new("FullScreen", "bool", "false", "Ocupa a tela inteira."),
+        new("Alert", "bool", "false", "Confirmacao: alertdialog, e o fundo nao fecha."),
+        new("CloseOnBackdropClick", "bool", "true", "Clicar fora fecha."),
+        new("CloseOnEscape", "bool", "true", "Esc fecha."),
+        new("ShowCloseButton", "bool", "false", "Botao x no topo."),
+        new("CloseLabel", "string", "\"Fechar\"", "Nome acessivel do x."),
+        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Repassados a caixa do dialogo.")
+    ];
+
+    private const string CodigoConfirmacao = """
+        <RvmDialog @bind-Open="_confirmar" Title="Excluir o Talhao 12?" Alert="true" Size="RvmSize.Small">
+            <ChildContent>O historico tambem sera apagado. Nao da para desfazer.</ChildContent>
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Text" OnClick="Cancelar">Cancelar</RvmButton>
+                <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Error" OnClick="Excluir">Excluir</RvmButton>
+            </Actions>
+        </RvmDialog>
+        """;
+
+    private const string CodigoFormulario = """
+        <RvmDialog @bind-Open="_aberto" Title="Novo talhao">
+            <ChildContent>
+                <EditForm id="form-talhao" Model="@_talhao" OnValidSubmit="Salvar">
+                    <DataAnnotationsValidator />
+                    <RvmTextField @bind-Value="_talhao.Nome" Label="Nome do talhao" Required="true" />
+                </EditForm>
+            </ChildContent>
+            <Actions>
+                <RvmButton Type="RvmButtonType.Submit" form="form-talhao">Salvar</RvmButton>
+            </Actions>
+        </RvmDialog>
+        """;
+}
