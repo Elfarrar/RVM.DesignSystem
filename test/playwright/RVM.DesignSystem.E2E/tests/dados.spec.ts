@@ -120,3 +120,58 @@ test('linha do tempo: lista ordenada com os acontecimentos na ordem', async ({ p
     await expect(linha.getByRole('listitem')).toHaveCount(3);
     await expect(linha.getByRole('listitem').first()).toContainText('Plantio concluido');
 });
+
+test('tabela: ordena pelo teclado e a caixa do cabecalho marca todas', async ({ page }) => {
+    await page.goto('/componentes/table');
+    const tabela = page.getByRole('table', { name: 'Talhoes da fazenda' });
+    const area = tabela.getByRole('columnheader', { name: 'Area (ha)' });
+
+    await area.getByRole('button').focus();
+    await page.keyboard.press('Enter');
+    await expect(area).toHaveAttribute('aria-sort', 'ascending');
+    await expect(tabela.getByRole('row').nth(1).getByRole('cell').first()).toHaveText('Sede');
+    await page.keyboard.press('Enter');
+    await expect(area).toHaveAttribute('aria-sort', 'descending');
+    await expect(tabela.getByRole('row').nth(1).getByRole('cell').first()).toHaveText('Cerrado');
+
+    const selecao = page.getByRole('table', { name: 'Talhoes para a aplicacao' });
+    await selecao.getByRole('checkbox', { name: 'Selecionar todas as linhas' }).check();
+    await expect(selecao.getByRole('checkbox', { name: /^Selecionar (?!todas)/ })).toHaveCount(5);
+    for (const caixa of await selecao.getByRole('checkbox', { name: /^Selecionar (?!todas)/ }).all()) {
+        await expect(caixa).toBeChecked();
+    }
+    await expect(page.getByText(/^5 marcado\(s\), 458[.,]5 ha\.$/)).toBeVisible();
+});
+
+test('grade: filtra por coluna, pagina e anuncia o intervalo', async ({ page }) => {
+    await page.goto('/componentes/data-grid');
+    const grade = page.getByRole('table', { name: 'Talhoes da fazenda' });
+    const regiao = page.getByRole('region', { name: 'Talhoes da fazenda' }).locator('..');
+    const intervalo = regiao.getByRole('status');
+
+    await expect(intervalo).toHaveText('1–5 de 13');
+    await regiao.getByRole('button', { name: 'Proxima pagina' }).click();
+    await expect(intervalo).toHaveText('6–10 de 13');
+
+    await grade.getByRole('searchbox', { name: 'Filtrar por Cultura' }).fill('soja');
+    await expect(intervalo).toHaveText('1–4 de 4');
+    await expect(grade.getByRole('row')).toHaveCount(2 + 4);
+
+    await grade.getByRole('searchbox', { name: 'Filtrar por Cultura' }).fill('');
+    await regiao.getByLabel('Linhas por pagina:').selectOption('10');
+    await expect(intervalo).toHaveText('1–10 de 13');
+});
+
+for (const tema of ['claro', 'escuro'] as const) {
+    test(`grade com linha marcada e filtro sem violacao seria no tema ${tema}`, async ({ page }) => {
+        await page.goto('/componentes/data-grid');
+        await expect(page.getByRole('heading', { name: 'RvmDataGrid', level: 1 })).toBeVisible();
+        if (tema === 'escuro') {
+            await page.getByRole('button', { name: /Tema/ }).click();
+        }
+
+        await page.getByRole('checkbox', { name: 'Hilda Rath' }).check();
+        await page.getByRole('searchbox', { name: 'Filtrar por Talhao' }).first().fill('a');
+        await semViolacaoSeria(page);
+    });
+}

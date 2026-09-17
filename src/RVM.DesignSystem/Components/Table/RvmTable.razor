@@ -1,0 +1,150 @@
+@namespace RVM.DesignSystem.Components.Table
+@typeparam TItem
+@using RVM.DesignSystem.Components.Checkbox
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Tabela de verdade (<table>, <th scope="col">), e nao role="grid": nada aqui pede navegacao celula a
+   celula, e o leitor de tela ja anda por tabela com os atalhos dele. O que e interativo (titulo que
+   ordena, caixa de marcar, filtro) entra na ordem de tabulacao normal.
+
+   As colunas vem primeiro, dentro do CascadingValue, e se apresentam; a tabela sai depois, no
+   RvmAdiado (DepoisDasColunas), ja com os parametros novos delas. *@
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+@DepoisDasColunas(Corpo)
+
+@code {
+    private RenderFragment Corpo => @<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+        @{
+            var filtradas = Filtradas;
+            var visiveis = Visiveis(filtradas);
+            var marcadas = Selectable ? visiveis.Count(EstaSelecionado) : 0;
+            var totalDeColunas = Colunas.Count + (Selectable ? 1 : 0);
+        }
+        @* A area rola na horizontal quando a tabela nao cabe. Focavel e com nome: sem isso quem usa
+           teclado nao consegue rolar (regra scrollable-region-focusable do axe). *@
+        <div class="rvm-rolagem" role="region" aria-label="@Caption" tabindex="0">
+            <table class="rvm-tabela-nativa">
+                <caption class="rvm-so-leitor">@Caption</caption>
+                <thead>
+                    <tr class="rvm-linha-cabecalho">
+                        @if (Selectable)
+                        {
+                            <th scope="col" class="rvm-celula-marcar">
+                                <RvmCheckbox Value="@(visiveis.Count > 0 && marcadas == visiveis.Count)"
+                                             Indeterminate="@(marcadas > 0 && marcadas < visiveis.Count)"
+                                             ValueChanged="@((bool v) => MarcarTodasAsync(visiveis, v))"
+                                             Disabled="@(visiveis.Count == 0)"
+                                             aria-label="@(TamanhoDaPagina is null ? "Selecionar todas as linhas" : "Selecionar todas as linhas da pagina")" />
+                            </th>
+                        }
+                        @foreach (var coluna in Colunas)
+                        {
+                            var ordenada = ColunaOrdenada == coluna;
+                            <th scope="col" class="rvm-titulo @ClasseDoAlinhamento(coluna.Align)" style="@(coluna.Width is null ? null : $"width: {coluna.Width}")" aria-sort="@AriaSort(ordenada, Sentido)">
+                                @if (coluna.Ordenavel)
+                                {
+                                    <button type="button" class="@(ordenada ? "rvm-ordenar rvm-ordenada" : "rvm-ordenar")" @onclick="() => OrdenarAsync(coluna)">
+                                        <span>@coluna.Title</span>
+                                        <RvmIcon Name="@(ordenada && Sentido == RvmSortDirection.Descending ? RvmIconName.ArrowDown : RvmIconName.ArrowUp)" Size="RvmSize.Small" class="rvm-seta" />
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span class="rvm-texto-titulo">@coluna.Title</span>
+                                }
+                            </th>
+                        }
+                    </tr>
+                    @if (EhGrade && Colunas.Any(c => c.Filtravel))
+                    {
+                        <tr class="rvm-linha-filtro">
+                            @if (Selectable)
+                            {
+                                <td></td>
+                            }
+                            @foreach (var coluna in Colunas)
+                            {
+                                <td>
+                                    @if (coluna.Filtravel)
+                                    {
+                                        <input type="search"
+                                               class="rvm-filtro"
+                                               placeholder="Filtrar"
+                                               aria-label="@($"Filtrar por {coluna.Title}")"
+                                               value="@(Filtros.GetValueOrDefault(coluna) ?? "")"
+                                               @oninput="e => FiltrarAsync(coluna, e.Value as string)" />
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </thead>
+                <tbody>
+                    @if (visiveis.Count == 0)
+                    {
+                        <tr class="rvm-linha-vazia">
+                            <td colspan="@totalDeColunas">@TextoSemLinhas</td>
+                        </tr>
+                    }
+                    @foreach (var item in visiveis)
+                    {
+                        var marcada = Selectable && EstaSelecionado(item);
+                        <tr class="@(marcada ? "rvm-linha rvm-marcada" : "rvm-linha")">
+                            @if (Selectable)
+                            {
+                                <td class="rvm-celula-marcar">
+                                    <RvmCheckbox Value="marcada"
+                                                 ValueChanged="@((bool v) => MarcarAsync(item, v))"
+                                                 aria-label="@RotuloDaLinha(item)" />
+                                </td>
+                            }
+                            @foreach (var coluna in Colunas)
+                            {
+                                <td class="@ClasseDoAlinhamento(coluna.Align)">
+                                    @if (coluna.ChildContent is not null)
+                                    {
+                                        @coluna.ChildContent(item)
+                                    }
+                                    else
+                                    {
+                                        @coluna.TextoDe(item)
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (TamanhoDaPagina is { } tamanho)
+        {
+            var total = filtradas.Count;
+            var pagina = PaginaPara(total);
+            var paginas = Math.Max(1, (int)Math.Ceiling(total / (double)tamanho));
+            var inicio = total == 0 ? 0 : (pagina - 1) * tamanho + 1;
+            var fim = Math.Min(pagina * tamanho, total);
+            <div class="rvm-rodape">
+                <label class="rvm-rotulo-tamanho" for="@($"{IdBase}-tamanho")">Linhas por pagina:</label>
+                <select id="@($"{IdBase}-tamanho")" class="rvm-tamanho" @onchange="e => MudarTamanhoAsync(e.Value as string)">
+                    @foreach (var opcao in OpcoesDeTamanho)
+                    {
+                        <option value="@opcao" selected="@(opcao == tamanho)">@opcao</option>
+                    }
+                </select>
+                @* role="status": quem filtra ou troca de pagina ouve o novo intervalo sem sair do lugar. *@
+                <span class="rvm-intervalo" role="status">@inicio–@fim de @total</span>
+                <button type="button" class="rvm-pagina" aria-label="Pagina anterior" disabled="@(pagina <= 1)" @onclick="() => IrParaPaginaAsync(pagina - 1)">
+                    <RvmIcon Name="RvmIconName.ChevronLeft" Size="RvmSize.Small" />
+                </button>
+                <button type="button" class="rvm-pagina" aria-label="Proxima pagina" disabled="@(pagina >= paginas)" @onclick="() => IrParaPaginaAsync(pagina + 1)">
+                    <RvmIcon Name="RvmIconName.ChevronRight" Size="RvmSize.Small" />
+                </button>
+            </div>
+        }
+    </div>;
+}

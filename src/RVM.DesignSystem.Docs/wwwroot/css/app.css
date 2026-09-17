@@ -442,3 +442,11 @@ code {
     flex: 1;
     padding: var(--rvm-space-4);
 }
+
+/* Celula de pessoa da pagina da grade: avatar ao lado do nome e do e-mail. */
+.site-pessoa {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    line-height: 1.25;
+}

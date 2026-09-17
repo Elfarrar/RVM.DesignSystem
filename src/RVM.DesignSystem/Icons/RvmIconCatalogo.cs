@@ -17,6 +17,8 @@ internal static class RvmIconCatalogo
         [RvmIconName.AlertTriangle] = """<path d="M12 9v4" /> <path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0" /> <path d="M12 16h.01" />""",
         [RvmIconName.ArrowLeft] = """<path d="M5 12l14 0" /> <path d="M5 12l6 6" /> <path d="M5 12l6 -6" />""",
         [RvmIconName.ArrowRight] = """<path d="M5 12l14 0" /> <path d="M13 18l6 -6" /> <path d="M13 6l6 6" />""",
+        [RvmIconName.ArrowUp] = """<path d="M12 5l0 14" /> <path d="M18 11l-6 -6" /> <path d="M6 11l6 -6" />""",
+        [RvmIconName.ArrowDown] = """<path d="M12 5l0 14" /> <path d="M18 13l-6 6" /> <path d="M6 13l6 6" />""",
         [RvmIconName.Bell] = """<path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /> <path d="M9 17v1a3 3 0 0 0 6 0v-1" />""",
         [RvmIconName.Calendar] = """<path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12" /> <path d="M16 3v4" /> <path d="M8 3v4" /> <path d="M4 11h16" /> <path d="M11 15h1" /> <path d="M12 15v3" />""",
         [RvmIconName.Check] = """<path d="M5 12l5 5l10 -10" />""",
