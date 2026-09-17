@@ -11,11 +11,11 @@ public class RvmCardTests : BunitContext
     {
         var cortado = Render<RvmCard>(p => p.AddChildContent("<p>Texto</p>"));
 
-        Assert.Equal("cartao", cortado.Find("div.cartao").GetAttribute("class"));
-        Assert.Equal("Texto", cortado.Find("div.conteudo p").TextContent);
-        Assert.Empty(cortado.FindAll("div.cabecalho"));
+        Assert.Equal("rvm-cartao", cortado.Find("div.rvm-cartao").GetAttribute("class"));
+        Assert.Equal("Texto", cortado.Find("div.rvm-conteudo p").TextContent);
+        Assert.Empty(cortado.FindAll("div.rvm-cabecalho"));
         Assert.Empty(cortado.FindAll("img"));
-        Assert.Empty(cortado.FindAll("div.acoes"));
+        Assert.Empty(cortado.FindAll("div.rvm-acoes"));
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public class RvmCardTests : BunitContext
     {
         var cortado = Render<RvmCard>(p => p.Add(x => x.Title, "Resumo do mes"));
 
-        var titulo = cortado.Find("div.cabecalho h3");
+        var titulo = cortado.Find("div.rvm-cabecalho h3");
         Assert.Equal("Resumo do mes", titulo.TextContent);
         Assert.Contains("rvm-text-h6", titulo.GetAttribute("class"));
     }
@@ -35,7 +35,7 @@ public class RvmCardTests : BunitContext
             .Add(x => x.Title, "Resumo")
             .Add(x => x.TitleElement, RvmTextElement.H2));
 
-        Assert.NotNull(cortado.Find("div.cabecalho h2"));
+        Assert.NotNull(cortado.Find("div.rvm-cabecalho h2"));
         Assert.Empty(cortado.FindAll("h3"));
     }
 
@@ -44,7 +44,7 @@ public class RvmCardTests : BunitContext
     {
         var cortado = Render<RvmCard>(p => p.Add(x => x.Subheader, "Atualizado ontem"));
 
-        Assert.Equal("Atualizado ontem", cortado.Find("div.cabecalho p").TextContent);
+        Assert.Equal("Atualizado ontem", cortado.Find("div.rvm-cabecalho p").TextContent);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class RvmCardTests : BunitContext
     {
         var cortado = Render<RvmCard>(p => p.Add(x => x.HeaderAction, "<button class=\"menu\">...</button>"));
 
-        Assert.NotNull(cortado.Find("div.cabecalho button.menu"));
+        Assert.NotNull(cortado.Find("div.rvm-cabecalho button.menu"));
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class RvmCardTests : BunitContext
             .Add(x => x.MediaAlt, "Cerejas sobre fundo verde")
             .Add(x => x.MediaHeight, 160));
 
-        var img = cortado.Find("img.midia");
+        var img = cortado.Find("img.rvm-midia");
         Assert.Equal("capa.jpg", img.GetAttribute("src"));
         Assert.Equal("Cerejas sobre fundo verde", img.GetAttribute("alt"));
         Assert.Equal("160", img.GetAttribute("height"));
@@ -74,8 +74,8 @@ public class RvmCardTests : BunitContext
     {
         var cortado = Render<RvmCard>(p => p.Add(x => x.MediaSrc, "capa.jpg"));
 
-        Assert.Equal(string.Empty, cortado.Find("img.midia").GetAttribute("alt"));
-        Assert.Equal("200", cortado.Find("img.midia").GetAttribute("height"));
+        Assert.Equal(string.Empty, cortado.Find("img.rvm-midia").GetAttribute("alt"));
+        Assert.Equal("200", cortado.Find("img.rvm-midia").GetAttribute("height"));
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class RvmCardTests : BunitContext
     {
         var cortado = Render<RvmCard>(p => p.Add(x => x.Actions, "<button class=\"ler\">Ler mais</button>"));
 
-        Assert.Equal("Ler mais", cortado.Find("div.acoes button.ler").TextContent);
+        Assert.Equal("Ler mais", cortado.Find("div.rvm-acoes button.ler").TextContent);
     }
 
     [Fact]
@@ -93,8 +93,8 @@ public class RvmCardTests : BunitContext
             .AddUnmatched("class", "minha")
             .AddUnmatched("data-teste", "1"));
 
-        var card = cortado.Find("div.cartao");
-        Assert.Equal("cartao minha", card.GetAttribute("class"));
+        var card = cortado.Find("div.rvm-cartao");
+        Assert.Equal("rvm-cartao minha", card.GetAttribute("class"));
         Assert.Equal("1", card.GetAttribute("data-teste"));
     }
 }

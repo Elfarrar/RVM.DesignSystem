@@ -46,7 +46,7 @@ public class RvmDividerTests : BunitContext
         var cortado = Render<RvmDivider>(p => p.AddUnmatched("class", "minha"));
 
         var classe = cortado.Find("hr").GetAttribute("class");
-        Assert.Contains("divisor", classe);
+        Assert.Contains("rvm-divisor", classe);
         Assert.Contains("horizontal", classe);
         Assert.Contains("minha", classe);
     }

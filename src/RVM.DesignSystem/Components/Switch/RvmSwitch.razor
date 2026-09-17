@@ -4,21 +4,21 @@
 @* Um checkbox nativo com role="switch": o leitor de tela anuncia ligado ou desligado, em vez de
    marcado, que e o que o controle significa. Funciona sem JS e gera o name do POST. *@
 <label class="@ClassesDaRaiz" style="@EstiloDoConsumidor" aria-disabled="@(Disabled ? "true" : null)">
-    <span class="alvo">
+    <span class="rvm-alvo">
         <InputCheckbox @attributes="AtributosDoInput"
-                       class="nativo"
+                       class="rvm-nativo"
                        role="switch"
                        Value="Value"
                        ValueChanged="ValueChanged"
                        ValueExpression="ExpressaoEfetiva"
                        disabled="@Disabled" />
-        <span class="trilho" aria-hidden="true"></span>
-        <span class="polegar" aria-hidden="true"></span>
+        <span class="rvm-trilho" aria-hidden="true"></span>
+        <span class="rvm-polegar" aria-hidden="true"></span>
     </span>
 
     @if (!string.IsNullOrWhiteSpace(Label))
     {
-        <span class="rotulo">@Label</span>
+        <span class="rvm-rotulo">@Label</span>
     }
     else
     {

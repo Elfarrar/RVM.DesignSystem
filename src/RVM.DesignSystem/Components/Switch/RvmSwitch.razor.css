@@ -1,8 +1,8 @@
 /* CSS isolado do RvmSwitch. So custom properties — hex literal aqui quebra o tema escuro.
    MEDIDO no referencia-neatlab/Switch.png: trilho de 34 x 14 px (medio) e 26 x 10 px (pequeno).
-   O input vem do InputCheckbox, outro componente: por isso ::deep nas regras de .nativo. */
+   O input vem do InputCheckbox, outro componente: por isso ::deep nas regras de .rvm-nativo. */
 
-.controle {
+.rvm-controle {
     display: inline-flex;
     align-items: center;
     gap: var(--rvm-space-1);
@@ -14,7 +14,7 @@
     vertical-align: middle;
 }
 
-.alvo {
+.rvm-alvo {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -22,10 +22,10 @@
     border-radius: var(--rvm-radius-pill);
 }
 
-.medio .alvo { width: 58px; height: 38px; }
-.pequeno .alvo { width: 44px; height: 30px; }
+.rvm-medio .rvm-alvo { width: 58px; height: 38px; }
+.rvm-pequeno .rvm-alvo { width: 44px; height: 30px; }
 
-.alvo ::deep .nativo {
+.rvm-alvo ::deep .rvm-nativo {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -36,7 +36,7 @@
     z-index: 1;
 }
 
-.trilho {
+.rvm-trilho {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -48,10 +48,10 @@
     transition: background-color var(--rvm-transition-fast);
 }
 
-.medio .trilho { width: 34px; height: 14px; }
-.pequeno .trilho { width: 26px; height: 10px; }
+.rvm-medio .rvm-trilho { width: 34px; height: 14px; }
+.rvm-pequeno .rvm-trilho { width: 26px; height: 10px; }
 
-.polegar {
+.rvm-polegar {
     position: absolute;
     top: 50%;
     border-radius: var(--rvm-radius-circle);
@@ -61,58 +61,58 @@
     transition: left var(--rvm-transition-fast), background-color var(--rvm-transition-fast);
 }
 
-.medio .polegar { width: 20px; height: 20px; left: 9px; }
-.pequeno .polegar { width: 16px; height: 16px; left: 7px; }
+.rvm-medio .rvm-polegar { width: 20px; height: 20px; left: 9px; }
+.rvm-pequeno .rvm-polegar { width: 16px; height: 16px; left: 7px; }
 
 /* Ligado: o polegar corre para a direita e ganha a cor -text (o indicador de estado, 3:1 nos dois
    temas); o trilho vai para o tom resting, mais suave, como no kit. */
-.medio .alvo ::deep .nativo:checked ~ .polegar { left: 29px; }
-.pequeno .alvo ::deep .nativo:checked ~ .polegar { left: 21px; }
+.rvm-medio .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { left: 29px; }
+.rvm-pequeno .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { left: 21px; }
 
-.primary .alvo ::deep .nativo:checked ~ .polegar { background-color: var(--rvm-color-primary-text); }
-.primary .alvo ::deep .nativo:checked ~ .trilho { background-color: var(--rvm-color-primary-outlined-resting); }
-.secondary .alvo ::deep .nativo:checked ~ .polegar { background-color: var(--rvm-color-secondary-text); }
-.secondary .alvo ::deep .nativo:checked ~ .trilho { background-color: var(--rvm-color-secondary-outlined-resting); }
-.info .alvo ::deep .nativo:checked ~ .polegar { background-color: var(--rvm-color-info-text); }
-.info .alvo ::deep .nativo:checked ~ .trilho { background-color: var(--rvm-color-info-outlined-resting); }
-.success .alvo ::deep .nativo:checked ~ .polegar { background-color: var(--rvm-color-success-text); }
-.success .alvo ::deep .nativo:checked ~ .trilho { background-color: var(--rvm-color-success-outlined-resting); }
-.warning .alvo ::deep .nativo:checked ~ .polegar { background-color: var(--rvm-color-warning-text); }
-.warning .alvo ::deep .nativo:checked ~ .trilho { background-color: var(--rvm-color-warning-outlined-resting); }
-.error .alvo ::deep .nativo:checked ~ .polegar { background-color: var(--rvm-color-error-text); }
-.error .alvo ::deep .nativo:checked ~ .trilho { background-color: var(--rvm-color-error-outlined-resting); }
+.rvm-primary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-primary-text); }
+.rvm-primary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-primary-outlined-resting); }
+.rvm-secondary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-secondary-text); }
+.rvm-secondary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-secondary-outlined-resting); }
+.rvm-info .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-info-text); }
+.rvm-info .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-info-outlined-resting); }
+.rvm-success .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-success-text); }
+.rvm-success .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-success-outlined-resting); }
+.rvm-warning .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-warning-text); }
+.rvm-warning .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-warning-outlined-resting); }
+.rvm-error .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-error-text); }
+.rvm-error .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-error-outlined-resting); }
 
-.alvo:has(.nativo:focus-visible) {
+.rvm-alvo:has(.rvm-nativo:focus-visible) {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: -2px;
 }
 
-.controle:hover:not(.desabilitado) .alvo {
+.rvm-controle:hover:not(.rvm-desabilitado) .rvm-alvo {
     background-color: var(--rvm-color-action-hover);
 }
 
-.rotulo {
+.rvm-rotulo {
     padding-inline-end: var(--rvm-space-2);
 }
 
-.desabilitado {
+.rvm-desabilitado {
     cursor: not-allowed;
     color: var(--rvm-color-text-disabled);
 }
 
-.desabilitado .trilho,
-.desabilitado .alvo ::deep .nativo:checked ~ .trilho {
+.rvm-desabilitado .rvm-trilho,
+.rvm-desabilitado .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho {
     background-color: var(--rvm-color-action-disabled);
 }
 
-.desabilitado .polegar,
-.desabilitado .alvo ::deep .nativo:checked ~ .polegar {
+.rvm-desabilitado .rvm-polegar,
+.rvm-desabilitado .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar {
     background-color: var(--rvm-color-background-body);
     box-shadow: var(--rvm-shadow-1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .polegar {
+    .rvm-polegar {
         transition: none;
     }
 }

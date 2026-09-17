@@ -14,9 +14,9 @@ public class RvmAlertTests : BunitContext
     {
         var cortado = Render<RvmAlert>(p => p.AddChildContent("Sua sessao expira em 5 minutos."));
 
-        var alerta = cortado.Find("div.alerta");
-        Assert.Equal("alerta padrao info", alerta.GetAttribute("class"));
-        Assert.Equal("Sua sessao expira em 5 minutos.", cortado.Find("div.mensagem").TextContent);
+        var alerta = cortado.Find("div.rvm-alerta");
+        Assert.Equal("rvm-alerta rvm-padrao rvm-info", alerta.GetAttribute("class"));
+        Assert.Equal("Sua sessao expira em 5 minutos.", cortado.Find("div.rvm-mensagem").TextContent);
     }
 
     [Theory]
@@ -31,18 +31,18 @@ public class RvmAlertTests : BunitContext
         // "salvo com sucesso", e quem depende dele passa a ignorar os avisos que importam.
         var cortado = Render<RvmAlert>(p => p.Add(x => x.Severity, gravidade).AddChildContent("x"));
 
-        Assert.Equal(papel, cortado.Find("div.alerta").GetAttribute("role"));
+        Assert.Equal(papel, cortado.Find("div.rvm-alerta").GetAttribute("role"));
     }
 
     [Theory]
-    [InlineData(RvmAlertVariant.Standard, "padrao")]
-    [InlineData(RvmAlertVariant.Filled, "preenchido")]
-    [InlineData(RvmAlertVariant.Outlined, "contorno")]
+    [InlineData(RvmAlertVariant.Standard, "rvm-padrao")]
+    [InlineData(RvmAlertVariant.Filled, "rvm-preenchido")]
+    [InlineData(RvmAlertVariant.Outlined, "rvm-contorno")]
     public void Estilo_vira_classe(RvmAlertVariant variante, string classe)
     {
         var cortado = Render<RvmAlert>(p => p.Add(x => x.Variant, variante).AddChildContent("x"));
 
-        Assert.Contains(classe, cortado.Find("div.alerta").GetAttribute("class"));
+        Assert.Contains(classe, cortado.Find("div.rvm-alerta").GetAttribute("class"));
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class RvmAlertTests : BunitContext
             .Add(x => x.Title, "Nao foi possivel salvar")
             .AddChildContent("Confira a sua conexao e tente de novo."));
 
-        Assert.Equal("Nao foi possivel salvar", cortado.Find("div.titulo").TextContent);
+        Assert.Equal("Nao foi possivel salvar", cortado.Find("div.rvm-titulo").TextContent);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class RvmAlertTests : BunitContext
     {
         var cortado = Render<RvmAlert>(p => p.AddChildContent("x"));
 
-        Assert.Empty(cortado.FindAll("div.titulo"));
+        Assert.Empty(cortado.FindAll("div.rvm-titulo"));
     }
 
     [Fact]
@@ -69,8 +69,8 @@ public class RvmAlertTests : BunitContext
         var com = Render<RvmAlert>(p => p.AddChildContent("x"));
         var sem = Render<RvmAlert>(p => p.Add(x => x.ShowIcon, false).AddChildContent("x"));
 
-        Assert.NotEmpty(com.FindAll("span.icone-alerta svg"));
-        Assert.Empty(sem.FindAll("span.icone-alerta"));
+        Assert.NotEmpty(com.FindAll("span.rvm-icone-alerta svg"));
+        Assert.Empty(sem.FindAll("span.rvm-icone-alerta"));
     }
 
     [Theory]
@@ -83,7 +83,7 @@ public class RvmAlertTests : BunitContext
     {
         var cortado = Render<RvmAlert>(p => p.Add(x => x.Severity, gravidade).AddChildContent("x"));
 
-        Assert.Equal(DesenhoDe(esperado), cortado.Find("span.icone-alerta svg").InnerHtml);
+        Assert.Equal(DesenhoDe(esperado), cortado.Find("span.rvm-icone-alerta svg").InnerHtml);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class RvmAlertTests : BunitContext
             .Add(x => x.Icon, RvmIconName.Lock)
             .AddChildContent("x"));
 
-        Assert.Equal(DesenhoDe(RvmIconName.Lock), cortado.Find("span.icone-alerta svg").InnerHtml);
+        Assert.Equal(DesenhoDe(RvmIconName.Lock), cortado.Find("span.rvm-icone-alerta svg").InnerHtml);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public class RvmAlertTests : BunitContext
             .Add(x => x.OnClose, EventCallback.Factory.Create(this, () => fechados++))
             .AddChildContent("x"));
 
-        var botao = cortado.Find("button.fechar");
+        var botao = cortado.Find("button.rvm-fechar");
         Assert.Equal("Fechar aviso", botao.GetAttribute("aria-label"));
         Assert.Equal("button", botao.GetAttribute("type"));
 
@@ -126,7 +126,7 @@ public class RvmAlertTests : BunitContext
     {
         var cortado = Render<RvmAlert>(p => p.AddChildContent("x"));
 
-        Assert.Empty(cortado.FindAll("div.acoes"));
+        Assert.Empty(cortado.FindAll("div.rvm-acoes"));
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class RvmAlertTests : BunitContext
             .Add(x => x.Action, "<button class=\"desfazer\">Desfazer</button>")
             .AddChildContent("Item excluido."));
 
-        Assert.Equal("Desfazer", cortado.Find("div.acoes button.desfazer").TextContent);
+        Assert.Equal("Desfazer", cortado.Find("div.rvm-acoes button.desfazer").TextContent);
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public class RvmAlertTests : BunitContext
             .AddUnmatched("data-teste", "1")
             .AddChildContent("x"));
 
-        var alerta = cortado.Find("div.alerta");
+        var alerta = cortado.Find("div.rvm-alerta");
         Assert.Contains("minha", alerta.GetAttribute("class"));
         Assert.Equal("1", alerta.GetAttribute("data-teste"));
     }

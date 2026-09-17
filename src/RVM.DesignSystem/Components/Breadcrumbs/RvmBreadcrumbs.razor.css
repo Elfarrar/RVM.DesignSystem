@@ -2,7 +2,7 @@
    Cores do referencia-neatlab/Breadcrumbs.png: passo comum no texto secundario, atual no primario,
    desabilitado no desabilitado. */
 
-.passos {
+.rvm-passos {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -16,44 +16,44 @@
     font-weight: var(--rvm-text-body1-weight);
 }
 
-.passo {
+.rvm-passo {
     display: inline-flex;
     align-items: center;
     gap: var(--rvm-space-2);
 }
 
-.separador {
+.rvm-separador {
     display: inline-flex;
     align-items: center;
     color: var(--rvm-color-text-secondary);
 }
 
-.rotulo {
+.rvm-rotulo {
     display: inline-flex;
     align-items: center;
     gap: var(--rvm-space-1);
     color: var(--rvm-color-text-secondary);
 }
 
-.ligacao {
+.rvm-ligacao {
     border-radius: var(--rvm-radius-sm);
     text-decoration: none;
 }
 
-.ligacao:hover {
+.rvm-ligacao:hover {
     color: var(--rvm-color-text-primary);
     text-decoration: underline;
 }
 
-.ligacao:focus-visible {
+.rvm-ligacao:focus-visible {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: var(--rvm-focus-ring-offset);
 }
 
-.atual {
+.rvm-atual {
     color: var(--rvm-color-text-primary);
 }
 
-.desabilitado {
+.rvm-desabilitado {
     color: var(--rvm-color-text-disabled);
 }

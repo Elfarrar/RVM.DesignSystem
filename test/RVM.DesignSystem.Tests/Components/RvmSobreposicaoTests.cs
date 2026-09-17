@@ -43,13 +43,13 @@ public class RvmDialogTests : BunitContext
         var caixa = cortado.Find("[role=dialog]");
         Assert.Equal("true", caixa.GetAttribute("aria-modal"));
         Assert.Equal("-1", caixa.GetAttribute("tabindex"));
-        var titulo = cortado.Find("h2.titulo");
+        var titulo = cortado.Find("h2.rvm-titulo");
         Assert.Equal("Excluir talhao?", titulo.TextContent);
         Assert.Equal(titulo.Id, caixa.GetAttribute("aria-labelledby"));
         Assert.Null(caixa.GetAttribute("aria-describedby"));
-        Assert.Equal("Excluir", cortado.Find(".acoes button").TextContent);
-        Assert.Equal("dialogo medio", cortado.Find("div.dialogo").GetAttribute("class"));
-        Assert.Equal("true", cortado.Find(".fundo").GetAttribute("aria-hidden"));
+        Assert.Equal("Excluir", cortado.Find(".rvm-acoes button").TextContent);
+        Assert.Equal("rvm-dialogo rvm-medio", cortado.Find("div.rvm-dialogo").GetAttribute("class"));
+        Assert.Equal("true", cortado.Find(".rvm-fundo").GetAttribute("aria-hidden"));
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class RvmDialogTests : BunitContext
         Assert.Empty(cortado.FindAll("[role=dialog]"));
 
         var outro = Dialogo(aoMudar: estados.Add);
-        outro.Find(".fundo").Click();
+        outro.Find(".rvm-fundo").Click();
         Assert.Empty(outro.FindAll("[role=dialog]"));
         Assert.Equal([false, false], estados);
     }
@@ -76,8 +76,8 @@ public class RvmDialogTests : BunitContext
         var cortado = Dialogo(extra: p => p.Add(x => x.Alert, true));
 
         var caixa = cortado.Find("[role=alertdialog]");
-        Assert.Equal(cortado.Find(".conteudo").Id, caixa.GetAttribute("aria-describedby"));
-        cortado.Find(".fundo").Click();
+        Assert.Equal(cortado.Find(".rvm-conteudo").Id, caixa.GetAttribute("aria-describedby"));
+        cortado.Find(".rvm-fundo").Click();
         Assert.NotEmpty(cortado.FindAll("[role=alertdialog]"));
     }
 
@@ -87,7 +87,7 @@ public class RvmDialogTests : BunitContext
         var cortado = Dialogo(extra: p => p.Add(x => x.CloseOnEscape, false).Add(x => x.CloseOnBackdropClick, false));
 
         cortado.Find("[role=dialog]").KeyDown(key: "Escape");
-        cortado.Find(".fundo").Click();
+        cortado.Find(".rvm-fundo").Click();
 
         Assert.NotEmpty(cortado.FindAll("[role=dialog]"));
     }
@@ -97,7 +97,7 @@ public class RvmDialogTests : BunitContext
     {
         var cortado = Dialogo(extra: p => p.Add(x => x.ShowCloseButton, true).Add(x => x.CloseLabel, "Fechar aviso"));
 
-        var fechar = cortado.Find("button.fechar");
+        var fechar = cortado.Find("button.rvm-fechar");
         Assert.Equal("Fechar aviso", fechar.GetAttribute("aria-label"));
         fechar.Click();
 
@@ -116,14 +116,14 @@ public class RvmDialogTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmSize.Small, false, "dialogo pequeno")]
-    [InlineData(RvmSize.Large, false, "dialogo grande")]
-    [InlineData(RvmSize.Medium, true, "dialogo tela-cheia")]
+    [InlineData(RvmSize.Small, false, "rvm-dialogo rvm-pequeno")]
+    [InlineData(RvmSize.Large, false, "rvm-dialogo rvm-grande")]
+    [InlineData(RvmSize.Medium, true, "rvm-dialogo rvm-tela-cheia")]
     public void Tamanho_e_tela_cheia_viram_classes(RvmSize tamanho, bool telaCheia, string esperado)
     {
         var cortado = Dialogo(extra: p => p.Add(x => x.Size, tamanho).Add(x => x.FullScreen, telaCheia).AddUnmatched("class", "minha"));
 
-        Assert.Equal($"{esperado} minha", cortado.Find("div.dialogo").GetAttribute("class"));
+        Assert.Equal($"{esperado} minha", cortado.Find("div.rvm-dialogo").GetAttribute("class"));
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class RvmDialogTests : BunitContext
         var caixa = cortado.Find("[role=dialog]");
         Assert.Null(caixa.GetAttribute("aria-labelledby"));
         Assert.Equal("Aviso", caixa.GetAttribute("aria-label"));
-        Assert.Empty(cortado.FindAll(".topo"));
+        Assert.Empty(cortado.FindAll(".rvm-topo"));
     }
 
     [Fact]
@@ -252,9 +252,9 @@ public class RvmDrawerTests : BunitContext
 
         var aside = cortado.Find("aside");
         Assert.Equal("Menu principal", aside.GetAttribute("aria-label"));
-        Assert.Equal("gaveta permanente esquerda", aside.GetAttribute("class"));
+        Assert.Equal("rvm-gaveta rvm-permanente rvm-esquerda", aside.GetAttribute("class"));
         Assert.Equal("width: 280px", aside.GetAttribute("style"));
-        Assert.Empty(cortado.FindAll("[role=dialog], .fundo"));
+        Assert.Empty(cortado.FindAll("[role=dialog], .rvm-fundo"));
     }
 
     [Fact]
@@ -267,20 +267,20 @@ public class RvmDrawerTests : BunitContext
         var caixa = aberta.Find("[role=dialog]");
         Assert.Equal("true", caixa.GetAttribute("aria-modal"));
         Assert.Equal("Filtros", caixa.GetAttribute("aria-label"));
-        Assert.Equal("gaveta temporaria direita", caixa.GetAttribute("class"));
+        Assert.Equal("rvm-gaveta rvm-temporaria rvm-direita", caixa.GetAttribute("class"));
         Assert.Equal("width: 320px", caixa.GetAttribute("style"));
     }
 
     [Theory]
-    [InlineData(RvmDrawerAnchor.Top, "topo", "height: 320px")]
-    [InlineData(RvmDrawerAnchor.Bottom, "base", "height: 320px")]
-    [InlineData(RvmDrawerAnchor.Left, "esquerda", "width: 320px")]
+    [InlineData(RvmDrawerAnchor.Top, "rvm-topo", "height: 320px")]
+    [InlineData(RvmDrawerAnchor.Bottom, "rvm-base", "height: 320px")]
+    [InlineData(RvmDrawerAnchor.Left, "rvm-esquerda", "width: 320px")]
     public void Lado_define_classe_e_medida(RvmDrawerAnchor lado, string classe, string estilo)
     {
         var cortado = Render<RvmDrawer>(p => p.Add(x => x.AriaLabel, "Gaveta").Add(x => x.Open, true).Add(x => x.Anchor, lado).AddUnmatched("class", "minha"));
 
         var caixa = cortado.Find("[role=dialog]");
-        Assert.Equal($"gaveta temporaria {classe} minha", caixa.GetAttribute("class"));
+        Assert.Equal($"rvm-gaveta rvm-temporaria {classe} minha", caixa.GetAttribute("class"));
         Assert.Equal(estilo, caixa.GetAttribute("style"));
     }
 
@@ -300,7 +300,7 @@ public class RvmDrawerTests : BunitContext
         Assert.Empty(porTecla.FindAll("[role=dialog]"));
 
         var porFundo = Gaveta();
-        porFundo.Find(".fundo").Click();
+        porFundo.Find(".rvm-fundo").Click();
         Assert.Empty(porFundo.FindAll("[role=dialog]"));
 
         Assert.Equal([false, false], estados);
@@ -344,8 +344,8 @@ public class RvmSnackbarTests : BunitContext
 
         Assert.NotNull(cortado.Find("[role=status]"));
         Assert.NotNull(cortado.Find("[role=alert]"));
-        Assert.Empty(cortado.FindAll(".mensagem"));
-        Assert.Equal("avisos", cortado.Find("div.avisos").GetAttribute("class"));
+        Assert.Empty(cortado.FindAll(".rvm-mensagem"));
+        Assert.Equal("rvm-avisos", cortado.Find("div.rvm-avisos").GetAttribute("class"));
     }
 
     [Fact]
@@ -358,13 +358,13 @@ public class RvmSnackbarTests : BunitContext
 
         cortado.WaitForAssertion(() =>
         {
-            Assert.Equal("Talhao salvo.", cortado.Find("[role=status] .mensagem .texto").TextContent);
-            Assert.Equal("Nao conseguimos salvar.", cortado.Find("[role=alert] .mensagem .texto").TextContent);
+            Assert.Equal("Talhao salvo.", cortado.Find("[role=status] .rvm-mensagem .rvm-texto").TextContent);
+            Assert.Equal("Nao conseguimos salvar.", cortado.Find("[role=alert] .rvm-mensagem .rvm-texto").TextContent);
         });
-        Assert.Equal("mensagem neutra", cortado.Find("[role=status] .mensagem").GetAttribute("class"));
-        Assert.Equal("mensagem colorida error", cortado.Find("[role=alert] .mensagem").GetAttribute("class"));
-        Assert.Empty(cortado.FindAll("[role=status] .mensagem > .icone"));
-        Assert.NotNull(cortado.Find("[role=alert] .mensagem > .icone svg"));
+        Assert.Equal("rvm-mensagem rvm-neutra", cortado.Find("[role=status] .rvm-mensagem").GetAttribute("class"));
+        Assert.Equal("rvm-mensagem rvm-colorida rvm-error", cortado.Find("[role=alert] .rvm-mensagem").GetAttribute("class"));
+        Assert.Empty(cortado.FindAll("[role=status] .rvm-mensagem > .rvm-icone"));
+        Assert.NotNull(cortado.Find("[role=alert] .rvm-mensagem > .rvm-icone svg"));
     }
 
     [Fact]
@@ -379,10 +379,10 @@ public class RvmSnackbarTests : BunitContext
             Duration = null
         }));
 
-        cortado.WaitForElement("button.acao").Click();
+        cortado.WaitForElement("button.rvm-acao").Click();
 
         Assert.True(desfeito);
-        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")));
+        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".rvm-mensagem")));
     }
 
     [Fact]
@@ -391,11 +391,11 @@ public class RvmSnackbarTests : BunitContext
         var cortado = Render<RvmSnackbarHost>(p => p.Add(x => x.CloseLabel, "Dispensar"));
         cortado.InvokeAsync(() => _servico.Show("Oi.", new RvmSnackbarOptions { Duration = null }));
 
-        var fechar = cortado.WaitForElement("button.fechar");
+        var fechar = cortado.WaitForElement("button.rvm-fechar");
         Assert.Equal("Dispensar", fechar.GetAttribute("aria-label"));
         fechar.Click();
 
-        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")));
+        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".rvm-mensagem")));
     }
 
     [Fact]
@@ -404,14 +404,14 @@ public class RvmSnackbarTests : BunitContext
         var cortado = Render<RvmSnackbarHost>();
         cortado.InvokeAsync(() => _servico.Show("Rapida.", new RvmSnackbarOptions { Duration = TimeSpan.FromSeconds(5), ShowCloseButton = false }));
 
-        cortado.WaitForAssertion(() => Assert.NotEmpty(cortado.FindAll(".mensagem")));
-        Assert.Empty(cortado.FindAll("button.fechar"));
+        cortado.WaitForAssertion(() => Assert.NotEmpty(cortado.FindAll(".rvm-mensagem")));
+        Assert.Empty(cortado.FindAll("button.rvm-fechar"));
 
         _relogio.Advance(TimeSpan.FromSeconds(4));
-        Assert.NotEmpty(cortado.FindAll(".mensagem"));
+        Assert.NotEmpty(cortado.FindAll(".rvm-mensagem"));
 
         _relogio.Advance(TimeSpan.FromSeconds(1));
-        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")));
+        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".rvm-mensagem")));
     }
 
     [Fact]
@@ -422,17 +422,17 @@ public class RvmSnackbarTests : BunitContext
 
         // Eventos AGUARDADOS: a versao sincrona volta antes do handler rodar, e o relogio falso andava
         // antes de o tempo ser rearmado — o teste falhava uma vez a cada tres.
-        await cortado.WaitForElement(".mensagem").MouseEnterAsync(new MouseEventArgs());
+        await cortado.WaitForElement(".rvm-mensagem").MouseEnterAsync(new MouseEventArgs());
         _relogio.Advance(TimeSpan.FromMinutes(1));
-        Assert.NotEmpty(cortado.FindAll(".mensagem"));
+        Assert.NotEmpty(cortado.FindAll(".rvm-mensagem"));
 
         // Foco entrou e saiu: o tempo recomeca INTEIRO — 4 s depois ainda esta la, aos 5 s some.
-        await cortado.Find(".mensagem").FocusInAsync(new FocusEventArgs());
-        await cortado.Find(".mensagem").FocusOutAsync(new FocusEventArgs());
+        await cortado.Find(".rvm-mensagem").FocusInAsync(new FocusEventArgs());
+        await cortado.Find(".rvm-mensagem").FocusOutAsync(new FocusEventArgs());
         _relogio.Advance(TimeSpan.FromSeconds(4));
-        Assert.NotEmpty(cortado.FindAll(".mensagem"));
+        Assert.NotEmpty(cortado.FindAll(".rvm-mensagem"));
         _relogio.Advance(TimeSpan.FromSeconds(1));
-        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")), TimeSpan.FromSeconds(5));
+        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".rvm-mensagem")), TimeSpan.FromSeconds(5));
     }
 
     [Fact]
@@ -448,10 +448,10 @@ public class RvmSnackbarTests : BunitContext
             _servico.Show("Tres.", new RvmSnackbarOptions { Duration = null, Loading = true, Color = RvmColor.Info });
         });
 
-        cortado.WaitForAssertion(() => Assert.Equal(2, cortado.FindAll(".mensagem").Count));
+        cortado.WaitForAssertion(() => Assert.Equal(2, cortado.FindAll(".rvm-mensagem").Count));
         cortado.InvokeAsync(() => _servico.Close(primeira!));
 
-        cortado.WaitForAssertion(() => Assert.Equal(["Dois.", "Tres."], cortado.FindAll(".texto").Select(t => t.TextContent)));
+        cortado.WaitForAssertion(() => Assert.Equal(["Dois.", "Tres."], cortado.FindAll(".rvm-texto").Select(t => t.TextContent)));
         Assert.NotNull(cortado.Find("[role=progressbar]"));
     }
 
@@ -465,13 +465,13 @@ public class RvmSnackbarTests : BunitContext
             mensagem = _servico.Show("Um.", new RvmSnackbarOptions { Duration = null });
             _servico.Show("Dois.", new RvmSnackbarOptions { Color = RvmColor.Success });
         });
-        cortado.WaitForAssertion(() => Assert.Equal(2, cortado.FindAll(".mensagem").Count));
+        cortado.WaitForAssertion(() => Assert.Equal(2, cortado.FindAll(".rvm-mensagem").Count));
 
         cortado.InvokeAsync(_servico.CloseAll);
         cortado.InvokeAsync(_servico.CloseAll);
         cortado.InvokeAsync(() => _servico.Close(mensagem!));
 
-        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".mensagem")));
+        cortado.WaitForAssertion(() => Assert.Empty(cortado.FindAll(".rvm-mensagem")));
     }
 
     [Fact]
@@ -481,19 +481,19 @@ public class RvmSnackbarTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmColor.Primary, "primary")]
-    [InlineData(RvmColor.Secondary, "secondary")]
-    [InlineData(RvmColor.Info, "info")]
-    [InlineData(RvmColor.Success, "success")]
-    [InlineData(RvmColor.Warning, "warning")]
+    [InlineData(RvmColor.Primary, "rvm-primary")]
+    [InlineData(RvmColor.Secondary, "rvm-secondary")]
+    [InlineData(RvmColor.Info, "rvm-info")]
+    [InlineData(RvmColor.Success, "rvm-success")]
+    [InlineData(RvmColor.Warning, "rvm-warning")]
     public void Cada_papel_tem_classe_e_icone(RvmColor cor, string classe)
     {
         var cortado = Render<RvmSnackbarHost>(p => p.AddUnmatched("class", "minha"));
         cortado.InvokeAsync(() => _servico.Show("Aviso.", new RvmSnackbarOptions { Color = cor }));
 
-        cortado.WaitForAssertion(() => Assert.Equal($"mensagem colorida {classe}", cortado.Find(".mensagem").GetAttribute("class")));
-        Assert.NotNull(cortado.Find(".mensagem > .icone svg"));
-        Assert.Equal("avisos minha", cortado.Find("div.avisos").GetAttribute("class"));
+        cortado.WaitForAssertion(() => Assert.Equal($"rvm-mensagem rvm-colorida {classe}", cortado.Find(".rvm-mensagem").GetAttribute("class")));
+        Assert.NotNull(cortado.Find(".rvm-mensagem > .rvm-icone svg"));
+        Assert.Equal("rvm-avisos minha", cortado.Find("div.rvm-avisos").GetAttribute("class"));
     }
 
     [Fact]
@@ -501,7 +501,7 @@ public class RvmSnackbarTests : BunitContext
     {
         var cortado = Render<RvmSnackbarHost>();
         await cortado.InvokeAsync(() => _servico.Show("Com relogio.", new RvmSnackbarOptions { Duration = TimeSpan.FromMinutes(1) }));
-        cortado.WaitForAssertion(() => Assert.NotEmpty(cortado.FindAll(".mensagem")));
+        cortado.WaitForAssertion(() => Assert.NotEmpty(cortado.FindAll(".rvm-mensagem")));
 
         await DisposeComponentsAsync();
 

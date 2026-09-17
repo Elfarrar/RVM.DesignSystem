@@ -29,12 +29,12 @@ public partial class RvmSkeleton : ComponentBase
         get
         {
             var proprias = string.Join(' ',
-                "esqueleto",
-                Variant switch { RvmSkeletonVariant.Rectangular => "retangulo", RvmSkeletonVariant.Circular => "circulo", _ => "texto" });
+                "rvm-esqueleto",
+                Variant switch { RvmSkeletonVariant.Rectangular => "rvm-retangulo", RvmSkeletonVariant.Circular => "rvm-circulo", _ => "rvm-texto" });
 
             if (Animated)
             {
-                proprias += " animado";
+                proprias += " rvm-animado";
             }
 
             return Valor("class") is { } texto ? $"{proprias} {texto}" : proprias;

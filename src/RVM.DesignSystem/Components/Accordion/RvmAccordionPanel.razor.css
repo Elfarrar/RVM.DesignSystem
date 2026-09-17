@@ -3,17 +3,17 @@
    painel aberto se descola dos vizinhos com 16 px de vao; no "Customized", o cabecalho e preenchido
    (action-selected) e o conteudo fica no papel. */
 
-.painel {
+.rvm-painel {
     background-color: var(--rvm-color-background-paper);
     transition: margin var(--rvm-transition-fast);
 }
 
-.cabecalho {
+.rvm-cabecalho {
     margin: 0;
     font: inherit;
 }
 
-.gatilho {
+.rvm-gatilho {
     display: flex;
     align-items: center;
     gap: var(--rvm-space-3);
@@ -31,48 +31,48 @@
     cursor: pointer;
 }
 
-.gatilho:hover:not(:disabled) {
+.rvm-gatilho:hover:not(:disabled) {
     background-color: var(--rvm-color-action-hover);
 }
 
-.gatilho:focus-visible {
+.rvm-gatilho:focus-visible {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: calc(var(--rvm-focus-ring-width) * -1);
 }
 
-.icone {
+.rvm-icone {
     display: inline-flex;
     color: var(--rvm-color-text-secondary);
 }
 
 /* O subtitulo comeca numa coluna fixa, como no kit, e nao colado ao titulo. */
-.titulo {
+.rvm-titulo {
     flex: 0 0 auto;
     min-width: 30%;
 }
 
-.subtitulo {
+.rvm-subtitulo {
     flex: 1;
     color: var(--rvm-color-text-secondary);
 }
 
-.marca {
+.rvm-marca {
     display: inline-flex;
     margin-inline-start: auto;
     color: var(--rvm-color-text-secondary);
 }
 
-.conteudo {
+.rvm-conteudo {
     padding: 0 var(--rvm-space-5) var(--rvm-space-5);
     color: var(--rvm-color-text-primary);
     font-size: var(--rvm-text-body2-size);
     line-height: var(--rvm-text-body2-line);
 }
 
-.desabilitado .gatilho,
-.desabilitado .icone,
-.desabilitado .subtitulo,
-.desabilitado .marca {
+.rvm-desabilitado .rvm-gatilho,
+.rvm-desabilitado .rvm-icone,
+.rvm-desabilitado .rvm-subtitulo,
+.rvm-desabilitado .rvm-marca {
     color: var(--rvm-color-text-disabled);
     cursor: not-allowed;
 }

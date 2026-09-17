@@ -14,7 +14,7 @@
         @onclick="AoClicar">
     @if (Loading)
     {
-        <span class="girando">
+        <span class="rvm-girando">
             <RvmIcon Name="RvmIconName.Loader" Size="@Size" />
         </span>
     }
@@ -23,7 +23,7 @@
         <RvmIcon Name="StartIcon.Value" Size="@Size" />
     }
 
-    <span class="rotulo">@ChildContent</span>
+    <span class="rvm-rotulo">@ChildContent</span>
 
     @if (EndIcon is not null && !Loading)
     {

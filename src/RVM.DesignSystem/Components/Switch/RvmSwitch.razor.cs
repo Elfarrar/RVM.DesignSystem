@@ -55,19 +55,19 @@ public partial class RvmSwitch : ComponentBase
         get
         {
             var proprias = string.Join(' ',
-                "controle switch",
-                Size == RvmSize.Small ? "pequeno" : "medio",
+                "rvm-controle rvm-switch",
+                Size == RvmSize.Small ? "rvm-pequeno" : "rvm-medio",
                 Color switch
                 {
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Info => "info",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "primary"
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
                 });
 
-            if (Disabled) proprias += " desabilitado";
+            if (Disabled) proprias += " rvm-desabilitado";
 
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)

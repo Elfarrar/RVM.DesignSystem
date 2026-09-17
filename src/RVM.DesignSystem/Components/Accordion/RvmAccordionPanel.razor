@@ -10,7 +10,7 @@
 
     @if (_aberto)
     {
-        <div id="@IdRegiao" role="region" aria-labelledby="@IdBotao" class="conteudo">
+        <div id="@IdRegiao" role="region" aria-labelledby="@IdBotao" class="rvm-conteudo">
             @ChildContent
         </div>
     }
@@ -23,31 +23,31 @@
     private RenderFragment Cabecalho => @<text>
         @switch (NivelDoCabecalho)
         {
-            case 2: <h2 class="cabecalho">@Botao</h2> break;
-            case 4: <h4 class="cabecalho">@Botao</h4> break;
-            case 5: <h5 class="cabecalho">@Botao</h5> break;
-            case 6: <h6 class="cabecalho">@Botao</h6> break;
-            default: <h3 class="cabecalho">@Botao</h3> break;
+            case 2: <h2 class="rvm-cabecalho">@Botao</h2> break;
+            case 4: <h4 class="rvm-cabecalho">@Botao</h4> break;
+            case 5: <h5 class="rvm-cabecalho">@Botao</h5> break;
+            case 6: <h6 class="rvm-cabecalho">@Botao</h6> break;
+            default: <h3 class="rvm-cabecalho">@Botao</h3> break;
         }
     </text>;
 
     private RenderFragment Botao => @<button type="button"
                                               id="@IdBotao"
-                                              class="gatilho"
+                                              class="rvm-gatilho"
                                               aria-expanded="@(_aberto ? "true" : "false")"
                                               aria-controls="@(_aberto ? IdRegiao : null)"
                                               disabled="@Disabled"
                                               @onclick="AlternarAsync">
         @if (Icon is { } icone)
         {
-            <span class="icone" aria-hidden="true"><RvmIcon Name="icone" Size="RvmSize.Small" /></span>
+            <span class="rvm-icone" aria-hidden="true"><RvmIcon Name="icone" Size="RvmSize.Small" /></span>
         }
-        <span class="titulo">@Title</span>
+        <span class="rvm-titulo">@Title</span>
         @if (!string.IsNullOrWhiteSpace(SecondaryTitle))
         {
-            <span class="subtitulo">@SecondaryTitle</span>
+            <span class="rvm-subtitulo">@SecondaryTitle</span>
         }
-        <span class="marca" aria-hidden="true">
+        <span class="rvm-marca" aria-hidden="true">
             <RvmIcon Name="@IconeDeEstado" Size="RvmSize.Small" />
         </span>
     </button>;

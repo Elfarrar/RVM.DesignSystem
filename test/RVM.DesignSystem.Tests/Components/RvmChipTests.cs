@@ -13,20 +13,20 @@ public class RvmChipTests : BunitContext
     {
         var cortado = Render<RvmChip>(p => p.AddChildContent("Ativo"));
 
-        var chip = cortado.Find("span.chip");
-        Assert.Equal("chip medio preenchido neutro", chip.GetAttribute("class"));
-        Assert.Equal("Ativo", cortado.Find("span.rotulo").TextContent);
+        var chip = cortado.Find("span.rvm-chip");
+        Assert.Equal("rvm-chip rvm-medio rvm-preenchido rvm-neutro", chip.GetAttribute("class"));
+        Assert.Equal("Ativo", cortado.Find("span.rvm-rotulo").TextContent);
     }
 
     [Theory]
-    [InlineData(RvmChipVariant.Filled, "preenchido")]
-    [InlineData(RvmChipVariant.Outlined, "contorno")]
-    [InlineData(RvmChipVariant.Soft, "suave")]
+    [InlineData(RvmChipVariant.Filled, "rvm-preenchido")]
+    [InlineData(RvmChipVariant.Outlined, "rvm-contorno")]
+    [InlineData(RvmChipVariant.Soft, "rvm-suave")]
     public void Estilo_vira_classe(RvmChipVariant variante, string classe)
     {
         var cortado = Render<RvmChip>(p => p.Add(x => x.Variant, variante).AddChildContent("x"));
 
-        Assert.Contains(classe, cortado.Find("span.chip").GetAttribute("class"));
+        Assert.Contains(classe, cortado.Find("span.rvm-chip").GetAttribute("class"));
     }
 
     [Fact]
@@ -34,20 +34,20 @@ public class RvmChipTests : BunitContext
     {
         var cortado = Render<RvmChip>(p => p.Add(x => x.Color, RvmColor.Warning).AddChildContent("x"));
 
-        var classe = cortado.Find("span.chip").GetAttribute("class");
-        Assert.Contains("warning", classe);
-        Assert.DoesNotContain("neutro", classe);
+        var classe = cortado.Find("span.rvm-chip").GetAttribute("class");
+        Assert.Contains("rvm-warning", classe);
+        Assert.DoesNotContain("rvm-neutro", classe);
     }
 
     [Theory]
-    [InlineData(RvmSize.Small, "pequeno")]
-    [InlineData(RvmSize.Medium, "medio")]
-    [InlineData(RvmSize.Large, "medio")]
+    [InlineData(RvmSize.Small, "rvm-pequeno")]
+    [InlineData(RvmSize.Medium, "rvm-medio")]
+    [InlineData(RvmSize.Large, "rvm-medio")]
     public void O_kit_so_tem_dois_tamanhos_e_o_grande_sai_como_medio(RvmSize tamanho, string classe)
     {
         var cortado = Render<RvmChip>(p => p.Add(x => x.Size, tamanho).AddChildContent("x"));
 
-        Assert.Contains(classe, cortado.Find("span.chip").GetAttribute("class"));
+        Assert.Contains(classe, cortado.Find("span.rvm-chip").GetAttribute("class"));
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class RvmChipTests : BunitContext
             .Add(x => x.RemoveLabel, "Remover filtro de status")
             .AddChildContent("Status: ativo"));
 
-        var botao = cortado.Find("button.remover");
+        var botao = cortado.Find("button.rvm-remover");
         Assert.Equal("button", botao.GetAttribute("type"));
         Assert.Equal("Remover filtro de status", botao.GetAttribute("aria-label"));
 
@@ -83,7 +83,7 @@ public class RvmChipTests : BunitContext
             .Add(x => x.OnRemove, EventCallback.Factory.Create(this, () => { }))
             .AddChildContent("x"));
 
-        Assert.Equal("Remover", cortado.Find("button.remover").GetAttribute("aria-label"));
+        Assert.Equal("Remover", cortado.Find("button.rvm-remover").GetAttribute("aria-label"));
     }
 
     [Fact]
@@ -95,11 +95,11 @@ public class RvmChipTests : BunitContext
             .Add(x => x.OnRemove, EventCallback.Factory.Create(this, () => removidos++))
             .AddChildContent("x"));
 
-        var chip = cortado.Find("span.chip");
-        Assert.Contains("desabilitado", chip.GetAttribute("class"));
+        var chip = cortado.Find("span.rvm-chip");
+        Assert.Contains("rvm-desabilitado", chip.GetAttribute("class"));
         Assert.Equal("true", chip.GetAttribute("aria-disabled"));
 
-        var botao = cortado.Find("button.remover");
+        var botao = cortado.Find("button.rvm-remover");
         Assert.True(botao.HasAttribute("disabled"));
         await botao.ClickAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
 
@@ -115,7 +115,7 @@ public class RvmChipTests : BunitContext
             .Add(x => x.StartIcon, RvmIconName.Star)
             .AddChildContent("Ana"));
 
-        Assert.Equal("foto.png", cortado.Find("img.miniatura").GetAttribute("src"));
+        Assert.Equal("foto.png", cortado.Find("img.rvm-miniatura").GetAttribute("src"));
         Assert.Empty(cortado.FindAll("svg"));
     }
 
@@ -125,7 +125,7 @@ public class RvmChipTests : BunitContext
         // O rotulo ao lado ja diz quem e; alt vazio evita o leitor de tela anunciar o nome duas vezes.
         var cortado = Render<RvmChip>(p => p.Add(x => x.AvatarSrc, "foto.png").AddChildContent("Ana"));
 
-        Assert.Equal(string.Empty, cortado.Find("img.miniatura").GetAttribute("alt"));
+        Assert.Equal(string.Empty, cortado.Find("img.rvm-miniatura").GetAttribute("alt"));
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class RvmChipTests : BunitContext
             .AddUnmatched("data-teste", "1")
             .AddChildContent("x"));
 
-        var chip = cortado.Find("span.chip");
+        var chip = cortado.Find("span.rvm-chip");
         Assert.Contains("minha", chip.GetAttribute("class"));
         Assert.Equal("1", chip.GetAttribute("data-teste"));
     }

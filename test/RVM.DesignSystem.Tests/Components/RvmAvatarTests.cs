@@ -29,10 +29,10 @@ public class RvmAvatarTests : BunitContext
             .Add(x => x.Initials, "rv")
             .Add(x => x.Alt, "Rafael Veneroso"));
 
-        var raiz = cortado.Find("span.avatar");
+        var raiz = cortado.Find("span.rvm-avatar");
         Assert.Equal("img", raiz.GetAttribute("role"));
         Assert.Equal("Rafael Veneroso", raiz.GetAttribute("aria-label"));
-        var iniciais = cortado.Find("span.iniciais");
+        var iniciais = cortado.Find("span.rvm-iniciais");
         Assert.Equal("RV", iniciais.TextContent);
         Assert.Equal("true", iniciais.GetAttribute("aria-hidden"));
     }
@@ -42,7 +42,7 @@ public class RvmAvatarTests : BunitContext
     {
         var cortado = Render<RvmAvatar>(p => p.Add(x => x.Initials, "PR"));
 
-        Assert.Equal("PR", cortado.Find("span.avatar").GetAttribute("aria-label"));
+        Assert.Equal("PR", cortado.Find("span.rvm-avatar").GetAttribute("aria-label"));
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class RvmAvatarTests : BunitContext
     {
         var cortado = Render<RvmAvatar>(p => p.Add(x => x.Initials, "abcde"));
 
-        Assert.Equal("AB", cortado.Find("span.iniciais").TextContent);
+        Assert.Equal("AB", cortado.Find("span.rvm-iniciais").TextContent);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class RvmAvatarTests : BunitContext
         // `role="img"` sem nome faz o leitor de tela anunciar so "imagem".
         var cortado = Render<RvmAvatar>(p => p.Add(x => x.Icon, RvmIconName.User));
 
-        var raiz = cortado.Find("span.avatar");
+        var raiz = cortado.Find("span.rvm-avatar");
         Assert.False(raiz.HasAttribute("role"));
         Assert.False(raiz.HasAttribute("aria-label"));
         Assert.Equal("true", raiz.GetAttribute("aria-hidden"));
@@ -73,7 +73,7 @@ public class RvmAvatarTests : BunitContext
             .Add(x => x.Initials, "RV"));
 
         Assert.NotEmpty(cortado.FindAll("svg"));
-        Assert.Empty(cortado.FindAll("span.iniciais"));
+        Assert.Empty(cortado.FindAll("span.rvm-iniciais"));
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class RvmAvatarTests : BunitContext
         cortado.Find("img").TriggerEvent("onerror", new Microsoft.AspNetCore.Components.Web.ErrorEventArgs());
 
         Assert.Empty(cortado.FindAll("img"));
-        Assert.Equal("RV", cortado.Find("span.iniciais").TextContent);
+        Assert.Equal("RV", cortado.Find("span.rvm-iniciais").TextContent);
     }
 
     [Fact]
@@ -104,25 +104,25 @@ public class RvmAvatarTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmSize.Small, "pequeno")]
-    [InlineData(RvmSize.Medium, "medio")]
-    [InlineData(RvmSize.Large, "grande")]
+    [InlineData(RvmSize.Small, "rvm-pequeno")]
+    [InlineData(RvmSize.Medium, "rvm-medio")]
+    [InlineData(RvmSize.Large, "rvm-grande")]
     public void Tamanho_vira_classe(RvmSize tamanho, string classe)
     {
         var cortado = Render<RvmAvatar>(p => p.Add(x => x.Size, tamanho).Add(x => x.Initials, "A"));
 
-        Assert.Contains(classe, cortado.Find("span.avatar").GetAttribute("class"));
+        Assert.Contains(classe, cortado.Find("span.rvm-avatar").GetAttribute("class"));
     }
 
     [Theory]
-    [InlineData(RvmAvatarShape.Circle, "circulo")]
-    [InlineData(RvmAvatarShape.Rounded, "arredondado")]
-    [InlineData(RvmAvatarShape.Square, "quadrado")]
+    [InlineData(RvmAvatarShape.Circle, "rvm-circulo")]
+    [InlineData(RvmAvatarShape.Rounded, "rvm-arredondado")]
+    [InlineData(RvmAvatarShape.Square, "rvm-quadrado")]
     public void Forma_vira_classe(RvmAvatarShape forma, string classe)
     {
         var cortado = Render<RvmAvatar>(p => p.Add(x => x.Shape, forma).Add(x => x.Initials, "A"));
 
-        Assert.Contains(classe, cortado.Find("span.avatar").GetAttribute("class"));
+        Assert.Contains(classe, cortado.Find("span.rvm-avatar").GetAttribute("class"));
     }
 
     [Fact]
@@ -133,9 +133,9 @@ public class RvmAvatarTests : BunitContext
             .Add(x => x.Color, RvmColor.Success)
             .Add(x => x.Initials, "SU"));
 
-        var classe = cortado.Find("span.avatar").GetAttribute("class");
-        Assert.Contains("suave", classe);
-        Assert.Contains("success", classe);
+        var classe = cortado.Find("span.rvm-avatar").GetAttribute("class");
+        Assert.Contains("rvm-suave", classe);
+        Assert.Contains("rvm-success", classe);
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public class RvmAvatarTests : BunitContext
             .AddUnmatched("class", "minha")
             .AddUnmatched("data-teste", "1"));
 
-        var raiz = cortado.Find("span.avatar");
+        var raiz = cortado.Find("span.rvm-avatar");
         Assert.Contains("minha", raiz.GetAttribute("class"));
         Assert.Equal("1", raiz.GetAttribute("data-teste"));
     }
@@ -185,7 +185,7 @@ public class RvmAvatarGroupTests : BunitContext
     {
         var cortado = Render<RvmAvatarGroup>(p => p.Add(x => x.Surplus, 3));
 
-        var mais = cortado.Find("span.avatar");
+        var mais = cortado.Find("span.rvm-avatar");
         Assert.Equal("+3", mais.TextContent.Trim());
         Assert.Equal("Mais 3", mais.GetAttribute("aria-label"));
     }
@@ -198,8 +198,8 @@ public class RvmAvatarGroupTests : BunitContext
         // "+10" passava pelo corte de iniciais em duas letras e virava "+1": contagem errada, calada.
         var cortado = Render<RvmAvatarGroup>(p => p.Add(x => x.Surplus, excedente));
 
-        Assert.Equal(esperado, cortado.Find("span.avatar").TextContent.Trim());
-        Assert.Equal($"Mais {excedente}", cortado.Find("span.avatar").GetAttribute("aria-label"));
+        Assert.Equal(esperado, cortado.Find("span.rvm-avatar").TextContent.Trim());
+        Assert.Equal($"Mais {excedente}", cortado.Find("span.rvm-avatar").GetAttribute("aria-label"));
     }
 
     [Fact]
@@ -207,7 +207,7 @@ public class RvmAvatarGroupTests : BunitContext
     {
         var cortado = Render<RvmAvatarGroup>(p => p.AddChildContent("<span class=\"filho\"></span>"));
 
-        Assert.Empty(cortado.FindAll("span.avatar"));
+        Assert.Empty(cortado.FindAll("span.rvm-avatar"));
         Assert.NotEmpty(cortado.FindAll("span.filho"));
     }
 
@@ -216,6 +216,6 @@ public class RvmAvatarGroupTests : BunitContext
     {
         var cortado = Render<RvmAvatarGroup>(p => p.AddUnmatched("class", "minha"));
 
-        Assert.Equal("grupo minha", cortado.Find("div").GetAttribute("class"));
+        Assert.Equal("rvm-grupo minha", cortado.Find("div").GetAttribute("class"));
     }
 }

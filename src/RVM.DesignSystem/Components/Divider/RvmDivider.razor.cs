@@ -26,10 +26,10 @@ public partial class RvmDivider : ComponentBase
         get
         {
             var proprias = ChildContent is not null
-                ? "divisor com-texto"
+                ? "rvm-divisor rvm-com-texto"
                 : Orientation == RvmOrientation.Vertical
-                    ? "divisor vertical"
-                    : "divisor horizontal";
+                    ? "rvm-divisor rvm-vertical"
+                    : "rvm-divisor rvm-horizontal";
 
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)

@@ -162,14 +162,14 @@ public partial class RvmTextField
         get
         {
             var proprias = string.Join(' ',
-                "campo",
-                Variant switch { RvmTextFieldVariant.Filled => "preenchido", RvmTextFieldVariant.Standard => "padrao", _ => "contorno" },
-                Size == RvmSize.Small ? "pequeno" : "medio");
+                "rvm-campo",
+                Variant switch { RvmTextFieldVariant.Filled => "rvm-preenchido", RvmTextFieldVariant.Standard => "rvm-padrao", _ => "rvm-contorno" },
+                Size == RvmSize.Small ? "rvm-pequeno" : "rvm-medio");
 
-            if (!string.IsNullOrEmpty(Placeholder)) proprias += " rotulo-fixo";
-            if (!string.IsNullOrWhiteSpace(Prefix)) proprias += " com-prefixo";
-            if (TemErro) proprias += " erro";
-            if (Disabled) proprias += " desabilitado";
+            if (!string.IsNullOrEmpty(Placeholder)) proprias += " rvm-rotulo-fixo";
+            if (!string.IsNullOrWhiteSpace(Prefix)) proprias += " rvm-com-prefixo";
+            if (TemErro) proprias += " rvm-erro";
+            if (Disabled) proprias += " rvm-desabilitado";
 
             // `CssClass` do InputBase traz as classes de validacao do EditForm ("modified", "invalid")
             // e a `class` que o consumidor mandou.

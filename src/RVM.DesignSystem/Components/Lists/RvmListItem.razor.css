@@ -4,25 +4,25 @@
    chega a 4.5:1. Aqui o selecionado usa o action-selected, mais suave, e ganha uma barra de 3 px no
    -text do primary como indicador (3:1 contra o fundo). */
 
-.item {
+.rvm-item {
     font-family: var(--rvm-font-family);
 }
 
-.linha {
+.rvm-linha {
     display: flex;
     align-items: center;
     min-height: 48px;
 }
 
-.denso .linha {
+.rvm-denso .rvm-linha {
     min-height: 40px;
 }
 
-.duas-linhas .linha {
+.rvm-duas-linhas .rvm-linha {
     min-height: 60px;
 }
 
-.principal {
+.rvm-principal {
     display: flex;
     flex: 1;
     align-items: center;
@@ -40,79 +40,79 @@
     text-decoration: none;
 }
 
-.interativo {
+.rvm-interativo {
     cursor: pointer;
     transition: background-color var(--rvm-transition-fast);
 }
 
-.interativo:hover {
+.rvm-interativo:hover {
     background-color: var(--rvm-color-action-hover);
 }
 
-.interativo:focus-visible {
+.rvm-interativo:focus-visible {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: calc(var(--rvm-focus-ring-width) * -1);
 }
 
-.selecionado .principal {
+.rvm-selecionado .rvm-principal {
     background-color: var(--rvm-color-action-selected);
     border-inline-start-color: var(--rvm-color-primary-text);
 }
 
-.inicio {
+.rvm-inicio {
     display: inline-flex;
     flex: none;
     align-items: center;
     justify-content: center;
 }
 
-.icone {
+.rvm-icone {
     color: var(--rvm-color-text-secondary);
 }
 
-.textos {
+.rvm-textos {
     display: flex;
     flex: 1;
     flex-direction: column;
     min-width: 0;
 }
 
-.primario {
+.rvm-primario {
     font-size: var(--rvm-text-body1-size);
     line-height: var(--rvm-text-body1-line);
 }
 
-.denso .primario {
+.rvm-denso .rvm-primario {
     font-size: var(--rvm-text-body2-size);
     line-height: var(--rvm-text-body2-line);
 }
 
-.secundario {
+.rvm-secundario {
     color: var(--rvm-color-text-secondary);
     font-size: var(--rvm-text-body2-size);
     line-height: var(--rvm-text-body2-line);
 }
 
-.seta {
+.rvm-seta {
     display: inline-flex;
     flex: none;
     color: var(--rvm-color-text-secondary);
 }
 
-.fim {
+.rvm-fim {
     display: flex;
     flex: none;
     align-items: center;
     padding: 0 var(--rvm-space-2);
 }
 
-.desabilitado .principal,
-.desabilitado .icone,
-.desabilitado .secundario {
+.rvm-desabilitado .rvm-principal,
+.rvm-desabilitado .rvm-icone,
+.rvm-desabilitado .rvm-secundario {
     color: var(--rvm-color-text-disabled);
     cursor: not-allowed;
 }
 
-.desabilitado .interativo:hover {
+.rvm-desabilitado .rvm-interativo:hover {
     background-color: transparent;
 }

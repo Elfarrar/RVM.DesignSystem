@@ -5,15 +5,15 @@
 @* <nav> + <ol> com aria-current no ultimo: o padrao do APG para trilha. O leitor de tela anuncia
    "trilha de navegacao, lista, 3 itens" e sabe qual e a pagina atual. Os separadores sao desenho. *@
 <nav @attributes="AdditionalAttributes" aria-label="@AriaLabel" class="@ClassesDaRaiz">
-    <ol class="passos">
+    <ol class="rvm-passos">
         @for (var i = 0; i < Items.Count; i++)
         {
             var item = Items[i];
             var atual = i == Items.Count - 1;
-            <li class="passo">
+            <li class="rvm-passo">
                 @if (i > 0)
                 {
-                    <span class="separador" aria-hidden="true">
+                    <span class="rvm-separador" aria-hidden="true">
                         @if (Separator == RvmBreadcrumbSeparator.Chevron)
                         {
                             <RvmIcon Name="RvmIconName.ChevronRight" Size="RvmSize.Small" />
@@ -27,19 +27,19 @@
 
                 @if (atual)
                 {
-                    <span class="rotulo atual" aria-current="page">@Conteudo(item)</span>
+                    <span class="rvm-rotulo rvm-atual" aria-current="page">@Conteudo(item)</span>
                 }
                 else if (item.Disabled)
                 {
-                    <span class="rotulo desabilitado" aria-disabled="true">@Conteudo(item)</span>
+                    <span class="rvm-rotulo rvm-desabilitado" aria-disabled="true">@Conteudo(item)</span>
                 }
                 else if (!string.IsNullOrWhiteSpace(item.Href))
                 {
-                    <a class="rotulo ligacao" href="@item.Href">@Conteudo(item)</a>
+                    <a class="rvm-rotulo rvm-ligacao" href="@item.Href">@Conteudo(item)</a>
                 }
                 else
                 {
-                    <span class="rotulo">@Conteudo(item)</span>
+                    <span class="rvm-rotulo">@Conteudo(item)</span>
                 }
             </li>
         }

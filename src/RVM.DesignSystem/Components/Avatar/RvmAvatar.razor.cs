@@ -70,18 +70,18 @@ public partial class RvmAvatar : ComponentBase
         get
         {
             var proprias = string.Join(' ',
-                "avatar",
-                Size switch { RvmSize.Small => "pequeno", RvmSize.Large => "grande", _ => "medio" },
-                Shape switch { RvmAvatarShape.Rounded => "arredondado", RvmAvatarShape.Square => "quadrado", _ => "circulo" },
-                Variant == RvmAvatarVariant.Soft ? "suave" : "preenchido",
+                "rvm-avatar",
+                Size switch { RvmSize.Small => "rvm-pequeno", RvmSize.Large => "rvm-grande", _ => "rvm-medio" },
+                Shape switch { RvmAvatarShape.Rounded => "rvm-arredondado", RvmAvatarShape.Square => "rvm-quadrado", _ => "rvm-circulo" },
+                Variant == RvmAvatarVariant.Soft ? "rvm-suave" : "rvm-preenchido",
                 Color switch
                 {
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Info => "info",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "primary"
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
                 });
 
             return AdditionalAttributes is not null

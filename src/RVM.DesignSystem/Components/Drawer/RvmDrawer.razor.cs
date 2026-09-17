@@ -54,14 +54,14 @@ public partial class RvmDrawer : ComponentBase, IAsyncDisposable
         get
         {
             var proprias = string.Join(' ',
-                "gaveta",
-                Variant == RvmDrawerVariant.Permanent ? "permanente" : "temporaria",
+                "rvm-gaveta",
+                Variant == RvmDrawerVariant.Permanent ? "rvm-permanente" : "rvm-temporaria",
                 Anchor switch
                 {
-                    RvmDrawerAnchor.Right => "direita",
-                    RvmDrawerAnchor.Top => "topo",
-                    RvmDrawerAnchor.Bottom => "base",
-                    _ => "esquerda"
+                    RvmDrawerAnchor.Right => "rvm-direita",
+                    RvmDrawerAnchor.Top => "rvm-topo",
+                    RvmDrawerAnchor.Bottom => "rvm-base",
+                    _ => "rvm-esquerda"
                 });
 
             return AdditionalAttributes is not null
@@ -73,7 +73,7 @@ public partial class RvmDrawer : ComponentBase, IAsyncDisposable
         }
     }
 
-    internal string ClassesDaRaizTemporaria => "camada";
+    internal string ClassesDaRaizTemporaria => "rvm-camada";
 
     internal string EstiloDaGaveta => Horizontal ? $"width: {Size}" : $"height: {Size}";
 

@@ -33,8 +33,8 @@ public partial class RvmMenuItem : ComponentBase, IDisposable
            && AdditionalAttributes.TryGetValue("class", out var informada)
            && informada is string texto
            && !string.IsNullOrWhiteSpace(texto)
-            ? $"item {texto}"
-            : "item";
+            ? $"rvm-item {texto}"
+            : "rvm-item";
 
     internal ValueTask FocusAsync() => _elemento.FocusAsync();
 

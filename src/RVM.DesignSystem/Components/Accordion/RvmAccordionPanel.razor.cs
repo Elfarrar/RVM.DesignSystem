@@ -55,8 +55,8 @@ public partial class RvmAccordionPanel : ComponentBase, IDisposable
     {
         get
         {
-            var proprias = _aberto ? "painel aberto" : "painel";
-            if (Disabled) proprias += " desabilitado";
+            var proprias = _aberto ? "rvm-painel rvm-aberto" : "rvm-painel";
+            if (Disabled) proprias += " rvm-desabilitado";
 
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)

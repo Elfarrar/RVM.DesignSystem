@@ -16,11 +16,11 @@ public class RvmProgressTests : BunitContext
         var cortado = Render<RvmProgress>();
 
         var raiz = cortado.Find("[role=progressbar]");
-        Assert.Equal("progresso linear indeterminado medio primary", raiz.GetAttribute("class"));
+        Assert.Equal("rvm-progresso rvm-linear rvm-indeterminado rvm-medio rvm-primary", raiz.GetAttribute("class"));
         Assert.Equal("Carregando", raiz.GetAttribute("aria-label"));
         Assert.Null(raiz.GetAttribute("aria-valuenow"));
         Assert.Null(raiz.GetAttribute("aria-valuemin"));
-        Assert.Null(cortado.Find(".barra").GetAttribute("style"));
+        Assert.Null(cortado.Find(".rvm-barra").GetAttribute("style"));
     }
 
     [Theory]
@@ -32,24 +32,24 @@ public class RvmProgressTests : BunitContext
         var cortado = Render<RvmProgress>(p => p.Add(x => x.Value, valor).Add(x => x.Label, "Enviando planilha"));
 
         var raiz = cortado.Find("[role=progressbar]");
-        Assert.Contains("determinado", raiz.GetAttribute("class"));
+        Assert.Contains("rvm-determinado", raiz.GetAttribute("class"));
         Assert.Equal("0", raiz.GetAttribute("aria-valuemin"));
         Assert.Equal("100", raiz.GetAttribute("aria-valuemax"));
         Assert.Equal(anunciado, raiz.GetAttribute("aria-valuenow"));
         Assert.Equal("Enviando planilha", raiz.GetAttribute("aria-label"));
-        Assert.Equal(estilo, cortado.Find(".barra").GetAttribute("style"));
+        Assert.Equal(estilo, cortado.Find(".rvm-barra").GetAttribute("style"));
     }
 
     [Fact]
     public void Mostrar_valor_so_no_determinado_e_escondido_do_leitor()
     {
         var determinado = Render<RvmProgress>(p => p.Add(x => x.Value, 70).Add(x => x.ShowValue, true));
-        var valor = determinado.Find(".valor");
+        var valor = determinado.Find(".rvm-valor");
         Assert.Equal("70%", valor.TextContent);
         Assert.Equal("true", valor.GetAttribute("aria-hidden"));
 
         var indeterminado = Render<RvmProgress>(p => p.Add(x => x.ShowValue, true));
-        Assert.Empty(indeterminado.FindAll(".valor"));
+        Assert.Empty(indeterminado.FindAll(".rvm-valor"));
     }
 
     [Fact]
@@ -57,10 +57,10 @@ public class RvmProgressTests : BunitContext
     {
         var cortado = Render<RvmProgress>(p => p.Add(x => x.Variant, RvmProgressVariant.Circular).Add(x => x.Value, 25));
 
-        Assert.Contains("circular", cortado.Find("[role=progressbar]").GetAttribute("class"));
+        Assert.Contains("rvm-circular", cortado.Find("[role=progressbar]").GetAttribute("class"));
         Assert.Equal("true", cortado.Find("svg").GetAttribute("aria-hidden"));
         // Circunferencia de 2 * pi * 20.2 = 126.92; faltando 75%, o deslocamento e 95.19.
-        Assert.Equal("stroke-dasharray: 126.92; stroke-dashoffset: 95.19", cortado.Find(".arco").GetAttribute("style"));
+        Assert.Equal("stroke-dasharray: 126.92; stroke-dashoffset: 95.19", cortado.Find(".rvm-arco").GetAttribute("style"));
     }
 
     [Fact]
@@ -73,10 +73,10 @@ public class RvmProgressTests : BunitContext
         {
             var cortado = Render<RvmProgress>(p => p.Add(x => x.Variant, RvmProgressVariant.Circular).Add(x => x.Value, 25));
 
-            var arco = cortado.Find(".arco");
+            var arco = cortado.Find(".rvm-arco");
             Assert.Equal("20.2", arco.GetAttribute("r"));
             Assert.Equal("3.6", arco.GetAttribute("stroke-width"));
-            Assert.Equal("20.2", cortado.Find(".trilho-anel").GetAttribute("r"));
+            Assert.Equal("20.2", cortado.Find(".rvm-trilho-anel").GetAttribute("r"));
             Assert.Equal("stroke-dasharray: 126.92; stroke-dashoffset: 95.19", arco.GetAttribute("style"));
         }
         finally
@@ -90,15 +90,15 @@ public class RvmProgressTests : BunitContext
     {
         var cortado = Render<RvmProgress>(p => p.Add(x => x.Variant, RvmProgressVariant.Circular));
 
-        Assert.Null(cortado.Find(".arco").GetAttribute("style"));
+        Assert.Null(cortado.Find(".rvm-arco").GetAttribute("style"));
     }
 
     [Theory]
-    [InlineData(RvmSize.Small, RvmColor.Secondary, "pequeno secondary")]
-    [InlineData(RvmSize.Large, RvmColor.Info, "grande info")]
-    [InlineData(RvmSize.Medium, RvmColor.Success, "medio success")]
-    [InlineData(RvmSize.Medium, RvmColor.Warning, "medio warning")]
-    [InlineData(RvmSize.Medium, RvmColor.Error, "medio error")]
+    [InlineData(RvmSize.Small, RvmColor.Secondary, "rvm-pequeno rvm-secondary")]
+    [InlineData(RvmSize.Large, RvmColor.Info, "rvm-grande rvm-info")]
+    [InlineData(RvmSize.Medium, RvmColor.Success, "rvm-medio rvm-success")]
+    [InlineData(RvmSize.Medium, RvmColor.Warning, "rvm-medio rvm-warning")]
+    [InlineData(RvmSize.Medium, RvmColor.Error, "rvm-medio rvm-error")]
     public void Tamanho_e_cor_viram_classes(RvmSize tamanho, RvmColor cor, string esperado)
     {
         var cortado = Render<RvmProgress>(p => p.Add(x => x.Size, tamanho).Add(x => x.Color, cor).AddUnmatched("class", "minha"));
@@ -115,7 +115,7 @@ public class RvmSkeletonTests : BunitContext
         var cortado = Render<RvmSkeleton>();
 
         var raiz = cortado.Find("span");
-        Assert.Equal("esqueleto texto animado", raiz.GetAttribute("class"));
+        Assert.Equal("rvm-esqueleto rvm-texto rvm-animado", raiz.GetAttribute("class"));
         Assert.Equal("true", raiz.GetAttribute("aria-hidden"));
         Assert.Equal(string.Empty, raiz.GetAttribute("style"));
     }
@@ -131,7 +131,7 @@ public class RvmSkeletonTests : BunitContext
             .Add(x => x.Width, "50%").Add(x => x.Height, "3rem")
             .Add(x => x.Animated, false));
         Assert.Equal("width: 50%; height: 3rem", medido.Find("span").GetAttribute("style"));
-        Assert.Equal("esqueleto retangulo", medido.Find("span").GetAttribute("class"));
+        Assert.Equal("rvm-esqueleto rvm-retangulo", medido.Find("span").GetAttribute("class"));
     }
 
     [Fact]
@@ -153,7 +153,7 @@ public class RvmSkeletonTests : BunitContext
             .AddUnmatched("style", "margin-top: 8px;"));
 
         var raiz = cortado.Find("span");
-        Assert.Equal("esqueleto texto animado minha", raiz.GetAttribute("class"));
+        Assert.Equal("rvm-esqueleto rvm-texto rvm-animado minha", raiz.GetAttribute("class"));
         Assert.Equal("width: 10rem; margin-top: 8px", raiz.GetAttribute("style"));
     }
 }
@@ -167,12 +167,12 @@ public class RvmEmptyStateTests : BunitContext
             .Add(x => x.Title, "Nenhum talhao cadastrado ainda")
             .Add(x => x.Description, "Cadastre o primeiro para acompanhar a safra."));
 
-        var secao = cortado.Find("section.vazio");
-        var titulo = cortado.Find("h2.titulo");
+        var secao = cortado.Find("section.rvm-vazio");
+        var titulo = cortado.Find("h2.rvm-titulo");
         Assert.Equal("Nenhum talhao cadastrado ainda", titulo.TextContent);
         Assert.Equal(titulo.Id, secao.GetAttribute("aria-labelledby"));
-        Assert.Equal("Cadastre o primeiro para acompanhar a safra.", cortado.Find("p.descricao").TextContent);
-        Assert.Empty(cortado.FindAll(".icone, .ilustracao, .acoes, .detalhe"));
+        Assert.Equal("Cadastre o primeiro para acompanhar a safra.", cortado.Find("p.rvm-descricao").TextContent);
+        Assert.Empty(cortado.FindAll(".rvm-icone, .rvm-ilustracao, .rvm-acoes, .rvm-detalhe"));
     }
 
     [Theory]
@@ -185,7 +185,7 @@ public class RvmEmptyStateTests : BunitContext
     {
         var cortado = Render<RvmEmptyState>(p => p.Add(x => x.Title, "Vazio").Add(x => x.HeadingLevel, nivel));
 
-        Assert.Equal("Vazio", cortado.Find($"{elemento}.titulo").TextContent);
+        Assert.Equal("Vazio", cortado.Find($"{elemento}.rvm-titulo").TextContent);
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class RvmEmptyStateTests : BunitContext
     {
         var cortado = Render<RvmEmptyState>(p => p.Add(x => x.Title, "Vazio").Add(x => x.HeadingLevel, 5));
 
-        Assert.Contains(cortado.Find("h5.titulo").Attributes, a => a.Name.StartsWith("b-", StringComparison.Ordinal));
+        Assert.Contains(cortado.Find("h5.rvm-titulo").Attributes, a => a.Name.StartsWith("b-", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -206,10 +206,10 @@ public class RvmEmptyStateTests : BunitContext
             .Add(x => x.Actions, (RenderFragment)(b => b.AddMarkupContent(0, "<button>Limpar filtros</button>")))
             .AddUnmatched("class", "minha"));
 
-        Assert.Equal("true", cortado.Find(".icone").GetAttribute("aria-hidden"));
-        Assert.Equal("Limpar filtros", cortado.Find(".acoes button").TextContent);
-        Assert.Equal("dica", cortado.Find(".detalhe small").TextContent);
-        Assert.Equal("vazio minha", cortado.Find("section").GetAttribute("class"));
+        Assert.Equal("true", cortado.Find(".rvm-icone").GetAttribute("aria-hidden"));
+        Assert.Equal("Limpar filtros", cortado.Find(".rvm-acoes button").TextContent);
+        Assert.Equal("dica", cortado.Find(".rvm-detalhe small").TextContent);
+        Assert.Equal("rvm-vazio minha", cortado.Find("section").GetAttribute("class"));
     }
 
     [Fact]
@@ -220,7 +220,7 @@ public class RvmEmptyStateTests : BunitContext
             .Add(x => x.Icon, RvmIconName.Search)
             .Add(x => x.Illustration, (RenderFragment)(b => b.AddMarkupContent(0, "<img src=\"x.svg\" alt=\"\" />"))));
 
-        Assert.Equal("true", cortado.Find(".ilustracao").GetAttribute("aria-hidden"));
-        Assert.Empty(cortado.FindAll(".icone"));
+        Assert.Equal("true", cortado.Find(".rvm-ilustracao").GetAttribute("aria-hidden"));
+        Assert.Empty(cortado.FindAll(".rvm-icone"));
     }
 }

@@ -39,15 +39,15 @@ public class RvmListTests : BunitContext
             .Com(nameof(RvmListItem.Icon), RvmIconName.Clock)));
 
         var ul = cortado.Find("ul");
-        Assert.Equal("lista", ul.GetAttribute("class"));
+        Assert.Equal("rvm-lista", ul.GetAttribute("class"));
         Assert.Equal("Produtores", ul.GetAttribute("aria-label"));
         var li = cortado.Find("li");
-        Assert.Equal("item duas-linhas", li.GetAttribute("class"));
-        Assert.Equal("Caroline Black", cortado.Find(".primario").TextContent);
-        Assert.Equal("Sweet dessert brownie", cortado.Find(".secundario").TextContent);
-        Assert.Equal("true", cortado.Find(".icone").GetAttribute("aria-hidden"));
+        Assert.Equal("rvm-item rvm-duas-linhas", li.GetAttribute("class"));
+        Assert.Equal("Caroline Black", cortado.Find(".rvm-primario").TextContent);
+        Assert.Equal("Sweet dessert brownie", cortado.Find(".rvm-secundario").TextContent);
+        Assert.Equal("true", cortado.Find(".rvm-icone").GetAttribute("aria-hidden"));
         Assert.Empty(cortado.FindAll("a, button"));
-        Assert.Equal("DIV", cortado.Find(".principal").TagName);
+        Assert.Equal("DIV", cortado.Find(".rvm-principal").TagName);
     }
 
     [Fact]
@@ -58,10 +58,10 @@ public class RvmListTests : BunitContext
             .Com(nameof(RvmListItem.Selected), true)
             .Com(nameof(RvmListItem.ChildContent), (RenderFragment)(c => c.AddContent(0, "Talhoes")))), densa: true);
 
-        var link = cortado.Find("a.principal");
+        var link = cortado.Find("a.rvm-principal");
         Assert.Equal("/talhoes", link.GetAttribute("href"));
         Assert.Equal("page", link.GetAttribute("aria-current"));
-        Assert.Equal("item denso selecionado", cortado.Find("li").GetAttribute("class"));
+        Assert.Equal("rvm-item rvm-denso rvm-selecionado", cortado.Find("li").GetAttribute("class"));
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class RvmListTests : BunitContext
             .Com(nameof(RvmListItem.Href), "/talhoes")
             .Com(nameof(RvmListItem.Disabled), true)));
 
-        var link = cortado.Find("a.principal");
+        var link = cortado.Find("a.rvm-principal");
         Assert.Null(link.GetAttribute("href"));
         Assert.Equal("true", link.GetAttribute("aria-disabled"));
     }
@@ -85,11 +85,11 @@ public class RvmListTests : BunitContext
             .Com(nameof(RvmListItem.StartContent), (RenderFragment)(c => c.AddMarkupContent(0, "<img alt=\"\" src=\"a.png\" />")))
             .Com(nameof(RvmListItem.EndContent), (RenderFragment)(c => c.AddMarkupContent(0, "<button class=\"favoritar\">Favoritar</button>")))));
 
-        var botao = cortado.Find("button.principal");
+        var botao = cortado.Find("button.rvm-principal");
         Assert.Equal("false", botao.GetAttribute("aria-pressed"));
-        Assert.NotNull(botao.QuerySelector(".inicio img"));
+        Assert.NotNull(botao.QuerySelector(".rvm-inicio img"));
         Assert.Null(botao.QuerySelector(".favoritar"));
-        Assert.NotNull(cortado.Find(".fim .favoritar"));
+        Assert.NotNull(cortado.Find(".rvm-fim .favoritar"));
 
         botao.Click();
         Assert.Equal(1, cliques);
@@ -105,10 +105,10 @@ public class RvmListTests : BunitContext
             .Com(nameof(RvmListItem.Disabled), true)
             .Com("class", "minha")));
 
-        var botao = cortado.Find("button.principal");
+        var botao = cortado.Find("button.rvm-principal");
         Assert.True(botao.HasAttribute("disabled"));
         Assert.Equal("true", botao.GetAttribute("aria-pressed"));
-        Assert.Equal("item selecionado desabilitado minha", cortado.Find("li").GetAttribute("class"));
+        Assert.Equal("rvm-item rvm-selecionado rvm-desabilitado minha", cortado.Find("li").GetAttribute("class"));
         botao.Click();
         Assert.Equal(0, cliques);
     }
@@ -122,20 +122,20 @@ public class RvmListTests : BunitContext
             .Com(nameof(RvmListItem.ExpandedChanged), EventCallback.Factory.Create<bool>(this, estados.Add))
             .Com(nameof(RvmListItem.NestedContent), (RenderFragment)(c => c.AddMarkupContent(0, "<ul><li>Santa Clara</li></ul>")))));
 
-        var botao = cortado.Find("button.principal");
+        var botao = cortado.Find("button.rvm-principal");
         Assert.Equal("false", botao.GetAttribute("aria-expanded"));
         Assert.Null(botao.GetAttribute("aria-controls"));
-        Assert.Empty(cortado.FindAll(".aninhada"));
+        Assert.Empty(cortado.FindAll(".rvm-aninhada"));
 
         botao.Click();
-        botao = cortado.Find("button.principal");
-        var sublista = cortado.Find(".aninhada");
+        botao = cortado.Find("button.rvm-principal");
+        var sublista = cortado.Find(".rvm-aninhada");
         Assert.Equal("true", botao.GetAttribute("aria-expanded"));
         Assert.Equal(sublista.Id, botao.GetAttribute("aria-controls"));
         Assert.Contains("Santa Clara", sublista.TextContent);
 
-        cortado.Find("button.principal").Click();
-        Assert.Empty(cortado.FindAll(".aninhada"));
+        cortado.Find("button.rvm-principal").Click();
+        Assert.Empty(cortado.FindAll(".rvm-aninhada"));
         Assert.Equal([true, false], estados);
     }
 
@@ -147,9 +147,9 @@ public class RvmListTests : BunitContext
             .Com(nameof(RvmListItem.Disabled), true)
             .Com(nameof(RvmListItem.NestedContent), (RenderFragment)(c => c.AddContent(0, "filhos")))));
 
-        Assert.NotEmpty(cortado.FindAll(".aninhada"));
-        cortado.Find("button.principal").Click();
-        Assert.NotEmpty(cortado.FindAll(".aninhada"));
+        Assert.NotEmpty(cortado.FindAll(".rvm-aninhada"));
+        cortado.Find("button.rvm-principal").Click();
+        Assert.NotEmpty(cortado.FindAll(".rvm-aninhada"));
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class RvmListTests : BunitContext
     {
         var cortado = Render<RvmListItem>(p => p.AddChildContent("Solto"));
 
-        Assert.Equal("item", cortado.Find("li").GetAttribute("class"));
+        Assert.Equal("rvm-item", cortado.Find("li").GetAttribute("class"));
     }
 }
 
@@ -194,13 +194,13 @@ public class RvmAccordionTests : BunitContext
     {
         var cortado = Acordeao();
 
-        Assert.Equal("acordeao padrao", cortado.Find("div.acordeao").GetAttribute("class"));
-        var botoes = cortado.FindAll("h3 > button.gatilho");
+        Assert.Equal("rvm-acordeao rvm-padrao", cortado.Find("div.rvm-acordeao").GetAttribute("class"));
+        var botoes = cortado.FindAll("h3 > button.rvm-gatilho");
         Assert.Equal(3, botoes.Count);
         Assert.All(botoes, b => Assert.Equal("false", b.GetAttribute("aria-expanded")));
         Assert.All(botoes, b => Assert.Null(b.GetAttribute("aria-controls")));
         Assert.Empty(cortado.FindAll("[role=region]"));
-        Assert.Equal("Detalhe", cortado.Find(".subtitulo").TextContent);
+        Assert.Equal("Detalhe", cortado.Find(".rvm-subtitulo").TextContent);
     }
 
     [Fact]
@@ -209,15 +209,15 @@ public class RvmAccordionTests : BunitContext
         var eventos = new List<(string, bool)>();
         var cortado = Acordeao(eventos: eventos);
 
-        cortado.FindAll("button.gatilho")[2].Click();
+        cortado.FindAll("button.rvm-gatilho")[2].Click();
 
-        var botao = cortado.FindAll("button.gatilho")[2];
+        var botao = cortado.FindAll("button.rvm-gatilho")[2];
         var regiao = cortado.Find("[role=region]");
         Assert.Equal("true", botao.GetAttribute("aria-expanded"));
         Assert.Equal(regiao.Id, botao.GetAttribute("aria-controls"));
         Assert.Equal(botao.Id, regiao.GetAttribute("aria-labelledby"));
         Assert.Equal("Conteudo Colheita", regiao.TextContent.Trim());
-        Assert.Contains("aberto", cortado.FindAll(".painel")[2].GetAttribute("class"));
+        Assert.Contains("rvm-aberto", cortado.FindAll(".rvm-painel")[2].GetAttribute("class"));
         Assert.Equal([("Colheita", true)], eventos);
     }
 
@@ -226,7 +226,7 @@ public class RvmAccordionTests : BunitContext
     {
         var cortado = Acordeao(primeiroAberto: true);
 
-        cortado.FindAll("button.gatilho")[2].Click();
+        cortado.FindAll("button.rvm-gatilho")[2].Click();
 
         Assert.Equal(2, cortado.FindAll("[role=region]").Count);
     }
@@ -237,7 +237,7 @@ public class RvmAccordionTests : BunitContext
         var eventos = new List<(string, bool)>();
         var cortado = Acordeao(exclusivo: true, primeiroAberto: true, eventos: eventos);
 
-        cortado.FindAll("button.gatilho")[2].Click();
+        cortado.FindAll("button.rvm-gatilho")[2].Click();
 
         var regioes = cortado.FindAll("[role=region]");
         Assert.Single(regioes);
@@ -250,12 +250,12 @@ public class RvmAccordionTests : BunitContext
     {
         var cortado = Acordeao(segundoDesabilitado: true);
 
-        var botao = cortado.FindAll("button.gatilho")[1];
+        var botao = cortado.FindAll("button.rvm-gatilho")[1];
         Assert.True(botao.HasAttribute("disabled"));
         botao.Click();
 
         Assert.Empty(cortado.FindAll("[role=region]"));
-        Assert.Contains("desabilitado", cortado.FindAll(".painel")[1].GetAttribute("class"));
+        Assert.Contains("rvm-desabilitado", cortado.FindAll(".rvm-painel")[1].GetAttribute("class"));
     }
 
     [Fact]
@@ -263,11 +263,11 @@ public class RvmAccordionTests : BunitContext
     {
         var cortado = Acordeao(variante: RvmAccordionVariant.Filled, primeiroAberto: true, nivel: 9);
 
-        Assert.Equal("acordeao preenchido", cortado.Find("div.acordeao").GetAttribute("class"));
+        Assert.Equal("rvm-acordeao rvm-preenchido", cortado.Find("div.rvm-acordeao").GetAttribute("class"));
         Assert.Equal(3, cortado.FindAll("h6 > button").Count);
         // O icone aberto (menos) difere do fechado (mais): comparar o desenho dos dois.
-        var aberto = cortado.FindAll(".marca")[0].InnerHtml;
-        var fechado = cortado.FindAll(".marca")[1].InnerHtml;
+        var aberto = cortado.FindAll(".rvm-marca")[0].InnerHtml;
+        var fechado = cortado.FindAll(".rvm-marca")[1].InnerHtml;
         Assert.NotEqual(aberto, fechado);
     }
 
@@ -284,11 +284,11 @@ public class RvmAccordionTests : BunitContext
             b.CloseComponent();
         };
         var cortado = Render<RvmAccordion>(p => p.Add(x => x.ChildContent, Conteudo()).AddUnmatched("class", "minha"));
-        Assert.Equal("acordeao padrao minha", cortado.Find("div.acordeao").GetAttribute("class"));
-        Assert.NotNull(cortado.Find(".icone svg"));
+        Assert.Equal("rvm-acordeao rvm-padrao minha", cortado.Find("div.rvm-acordeao").GetAttribute("class"));
+        Assert.NotNull(cortado.Find(".rvm-icone svg"));
 
         // Aberto pelo clique, sem @bind: um re-render do pai com o mesmo Expanded=false nao fecha.
-        cortado.Find("button.gatilho").Click();
+        cortado.Find("button.rvm-gatilho").Click();
         cortado.Render(p => p.Add(x => x.ChildContent, Conteudo()));
         Assert.NotEmpty(cortado.FindAll("[role=region]"));
 
@@ -306,7 +306,7 @@ public class RvmAccordionTests : BunitContext
         // h{n} criado pelo RenderTreeBuilder nao recebe o atributo b-xxxx, e o CSS do painel nao pegava.
         var cortado = Acordeao(nivel: 4);
 
-        var cabecalho = cortado.Find("h4.cabecalho");
+        var cabecalho = cortado.Find("h4.rvm-cabecalho");
         Assert.Contains(cabecalho.Attributes, a => a.Name.StartsWith("b-", StringComparison.Ordinal));
     }
 
@@ -316,7 +316,7 @@ public class RvmAccordionTests : BunitContext
         var cortado = Render<RvmAccordionPanel>(p => p.Add(x => x.Title, "Solto").AddUnmatched("class", "minha"));
 
         Assert.NotNull(cortado.Find("h3 > button"));
-        Assert.Equal("painel minha", cortado.Find("div.painel").GetAttribute("class"));
+        Assert.Equal("rvm-painel minha", cortado.Find("div.rvm-painel").GetAttribute("class"));
         cortado.Find("button").Click();
         Assert.NotEmpty(cortado.FindAll("[role=region]"));
     }

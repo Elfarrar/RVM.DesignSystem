@@ -49,7 +49,7 @@ public partial class RvmCard : ComponentBase
     {
         get
         {
-            const string propria = "cartao";
+            const string propria = "rvm-cartao";
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)
                    && informada is string texto

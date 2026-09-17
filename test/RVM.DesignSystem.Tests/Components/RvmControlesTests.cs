@@ -38,8 +38,8 @@ public class RvmCheckboxTests : BunitContext
         var cortado = Caixa(new Preferencias(), p => p.Add(x => x.Label, "Aceito os termos"));
 
         var input = cortado.Find("label input[type=checkbox]");
-        Assert.Contains("nativo", input.GetAttribute("class"));
-        Assert.Equal("Aceito os termos", cortado.Find("label span.rotulo").TextContent);
+        Assert.Contains("rvm-nativo", input.GetAttribute("class"));
+        Assert.Equal("Aceito os termos", cortado.Find("label span.rvm-rotulo").TextContent);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class RvmCheckboxTests : BunitContext
     {
         var cortado = Caixa(new Preferencias(), p => p.Add(x => x.Indeterminate, true));
 
-        Assert.Contains("indeterminado", cortado.Find("label").GetAttribute("class"));
+        Assert.Contains("rvm-indeterminado", cortado.Find("label").GetAttribute("class"));
         Assert.Contains(JSInterop.Invocations, i => i.Identifier == "import");
     }
 
@@ -83,7 +83,7 @@ public class RvmCheckboxTests : BunitContext
     {
         var cortado = Caixa(new Preferencias());
 
-        Assert.DoesNotContain("indeterminado", cortado.Find("label").GetAttribute("class"));
+        Assert.DoesNotContain("rvm-indeterminado", cortado.Find("label").GetAttribute("class"));
         Assert.DoesNotContain(JSInterop.Invocations, i => i.Identifier == "import");
     }
 
@@ -93,12 +93,12 @@ public class RvmCheckboxTests : BunitContext
         var cortado = Caixa(new Preferencias(), p => p.Add(x => x.Disabled, true));
 
         Assert.True(cortado.Find("input").HasAttribute("disabled"));
-        Assert.Contains("desabilitado", cortado.Find("label").GetAttribute("class"));
+        Assert.Contains("rvm-desabilitado", cortado.Find("label").GetAttribute("class"));
     }
 
     [Theory]
-    [InlineData(RvmSize.Small, RvmColor.Error, "pequeno error")]
-    [InlineData(RvmSize.Large, RvmColor.Success, "grande success")]
+    [InlineData(RvmSize.Small, RvmColor.Error, "rvm-pequeno rvm-error")]
+    [InlineData(RvmSize.Large, RvmColor.Success, "rvm-grande rvm-success")]
     public void Tamanho_e_cor_viram_classe(RvmSize tamanho, RvmColor cor, string esperado)
     {
         var cortado = Caixa(new Preferencias(), p => p.Add(x => x.Size, tamanho).Add(x => x.Color, cor));
@@ -181,7 +181,7 @@ public class RvmSwitchTests : BunitContext
 
         var input = cortado.Find("input[type=checkbox]");
         Assert.Equal("switch", input.GetAttribute("role"));
-        Assert.Equal("Notificacoes por e-mail", cortado.Find("span.rotulo").TextContent);
+        Assert.Equal("Notificacoes por e-mail", cortado.Find("span.rvm-rotulo").TextContent);
     }
 
     [Fact]
@@ -196,9 +196,9 @@ public class RvmSwitchTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmSize.Small, "pequeno")]
-    [InlineData(RvmSize.Medium, "medio")]
-    [InlineData(RvmSize.Large, "medio")]
+    [InlineData(RvmSize.Small, "rvm-pequeno")]
+    [InlineData(RvmSize.Medium, "rvm-medio")]
+    [InlineData(RvmSize.Large, "rvm-medio")]
     public void O_kit_so_tem_dois_tamanhos(RvmSize tamanho, string esperado)
     {
         var cortado = Chave(new Ajustes(), p => p.Add(x => x.Size, tamanho));
@@ -212,7 +212,7 @@ public class RvmSwitchTests : BunitContext
         var cortado = Chave(new Ajustes(), p => p.Add(x => x.Disabled, true));
 
         Assert.True(cortado.Find("input").HasAttribute("disabled"));
-        Assert.Contains("desabilitado", cortado.Find("label").GetAttribute("class"));
+        Assert.Contains("rvm-desabilitado", cortado.Find("label").GetAttribute("class"));
     }
 
     [Fact]
@@ -307,7 +307,7 @@ public class RvmRadioTests : BunitContext
         var cortado = Grupo(new Pedido(), p => p.Add(x => x.Disabled, true));
 
         Assert.True(cortado.Find("fieldset").HasAttribute("disabled"));
-        Assert.All(cortado.FindAll("label"), l => Assert.Contains("desabilitado", l.GetAttribute("class")));
+        Assert.All(cortado.FindAll("label"), l => Assert.Contains("rvm-desabilitado", l.GetAttribute("class")));
     }
 
     [Fact]
@@ -317,8 +317,8 @@ public class RvmRadioTests : BunitContext
 
         Assert.All(cortado.FindAll("label"), l =>
         {
-            Assert.Contains("success", l.GetAttribute("class"));
-            Assert.Contains("pequeno", l.GetAttribute("class"));
+            Assert.Contains("rvm-success", l.GetAttribute("class"));
+            Assert.Contains("rvm-pequeno", l.GetAttribute("class"));
         });
     }
 

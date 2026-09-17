@@ -6,10 +6,10 @@
    da direita. A acao fica FORA da principal de proposito — botao dentro de botao e HTML invalido e o
    leitor de tela so enxerga um dos dois. *@
 <li @attributes="AdditionalAttributes" class="@ClassesDoItem">
-    <div class="linha">
+    <div class="rvm-linha">
         @if (!string.IsNullOrWhiteSpace(Href))
         {
-            <a class="principal interativo" href="@(Disabled ? null : Href)"
+            <a class="rvm-principal rvm-interativo" href="@(Disabled ? null : Href)"
                aria-current="@(Selected ? "page" : null)"
                aria-disabled="@(Disabled ? "true" : null)">
                 @Conteudo
@@ -17,20 +17,20 @@
         }
         else if (Aninhado)
         {
-            <button type="button" class="principal interativo"
+            <button type="button" class="rvm-principal rvm-interativo"
                     aria-expanded="@(_aberto ? "true" : "false")"
                     aria-controls="@(_aberto ? IdAninhada : null)"
                     disabled="@Disabled"
                     @onclick="AlternarAsync">
                 @Conteudo
-                <span class="seta" aria-hidden="true">
+                <span class="rvm-seta" aria-hidden="true">
                     <RvmIcon Name="@(_aberto ? RvmIconName.ChevronUp : RvmIconName.ChevronDown)" Size="RvmSize.Small" />
                 </span>
             </button>
         }
         else if (OnClick.HasDelegate)
         {
-            <button type="button" class="principal interativo"
+            <button type="button" class="rvm-principal rvm-interativo"
                     aria-pressed="@(Selected ? "true" : "false")"
                     disabled="@Disabled"
                     @onclick="AoClicarAsync">
@@ -39,18 +39,18 @@
         }
         else
         {
-            <div class="principal">@Conteudo</div>
+            <div class="rvm-principal">@Conteudo</div>
         }
 
         @if (EndContent is not null)
         {
-            <div class="fim">@EndContent</div>
+            <div class="rvm-fim">@EndContent</div>
         }
     </div>
 
     @if (Aninhado && _aberto)
     {
-        <div id="@IdAninhada" class="aninhada">@NestedContent</div>
+        <div id="@IdAninhada" class="rvm-aninhada">@NestedContent</div>
     }
 </li>
 
@@ -58,17 +58,17 @@
     private RenderFragment Conteudo => @<text>
         @if (StartContent is not null)
         {
-            <span class="inicio">@StartContent</span>
+            <span class="rvm-inicio">@StartContent</span>
         }
         else if (Icon is { } icone)
         {
-            <span class="inicio icone" aria-hidden="true"><RvmIcon Name="icone" /></span>
+            <span class="rvm-inicio rvm-icone" aria-hidden="true"><RvmIcon Name="icone" /></span>
         }
-        <span class="textos">
-            <span class="primario">@ChildContent</span>
+        <span class="rvm-textos">
+            <span class="rvm-primario">@ChildContent</span>
             @if (!string.IsNullOrWhiteSpace(SecondaryText))
             {
-                <span class="secundario">@SecondaryText</span>
+                <span class="rvm-secundario">@SecondaryText</span>
             }
         </span>
     </text>;

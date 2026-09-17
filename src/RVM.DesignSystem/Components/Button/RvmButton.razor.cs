@@ -66,24 +66,24 @@ public partial class RvmButton : ComponentBase
     {
         get
         {
-            var proprias = string.Join(' ', "botao", Variant switch
+            var proprias = string.Join(' ', "rvm-botao", Variant switch
             {
-                RvmButtonVariant.Outlined => "contorno",
-                RvmButtonVariant.Text => "texto",
-                _ => "preenchido"
+                RvmButtonVariant.Outlined => "rvm-contorno",
+                RvmButtonVariant.Text => "rvm-texto",
+                _ => "rvm-preenchido"
             }, Size switch
             {
-                RvmSize.Small => "pequeno",
-                RvmSize.Large => "grande",
-                _ => "medio"
+                RvmSize.Small => "rvm-pequeno",
+                RvmSize.Large => "rvm-grande",
+                _ => "rvm-medio"
             }, Color switch
             {
-                RvmColor.Secondary => "secondary",
-                RvmColor.Info => "info",
-                RvmColor.Success => "success",
-                RvmColor.Warning => "warning",
-                RvmColor.Error => "error",
-                _ => "primary"
+                RvmColor.Secondary => "rvm-secondary",
+                RvmColor.Info => "rvm-info",
+                RvmColor.Success => "rvm-success",
+                RvmColor.Warning => "rvm-warning",
+                RvmColor.Error => "rvm-error",
+                _ => "rvm-primary"
             });
 
             return AdditionalAttributes is not null

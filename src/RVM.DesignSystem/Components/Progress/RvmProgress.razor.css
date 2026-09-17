@@ -4,20 +4,20 @@
    com o -outlined-resting de cada cor, o preenchido dava 2.3 a 3.1:1 contra o trilho no tema escuro,
    abaixo dos 3:1 da WCAG 1.4.11. Contra o neutro passa de 5:1 nos dois temas (medido). */
 
-.progresso {
+.rvm-progresso {
     display: flex;
     align-items: center;
     gap: var(--rvm-space-3);
     font-family: var(--rvm-font-family);
 }
 
-.circular {
+.rvm-circular {
     position: relative;
     display: inline-flex;
     justify-content: center;
 }
 
-.valor {
+.rvm-valor {
     flex: none;
     color: var(--rvm-color-text-secondary);
     font-size: var(--rvm-text-caption-size);
@@ -26,7 +26,7 @@
 }
 
 /* --- Barra --- */
-.trilho {
+.rvm-trilho {
     position: relative;
     flex: 1;
     height: 4px;
@@ -34,13 +34,13 @@
     border-radius: var(--rvm-radius-pill);
 }
 
-.barra {
+.rvm-barra {
     height: 100%;
     border-radius: inherit;
     transition: width var(--rvm-transition-medium);
 }
 
-.linear.indeterminado .barra {
+.rvm-linear.rvm-indeterminado .rvm-barra {
     position: absolute;
     top: 0;
     left: 0;
@@ -54,22 +54,22 @@
 }
 
 /* --- Anel --- */
-.pequeno .anel { width: 24px; height: 24px; }
-.medio .anel { width: 40px; height: 40px; }
-.grande .anel { width: 56px; height: 56px; }
+.rvm-pequeno .rvm-anel { width: 24px; height: 24px; }
+.rvm-medio .rvm-anel { width: 40px; height: 40px; }
+.rvm-grande .rvm-anel { width: 56px; height: 56px; }
 
-.arco {
+.rvm-arco {
     stroke-linecap: round;
     transform-origin: 44px 44px;
     transform: rotate(-90deg);
     transition: stroke-dashoffset var(--rvm-transition-medium);
 }
 
-.circular.indeterminado .anel {
+.rvm-circular.rvm-indeterminado .rvm-anel {
     animation: rvm-progresso-gira 1.4s linear infinite;
 }
 
-.circular.indeterminado .arco {
+.rvm-circular.rvm-indeterminado .rvm-arco {
     stroke-dasharray: 80 127;
     stroke-dashoffset: 0;
 }
@@ -78,7 +78,7 @@
     100% { transform: rotate(360deg); }
 }
 
-.circular .valor {
+.rvm-circular .rvm-valor {
     position: absolute;
     inset: 0;
     display: flex;
@@ -87,42 +87,42 @@
     font-size: 0.625rem;
 }
 
-.grande.circular .valor { font-size: var(--rvm-text-caption-size); }
+.rvm-grande.rvm-circular .rvm-valor { font-size: var(--rvm-text-caption-size); }
 
 /* O anel pequeno nao tem espaco para o numero: fica ao lado. */
-.pequeno.circular .valor {
+.rvm-pequeno.rvm-circular .rvm-valor {
     position: static;
     margin-inline-start: var(--rvm-space-2);
 }
 
 /* --- Trilho neutro; preenchido na cor escolhida, em -text --- */
-.trilho { background-color: var(--rvm-color-action-selected); }
-.trilho-anel { stroke: var(--rvm-color-action-selected); }
+.rvm-trilho { background-color: var(--rvm-color-action-selected); }
+.rvm-trilho-anel { stroke: var(--rvm-color-action-selected); }
 
-.primary .barra { background-color: var(--rvm-color-primary-text); }
-.secondary .barra { background-color: var(--rvm-color-secondary-text); }
-.info .barra { background-color: var(--rvm-color-info-text); }
-.success .barra { background-color: var(--rvm-color-success-text); }
-.warning .barra { background-color: var(--rvm-color-warning-text); }
-.error .barra { background-color: var(--rvm-color-error-text); }
+.rvm-primary .rvm-barra { background-color: var(--rvm-color-primary-text); }
+.rvm-secondary .rvm-barra { background-color: var(--rvm-color-secondary-text); }
+.rvm-info .rvm-barra { background-color: var(--rvm-color-info-text); }
+.rvm-success .rvm-barra { background-color: var(--rvm-color-success-text); }
+.rvm-warning .rvm-barra { background-color: var(--rvm-color-warning-text); }
+.rvm-error .rvm-barra { background-color: var(--rvm-color-error-text); }
 
-.primary .arco { stroke: var(--rvm-color-primary-text); }
-.secondary .arco { stroke: var(--rvm-color-secondary-text); }
-.info .arco { stroke: var(--rvm-color-info-text); }
-.success .arco { stroke: var(--rvm-color-success-text); }
-.warning .arco { stroke: var(--rvm-color-warning-text); }
-.error .arco { stroke: var(--rvm-color-error-text); }
+.rvm-primary .rvm-arco { stroke: var(--rvm-color-primary-text); }
+.rvm-secondary .rvm-arco { stroke: var(--rvm-color-secondary-text); }
+.rvm-info .rvm-arco { stroke: var(--rvm-color-info-text); }
+.rvm-success .rvm-arco { stroke: var(--rvm-color-success-text); }
+.rvm-warning .rvm-arco { stroke: var(--rvm-color-warning-text); }
+.rvm-error .rvm-arco { stroke: var(--rvm-color-error-text); }
 
 /* Movimento reduzido: o indeterminado continua dizendo "andando", so que devagar. Parar de vez
    faria o indicador parecer travado. */
 @media (prefers-reduced-motion: reduce) {
-    .linear.indeterminado .barra,
-    .circular.indeterminado .anel {
+    .rvm-linear.rvm-indeterminado .rvm-barra,
+    .rvm-circular.rvm-indeterminado .rvm-anel {
         animation-duration: 4s;
     }
 
-    .barra,
-    .arco {
+    .rvm-barra,
+    .rvm-arco {
         transition: none;
     }
 }

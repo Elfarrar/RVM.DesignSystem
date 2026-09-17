@@ -1,7 +1,7 @@
 /* CSS isolado do RvmPagination. So custom properties — hex literal aqui quebra o tema escuro.
    MEDIDO no referencia-neatlab/Pagination.png: itens de 26, 32 e 40 px, com 6 px entre eles. */
 
-.itens {
+.rvm-itens {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -11,7 +11,7 @@
     list-style: none;
 }
 
-.item {
+.rvm-item {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -28,64 +28,64 @@
     transition: background-color var(--rvm-transition-fast);
 }
 
-button.item {
+button.rvm-item {
     cursor: pointer;
 }
 
-.pequeno .item { min-width: 26px; height: 26px; }
-.medio .item { min-width: 32px; height: 32px; }
-.grande .item { min-width: 40px; height: 40px; font-size: var(--rvm-text-body1-size); }
+.rvm-pequeno .rvm-item { min-width: 26px; height: 26px; }
+.rvm-medio .rvm-item { min-width: 32px; height: 32px; }
+.rvm-grande .rvm-item { min-width: 40px; height: 40px; font-size: var(--rvm-text-body1-size); }
 
-.circular .item { border-radius: var(--rvm-radius-pill); }
-.arredondado .item { border-radius: var(--rvm-radius-sm); }
+.rvm-circular .rvm-item { border-radius: var(--rvm-radius-pill); }
+.rvm-arredondado .rvm-item { border-radius: var(--rvm-radius-sm); }
 
 /* A borda do contorno e o contorno do controle: --rvm-color-outline ja e o token medido para isso. */
-.contorno .item { border-color: var(--rvm-color-outline); }
-.contorno .reticencias { border-color: transparent; }
+.rvm-contorno .rvm-item { border-color: var(--rvm-color-outline); }
+.rvm-contorno .rvm-reticencias { border-color: transparent; }
 
-button.item:hover:not(:disabled) {
+button.rvm-item:hover:not(:disabled) {
     background-color: var(--rvm-color-action-hover);
 }
 
-.item:focus-visible {
+.rvm-item:focus-visible {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: var(--rvm-focus-ring-offset);
 }
 
-.item:disabled {
+.rvm-item:disabled {
     color: var(--rvm-color-text-disabled);
     cursor: not-allowed;
 }
 
-.contorno .item:disabled {
+.rvm-contorno .rvm-item:disabled {
     border-color: var(--rvm-color-action-disabled);
 }
 
 /* --- Pagina atual, sem cor: a coluna "State: Active" do kit --- */
-.neutro .atual,
-.neutro .atual:hover:not(:disabled) {
+.rvm-neutro .rvm-atual,
+.rvm-neutro .rvm-atual:hover:not(:disabled) {
     background-color: var(--rvm-color-action-selected);
 }
 
 /* --- Pagina atual no texto: fundo -main, texto -contrast (o par do botao contained) --- */
-.texto.primary .atual, .texto.primary .atual:hover:not(:disabled) { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
-.texto.secondary .atual, .texto.secondary .atual:hover:not(:disabled) { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
-.texto.info .atual, .texto.info .atual:hover:not(:disabled) { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
-.texto.success .atual, .texto.success .atual:hover:not(:disabled) { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
-.texto.warning .atual, .texto.warning .atual:hover:not(:disabled) { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
-.texto.error .atual, .texto.error .atual:hover:not(:disabled) { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+.rvm-texto.rvm-primary .rvm-atual, .rvm-texto.rvm-primary .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-texto.rvm-secondary .rvm-atual, .rvm-texto.rvm-secondary .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-texto.rvm-info .rvm-atual, .rvm-texto.rvm-info .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-texto.rvm-success .rvm-atual, .rvm-texto.rvm-success .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-texto.rvm-warning .rvm-atual, .rvm-texto.rvm-warning .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-texto.rvm-error .rvm-atual, .rvm-texto.rvm-error .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
 
 /* --- Pagina atual no contorno: fundo -soft, borda e texto -text (o kit usa um tom suave) --- */
-.contorno.primary .atual, .contorno.primary .atual:hover:not(:disabled) { background-color: var(--rvm-color-primary-soft); border-color: var(--rvm-color-primary-text); color: var(--rvm-color-primary-text); }
-.contorno.secondary .atual, .contorno.secondary .atual:hover:not(:disabled) { background-color: var(--rvm-color-secondary-soft); border-color: var(--rvm-color-secondary-text); color: var(--rvm-color-secondary-text); }
-.contorno.info .atual, .contorno.info .atual:hover:not(:disabled) { background-color: var(--rvm-color-info-soft); border-color: var(--rvm-color-info-text); color: var(--rvm-color-info-text); }
-.contorno.success .atual, .contorno.success .atual:hover:not(:disabled) { background-color: var(--rvm-color-success-soft); border-color: var(--rvm-color-success-text); color: var(--rvm-color-success-text); }
-.contorno.warning .atual, .contorno.warning .atual:hover:not(:disabled) { background-color: var(--rvm-color-warning-soft); border-color: var(--rvm-color-warning-text); color: var(--rvm-color-warning-text); }
-.contorno.error .atual, .contorno.error .atual:hover:not(:disabled) { background-color: var(--rvm-color-error-soft); border-color: var(--rvm-color-error-text); color: var(--rvm-color-error-text); }
+.rvm-contorno.rvm-primary .rvm-atual, .rvm-contorno.rvm-primary .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-primary-soft); border-color: var(--rvm-color-primary-text); color: var(--rvm-color-primary-text); }
+.rvm-contorno.rvm-secondary .rvm-atual, .rvm-contorno.rvm-secondary .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-secondary-soft); border-color: var(--rvm-color-secondary-text); color: var(--rvm-color-secondary-text); }
+.rvm-contorno.rvm-info .rvm-atual, .rvm-contorno.rvm-info .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-info-soft); border-color: var(--rvm-color-info-text); color: var(--rvm-color-info-text); }
+.rvm-contorno.rvm-success .rvm-atual, .rvm-contorno.rvm-success .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-success-soft); border-color: var(--rvm-color-success-text); color: var(--rvm-color-success-text); }
+.rvm-contorno.rvm-warning .rvm-atual, .rvm-contorno.rvm-warning .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-warning-soft); border-color: var(--rvm-color-warning-text); color: var(--rvm-color-warning-text); }
+.rvm-contorno.rvm-error .rvm-atual, .rvm-contorno.rvm-error .rvm-atual:hover:not(:disabled) { background-color: var(--rvm-color-error-soft); border-color: var(--rvm-color-error-text); color: var(--rvm-color-error-text); }
 
-/* Desabilitada, a atual perde a cor como as demais — `.paginacao .item.atual:disabled` (0,4,0)
+/* Desabilitada, a atual perde a cor como as demais — `.rvm-paginacao .rvm-item.rvm-atual:disabled` (0,4,0)
    empata ou vence as regras de cor acima e vem depois. */
-.paginacao .item.atual:disabled {
+.rvm-paginacao .rvm-item.rvm-atual:disabled {
     background-color: var(--rvm-color-action-disabled);
     border-color: transparent;
     color: var(--rvm-color-text-disabled);

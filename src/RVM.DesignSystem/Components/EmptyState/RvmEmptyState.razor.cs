@@ -46,6 +46,6 @@ public partial class RvmEmptyState : ComponentBase
            && AdditionalAttributes.TryGetValue("class", out var informada)
            && informada is string texto
            && !string.IsNullOrWhiteSpace(texto)
-            ? $"vazio {texto}"
-            : "vazio";
+            ? $"rvm-vazio {texto}"
+            : "rvm-vazio";
 }

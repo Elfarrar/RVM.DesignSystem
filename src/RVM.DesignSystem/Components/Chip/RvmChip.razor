@@ -5,20 +5,20 @@
 <span @attributes="AdditionalAttributes" class="@CssClass" aria-disabled="@(Disabled ? "true" : null)">
     @if (!string.IsNullOrWhiteSpace(AvatarSrc))
     {
-        <img class="miniatura" src="@AvatarSrc" alt="@(AvatarAlt ?? string.Empty)" />
+        <img class="rvm-miniatura" src="@AvatarSrc" alt="@(AvatarAlt ?? string.Empty)" />
     }
     else if (StartIcon is not null)
     {
         <RvmIcon Name="StartIcon.Value" Size="RvmSize.Small" />
     }
 
-    <span class="rotulo">@ChildContent</span>
+    <span class="rvm-rotulo">@ChildContent</span>
 
     @if (OnRemove.HasDelegate)
     {
         @* Botao de verdade, com nome acessivel: o "x" sozinho e so um desenho para quem usa leitor
            de tela, e sem <button> ele nao entra na ordem de tabulacao. *@
-        <button type="button" class="remover" aria-label="@RemoveLabel" disabled="@Disabled" @onclick="Remover">
+        <button type="button" class="rvm-remover" aria-label="@RemoveLabel" disabled="@Disabled" @onclick="Remover">
             <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
         </button>
     }

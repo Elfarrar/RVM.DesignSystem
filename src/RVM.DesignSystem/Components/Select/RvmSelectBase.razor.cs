@@ -155,14 +155,14 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
         get
         {
             var proprias = string.Join(' ',
-                "campo",
-                Variant switch { RvmTextFieldVariant.Filled => "preenchido", RvmTextFieldVariant.Standard => "padrao", _ => "contorno" },
-                Size == RvmSize.Small ? "pequeno" : "medio");
+                "rvm-campo",
+                Variant switch { RvmTextFieldVariant.Filled => "rvm-preenchido", RvmTextFieldVariant.Standard => "rvm-padrao", _ => "rvm-contorno" },
+                Size == RvmSize.Small ? "rvm-pequeno" : "rvm-medio");
 
-            if (TemValor || !string.IsNullOrEmpty(Placeholder) || _aberto) proprias += " rotulo-fixo";
-            if (_aberto) proprias += " aberto";
-            if (TemErro) proprias += " erro";
-            if (Disabled) proprias += " desabilitado";
+            if (TemValor || !string.IsNullOrEmpty(Placeholder) || _aberto) proprias += " rvm-rotulo-fixo";
+            if (_aberto) proprias += " rvm-aberto";
+            if (TemErro) proprias += " rvm-erro";
+            if (Disabled) proprias += " rvm-desabilitado";
             if (Campo is { } campo && EditContext!.IsModified(campo)) proprias += " modified";
 
             return AdditionalAttributes is not null
@@ -191,10 +191,10 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
 
     internal string ClassesDaOpcao(int indice, bool selecionada, bool desabilitada)
     {
-        var classes = "opcao";
-        if (indice == _ativa) classes += " ativa";
-        if (selecionada) classes += " selecionada";
-        if (desabilitada) classes += " desabilitada";
+        var classes = "rvm-opcao";
+        if (indice == _ativa) classes += " rvm-ativa";
+        if (selecionada) classes += " rvm-selecionada";
+        if (desabilitada) classes += " rvm-desabilitada";
         return classes;
     }
 

@@ -31,19 +31,19 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
            && AdditionalAttributes.TryGetValue("class", out var informada)
            && informada is string texto
            && !string.IsNullOrWhiteSpace(texto)
-            ? $"avisos {texto}"
-            : "avisos";
+            ? $"rvm-avisos {texto}"
+            : "rvm-avisos";
 
     internal static string ClassesDaMensagem(RvmSnackbarMessage mensagem)
         => mensagem.Options.Color switch
         {
-            null => "mensagem neutra",
-            RvmColor.Secondary => "mensagem colorida secondary",
-            RvmColor.Info => "mensagem colorida info",
-            RvmColor.Success => "mensagem colorida success",
-            RvmColor.Warning => "mensagem colorida warning",
-            RvmColor.Error => "mensagem colorida error",
-            _ => "mensagem colorida primary"
+            null => "rvm-mensagem rvm-neutra",
+            RvmColor.Secondary => "rvm-mensagem rvm-colorida rvm-secondary",
+            RvmColor.Info => "rvm-mensagem rvm-colorida rvm-info",
+            RvmColor.Success => "rvm-mensagem rvm-colorida rvm-success",
+            RvmColor.Warning => "rvm-mensagem rvm-colorida rvm-warning",
+            RvmColor.Error => "rvm-mensagem rvm-colorida rvm-error",
+            _ => "rvm-mensagem rvm-colorida rvm-primary"
         };
 
     internal static RvmIconName? IconeDe(RvmColor? cor) => cor switch

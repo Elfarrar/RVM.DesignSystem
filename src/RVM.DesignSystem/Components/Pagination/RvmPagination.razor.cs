@@ -96,19 +96,19 @@ public partial class RvmPagination : ComponentBase
         get
         {
             var proprias = string.Join(' ',
-                "paginacao",
-                Variant == RvmPaginationVariant.Outlined ? "contorno" : "texto",
-                Shape == RvmPaginationShape.Rounded ? "arredondado" : "circular",
-                Size switch { RvmSize.Small => "pequeno", RvmSize.Large => "grande", _ => "medio" },
+                "rvm-paginacao",
+                Variant == RvmPaginationVariant.Outlined ? "rvm-contorno" : "rvm-texto",
+                Shape == RvmPaginationShape.Rounded ? "rvm-arredondado" : "rvm-circular",
+                Size switch { RvmSize.Small => "rvm-pequeno", RvmSize.Large => "rvm-grande", _ => "rvm-medio" },
                 Color switch
                 {
-                    null => "neutro",
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Info => "info",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "primary"
+                    null => "rvm-neutro",
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
                 });
 
             return AdditionalAttributes is not null

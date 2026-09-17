@@ -99,7 +99,7 @@ public class RvmIconTests : BunitContext
             .AddUnmatched("data-teste", "1"));
 
         var svg = cortado.Find("svg");
-        Assert.Equal("icone minha", svg.GetAttribute("class"));
+        Assert.Equal("rvm-icone minha", svg.GetAttribute("class"));
         Assert.Equal("1", svg.GetAttribute("data-teste"));
     }
 }

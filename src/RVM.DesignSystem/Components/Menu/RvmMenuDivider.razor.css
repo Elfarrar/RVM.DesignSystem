@@ -1,6 +1,6 @@
 /* CSS isolado do RvmMenuDivider. So custom properties — hex literal aqui quebra o tema escuro. */
 
-.divisor {
+.rvm-divisor {
     height: 1px;
     margin: var(--rvm-space-2) 0;
     background-color: var(--rvm-color-divider);

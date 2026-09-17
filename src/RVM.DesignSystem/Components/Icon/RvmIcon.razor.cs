@@ -46,7 +46,7 @@ public partial class RvmIcon : ComponentBase
     {
         get
         {
-            const string propria = "icone";
+            const string propria = "rvm-icone";
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)
                    && informada is string texto

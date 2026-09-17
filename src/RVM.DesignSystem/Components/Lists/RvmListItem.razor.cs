@@ -68,11 +68,11 @@ public partial class RvmListItem : ComponentBase
     {
         get
         {
-            var proprias = "item";
-            if (Lista?.Dense == true) proprias += " denso";
-            if (!string.IsNullOrWhiteSpace(SecondaryText)) proprias += " duas-linhas";
-            if (Selected) proprias += " selecionado";
-            if (Disabled) proprias += " desabilitado";
+            var proprias = "rvm-item";
+            if (Lista?.Dense == true) proprias += " rvm-denso";
+            if (!string.IsNullOrWhiteSpace(SecondaryText)) proprias += " rvm-duas-linhas";
+            if (Selected) proprias += " rvm-selecionado";
+            if (Disabled) proprias += " rvm-desabilitado";
 
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)

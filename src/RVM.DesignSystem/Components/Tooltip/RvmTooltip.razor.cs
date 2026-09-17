@@ -40,7 +40,7 @@ public partial class RvmTooltip : ComponentBase
     {
         get
         {
-            var proprias = _dispensada ? "com-dica dispensada" : "com-dica";
+            var proprias = _dispensada ? "rvm-com-dica rvm-dispensada" : "rvm-com-dica";
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)
                    && informada is string texto
@@ -52,15 +52,15 @@ public partial class RvmTooltip : ComponentBase
 
     internal string ClassesDaDica
         => string.Join(' ',
-            "dica",
+            "rvm-dica",
             Placement switch
             {
-                RvmTooltipPlacement.Bottom => "abaixo",
-                RvmTooltipPlacement.Left => "esquerda",
-                RvmTooltipPlacement.Right => "direita",
-                _ => "acima"
+                RvmTooltipPlacement.Bottom => "rvm-abaixo",
+                RvmTooltipPlacement.Left => "rvm-esquerda",
+                RvmTooltipPlacement.Right => "rvm-direita",
+                _ => "rvm-acima"
             },
-            Arrow ? "com-seta" : "sem-seta");
+            Arrow ? "rvm-com-seta" : "rvm-sem-seta");
 
     private void AoTeclar(KeyboardEventArgs e)
     {

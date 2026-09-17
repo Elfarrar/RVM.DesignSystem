@@ -5,16 +5,16 @@
     @if (!string.IsNullOrWhiteSpace(MediaSrc))
     {
         @* A altura vem por atributo e nao por style, para nao disputar o `style` do consumidor. *@
-        <img class="midia" src="@MediaSrc" alt="@(MediaAlt ?? string.Empty)" height="@MediaHeight" />
+        <img class="rvm-midia" src="@MediaSrc" alt="@(MediaAlt ?? string.Empty)" height="@MediaHeight" />
     }
 
     @if (TemCabecalho)
     {
-        <div class="cabecalho">
-            <div class="textos">
+        <div class="rvm-cabecalho">
+            <div class="rvm-textos">
                 @if (!string.IsNullOrWhiteSpace(Title))
                 {
-                    <RvmTypography Variant="RvmTypographyVariant.H6" As="@TitleElement" class="titulo">@Title</RvmTypography>
+                    <RvmTypography Variant="RvmTypographyVariant.H6" As="@TitleElement" class="rvm-titulo">@Title</RvmTypography>
                 }
                 @if (!string.IsNullOrWhiteSpace(Subheader))
                 {
@@ -27,11 +27,11 @@
 
     @if (ChildContent is not null)
     {
-        <div class="conteudo rvm-text-body2">@ChildContent</div>
+        <div class="rvm-conteudo rvm-text-body2">@ChildContent</div>
     }
 
     @if (Actions is not null)
     {
-        <div class="acoes">@Actions</div>
+        <div class="rvm-acoes">@Actions</div>
     }
 </div>

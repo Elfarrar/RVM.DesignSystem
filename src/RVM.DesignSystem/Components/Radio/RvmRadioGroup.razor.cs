@@ -59,7 +59,7 @@ public partial class RvmRadioGroup<TValue> : ComponentBase
     {
         get
         {
-            var proprias = Orientation == RvmOrientation.Horizontal ? "grupo horizontal" : "grupo vertical";
+            var proprias = Orientation == RvmOrientation.Horizontal ? "rvm-grupo rvm-horizontal" : "rvm-grupo rvm-vertical";
             return AdditionalAttributes is not null
                    && AdditionalAttributes.TryGetValue("class", out var informada)
                    && informada is string texto

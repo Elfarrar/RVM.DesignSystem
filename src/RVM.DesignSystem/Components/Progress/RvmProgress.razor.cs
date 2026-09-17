@@ -71,18 +71,18 @@ public partial class RvmProgress : ComponentBase
         get
         {
             var proprias = string.Join(' ',
-                "progresso",
-                Variant == RvmProgressVariant.Circular ? "circular" : "linear",
-                Indeterminado ? "indeterminado" : "determinado",
-                Size switch { RvmSize.Small => "pequeno", RvmSize.Large => "grande", _ => "medio" },
+                "rvm-progresso",
+                Variant == RvmProgressVariant.Circular ? "rvm-circular" : "rvm-linear",
+                Indeterminado ? "rvm-indeterminado" : "rvm-determinado",
+                Size switch { RvmSize.Small => "rvm-pequeno", RvmSize.Large => "rvm-grande", _ => "rvm-medio" },
                 Color switch
                 {
-                    RvmColor.Secondary => "secondary",
-                    RvmColor.Info => "info",
-                    RvmColor.Success => "success",
-                    RvmColor.Warning => "warning",
-                    RvmColor.Error => "error",
-                    _ => "primary"
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
                 });
 
             return AdditionalAttributes is not null

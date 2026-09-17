@@ -75,11 +75,11 @@ public partial class RvmDialog : ComponentBase, IAsyncDisposable
     {
         get
         {
-            var proprias = "dialogo " + (FullScreen ? "tela-cheia" : Size switch
+            var proprias = "rvm-dialogo " + (FullScreen ? "rvm-tela-cheia" : Size switch
             {
-                RvmSize.Small => "pequeno",
-                RvmSize.Large => "grande",
-                _ => "medio"
+                RvmSize.Small => "rvm-pequeno",
+                RvmSize.Large => "rvm-grande",
+                _ => "rvm-medio"
             });
 
             return AdditionalAttributes is not null

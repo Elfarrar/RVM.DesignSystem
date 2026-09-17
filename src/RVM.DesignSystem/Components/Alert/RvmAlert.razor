@@ -8,27 +8,27 @@
 <div @attributes="AdditionalAttributes" class="@CssClass" role="@Papel">
     @if (ShowIcon)
     {
-        <span class="icone-alerta">
+        <span class="rvm-icone-alerta">
             <RvmIcon Name="@IconeEfetivo" Size="RvmSize.Medium" />
         </span>
     }
 
-    <div class="corpo">
+    <div class="rvm-corpo">
         @if (!string.IsNullOrWhiteSpace(Title))
         {
-            <div class="titulo rvm-text-alert-title">@Title</div>
+            <div class="rvm-titulo rvm-text-alert-title">@Title</div>
         }
-        <div class="mensagem rvm-text-body2">@ChildContent</div>
+        <div class="rvm-mensagem rvm-text-body2">@ChildContent</div>
     </div>
 
     @if (Action is not null || OnClose.HasDelegate)
     {
-        <div class="acoes">
+        <div class="rvm-acoes">
             @Action
 
             @if (OnClose.HasDelegate)
             {
-                <button type="button" class="fechar" aria-label="@CloseLabel" @onclick="Fechar">
+                <button type="button" class="rvm-fechar" aria-label="@CloseLabel" @onclick="Fechar">
                     <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
                 </button>
             }

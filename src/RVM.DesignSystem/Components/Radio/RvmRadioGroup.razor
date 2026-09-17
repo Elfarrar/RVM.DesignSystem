@@ -11,7 +11,7 @@
 <fieldset @attributes="AdditionalAttributes" class="@ClassesDaRaiz" disabled="@Disabled">
     @if (!string.IsNullOrWhiteSpace(Label))
     {
-        <legend class="legenda">@Label</legend>
+        <legend class="rvm-legenda">@Label</legend>
     }
 
     <InputRadioGroup TValue="TValue"
@@ -20,7 +20,7 @@
                      ValueExpression="ExpressaoEfetiva"
                      Name="@Name">
         <CascadingValue TValue="RvmRadioGroup<TValue>" Value="this" IsFixed="false">
-            <div class="opcoes">
+            <div class="rvm-opcoes">
                 @ChildContent
             </div>
         </CascadingValue>

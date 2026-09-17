@@ -44,20 +44,20 @@ public partial class RvmBadge : ComponentBase
 
     private string ClasseDaCor => Color switch
     {
-        RvmColor.Secondary => "secondary",
-        RvmColor.Info => "info",
-        RvmColor.Success => "success",
-        RvmColor.Warning => "warning",
-        RvmColor.Error => "error",
-        _ => "primary"
+        RvmColor.Secondary => "rvm-secondary",
+        RvmColor.Info => "rvm-info",
+        RvmColor.Success => "rvm-success",
+        RvmColor.Warning => "rvm-warning",
+        RvmColor.Error => "rvm-error",
+        _ => "rvm-primary"
     };
 
     internal string ClassesDaMarca
-        => string.Join(' ', "badge", Dot ? "ponto" : "pilula", ClasseDaCor, ChildContent is null ? "solto" : "sobreposto");
+        => string.Join(' ', "rvm-badge", Dot ? "rvm-ponto" : "rvm-pilula", ClasseDaCor, ChildContent is null ? "rvm-solto" : "rvm-sobreposto");
 
-    internal string ClassesDaRaiz => ComClasseDoConsumidor("badge-raiz");
+    internal string ClassesDaRaiz => ComClasseDoConsumidor("rvm-badge-raiz");
 
-    internal string ClassesDaAncora => ComClasseDoConsumidor("badge-ancora");
+    internal string ClassesDaAncora => ComClasseDoConsumidor("rvm-badge-ancora");
 
     private string ComClasseDoConsumidor(string proprias)
         => AdditionalAttributes is not null
