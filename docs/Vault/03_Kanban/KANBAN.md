@@ -10,7 +10,6 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-006]] | Onda 4: dados e shell (8 componentes) | em andamento |
 
 ## A fazer — ondas 2 a 4
 
@@ -23,6 +22,7 @@ Ondas 2 a 4 e o criterio de `1.0.0` em `09-roadmap.md`.
 
 | Card | O que |
 |---|---|
+| [[DSGN-006]] | Onda 4 (17/09): os 8 de dados e shell em quatro fatias, relogio circular a pedido, dois reviews independentes. Aprovada — fecham as quatro ondas; `1.0.0` e prod esperam sinal verde |
 | [[DSGN-005]] | Onda 3 (17/09): os 8 de feedback e sobreposicao, review independente, prefixo rvm- nas classes internas. Aprovada |
 | [[DSGN-004]] | Onda 2 (17/09): os 10 de formulario e navegacao, em tres fatias, com review independente. Aprovada |
 | [[DSGN-003]] | Onda 1 (17/09): os 9 componentes da fundacao, medidos do kit, com review independente. Aprovada |

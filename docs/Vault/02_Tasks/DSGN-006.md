@@ -3,7 +3,7 @@ id: DSGN-006
 titulo: Onda 4 — dados e shell (8 componentes)
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: concluido
 criada: 2026-09-17
 ---
 
