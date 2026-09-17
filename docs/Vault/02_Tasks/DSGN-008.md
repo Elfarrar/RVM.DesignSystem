@@ -3,7 +3,7 @@ id: DSGN-008
 titulo: Site de documentacao com menu lateral (RvmAppShell)
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: concluido
 criada: 2026-09-17
 ---
 
@@ -37,4 +37,4 @@ de indice.
 
 - bUnit 502 verdes; E2E local 175/175 (axe nos dois temas em todas as paginas, com o menu)
 - Screenshots: `site-menu-claro/escuro/recolhido/celular/celular-aberto.png` (scratchpad de 17/09)
-- Producao so com novo sinal verde do Rafael
+- Dev: PR #35, CI e E2E do dev verdes. Producao: sinal verde do Rafael em 17/09 ("pode promover e deployar")
