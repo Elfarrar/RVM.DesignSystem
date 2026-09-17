@@ -18,7 +18,7 @@ de faixa por arrasto para filtrar outros componentes, e exportar PDF ou CSV tamb
 1. [x] **Animacao** (`Animated`, desligada sozinha em "reduzir movimento") e **exportar** em PNG, SVG, CSV
        e PDF (`ExportAsync`), com menu de exportar no exemplo
 2. [x] **Eixo duplo**: `RvmChartAxis.Secondary` na serie, escala e rotulos a direita, legenda dizendo o eixo
-3. [ ] **Zoom em X e em Y** e **arrastar**: roda do mouse (Shift para Y), arrastar para deslocar, duplo
+3. [x] **Zoom em X e em Y** e **arrastar**: roda do mouse (Shift para Y), arrastar para deslocar, duplo
        clique para voltar, `+`/`-` e setas no teclado, janela anunciada em `aria-live`
 4. [ ] **Selecao de faixa por arrasto** (`SelectionMode`, `Selection`/`SelectionChanged`) para filtrar outros
        componentes, com teclado (Shift+setas, Enter, Esc) e exemplo no Dashboard filtrando a tabela
@@ -48,6 +48,20 @@ Zoom por caixa desenhada (brush-to-zoom), exportar Excel nativo (.xlsx), imprimi
 | PDF montado em C# com o JPEG do `canvas` (`DCTDecode`) | sem biblioteca de terceiros (decisao do projeto) e a montagem fica testavel sem navegador |
 | `pathLength="1"` na linha para animar o traco | dispensa medir o caminho em JS: a animacao roda so em CSS e morre sozinha em "reduzir movimento" |
 | Eixo escreve `0`, nao `0 mil` | achado na foto da entrega; `CompactForAxis` colocava o sufixo do passo na base do eixo |
+
+## Fatia 3 — entregue em 17/09/2026
+
+- `Zoomable` (padrao **desligado**: a roda do mouse pertence a pagina ate o consumidor decidir o contrario).
+- Roda aproxima o eixo X, Shift+roda o Y, arrasto desloca, duplo clique volta. No teclado: `+`, `-`
+  (com Shift, o eixo vertical), `0` e Ctrl+setas — as setas sozinhas continuam lendo ponto a ponto.
+- O zoom mexe na **janela do dominio**, nao numa transformacao do desenho: os rotulos do eixo sao
+  recalculados (`Escala.Recortada`) e continuam em numeros redondos, e o que sai da area e cortado.
+- Vale em colunas, linha, area e dispersao — os graficos com area de desenho cartesiana.
+- A janela e anunciada em `aria-live` e a instrucao do leitor de tela ganha as teclas.
+- A roda entra pelo JS (`observarRoda`): o ouvinte precisa poder cancelar a rolagem da pagina, e o
+  Blazor registra os dele como passivos. Sem JS, o grafico continua desenhado, navegavel e com zoom
+  pelo teclado.
+- De quebra: `-0` no eixo (a marca da base cai em -1e-14 depois do recorte) virou `0`.
 
 ## Fatia 2 — entregue em 17/09/2026
 

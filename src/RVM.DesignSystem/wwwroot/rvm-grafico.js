@@ -29,6 +29,29 @@ export function observar(elemento, dotnet) {
     };
 }
 
+// A roda do mouse so pode cancelar a rolagem da pagina num ouvinte NAO passivo, e o Blazor registra os
+// dele como passivos: por isso o zoom pela roda entra por aqui, e nao por @onwheel.
+export function observarRoda(elemento, dotnet) {
+    if (!elemento) {
+        return null;
+    }
+
+    const aoRodar = (evento) => {
+        evento.preventDefault();
+        const caixa = elemento.getBoundingClientRect();
+        dotnet.invokeMethodAsync('RodarNoGrafico', evento.deltaY,
+            evento.clientX - caixa.left, evento.clientY - caixa.top, evento.shiftKey).catch(() => { });
+    };
+
+    elemento.addEventListener('wheel', aoRodar, { passive: false });
+
+    return {
+        parar() {
+            elemento.removeEventListener('wheel', aoRodar);
+        }
+    };
+}
+
 // --- Exportar ---
 
 // Propriedades que o SVG precisa levar embutidas: o CSS do grafico e isolado (mora numa folha do site), e

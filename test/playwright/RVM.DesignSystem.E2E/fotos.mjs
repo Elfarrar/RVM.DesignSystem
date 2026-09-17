@@ -22,6 +22,13 @@ for (const tema of ['claro', 'escuro']) {
     await pagina.getByRole('heading', { name: 'RvmLineChart', level: 1 }).waitFor();
     await pagina.locator('figure.rvm-grafico').filter({ hasText: 'eixo direito' }).scrollIntoViewIfNeeded();
     await pagina.screenshot({ path: `${destino}/eixo-duplo-${tema}.png` });
+
+    const chuva = pagina.getByRole('group', { name: 'Chuva mensal por fazenda' });
+    await chuva.scrollIntoViewIfNeeded();
+    await chuva.focus();
+    await pagina.keyboard.press('+');
+    await pagina.keyboard.press('+');
+    await pagina.screenshot({ path: `${destino}/zoom-${tema}.png` });
     await pagina.close();
 }
 

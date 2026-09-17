@@ -33,6 +33,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     private ElementReference _camada;
     private IJSObjectReference? _modulo;
     private IJSObjectReference? _observador;
+    private IJSObjectReference? _roda;
     private IJSObjectReference? _teclado;
     private DotNetObjectReference<RvmChartBase<TItem>>? _referencia;
 
@@ -80,6 +81,13 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>Nome do arquivo exportado, sem extensao. Padrao: o <see cref="AriaLabel"/> em minusculas com hifens.</summary>
     [Parameter] public string? ExportFileName { get; set; }
 
+    /// <summary>
+    /// Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para
+    /// deslocar, duplo clique para voltar e, no teclado, <c>+</c>, <c>-</c>, <c>0</c> e Ctrl+setas.
+    /// Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario.
+    /// </summary>
+    [Parameter] public bool Zoomable { get; set; }
+
     /// <summary>Atributos extras, repassados a figura.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -89,6 +97,93 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     internal double Largura { get; private set; } = LarguraPadrao;
 
     internal int? Ativo { get; private set; }
+
+    // --- Zoom e arrasto ---
+
+    /// <summary>Nao da para aproximar alem de 50x: passado disso o desenho vira um borrao de um ponto so.</summary>
+    private const double JanelaMinima = 0.02;
+
+    private (double X, double Y)? _arrastando;
+
+    /// <summary>A parte do eixo X que esta a vista, em fracao do total (0 a 1).</summary>
+    internal (double Inicio, double Fim) JanelaX { get; private set; } = (0, 1);
+
+    /// <summary>A parte do eixo Y que esta a vista, em fracao do total (0 a 1), de baixo para cima.</summary>
+    internal (double Inicio, double Fim) JanelaY { get; private set; } = (0, 1);
+
+    /// <summary>Esta aproximado em algum dos eixos.</summary>
+    internal bool Aproximado => JanelaX != (0d, 1d) || JanelaY != (0d, 1d);
+
+    /// <summary>O grafico sabe onde desenha os dados — so esses aceitam zoom e arrasto.</summary>
+    internal virtual (double X, double Y, double Largura, double Altura)? AreaDoPlot => null;
+
+    private bool ZoomLigado => Zoomable && AreaDoPlot is not null;
+
+    /// <summary>O que o leitor de tela ouve quando a janela muda.</summary>
+    internal string? AvisoDoZoom { get; private set; }
+
+    private static (double Inicio, double Fim) Aproximar((double Inicio, double Fim) janela, double fator, double foco)
+    {
+        var tamanho = Math.Clamp((janela.Fim - janela.Inicio) * fator, JanelaMinima, 1);
+        var ponto = janela.Inicio + (janela.Fim - janela.Inicio) * Math.Clamp(foco, 0, 1);
+        var inicio = Math.Clamp(ponto - tamanho * Math.Clamp(foco, 0, 1), 0, 1 - tamanho);
+        return (inicio, inicio + tamanho);
+    }
+
+    private static (double Inicio, double Fim) Deslocar((double Inicio, double Fim) janela, double fracao)
+    {
+        var tamanho = janela.Fim - janela.Inicio;
+        var inicio = Math.Clamp(janela.Inicio + fracao, 0, 1 - tamanho);
+        return (inicio, inicio + tamanho);
+    }
+
+    /// <summary>Aproxima ou afasta um eixo em torno de um ponto (0 = borda esquerda ou de baixo).</summary>
+    internal void Aproximar(bool emY, double fator, double foco)
+    {
+        if (emY)
+        {
+            JanelaY = Aproximar(JanelaY, fator, foco);
+        }
+        else
+        {
+            JanelaX = Aproximar(JanelaX, fator, foco);
+        }
+
+        DepoisDeMudarAJanela();
+    }
+
+    /// <summary>Desloca a janela; a fracao e do total do eixo.</summary>
+    internal void Deslocar(double fracaoX, double fracaoY)
+    {
+        JanelaX = Deslocar(JanelaX, fracaoX);
+        JanelaY = Deslocar(JanelaY, fracaoY);
+        DepoisDeMudarAJanela();
+    }
+
+    /// <summary>Volta a mostrar o grafico inteiro.</summary>
+    public void ResetZoom()
+    {
+        if (!Aproximado)
+        {
+            return;
+        }
+
+        JanelaX = (0, 1);
+        JanelaY = (0, 1);
+        DepoisDeMudarAJanela();
+        StateHasChanged();
+    }
+
+    private void DepoisDeMudarAJanela()
+    {
+        _versaoDoLayout++;
+        AvisoDoZoom = Aproximado
+            ? $"Mostrando de {Percentual(JanelaX.Inicio)} a {Percentual(JanelaX.Fim)} do eixo horizontal e de "
+              + $"{Percentual(JanelaY.Inicio)} a {Percentual(JanelaY.Fim)} do vertical."
+            : "Grafico inteiro a vista.";
+    }
+
+    private static string Percentual(double fracao) => Math.Round(fracao * 100).ToString("0", CultureInfo.InvariantCulture) + "%";
 
     internal IReadOnlyList<TItem> Dados => Memo("Dados", () => Items as IReadOnlyList<TItem> ?? [.. Items ?? []]);
 
@@ -256,13 +351,66 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         }
     }
 
-    internal void AoMoverPonteiro(PointerEventArgs e) => Ativo = PontoEm(e.OffsetX, e.OffsetY);
+    internal void AoMoverPonteiro(PointerEventArgs e)
+    {
+        if (_arrastando is { } origem && AreaDoPlot is { } area)
+        {
+            // Arrastar leva o desenho junto: o conteudo vai para onde o dedo foi, o que significa mover a
+            // janela no sentido contrario.
+            Deslocar(-(e.OffsetX - origem.X) / area.Largura * (JanelaX.Fim - JanelaX.Inicio),
+                     (e.OffsetY - origem.Y) / area.Altura * (JanelaY.Fim - JanelaY.Inicio));
+            _arrastando = (e.OffsetX, e.OffsetY);
+            Ativo = null;
+            return;
+        }
 
-    internal void AoSairPonteiro() => Ativo = null;
+        Ativo = PontoEm(e.OffsetX, e.OffsetY);
+    }
+
+    internal void AoApertarPonteiro(PointerEventArgs e)
+    {
+        if (ZoomLigado && Aproximado)
+        {
+            _arrastando = (e.OffsetX, e.OffsetY);
+        }
+    }
+
+    internal void AoSoltarPonteiro() => _arrastando = null;
+
+    /// <summary>
+    /// A roda do mouse, vinda do JS (o ouvinte precisa poder cancelar a rolagem da pagina, e para isso
+    /// nao pode ser passivo — o que o Blazor sozinho nao faz). As coordenadas sao px dentro do grafico.
+    /// </summary>
+    [JSInvokable]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public Task RodarNoGrafico(double delta, double x, double y, bool shift)
+    {
+        if (!ZoomLigado || AreaDoPlot is not { } area)
+        {
+            return Task.CompletedTask;
+        }
+
+        // Roda para cima aproxima; com Shift, quem aproxima e o eixo vertical (que cresce para cima).
+        var foco = shift ? 1 - (y - area.Y) / area.Altura : (x - area.X) / area.Largura;
+        Aproximar(shift, delta < 0 ? 0.8 : 1.25, foco);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    internal void AoSairPonteiro()
+    {
+        Ativo = null;
+        _arrastando = null;
+    }
 
     internal void AoTeclar(KeyboardEventArgs e)
     {
         var total = QuantidadeDePontos;
+        if (ZoomLigado && TeclaDeZoom(e))
+        {
+            return;
+        }
+
         if (total == 0)
         {
             return;
@@ -277,6 +425,41 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             "Escape" => null,
             _ => Ativo
         };
+    }
+
+    // As setas sozinhas continuam percorrendo os pontos: com Ctrl elas deslocam a janela, e o zoom fica
+    // em "+", "-" e "0" — teclas que nao competem com a leitura ponto a ponto.
+    private bool TeclaDeZoom(KeyboardEventArgs e)
+    {
+        const double PassoDoPan = 0.1;
+        if (e.CtrlKey)
+        {
+            switch (e.Key)
+            {
+                case "ArrowRight": Deslocar(PassoDoPan, 0); return true;
+                case "ArrowLeft": Deslocar(-PassoDoPan, 0); return true;
+                case "ArrowUp": Deslocar(0, PassoDoPan); return true;
+                case "ArrowDown": Deslocar(0, -PassoDoPan); return true;
+                default: return false;
+            }
+        }
+
+        switch (e.Key)
+        {
+            case "+" or "=":
+                Aproximar(e.ShiftKey, 0.8, 0.5);
+                return true;
+            case "-" or "_":
+                Aproximar(e.ShiftKey, 1.25, 0.5);
+                return true;
+            case "0":
+                JanelaX = (0, 1);
+                JanelaY = (0, 1);
+                DepoisDeMudarAJanela();
+                return true;
+            default:
+                return false;
+        }
     }
 
     private string NomeDoArquivo
@@ -365,6 +548,17 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// </summary>
     internal virtual IEnumerable<string>? RotulosDoEixoSecundario => null;
 
+    /// <summary>A escala do eixo de valores como o zoom a mostra.</summary>
+    internal Escala NaJanela(Escala escala) => escala.Recortada(JanelaY.Inicio, JanelaY.Fim);
+
+    /// <summary>A posicao horizontal de uma fracao do eixo X (0 = primeiro item, 1 = ultimo), ja com o zoom.</summary>
+    internal double XDaFracao(double fracao, double esquerda, double largura)
+        => esquerda + largura * (fracao - JanelaX.Inicio) / (JanelaX.Fim - JanelaX.Inicio);
+
+    /// <summary>O inverso: de que fracao do eixo X aquele pixel veio.</summary>
+    internal double FracaoDoX(double x, double esquerda, double largura)
+        => JanelaX.Inicio + (x - esquerda) / largura * (JanelaX.Fim - JanelaX.Inicio);
+
     /// <summary>Largura reservada aos rotulos do eixo de valores, pelo maior texto.</summary>
     internal static double LarguraDosRotulos(IEnumerable<string> textos, double minimo = 32)
         => Math.Max(minimo, textos.Select(t => t.Length).DefaultIfEmpty(0).Max() * 7 + 12);
@@ -410,6 +604,11 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             _referencia = DotNetObjectReference.Create(this);
             _modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
             _observador = await _modulo.InvokeAsync<IJSObjectReference?>("observar", _area, _referencia);
+            if (Zoomable)
+            {
+                _roda = await _modulo.InvokeAsync<IJSObjectReference?>("observarRoda", _camada, _referencia);
+            }
+
             _teclado = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
             await _teclado.InvokeVoidAsync("prenderTeclas", _camada, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" });
         }
@@ -428,6 +627,12 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             {
                 await _observador.InvokeVoidAsync("parar");
                 await _observador.DisposeAsync();
+            }
+
+            if (_roda is not null)
+            {
+                await _roda.InvokeVoidAsync("parar");
+                await _roda.DisposeAsync();
             }
 
             if (_modulo is not null) await _modulo.DisposeAsync();

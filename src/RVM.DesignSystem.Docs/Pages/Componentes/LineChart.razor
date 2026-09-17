@@ -19,10 +19,10 @@
     </RvmLineChart>
 </BlocoExemplo>
 
-<BlocoExemplo Titulo="Varias series com pontos"
-              Descricao="Chuva mensal em tres fazendas, em mm."
+<BlocoExemplo Titulo="Varias series com pontos, aproximavel"
+              Descricao="Chuva mensal em tres fazendas, em mm. Com Zoomable, a roda do mouse aproxima o eixo dos meses (Shift para o dos milimetros), o arrasto desloca e o duplo clique volta; pelo teclado, + - 0 e Ctrl com as setas."
               Codigo="@CodigoSeries">
-    <RvmLineChart Items="Chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true"
+    <RvmLineChart Items="Chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true" Zoomable="true"
                   ValueFormat="@(v => $"{RvmChartFormat.Number(v)} mm")">
         <RvmChartSeries Name="Boa Vista" Value="c => c.BoaVista" />
         <RvmChartSeries Name="Santa Luzia" Value="c => c.SantaLuzia" Color="RvmColor.Warning" />
@@ -70,6 +70,7 @@
         new("ShowPoints", "bool", "false", "Marca todos os pontos; sem isso, so os da categoria ativa."),
         new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
         new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
+        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
         new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita (nao herda o ValueFormat, que descreve a unidade da esquerda)."),
         new("Animated", "bool", "true", "Anima o desenho; silenciada sozinha em \"reduzir movimento\"."),
         new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV ou PDF."),
@@ -92,7 +93,7 @@
         """;
 
     private const string CodigoSeries = """
-        <RvmLineChart Items="chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true">
+        <RvmLineChart Items="chuvas" Label="c => c.Mes" AriaLabel="Chuva mensal por fazenda" ShowPoints="true" Zoomable="true">
             <RvmChartSeries Name="Boa Vista" Value="c => c.BoaVista" />
             <RvmChartSeries Name="Santa Luzia" Value="c => c.SantaLuzia" Color="RvmColor.Warning" />
         </RvmLineChart>

@@ -31,6 +31,15 @@
     border-radius: var(--rvm-radius-sm);
 }
 
+/* Aproximado, o grafico pode ser arrastado: a mao aberta e a unica pista visual de que da. */
+.rvm-grafico-arrastavel {
+    cursor: grab;
+}
+
+.rvm-grafico-arrastavel:active {
+    cursor: grabbing;
+}
+
 .rvm-grafico-camada:focus-visible {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: var(--rvm-focus-ring-offset);

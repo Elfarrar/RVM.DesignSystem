@@ -40,6 +40,15 @@ public class RvmGraficosReviewTests : BunitContext
     }
 
     [Fact]
+    public void Zero_nao_sai_com_sinal_nem_com_sufixo()
+    {
+        // Aproximado, a marca da base cai em -1e-14 em vez de zero cravado (achado na foto do zoom).
+        Assert.Equal("0", RvmChartFormat.Compact(-1e-14));
+        Assert.Equal("0", RvmChartFormat.Number(-0.0001));
+        Assert.Equal("0", RvmChartFormat.Compact(-0.0));
+    }
+
+    [Fact]
     public async Task Layout_guardado_e_refeito_quando_os_dados_ou_a_largura_mudam()
     {
         var cortado = Render<RvmColumnChart<Venda>>(p => p.Add(x => x.Items, [new Venda("Jan", 10, 0)]).Add(x => x.AriaLabel, "Colunas")
