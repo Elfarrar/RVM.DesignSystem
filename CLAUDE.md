@@ -38,7 +38,11 @@ tokens + tema claro/escuro · site público de documentação feito com a própr
 acessibilidade AA como critério de aceite.
 
 **Não faz:** MudBlazor ou qualquer biblioteca de terceiros · migrar os apps existentes · backend,
-banco, auth, container · as telas prontas do kit (login, invoice, chat) · gráfico, editor rico, RTL.
+banco, auth, container · as telas prontas do kit (login, invoice, chat) · editor rico, RTL.
+
+> **Gráfico saiu do "não faz" em 17/09/2026** (`DSGN-010`, decisão do Rafael): oito tipos em SVG próprio,
+> sem biblioteca de terceiros — colunas, barras, histograma, linha, área, dispersão, pizza/rosca e radar.
+> Zoom, arrastar, animação, eixo duplo e exportar imagem seguem fora.
 
 ## Arquitetura
 

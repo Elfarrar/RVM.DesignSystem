@@ -10,12 +10,12 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-010]] | Graficos: colunas, barras, linha, area, pizza, histograma, dispersao e radar | em andamento |
 
 ## Concluido
 
 | Card | O que |
 |---|---|
+| [[DSGN-010]] | Graficos (17/09): colunas, barras, histograma, linha, area, dispersao, pizza e radar em SVG proprio, com teclado e tabela de dados; review independente. Em producao |
 | [[DSGN-009]] | Paginas de exemplo (17/09): dashboard, CMS, CRM, ERP e planner montados so com a biblioteca. Em producao |
 | [[DSGN-008]] | Site com menu lateral (17/09): o proprio RvmAppShell, os 35 componentes nas quatro secoes, gaveta no celular. Em producao |
 | [[DSGN-007]] | `1.0.0` e producao (17/09): `design.rvmit.com.br` no GitHub Pages com HTTPS, pacote `1.0.0` no BaGet, monitor 25 do Kuma retomado |

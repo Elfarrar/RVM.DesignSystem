@@ -3,7 +3,7 @@ id: DSGN-010
 titulo: Graficos — colunas, barras, linha, area, pizza, histograma, dispersao e radar
 repo: RVM.DesignSystem
 tipo: feature
-status: em andamento
+status: concluido
 criada: 2026-09-17
 ---
 
@@ -58,3 +58,12 @@ Zoom, arrastar, animacao, eixo duplo, exportar imagem.
 | 🔴 **Review Sonnet dos graficos: dois P1 e um de desempenho corrigidos** | (1) Ternario com os dois ramos iguais fazia a LINHA tambem partir do zero: valores de 950 a 1.050 ficavam espremidos no topo; agora so a area parte do zero. (2) `JSDisconnectedException` nao era capturada no primeiro render: sair da pagina no Blazor Server durante o `import` do JS derrubava o circuito. A mesma omissao existia em 6 componentes antigos (tema, checkbox, menu, abas, select, relogio) — corrigida em todos. (3) Colunas, pontos e fatias recalculados varias vezes por render (e a cada movimento do mouse): layout guardado por versao (`Memo`), invalidado quando parametros ou largura mudam |
 | 🔴 **Eixo repetia "1 mil" em tres marcas** (achado ao escrever o teste do P1 da linha) | O compacto arredondava 1.000, 1.020 e 1.040 para "1 mil". Rotulo de eixo agora usa a precisao do passo da escala: "1 mil", "1,02 mil", "1,04 mil" |
 | **P2 do review**: teto de 500 faixas no histograma; clamp de negativo no radar documentado; `Dados` tambem em cache (Items `IEnumerable` vivo) | Riscos latentes, sem cenario real hoje |
+
+## Verifica
+
+- 552 bUnit; E2E local 225/225 (axe com dica aberta nos dois temas; teclado anuncia o ponto em colunas,
+  barras, histograma, rosca, radar e area)
+- Cobertura 96,0%. Dev: PRs #41, #42 e #43, todos com E2E do dev verde
+- Comparacoes com o kit no scratchpad de 17/09: `comparacao-column-chart.png`, `-line-chart`, `-area-chart`,
+  `-pie-chart`, `-radar-chart`; fotos `graf-*-{0,1}-{claro,escuro}.png`
+- Producao: sinal verde do Rafael em 17/09 ("pode promover e deployar")
