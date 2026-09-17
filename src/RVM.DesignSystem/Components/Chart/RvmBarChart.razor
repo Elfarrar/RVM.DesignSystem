@@ -1,0 +1,172 @@
+@namespace RVM.DesignSystem.Components.Chart
+@typeparam TItem
+@inherits RvmChartBase<TItem>
+@attribute [CascadingTypeParameter(nameof(TItem))]
+
+@* Barras horizontais: as categorias ficam a esquerda, com espaco para nomes longos (cortados com "…" se
+   passarem de 35% da largura — o nome inteiro segue na dica e na tabela de dados). *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>Barras empilhadas em vez de lado a lado.</summary>
+    [Parameter] public bool Stacked { get; set; }
+
+    /// <summary>Espessura maxima de cada barra, em px. Padrao: 24.</summary>
+    [Parameter] public int MaxBarThickness { get; set; } = 24;
+
+    private sealed record Barra(int Categoria, int Serie, double X, double Y, double Comprimento, double Espessura);
+
+    private const int CaracteresPorPx = 7;
+
+    private Escala EscalaDosValores
+    {
+        get
+        {
+            double min = 0, max = 0;
+            foreach (var item in Dados)
+            {
+                if (Stacked)
+                {
+                    max = Math.Max(max, Series.Sum(s => Math.Max(0, s.ValorDe(item))));
+                    min = Math.Min(min, Series.Sum(s => Math.Min(0, s.ValorDe(item))));
+                }
+                else
+                {
+                    foreach (var s in Series)
+                    {
+                        max = Math.Max(max, s.ValorDe(item));
+                        min = Math.Min(min, s.ValorDe(item));
+                    }
+                }
+            }
+
+            return Escala.Arredondada(min, max);
+        }
+    }
+
+    private double LimiteDosRotulos => Largura * 0.35;
+
+    private double Esquerda
+        => Math.Min(LimiteDosRotulos, LarguraDosRotulos(Dados.Select((item, i) => NomeDe(item, i)), 48));
+
+    private string Rotulo(int indice)
+    {
+        var nome = NomeDe(Dados[indice], indice);
+        var cabem = (int)((Esquerda - 12) / CaracteresPorPx);
+        return nome.Length <= cabem || cabem < 2 ? nome : nome[..(cabem - 1)] + "…";
+    }
+
+    private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita - 8);
+
+    private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
+
+    private double Faixa => Dados.Count == 0 ? AlturaDoPlot : AlturaDoPlot / Dados.Count;
+
+    private double X(Escala escala, double valor) => escala.Posicao(valor, Esquerda, Esquerda + LarguraDoPlot);
+
+    private List<Barra> Barras
+    {
+        get
+        {
+            var escala = EscalaDosValores;
+            var lista = new List<Barra>();
+            var grupo = Faixa * 0.6;
+            var quantas = Math.Max(1, Series.Count);
+            var espessura = Math.Max(2, Math.Min(MaxBarThickness, Stacked ? grupo : (grupo - (quantas - 1) * 4) / quantas));
+            var zero = X(escala, 0);
+
+            for (var c = 0; c < Dados.Count; c++)
+            {
+                var item = Dados[c];
+                var centro = MargemTopo + Faixa * (c + 0.5);
+                double positivo = 0, negativo = 0;
+                for (var s = 0; s < Series.Count; s++)
+                {
+                    var valor = Series[s].ValorDe(item);
+                    double x0, x1, y;
+                    if (Stacked)
+                    {
+                        y = centro - espessura / 2;
+                        if (valor >= 0)
+                        {
+                            x0 = X(escala, positivo);
+                            positivo += valor;
+                            x1 = X(escala, positivo);
+                        }
+                        else
+                        {
+                            x0 = X(escala, negativo);
+                            negativo += valor;
+                            x1 = X(escala, negativo);
+                        }
+                    }
+                    else
+                    {
+                        var total = quantas * espessura + (quantas - 1) * 4;
+                        y = centro - total / 2 + s * (espessura + 4);
+                        x0 = zero;
+                        x1 = X(escala, valor);
+                    }
+
+                    lista.Add(new Barra(c, s, Math.Min(x0, x1), y, Math.Abs(x1 - x0), espessura));
+                }
+            }
+
+            return lista;
+        }
+    }
+
+    internal override RenderFragment Desenho => @<g>
+        @{ var escala = EscalaDosValores; }
+        @foreach (var marca in escala.Marcas)
+        {
+            var x = X(escala, marca);
+            @if (ShowGrid)
+            {
+                <line class="rvm-grafico-grade" x1="@N(x)" y1="@N(MargemTopo)" x2="@N(x)" y2="@N(MargemTopo + AlturaDoPlot)" />
+            }
+            @Texto(x, Height - 10, Formatar(marca))
+        }
+        @if (Ativo is { } ativo && ativo < Dados.Count)
+        {
+            <rect class="rvm-grafico-faixa-ativa" x="0" y="@N(MargemTopo + Faixa * ativo)" width="@N(Largura)" height="@N(Faixa)" rx="4" />
+        }
+        @foreach (var barra in Barras)
+        {
+            <rect class="@($"rvm-grafico-barra {ClasseDaCor(CorDa(Series[barra.Serie]))}")"
+                  x="@N(barra.X)" y="@N(barra.Y)" width="@N(barra.Comprimento)" height="@N(barra.Espessura)"
+                  rx="@N(Math.Min(4, barra.Espessura / 2))" />
+        }
+        @for (var c = 0; c < Dados.Count; c++)
+        {
+            @Texto(Esquerda - 12, MargemTopo + Faixa * (c + 0.5), Rotulo(c), "end", "middle")
+        }
+    </g>;
+
+    internal override int QuantidadeDePontos => Dados.Count;
+
+    internal override string TituloDoPonto(int indice) => NomeDe(Dados[indice], indice);
+
+    internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
+        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice])), CorDa(s)))];
+
+    internal override (double X, double Y) AncoraDoPonto(int indice)
+    {
+        var fim = Barras.Where(b => b.Categoria == indice).Select(b => b.X + b.Comprimento).DefaultIfEmpty(Esquerda).Max();
+        return (Math.Min(fim, Largura - MargemDireita), MargemTopo + Faixa * indice);
+    }
+
+    internal override int? PontoEm(double x, double y)
+    {
+        if (Dados.Count == 0 || y < MargemTopo || y > MargemTopo + AlturaDoPlot)
+        {
+            return null;
+        }
+
+        return Math.Clamp((int)((y - MargemTopo) / Faixa), 0, Dados.Count - 1);
+    }
+
+    internal override TabelaDeDados Tabela
+        => new(["Categoria", .. Series.Select(s => s.Name)],
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => Formatar(s.ValorDe(item)))])]);
+}

@@ -1,0 +1,76 @@
+@page "/componentes/bar-chart"
+
+<PageTitle>RvmBarChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmBarChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Barras horizontais: as mesmas comparacoes do grafico de colunas, com as categorias a esquerda. E a escolha
+    quando os nomes sao longos (talhoes, produtos, clientes). Nome que passa de 35% da largura e cortado com
+    "…"; o nome inteiro segue na dica e na tabela de dados.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ O kit nao tem grafico de barras horizontais: o visual segue o das colunas (grade tracejada, cantos de
+    4 px, legenda).
+</p>
+
+<BlocoExemplo Titulo="Nomes longos"
+              Descricao="Produtividade por talhao, em sacas por hectare."
+              Codigo="@CodigoSimples">
+    <RvmBarChart Items="Talhoes" Label="t => t.Nome" AriaLabel="Produtividade por talhao" Height="320"
+                 ValueFormat="@(v => $"{RvmChartFormat.Number(v)} sc/ha")">
+        <RvmChartSeries Name="Produtividade" Value="t => t.Produtividade" Color="RvmColor.Success" />
+    </RvmBarChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Empilhadas"
+              Descricao="Custo por hectare de cada cultura, por tipo de insumo."
+              Codigo="@CodigoEmpilhado">
+    <RvmBarChart Items="Custos" Label="c => c.Cultura" AriaLabel="Custo por hectare de cada cultura" Stacked="true" Height="240"
+                 ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)}")">
+        <RvmChartSeries Name="Sementes" Value="c => c.Sementes" />
+        <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" Color="RvmColor.Success" />
+        <RvmChartSeries Name="Defensivos" Value="c => c.Defensivos" Color="RvmColor.Warning" />
+    </RvmBarChart>
+</BlocoExemplo>
+
+<TabelaParametros Parametros="@Parametros" />
+
+@code {
+    private static readonly (string Nome, double Produtividade)[] Talhoes =
+    [
+        ("Talhao Norte (pivo 1)", 72), ("Baixada do corrego", 64), ("Sede", 58), ("Cerrado — area nova de abertura", 41),
+        ("Varzea", 69), ("Encosta sul", 53)
+    ];
+
+    private static readonly (string Cultura, double Sementes, double Fertilizantes, double Defensivos)[] Custos =
+    [
+        ("Soja", 620, 980, 740), ("Milho safrinha", 890, 1240, 520), ("Algodao", 710, 1650, 1980), ("Feijao", 540, 760, 610)
+    ];
+
+    private static readonly TabelaParametros.Parametro[] Parametros =
+    [
+        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
+        new("Stacked", "bool", "false", "Series empilhadas em vez de lado a lado."),
+        new("MaxBarThickness", "int", "24", "Espessura maxima de cada barra, em px."),
+        new("Height", "int", "300", "Altura, em px."),
+        new("ShowLegend / ShowGrid", "bool", "true / true", "Legenda (com mais de uma serie) e grade."),
+        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie.")
+    ];
+
+    private const string CodigoSimples = """
+        <RvmBarChart Items="talhoes" Label="t => t.Nome" AriaLabel="Produtividade por talhao"
+                     ValueFormat="@(v => $"{RvmChartFormat.Number(v)} sc/ha")">
+            <RvmChartSeries Name="Produtividade" Value="t => t.Produtividade" Color="RvmColor.Success" />
+        </RvmBarChart>
+        """;
+
+    private const string CodigoEmpilhado = """
+        <RvmBarChart Items="custos" Label="c => c.Cultura" AriaLabel="Custo por hectare" Stacked="true">
+            <RvmChartSeries Name="Sementes" Value="c => c.Sementes" />
+            <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" Color="RvmColor.Success" />
+        </RvmBarChart>
+        """;
+}

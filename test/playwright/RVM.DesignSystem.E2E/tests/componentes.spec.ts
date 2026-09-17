@@ -41,9 +41,13 @@ const PAGINAS = [
     { rota: '/componentes/table', titulo: 'RvmTable' },
     { rota: '/componentes/data-grid', titulo: 'RvmDataGrid' },
     { rota: '/componentes/app-shell', titulo: 'RvmAppShell' },
+    { rota: '/componentes/column-chart', titulo: 'RvmColumnChart' },
+    { rota: '/componentes/bar-chart', titulo: 'RvmBarChart' },
+    { rota: '/componentes/histogram', titulo: 'RvmHistogram' },
 ];
 
-const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton']);
+// Graficos que o kit nao desenhou: seguem o visual das colunas (DSGN-010).
+const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart']);
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
     await page.goto('/componentes');
