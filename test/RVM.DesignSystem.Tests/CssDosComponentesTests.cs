@@ -64,7 +64,9 @@ public class CssDosComponentesTests
         // da moldura (::deep), que precisa enxergar o estado recolhido e o modo estreito juntos.
         // Os graficos derivados so desenham SVG dentro da figura da RvmChartBase, que tem o CSS (::deep).
         string[] semCssPorProjeto = ["RvmNavGroup.razor", "RvmNavItem.razor", "RvmNavSection.razor",
-            "RvmColumnChart.razor", "RvmBarChart.razor", "RvmHistogram.razor"];
+            "RvmColumnChart.razor", "RvmBarChart.razor", "RvmHistogram.razor",
+            "RvmLineChart.razor", "RvmAreaChart.razor", "RvmScatterChart.razor",
+            "RvmPieChart.razor", "RvmRadarChart.razor"];
 
         var faltando = Directory.Exists(PastaDeComponentes)
             ? Directory.GetFiles(PastaDeComponentes, "*.razor", SearchOption.AllDirectories)

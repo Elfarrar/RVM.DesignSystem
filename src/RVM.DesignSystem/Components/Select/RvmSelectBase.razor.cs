@@ -15,8 +15,7 @@ namespace RVM.DesignSystem.Components.Select;
 /// <typeparam name="TValue">Tipo de cada opcao.</typeparam>
 public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDisposable
 {
-    private static int _proximoId;
-    private readonly string _idBase = $"rvm-select-{Interlocked.Increment(ref _proximoId)}";
+    private readonly string _idBase = GeradorDeIds.Novo("rvm-select");
     private ElementReference _gatilho;
     private ElementReference _busca;
     private IJSObjectReference? _modulo;

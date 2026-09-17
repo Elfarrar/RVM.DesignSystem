@@ -64,3 +64,20 @@ for (const tema of ['claro', 'escuro'] as const) {
         await semViolacaoSeria(page);
     });
 }
+
+test('rosca, radar e area anunciam o ponto ativo', async ({ page }) => {
+    await page.goto('/componentes/pie-chart');
+    await page.getByRole('group', { name: 'Area plantada por cultura' }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Soja' })).toHaveText('Soja: 620 ha (50%)');
+
+    await page.goto('/componentes/radar-chart');
+    await page.getByRole('group', { name: 'Avaliacao dos talhoes por criterio' }).focus();
+    await page.keyboard.press('End');
+    await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Sanidade' })).toHaveText('Sanidade: Talhao Norte 8,5; Varzea 6,5');
+
+    await page.goto('/componentes/area-chart');
+    await page.getByRole('group', { name: 'Vendas acumuladas no ano' }).focus();
+    await page.keyboard.press('ArrowLeft');
+    await expect(page.locator('[aria-live=polite]').filter({ hasText: 'Jul' })).toHaveText('Jul: Vendas R$ 42,6 mil');
+});

@@ -94,6 +94,16 @@
     stroke: none;
 }
 
+.rvm-grafico ::deep .rvm-grafico-degrade-topo {
+    stop-color: var(--rvm-grafico-cor);
+    stop-opacity: 0.32;
+}
+
+.rvm-grafico ::deep .rvm-grafico-degrade-base {
+    stop-color: var(--rvm-grafico-cor);
+    stop-opacity: 0;
+}
+
 .rvm-grafico ::deep .rvm-grafico-ponto {
     fill: var(--rvm-color-background-paper);
     stroke: var(--rvm-grafico-cor);
@@ -117,6 +127,10 @@
     fill: var(--rvm-grafico-cor);
     stroke: var(--rvm-color-background-paper);
     stroke-width: 2;
+}
+
+.rvm-grafico ::deep .rvm-grafico-eixo-ativo {
+    stroke: var(--rvm-color-text-secondary);
 }
 
 .rvm-grafico ::deep .rvm-grafico-teia {

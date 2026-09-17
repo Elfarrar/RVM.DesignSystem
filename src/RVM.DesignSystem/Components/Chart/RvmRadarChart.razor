@@ -1,0 +1,127 @@
+@namespace RVM.DesignSystem.Components.Chart
+@typeparam TItem
+@inherits RvmChartBase<TItem>
+@attribute [CascadingTypeParameter(nameof(TItem))]
+
+@* Radar (teia): cada item e um eixo a partir do centro, a primeira no alto e as outras no sentido horario;
+   cada serie e um poligono. A grade sao poligonos em niveis de mesma distancia. O eixo ativo marca o valor
+   de cada serie com um ponto. Precisa de pelo menos tres eixos para fechar um poligono. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>Numero de niveis da grade. Padrao: 5.</summary>
+    [Parameter] public int GridLevels { get; set; } = 5;
+
+    /// <summary>Valor na ponta dos eixos. Sem valor, o maior valor arredondado para cima.</summary>
+    [Parameter] public double? Max { get; set; }
+
+    private int Eixos => Dados.Count;
+
+    private double Maximo
+    {
+        get
+        {
+            if (Max is > 0 and var fixo)
+            {
+                return fixo;
+            }
+
+            var maior = Dados.SelectMany(item => Series.Select(s => s.ValorDe(item))).DefaultIfEmpty(0).Max();
+            return Escala.Arredondada(0, Math.Max(maior, 0)).Max;
+        }
+    }
+
+    private double CentroX => Largura / 2;
+
+    private double CentroY => Height / 2d;
+
+    private double Raio => Math.Max(10, Math.Min(Largura, Height) / 2 - 36);
+
+    private double AnguloDo(int eixo) => Eixos == 0 ? 0 : -90 + 360d * eixo / Eixos;
+
+    private (double X, double Y) Ponto(int eixo, double raio)
+    {
+        var rad = AnguloDo(eixo) * Math.PI / 180;
+        return (CentroX + raio * Math.Cos(rad), CentroY + raio * Math.Sin(rad));
+    }
+
+    private string Poligono(Func<int, double> raio)
+        => string.Join(" ", Enumerable.Range(0, Eixos).Select(e =>
+        {
+            var (x, y) = Ponto(e, raio(e));
+            return $"{N(x)},{N(y)}";
+        }));
+
+    private double RaioDoValor(double valor) => Maximo <= 0 ? 0 : Math.Clamp(valor / Maximo, 0, 1) * Raio;
+
+    private MarkupString RotuloDoEixo(int eixo)
+    {
+        var rad = AnguloDo(eixo) * Math.PI / 180;
+        var (x, y) = Ponto(eixo, Raio + 14);
+        var ancora = Math.Cos(rad) > 0.3 ? "start" : Math.Cos(rad) < -0.3 ? "end" : "middle";
+        var baseline = Math.Sin(rad) > 0.3 ? "hanging" : Math.Sin(rad) < -0.3 ? "auto" : "middle";
+        return Texto(x, y, NomeDe(Dados[eixo], eixo), ancora, baseline);
+    }
+
+    internal override RenderFragment Desenho => @<g>
+        @if (Eixos >= 3)
+        {
+            var niveis = Math.Max(1, GridLevels);
+            @if (ShowGrid)
+            {
+                @for (var nivel = 1; nivel <= niveis; nivel++)
+                {
+                    var fracao = (double)nivel / niveis;
+                    <polygon class="rvm-grafico-teia" points="@Poligono(_ => Raio * fracao)" />
+                }
+                @for (var e = 0; e < Eixos; e++)
+                {
+                    var (x, y) = Ponto(e, Raio);
+                    <line class="@(Ativo == e ? "rvm-grafico-eixo rvm-grafico-eixo-ativo" : "rvm-grafico-teia")" x1="@N(CentroX)" y1="@N(CentroY)" x2="@N(x)" y2="@N(y)" />
+                }
+            }
+            @foreach (var serie in Series)
+            {
+                <polygon class="@($"rvm-grafico-poligono {ClasseDaCor(CorDa(serie))}")" points="@Poligono(e => RaioDoValor(serie.ValorDe(Dados[e])))" />
+            }
+            @if (Ativo is { } ativo && ativo < Eixos)
+            {
+                @foreach (var serie in Series)
+                {
+                    var (x, y) = Ponto(ativo, RaioDoValor(serie.ValorDe(Dados[ativo])));
+                    <circle class="@($"rvm-grafico-ponto {ClasseDaCor(CorDa(serie))}")" cx="@N(x)" cy="@N(y)" r="5" />
+                }
+            }
+            @for (var e = 0; e < Eixos; e++)
+            {
+                @RotuloDoEixo(e)
+            }
+        }
+    </g>;
+
+    internal override int QuantidadeDePontos => Eixos >= 3 ? Eixos : 0;
+
+    internal override string TituloDoPonto(int indice) => NomeDe(Dados[indice], indice);
+
+    internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
+        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice])), CorDa(s)))];
+
+    internal override (double X, double Y) AncoraDoPonto(int indice) => Ponto(indice, Raio * 0.6);
+
+    internal override int? PontoEm(double x, double y)
+    {
+        var dx = x - CentroX;
+        var dy = y - CentroY;
+        if (Eixos < 3 || Math.Sqrt(dx * dx + dy * dy) > Raio + 24)
+        {
+            return null;
+        }
+
+        var angulo = (Math.Atan2(dy, dx) * 180 / Math.PI + 90 + 360) % 360;
+        return (int)Math.Round(angulo / (360d / Eixos)) % Eixos;
+    }
+
+    internal override TabelaDeDados Tabela
+        => new(["Eixo", .. Series.Select(s => s.Name)],
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => Formatar(s.ValorDe(item)))])]);
+}

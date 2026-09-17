@@ -1,0 +1,168 @@
+@namespace RVM.DesignSystem.Components.Chart
+@typeparam TItem
+@inherits RvmChartBase<TItem>
+@attribute [CascadingTypeParameter(nameof(TItem))]
+
+@* Pizza e rosca: cada item e uma fatia proporcional ao valor, a partir do alto e no sentido horario. A
+   legenda traz o percentual; a fatia ativa (mouse ou teclado) se afasta um pouco do centro. Valores zero ou
+   negativos nao desenham fatia, mas continuam na tabela de dados. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>O valor de cada fatia.</summary>
+    [Parameter, EditorRequired] public Func<TItem, double>? Value { get; set; }
+
+    /// <summary>Rosca (anel) em vez de pizza.</summary>
+    [Parameter] public bool Donut { get; set; }
+
+    /// <summary>Espessura do anel da rosca, em fracao do raio (0,1 a 0,9). Padrao: 0,35.</summary>
+    [Parameter] public double DonutThickness { get; set; } = 0.35;
+
+    /// <summary>Conteudo no centro da rosca (o total, um rotulo).</summary>
+    [Parameter] public RenderFragment? CenterContent { get; set; }
+
+    /// <summary>Cor de cada fatia. Sem valor, segue a paleta na ordem dos itens.</summary>
+    [Parameter] public Func<TItem, RvmColor>? SliceColor { get; set; }
+
+    private const double Afastamento = 6;
+
+    internal sealed record Fatia(int Indice, double Valor, double Inicio, double Fim);
+
+    private double Total => Dados.Sum(item => Math.Max(0, ValorDe(item)));
+
+    private double ValorDe(TItem item) => Value?.Invoke(item) ?? 0;
+
+    private RvmColor CorDe(int indice) => SliceColor?.Invoke(Dados[indice]) ?? CorDaPaleta(indice);
+
+    private double CentroX => Largura / 2;
+
+    private double CentroY => Height / 2d;
+
+    private double Raio => Math.Max(10, Math.Min(Largura, Height) / 2 - Afastamento - 4);
+
+    private double RaioInterno => Donut ? Raio * (1 - Math.Clamp(DonutThickness, 0.1, 0.9)) : 0;
+
+    private List<Fatia> Fatias
+    {
+        get
+        {
+            var total = Total;
+            var lista = new List<Fatia>();
+            if (total <= 0)
+            {
+                return lista;
+            }
+
+            var angulo = 0d;
+            for (var i = 0; i < Dados.Count; i++)
+            {
+                var valor = Math.Max(0, ValorDe(Dados[i]));
+                if (valor <= 0)
+                {
+                    continue;
+                }
+
+                var fim = angulo + valor / total * 360;
+                lista.Add(new Fatia(i, valor, angulo, fim));
+                angulo = fim;
+            }
+
+            return lista;
+        }
+    }
+
+    private string Percentual(double valor)
+        => Total <= 0 ? "0%" : RvmChartFormat.Number(Math.Round(valor / Total * 100, 1)) + "%";
+
+    /// <summary>Ponto na circunferencia; o angulo conta em graus a partir do alto, no sentido horario.</summary>
+    private (double X, double Y) Ponto(double angulo, double raio, double dx = 0, double dy = 0)
+    {
+        var rad = (angulo - 90) * Math.PI / 180;
+        return (CentroX + dx + raio * Math.Cos(rad), CentroY + dy + raio * Math.Sin(rad));
+    }
+
+    private string CaminhoDa(Fatia f)
+    {
+        var (dx, dy) = (0d, 0d);
+        if (Ativo == f.Indice)
+        {
+            var meio = (f.Inicio + f.Fim) / 2;
+            var rad = (meio - 90) * Math.PI / 180;
+            (dx, dy) = (Afastamento * Math.Cos(rad), Afastamento * Math.Sin(rad));
+        }
+
+        // Uma fatia so (100%): o arco de 360 graus nao existe no SVG; vira dois arcos de 180.
+        var fim = f.Fim - f.Inicio >= 359.999 ? f.Inicio + 359.999 : f.Fim;
+        var grande = fim - f.Inicio > 180 ? 1 : 0;
+        var (x0, y0) = Ponto(f.Inicio, Raio, dx, dy);
+        var (x1, y1) = Ponto(fim, Raio, dx, dy);
+        if (RaioInterno <= 0)
+        {
+            var (cx, cy) = (CentroX + dx, CentroY + dy);
+            return $"M {N(cx)} {N(cy)} L {N(x0)} {N(y0)} A {N(Raio)} {N(Raio)} 0 {grande} 1 {N(x1)} {N(y1)} Z";
+        }
+
+        var (xi1, yi1) = Ponto(fim, RaioInterno, dx, dy);
+        var (xi0, yi0) = Ponto(f.Inicio, RaioInterno, dx, dy);
+        return $"M {N(x0)} {N(y0)} A {N(Raio)} {N(Raio)} 0 {grande} 1 {N(x1)} {N(y1)} "
+               + $"L {N(xi1)} {N(yi1)} A {N(RaioInterno)} {N(RaioInterno)} 0 {grande} 0 {N(xi0)} {N(yi0)} Z";
+    }
+
+    internal override RenderFragment Desenho => @<g>
+        @{ var fatias = Fatias; }
+        @if (fatias.Count == 0)
+        {
+            <circle class="rvm-grafico-teia" cx="@N(CentroX)" cy="@N(CentroY)" r="@N(Raio)" />
+        }
+        @foreach (var fatia in fatias)
+        {
+            <path class="@($"rvm-grafico-fatia {ClasseDaCor(CorDe(fatia.Indice))}")" d="@CaminhoDa(fatia)" />
+        }
+    </g>;
+
+    internal override RenderFragment? Centro => Donut ? CenterContent : null;
+
+    internal override int QuantidadeDePontos => Fatias.Count;
+
+    private Fatia FatiaDoPonto(int indice) => Fatias[indice];
+
+    internal override string TituloDoPonto(int indice) => NomeDe(Dados[FatiaDoPonto(indice).Indice], FatiaDoPonto(indice).Indice);
+
+    internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
+    {
+        var f = FatiaDoPonto(indice);
+        return [new("", $"{Formatar(f.Valor)} ({Percentual(f.Valor)})", CorDe(f.Indice))];
+    }
+
+    internal override (double X, double Y) AncoraDoPonto(int indice)
+    {
+        var f = FatiaDoPonto(indice);
+        return Ponto((f.Inicio + f.Fim) / 2, (Raio + RaioInterno) / 2);
+    }
+
+    internal override int? PontoEm(double x, double y)
+    {
+        var dx = x - CentroX;
+        var dy = y - CentroY;
+        var distancia = Math.Sqrt(dx * dx + dy * dy);
+        if (distancia > Raio + Afastamento || distancia < RaioInterno)
+        {
+            return null;
+        }
+
+        var angulo = (Math.Atan2(dy, dx) * 180 / Math.PI + 90 + 360) % 360;
+        var fatias = Fatias;
+        var achada = fatias.FindIndex(f => angulo >= f.Inicio && angulo < f.Fim);
+        return achada < 0 ? null : achada;
+    }
+
+    // O Ativo da base conta fatias desenhadas; o afastamento compara com o indice do item.
+    private new int? Ativo => base.Ativo is { } i && i < Fatias.Count ? Fatias[i].Indice : null;
+
+    internal override IReadOnlyList<ItemDaLegenda> Legenda
+        => [.. Fatias.Select(f => new ItemDaLegenda(NomeDe(Dados[f.Indice], f.Indice), CorDe(f.Indice), Percentual(f.Valor)))];
+
+    internal override TabelaDeDados Tabela
+        => new(["Fatia", "Valor", "Percentual"],
+               [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), Formatar(ValorDe(item)), Percentual(Math.Max(0, ValorDe(item)))])]);
+}
