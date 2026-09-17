@@ -139,10 +139,9 @@ test('campo de texto: clicar no rotulo foca o campo e o rotulo flutua', async ({
     await expect(page.getByRole('heading', { name: 'RvmTextField', level: 1 })).toBeVisible();
 
     const campo = page.getByLabel('Peso da carga');
-    // `force`: o rotulo tem pointer-events: none (para o clique atravessar ate o input quando ele
-    // esta por cima), e sem isto o Playwright recusaria o clique. O que se testa aqui e a ligacao
-    // <label for> -> input: ativar o rotulo tem de focar o campo.
-    await page.locator('label', { hasText: 'Peso da carga' }).click({ force: true });
+    // O campo ja tem valor, entao o rotulo esta FLUTUANDO sobre a borda. E o caso que quebrou: com
+    // pointer-events: none no rotulo, o clique caia na borda e o campo nao recebia foco.
+    await page.locator('label', { hasText: 'Peso da carga' }).click();
 
     await expect(campo).toBeFocused();
 });
