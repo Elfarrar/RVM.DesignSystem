@@ -20,16 +20,15 @@
 
     private bool Suave => Smooth ?? Preenchida;
 
-    private Escala EscalaDosValores
-    {
-        get
+    private Escala EscalaDosValores => Memo("EscalaDosValores", () =>
         {
             var valores = Dados.SelectMany(item => Series.Select(s => s.ValorDe(item))).DefaultIfEmpty(0).ToList();
-            return Escala.Arredondada(Preenchida ? Math.Min(0, valores.Min()) : Math.Min(0, valores.Min()), valores.Max());
-        }
-    }
+            // So a area parte do zero (area cortada exagera o volume); a linha usa a faixa dos dados, senao
+            // valores entre 950 e 1050 ficavam espremidos no topo (achado do review: os dois ramos eram iguais).
+            return Escala.Arredondada(Preenchida ? Math.Min(0, valores.Min()) : valores.Min(), valores.Max());
+        });
 
-    private double Esquerda => LarguraDosRotulos(EscalaDosValores.Marcas.Select(Formatar));
+    private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaDosValores.Marcas.Select(m => FormatarMarca(m, EscalaDosValores.Passo))));
 
     private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita);
 
@@ -131,7 +130,7 @@
             {
                 <line class="rvm-grafico-grade" x1="@N(esquerda)" y1="@N(y)" x2="@N(Largura - MargemDireita)" y2="@N(y)" />
             }
-            @Texto(esquerda - 8, y, Formatar(marca), "end", "middle")
+            @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle")
         }
         @if (Ativo is { } ativo && ativo < Dados.Count)
         {

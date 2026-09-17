@@ -24,29 +24,22 @@
 
     private string FormatarX(double valor) => (XFormat ?? RvmChartFormat.Compact)(valor);
 
-    private List<Ponto> Pontos
-        => [.. Series.SelectMany((s, i) => Dados.Select(item => new Ponto(i, item, s.X?.Invoke(item) ?? 0, s.ValorDe(item))))
-                     .OrderBy(p => p.X).ThenBy(p => p.Y)];
+    private List<Ponto> Pontos => Memo<List<Ponto>>("Pontos", () => [.. Series.SelectMany((s, i) => Dados.Select(item => new Ponto(i, item, s.X?.Invoke(item) ?? 0, s.ValorDe(item))))
+                     .OrderBy(p => p.X).ThenBy(p => p.Y)]);
 
-    private Escala EscalaX
-    {
-        get
+    private Escala EscalaX => Memo("EscalaX", () =>
         {
             var xs = Pontos.Select(p => p.X).DefaultIfEmpty(0).ToList();
             return Escala.Arredondada(xs.Min(), xs.Max());
-        }
-    }
+        });
 
-    private Escala EscalaY
-    {
-        get
+    private Escala EscalaY => Memo("EscalaY", () =>
         {
             var ys = Pontos.Select(p => p.Y).DefaultIfEmpty(0).ToList();
             return Escala.Arredondada(ys.Min(), ys.Max());
-        }
-    }
+        });
 
-    private double Esquerda => LarguraDosRotulos(EscalaY.Marcas.Select(Formatar));
+    private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaY.Marcas.Select(m => FormatarMarca(m, EscalaY.Passo))));
 
     private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita);
 
@@ -68,7 +61,7 @@
             {
                 <line class="rvm-grafico-grade" x1="@N(Esquerda)" y1="@N(PY(marca))" x2="@N(Largura - MargemDireita)" y2="@N(PY(marca))" />
             }
-            @Texto(Esquerda - 8, PY(marca), Formatar(marca), "end", "middle")
+            @Texto(Esquerda - 8, PY(marca), FormatarMarca(marca, EscalaY.Passo), "end", "middle")
         }
         @for (var i = 0; i < marcasX.Count; i++)
         {
@@ -78,7 +71,7 @@
             }
             @if (i % salto == 0)
             {
-                @Texto(PX(marcasX[i]), Height - 10, FormatarX(marcasX[i]))
+                @Texto(PX(marcasX[i]), Height - 10, XFormat is { } fx ? fx(marcasX[i]) : RvmChartFormat.CompactForAxis(marcasX[i], EscalaX.Passo))
             }
         }
         @for (var i = 0; i < pontos.Count; i++)

@@ -138,7 +138,7 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
             {
                 await _abas[indice].Botao.FocusAsync();
             }
-            catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+            catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
             {
                 // Sem JS disponivel (pre-renderizacao): a aba ja foi trocada, so o foco nao andou.
             }
@@ -193,7 +193,7 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
             _modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
             await _modulo.InvokeVoidAsync("prenderTeclas", _lista, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" });
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS: as setas ainda trocam de aba; so a pagina rola junto.
         }

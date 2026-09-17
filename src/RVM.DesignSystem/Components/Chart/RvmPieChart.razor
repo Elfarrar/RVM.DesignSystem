@@ -28,7 +28,7 @@
 
     internal sealed record Fatia(int Indice, double Valor, double Inicio, double Fim);
 
-    private double Total => Dados.Sum(item => Math.Max(0, ValorDe(item)));
+    private double Total => Memo("Total", () => Dados.Sum(item => Math.Max(0, ValorDe(item))));
 
     private double ValorDe(TItem item) => Value?.Invoke(item) ?? 0;
 
@@ -42,9 +42,7 @@
 
     private double RaioInterno => Donut ? Raio * (1 - Math.Clamp(DonutThickness, 0.1, 0.9)) : 0;
 
-    private List<Fatia> Fatias
-    {
-        get
+    private List<Fatia> Fatias => Memo("Fatias", () =>
         {
             var total = Total;
             var lista = new List<Fatia>();
@@ -68,8 +66,7 @@
             }
 
             return lista;
-        }
-    }
+        });
 
     private string Percentual(double valor)
         => Total <= 0 ? "0%" : RvmChartFormat.Number(Math.Round(valor / Total * 100, 1)) + "%";

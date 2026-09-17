@@ -15,9 +15,7 @@
 
     private sealed record Coluna(int Categoria, int Serie, double X, double Y, double Largura, double Altura);
 
-    private Escala EscalaDosValores
-    {
-        get
+    private Escala EscalaDosValores => Memo("EscalaDosValores", () =>
         {
             var dados = Dados;
             double min = 0, max = 0;
@@ -39,10 +37,9 @@
             }
 
             return Escala.Arredondada(min, max);
-        }
-    }
+        });
 
-    private double Esquerda => LarguraDosRotulos(EscalaDosValores.Marcas.Select(Formatar));
+    private double Esquerda => Memo("Esquerda", () => LarguraDosRotulos(EscalaDosValores.Marcas.Select(m => FormatarMarca(m, EscalaDosValores.Passo))));
 
     private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita);
 
@@ -52,9 +49,7 @@
 
     private double Y(Escala escala, double valor) => escala.Posicao(valor, MargemTopo + AlturaDoPlot, MargemTopo);
 
-    private List<Coluna> Colunas
-    {
-        get
+    private List<Coluna> Colunas => Memo("Colunas", () =>
         {
             var escala = EscalaDosValores;
             var lista = new List<Coluna>();
@@ -102,8 +97,7 @@
             }
 
             return lista;
-        }
-    }
+        });
 
     internal override RenderFragment Desenho => @<g>
         @{
@@ -118,7 +112,7 @@
             {
                 <line class="rvm-grafico-grade" x1="@N(esquerda)" y1="@N(y)" x2="@N(Largura - MargemDireita)" y2="@N(y)" />
             }
-            @Texto(esquerda - 8, y, Formatar(marca), "end", "middle")
+            @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle")
         }
         @if (Ativo is { } ativo && ativo < Dados.Count)
         {

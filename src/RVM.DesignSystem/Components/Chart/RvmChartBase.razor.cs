@@ -74,9 +74,36 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     internal int? Ativo { get; private set; }
 
-    internal IReadOnlyList<TItem> Dados => Items as IReadOnlyList<TItem> ?? [.. Items ?? []];
+    internal IReadOnlyList<TItem> Dados => Memo("Dados", () => Items as IReadOnlyList<TItem> ?? [.. Items ?? []]);
+
+    private readonly Dictionary<string, (int Versao, object? Valor)> _cache = [];
+    private int _versaoDoLayout;
+
+    /// <summary>
+    /// Guarda um calculo de layout ate os parametros ou a largura mudarem. Sem isso, colunas, pontos e
+    /// fatias eram recalculados varias vezes por render — e mover o mouse renderiza a cada evento
+    /// (achado do review dos graficos).
+    /// </summary>
+    internal T Memo<T>(string chave, Func<T> calcular)
+    {
+        if (_cache.TryGetValue(chave, out var guardado) && guardado.Versao == _versaoDoLayout)
+        {
+            return (T)guardado.Valor!;
+        }
+
+        var valor = calcular();
+        _cache[chave] = (_versaoDoLayout, valor);
+        return valor;
+    }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet() => _versaoDoLayout++;
 
     internal string Formatar(double valor) => (ValueFormat ?? RvmChartFormat.Compact)(valor);
+
+    /// <summary>Rotulo de uma marca de eixo: o formato do consumidor, ou o compacto na precisao do passo.</summary>
+    internal string FormatarMarca(double marca, double passo)
+        => ValueFormat is { } formato ? formato(marca) : RvmChartFormat.CompactForAxis(marca, passo);
 
     internal string NomeDe(TItem item, int indice) => Label?.Invoke(item) ?? (indice + 1).ToString(CultureInfo.InvariantCulture);
 
@@ -233,6 +260,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         if (largura > 0 && Math.Abs(largura - Largura) >= 1)
         {
             Largura = largura;
+            _versaoDoLayout++;
             StateHasChanged();
         }
 
@@ -255,7 +283,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             _teclado = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
             await _teclado.InvokeVoidAsync("prenderTeclas", _camada, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" });
         }
-        catch (Exception e) when (e is JSException or InvalidOperationException or TaskCanceledException)
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao, bUnit): o grafico fica na largura padrao, escalado para caber.
         }
