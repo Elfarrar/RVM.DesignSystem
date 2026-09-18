@@ -31,3 +31,6 @@ docs/fotos/
 
 # Estado local do Claude Code; settings e agents do projeto CONTINUAM versionados
 .claude/scheduled_tasks.lock
+
+# Cache do Python das ferramentas de medicao
+__pycache__/
