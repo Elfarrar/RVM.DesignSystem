@@ -9,6 +9,10 @@ criada: 2026-09-18
 
 # DSGN-015 — Cada grafico entra do jeito que faz sentido para ele
 
+> **Publicada na `1.5.0` em 18/09/2026** (tag `v1.5.0`, versao conferida no feed do BaGet) e em
+> producao em `https://design.rvmit.com.br`. E2E contra producao: **234 testes verdes**, a suite
+> inteira. Alphas de `dev` passam a `1.6.0-alpha.N`.
+
 O Rafael olhou as animacoes no ar e notou que **as colunas entram da esquerda para a direita**. Isso
 nao era animacao de entrada: e efeito colateral da `transition` de `x`/`width`. Quando o JS mede a
 largura real do grafico (de 600 px de chute para a largura do cartao), o SVG se redesenha e as barras
