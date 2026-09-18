@@ -56,6 +56,13 @@ nas colunas), `.xls` antigo (formato binario de 1997) e imprimir varios graficos
 | Icones `Printer` e `Table` copiados do Tabler oficial | o menu pedia os dois e o conjunto curado nao tinha; desenhar "parecido" seria atribuir ao Tabler um traco que nao e dele |
 | O exemplo de barras virou "Area plantada e produtividade de cada talhao" | o nome anterior CONTINHA o de outro grafico da mesma pagina, e o Playwright casa nome acessivel por substring: os dois viravam o mesmo alvo |
 
+## Publicada em 18/09/2026
+
+`1.3.0` no BaGet (tag `v1.3.0`, versao conferida no feed) e producao no ar em
+`https://design.rvmit.com.br`. Promocao com sinal verde do Rafael ("pode juntar e subir"), junto da
+DSGN-012. E2E contra producao: 33 verdes, incluindo baixar o `.xlsx`, o zoom por caixa e o eixo no
+topo das barras. Alphas de `dev` passam a `1.4.0-alpha.N`.
+
 ## Review independente (Sonnet, 18/09/2026) — 1 P1 e 2 menores, corrigidos
 
 | # | O que | Correcao |
