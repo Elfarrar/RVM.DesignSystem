@@ -9,6 +9,10 @@ criada: 2026-09-18
 
 # DSGN-014 — As quatro pendencias de token, resolvidas na marra
 
+> **Publicada na `1.4.0` em 18/09/2026** (tag `v1.4.0`, versao conferida no feed do BaGet) e em
+> producao em `https://design.rvmit.com.br`. E2E contra producao: **232 testes verdes**, a suite
+> inteira. Alphas de `dev` passam a `1.5.0-alpha.N`.
+
 As quatro pendencias do `CLAUDE.md` esperavam "duplicar o kit no Figma e ler pela API". Em 18/09 o
 Rafael informou que **no Figma o kit tambem e uma imagem, nao objetos de desenho**: nao ha valor para
 ler, em lugar nenhum. Ele mandou fazer por amostragem.
