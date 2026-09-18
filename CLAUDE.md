@@ -160,12 +160,15 @@ com sinal verde explícito dele. Não há `demo`: de `dev` direto para `master`.
 
 ## Pendências ⏳ (detalhe em `09-roadmap.md`)
 
-1. Os `box-shadow` exatos das 24 elevações — o kit mostra os quadrados e não escreve os valores.
-2. Alpha do texto secundário/desabilitado no tema escuro — o PNG não guarda opacidade.
-3. Fundos suaves do tema claro são **roxos** com um primary **azul** — manter fiel ou harmonizar?
-4. Ícones em vetor, se ele reexportar do Figma.
+> **Resolvidas por amostragem de pixel em 18/09/2026 (`DSGN-014`).** O Rafael confirmou que no Figma
+> o kit também é uma imagem, não objetos de desenho: não há valor para ler por API, em lugar nenhum.
+> A ferramenta é `tools/amostragem-do-kit.py`.
 
-⚠️ **A API do Figma NÃO resolve.** Em 18/09/2026 o Rafael confirmou que, no arquivo do Community, o
-kit é **uma imagem, não objetos de desenho** — duplicar para a conta dele daria o mesmo PNG que já
-está em `referencia-neatlab/`. **As quatro saem por amostragem de pixel**, com a limitação que isso
-traz: sombra e opacidade são medidas por comparação contra fundo conhecido, não lidas de um valor.
+1. ✅ **24 elevações medidas** (ajuste conjunto — elas se sobrepõem na grade; resíduo 0,008). Os cinco
+   níveis da biblioteca levam as elevações 1, 3, 7, 12 e 20. A sombra do kit **não é preta**: escurece
+   menos o azul.
+2. ✅ **Alphas do tema escuro**: primário 0,87 e secundário 0,68 confirmados; **desabilitado era 0,38 e
+   o kit usa 0,26** — corrigido nos dois temas.
+3. ⏳ **Decisão do Rafael.** O fundo suave "roxo" é `#9155FD` a 12%, um roxo que **não existe na paleta
+   do kit** (primary é `#264CC8`) — resquício do template de origem. Harmonizar daria `#E5EAF8`.
+4. ✅ **Encerrada:** não há vetor para exportar em lugar nenhum. **Tabler (ADR-005) é definitivo.**
