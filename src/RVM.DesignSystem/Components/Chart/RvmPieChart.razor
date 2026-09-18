@@ -111,10 +111,22 @@
         {
             <circle class="rvm-grafico-teia" cx="@N(CentroX)" cy="@N(CentroY)" r="@N(Raio)" />
         }
-        @foreach (var fatia in fatias)
-        {
-            <path class="@($"rvm-grafico-fatia {ClasseDaCor(CorDe(fatia.Indice))}")" d="@CaminhoDa(fatia)" />
-        }
+        @* A entrada e uma varredura de relogio: uma mascara circular vai abrindo a partir do meio-dia
+           (o traco comeca as 3h, dai o giro de -90 graus) ate fechar a volta. `pathLength="1"` deixa o
+           `stroke-dasharray` valer o perimetro inteiro, sem calcular circunferencia. *@
+        <defs>
+            <mask id="@($"{IdBase}-relogio")" maskUnits="userSpaceOnUse">
+                <circle class="rvm-grafico-relogio" cx="@N(CentroX)" cy="@N(CentroY)" r="@N(Raio / 2)"
+                        pathLength="1" fill="none" stroke="#FFFFFF" stroke-width="@N(Raio)"
+                        style="@($"transform-origin: {N(CentroX)}px {N(CentroY)}px")" />
+            </mask>
+        </defs>
+        <g mask="@($"url(#{IdBase}-relogio)")">
+            @foreach (var fatia in fatias)
+            {
+                <path class="@($"rvm-grafico-fatia {ClasseDaCor(CorDe(fatia.Indice))}")" d="@CaminhoDa(fatia)" />
+            }
+        </g>
     </g>;
 
     internal override RenderFragment? Centro => Donut ? CenterContent : null;

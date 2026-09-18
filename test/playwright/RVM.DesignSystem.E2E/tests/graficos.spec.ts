@@ -271,3 +271,55 @@ test('barras: o segundo eixo fica no topo, nao a direita', async ({ page }) => {
     expect(yDeCima).toBeLessThan(yDeBaixo);
     await expect(figura.getByRole('columnheader', { name: 'Produtividade (eixo de cima)' })).toBeAttached();
 });
+
+// Animacao de entrada por tipo (DSGN-015). O que o Rafael viu antes — colunas entrando de lado — era
+// a transicao de x/width se acertando quando o JS mede a largura real, nao animacao de entrada.
+test('cada grafico entra do seu jeito, e "reduzir movimento" desliga tudo', async ({ page }) => {
+    const animacaoDe = (seletor: string) =>
+        page.locator(seletor).first().evaluate(e => {
+            const s = getComputedStyle(e);
+            // O CSS isolado embaralha o nome do @keyframes: fica so a parte legivel.
+            return { nome: s.animationName.split('-b-')[0], origem: s.transformOrigin, duracao: s.animationDuration };
+        });
+
+    await page.goto('/componentes/column-chart');
+    await expect(page.getByRole('heading', { name: 'RvmColumnChart', level: 1 })).toBeVisible();
+    const coluna = await animacaoDe('.rvm-grafico-de-cima');
+    expect(coluna.nome).toBe('rvm-grafico-descer');
+    expect(coluna.origem).toMatch(/^[\d.]+px 0px$/); // topo da propria coluna
+
+    await page.goto('/componentes/bar-chart');
+    await expect(page.getByRole('heading', { name: 'RvmBarChart', level: 1 })).toBeVisible();
+    const barra = await animacaoDe('.rvm-grafico-da-esquerda');
+    expect(barra.nome).toBe('rvm-grafico-abrir');
+    expect(barra.origem).toMatch(/^0px [\d.]+px$/); // ponta esquerda da propria barra
+
+    await page.goto('/componentes/histogram');
+    await expect(page.getByRole('heading', { name: 'RvmHistogram', level: 1 })).toBeVisible();
+    expect((await animacaoDe('.rvm-grafico-de-cima')).nome).toBe('rvm-grafico-descer');
+
+    await page.goto('/componentes/pie-chart');
+    await expect(page.getByRole('heading', { name: 'RvmPieChart', level: 1 })).toBeVisible();
+    expect((await animacaoDe('.rvm-grafico-relogio')).nome).toBe('rvm-grafico-relogio');
+    // As fatias entram por uma mascara, entao ficam intactas.
+    await expect(page.locator('g[mask]').first()).toBeAttached();
+
+    await page.goto('/componentes/scatter-chart');
+    await expect(page.getByRole('heading', { name: 'RvmScatterChart', level: 1 })).toBeVisible();
+    expect((await animacaoDe('.rvm-grafico-nuvem')).nome).toBe('rvm-grafico-espalhar');
+
+    await page.goto('/componentes/line-chart');
+    await expect(page.getByRole('heading', { name: 'RvmLineChart', level: 1 })).toBeVisible();
+    expect((await animacaoDe('.rvm-grafico-pontos')).nome).toBe('rvm-grafico-espalhar');
+    expect((await animacaoDe('.rvm-grafico-linha')).nome).toBe('rvm-grafico-desenhar');
+});
+
+test('com "reduzir movimento" nenhum grafico anima', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/componentes/column-chart');
+    await expect(page.getByRole('heading', { name: 'RvmColumnChart', level: 1 })).toBeVisible();
+
+    const coluna = page.locator('.rvm-grafico-de-cima').first();
+    expect(await coluna.evaluate(e => getComputedStyle(e).animationName)).toBe('none');
+    expect(await coluna.evaluate(e => getComputedStyle(e).transitionDuration)).toBe('0s');
+});

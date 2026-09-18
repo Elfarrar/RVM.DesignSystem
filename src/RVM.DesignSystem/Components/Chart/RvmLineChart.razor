@@ -193,13 +193,17 @@
                 }
                 @* pathLength="1" faz o stroke-dasharray da animacao valer o comprimento inteiro da linha. *@
                 <path class="rvm-grafico-linha" pathLength="1" d="@CaminhoDa(serie)" />
-                @for (var i = 0; i < Dados.Count; i++)
-                {
-                    @if (ShowPoints || Ativo == i || Dados.Count == 1)
+                @* Os pontos entram juntos, saindo da origem do grafico (o canto de baixo a esquerda,
+                   onde x e y valem zero) ate cada um parar no seu lugar. *@
+                <g class="rvm-grafico-pontos" style="@($"transform-origin: {N(Esquerda)}px {N(MargemTopo + AlturaDoPlot)}px")">
+                    @for (var i = 0; i < Dados.Count; i++)
                     {
-                        <circle class="rvm-grafico-ponto" cx="@N(XDe(i))" cy="@N(Y(NaJanela(EscalaDe(EixoDa(serie))), serie.ValorDe(Dados[i])))" r="@(Ativo == i ? "6" : "4")" />
+                        @if (ShowPoints || Ativo == i || Dados.Count == 1)
+                        {
+                            <circle class="rvm-grafico-ponto" cx="@N(XDe(i))" cy="@N(Y(NaJanela(EscalaDe(EixoDa(serie))), serie.ValorDe(Dados[i])))" r="@(Ativo == i ? "6" : "4")" />
+                        }
                     }
-                }
+                </g>
             </g>
         }
         @for (var c = 0; c < Dados.Count; c += salto)
