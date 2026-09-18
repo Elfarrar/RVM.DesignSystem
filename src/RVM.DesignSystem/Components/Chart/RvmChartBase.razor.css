@@ -267,6 +267,12 @@
     border: 0;
 }
 
+/* A duracao da ENTRADA de todo grafico, num lugar so (decisao do Rafael em 18/09: 1 s para todos).
+   Quem consome pode sobrescrever: `.rvm-grafico { --rvm-grafico-entrada: 600ms }`. */
+.rvm-grafico {
+    --rvm-grafico-entrada: 1s;
+}
+
 /* Animacao: so com Animated e so para quem nao pediu "reduzir movimento". A linha se desenha pelo traco
    (os paths levam pathLength="1", entao 1 = o comprimento inteiro); o resto aparece. */
 @media (prefers-reduced-motion: no-preference) {
@@ -289,11 +295,11 @@
     }
 
     .rvm-animado ::deep .rvm-grafico-linha {
-        animation: rvm-grafico-desenhar 600ms ease-out both;
+        animation: rvm-grafico-desenhar var(--rvm-grafico-entrada) ease-out both;
     }
 
     .rvm-animado ::deep .rvm-grafico-preenchimento {
-        animation: rvm-grafico-aparecer 450ms ease-out both;
+        animation: rvm-grafico-aparecer var(--rvm-grafico-entrada) ease-out both;
     }
 
     /* Coluna e histograma descem do proprio topo; barra horizontal abre da esquerda. `fill-box` faz a
@@ -305,26 +311,26 @@
 
     .rvm-animado ::deep .rvm-grafico-de-cima {
         transform-origin: top;
-        animation: rvm-grafico-descer 450ms ease-out both;
+        animation: rvm-grafico-descer var(--rvm-grafico-entrada) ease-out both;
     }
 
     .rvm-animado ::deep .rvm-grafico-da-esquerda {
         transform-origin: left;
-        animation: rvm-grafico-abrir 450ms ease-out both;
+        animation: rvm-grafico-abrir var(--rvm-grafico-entrada) ease-out both;
     }
 
     /* Os pontos da linha saem da origem do grafico; a nuvem da dispersao e o radar saem do centro. A
        origem exata vai em `style` no proprio elemento, porque depende do layout. */
     .rvm-animado ::deep .rvm-grafico-pontos,
     .rvm-animado ::deep .rvm-grafico-nuvem {
-        animation: rvm-grafico-espalhar 500ms ease-out both;
+        animation: rvm-grafico-espalhar var(--rvm-grafico-entrada) ease-out both;
     }
 
     /* A rosca e revelada por uma mascara que gira como ponteiro de relogio. */
     .rvm-animado ::deep .rvm-grafico-relogio {
         transform: rotate(-90deg);
         stroke-dasharray: 1;
-        animation: rvm-grafico-relogio 700ms ease-out both;
+        animation: rvm-grafico-relogio var(--rvm-grafico-entrada) ease-out both;
     }
 
     @keyframes rvm-grafico-descer {

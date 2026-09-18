@@ -287,6 +287,8 @@ test('cada grafico entra do seu jeito, e "reduzir movimento" desliga tudo', asyn
     const coluna = await animacaoDe('.rvm-grafico-de-cima');
     expect(coluna.nome).toBe('rvm-grafico-descer');
     expect(coluna.origem).toMatch(/^[\d.]+px 0px$/); // topo da propria coluna
+    // Uma duracao so para a entrada de todos os tipos, no token --rvm-grafico-entrada.
+    expect(coluna.duracao).toBe('1s');
 
     await page.goto('/componentes/bar-chart');
     await expect(page.getByRole('heading', { name: 'RvmBarChart', level: 1 })).toBeVisible();
@@ -300,7 +302,9 @@ test('cada grafico entra do seu jeito, e "reduzir movimento" desliga tudo', asyn
 
     await page.goto('/componentes/pie-chart');
     await expect(page.getByRole('heading', { name: 'RvmPieChart', level: 1 })).toBeVisible();
-    expect((await animacaoDe('.rvm-grafico-relogio')).nome).toBe('rvm-grafico-relogio');
+    const relogio = await animacaoDe('.rvm-grafico-relogio');
+    expect(relogio.nome).toBe('rvm-grafico-relogio');
+    expect(relogio.duracao).toBe('1s');
     // As fatias entram por uma mascara, entao ficam intactas.
     await expect(page.locator('g[mask]').first()).toBeAttached();
 
