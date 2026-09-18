@@ -3,7 +3,7 @@ id: DSGN-014
 titulo: Tokens que o kit nao escreve, medidos por amostragem de pixel
 repo: RVM.DesignSystem
 tipo: chore
-status: em andamento
+status: concluida
 criada: 2026-09-18
 ---
 
@@ -67,7 +67,7 @@ O mesmo vale no tema claro: o campo desabilitado do kit e `#D2D1D4` (23% da base
 Contraste conferido no tema escuro sobre `#312D4B`: primario 7,88:1 e secundario 5,44:1 — os dois
 passam AA com folga.
 
-## 3. Fundos suaves roxos com primary azul — **medido, decisao do Rafael**
+## 3. Fundos suaves roxos com primary azul — **medido e harmonizado**
 
 No `Chip-1.png` (claro), o primary cheio e `#264CC8` (matiz 226°) e o fundo suave do primary e
 `#F2EAFF` (matiz 263°). A conta fecha exata: **`#F2EAFF` e `#9155FD` a 12%** — um roxo que **nao
@@ -75,9 +75,12 @@ existe na paleta do kit**. E resquicio do template de onde o kit saiu.
 
 As outras familias sao coerentes: error `#FF4C51` → `#FEE8E7`, info `#16B1FF` → `#E4F2FE`.
 
-Duas saidas, e a escolha e do Rafael:
-- **Harmonizar** (recomendado): derivar do proprio primary — `#264CC8` a 12% da `#E5EAF8`.
-- **Manter fiel**: seguir o kit e preservar um roxo que o template anterior deixou para tras.
+**Decidido pelo Rafael em 18/09: harmonizar.** O fundo suave de primary passa a ser o proprio
+primary na mesma proporcao do kit — `#E5EAF8` no claro (12%) e `#30315B` no escuro (12,5%). As outras
+familias ja eram coerentes e ficaram como estao.
+
+Contraste do texto sobre o fundo suave, antes e depois: claro 6,10:1 -> 5,90:1; escuro 5,61:1 ->
+5,97:1. Os dois passam AA, e no escuro o harmonizado ficou melhor que o roxo.
 
 ## 4. Icones em vetor — **pendencia encerrada**
 

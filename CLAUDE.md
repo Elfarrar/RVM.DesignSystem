@@ -160,7 +160,7 @@ com sinal verde explícito dele. Não há `demo`: de `dev` direto para `master`.
 
 ## Pendências ⏳ (detalhe em `09-roadmap.md`)
 
-> **Resolvidas por amostragem de pixel em 18/09/2026 (`DSGN-014`).** O Rafael confirmou que no Figma
+> **As quatro fechadas em 18/09/2026 (`DSGN-014`), por amostragem de pixel.** O Rafael confirmou que no Figma
 > o kit também é uma imagem, não objetos de desenho: não há valor para ler por API, em lugar nenhum.
 > A ferramenta é `tools/amostragem-do-kit.py`.
 
@@ -169,6 +169,7 @@ com sinal verde explícito dele. Não há `demo`: de `dev` direto para `master`.
    menos o azul.
 2. ✅ **Alphas do tema escuro**: primário 0,87 e secundário 0,68 confirmados; **desabilitado era 0,38 e
    o kit usa 0,26** — corrigido nos dois temas.
-3. ⏳ **Decisão do Rafael.** O fundo suave "roxo" é `#9155FD` a 12%, um roxo que **não existe na paleta
-   do kit** (primary é `#264CC8`) — resquício do template de origem. Harmonizar daria `#E5EAF8`.
+3. ✅ **Harmonizado** (decisão dele em 18/09). O fundo suave "roxo" era `#9155FD` a 12% — um roxo que
+   **não existe na paleta do kit** (primary é `#264CC8`), resquício do template de origem. Agora é o
+   próprio primary na mesma proporção: `#E5EAF8` no claro e `#30315B` no escuro.
 4. ✅ **Encerrada:** não há vetor para exportar em lugar nenhum. **Tabler (ADR-005) é definitivo.**
