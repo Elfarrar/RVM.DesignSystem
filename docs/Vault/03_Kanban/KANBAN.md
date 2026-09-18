@@ -15,6 +15,7 @@
 
 | Card | O que |
 |---|---|
+| [[DSGN-013]] | Graficos (18/09): eixo duplo em barras (segundo eixo no topo), zoom por caixa desenhada, exportar `.xlsx` e imprimir; icones Printer e Table. No dev, alvo `1.3.0` |
 | [[DSGN-012]] | Documentacao (17/09): animacao e exportar nas cinco paginas de grafico que a DSGN-011 nao cobriu, e o que NAO vale em barras, histograma, pizza e radar. No dev |
 | [[DSGN-011]] | Graficos, o que faltava (17/09): animacao, exportar em PNG/SVG/CSV/PDF, eixo duplo, zoom em X e Y, arrastar e selecao de faixa; review independente com 2 P1 corrigidos. `1.2.0` publicada e em producao |
 | [[DSGN-010]] | Graficos (17/09): colunas, barras, histograma, linha, area, dispersao, pizza e radar em SVG proprio, com teclado e tabela de dados; review independente. Em producao |

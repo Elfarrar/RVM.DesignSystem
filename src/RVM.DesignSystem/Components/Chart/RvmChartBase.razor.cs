@@ -20,7 +20,7 @@ namespace RVM.DesignSystem.Components.Chart;
 public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposable
 {
     internal const double LarguraPadrao = 600;
-    internal const double MargemTopo = 16;
+    internal const double MargemTopoPadrao = 16;
     internal const double MargemDireitaPadrao = 16;
     internal const double MargemBaixo = 32;
 
@@ -115,6 +115,8 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     private const double JanelaMinima = 0.02;
 
     private (double X, double Y)? _arrastando;
+    private (double X, double Y)? _caixaDe;
+    private (double X, double Y)? _caixaAte;
     private int? _marcandoDe;
     private RvmChartRange? _selecao;
     private RvmChartRange? _selecaoRecebida;
@@ -135,7 +137,10 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// O zoom vale mesmo: so os graficos que sabem onde desenham (colunas, linha, area, dispersao) o tem.
     /// Pedir <c>Zoomable</c> numa rosca nao pode virar promessa de tecla que nao existe.
     /// </summary>
-    internal bool ZoomLigado => Zoomable && AreaDoPlot is not null;
+    internal bool ZoomLigado => (Zoomable || SelectionMode == RvmChartSelectionMode.ZoomBox) && AreaDoPlot is not null;
+
+    /// <summary>O arrasto desenha a caixa do zoom.</summary>
+    internal bool CaixaLigada => SelectionMode == RvmChartSelectionMode.ZoomBox && AreaDoPlot is not null;
 
     /// <summary>O que o leitor de tela ouve quando a janela muda.</summary>
     internal string? AvisoDoZoom { get; private set; }
@@ -249,6 +254,63 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>A selecao vale mesmo; ver <see cref="ZoomLigado"/>.</summary>
     internal bool SelecaoLigada => SelectionMode == RvmChartSelectionMode.Range && AreaDoPlot is not null;
 
+    /// <summary>A caixa que esta sendo desenhada, em % do desenho — enquanto o botao nao e solto.</summary>
+    internal string? EstiloDaCaixa
+    {
+        get
+        {
+            if (_caixaDe is not { } de || _caixaAte is not { } ate || AreaDoPlot is not { } area)
+            {
+                return null;
+            }
+
+            var x0 = Math.Clamp(Math.Min(de.X, ate.X), area.X, area.X + area.Largura);
+            var x1 = Math.Clamp(Math.Max(de.X, ate.X), area.X, area.X + area.Largura);
+            var y0 = Math.Clamp(Math.Min(de.Y, ate.Y), area.Y, area.Y + area.Altura);
+            var y1 = Math.Clamp(Math.Max(de.Y, ate.Y), area.Y, area.Y + area.Altura);
+            return string.Create(CultureInfo.InvariantCulture,
+                $"left: {x0 / Largura * 100:0.##}%; width: {(x1 - x0) / Largura * 100:0.##}%; "
+                + $"top: {y0 / Height * 100:0.##}%; height: {(y1 - y0) / Height * 100:0.##}%");
+        }
+    }
+
+    /// <summary>Aproxima na caixa desenhada; caixa curta demais e clique, nao arrasto.</summary>
+    private void AproximarNaCaixa()
+    {
+        if (_caixaDe is not { } de || _caixaAte is not { } ate || AreaDoPlot is not { } area)
+        {
+            return;
+        }
+
+        _caixaDe = null;
+        _caixaAte = null;
+        const double MenorCaixa = 8;
+        if (Math.Abs(ate.X - de.X) < MenorCaixa && Math.Abs(ate.Y - de.Y) < MenorCaixa)
+        {
+            return;
+        }
+
+        JanelaX = PedacoDaJanela(JanelaX, (de.X - area.X) / area.Largura, (ate.X - area.X) / area.Largura);
+        // O eixo vertical cresce para cima: o topo da caixa e o FIM da janela.
+        JanelaY = PedacoDaJanela(JanelaY, 1 - (de.Y - area.Y) / area.Altura, 1 - (ate.Y - area.Y) / area.Altura);
+        DepoisDeMudarAJanela();
+    }
+
+    /// <summary>O pedaco da janela atual entre duas fracoes da area desenhada.</summary>
+    private static (double Inicio, double Fim) PedacoDaJanela((double Inicio, double Fim) janela, double de, double ate)
+    {
+        var tamanho = janela.Fim - janela.Inicio;
+        var inicio = janela.Inicio + Math.Clamp(Math.Min(de, ate), 0, 1) * tamanho;
+        var fim = janela.Inicio + Math.Clamp(Math.Max(de, ate), 0, 1) * tamanho;
+        if (fim - inicio < JanelaMinima)
+        {
+            var meio = (inicio + fim) / 2;
+            (inicio, fim) = (meio - JanelaMinima / 2, meio + JanelaMinima / 2);
+        }
+
+        return (Math.Clamp(inicio, 0, 1 - JanelaMinima), Math.Clamp(fim, JanelaMinima, 1));
+    }
+
     /// <summary>Onde a faixa comeca e termina no desenho; cada grafico sabe a largura de um ponto.</summary>
     internal virtual (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim) => null;
 
@@ -318,7 +380,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     /// <summary>O nome da serie na tabela de dados, dizendo o eixo quando ha dois.</summary>
     internal string NomeNaTabela(RvmChartSeries<TItem> serie)
-        => TemEixoSecundario && serie.Axis == RvmChartAxis.Secondary ? $"{serie.Name} (eixo direito)" : serie.Name;
+        => TemEixoSecundario && serie.Axis == RvmChartAxis.Secondary ? $"{serie.Name} ({NomeDoEixoSecundario})" : serie.Name;
 
     /// <summary>Rotulo de uma marca de eixo: o formato do consumidor, ou o compacto na precisao do passo.</summary>
     internal string FormatarMarca(double marca, double passo)
@@ -375,7 +437,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     internal virtual IReadOnlyList<ItemDaLegenda> Legenda
         => _series.Count > 1
             ? [.. _series.Select(s => new ItemDaLegenda(s.Name, CorDa(s),
-                TemEixoSecundario ? (s.Axis == RvmChartAxis.Secondary ? "eixo direito" : "eixo esquerdo") : null))]
+                TemEixoSecundario ? (s.Axis == RvmChartAxis.Secondary ? NomeDoEixoSecundario : NomeDoEixoPrimario) : null))]
             : [];
 
     /// <summary>A tabela de dados, com os valores passados pelo formatador informado.</summary>
@@ -443,6 +505,13 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             return;
         }
 
+        if (_caixaDe is not null)
+        {
+            _caixaAte = (e.OffsetX, e.OffsetY);
+            Ativo = null;
+            return;
+        }
+
         if (_arrastando is { } origem && AreaDoPlot is { } area)
         {
             // Arrastar leva o desenho junto: o conteudo vai para onde o dedo foi, o que significa mover a
@@ -486,6 +555,13 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             return;
         }
 
+        if (CaixaLigada && !e.ShiftKey)
+        {
+            _caixaDe = (e.OffsetX, e.OffsetY);
+            _caixaAte = (e.OffsetX, e.OffsetY);
+            return;
+        }
+
         if (ZoomLigado && Aproximado)
         {
             _arrastando = (e.OffsetX, e.OffsetY);
@@ -495,6 +571,13 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     internal async Task AoSoltarPonteiro(PointerEventArgs e)
     {
         _arrastando = null;
+        if (_caixaDe is not null)
+        {
+            _caixaAte = (e.OffsetX, e.OffsetY);
+            AproximarNaCaixa();
+            return;
+        }
+
         if (_marcandoDe is { } inicio)
         {
             _marcandoDe = null;
@@ -532,6 +615,8 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         Ativo = null;
         _arrastando = null;
         _marcandoDe = null;
+        _caixaDe = null;
+        _caixaAte = null;
     }
 
     internal async Task AoTeclar(KeyboardEventArgs e)
@@ -663,6 +748,14 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
                         RvmChartCsv.Gerar(tabela.Cabecalho, tabela.Linhas), false);
                     return true;
 
+                case RvmChartExportFormat.Xlsx:
+                    // Invariante de proposito: quem le e o Excel, que quer o ponto decimal cru para somar.
+                    var planilha = MontarTabela(v => v.ToString(CultureInfo.InvariantCulture));
+                    await _modulo.InvokeVoidAsync("baixar", $"{NomeDoArquivo}.xlsx",
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        Convert.ToBase64String(RvmChartXlsx.Gerar(planilha.Cabecalho, planilha.Linhas, AriaLabel)), true);
+                    return true;
+
                 case RvmChartExportFormat.Svg:
                     var svg = await _modulo.InvokeAsync<string>("serializar", _svg);
                     await _modulo.InvokeVoidAsync("baixar", $"{NomeDoArquivo}.svg", "image/svg+xml;charset=utf-8", svg, false);
@@ -692,6 +785,25 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         }
     }
 
+    /// <summary>
+    /// Abre a caixa de impressao do navegador com o grafico sozinho na pagina — o desenho com as cores
+    /// embutidas, como no exportar, e o nome do grafico como titulo. Devolve <c>false</c> sem JS.
+    /// </summary>
+    public async Task<bool> PrintAsync()
+    {
+        try
+        {
+            _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
+            await _modulo.InvokeVoidAsync("imprimir", _svg, AriaLabel);
+            return true;
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException
+                                       or TaskCanceledException or ArgumentException)
+        {
+            return false;
+        }
+    }
+
     internal string ClassesDaRaiz
         => AdditionalAttributes is not null
            && AdditionalAttributes.TryGetValue("class", out var informada)
@@ -703,6 +815,18 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     private string ClassesProprias => Animated ? "rvm-grafico rvm-animado" : "rvm-grafico";
 
     // --- Layout cartesiano, comum a colunas, barras, linha, area, histograma e dispersao ---
+
+    /// <summary>
+    /// Espaco acima do desenho. Cresce quando o grafico poe um eixo no topo (as barras horizontais, onde
+    /// o eixo de valores e o horizontal).
+    /// </summary>
+    internal virtual double MargemTopo => MargemTopoPadrao;
+
+    /// <summary>Como a legenda e a tabela chamam cada eixo. Nas barras, "de baixo" e "de cima".</summary>
+    internal virtual string NomeDoEixoPrimario => "eixo esquerdo";
+
+    /// <inheritdoc cref="NomeDoEixoPrimario"/>
+    internal virtual string NomeDoEixoSecundario => "eixo direito";
 
     /// <summary>
     /// Espaco a direita do desenho: a margem de sempre, ou o que os rotulos do eixo secundario precisam.

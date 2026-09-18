@@ -25,6 +25,15 @@
     overflow: visible;
 }
 
+/* A caixa do zoom, enquanto o botao esta apertado: contorno tracejado, como o laco de selecao do SO. */
+.rvm-grafico-caixa-de-zoom {
+    position: absolute;
+    border: 1px dashed var(--rvm-color-primary-text);
+    background: color-mix(in srgb, var(--rvm-color-primary-text) 8%, transparent);
+    border-radius: var(--rvm-radius-sm);
+    pointer-events: none;
+}
+
 /* A faixa marcada por arrasto: veu da cor primaria, sob a camada que recebe os eventos. */
 .rvm-grafico-faixa-marcada {
     position: absolute;

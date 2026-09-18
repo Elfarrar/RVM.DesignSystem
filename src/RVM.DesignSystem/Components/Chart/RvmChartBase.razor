@@ -28,6 +28,11 @@
                 <div class="rvm-grafico-faixa-marcada" style="@faixa" aria-hidden="true"></div>
             }
 
+            @if (EstiloDaCaixa is { } caixa)
+            {
+                <div class="rvm-grafico-caixa-de-zoom" style="@caixa" aria-hidden="true"></div>
+            }
+
             <div @ref="_camada"
                  class="@(Aproximado ? "rvm-grafico-camada rvm-grafico-arrastavel" : "rvm-grafico-camada")"
                  tabindex="0"
@@ -73,6 +78,10 @@
             @if (SelecaoLigada)
             {
                 @: Shift com as setas marca uma faixa, Enter marca so o ponto atual e Esc limpa.
+            }
+            @if (CaixaLigada)
+            {
+                @: Arrastando com o mouse da para desenhar a area a aproximar.
             }
         </span>
         <span class="rvm-so-leitor" aria-live="polite">@TextoDoAtivo</span>

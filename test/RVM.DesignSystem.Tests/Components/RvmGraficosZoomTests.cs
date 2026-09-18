@@ -177,5 +177,73 @@ public class RvmGraficosZoomTests : BunitContext
         Assert.Equal(noMeio, linha.Find(".rvm-grafico-dica-titulo").TextContent);
     }
 
+    // --- Zoom por caixa desenhada (DSGN-013) ---
+
+    private IRenderedComponent<RvmColumnChart<Dia>> ComCaixa()
+        => Render<RvmColumnChart<Dia>>(p => p
+            .Add(x => x.Items, Dados).Add(x => x.Label, d => d.Nome).Add(x => x.AriaLabel, "Movimento por dia")
+            .Add(x => x.SelectionMode, RvmChartSelectionMode.ZoomBox)
+            .AddChildContent<RvmChartSeries<Dia>>(s => s.Add(x => x.Name, "Valor").Add(x => x.Value, d => d.Valor)));
+
+    [Fact]
+    public void A_caixa_desenhada_aproxima_nos_dois_eixos()
+    {
+        var grafico = ComCaixa();
+        var camada = grafico.Find(".rvm-grafico-camada");
+        var inteiro = Categorias(grafico);
+        var marcasInteiras = MarcasDoEixo(grafico);
+
+        camada.PointerDown(new PointerEventArgs { OffsetX = 150, OffsetY = 80 });
+        camada.PointerMove(new PointerEventArgs { OffsetX = 400, OffsetY = 200 });
+        // Enquanto o botao esta apertado, a caixa aparece.
+        Assert.Single(grafico.FindAll(".rvm-grafico-caixa-de-zoom"));
+        camada.PointerUp(new PointerEventArgs { OffsetX = 400, OffsetY = 200 });
+
+        Assert.Empty(grafico.FindAll(".rvm-grafico-caixa-de-zoom"));
+        var depois = Categorias(grafico);
+        var marcas = MarcasDoEixo(grafico);
+        Assert.True(depois.Count < inteiro.Count, "a caixa aproxima o eixo horizontal");
+        Assert.True(marcas.Max() - marcas.Min() < marcasInteiras.Max() - marcasInteiras.Min(), "e o vertical tambem");
+
+        // E ha caminho de volta: o duplo clique e as teclas valem mesmo sem Zoomable.
+        camada.DoubleClick();
+        Assert.Equal(inteiro, Categorias(grafico));
+    }
+
+    [Fact]
+    public void Caixa_pequena_demais_e_clique_e_nao_aproxima()
+    {
+        var grafico = ComCaixa();
+        var camada = grafico.Find(".rvm-grafico-camada");
+        var inteiro = Categorias(grafico);
+
+        camada.PointerDown(new PointerEventArgs { OffsetX = 300, OffsetY = 150 });
+        camada.PointerMove(new PointerEventArgs { OffsetX = 303, OffsetY = 152 });
+        camada.PointerUp(new PointerEventArgs { OffsetX = 303, OffsetY = 152 });
+
+        Assert.Equal(inteiro, Categorias(grafico));
+    }
+
+    [Fact]
+    public void Com_shift_o_arrasto_desloca_em_vez_de_desenhar_a_caixa()
+    {
+        var grafico = ComCaixa();
+        var camada = grafico.Find(".rvm-grafico-camada");
+
+        // Primeiro aproxima pela caixa, senao nao ha o que deslocar.
+        camada.PointerDown(new PointerEventArgs { OffsetX = 150, OffsetY = 80 });
+        camada.PointerMove(new PointerEventArgs { OffsetX = 400, OffsetY = 220 });
+        camada.PointerUp(new PointerEventArgs { OffsetX = 400, OffsetY = 220 });
+        var aproximado = Categorias(grafico);
+
+        camada = grafico.Find(".rvm-grafico-camada");
+        camada.PointerDown(new PointerEventArgs { OffsetX = 400, OffsetY = 150, ShiftKey = true });
+        camada.PointerMove(new PointerEventArgs { OffsetX = 200, OffsetY = 150, ShiftKey = true });
+        camada.PointerUp(new PointerEventArgs { OffsetX = 200, OffsetY = 150, ShiftKey = true });
+
+        Assert.Empty(grafico.FindAll(".rvm-grafico-caixa-de-zoom"));
+        Assert.NotEqual(aproximado, Categorias(grafico));
+    }
+
     private static int Numero(string categoria) => int.Parse(categoria["Dia ".Length..], CultureInfo.InvariantCulture);
 }

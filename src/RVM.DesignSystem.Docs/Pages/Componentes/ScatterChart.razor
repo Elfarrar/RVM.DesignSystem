@@ -15,9 +15,9 @@
 </p>
 
 <BlocoExemplo Titulo="Duas variaveis"
-              Descricao="Adubacao (kg/ha) contra produtividade (sc/ha), por talhao, em duas safras."
+              Descricao="Adubacao (kg/ha) contra produtividade (sc/ha), por talhao, em duas safras. Arraste sobre o grafico para desenhar a area a aproximar; a roda tambem aproxima e o duplo clique volta."
               Codigo="@CodigoSeries">
-    <RvmScatterChart Items="Talhoes" Label="t => t.Nome" AriaLabel="Adubacao e produtividade por talhao" Height="320" Zoomable="true"
+    <RvmScatterChart Items="Talhoes" Label="t => t.Nome" AriaLabel="Adubacao e produtividade por talhao" Height="320" Zoomable="true" SelectionMode="RvmChartSelectionMode.ZoomBox"
                      XLabel="Adubacao" YLabel="Produtividade"
                      XFormat="@(v => $"{RvmChartFormat.Number(v)} kg/ha")" ValueFormat="@(v => $"{RvmChartFormat.Number(v)} sc/ha")">
         <RvmChartSeries Name="Safra 2025" X="t => t.Adubo2025" Value="t => t.Produtividade2025" />
@@ -39,7 +39,7 @@
     [
         new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, nome de cada ponto e nome do grafico (obrigatorio)."),
         new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
-        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Range: arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela. ZoomBox: arrastar desenha a area a aproximar, nos dois eixos de uma vez."),
         new("XLabel / YLabel", "string", "\"X\" / \"Y\"", "Nomes dos eixos na dica e na tabela de dados."),
         new("XFormat / ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato de X e de Y."),
         new("PointRadius", "int", "5", "Raio de cada ponto, em px."),

@@ -25,3 +25,9 @@ playwright/.cache/
 .env.*
 docs/ACESSOS.md
 *.dump
+
+# Fotos de entrega — ficam na maquina de quem entregou (1 MB+ por rodada, e a prova vai no PR)
+docs/fotos/
+
+# Estado local do Claude Code; settings e agents do projeto CONTINUAM versionados
+.claude/scheduled_tasks.lock

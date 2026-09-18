@@ -119,6 +119,9 @@ public enum RvmIconName
     /// <summary>Icone <c>Plus</c> do conjunto Tabler.</summary>
     Plus,
 
+    /// <summary>Icone <c>Printer</c> do conjunto Tabler.</summary>
+    Printer,
+
     /// <summary>Icone <c>Refresh</c> do conjunto Tabler.</summary>
     Refresh,
 
@@ -130,6 +133,9 @@ public enum RvmIconName
 
     /// <summary>Icone <c>Star</c> do conjunto Tabler.</summary>
     Star,
+
+    /// <summary>Icone <c>Table</c> do conjunto Tabler.</summary>
+    Table,
 
     /// <summary>Icone <c>Trash</c> do conjunto Tabler.</summary>
     Trash,
