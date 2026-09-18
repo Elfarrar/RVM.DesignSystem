@@ -30,8 +30,7 @@ mesmo buraco pelo lado de quem le.
 ## Entregue em 17/09/2026
 
 PR #54 no dev: as cinco paginas com as linhas novas, 591 testes unitarios e 229 E2E verdes, fotos das
-tabelas nos dois temas em `docs/fotos/dsgn-012`. **Producao continua na `1.2.0`** — como e so texto do
-site, a promocao pode ir junto da proxima entrega.
+tabelas nos dois temas em `docs/fotos/dsgn-012`. Publicada na **`1.3.0`** em 18/09/2026, junto da DSGN-013.
 
 ## Fora
 

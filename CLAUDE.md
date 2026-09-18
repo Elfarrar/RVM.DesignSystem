@@ -18,7 +18,9 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 > Depois da `1.0.0`, tudo aprovado e em produção: `DSGN-008` (o site passou a usar o próprio
 > `RvmAppShell`, com menu lateral), `DSGN-009` (cinco telas de exemplo) e `DSGN-010` (os oito
 > gráficos, publicados na `1.1.0`) e `DSGN-011` (exportar, eixo duplo, zoom, arrastar e seleção nos
-> gráficos, publicada na **`1.2.0`** em 17/09). Alphas de `dev` são `1.3.0-alpha.N`.
+> gráficos, publicada na **`1.2.0`** em 17/09). Em 18/09, `DSGN-012` (documentação dos gráficos) e
+> `DSGN-013` (eixo duplo em barras, zoom por caixa, exportar `.xlsx` e imprimir) saíram na **`1.3.0`**.
+> Alphas de `dev` são `1.4.0-alpha.N`.
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 
@@ -158,12 +160,16 @@ com sinal verde explícito dele. Não há `demo`: de `dev` direto para `master`.
 
 ## Pendências ⏳ (detalhe em `09-roadmap.md`)
 
-1. Os `box-shadow` exatos das 24 elevações — o kit mostra os quadrados e não escreve os valores.
-2. Alpha do texto secundário/desabilitado no tema escuro — o PNG não guarda opacidade.
-3. Fundos suaves do tema claro são **roxos** com um primary **azul** — manter fiel ou harmonizar?
-4. Ícones em vetor, se ele reexportar do Figma.
+> **As quatro fechadas em 18/09/2026 (`DSGN-014`), por amostragem de pixel.** O Rafael confirmou que no Figma
+> o kit também é uma imagem, não objetos de desenho: não há valor para ler por API, em lugar nenhum.
+> A ferramenta é `tools/amostragem-do-kit.py`.
 
-⚠️ **A API do Figma NÃO resolve.** Em 18/09/2026 o Rafael confirmou que, no arquivo do Community, o
-kit é **uma imagem, não objetos de desenho** — duplicar para a conta dele daria o mesmo PNG que já
-está em `referencia-neatlab/`. **As quatro saem por amostragem de pixel**, com a limitação que isso
-traz: sombra e opacidade são medidas por comparação contra fundo conhecido, não lidas de um valor.
+1. ✅ **24 elevações medidas** (ajuste conjunto — elas se sobrepõem na grade; resíduo 0,008). Os cinco
+   níveis da biblioteca levam as elevações 1, 3, 7, 12 e 20. A sombra do kit **não é preta**: escurece
+   menos o azul.
+2. ✅ **Alphas do tema escuro**: primário 0,87 e secundário 0,68 confirmados; **desabilitado era 0,38 e
+   o kit usa 0,26** — corrigido nos dois temas.
+3. ✅ **Harmonizado** (decisão dele em 18/09). O fundo suave "roxo" era `#9155FD` a 12% — um roxo que
+   **não existe na paleta do kit** (primary é `#264CC8`), resquício do template de origem. Agora é o
+   próprio primary na mesma proporção: `#E5EAF8` no claro e `#30315B` no escuro.
+4. ✅ **Encerrada:** não há vetor para exportar em lugar nenhum. **Tabler (ADR-005) é definitivo.**
