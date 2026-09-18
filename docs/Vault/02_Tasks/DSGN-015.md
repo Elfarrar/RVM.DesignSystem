@@ -30,6 +30,15 @@ Direcao dada por ele em 18/09:
 Radar nao foi citado. Entra no mesmo criterio da dispersao (cresce do centro) por coerencia — se nao
 for isso, e uma linha de CSS para mudar.
 
+## Duracao: 1 s para todos (18/09)
+
+As entradas nasceram com tempos diferentes (450 ms a 700 ms). O Rafael pediu **1 s para todas**, e a
+duracao passou a sair de um token unico, `--rvm-grafico-entrada`, definido em `.rvm-grafico` — quem
+consome pode sobrescrever num gráfico ou no tema inteiro.
+
+A transicao de MUDANCA DE VALOR continua em 250 ms (`--rvm-transition-medium`): ela responde a uma
+acao (trocar o periodo, aproximar, filtrar), e 1 s ali faria o grafico parecer travado.
+
 ## Decisoes de partida
 
 - **Tudo em CSS, nada de estado inicial no C#.** Fazer a barra "nascer em zero" e crescer no segundo
