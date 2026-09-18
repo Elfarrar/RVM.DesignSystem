@@ -212,3 +212,62 @@ test('selecao: arrastar no grafico filtra a tabela, e o teclado faz o mesmo', as
     await page.keyboard.press('Escape');
     await expect(fechamento.getByRole('row')).toHaveCount(8);
 });
+
+// DSGN-013: planilha, zoom por caixa e o segundo eixo das barras (que vai para CIMA, nao para a direita).
+test('exportar planilha: o xlsx sai como ZIP de XML com numero de verdade', async ({ page }) => {
+    await page.goto('/componentes/column-chart');
+    await expect(page.getByRole('heading', { name: 'RvmColumnChart', level: 1 })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Exportar' }).click();
+    const espera = page.waitForEvent('download');
+    await page.getByRole('menuitem', { name: 'Planilha XLSX' }).click();
+    const arquivo = await espera;
+
+    expect(arquivo.suggestedFilename()).toBe('receita-e-despesa-por-ano.xlsx');
+    const bytes = readFileSync((await arquivo.path())!);
+    // Assinatura de ZIP ("PK") e a parte que o Excel exige.
+    expect(bytes.subarray(0, 2).toString('latin1')).toBe('PK');
+    expect(bytes.toString('latin1')).toContain('xl/worksheets/sheet1.xml');
+});
+
+test('zoom por caixa: arrastar desenha a area e o grafico aproxima nela', async ({ page }) => {
+    await page.goto('/componentes/scatter-chart');
+    const grafico = page.getByRole('group', { name: 'Adubacao e produtividade por talhao' });
+    await expect(grafico).toBeVisible();
+    const figura = page.locator('figure.rvm-grafico').first();
+    const rotulos = () => figura.locator('text').count();
+
+    await expect.poll(rotulos).toBeGreaterThan(0);
+    const antes = await rotulos();
+    const caixa = (await grafico.boundingBox())!;
+
+    await page.mouse.move(caixa.x + caixa.width * 0.3, caixa.y + caixa.height * 0.3);
+    await page.mouse.down();
+    await page.mouse.move(caixa.x + caixa.width * 0.6, caixa.y + caixa.height * 0.7, { steps: 10 });
+    // Enquanto o botao esta apertado, a area aparece desenhada.
+    await expect(page.locator('.rvm-grafico-caixa-de-zoom')).toBeVisible();
+    await page.mouse.up();
+
+    await expect(page.locator('.rvm-grafico-caixa-de-zoom')).toHaveCount(0);
+    await expect(figura.locator('[aria-live=polite]').filter({ hasText: 'Mostrando de' })).toBeVisible();
+
+    // E ha caminho de volta, mesmo tendo aproximado com o mouse.
+    await grafico.dblclick();
+    await expect.poll(rotulos).toBe(antes);
+});
+
+test('barras: o segundo eixo fica no topo, nao a direita', async ({ page }) => {
+    await page.goto('/componentes/bar-chart');
+    const figura = page.locator('figure.rvm-grafico').filter({ hasText: 'eixo de cima' });
+    await expect(figura.getByText('eixo de baixo')).toBeVisible();
+
+    const emSacas = figura.locator('text', { hasText: /sc\/ha$/ }).first();
+    // "sc/ha" tambem termina em "ha": o rotulo do eixo de baixo precisa do numero antes.
+    const emHectares = figura.locator('text', { hasText: /^[\d.,]+ ha$/ }).last();
+    await expect(emSacas).toBeAttached();
+
+    const yDeCima = Number(await emSacas.getAttribute('y'));
+    const yDeBaixo = Number(await emHectares.getAttribute('y'));
+    expect(yDeCima).toBeLessThan(yDeBaixo);
+    await expect(figura.getByRole('columnheader', { name: 'Produtividade (eixo de cima)' })).toBeAttached();
+});

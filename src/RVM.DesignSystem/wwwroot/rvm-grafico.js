@@ -143,6 +143,44 @@ export function tamanho(svg, escala) {
     ];
 }
 
+function escaparHtml(texto) {
+    return String(texto).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+}
+
+// O quadro da impressao anterior, se ainda estiver na pagina: dois cliques seguidos em "Imprimir" nao
+// podem deixar duas caixas de dialogo empilhadas.
+let quadroDaImpressao = null;
+
+/** Abre a caixa de impressao com o grafico sozinho na pagina, num quadro proprio. */
+export function imprimir(svg, titulo) {
+    const desenho = serializar(svg);
+    quadroDaImpressao?.remove();
+    const quadro = document.createElement('iframe');
+    quadroDaImpressao = quadro;
+    quadro.setAttribute('aria-hidden', 'true');
+    quadro.setAttribute('title', 'Impressao do grafico');
+    // Fora da vista, mas NAO display:none: um quadro escondido assim nao imprime em alguns navegadores.
+    quadro.style.cssText = 'position: fixed; right: 0; bottom: 0; width: 1px; height: 1px; border: 0; opacity: 0;';
+    quadro.srcdoc = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>${escaparHtml(titulo)}</title>`
+        + '<style>@page { margin: 16mm } body { margin: 0; font-family: system-ui, sans-serif; color: #111 }'
+        + 'h1 { font-size: 16px; margin: 0 0 12px } svg { width: 100%; height: auto }</style></head>'
+        + `<body><h1>${escaparHtml(titulo)}</h1>${desenho}</body></html>`;
+
+    quadro.onload = () => {
+        quadro.contentWindow.focus();
+        quadro.contentWindow.print();
+        // O dialogo do navegador e sincrono na maioria dos casos, mas nao em todos: o quadro sai depois.
+        setTimeout(() => {
+            quadro.remove();
+            if (quadroDaImpressao === quadro) {
+                quadroDaImpressao = null;
+            }
+        }, 60_000);
+    };
+
+    document.body.appendChild(quadro);
+}
+
 /** Salva o arquivo: `base64` verdadeiro para binario, falso para texto. */
 export function baixar(nome, mime, dados, base64) {
     const conteudo = base64

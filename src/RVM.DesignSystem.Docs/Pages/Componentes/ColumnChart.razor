@@ -24,7 +24,9 @@
             <RvmMenuItem Icon="RvmIconName.Eye" OnClick="@(() => Exportar(RvmChartExportFormat.Png))">Imagem PNG</RvmMenuItem>
             <RvmMenuItem Icon="RvmIconName.File" OnClick="@(() => Exportar(RvmChartExportFormat.Svg))">Vetor SVG</RvmMenuItem>
             <RvmMenuItem Icon="RvmIconName.Copy" OnClick="@(() => Exportar(RvmChartExportFormat.Csv))">Dados CSV</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.Table" OnClick="@(() => Exportar(RvmChartExportFormat.Xlsx))">Planilha XLSX</RvmMenuItem>
             <RvmMenuItem Icon="RvmIconName.Download" OnClick="@(() => Exportar(RvmChartExportFormat.Pdf))">PDF</RvmMenuItem>
+            <RvmMenuItem Icon="RvmIconName.Printer" OnClick="Imprimir">Imprimir</RvmMenuItem>
         </RvmMenu>
     </div>
     <RvmColumnChart @ref="_grafico" Items="Anos" Label="a => a.Ano" AriaLabel="Receita e despesa por ano">
@@ -67,6 +69,20 @@
             new RvmSnackbarOptions { Color = ok ? RvmColor.Success : RvmColor.Warning });
     }
 
+    private async Task Imprimir()
+    {
+        if (_grafico is null)
+        {
+            return;
+        }
+
+        var ok = await _grafico.PrintAsync();
+        if (!ok)
+        {
+            Avisos.Show("Nao foi possivel abrir a impressao aqui.", new RvmSnackbarOptions { Color = RvmColor.Warning });
+        }
+    }
+
     private static readonly (string Ano, double Receita, double Despesa)[] Anos =
     [
         ("2019", 28_000, 18_000), ("2020", 34_000, 21_000), ("2021", 31_000, 24_500),
@@ -94,7 +110,7 @@
         new("ExportFileName", "string?", "AriaLabel em minusculas", "Nome do arquivo exportado, sem extensao."),
         new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Nome, valor e cor de cada serie."),
         new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
-        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Range: arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela. ZoomBox: arrastar desenha a area a aproximar, nos dois eixos de uma vez."),
         new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita."),
         new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida; com duas escalas, o exemplo de eixo duplo esta no RvmLineChart.")
     ];

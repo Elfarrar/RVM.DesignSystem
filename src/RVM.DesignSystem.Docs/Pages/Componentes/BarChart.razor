@@ -35,13 +35,24 @@
     </RvmBarChart>
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="Eixo duplo"
+              Descricao="Area em hectares embaixo e produtividade em sacas por hectare em cima: nas barras o eixo de valores e o horizontal, entao o segundo eixo vai para o topo."
+              Codigo="@CodigoEixoDuplo">
+    <RvmBarChart Items="Talhoes" Label="t => t.Nome" AriaLabel="Area plantada e produtividade de cada talhao" Height="320"
+                 ValueFormat="@(v => $"{RvmChartFormat.Number(v)} ha")"
+                 SecondaryValueFormat="@(v => $"{RvmChartFormat.Number(v)} sc/ha")">
+        <RvmChartSeries Name="Area" Value="t => t.Area" />
+        <RvmChartSeries Name="Produtividade" Value="t => t.Produtividade" Color="RvmColor.Success" Axis="RvmChartAxis.Secondary" />
+    </RvmBarChart>
+</BlocoExemplo>
+
 <TabelaParametros Parametros="@Parametros" />
 
 @code {
-    private static readonly (string Nome, double Produtividade)[] Talhoes =
+    private static readonly (string Nome, double Produtividade, double Area)[] Talhoes =
     [
-        ("Talhao Norte (pivo 1)", 72), ("Baixada do corrego", 64), ("Sede", 58), ("Cerrado — area nova de abertura", 41),
-        ("Varzea", 69), ("Encosta sul", 53)
+        ("Talhao Norte (pivo 1)", 72, 310), ("Baixada do corrego", 64, 145), ("Sede", 58, 96),
+        ("Cerrado — area nova de abertura", 41, 420), ("Varzea", 69, 88), ("Encosta sul", 53, 181)
     ];
 
     private static readonly (string Cultura, double Sementes, double Fertilizantes, double Defensivos)[] Custos =
@@ -57,8 +68,23 @@
         new("Height", "int", "300", "Altura, em px."),
         new("ShowLegend / ShowGrid", "bool", "true / true", "Legenda (com mais de uma serie) e grade."),
         new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie.")
+        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie."),
+        new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
+        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O CSV e para ler, o XLSX e para somar (numero entra como numero). O nome padrao vem do AriaLabel."),
+        new("PrintAsync()", "Task<bool>", "—", "Abre a caixa de impressao do navegador com o grafico sozinho na pagina."),
+        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo de cima (nao herda o ValueFormat, que descreve a unidade do de baixo)."),
+        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida. Aqui o eixo de valores e o horizontal: Secondary poe a escala no TOPO, nao a direita."),
+        new("Zoomable / SelectionMode", "bool / RvmChartSelectionMode", "false / None", "Aparecem por heranca, mas NAO valem aqui: zoom, arrasto e selecao de faixa pedem o eixo de categorias na horizontal — use RvmColumnChart, RvmLineChart, RvmAreaChart ou RvmScatterChart.")
     ];
+
+    private const string CodigoEixoDuplo = """
+        <RvmBarChart Items="talhoes" Label="t => t.Nome" AriaLabel="Area plantada e produtividade de cada talhao"
+                     ValueFormat="@(v => v + " ha")"
+                     SecondaryValueFormat="@(v => v + " sc/ha")">
+            <RvmChartSeries Name="Area" Value="t => t.Area" />
+            <RvmChartSeries Name="Produtividade" Value="t => t.Produtividade" Axis="RvmChartAxis.Secondary" />
+        </RvmBarChart>
+        """;
 
     private const string CodigoSimples = """
         <RvmBarChart Items="talhoes" Label="t => t.Nome" AriaLabel="Produtividade por talhao"

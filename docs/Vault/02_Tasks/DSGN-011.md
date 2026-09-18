@@ -49,6 +49,14 @@ Zoom por caixa desenhada (brush-to-zoom), exportar Excel nativo (.xlsx), imprimi
 | `pathLength="1"` na linha para animar o traco | dispensa medir o caminho em JS: a animacao roda so em CSS e morre sozinha em "reduzir movimento" |
 | Eixo escreve `0`, nao `0 mil` | achado na foto da entrega; `CompactForAxis` colocava o sufixo do passo na base do eixo |
 
+## Publicada em 17/09/2026
+
+`1.2.0` no BaGet (tag `v1.2.0` presa ao commit do master, versao conferida no feed) e producao no ar
+em `https://design.rvmit.com.br` pelo GitHub Pages. Promocao com sinal verde explicito do Rafael
+("pode executar"). E2E contra producao: 30 testes verdes, incluindo baixar os quatro arquivos, o eixo
+duplo, o zoom pela roda e pelo teclado e a selecao filtrando a tabela. Alphas de `dev` passam a
+`1.3.0-alpha.N`.
+
 ## Review independente (Sonnet, 17/09/2026) — 2 P1 e 5 menores, todos corrigidos
 
 | # | O que | Correcao |

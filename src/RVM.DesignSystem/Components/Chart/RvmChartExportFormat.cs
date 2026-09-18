@@ -12,6 +12,9 @@ public enum RvmChartExportFormat
     /// <summary>Os dados em CSV, separados por ponto e virgula, com BOM (abre no Excel em PT-BR).</summary>
     Csv,
 
+    /// <summary>Planilha do Excel (<c>.xlsx</c>): os mesmos dados do CSV, mas numero entra como numero.</summary>
+    Xlsx,
+
     /// <summary>PDF de uma pagina com a imagem do grafico.</summary>
     Pdf
 }

@@ -15,7 +15,9 @@
 
 | Card | O que |
 |---|---|
-| [[DSGN-011]] | Graficos, o que faltava (17/09): animacao, exportar em PNG/SVG/CSV/PDF, eixo duplo, zoom em X e Y, arrastar e selecao de faixa; review independente com 2 P1 corrigidos. No dev, fecha a `1.2.0` |
+| [[DSGN-013]] | Graficos (18/09): eixo duplo em barras (segundo eixo no topo), zoom por caixa desenhada, exportar `.xlsx` e imprimir; icones Printer e Table. No dev, alvo `1.3.0` |
+| [[DSGN-012]] | Documentacao (17/09): animacao e exportar nas cinco paginas de grafico que a DSGN-011 nao cobriu, e o que NAO vale em barras, histograma, pizza e radar. No dev |
+| [[DSGN-011]] | Graficos, o que faltava (17/09): animacao, exportar em PNG/SVG/CSV/PDF, eixo duplo, zoom em X e Y, arrastar e selecao de faixa; review independente com 2 P1 corrigidos. `1.2.0` publicada e em producao |
 | [[DSGN-010]] | Graficos (17/09): colunas, barras, histograma, linha, area, dispersao, pizza e radar em SVG proprio, com teclado e tabela de dados; review independente. Em producao |
 | [[DSGN-009]] | Paginas de exemplo (17/09): dashboard, CMS, CRM, ERP e planner montados so com a biblioteca. Em producao |
 | [[DSGN-008]] | Site com menu lateral (17/09): o proprio RvmAppShell, os 35 componentes nas quatro secoes, gaveta no celular. Em producao |

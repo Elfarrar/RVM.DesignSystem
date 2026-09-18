@@ -18,19 +18,22 @@
 
     private const int CaracteresPorPx = 7;
 
-    private Escala EscalaDosValores => Memo("EscalaDosValores", () =>
+    // Uma escala por eixo. Aqui o eixo de valores e o HORIZONTAL: o segundo eixo vai no topo, nao a
+    // direita, e por isso e a margem de cima que cresce.
+    private Escala EscalaDe(RvmChartAxis eixo) => Memo($"Escala{eixo}", () =>
         {
+            var series = SeriesDo(eixo);
             double min = 0, max = 0;
             foreach (var item in Dados)
             {
                 if (Stacked)
                 {
-                    max = Math.Max(max, Series.Sum(s => Math.Max(0, s.ValorDe(item))));
-                    min = Math.Min(min, Series.Sum(s => Math.Min(0, s.ValorDe(item))));
+                    max = Math.Max(max, series.Sum(s => Math.Max(0, s.ValorDe(item))));
+                    min = Math.Min(min, series.Sum(s => Math.Min(0, s.ValorDe(item))));
                 }
                 else
                 {
-                    foreach (var s in Series)
+                    foreach (var s in series)
                     {
                         max = Math.Max(max, s.ValorDe(item));
                         min = Math.Min(min, s.ValorDe(item));
@@ -40,6 +43,16 @@
 
             return Escala.Arredondada(min, max);
         });
+
+    private Escala EscalaDosValores => EscalaDe(RvmChartAxis.Primary);
+
+    private Escala EscalaSecundaria => EscalaDe(RvmChartAxis.Secondary);
+
+    internal override double MargemTopo => TemEixoSecundario ? MargemTopoPadrao + 18 : MargemTopoPadrao;
+
+    internal override string NomeDoEixoPrimario => "eixo de baixo";
+
+    internal override string NomeDoEixoSecundario => "eixo de cima";
 
     private double LimiteDosRotulos => Largura * 0.35;
 
@@ -62,20 +75,22 @@
 
     private List<Barra> Barras => Memo("Barras", () =>
         {
-            var escala = EscalaDosValores;
             var lista = new List<Barra>();
             var grupo = Faixa * 0.6;
             var quantas = Math.Max(1, Series.Count);
             var espessura = Math.Max(2, Math.Min(MaxBarThickness, Stacked ? grupo : (grupo - (quantas - 1) * 4) / quantas));
-            var zero = X(escala, 0);
 
             for (var c = 0; c < Dados.Count; c++)
             {
                 var item = Dados[c];
                 var centro = MargemTopo + Faixa * (c + 0.5);
-                double positivo = 0, negativo = 0;
+                var positivos = new Dictionary<RvmChartAxis, double>();
+                var negativos = new Dictionary<RvmChartAxis, double>();
                 for (var s = 0; s < Series.Count; s++)
                 {
+                    var eixo = EixoDa(Series[s]);
+                    var escala = EscalaDe(eixo);
+                    var zero = X(escala, 0);
                     var valor = Series[s].ValorDe(item);
                     double x0, x1, y;
                     if (Stacked)
@@ -83,15 +98,17 @@
                         y = centro - espessura / 2;
                         if (valor >= 0)
                         {
-                            x0 = X(escala, positivo);
-                            positivo += valor;
-                            x1 = X(escala, positivo);
+                            positivos.TryGetValue(eixo, out var acumulado);
+                            x0 = X(escala, acumulado);
+                            positivos[eixo] = acumulado + valor;
+                            x1 = X(escala, positivos[eixo]);
                         }
                         else
                         {
-                            x0 = X(escala, negativo);
-                            negativo += valor;
-                            x1 = X(escala, negativo);
+                            negativos.TryGetValue(eixo, out var acumulado);
+                            x0 = X(escala, acumulado);
+                            negativos[eixo] = acumulado + valor;
+                            x1 = X(escala, negativos[eixo]);
                         }
                     }
                     else
@@ -120,6 +137,15 @@
             }
             @Texto(x, Height - 10, FormatarMarca(marca, escala.Passo))
         }
+        @if (TemEixoSecundario)
+        {
+            // A grade e so do eixo de baixo: duas grades no mesmo desenho viram teia.
+            var secundaria = EscalaSecundaria;
+            foreach (var marca in secundaria.Marcas)
+            {
+                @Texto(X(secundaria, marca), MargemTopo - 8, FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary))
+            }
+        }
         @if (Ativo is { } ativo && ativo < Dados.Count)
         {
             <rect class="rvm-grafico-faixa-ativa" x="0" y="@N(MargemTopo + Faixa * ativo)" width="@N(Largura)" height="@N(Faixa)" rx="4" />
@@ -141,7 +167,7 @@
     internal override string TituloDoPonto(int indice) => NomeDe(Dados[indice], indice);
 
     internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
-        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice])), CorDa(s)))];
+        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice]), EixoDa(s)), CorDa(s)))];
 
     internal override (double X, double Y) AncoraDoPonto(int indice)
     {
@@ -160,6 +186,6 @@
     }
 
     internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
-        => new(["Categoria", .. Series.Select(s => s.Name)],
+        => new(["Categoria", .. Series.Select(NomeNaTabela)],
                [.. Dados.Select((item, i) => (IReadOnlyList<string>)[NomeDe(item, i), .. Series.Select(s => formatar(s.ValorDe(item)))])]);
 }
