@@ -95,13 +95,17 @@
                 @Texto(PX(marcasX[i]), Height - 10, XFormat is { } fx ? fx(marcasX[i]) : RvmChartFormat.CompactForAxis(marcasX[i], EscalaX.Passo))
             }
         }
-        @for (var i = 0; i < pontos.Count; i++)
-        {
-            var p = pontos[i];
-            var ativo = Ativo == i;
-            <circle class="@($"{(ativo ? "rvm-grafico-ponto-cheio rvm-grafico-ponto-ativo" : "rvm-grafico-ponto-cheio")} {ClasseDaCor(CorDa(Series[p.Serie]))}")"
-                    cx="@N(PX(p.X))" cy="@N(PY(p.Y))" r="@(ativo ? PointRadius + 2 : PointRadius)" />
-        }
+        @* Os pontos saem da origem do grafico (o canto de baixo a esquerda, onde x e y valem zero) ate
+           cada um parar no seu lugar — o mesmo da linha. *@
+        <g class="rvm-grafico-pontos" style="@($"transform-origin: {N(Esquerda)}px {N(MargemTopo + AlturaDoPlot)}px")">
+            @for (var i = 0; i < pontos.Count; i++)
+            {
+                var p = pontos[i];
+                var ativo = Ativo == i;
+                <circle class="@($"{(ativo ? "rvm-grafico-ponto-cheio rvm-grafico-ponto-ativo" : "rvm-grafico-ponto-cheio")} {ClasseDaCor(CorDa(Series[p.Serie]))}")"
+                        cx="@N(PX(p.X))" cy="@N(PY(p.Y))" r="@(ativo ? PointRadius + 2 : PointRadius)" />
+            }
+        </g>
     </g>;
 
     internal override int QuantidadeDePontos => Pontos.Count;

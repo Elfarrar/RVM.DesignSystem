@@ -19,8 +19,9 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 > `RvmAppShell`, com menu lateral), `DSGN-009` (cinco telas de exemplo) e `DSGN-010` (os oito
 > gráficos, publicados na `1.1.0`) e `DSGN-011` (exportar, eixo duplo, zoom, arrastar e seleção nos
 > gráficos, publicada na **`1.2.0`** em 17/09). Em 18/09, `DSGN-012` (documentação dos gráficos) e
-> `DSGN-013` (eixo duplo em barras, zoom por caixa, exportar `.xlsx` e imprimir) saíram na **`1.3.0`**.
-> Alphas de `dev` são `1.4.0-alpha.N`.
+> `DSGN-013` (eixo duplo em barras, zoom por caixa, exportar `.xlsx` e imprimir) saíram na **`1.3.0`**,
+> e a `DSGN-014` (tokens do kit medidos por amostragem de pixel) na **`1.4.0`**. Alphas de `dev` são
+> `1.5.0-alpha.N`.
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 

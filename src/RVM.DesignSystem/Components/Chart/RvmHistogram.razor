@@ -102,7 +102,7 @@
             {
                 <rect class="rvm-grafico-faixa-ativa" x="@N(x)" y="@N(MargemTopo)" width="@N(LarguraDaFaixa)" height="@N(AlturaDoPlot)" />
             }
-            <rect class="@($"rvm-grafico-barra {ClasseDaCor(Color)}")" x="@N(x + 1)" y="@N(Y(faixas[i].Contagem))"
+            <rect class="@($"rvm-grafico-barra rvm-grafico-de-baixo {ClasseDaCor(Color)}")" x="@N(x + 1)" y="@N(Y(faixas[i].Contagem))"
                   width="@N(Math.Max(1, LarguraDaFaixa - 2))" height="@N(MargemTopo + AlturaDoPlot - Y(faixas[i].Contagem))" rx="2" />
         }
         @for (var i = 0; faixas.Count > 0 && i <= faixas.Count; i += salto)

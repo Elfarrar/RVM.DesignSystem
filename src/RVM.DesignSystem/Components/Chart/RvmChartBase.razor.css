@@ -267,6 +267,12 @@
     border: 0;
 }
 
+/* A duracao da ENTRADA de todo grafico, num lugar so (decisao do Rafael em 18/09: 1 s para todos).
+   Quem consome pode sobrescrever: `.rvm-grafico { --rvm-grafico-entrada: 600ms }`. */
+.rvm-grafico {
+    --rvm-grafico-entrada: 1s;
+}
+
 /* Animacao: so com Animated e so para quem nao pediu "reduzir movimento". A linha se desenha pelo traco
    (os paths levam pathLength="1", entao 1 = o comprimento inteiro); o resto aparece. */
 @media (prefers-reduced-motion: no-preference) {
@@ -275,21 +281,76 @@
         transition: opacity var(--rvm-transition-fast);
     }
 
+    /* Mudanca de VALOR continua transicionando a geometria. O x/width ficaram de fora de proposito: e
+       o que fazia as colunas deslizarem de lado quando o JS media a largura real do cartao — parecia
+       animacao de entrada e era so o layout se acertando (achado do Rafael em 18/09). */
     .rvm-animado ::deep .rvm-grafico-barra {
-        transition: x var(--rvm-transition-medium), y var(--rvm-transition-medium),
-                    width var(--rvm-transition-medium), height var(--rvm-transition-medium),
+        transition: y var(--rvm-transition-medium), height var(--rvm-transition-medium),
+                    opacity var(--rvm-transition-fast);
+    }
+
+    .rvm-animado ::deep .rvm-grafico-da-esquerda {
+        transition: x var(--rvm-transition-medium), width var(--rvm-transition-medium),
                     opacity var(--rvm-transition-fast);
     }
 
     .rvm-animado ::deep .rvm-grafico-linha {
-        animation: rvm-grafico-desenhar 600ms ease-out both;
+        animation: rvm-grafico-desenhar var(--rvm-grafico-entrada) ease-out both;
     }
 
-    .rvm-animado ::deep .rvm-grafico-preenchimento,
-    .rvm-animado ::deep .rvm-grafico-fatia,
-    .rvm-animado ::deep .rvm-grafico-poligono,
-    .rvm-animado ::deep .rvm-grafico-ponto-cheio {
-        animation: rvm-grafico-aparecer 450ms ease-out both;
+    .rvm-animado ::deep .rvm-grafico-preenchimento {
+        animation: rvm-grafico-aparecer var(--rvm-grafico-entrada) ease-out both;
+    }
+
+    /* Coluna e histograma crescem do eixo para cima; barra horizontal abre da esquerda. `fill-box` faz
+       a origem ser a caixa de CADA forma, e nao a do SVG inteiro. */
+    .rvm-animado ::deep .rvm-grafico-de-baixo,
+    .rvm-animado ::deep .rvm-grafico-da-esquerda {
+        transform-box: fill-box;
+    }
+
+    .rvm-animado ::deep .rvm-grafico-de-baixo {
+        transform-origin: bottom;
+        animation: rvm-grafico-subir var(--rvm-grafico-entrada) ease-out both;
+    }
+
+    .rvm-animado ::deep .rvm-grafico-da-esquerda {
+        transform-origin: left;
+        animation: rvm-grafico-abrir var(--rvm-grafico-entrada) ease-out both;
+    }
+
+    /* Os pontos da linha e da dispersao saem da origem do grafico; so o radar cresce do centro. A
+       origem exata vai em `style` no proprio elemento, porque depende do layout. */
+    .rvm-animado ::deep .rvm-grafico-pontos,
+    .rvm-animado ::deep .rvm-grafico-do-centro {
+        animation: rvm-grafico-espalhar var(--rvm-grafico-entrada) ease-out both;
+    }
+
+    /* A rosca e revelada por uma mascara que gira como ponteiro de relogio. */
+    .rvm-animado ::deep .rvm-grafico-relogio {
+        transform: rotate(-90deg);
+        stroke-dasharray: 1;
+        animation: rvm-grafico-relogio var(--rvm-grafico-entrada) ease-out both;
+    }
+
+    @keyframes rvm-grafico-subir {
+        from { transform: scaleY(0); }
+        to { transform: scaleY(1); }
+    }
+
+    @keyframes rvm-grafico-abrir {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+    }
+
+    @keyframes rvm-grafico-espalhar {
+        from { transform: scale(0); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes rvm-grafico-relogio {
+        from { stroke-dashoffset: 1; }
+        to { stroke-dashoffset: 0; }
     }
 
     @keyframes rvm-grafico-desenhar {
