@@ -80,7 +80,11 @@ public static class RvmChartXlsx
         {
             var referencia = Coluna(c) + numero.ToString(CultureInfo.InvariantCulture);
             // O Excel so soma o que entrou como numero: texto que "parece" numero vira aspa verde na celula.
-            if (double.TryParse(celulas[c], NumberStyles.Float, CultureInfo.InvariantCulture, out var valor))
+            // NaN e infinito ficam de FORA do ramo numerico: "NaN"/"Infinity" dentro de <v> nao e double
+            // valido, e a planilha abriria corrompida — sem erro nenhum na hora de baixar. Aparecem em
+            // conta de razao com denominador zero (produtividade = producao / area).
+            if (double.TryParse(celulas[c], NumberStyles.Float, CultureInfo.InvariantCulture, out var valor)
+                && !double.IsNaN(valor) && !double.IsInfinity(valor))
             {
                 xml.Append(CultureInfo.InvariantCulture, $"<c r=\"{referencia}\"><v>{valor.ToString("R", CultureInfo.InvariantCulture)}</v></c>");
             }
@@ -109,12 +113,17 @@ public static class RvmChartXlsx
     /// <summary>O Excel recusa a planilha se o nome da aba passar de 31 caracteres ou tiver <c>:\/?*[]</c>.</summary>
     private static string NomeDaAba(string nome)
     {
-        var limpo = new string([.. nome.Where(c => !":\\/?*[]".Contains(c))]).Trim();
+        var limpo = new string([.. nome.Where(c => !":\\/?*[]".Contains(c))]).Trim().Trim('\'');
         return string.IsNullOrEmpty(limpo) ? "Dados" : limpo[..Math.Min(31, limpo.Length)];
     }
 
     private static string Texto(string valor)
-        => valor.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+    {
+        // Caractere de controle nao existe em XML 1.0 (so tab, LF e CR): um byte desses, vindo de dado
+        // importado de sistema velho, deixaria a planilha malformada e o Excel se recusaria a abrir.
+        var limpo = new string([.. valor.Where(c => c is '\t' or '\n' or '\r' || !char.IsControl(c))]);
+        return limpo.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+    }
 
     private static void Escrever(ZipArchive zip, string caminho, string conteudo)
     {

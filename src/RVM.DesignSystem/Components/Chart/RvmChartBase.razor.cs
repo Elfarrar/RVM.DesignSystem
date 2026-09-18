@@ -111,6 +111,9 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     // --- Zoom e arrasto ---
 
+    /// <summary>Caixa menor que isto, num eixo, e mao tremendo — nao e intencao de aproximar naquele eixo.</summary>
+    private const double MenorCaixa = 8;
+
     /// <summary>Nao da para aproximar alem de 50x: passado disso o desenho vira um borrao de um ponto so.</summary>
     private const double JanelaMinima = 0.02;
 
@@ -284,15 +287,25 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
         _caixaDe = null;
         _caixaAte = null;
-        const double MenorCaixa = 8;
         if (Math.Abs(ate.X - de.X) < MenorCaixa && Math.Abs(ate.Y - de.Y) < MenorCaixa)
         {
             return;
         }
 
-        JanelaX = PedacoDaJanela(JanelaX, (de.X - area.X) / area.Largura, (ate.X - area.X) / area.Largura);
-        // O eixo vertical cresce para cima: o topo da caixa e o FIM da janela.
-        JanelaY = PedacoDaJanela(JanelaY, 1 - (de.Y - area.Y) / area.Altura, 1 - (ate.Y - area.Y) / area.Altura);
+        // So aperta o eixo em que a caixa tem tamanho de verdade: segurar o mouse em linha reta e
+        // impossivel, e uma deriva de 3 px nao pode cortar o eixo vertical de quem queria so a faixa de
+        // datas. Abaixo de MenorCaixa o eixo fica como estava.
+        if (Math.Abs(ate.X - de.X) >= MenorCaixa)
+        {
+            JanelaX = PedacoDaJanela(JanelaX, (de.X - area.X) / area.Largura, (ate.X - area.X) / area.Largura);
+        }
+
+        if (Math.Abs(ate.Y - de.Y) >= MenorCaixa)
+        {
+            // O eixo vertical cresce para cima: o topo da caixa e o FIM da janela.
+            JanelaY = PedacoDaJanela(JanelaY, 1 - (de.Y - area.Y) / area.Altura, 1 - (ate.Y - area.Y) / area.Altura);
+        }
+
         DepoisDeMudarAJanela();
     }
 

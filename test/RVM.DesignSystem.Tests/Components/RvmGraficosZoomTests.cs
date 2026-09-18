@@ -245,5 +245,22 @@ public class RvmGraficosZoomTests : BunitContext
         Assert.NotEqual(aproximado, Categorias(grafico));
     }
 
+    [Fact]
+    public void Caixa_quase_horizontal_nao_aperta_o_eixo_vertical()
+    {
+        var grafico = ComCaixa();
+        var camada = grafico.Find(".rvm-grafico-camada");
+        var marcasInteiras = MarcasDoEixo(grafico);
+        var inteiro = Categorias(grafico);
+
+        // Arrasto pensado como "so a faixa de dias", com a mao derivando 4 px na vertical.
+        camada.PointerDown(new PointerEventArgs { OffsetX = 150, OffsetY = 150 });
+        camada.PointerMove(new PointerEventArgs { OffsetX = 400, OffsetY = 154 });
+        camada.PointerUp(new PointerEventArgs { OffsetX = 400, OffsetY = 154 });
+
+        Assert.True(Categorias(grafico).Count < inteiro.Count, "o eixo horizontal aproxima");
+        Assert.Equal(marcasInteiras, MarcasDoEixo(grafico));
+    }
+
     private static int Numero(string categoria) => int.Parse(categoria["Dia ".Length..], CultureInfo.InvariantCulture);
 }

@@ -56,6 +56,18 @@ nas colunas), `.xls` antigo (formato binario de 1997) e imprimir varios graficos
 | Icones `Printer` e `Table` copiados do Tabler oficial | o menu pedia os dois e o conjunto curado nao tinha; desenhar "parecido" seria atribuir ao Tabler um traco que nao e dele |
 | O exemplo de barras virou "Area plantada e produtividade de cada talhao" | o nome anterior CONTINHA o de outro grafico da mesma pagina, e o Playwright casa nome acessivel por substring: os dois viravam o mesmo alvo |
 
+## Review independente (Sonnet, 18/09/2026) — 1 P1 e 2 menores, corrigidos
+
+| # | O que | Correcao |
+|---|---|---|
+| **P1** | `.xlsx` saia **corrompido, sem erro nenhum**, quando o valor era `NaN`/infinito (conta de razao com denominador zero: produtividade = producao / area) ou quando o texto trazia caractere de controle. `"NaN"`/`"Infinity"` dentro de `<v>` nao e double valido, e byte de controle deixa o XML malformado — o navegador baixava um arquivo que o Excel recusa | `NaN` e infinito saem do ramo numerico e viram texto; `Texto()` descarta os caracteres de controle que o XML 1.0 nao aceita (tab, LF e CR continuam valendo) |
+| P2 | Zoom por caixa apertava **sempre os dois eixos**: quem arrastasse pensando em "so a faixa de datas" perdia o eixo vertical por uma deriva de mao de 3 px | so aperta o eixo em que a caixa tem 8 px ou mais; abaixo disso aquele eixo fica como estava |
+| P2 | Dois cliques seguidos em "Imprimir" deixavam dois quadros e duas caixas de dialogo | o quadro anterior sai de cena antes de o novo entrar |
+| P3 | Aba comecando ou terminando com apostrofo (o Excel recusa) | filtrada junto com `:\/?*[]` |
+
+O E2E do `.xlsx` so conferia a assinatura `PK` do ZIP: agora ha teste unitario que **abre todas as
+partes do pacote e valida o XML** com `XmlDocument`. 604 testes unitarios e 232 E2E verdes.
+
 ## Entregue em 18/09/2026
 
 - Eixo duplo em barras: segundo eixo no **topo**, com a margem de cima crescendo para caber os rotulos;
