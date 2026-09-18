@@ -275,9 +275,16 @@
         transition: opacity var(--rvm-transition-fast);
     }
 
+    /* Mudanca de VALOR continua transicionando a geometria. O x/width ficaram de fora de proposito: e
+       o que fazia as colunas deslizarem de lado quando o JS media a largura real do cartao — parecia
+       animacao de entrada e era so o layout se acertando (achado do Rafael em 18/09). */
     .rvm-animado ::deep .rvm-grafico-barra {
-        transition: x var(--rvm-transition-medium), y var(--rvm-transition-medium),
-                    width var(--rvm-transition-medium), height var(--rvm-transition-medium),
+        transition: y var(--rvm-transition-medium), height var(--rvm-transition-medium),
+                    opacity var(--rvm-transition-fast);
+    }
+
+    .rvm-animado ::deep .rvm-grafico-da-esquerda {
+        transition: x var(--rvm-transition-medium), width var(--rvm-transition-medium),
                     opacity var(--rvm-transition-fast);
     }
 
@@ -285,11 +292,59 @@
         animation: rvm-grafico-desenhar 600ms ease-out both;
     }
 
-    .rvm-animado ::deep .rvm-grafico-preenchimento,
-    .rvm-animado ::deep .rvm-grafico-fatia,
-    .rvm-animado ::deep .rvm-grafico-poligono,
-    .rvm-animado ::deep .rvm-grafico-ponto-cheio {
+    .rvm-animado ::deep .rvm-grafico-preenchimento {
         animation: rvm-grafico-aparecer 450ms ease-out both;
+    }
+
+    /* Coluna e histograma descem do proprio topo; barra horizontal abre da esquerda. `fill-box` faz a
+       origem ser a caixa de CADA forma, e nao a do SVG inteiro. */
+    .rvm-animado ::deep .rvm-grafico-de-cima,
+    .rvm-animado ::deep .rvm-grafico-da-esquerda {
+        transform-box: fill-box;
+    }
+
+    .rvm-animado ::deep .rvm-grafico-de-cima {
+        transform-origin: top;
+        animation: rvm-grafico-descer 450ms ease-out both;
+    }
+
+    .rvm-animado ::deep .rvm-grafico-da-esquerda {
+        transform-origin: left;
+        animation: rvm-grafico-abrir 450ms ease-out both;
+    }
+
+    /* Os pontos da linha saem da origem do grafico; a nuvem da dispersao e o radar saem do centro. A
+       origem exata vai em `style` no proprio elemento, porque depende do layout. */
+    .rvm-animado ::deep .rvm-grafico-pontos,
+    .rvm-animado ::deep .rvm-grafico-nuvem {
+        animation: rvm-grafico-espalhar 500ms ease-out both;
+    }
+
+    /* A rosca e revelada por uma mascara que gira como ponteiro de relogio. */
+    .rvm-animado ::deep .rvm-grafico-relogio {
+        transform: rotate(-90deg);
+        stroke-dasharray: 1;
+        animation: rvm-grafico-relogio 700ms ease-out both;
+    }
+
+    @keyframes rvm-grafico-descer {
+        from { transform: scaleY(0); }
+        to { transform: scaleY(1); }
+    }
+
+    @keyframes rvm-grafico-abrir {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+    }
+
+    @keyframes rvm-grafico-espalhar {
+        from { transform: scale(0); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes rvm-grafico-relogio {
+        from { stroke-dashoffset: 1; }
+        to { stroke-dashoffset: 0; }
     }
 
     @keyframes rvm-grafico-desenhar {

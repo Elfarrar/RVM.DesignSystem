@@ -15,6 +15,7 @@
 
 | Card | O que |
 |---|---|
+| [[DSGN-015]] | Animacao de entrada por tipo de grafico (18/09): colunas e histograma descem do topo, barras abrem da esquerda, pontos saem de (0,0), rosca varre como relogio, dispersao e radar crescem do centro |
 | [[DSGN-014]] | Tokens medidos por amostragem (18/09): as 24 elevacoes, os alphas de texto do tema escuro e a origem do roxo dos fundos suaves; icones em vetor encerrado; fundo suave harmonizado com o primary. As quatro pendencias de token fecharam. `1.4.0` publicada e em producao |
 | [[DSGN-013]] | Graficos (18/09): eixo duplo em barras (segundo eixo no topo), zoom por caixa desenhada, exportar `.xlsx` e imprimir; icones Printer e Table. `1.3.0` publicada e em producao |
 | [[DSGN-012]] | Documentacao (17/09): animacao e exportar nas cinco paginas de grafico que a DSGN-011 nao cobriu, e o que NAO vale em barras, histograma, pizza e radar. Em producao na `1.3.0` |

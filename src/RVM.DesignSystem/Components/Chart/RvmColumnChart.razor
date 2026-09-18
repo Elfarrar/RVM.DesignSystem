@@ -164,7 +164,7 @@
             }
             @foreach (var coluna in Colunas)
             {
-                <rect class="@($"rvm-grafico-barra {ClasseDaCor(CorDa(Series[coluna.Serie]))}")"
+                <rect class="@($"rvm-grafico-barra rvm-grafico-de-cima {ClasseDaCor(CorDa(Series[coluna.Serie]))}")"
                       x="@N(coluna.X)" y="@N(coluna.Y)" width="@N(coluna.Largura)" height="@N(coluna.Altura)"
                       rx="@N(Math.Min(4, coluna.Largura / 2))" />
             }
