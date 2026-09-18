@@ -30,6 +30,18 @@ Direcao dada por ele em 18/09:
 Radar nao foi citado. Entra no mesmo criterio da dispersao (cresce do centro) por coerencia — se nao
 for isso, e uma linha de CSS para mudar.
 
+## Correcoes depois de ver no dev (18/09)
+
+O Rafael conferiu no ar e apontou tres erros:
+
+1. **Colunas e histograma desciam do topo** — deveria ser o oposto: crescem do eixo para cima
+   (`transform-origin: bottom`, `rvm-grafico-subir`).
+2. **A dispersao crescia do centro**, igual ao radar. Ela passa a sair da **origem do grafico (0,0)**,
+   como a linha; do centro fica so o radar.
+
+As classes passaram a dizer o que fazem: `rvm-grafico-de-baixo` (era "de-cima") e
+`rvm-grafico-do-centro` (era "nuvem", que so descrevia a dispersao).
+
 ## Duracao: 1 s para todos (18/09)
 
 As entradas nasceram com tempos diferentes (450 ms a 700 ms). O Rafael pediu **1 s para todas**, e a
@@ -52,11 +64,12 @@ acao (trocar o periodo, aproximar, filtrar), e 1 s ali faria o grafico parecer t
 
 | Grafico | Como entra agora | Como |
 |---|---|---|
-| Colunas, histograma | desce do proprio topo | `scaleY(0->1)` com `transform-origin: top` e `transform-box: fill-box` |
+| Colunas, histograma | crescem do eixo para cima | `scaleY(0->1)` com `transform-origin: bottom` e `transform-box: fill-box` |
 | Barras | abre da esquerda | `scaleX(0->1)` com `transform-origin: left` |
 | Linha, area | traco se desenha (como antes) e **os pontos saem de (0,0)** | grupo `rvm-grafico-pontos` com a origem no canto de baixo a esquerda do plot |
 | Pizza/rosca | **varredura de relogio**, do meio-dia fechando a volta | mascara com um circulo de `pathLength="1"`, `stroke-dasharray` animado e giro de -90 graus |
-| Dispersao, radar | do centro para fora | grupo `rvm-grafico-nuvem` com a origem no centro do desenho |
+| Dispersao | da origem do grafico, como a linha | grupo `rvm-grafico-pontos` com a origem no canto de baixo a esquerda |
+| Radar | do centro para fora | grupo `rvm-grafico-do-centro` com a origem no centro do desenho |
 
 Tambem: `x`/`width` sairam da `transition` das colunas — era exatamente o que fazia as barras
 deslizarem de lado quando o JS media a largura real. Nas barras horizontais a transicao de `x`/`width`

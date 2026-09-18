@@ -83,8 +83,8 @@
                     <line class="@(Ativo == e ? "rvm-grafico-eixo rvm-grafico-eixo-ativo" : "rvm-grafico-teia")" x1="@N(CentroX)" y1="@N(CentroY)" x2="@N(x)" y2="@N(y)" />
                 }
             }
-            @* Os poligonos crescem do centro para fora, como a nuvem da dispersao. *@
-            <g class="rvm-grafico-nuvem" style="@($"transform-origin: {N(CentroX)}px {N(CentroY)}px")">
+            @* Os poligonos crescem do centro para fora. *@
+            <g class="rvm-grafico-do-centro" style="@($"transform-origin: {N(CentroX)}px {N(CentroY)}px")">
                 @foreach (var serie in Series)
                 {
                     <polygon class="@($"rvm-grafico-poligono {ClasseDaCor(CorDa(serie))}")" points="@Poligono(e => RaioDoValor(serie.ValorDe(Dados[e])))" />

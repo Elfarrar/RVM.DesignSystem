@@ -95,8 +95,9 @@
                 @Texto(PX(marcasX[i]), Height - 10, XFormat is { } fx ? fx(marcasX[i]) : RvmChartFormat.CompactForAxis(marcasX[i], EscalaX.Passo))
             }
         }
-        @* A nuvem entra do centro do desenho para fora, cada ponto ate o seu lugar. *@
-        <g class="rvm-grafico-nuvem" style="@($"transform-origin: {N(Esquerda + LarguraDoPlot / 2)}px {N(MargemTopo + AlturaDoPlot / 2)}px")">
+        @* Os pontos saem da origem do grafico (o canto de baixo a esquerda, onde x e y valem zero) ate
+           cada um parar no seu lugar — o mesmo da linha. *@
+        <g class="rvm-grafico-pontos" style="@($"transform-origin: {N(Esquerda)}px {N(MargemTopo + AlturaDoPlot)}px")">
             @for (var i = 0; i < pontos.Count; i++)
             {
                 var p = pontos[i];

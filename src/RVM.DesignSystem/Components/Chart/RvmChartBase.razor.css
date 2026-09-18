@@ -302,16 +302,16 @@
         animation: rvm-grafico-aparecer var(--rvm-grafico-entrada) ease-out both;
     }
 
-    /* Coluna e histograma descem do proprio topo; barra horizontal abre da esquerda. `fill-box` faz a
-       origem ser a caixa de CADA forma, e nao a do SVG inteiro. */
-    .rvm-animado ::deep .rvm-grafico-de-cima,
+    /* Coluna e histograma crescem do eixo para cima; barra horizontal abre da esquerda. `fill-box` faz
+       a origem ser a caixa de CADA forma, e nao a do SVG inteiro. */
+    .rvm-animado ::deep .rvm-grafico-de-baixo,
     .rvm-animado ::deep .rvm-grafico-da-esquerda {
         transform-box: fill-box;
     }
 
-    .rvm-animado ::deep .rvm-grafico-de-cima {
-        transform-origin: top;
-        animation: rvm-grafico-descer var(--rvm-grafico-entrada) ease-out both;
+    .rvm-animado ::deep .rvm-grafico-de-baixo {
+        transform-origin: bottom;
+        animation: rvm-grafico-subir var(--rvm-grafico-entrada) ease-out both;
     }
 
     .rvm-animado ::deep .rvm-grafico-da-esquerda {
@@ -319,10 +319,10 @@
         animation: rvm-grafico-abrir var(--rvm-grafico-entrada) ease-out both;
     }
 
-    /* Os pontos da linha saem da origem do grafico; a nuvem da dispersao e o radar saem do centro. A
+    /* Os pontos da linha e da dispersao saem da origem do grafico; so o radar cresce do centro. A
        origem exata vai em `style` no proprio elemento, porque depende do layout. */
     .rvm-animado ::deep .rvm-grafico-pontos,
-    .rvm-animado ::deep .rvm-grafico-nuvem {
+    .rvm-animado ::deep .rvm-grafico-do-centro {
         animation: rvm-grafico-espalhar var(--rvm-grafico-entrada) ease-out both;
     }
 
@@ -333,7 +333,7 @@
         animation: rvm-grafico-relogio var(--rvm-grafico-entrada) ease-out both;
     }
 
-    @keyframes rvm-grafico-descer {
+    @keyframes rvm-grafico-subir {
         from { transform: scaleY(0); }
         to { transform: scaleY(1); }
     }

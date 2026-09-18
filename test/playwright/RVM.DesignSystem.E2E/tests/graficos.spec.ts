@@ -284,9 +284,11 @@ test('cada grafico entra do seu jeito, e "reduzir movimento" desliga tudo', asyn
 
     await page.goto('/componentes/column-chart');
     await expect(page.getByRole('heading', { name: 'RvmColumnChart', level: 1 })).toBeVisible();
-    const coluna = await animacaoDe('.rvm-grafico-de-cima');
-    expect(coluna.nome).toBe('rvm-grafico-descer');
-    expect(coluna.origem).toMatch(/^[\d.]+px 0px$/); // topo da propria coluna
+    const coluna = await animacaoDe('.rvm-grafico-de-baixo');
+    expect(coluna.nome).toBe('rvm-grafico-subir');
+    // A coluna cresce do eixo para cima: a origem e a base da propria forma.
+    expect(coluna.origem).toMatch(/^[\d.]+px [\d.]+px$/);
+    expect(Number(coluna.origem.split(' ')[1].replace('px', ''))).toBeGreaterThan(0);
     // Uma duracao so para a entrada de todos os tipos, no token --rvm-grafico-entrada.
     expect(coluna.duracao).toBe('1s');
 
@@ -298,7 +300,7 @@ test('cada grafico entra do seu jeito, e "reduzir movimento" desliga tudo', asyn
 
     await page.goto('/componentes/histogram');
     await expect(page.getByRole('heading', { name: 'RvmHistogram', level: 1 })).toBeVisible();
-    expect((await animacaoDe('.rvm-grafico-de-cima')).nome).toBe('rvm-grafico-descer');
+    expect((await animacaoDe('.rvm-grafico-de-baixo')).nome).toBe('rvm-grafico-subir');
 
     await page.goto('/componentes/pie-chart');
     await expect(page.getByRole('heading', { name: 'RvmPieChart', level: 1 })).toBeVisible();
@@ -308,9 +310,14 @@ test('cada grafico entra do seu jeito, e "reduzir movimento" desliga tudo', asyn
     // As fatias entram por uma mascara, entao ficam intactas.
     await expect(page.locator('g[mask]').first()).toBeAttached();
 
+    // A dispersao sai da origem do grafico, como a linha; so o radar cresce do centro.
     await page.goto('/componentes/scatter-chart');
     await expect(page.getByRole('heading', { name: 'RvmScatterChart', level: 1 })).toBeVisible();
-    expect((await animacaoDe('.rvm-grafico-nuvem')).nome).toBe('rvm-grafico-espalhar');
+    expect((await animacaoDe('.rvm-grafico-pontos')).nome).toBe('rvm-grafico-espalhar');
+
+    await page.goto('/componentes/radar-chart');
+    await expect(page.getByRole('heading', { name: 'RvmRadarChart', level: 1 })).toBeVisible();
+    expect((await animacaoDe('.rvm-grafico-do-centro')).nome).toBe('rvm-grafico-espalhar');
 
     await page.goto('/componentes/line-chart');
     await expect(page.getByRole('heading', { name: 'RvmLineChart', level: 1 })).toBeVisible();
@@ -323,7 +330,7 @@ test('com "reduzir movimento" nenhum grafico anima', async ({ page }) => {
     await page.goto('/componentes/column-chart');
     await expect(page.getByRole('heading', { name: 'RvmColumnChart', level: 1 })).toBeVisible();
 
-    const coluna = page.locator('.rvm-grafico-de-cima').first();
+    const coluna = page.locator('.rvm-grafico-de-baixo').first();
     expect(await coluna.evaluate(e => getComputedStyle(e).animationName)).toBe('none');
     expect(await coluna.evaluate(e => getComputedStyle(e).transitionDuration)).toBe('0s');
 });
