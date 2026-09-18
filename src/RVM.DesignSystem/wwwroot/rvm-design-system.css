@@ -112,10 +112,12 @@
     --rvm-color-error-outlined-hover: #FFF1F1;
     --rvm-color-error-outlined-resting: #FFA6A8;
 
-    /* Fundos suaves (Custom BG). O primary-soft e ROXO com um primary AZUL — e assim no kit,
-       resquicio da paleta roxa que o autor usou antes de trocar o primary. Mantido FIEL: o
-       criterio de aceite e o screenshot lado a lado com o PNG. Harmonizar e mudar uma linha. */
-    --rvm-color-primary-soft: #F2EAFF;
+    /* Fundos suaves (Custom BG). O primary-soft do kit e ROXO com um primary AZUL, e a DSGN-014
+       provou a origem medindo os pixels: `#F2EAFF` e exatamente `#9155FD` a 12% (e o `#3D3261` do
+       tema escuro e o MESMO roxo a 12,5%). `#9155FD` nao existe na paleta do kit — e resquicio do
+       template de onde ele saiu. Harmonizado a mando do Rafael em 18/09: o mesmo 12% do proprio
+       primary. As outras familias ja eram coerentes e ficam como estao. */
+    --rvm-color-primary-soft: #E5EAF8;
     --rvm-color-secondary-soft: #F1F1F2;
     --rvm-color-info-soft: #E4F2FE;
     --rvm-color-success-soft: #E9F5EA;
@@ -329,7 +331,7 @@
     --rvm-color-error-outlined-hover: #412F4B;
     --rvm-color-error-outlined-resting: #983D4E;
 
-    --rvm-color-primary-soft: #3D3261;
+    --rvm-color-primary-soft: #30315B; /* o primary a 12,5%, como no claro (DSGN-014) */
     --rvm-color-secondary-soft: #3C3954;
     --rvm-color-info-soft: #2F3A60;
     --rvm-color-success-soft: #343D4C;
