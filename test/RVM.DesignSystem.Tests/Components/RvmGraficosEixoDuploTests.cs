@@ -108,6 +108,52 @@ public class RvmGraficosEixoDuploTests : BunitContext
     }
 
     [Fact]
+    public void Nas_barras_o_segundo_eixo_vai_para_CIMA_e_nao_para_a_direita()
+    {
+        var barras = Render<RvmBarChart<Mes>>(p => p
+            .Add(x => x.Items, Dados).Add(x => x.Label, m => m.Nome).Add(x => x.AriaLabel, "Receita e margem")
+            .Add(x => x.SecondaryValueFormat, v => v.ToString("0", CultureInfo.InvariantCulture) + "%")
+            .AddChildContent<RvmChartSeries<Mes>>(s => s.Add(x => x.Name, "Receita").Add(x => x.Value, m => m.Receita))
+            .AddChildContent<RvmChartSeries<Mes>>(s => s.Add(x => x.Name, "Margem").Add(x => x.Value, m => m.Margem).Add(x => x.Axis, RvmChartAxis.Secondary)));
+
+        var rotulos = barras.FindAll("text")
+            .Select(t => (Y: double.Parse(t.GetAttribute("y")!, CultureInfo.InvariantCulture), Texto: t.TextContent))
+            .ToList();
+
+        // Aqui o eixo de valores e o horizontal: o segundo eixo e uma linha de rotulos no TOPO.
+        var emPorcento = rotulos.Where(r => r.Texto.EndsWith('%')).ToList();
+        Assert.NotEmpty(emPorcento);
+        Assert.All(emPorcento, r => Assert.True(r.Y < 40, "o eixo secundario das barras fica no topo"));
+        Assert.All(rotulos.Where(r => r.Texto.EndsWith("mil")), r => Assert.True(r.Y > 250));
+
+        // E a legenda e a tabela chamam os eixos pelo que eles sao nas barras.
+        var legenda = barras.FindAll(".rvm-grafico-legenda li").Select(li => li.TextContent).ToList();
+        Assert.Contains(legenda, t => t.Contains("Receita") && t.Contains("eixo de baixo"));
+        Assert.Contains(legenda, t => t.Contains("Margem") && t.Contains("eixo de cima"));
+        Assert.Equal(["Categoria", "Receita", "Margem (eixo de cima)"],
+            barras.FindAll("table thead th").Select(th => th.TextContent));
+
+        // A margem de cima abriu espaco para esses rotulos: a barra nao comeca colada neles.
+        var topoDaPrimeiraBarra = barras.FindAll("rect.rvm-grafico-barra")
+            .Select(r => double.Parse(r.GetAttribute("y")!, CultureInfo.InvariantCulture)).Min();
+        Assert.True(topoDaPrimeiraBarra > 16);
+    }
+
+    [Fact]
+    public void Nas_barras_a_serie_pequena_tambem_usa_o_comprimento_todo()
+    {
+        var comDois = Render<RvmBarChart<Mes>>(p => p
+            .Add(x => x.Items, Dados).Add(x => x.Label, m => m.Nome).Add(x => x.AriaLabel, "Receita e margem")
+            .AddChildContent<RvmChartSeries<Mes>>(s => s.Add(x => x.Name, "Receita").Add(x => x.Value, m => m.Receita))
+            .AddChildContent<RvmChartSeries<Mes>>(s => s.Add(x => x.Name, "Margem").Add(x => x.Value, m => m.Margem).Add(x => x.Axis, RvmChartAxis.Secondary)));
+
+        var comprimentoDaMargem = comDois.FindAll("rect.rvm-grafico-barra").Where((_, i) => i % 2 == 1)
+            .Select(r => double.Parse(r.GetAttribute("width")!, CultureInfo.InvariantCulture)).Max();
+
+        Assert.True(comprimentoDaMargem > 300, "a margem em porcento tem a escala dela");
+    }
+
+    [Fact]
     public void Na_linha_cada_serie_desenha_na_escala_do_seu_eixo()
     {
         var linha = Render<RvmLineChart<Mes>>(p => p

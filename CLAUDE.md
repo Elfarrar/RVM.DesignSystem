@@ -163,5 +163,7 @@ com sinal verde explícito dele. Não há `demo`: de `dev` direto para `master`.
 3. Fundos suaves do tema claro são **roxos** com um primary **azul** — manter fiel ou harmonizar?
 4. Ícones em vetor, se ele reexportar do Figma.
 
-**As quatro se resolvem de uma vez** se o kit for duplicado para a conta do Rafael e lido pela API
-do Figma.
+⚠️ **A API do Figma NÃO resolve.** Em 18/09/2026 o Rafael confirmou que, no arquivo do Community, o
+kit é **uma imagem, não objetos de desenho** — duplicar para a conta dele daria o mesmo PNG que já
+está em `referencia-neatlab/`. **As quatro saem por amostragem de pixel**, com a limitação que isso
+traz: sombra e opacidade são medidas por comparação contra fundo conhecido, não lidas de um valor.

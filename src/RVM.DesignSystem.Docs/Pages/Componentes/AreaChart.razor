@@ -55,9 +55,10 @@
         new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
         new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita (nao herda o ValueFormat, que descreve a unidade da esquerda)."),
         new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
-        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O nome padrao vem do AriaLabel."),
+        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O CSV e para ler, o XLSX e para somar (numero entra como numero). O nome padrao vem do AriaLabel."),
+        new("PrintAsync()", "Task<bool>", "—", "Abre a caixa de impressao do navegador com o grafico sozinho na pagina."),
         new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
-        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela."),
+        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Range: arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela. ZoomBox: arrastar desenha a area a aproximar, nos dois eixos de uma vez."),
         new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie."),
         new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida: o da esquerda ou o da direita, com escala propria.")
     ];

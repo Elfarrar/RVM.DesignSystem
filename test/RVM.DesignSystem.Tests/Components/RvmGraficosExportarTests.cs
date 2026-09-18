@@ -65,6 +65,61 @@ public class RvmChartPdfTests
     }
 }
 
+public class RvmChartXlsxTests
+{
+    [Fact]
+    public void Planilha_e_um_zip_com_as_partes_que_o_excel_exige()
+    {
+        var bytes = RvmChartXlsx.Gerar(["Mes", "Receita"], [["Jan", "45000"], ["Fev", "60000.5"]]);
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(bytes));
+
+        Assert.Equal(
+            ["[Content_Types].xml", "_rels/.rels", "xl/workbook.xml", "xl/_rels/workbook.xml.rels", "xl/worksheets/sheet1.xml"],
+            zip.Entries.Select(e => e.FullName));
+
+        using var folha = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+        var xml = folha.ReadToEnd();
+        // Numero entra como numero (soma na planilha); texto vai embutido, sem tabela de textos.
+        Assert.Contains("<c r=\"B2\"><v>45000</v></c>", xml);
+        Assert.Contains("<c r=\"B3\"><v>60000.5</v></c>", xml);
+        Assert.Contains("<is><t xml:space=\"preserve\">Jan</t></is>", xml);
+        Assert.Contains("<c r=\"A1\" t=\"inlineStr\">", xml);
+    }
+
+    [Fact]
+    public void Nome_da_aba_e_texto_das_celulas_saem_validos()
+    {
+        var bytes = RvmChartXlsx.Gerar(["Cultura & area"], [["Soja > 50%"]],
+            aba: "Receita/despesa por mes em todas as fazendas do grupo");
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(bytes));
+
+        using var livro = new StreamReader(zip.GetEntry("xl/workbook.xml")!.Open());
+        var nome = livro.ReadToEnd().Split("name=\"")[1].Split('"')[0];
+        // O Excel recusa a planilha com aba de mais de 31 caracteres ou com : \ / ? * [ ]
+        Assert.True(nome.Length <= 31, nome);
+        Assert.DoesNotContain('/', nome);
+
+        using var folha = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+        var xml = folha.ReadToEnd();
+        Assert.Contains("Cultura &amp; area", xml);
+        Assert.Contains("Soja &gt; 50%", xml);
+    }
+
+    [Fact]
+    public void Colunas_passam_de_Z_para_AA()
+    {
+        var cabecalho = Enumerable.Range(0, 28).Select(i => $"c{i}").ToArray();
+        var bytes = RvmChartXlsx.Gerar(cabecalho, []);
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(bytes));
+        using var folha = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+        var xml = folha.ReadToEnd();
+
+        Assert.Contains("r=\"Z1\"", xml);
+        Assert.Contains("r=\"AA1\"", xml);
+        Assert.Contains("r=\"AB1\"", xml);
+    }
+}
+
 public class RvmGraficoExportarTests : BunitContext
 {
     public RvmGraficoExportarTests() => JSInterop.Mode = JSRuntimeMode.Loose;
@@ -145,6 +200,37 @@ public class RvmGraficoExportarTests : BunitContext
         var pdf = Encoding.Latin1.GetString(Convert.FromBase64String((string)chamada.Arguments[2]!));
         Assert.StartsWith("%PDF-1.4", pdf);
         Assert.Contains("/MediaBox [0 0 1200 600]", pdf);
+    }
+
+    [Fact]
+    public async Task Exportar_xlsx_manda_a_planilha_com_numero_de_verdade()
+    {
+        var modulo = Modulo();
+        var cortado = Grafico();
+
+        Assert.True(await cortado.Instance.ExportAsync(RvmChartExportFormat.Xlsx));
+
+        var chamada = modulo.Invocations["baixar"].Single();
+        Assert.Equal("receita-por-mes.xlsx", chamada.Arguments[0]);
+        Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", chamada.Arguments[1]);
+        Assert.Equal(true, chamada.Arguments[3]);
+
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(Convert.FromBase64String((string)chamada.Arguments[2]!)));
+        using var folha = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+        var xml = folha.ReadToEnd();
+        Assert.Contains("<v>20000</v>", xml);
+        Assert.Contains("Receita", xml);
+    }
+
+    [Fact]
+    public async Task Imprimir_manda_o_grafico_e_o_nome_para_o_navegador()
+    {
+        var modulo = Modulo();
+        var cortado = Grafico();
+
+        Assert.True(await cortado.Instance.PrintAsync());
+
+        Assert.Equal("Receita por mes", modulo.Invocations["imprimir"].Single().Arguments[1]);
     }
 
     [Fact]

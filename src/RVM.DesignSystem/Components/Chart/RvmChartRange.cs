@@ -10,7 +10,15 @@ public enum RvmChartSelectionMode
     /// O arrasto marca uma faixa de categorias, para filtrar o resto da tela. Com <c>Zoomable</c>, quem
     /// desloca passa a ser Shift com o arrasto.
     /// </summary>
-    Range
+    Range,
+
+    /// <summary>
+    /// O arrasto desenha uma caixa e, ao soltar, o grafico aproxima nela — nos dois eixos de uma vez.
+    /// Liga o zoom por inteiro (roda, teclado e duplo clique para voltar), mesmo sem <c>Zoomable</c>:
+    /// aproximar sem caminho de volta pelo teclado nao passaria no criterio de acessibilidade.
+    /// Shift com o arrasto desloca.
+    /// </summary>
+    ZoomBox
 }
 
 /// <summary>
