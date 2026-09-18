@@ -120,6 +120,61 @@ public class RvmChartXlsxTests
     }
 }
 
+// Achados do review independente da DSGN-013: a planilha saia corrompida, sem erro nenhum, quando o
+// valor era NaN/infinito (conta de razao com denominador zero) ou quando o texto trazia caractere de
+// controle. Aqui o XML de TODAS as partes do ZIP e conferido de verdade.
+public class RvmChartXlsxReviewTests
+{
+    private static void TodasAsPartesSaoXmlValido(byte[] planilha)
+    {
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(planilha));
+        foreach (var parte in zip.Entries)
+        {
+            using var conteudo = new StreamReader(parte.Open());
+            var documento = new System.Xml.XmlDocument();
+            documento.LoadXml(conteudo.ReadToEnd());
+        }
+    }
+
+    [Fact]
+    public void Valor_sem_numero_vira_texto_em_vez_de_corromper_a_planilha()
+    {
+        var infinito = (1.0 / 0).ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var indefinido = (0.0 / 0).ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        var planilha = RvmChartXlsx.Gerar(["Talhao", "Produtividade"], [["Sede", infinito], ["Nova", indefinido]]);
+
+        TodasAsPartesSaoXmlValido(planilha);
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(planilha));
+        using var folha = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+        var xml = folha.ReadToEnd();
+        // Fora do ramo numerico: "NaN"/"Infinity" dentro de <v> nao e double valido para o Excel.
+        Assert.DoesNotContain("<v>Infinity</v>", xml);
+        Assert.DoesNotContain("<v>NaN</v>", xml);
+        Assert.Contains("t=\"inlineStr\"", xml);
+    }
+
+    [Fact]
+    public void Caractere_de_controle_no_texto_nao_deixa_o_xml_malformado()
+    {
+        var planilha = RvmChartXlsx.Gerar(["Cliente\u0001"], [["Fazenda\u0000 Boa Vista\u001f"], ["Com\ttab e\nlinha"]],
+            aba: "'Resumo'");
+
+        TodasAsPartesSaoXmlValido(planilha);
+        using var zip = new System.IO.Compression.ZipArchive(new MemoryStream(planilha));
+        using var folha = new StreamReader(zip.GetEntry("xl/worksheets/sheet1.xml")!.Open());
+        var xml = folha.ReadToEnd();
+        Assert.Contains("Fazenda Boa Vista", xml.Replace("  ", " "));
+        // Tab e quebra de linha sao validos em XML 1.0 e continuam valendo na celula.
+        Assert.Contains("\t", xml);
+
+        using var livro = new StreamReader(zip.GetEntry("xl/workbook.xml")!.Open());
+        var aba = livro.ReadToEnd().Split("name=\"")[1].Split('"')[0];
+        // O Excel recusa aba que comeca ou termina com apostrofo.
+        Assert.False(aba.StartsWith('\'') || aba.EndsWith('\''), aba);
+    }
+}
+
 public class RvmGraficoExportarTests : BunitContext
 {
     public RvmGraficoExportarTests() => JSInterop.Mode = JSRuntimeMode.Loose;

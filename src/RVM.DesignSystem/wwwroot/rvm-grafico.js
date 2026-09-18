@@ -147,10 +147,16 @@ function escaparHtml(texto) {
     return String(texto).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 }
 
+// O quadro da impressao anterior, se ainda estiver na pagina: dois cliques seguidos em "Imprimir" nao
+// podem deixar duas caixas de dialogo empilhadas.
+let quadroDaImpressao = null;
+
 /** Abre a caixa de impressao com o grafico sozinho na pagina, num quadro proprio. */
 export function imprimir(svg, titulo) {
     const desenho = serializar(svg);
+    quadroDaImpressao?.remove();
     const quadro = document.createElement('iframe');
+    quadroDaImpressao = quadro;
     quadro.setAttribute('aria-hidden', 'true');
     quadro.setAttribute('title', 'Impressao do grafico');
     // Fora da vista, mas NAO display:none: um quadro escondido assim nao imprime em alguns navegadores.
@@ -164,7 +170,12 @@ export function imprimir(svg, titulo) {
         quadro.contentWindow.focus();
         quadro.contentWindow.print();
         // O dialogo do navegador e sincrono na maioria dos casos, mas nao em todos: o quadro sai depois.
-        setTimeout(() => quadro.remove(), 60_000);
+        setTimeout(() => {
+            quadro.remove();
+            if (quadroDaImpressao === quadro) {
+                quadroDaImpressao = null;
+            }
+        }, 60_000);
     };
 
     document.body.appendChild(quadro);
