@@ -115,18 +115,25 @@ internal sealed class ApiParaIa
             sb.Append($"\n### {NomeDoTipo(tipo)}\n\n`{tipo.Namespace}`");
             var resumo = Resumo(tipo);
             sb.Append(resumo.Length > 0 ? " · " + resumo : "").Append('\n');
-            foreach (var propriedade in tipo.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            // Ordem por nome em tudo que vem de reflexao: a ordem do GetProperties/GetMethods segue a dos
+            // arquivos na compilacao, que no Linux do CI pode nao ser a do Windows — e o teste de sincronia
+            // ficaria vermelho para sempre la.
+            foreach (var propriedade in tipo.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                         .OrderBy(p => p.Name, StringComparer.Ordinal))
             {
                 var doc = Documentacao("P", propriedade);
                 sb.Append($"- `{propriedade.Name}`: `{NomeDoTipo(propriedade)}`{(doc.Length > 0 ? " — " + doc : "")}\n");
             }
 
-            foreach (var metodo in tipo.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
-                         .Where(m => !m.IsSpecialName && !m.Name.Contains('<', StringComparison.Ordinal)
-                                     && m.Name is not ("Equals" or "GetHashCode" or "ToString" or "Deconstruct" or "PrintMembers")))
+            var metodos = tipo.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+                .Where(m => !m.IsSpecialName && !m.Name.Contains('<', StringComparison.Ordinal)
+                            && m.Name is not ("Equals" or "GetHashCode" or "ToString" or "Deconstruct" or "PrintMembers"))
+                .Select(m => (m.Name, Linha: $"- `{NomeDoTipo(m.ReturnType)} {m.Name}({string.Join(", ", m.GetParameters().Select(p => $"{NomeDoTipo(p.ParameterType)} {p.Name}"))})`\n"))
+                .OrderBy(m => m.Name, StringComparer.Ordinal)
+                .ThenBy(m => m.Linha, StringComparer.Ordinal);
+            foreach (var (_, linha) in metodos)
             {
-                var assinatura = string.Join(", ", metodo.GetParameters().Select(p => $"{NomeDoTipo(p.ParameterType)} {p.Name}"));
-                sb.Append($"- `{NomeDoTipo(metodo.ReturnType)} {metodo.Name}({assinatura})`\n");
+                sb.Append(linha);
             }
         }
 
@@ -149,6 +156,7 @@ internal sealed class ApiParaIa
         // Do tipo fechado (RvmDataGrid<object>): propriedade do tipo aberto nao pode ser lida.
         return (instancia?.GetType() ?? componente).GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.GetCustomAttribute<ParameterAttribute>() is not null)
+            .OrderBy(p => p.Name, StringComparer.Ordinal)
             .Select(p =>
             {
                 var obrigatorio = p.GetCustomAttribute<EditorRequiredAttribute>() is not null;
@@ -352,7 +360,7 @@ internal sealed class ApiParaIa
 
         1. `dotnet add package RVM.DesignSystem` (feed BaGet do ecossistema RVM).
         2. No `Program.cs`: `builder.Services.AddRvmDesignSystem();` — registra o `RvmSnackbarService`.
-        3. No `<head>` (index.html ou App.razor): `<link rel="stylesheet" href="_content/RVM.DesignSystem/rvm-design-system.css" />` e `<script src="_content/RVM.DesignSystem/rvm-theme.js"></script>`.
+        3. No `<head>` (index.html ou App.razor): `<link rel="stylesheet" href="_content/RVM.DesignSystem/rvm-design-system.css" />` e `<script src="_content/RVM.DesignSystem/rvm-theme.js"></script>`. Opcional, em WebAssembly: um script inline logo depois que le `localStorage.getItem('rvm-theme')` e grava `data-theme` no `<html>` antes da primeira pintura — sem ele a pagina pisca no tema claro antes de o runtime subir.
         4. `class="rvm-root"` no `<body>` (fonte, cor de texto e foco visivel) e o layout dentro de `<RvmThemeProvider @bind-Theme="_tema">`.
         5. `@using` dos namespaces em `_Imports.razor`: cada componente mora em `RVM.DesignSystem.Components.<Pasta>` (indicado em cada componente abaixo); enums comuns em `RVM.DesignSystem`, icones em `RVM.DesignSystem.Icons`, tema em `RVM.DesignSystem.Theming`.
 

@@ -43,6 +43,7 @@ internal static class TokensDtcg
         var raiz = new JsonObject
         {
             ["$description"] = "Tokens do RVM Design System, gerados de rvm-design-system.css (a fonte da verdade). "
+                               + "Formato DTCG no estilo do rascunho do W3C (dimensao e cor como texto, ex.: \"0.25rem\", \"#264CC8\"). "
                                + "$value e o tema claro; o escuro esta em $extensions." + Extensao + ".modes.dark. "
                                + "Em CSS, use sempre var(cssVar), nunca o valor literal. Visual derivado do NEATLAB - "
                                + "Super Admin Dashboard UI Design Kit, de hello.uiworld (Figma Community), sob CC BY 4.0."
