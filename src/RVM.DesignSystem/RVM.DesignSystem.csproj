@@ -24,6 +24,11 @@
     <SupportedPlatform Include="browser" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <!-- DSGN-016: os arquivos para agentes de IA vao na raiz do pacote, para o agente de um projeto
+         consumidor achar offline em ~/.nuget/packages/rvm.designsystem/<versao>/. Sao gerados pelos
+         testes (ArquivosDeIaTests) e moram no wwwroot do site, que tambem os serve. -->
+    <None Include="..\RVM.DesignSystem.Docs\wwwroot\llms.txt;..\RVM.DesignSystem.Docs\wwwroot\llms-full.txt;..\RVM.DesignSystem.Docs\wwwroot\tokens.json"
+          Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,1515 @@
+# RVM Design System
+
+> Biblioteca de componentes Blazor (Server e WebAssembly), em C#, distribuida no pacote NuGet `RVM.DesignSystem`. Visual derivado do NEATLAB - Super Admin Dashboard UI Design Kit, de hello.uiworld (Figma Community), sob CC BY 4.0 — o credito e obrigatorio. Codigo sob MIT.
+
+Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do Brasil. Toda cor, espaco, raio, sombra e tipografia vem de custom properties `--rvm-*`, com tema claro e escuro. Documentacao com exemplos: https://design.rvmit.com.br
+
+## Como instalar
+
+1. `dotnet add package RVM.DesignSystem` (feed BaGet do ecossistema RVM).
+2. No `Program.cs`: `builder.Services.AddRvmDesignSystem();` — registra o `RvmSnackbarService`.
+3. No `<head>` (index.html ou App.razor): `<link rel="stylesheet" href="_content/RVM.DesignSystem/rvm-design-system.css" />` e `<script src="_content/RVM.DesignSystem/rvm-theme.js"></script>`. Opcional, em WebAssembly: um script inline logo depois que le `localStorage.getItem('rvm-theme')` e grava `data-theme` no `<html>` antes da primeira pintura — sem ele a pagina pisca no tema claro antes de o runtime subir.
+4. `class="rvm-root"` no `<body>` (fonte, cor de texto e foco visivel) e o layout dentro de `<RvmThemeProvider @bind-Theme="_tema">`.
+5. `@using` dos namespaces em `_Imports.razor`: cada componente mora em `RVM.DesignSystem.Components.<Pasta>` (indicado em cada componente abaixo); enums comuns em `RVM.DesignSystem`, icones em `RVM.DesignSystem.Icons`, tema em `RVM.DesignSystem.Theming`.
+
+## Regras que um agente precisa seguir
+
+- Use o componente `Rvm*` em vez de HTML cru estilizado. Nao misture MudBlazor nem outra biblioteca de componentes.
+- Nunca escreva cor literal (`#hex`, `rgb()`) em CSS: use `var(--rvm-...)`. Cor literal quebra o tema escuro.
+- Cor de TEXTO e `--rvm-color-<papel>-text`, nunca `-main`: so o primary passa contraste AA como texto no `-main`.
+- Texto sobre fundo `-main` usa `--rvm-color-<papel>-contrast`.
+- Espaco por `--rvm-space-N` (N = 1, 2, 3, 4, 5, 6, 8, 10, 12; passo de 4 px); raio por `--rvm-radius-*`; sombra por `--rvm-shadow-1` a `--rvm-shadow-5`.
+- Tipografia pelas classes `rvm-text-<estilo>` (h1-h6, subtitle1, subtitle2, body1, body2, caption, overline, button-lg/md/sm...) ou pelo `RvmTypography`.
+- Cor, tamanho e variante por enum (`RvmColor`, `RvmSize`, `Rvm*Variant`), nunca por string.
+- Atributo HTML extra (`class`, `style`, `id`, `data-*`, `aria-*`) passa direto: todo componente repassa `AdditionalAttributes` ao elemento raiz.
+- Classe CSS propria do consumidor nao deve comecar com `rvm-` (prefixo reservado da biblioteca).
+- Icones: `<RvmIcon Name="RvmIconName.X" />`, conjunto Tabler (lista em `RvmIconName`).
+- Texto visivel ao usuario em portugues do Brasil, explicativo, sem codigo interno.
+- Funciona em Blazor Server e WebAssembly; nenhum componente precisa de JS para o estado inicial.
+
+## Componentes
+
+### RvmAccordion
+
+`@using RVM.DesignSystem.Components.Accordion` · exemplos: https://design.rvmit.com.br/componentes/accordion
+
+Grupo de paineis que abrem e fecham. Os paineis sao `RvmAccordionPanel` filhos.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `ChildContent` | `RenderFragment?` | — | Os paineis. |
+| `Exclusive` | `bool` | `false` | So um painel aberto por vez: abrir um fecha os outros. |
+| `HeadingLevel` | `int` | `3` | Nivel dos cabecalhos dos paineis (2 a 6). Padrao: 3. |
+| `Variant` | `RvmAccordionVariant` | `RvmAccordionVariant.Standard` | Estilo. Padrao: `RvmAccordionVariant.Standard`. |
+
+### RvmAccordionPanel
+
+`@using RVM.DesignSystem.Components.Accordion` · exemplos: https://design.rvmit.com.br/componentes/accordion
+
+Um painel de `RvmAccordion`: um titulo que abre e fecha o conteudo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz do painel. |
+| `ChildContent` | `RenderFragment?` | — | O conteudo. |
+| `Disabled` | `bool` | `false` | Indisponivel: nao abre nem fecha. |
+| `Expanded` | `bool` | `false` | Aberto. Aceita `@bind-Expanded`. |
+| `ExpandedChanged` | `EventCallback<bool>` | — | Disparado quando abre ou fecha. |
+| `Icon` | `RvmIconName?` | — | Icone antes do titulo. |
+| `SecondaryTitle` | `string?` | — | Um complemento ao lado do titulo, no tom secundario ("Secondary heading" no kit). |
+| `Title` | `string` | obrigatorio | O titulo do painel. |
+
+### RvmAlert
+
+`@using RVM.DesignSystem.Components.Alert` · exemplos: https://design.rvmit.com.br/componentes/alert
+
+Mensagem de destaque dentro da pagina: o que aconteceu e, quando der, o que fazer. Para aviso que some sozinho, use o snackbar (onda 3).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Action` | `RenderFragment?` | — | Acao ao lado da mensagem ("DESFAZER", "VER DETALHES") — a variacao "With Action". |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | A mensagem. |
+| `CloseLabel` | `string` | `"Fechar aviso"` | Nome acessivel do botao de fechar. Padrao: "Fechar aviso". |
+| `Icon` | `RvmIconName?` | — | Troca o icone da gravidade por outro. |
+| `OnClose` | `EventCallback` | — | Chamado ao fechar. Com alguem escutando, aparece o botao de fechar. |
+| `Severity` | `RvmColor` | `RvmColor.Info` | Gravidade, pelo papel de cor. Padrao: `RvmColor.Info`. O kit desenha quatro (Error, Warning, Info, Success); Primary e Secondary tambem funcionam, pelo contrato do `RvmColor`. |
+| `ShowIcon` | `bool` | `true` | Mostra o icone da gravidade. Padrao: sim. |
+| `Title` | `string?` | — | Titulo acima da mensagem (a variacao "With Title" do kit). |
+| `Variant` | `RvmAlertVariant` | `RvmAlertVariant.Standard` | Estilo. Padrao: `RvmAlertVariant.Standard`. |
+
+### RvmAppShell
+
+`@using RVM.DesignSystem.Components.AppShell` · exemplos: https://design.rvmit.com.br/componentes/app-shell
+
+A moldura da aplicacao: menu lateral, barra do topo, conteudo e rodape. Em telas largas o menu fica fixo e pode ser recolhido aos icones; em telas estreitas (ate 840 px de largura da moldura) vira uma gaveta que abre por cima do conteudo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Brand` | `RenderFragment?` | — | Marca no alto do menu (logo e nome). Recolhido, aparece so o inicio dela: ponha o logo primeiro. |
+| `ChildContent` | `RenderFragment?` | — | O conteudo da pagina. |
+| `Collapsed` | `bool` | `false` | Menu recolhido aos icones (so em tela larga). Aceita `@bind-Collapsed`. |
+| `CollapsedChanged` | `EventCallback<bool>` | — | Disparado quando a pessoa recolhe ou expande o menu. |
+| `Footer` | `RenderFragment?` | — | Rodape abaixo do conteudo. |
+| `MenuOpen` | `bool` | `false` | Gaveta do menu aberta (so em tela estreita). Aceita `@bind-MenuOpen`. |
+| `MenuOpenChanged` | `EventCallback<bool>` | — | Disparado quando a gaveta abre ou fecha. |
+| `Navigation` | `RenderFragment?` | — | O menu: `RvmNavItem`, `RvmNavGroup` e `RvmNavSection`. |
+| `NavigationLabel` | `string` | `"Menu principal"` | Nome da navegacao para o leitor de tela. Padrao: "Menu principal". |
+| `TopBar` | `RenderFragment?` | — | Conteudo da barra do topo, depois do botao do menu (busca, tema, notificacoes, perfil). |
+
+### RvmAreaChart<TItem>
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/area-chart
+
+Linha com o volume preenchido em degrade.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
+| `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowPoints` | `bool` | `false` | Marca todos os pontos. Sem isso, so os da categoria ativa aparecem. Padrao: nao. |
+| `Smooth` | `bool?` | — | Curva suave em vez de segmentos retos. Padrao: reta na linha, suave na area. |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmAvatar
+
+`@using RVM.DesignSystem.Components.Avatar` · exemplos: https://design.rvmit.com.br/componentes/avatar
+
+Representa uma pessoa ou uma entidade: foto, iniciais ou icone. Se a foto nao carregar, cai para as iniciais (ou o icone) em vez de mostrar imagem quebrada.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Alt` | `string?` | — | Quem ou o que o avatar representa ("Rafael Veneroso"). Vira o `alt` da foto, ou o nome acessivel quando nao ha foto. Sem ele, o leitor de tela so tem as iniciais para anunciar. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo livre, quando nao ha foto, icone nem iniciais. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do fundo, para iniciais e icone. Padrao: `RvmColor.Primary`. |
+| `Icon` | `RvmIconName?` | — | Icone, usado quando nao ha foto. Tem prioridade sobre as iniciais. |
+| `Initials` | `string?` | — | Iniciais, usadas quando nao ha foto nem icone. Passam de 2 letras sao cortadas. |
+| `Shape` | `RvmAvatarShape` | `RvmAvatarShape.Circle` | Forma. Padrao: `RvmAvatarShape.Circle`. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 24, 40 (padrao) ou 56 px — os tres tamanhos medidos no kit. |
+| `Src` | `string?` | — | Endereco da foto. Tem prioridade sobre icone e iniciais. |
+| `Variant` | `RvmAvatarVariant` | `RvmAvatarVariant.Filled` | Preenchido ou suave. Padrao: `RvmAvatarVariant.Filled`. |
+
+### RvmAvatarGroup
+
+`@using RVM.DesignSystem.Components.Avatar` · exemplos: https://design.rvmit.com.br/componentes/avatar
+
+Avatares sobrepostos, como na linha "Grouped Avatars" do kit. O "+N" do fim diz quantos ficaram de fora.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | Os avatares visiveis. Use o mesmo `RvmAvatarGroup.Size` neles. |
+| `Label` | `string?` | — | O que o grupo representa, para o leitor de tela ("Participantes da reuniao"). |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Tamanho do avatar "+N". Padrao: `RvmSize.Medium`. |
+| `Surplus` | `int` | `0` | Quantos ficaram de fora. Acima de zero, aparece um avatar "+N" no fim. |
+
+### RvmBadge
+
+`@using RVM.DesignSystem.Components.Badge` · exemplos: https://design.rvmit.com.br/componentes/badge
+
+Contador ou ponto de aviso. Sozinho, ou por cima de um icone ou avatar passado como conteudo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `ChildContent` | `RenderFragment?` | — | O conteudo sobre o qual o badge fica (um icone, um avatar). |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Primary`. |
+| `Content` | `string?` | — | O que aparece dentro da pilula ("3", "Novo"). Ignorado quando `RvmBadge.Dot`. |
+| `Count` | `int?` | — | Contador numerico. Vence `RvmBadge.Content` e respeita `RvmBadge.Max`. |
+| `Dot` | `bool` | `false` | So o ponto de 8 px, sem texto — "tem novidade", sem dizer quanto. |
+| `Label` | `string?` | — | O que o badge significa, para o leitor de tela ("3 mensagens nao lidas"). Obrigatorio na pratica quando `RvmBadge.Dot`: um ponto sem rotulo nao diz nada a quem nao o ve. |
+| `Max` | `int` | `99` | Acima deste valor, o contador mostra "`Max`+". Padrao: 99. |
+
+### RvmBarChart<TItem>
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/bar-chart
+
+Barras horizontais para nomes longos.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
+| `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `MaxBarThickness` | `int` | `24` | Espessura maxima de cada barra, em px. Padrao: 24. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `Stacked` | `bool` | `false` | Barras empilhadas em vez de lado a lado. |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmBreadcrumbs
+
+`@using RVM.DesignSystem.Components.Breadcrumbs` · exemplos: https://design.rvmit.com.br/componentes/breadcrumbs
+
+Trilha de navegacao: onde a pessoa esta dentro da hierarquia, com atalho para cada nivel acima. O ultimo passo e a pagina atual.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `nav`. |
+| `AriaLabel` | `string` | `"Trilha de navegacao"` | Nome da regiao para o leitor de tela. Padrao: "Trilha de navegacao". |
+| `Items` | `IReadOnlyList<RvmBreadcrumbItem>` | obrigatorio | Os passos, do mais alto ao atual. |
+| `Separator` | `RvmBreadcrumbSeparator` | `RvmBreadcrumbSeparator.Slash` | Barra ou seta entre os passos. Padrao: `RvmBreadcrumbSeparator.Slash`. |
+
+### RvmButton
+
+`@using RVM.DesignSystem.Components.Button` · exemplos: https://design.rvmit.com.br/componentes/button
+
+O botao do design system. Tres pesos visuais, tres tamanhos, icone dos dois lados e estado de carregando.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | O rotulo. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel semantico da cor. Padrao: `RvmColor.Primary`. |
+| `Disabled` | `bool` | `false` | Indisponivel: sai da ordem de tabulacao e ignora clique. |
+| `EndIcon` | `RvmIconName?` | — | Icone depois do rotulo. Fica escondido enquanto `RvmButton.Loading`. |
+| `Loading` | `bool` | `false` | A acao esta em curso. Troca o icone da esquerda por um girando, marca `aria-busy` e bloqueia o clique — sem isto, dois cliques viram duas requisicoes. |
+| `OnClick` | `EventCallback<MouseEventArgs>` | — | O que fazer no clique. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Tamanho. Padrao: `RvmSize.Medium` (38 px de altura, medido do kit). |
+| `StartIcon` | `RvmIconName?` | — | Icone antes do rotulo. |
+| `Type` | `RvmButtonType` | `RvmButtonType.Button` | O `type` do elemento. Padrao: `RvmButtonType.Button`. |
+| `Variant` | `RvmButtonVariant` | `RvmButtonVariant.Contained` | Peso visual. Padrao: `RvmButtonVariant.Contained`. |
+
+### RvmCalendar
+
+`@using RVM.DesignSystem.Components.Calendar`
+
+Calendario de um mes para escolher uma data ou um intervalo. Aparece solto na pagina ou dentro do `RvmDatePicker`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas (domingos, feriados). Continuam focaveis. |
+| `IsRange` | `bool` | `false` | Escolhe um intervalo (dois cliques: inicio e fim) em vez de uma data. |
+| `Max` | `DateOnly?` | — | Ultima data escolhivel. |
+| `Min` | `DateOnly?` | — | Primeira data escolhivel. |
+| `Range` | `RvmDateRange?` | — | O intervalo escolhido. Aceita `@bind-Range`. |
+| `RangeChanged` | `EventCallback<RvmDateRange?>` | — | Disparado a cada clique do intervalo (o primeiro deixa o fim vazio). |
+| `Today` | `DateOnly?` | — | "Hoje" para marcar o dia atual. Padrao: a data do sistema. Existe para teste e fuso. |
+| `Value` | `DateOnly?` | — | A data escolhida. Aceita `@bind-Value`. Ignorada com `RvmCalendar.IsRange`. |
+| `ValueChanged` | `EventCallback<DateOnly?>` | — | Disparado quando a pessoa escolhe uma data. |
+
+### RvmCard
+
+`@using RVM.DesignSystem.Components.Card` · exemplos: https://design.rvmit.com.br/componentes/card
+
+Superficie que agrupa um assunto: midia no topo, cabecalho, conteudo e acoes — todos opcionais.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Actions` | `RenderFragment?` | — | Acoes no rodape do card. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | O conteudo. |
+| `HeaderAction` | `RenderFragment?` | — | Algo no canto direito do cabecalho (menu, botao de icone). |
+| `MediaAlt` | `string?` | — | Texto alternativo da imagem. Vazio quando ela e so decorativa. |
+| `MediaHeight` | `int` | `200` | Altura da imagem em pixels. Padrao: 200. |
+| `MediaSrc` | `string?` | — | Imagem no topo do card. |
+| `Subheader` | `string?` | — | Linha de apoio abaixo do titulo. |
+| `Title` | `string?` | — | Titulo do cabecalho. |
+| `TitleElement` | `RvmTextElement` | `RvmTextElement.H3` | Elemento do titulo. Padrao: `h3`. Ajuste a ordem de cabecalhos da pagina — um card solto numa pagina cujo titulo e h1 costuma querer h2. |
+
+### RvmChartSeries<TItem>
+
+`@using RVM.DesignSystem.Components.Chart`
+
+Uma serie de um grafico: o nome na legenda, o valor de cada item e a cor. Nao desenha nada sozinha; so se apresenta ao grafico em que foi declarada.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Axis` | `RvmChartAxis` | `RvmChartAxis.Primary` | Em qual eixo de valores a serie e lida. Padrao: o da esquerda. Vale no grafico de colunas, de linha e de area; nos outros a serie e sempre lida no eixo unico. |
+| `Color` | `RvmColor?` | — | Papel de cor. Sem valor, segue a ordem: primary, success, warning, info, error, secondary. |
+| `Name` | `string` | obrigatorio | Nome na legenda, na dica e na tabela de dados. |
+| `Value` | `Func<object, double>?` | obrigatorio | O valor de cada item (no grafico de dispersao, o Y). |
+| `X` | `Func<object, double>?` | — | So no grafico de dispersao: o X de cada item. |
+
+### RvmCheckbox
+
+`@using RVM.DesignSystem.Components.Checkbox` · exemplos: https://design.rvmit.com.br/componentes/checkbox
+
+Caixa de marcar. Sozinha, com rotulo ou indeterminada. Dentro de um `EditForm` participa da validacao; em formulario SSR estatico funciona sem JS.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras. `class` e `style` vao para a raiz (onde layout faz efeito); o resto vai para o input nativo (`aria-*`, `data-*`, `id`, `name`). |
+| `ChildContent` | `RenderFragment?` | — | Rotulo livre, quando o texto precisa de marcacao (um link para os termos, por exemplo). Vale quando `RvmCheckbox.Label` esta vazio. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da caixa marcada. Padrao: `RvmColor.Primary`. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `Indeterminate` | `bool` | `false` | Estado "alguns marcados" — a caixa-mae de uma lista. O visual sai por CSS ja no primeiro render; a semantica "misto" para o leitor de tela e completada por JS quando disponivel. Quem liga isto e responsavel por desligar quando os filhos ficarem todos iguais. |
+| `Label` | `string?` | — | Texto ao lado da caixa. Tambem e o nome acessivel. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 16, 18 (padrao) ou 22 px de caixa — medidos no kit. |
+| `Value` | `bool` | `false` | Marcado ou nao. Aceita `@bind-Value`. |
+| `ValueChanged` | `EventCallback<bool>` | — | Disparado quando a marcacao muda. |
+| `ValueExpression` | `Expression<Func<bool>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+
+### RvmChip
+
+`@using RVM.DesignSystem.Components.Chip` · exemplos: https://design.rvmit.com.br/componentes/chip
+
+Rotulo compacto: um filtro aplicado, uma etiqueta, uma pessoa num campo de destinatarios. Removivel quando `RvmChip.OnRemove` tem quem escute.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `AvatarAlt` | `string?` | — | Texto alternativo da miniatura. Vazio quando o rotulo ja diz quem e. |
+| `AvatarSrc` | `string?` | — | Miniatura de foto antes do rotulo (a variacao "Thumbnail" do kit). Vence o icone. |
+| `ChildContent` | `RenderFragment?` | — | O rotulo. |
+| `Color` | `RvmColor?` | — | Papel de cor. Sem valor, o chip e neutro — a coluna "Default" do kit. |
+| `Disabled` | `bool` | `false` | Indisponivel: esmaecido e sem remover. |
+| `OnRemove` | `EventCallback` | — | Chamado ao remover. Com alguem escutando, aparece o botao de remover. |
+| `RemoveLabel` | `string` | `"Remover"` | Nome acessivel do botao de remover. Padrao: "Remover". Vale personalizar com o rotulo ("Remover filtro de status") quando houver varios chips lado a lado. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 24 px (`RvmSize.Small`) ou 32 px — medidos no kit. O kit nao define um chip grande, entao `RvmSize.Large` sai igual ao medio. |
+| `StartIcon` | `RvmIconName?` | — | Icone antes do rotulo. |
+| `Variant` | `RvmChipVariant` | `RvmChipVariant.Filled` | Estilo. Padrao: `RvmChipVariant.Filled`. |
+
+### RvmColumnChart<TItem>
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/column-chart
+
+Colunas lado a lado ou empilhadas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
+| `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `MaxBarWidth` | `int` | `28` | Largura maxima de cada coluna, em px. Padrao: 28. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `Stacked` | `bool` | `false` | Colunas empilhadas em vez de lado a lado. |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmDataGrid<TItem>
+
+`@using RVM.DesignSystem.Components.Table` · exemplos: https://design.rvmit.com.br/componentes/data-grid
+
+A `RvmTable` com paginacao, filtro por coluna e o cabecalho escuro com separadores do kit. Os dados ficam todos na memoria: filtra, ordena e pagina no proprio componente.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Caption` | `string` | obrigatorio | Nome da tabela para o leitor de tela (vai num `caption` escondido). Tambem nomeia a area de rolagem quando a tabela nao cabe na largura. |
+| `ChildContent` | `RenderFragment?` | — | As colunas: `RvmTableColumn`. |
+| `Dense` | `bool` | `false` | Linhas de 36 px em vez de 52 — medidos no kit. |
+| `ItemKey` | `Func<object, object>?` | — | A identidade da linha para a selecao (`t => t.Id`). Sem ela vale o `Equals` do item: numa classe comum e a referencia, e recarregar `RvmTable.Items` com instancias novas das mesmas linhas apaga a marcacao sem aviso. Records ja comparam pelo valor. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | As linhas. |
+| `NoRecordsText` | `string` | `"Nenhum registro para mostrar."` | Texto quando nao ha linhas. |
+| `NoResultsText` | `string` | `"Nenhum registro encontrado para esse filtro."` | Texto quando o filtro nao casa com nenhuma linha. |
+| `Page` | `int` | `1` | A pagina mostrada, comecando em 1. Aceita `@bind-Page`. |
+| `PageChanged` | `EventCallback<int>` | — | Disparado quando a pagina muda. |
+| `PageSize` | `int` | `10` | Linhas por pagina. Aceita `@bind-PageSize`. Padrao: 10. |
+| `PageSizeChanged` | `EventCallback<int>` | — | Disparado quando a pessoa troca as linhas por pagina. |
+| `PageSizeOptions` | `IReadOnlyList<int>` | — | As escolhas de "Linhas por pagina". Padrao: 5, 10 e 25. |
+| `RowLabel` | `Func<object, string>?` | — | Nome da caixa de marcar de cada linha. Padrao: "Selecionar" + o texto da primeira coluna — o leitor de tela precisa saber QUAL linha marca, e "Selecionar linha 3" nao diz. |
+| `Selectable` | `bool` | `false` | Uma caixa de marcar por linha e outra no cabecalho para todas. |
+| `SelectedItems` | `IReadOnlyCollection<object>?` | — | As linhas marcadas. Aceita `@bind-SelectedItems`. |
+| `SelectedItemsChanged` | `EventCallback<IReadOnlyCollection<object>>` | — | Disparado quando a marcacao muda. |
+
+### RvmDatePicker
+
+`@using RVM.DesignSystem.Components.DatePicker` · exemplos: https://design.rvmit.com.br/componentes/date-picker
+
+Campo de data com calendario. Dentro de um EditForm, participa da validacao.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao do campo. |
+| `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `Label` | `string` | obrigatorio | Rotulo do campo. Entra no nome acessivel junto com o valor. |
+| `Max` | `DateOnly?` | — | Ultima data escolhivel. |
+| `Min` | `DateOnly?` | — | Primeira data escolhivel. |
+| `Name` | `string?` | — | `name` para envio de formulario: o valor vai em `input hidden` em formato invariante (data em `yyyy-MM-dd`, com `{Name}Inicio` e `{Name}Fim` no intervalo; horario em `HH:mm`). |
+| `Placeholder` | `string?` | — | Texto no campo vazio. Padrao: o formato esperado ("dd/mm/aaaa", "hh:mm"). |
+| `Required` | `bool` | `false` | Asterisco no rotulo. A validacao em si e do EditForm. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
+| `Today` | `DateOnly?` | — | "Hoje" para marcar o dia atual no calendario. Padrao: a data do sistema. |
+| `Value` | `DateOnly?` | — | A data escolhida. Aceita `@bind-Value`. |
+| `ValueChanged` | `EventCallback<DateOnly?>` | — | Disparado quando a data muda. |
+| `ValueExpression` | `Expression<Func<DateOnly?>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+
+### RvmDateRangePicker
+
+`@using RVM.DesignSystem.Components.DatePicker`
+
+Campo de intervalo de datas: o primeiro clique no calendario marca o inicio, o segundo o fim, e o dialogo fecha.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao do campo. |
+| `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `Label` | `string` | obrigatorio | Rotulo do campo. Entra no nome acessivel junto com o valor. |
+| `Max` | `DateOnly?` | — | Ultima data escolhivel. |
+| `Min` | `DateOnly?` | — | Primeira data escolhivel. |
+| `Name` | `string?` | — | `name` para envio de formulario: o valor vai em `input hidden` em formato invariante (data em `yyyy-MM-dd`, com `{Name}Inicio` e `{Name}Fim` no intervalo; horario em `HH:mm`). |
+| `Placeholder` | `string?` | — | Texto no campo vazio. Padrao: o formato esperado ("dd/mm/aaaa", "hh:mm"). |
+| `Required` | `bool` | `false` | Asterisco no rotulo. A validacao em si e do EditForm. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
+| `Today` | `DateOnly?` | — | "Hoje" para marcar o dia atual no calendario. Padrao: a data do sistema. |
+| `Value` | `RvmDateRange?` | — | O intervalo escolhido. Aceita `@bind-Value`. |
+| `ValueChanged` | `EventCallback<RvmDateRange?>` | — | Disparado quando o intervalo muda (inclusive no primeiro clique, com o fim vazio). |
+| `ValueExpression` | `Expression<Func<RvmDateRange?>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+
+### RvmDialog
+
+`@using RVM.DesignSystem.Components.Dialog` · exemplos: https://design.rvmit.com.br/componentes/dialog
+
+Janela modal por cima da pagina: aviso, confirmacao, formulario curto ou tela cheia.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Actions` | `RenderFragment?` | — | Os botoes do rodape, alinhados a direita. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a caixa do dialogo. |
+| `Alert` | `bool` | `false` | Confirmacao que exige resposta: vira `alertdialog`, o corpo e lido junto com o titulo e clicar no fundo nao fecha. |
+| `ChildContent` | `RenderFragment?` | — | O corpo. |
+| `CloseLabel` | `string` | `"Fechar"` | Nome acessivel do botao de fechar. Padrao: "Fechar". |
+| `CloseOnBackdropClick` | `bool` | `true` | Clicar fora fecha. Padrao: sim (menos no `RvmDialog.Alert`). |
+| `CloseOnEscape` | `bool` | `true` | Esc fecha. Padrao: sim. |
+| `FullScreen` | `bool` | `false` | Ocupa a tela inteira — para formulario longo no celular. |
+| `Open` | `bool` | `false` | Aberto. Aceita `@bind-Open`. |
+| `OpenChanged` | `EventCallback<bool>` | — | Disparado quando o dialogo se fecha sozinho (Esc, fundo, botao de fechar). |
+| `ShowCloseButton` | `bool` | `false` | Botao de fechar (x) no topo. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Largura maxima: 400 px (`RvmSize.Small`), 600 px (padrao, a do kit) ou 900 px. |
+| `Title` | `string?` | — | O titulo. Tambem e o nome acessivel do dialogo. |
+
+### RvmDivider
+
+`@using RVM.DesignSystem.Components.Divider` · exemplos: https://design.rvmit.com.br/componentes/divider
+
+Linha que separa blocos de conteudo. Com `RvmDivider.ChildContent`, a linha abre espaco para um rotulo no meio ("ou", "ontem", "mais opcoes").
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | Rotulo no meio da linha. Sem ele, sai um `<hr>` simples. |
+| `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Deitado (padrao) ou em pe. O rotulo so vale no deitado. |
+
+### RvmDrawer
+
+`@using RVM.DesignSystem.Components.Drawer` · exemplos: https://design.rvmit.com.br/componentes/drawer
+
+Painel que sai de um lado da tela: menu de navegacao, filtros, detalhe de um item.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a gaveta. |
+| `Anchor` | `RvmDrawerAnchor` | `RvmDrawerAnchor.Left` | Lado da tela. Padrao: `RvmDrawerAnchor.Left`. |
+| `AriaLabel` | `string` | obrigatorio | Nome da gaveta para o leitor de tela ("Filtros", "Menu principal"). |
+| `ChildContent` | `RenderFragment?` | — | O conteudo. |
+| `Open` | `bool` | `false` | Aberta (so na temporaria). Aceita `@bind-Open`. |
+| `OpenChanged` | `EventCallback<bool>` | — | Disparado quando a gaveta se fecha sozinha (Esc, fundo). |
+| `Size` | `string` | `"320px"` | Largura (esquerda e direita) ou altura (topo e base), em CSS. Padrao: 320px, a do kit. |
+| `Variant` | `RvmDrawerVariant` | `RvmDrawerVariant.Temporary` | Temporaria (padrao) ou permanente. |
+
+### RvmEmptyState
+
+`@using RVM.DesignSystem.Components.EmptyState` · exemplos: https://design.rvmit.com.br/componentes/empty-state
+
+Tela ou bloco sem conteudo que diz o que aconteceu e o proximo passo. Serve para lista vazia, busca sem resultado, erro de carregamento e pagina nao encontrada.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Actions` | `RenderFragment?` | — | As acoes — normalmente um botao que resolve o vazio. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo extra entre a descricao e as acoes. |
+| `Description` | `string?` | — | Por que, e o que fazer ("Cadastre o primeiro para acompanhar a safra."). |
+| `HeadingLevel` | `int` | `2` | Nivel do titulo (2 a 6). Padrao: 2. Escolha o que encaixa na hierarquia da pagina. |
+| `Icon` | `RvmIconName?` | — | Icone grande acima do titulo, quando nao ha ilustracao. |
+| `Illustration` | `RenderFragment?` | — | Ilustracao livre (imagem, SVG). Vence o icone. E tratada como decorativa. |
+| `Title` | `string` | obrigatorio | O que aconteceu, em uma frase ("Nenhum talhao cadastrado ainda"). |
+
+### RvmHistogram
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/histogram
+
+Distribuicao de valores em faixas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `BinFormat` | `Func<double, string>?` | — | Formato dos limites das faixas. Padrao: o mesmo dos valores. |
+| `BinWidth` | `double?` | — | Largura de cada faixa. Vence `RvmHistogram.Bins` quando informada. |
+| `Bins` | `int?` | — | Numero de faixas. Padrao: regra de Sturges (1 + log2 de n). |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor das colunas. Padrao: primary. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<double>?` | obrigatorio | Os dados. |
+| `Label` | `Func<double, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `SeriesName` | `string` | `"Frequencia"` | Nome da contagem na dica e na tabela. Padrao: "Frequencia". |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmIcon
+
+`@using RVM.DesignSystem.Components.Icon` · exemplos: https://design.rvmit.com.br/componentes/icon
+
+Um icone do conjunto Tabler, desenhado inline. A cor vem por heranca (`currentColor`), ou do papel semantico quando `RvmIcon.Color` e informado.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Color` | `RvmColor?` | — | Papel semantico da cor. Sem valor, o icone herda a cor do texto em volta — que e o que se quer dentro de botao, chip e alerta, onde o contraste ja foi resolvido pelo container. |
+| `Name` | `RvmIconName` | obrigatorio | Qual icone. Enum: nome errado nao compila. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Tamanho do lado do icone. Padrao: `RvmSize.Medium` (20 px). |
+| `Title` | `string?` | — | O que o icone significa, para quem nao o enxerga. **Preencha so quando o icone for a UNICA fonte daquela informacao** — botao de icone sem rotulo, por exemplo. Ao lado de um texto que ja diz a mesma coisa, deixe vazio: o leitor de tela repetiria a informacao. |
+
+### RvmLineChart<TItem>
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/line-chart
+
+Evolucao no tempo, reta ou suave.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
+| `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowPoints` | `bool` | `false` | Marca todos os pontos. Sem isso, so os da categoria ativa aparecem. Padrao: nao. |
+| `Smooth` | `bool?` | — | Curva suave em vez de segmentos retos. Padrao: reta na linha, suave na area. |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmList
+
+`@using RVM.DesignSystem.Components.Lists` · exemplos: https://design.rvmit.com.br/componentes/list
+
+Simples, com icone, com acao e aninhada.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `ul`. |
+| `AriaLabel` | `string?` | — | Nome da lista para o leitor de tela, quando nao ha um titulo visivel antes dela. |
+| `ChildContent` | `RenderFragment?` | — | Os `RvmListItem`. |
+| `Dense` | `bool` | `false` | Itens de 40 px em vez de 48 px (o "Small" do kit). |
+
+### RvmListItem
+
+`@using RVM.DesignSystem.Components.Lists` · exemplos: https://design.rvmit.com.br/componentes/list
+
+Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao no fim. Com `RvmListItem.Href` vira link; com `RvmListItem.OnClick`, botao; com `RvmListItem.NestedContent`, abre uma sublista.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `li`. |
+| `ChildContent` | `RenderFragment?` | — | O texto principal. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `EndContent` | `RenderFragment?` | — | Acao na direita (um botao de favoritar). Fica fora da area clicavel do item. |
+| `Expanded` | `bool` | `false` | Sublista aberta. Aceita `@bind-Expanded`. |
+| `ExpandedChanged` | `EventCallback<bool>` | — | Disparado quando a sublista abre ou fecha. |
+| `Href` | `string?` | — | Faz do item um link. |
+| `Icon` | `RvmIconName?` | — | Icone no inicio. |
+| `NestedContent` | `RenderFragment?` | — | Sublista que abre e fecha pelo item (a variante "Dropdown" do kit). |
+| `OnClick` | `EventCallback` | — | Faz do item um botao. Com `RvmListItem.Href` junto, o link vence e este e ignorado. |
+| `SecondaryText` | `string?` | — | A linha de baixo, menor e no tom secundario. |
+| `Selected` | `bool` | `false` | Item escolhido: `aria-current` no link, `aria-pressed` no botao. |
+| `StartContent` | `RenderFragment?` | — | Conteudo livre no inicio (um avatar). Vence o icone. Num item clicavel ele fica DENTRO do link ou botao: nao ponha controle interativo aqui — para caixa de marcar, use o item sem clique. |
+
+### RvmMenu
+
+`@using RVM.DesignSystem.Components.Menu` · exemplos: https://design.rvmit.com.br/componentes/menu
+
+Botao que abre uma lista de acoes. Os itens sao `RvmMenuItem` e `RvmMenuDivider` filhos.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao. |
+| `AlignEnd` | `bool` | `false` | Alinha o menu pela direita do botao — para botoes encostados na borda direita. |
+| `ButtonColor` | `RvmColor` | `RvmColor.Primary` | Cor do botao. Padrao: `RvmColor.Primary`. |
+| `ButtonVariant` | `RvmButtonVariant` | `RvmButtonVariant.Outlined` | Estilo do botao. Padrao: `RvmButtonVariant.Outlined`. |
+| `ChildContent` | `RenderFragment?` | — | Os itens. |
+| `Disabled` | `bool` | `false` | Botao indisponivel. |
+| `Icon` | `RvmIconName?` | — | Icone antes do texto do botao. |
+| `Label` | `string` | obrigatorio | O texto do botao. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Tamanho do botao. |
+
+### RvmMenuDivider
+
+`@using RVM.DesignSystem.Components.Menu` · exemplos: https://design.rvmit.com.br/componentes/menu
+
+Sem parametros.
+
+### RvmMenuItem
+
+`@using RVM.DesignSystem.Components.Menu` · exemplos: https://design.rvmit.com.br/componentes/menu
+
+Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao botao do item. |
+| `ChildContent` | `RenderFragment?` | — | O texto do item. |
+| `Disabled` | `bool` | `false` | Visivel, mas nao escolhivel — o teclado tambem o pula. |
+| `Icon` | `RvmIconName?` | — | Icone antes do texto. |
+| `OnClick` | `EventCallback` | — | O que fazer ao escolher o item. |
+
+### RvmMultiSelect<TValue>
+
+`@using RVM.DesignSystem.Components.Select`
+
+Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enquanto se marca; Esc, Tab ou clicar fora fecham.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no combobox. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `ItemDisabled` | `Func<object, bool>?` | — | Opcoes visiveis mas nao escolhiveis. |
+| `ItemText` | `Func<object, string>?` | — | Texto de cada opcao. Padrao: `ToString()`. |
+| `Items` | `IEnumerable<object>` | obrigatorio | As opcoes. Passe uma lista ja materializada: a colecao e percorrida a cada render do pai, e um `IQueryable` iria ao banco toda vez. |
+| `Label` | `string?` | — | Rotulo do campo. Tambem e o nome acessivel do combobox e da lista. |
+| `Name` | `string?` | — | `name` para envio de formulario: cada valor escolhido vira um `input hidden`, com o valor em cultura invariante. |
+| `NoResultsText` | `string` | `"Nenhuma opcao encontrada para essa busca."` | Mensagem quando a busca nao acha nada. |
+| `Placeholder` | `string?` | — | Texto no campo vazio. Com ele, o rotulo fica sempre la em cima. |
+| `Required` | `bool` | `false` | Asterisco no rotulo e `aria-required`. A validacao em si e do EditForm. |
+| `SearchPlaceholder` | `string` | `"Buscar"` | Dica e nome acessivel do campo de busca. Padrao: "Buscar". |
+| `Searchable` | `bool` | `false` | Campo de busca no topo da lista, que filtra as opcoes enquanto se digita. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
+| `Values` | `IReadOnlyList<object>` | — | As opcoes escolhidas, na ordem da lista. Aceita `@bind-Values`. |
+| `ValuesChanged` | `EventCallback<IReadOnlyList<object>>` | — | Disparado quando a selecao muda. |
+| `ValuesExpression` | `Expression<Func<IReadOnlyList<object>>>?` | — | Expressao do valor ligado. O `@bind-Values` preenche sozinho. |
+| `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo — os mesmos tres do campo de texto. Padrao: `RvmTextFieldVariant.Outlined`. |
+
+### RvmNavGroup
+
+`@using RVM.DesignSystem.Components.AppShell`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Badge` | `string?` | — | Selo ao lado do texto ("Novo"). |
+| `ChildContent` | `RenderFragment?` | — | Os subitens: `RvmNavItem` sem icone. |
+| `Expanded` | `bool` | `false` | Subitens a mostra. Aceita `@bind-Expanded`. |
+| `ExpandedChanged` | `EventCallback<bool>` | — | Disparado quando o grupo abre ou fecha. |
+| `Icon` | `RvmIconName` | obrigatorio | Icone do grupo. |
+| `Text` | `string` | obrigatorio | Texto do grupo. |
+
+### RvmNavItem
+
+`@using RVM.DesignSystem.Components.AppShell`
+
+Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o destaque do kit.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao link. |
+| `Badge` | `string?` | — | Selo ao lado do texto ("Novo", "3"). |
+| `Href` | `string` | obrigatorio | Endereco do link. |
+| `Icon` | `RvmIconName?` | — | Icone. Sem icone, o item leva o circulo pequeno dos subitens do kit. |
+| `Match` | `RvmNavMatch` | `RvmNavMatch.Prefix` | Como decidir que e a pagina atual. Padrao: `RvmNavMatch.Prefix`. |
+| `Text` | `string` | obrigatorio | Texto do item. Com o menu recolhido, continua sendo o nome do link para o leitor de tela. |
+
+### RvmNavSection
+
+`@using RVM.DesignSystem.Components.AppShell`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | — | Os itens da secao. |
+| `Title` | `string` | obrigatorio | Titulo da secao. |
+
+### RvmPagination
+
+`@using RVM.DesignSystem.Components.Pagination` · exemplos: https://design.rvmit.com.br/componentes/pagination
+
+Paginacao numerica, com setas e reticencias quando as paginas nao cabem.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `nav`. |
+| `AriaLabel` | `string` | `"Paginacao"` | Nome da regiao para o leitor de tela. Padrao: "Paginacao". |
+| `BoundaryCount` | `int` | `1` | Paginas sempre visiveis em cada ponta. Padrao: 1. |
+| `Color` | `RvmColor?` | `RvmColor.Primary` | Cor da pagina atual. Sem valor, a atual ganha so um fundo neutro — a coluna "State: Active" do kit. Padrao: `RvmColor.Primary`. |
+| `Count` | `int` | obrigatorio | Total de paginas. |
+| `Disabled` | `bool` | `false` | Desabilita a paginacao inteira. |
+| `Page` | `int` | `1` | A pagina atual, comecando em 1. Aceita `@bind-Page`. |
+| `PageChanged` | `EventCallback<int>` | — | Disparado quando a pessoa escolhe outra pagina. |
+| `Shape` | `RvmPaginationShape` | `RvmPaginationShape.Circular` | Forma. Padrao: `RvmPaginationShape.Circular`. |
+| `SiblingCount` | `int` | `1` | Paginas vizinhas da atual sempre visiveis, de cada lado. Padrao: 1. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Itens de 26, 32 (padrao) ou 40 px — medidos no kit. |
+| `Variant` | `RvmPaginationVariant` | `RvmPaginationVariant.Text` | Estilo. Padrao: `RvmPaginationVariant.Text`. |
+
+### RvmPieChart<TItem>
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/pie-chart
+
+Pizza e rosca, com percentuais.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `CenterContent` | `RenderFragment?` | — | Conteudo no centro da rosca (o total, um rotulo). |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Donut` | `bool` | `false` | Rosca (anel) em vez de pizza. |
+| `DonutThickness` | `double` | `0.35` | Espessura do anel da rosca, em fracao do raio (0,1 a 0,9). Padrao: 0,35. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
+| `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `SliceColor` | `Func<object, RvmColor>?` | — | Cor de cada fatia. Sem valor, segue a paleta na ordem dos itens. |
+| `Value` | `Func<object, double>?` | obrigatorio | O valor de cada fatia. |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmProgress
+
+`@using RVM.DesignSystem.Components.Progress` · exemplos: https://design.rvmit.com.br/componentes/progress
+
+Progresso de uma tarefa: com valor (determinado) ou so "esta andando" (indeterminado).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Primary`. |
+| `Label` | `string` | `"Carregando"` | Nome para o leitor de tela: o que esta progredindo ("Enviando planilha"). Padrao: "Carregando". |
+| `ShowValue` | `bool` | `false` | Mostra a porcentagem ao lado da barra ou dentro do anel. So no determinado. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Anel de 24, 40 (padrao) ou 56 px — os tamanhos do avatar. A barra tem sempre 4 px de altura. |
+| `Value` | `double?` | — | Porcentagem de 0 a 100. Sem valor, o indicador e indeterminado — use quando nao da para saber quanto falta. |
+| `Variant` | `RvmProgressVariant` | `RvmProgressVariant.Linear` | Barra (padrao) ou anel. |
+
+### RvmRadarChart<TItem>
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/radar-chart
+
+Varias variaveis a partir de um centro.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `GridLevels` | `int` | `5` | Numero de niveis da grade. Padrao: 5. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
+| `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Max` | `double?` | — | Valor na ponta dos eixos. Sem valor, o maior valor arredondado para cima. O centro e o zero: valores negativos ficam no centro (o radar nao tem eixo negativo) e valores acima do Max ficam na ponta. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmRadioGroup<TValue>
+
+`@using RVM.DesignSystem.Components.Radio` · exemplos: https://design.rvmit.com.br/componentes/radio
+
+Grupo de opcoes em que so uma vale. Os filhos sao `RvmRadio`, que herdam a cor, o tamanho e o estado desabilitado daqui.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao fieldset. |
+| `ChildContent` | `RenderFragment?` | — | As opcoes. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da opcao escolhida. Padrao: `RvmColor.Primary`. |
+| `Disabled` | `bool` | `false` | Desabilita o grupo inteiro. |
+| `Label` | `string?` | — | A pergunta do grupo ("Forma de pagamento"). Vira a legenda do fieldset. |
+| `Name` | `string?` | — | `name` dos radios. Sem ele, o Blazor gera um a partir do `@bind-Value` — que e o que o formulario em SSR estatico precisa. |
+| `Orientation` | `RvmOrientation` | `RvmOrientation.Vertical` | Opcoes em linha (`RvmOrientation.Horizontal`) ou empilhadas (padrao). |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 18, 20 (padrao) ou 22 px de circulo — medidos no kit. |
+| `Value` | `object?` | — | O valor escolhido. Aceita `@bind-Value`. |
+| `ValueChanged` | `EventCallback<object>` | — | Disparado quando a escolha muda. |
+| `ValueExpression` | `Expression<Func<object>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+
+### RvmRadio<TValue>
+
+`@using RVM.DesignSystem.Components.Radio` · exemplos: https://design.rvmit.com.br/componentes/radio
+
+Uma opcao de um `RvmRadioGroup`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao input nativo. |
+| `ChildContent` | `RenderFragment?` | — | Rotulo livre, quando `RvmRadio.Label` esta vazio. |
+| `Label` | `string?` | — | Texto da opcao. Tambem e o nome acessivel. |
+| `Value` | `object?` | obrigatorio | O valor que esta opcao representa. |
+
+### RvmRating
+
+`@using RVM.DesignSystem.Components.Rating` · exemplos: https://design.rvmit.com.br/componentes/rating
+
+Nota em estrelas: para mostrar uma avaliacao ou para a pessoa dar a dela.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `AllowHalf` | `bool` | `false` | Permite meia estrela. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `Label` | `string` | `"Avaliacao"` | O que esta sendo avaliado ("Nota do atendimento"). Nome do grupo para o leitor de tela. Padrao: "Avaliacao". |
+| `Max` | `int` | `5` | Quantas estrelas. Padrao: 5. |
+| `Name` | `string?` | — | `name` dos radios, para envio de formulario. Sem valor, e gerado. |
+| `ReadOnly` | `bool` | `false` | So mostra a nota, sem deixar mudar. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Estrelas de 18, 24 (padrao) ou 30 px — medidas no kit. |
+| `Value` | `double` | `0` | A nota. Aceita `@bind-Value`. Zero e "sem nota". |
+| `ValueChanged` | `EventCallback<double>` | — | Disparado quando a pessoa escolhe outra nota. |
+
+### RvmScatterChart<TItem>
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/scatter-chart
+
+Relacao entre duas variaveis numericas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
+| `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
+| `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
+| `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `PointRadius` | `int` | `5` | Raio de cada ponto, em px. Padrao: 5. |
+| `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
+| `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
+| `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
+| `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
+| `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
+| `XFormat` | `Func<double, string>?` | — | Formato dos valores do eixo X. Padrao: `RvmChartFormat.Compact`. |
+| `XLabel` | `string` | `"X"` | Nome do eixo X na dica e na tabela. Padrao: "X". |
+| `YLabel` | `string` | `"Y"` | Nome do eixo Y na dica e na tabela. Padrao: "Y". |
+| `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmSelect<TValue>
+
+`@using RVM.DesignSystem.Components.Select` · exemplos: https://design.rvmit.com.br/componentes/select
+
+Escolha de UMA opcao numa lista, com busca opcional. Dentro de um `EditForm` participa da validacao pelo `@bind-Value`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no combobox. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `ItemDisabled` | `Func<object, bool>?` | — | Opcoes visiveis mas nao escolhiveis. |
+| `ItemText` | `Func<object, string>?` | — | Texto de cada opcao. Padrao: `ToString()`. |
+| `Items` | `IEnumerable<object>` | obrigatorio | As opcoes. Passe uma lista ja materializada: a colecao e percorrida a cada render do pai, e um `IQueryable` iria ao banco toda vez. |
+| `Label` | `string?` | — | Rotulo do campo. Tambem e o nome acessivel do combobox e da lista. |
+| `Name` | `string?` | — | `name` para envio de formulario: cada valor escolhido vira um `input hidden`, com o valor em cultura invariante. |
+| `NoResultsText` | `string` | `"Nenhuma opcao encontrada para essa busca."` | Mensagem quando a busca nao acha nada. |
+| `Placeholder` | `string?` | — | Texto no campo vazio. Com ele, o rotulo fica sempre la em cima. |
+| `Required` | `bool` | `false` | Asterisco no rotulo e `aria-required`. A validacao em si e do EditForm. |
+| `SearchPlaceholder` | `string` | `"Buscar"` | Dica e nome acessivel do campo de busca. Padrao: "Buscar". |
+| `Searchable` | `bool` | `false` | Campo de busca no topo da lista, que filtra as opcoes enquanto se digita. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
+| `Value` | `object?` | — | A opcao escolhida. Aceita `@bind-Value`. Para o campo poder comecar vazio com enum ou numero, use o tipo anulavel (`Status?`, `int?`): sem isso o `default` ja e uma escolha. |
+| `ValueChanged` | `EventCallback<object>` | — | Disparado quando a escolha muda. |
+| `ValueExpression` | `Expression<Func<object>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+| `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo — os mesmos tres do campo de texto. Padrao: `RvmTextFieldVariant.Outlined`. |
+
+### RvmSkeleton
+
+`@using RVM.DesignSystem.Components.Skeleton` · exemplos: https://design.rvmit.com.br/componentes/skeleton
+
+Espaco reservado com a forma do conteudo que ainda vai chegar. Evita que a tela pule quando os dados aparecem.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` somados aos proprios; o resto na raiz. |
+| `Animated` | `bool` | `true` | Com o brilho passando (padrao) ou parado. |
+| `Height` | `string?` | — | Altura em CSS. Padrao: a da linha de texto; retangulo, 120 px; circulo, igual a largura. |
+| `Variant` | `RvmSkeletonVariant` | `RvmSkeletonVariant.Text` | Linha de texto (padrao), retangulo ou circulo. |
+| `Width` | `string?` | — | Largura em CSS ("100%", "12rem", "40px"). Padrao: toda a largura; circulo, 40 px. |
+
+### RvmSnackbarHost
+
+`@using RVM.DesignSystem.Components.Snackbar` · exemplos: https://design.rvmit.com.br/componentes/snackbar
+
+Onde as mensagens do `RvmSnackbarService` aparecem. Um por layout, fora de qualquer area que role.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `CloseLabel` | `string` | `"Fechar mensagem"` | Nome acessivel do botao de fechar de cada mensagem. Padrao: "Fechar mensagem". |
+
+### RvmStepper
+
+`@using RVM.DesignSystem.Components.Stepper` · exemplos: https://design.rvmit.com.br/componentes/stepper
+
+As etapas de um processo e em qual a pessoa esta: cadastro em partes, assistente de configuracao.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `ActiveStep` | `int` | `0` | Indice da etapa atual, a partir de 0. As anteriores contam como concluidas. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `ol`. |
+| `AriaLabel` | `string` | `"Etapas"` | Nome da lista para o leitor de tela. Padrao: "Etapas". |
+| `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Etapas em linha (padrao) ou empilhadas. |
+| `Placement` | `RvmStepperLabelPlacement` | `RvmStepperLabelPlacement.End` | Texto ao lado com o numero grande (padrao) ou embaixo, centralizado. |
+| `Steps` | `IReadOnlyList<RvmStep>` | obrigatorio | As etapas, em ordem. |
+
+### RvmSwitch
+
+`@using RVM.DesignSystem.Components.Switch` · exemplos: https://design.rvmit.com.br/componentes/switch
+
+Liga e desliga algo que vale na hora (notificacoes, modo compacto). Para uma escolha que so vale quando o formulario e enviado, o checkbox costuma ser o controle mais honesto.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no input nativo. |
+| `ChildContent` | `RenderFragment?` | — | Rotulo livre, quando `RvmSwitch.Label` esta vazio. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do ligado. Padrao: `RvmColor.Primary`. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `Label` | `string?` | — | Texto ao lado. Tambem e o nome acessivel. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Trilho de 34 x 14 px (padrao) ou 26 x 10 px (`RvmSize.Small`), medidos no kit. O kit nao define um switch grande, entao `RvmSize.Large` sai igual ao medio. |
+| `Value` | `bool` | `false` | Ligado ou desligado. Aceita `@bind-Value`. |
+| `ValueChanged` | `EventCallback<bool>` | — | Disparado quando muda. |
+| `ValueExpression` | `Expression<Func<bool>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+
+### RvmTab
+
+`@using RVM.DesignSystem.Components.Tabs`
+
+Uma aba de `RvmTabs`. O titulo vira o botao da lista; o conteudo so e renderizado enquanto a aba esta ativa.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | — | O painel da aba. |
+| `Disabled` | `bool` | `false` | Visivel, mas nao selecionavel — o teclado tambem a pula. |
+| `Icon` | `RvmIconName?` | — | Icone acima do titulo. |
+| `Title` | `string` | obrigatorio | O texto do botao da aba. |
+
+### RvmTableColumn<TItem>
+
+`@using RVM.DesignSystem.Components.Table` · exemplos: https://design.rvmit.com.br/componentes/table
+
+Uma coluna da `RvmTable` ou da `RvmDataGrid`. Nao desenha nada sozinha: so se apresenta a tabela em que foi declarada.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Align` | `RvmTableAlign` | `RvmTableAlign.Start` | Alinhamento. Padrao: `RvmTableAlign.Start`. |
+| `ChildContent` | `RenderFragment<object>?` | — | Conteudo livre da celula (avatar, chip, botao). O item chega como `context`. |
+| `Filterable` | `bool` | `true` | Ganha campo de filtro na `RvmDataGrid`. Padrao: sim, quando ha `RvmTableColumn.Value`. |
+| `Format` | `string?` | — | Formato do valor, quando ele e formatavel (`"dd/MM/yyyy"`, `"N2"`). |
+| `InitialSort` | `RvmSortDirection?` | — | Ordenacao aplicada ao abrir. Vale para uma coluna so. |
+| `Sortable` | `bool` | `false` | Ordena pelo `RvmTableColumn.Value` ao clicar no titulo. |
+| `Title` | `string` | obrigatorio | Titulo no cabecalho. |
+| `Value` | `Func<object, object>?` | — | O valor da celula. E o que aparece (quando nao ha `RvmTableColumn.ChildContent`), o que ordena e o que o filtro procura. |
+| `Width` | `string?` | — | Largura em CSS (`"120px"`, `"20%"`). Sem valor, a tabela distribui. |
+
+### RvmTable<TItem>
+
+`@using RVM.DesignSystem.Components.Table` · exemplos: https://design.rvmit.com.br/componentes/table
+
+Tabela de dados: colunas declaradas com `RvmTableColumn`, ordenacao pelo titulo, selecao por caixa de marcar e versao densa. Para paginar e filtrar, `RvmDataGrid`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Caption` | `string` | obrigatorio | Nome da tabela para o leitor de tela (vai num `caption` escondido). Tambem nomeia a area de rolagem quando a tabela nao cabe na largura. |
+| `ChildContent` | `RenderFragment?` | — | As colunas: `RvmTableColumn`. |
+| `Dense` | `bool` | `false` | Linhas de 36 px em vez de 52 — medidos no kit. |
+| `ItemKey` | `Func<object, object>?` | — | A identidade da linha para a selecao (`t => t.Id`). Sem ela vale o `Equals` do item: numa classe comum e a referencia, e recarregar `RvmTable.Items` com instancias novas das mesmas linhas apaga a marcacao sem aviso. Records ja comparam pelo valor. |
+| `Items` | `IEnumerable<object>?` | obrigatorio | As linhas. |
+| `NoRecordsText` | `string` | `"Nenhum registro para mostrar."` | Texto quando nao ha linhas. |
+| `RowLabel` | `Func<object, string>?` | — | Nome da caixa de marcar de cada linha. Padrao: "Selecionar" + o texto da primeira coluna — o leitor de tela precisa saber QUAL linha marca, e "Selecionar linha 3" nao diz. |
+| `Selectable` | `bool` | `false` | Uma caixa de marcar por linha e outra no cabecalho para todas. |
+| `SelectedItems` | `IReadOnlyCollection<object>?` | — | As linhas marcadas. Aceita `@bind-SelectedItems`. |
+| `SelectedItemsChanged` | `EventCallback<IReadOnlyCollection<object>>` | — | Disparado quando a marcacao muda. |
+
+### RvmTabs
+
+`@using RVM.DesignSystem.Components.Tabs` · exemplos: https://design.rvmit.com.br/componentes/tabs
+
+Abas: uma lista de titulos e o painel da aba escolhida. As abas sao `RvmTab` filhas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `ActiveIndex` | `int` | `0` | Indice da aba ativa, a partir de 0. Aceita `@bind-ActiveIndex`. |
+| `ActiveIndexChanged` | `EventCallback<int>` | — | Disparado quando a aba ativa muda. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto na lista de abas. |
+| `AriaLabel` | `string?` | — | Nome da lista de abas para o leitor de tela ("Configuracoes da conta"). |
+| `ChildContent` | `RenderFragment?` | — | As `RvmTab`. |
+| `FullWidth` | `bool` | `false` | As abas dividem a largura toda ("Full Width" no kit). So na horizontal. |
+| `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Abas em linha (padrao) ou empilhadas a esquerda do painel. |
+| `Variant` | `RvmTabsVariant` | `RvmTabsVariant.Standard` | Sublinhada (padrao) ou preenchida. |
+
+### RvmTextField
+
+`@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/text-field
+
+Campo de texto com rotulo flutuante, apoio, erro, prefixo e sufixo. Herda de `InputBase`: dentro de um `EditForm` ele participa da validacao, e fora de um tambem funciona.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao do proprio campo ja aparece sozinha — use este parametro para erro que vem de outro lugar (a resposta de uma API, por exemplo). |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar a mensagem de erro quando ha erro. |
+| `Label` | `string?` | — | Rotulo do campo. Flutua para cima quando o campo tem valor ou foco. |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre la em cima. |
+| `Prefix` | `string?` | — | Texto antes do valor ("R$"). |
+| `Required` | `bool` | `false` | Obrigatorio: asterisco no rotulo e `aria-required` no input. A validacao em si e do `EditForm` (`[Required]` no modelo) — o `required` nativo do HTML fica de fora de proposito, porque barraria o envio com a mensagem do navegador, em ingles. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), medidos no kit. O kit nao define um campo grande, entao `RvmSize.Large` sai igual ao medio. |
+| `Suffix` | `string?` | — | Texto depois do valor ("Kg", "%"). |
+| `Type` | `RvmInputType` | `RvmInputType.Text` | O `type` do campo. Padrao: `RvmInputType.Text`. |
+| `Value` | `string?` | — |  |
+| `ValueChanged` | `EventCallback<string>` | — |  |
+| `ValueExpression` | `Expression<Func<string>>?` | — |  |
+| `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo. Padrao: `RvmTextFieldVariant.Outlined`. |
+
+### RvmThemeProvider
+
+`@using RVM.DesignSystem.Theming`
+
+Envolve a arvore que usa o design system e define qual tema vale nela. Componente filho nenhum precisa saber do tema: os tokens chegam por CSS a partir do `data-theme` deste elemento.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo tematizado. |
+| `Persist` | `bool` | `true` | Guarda a escolha no navegador de quem esta vendo e a restaura na proxima visita. Desligue quando o tema vier de outro lugar (preferencia do usuario no banco, por exemplo). |
+| `Theme` | `RvmTheme` | `RvmTheme.Light` | Tema em vigor. Aceita ligacao de duas vias (`@bind-Theme`). |
+| `ThemeChanged` | `EventCallback<RvmTheme>` | — | Disparado quando o tema muda, inclusive pela preferencia restaurada do navegador. |
+
+### RvmTimeClock
+
+`@using RVM.DesignSystem.Components.TimePicker`
+
+Relogio circular para escolher um horario: primeiro a hora, depois os minutos. Aparece solto na pagina ou dentro do `RvmTimePicker` no modo `RvmTimePickerMode.Clock`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Actions` | `RenderFragment?` | — | Botoes abaixo do mostrador (o CANCELAR e OK do dialogo). |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Max` | `TimeOnly` | — | Ultimo horario escolhivel (inclusive). Padrao: 23:59. |
+| `Min` | `TimeOnly` | — | Primeiro horario escolhivel. Padrao: 00:00. Maior que `RvmTimeClock.Max`, a janela cruza a meia-noite (22:00 a 06:00, um plantao noturno). |
+| `OnConfirm` | `EventCallback` | — | Enter nos minutos: quem esta num dialogo confirma a escolha aqui. |
+| `Step` | `int` | `1` | Minutos entre uma opcao e a proxima, de 1 a 30. Padrao: 1. |
+| `Title` | `string` | `"Selecione o horario"` | Titulo pequeno no topo. Padrao: "Selecione o horario". |
+| `Use24Hours` | `bool` | `true` | 24 h (padrao, com 13 a 00 no anel de dentro) ou 12 h com AM e PM. |
+| `Value` | `TimeOnly?` | — | O horario escolhido. Aceita `@bind-Value`. |
+| `ValueChanged` | `EventCallback<TimeOnly?>` | — | Disparado a cada mudanca de hora, minuto ou periodo. |
+| `View` | `RvmTimeClockView` | `RvmTimeClockView.Hours` | Horas ou minutos no mostrador. Aceita `@bind-View`. Padrao: horas. |
+| `ViewChanged` | `EventCallback<RvmTimeClockView>` | — | Disparado quando o mostrador troca entre horas e minutos. |
+
+### RvmTimePicker
+
+`@using RVM.DesignSystem.Components.TimePicker` · exemplos: https://design.rvmit.com.br/componentes/time-picker
+
+Campo de horario em 24 h (padrao) ou 12 h: uma lista de horarios em intervalos fixos, ou um relogio circular num dialogo (`RvmTimePicker.Mode`).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao campo. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `ErrorText` | `string?` | — | Erro informado por fora. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `Max` | `TimeOnly` | — | Ultimo horario da lista (inclusive). Padrao: 23:59. |
+| `Min` | `TimeOnly` | — | Primeiro horario escolhivel. Padrao: 00:00. Maior que `RvmTimePicker.Max`, a janela cruza a meia-noite. |
+| `Mode` | `RvmTimePickerMode` | `RvmTimePickerMode.List` | Lista ou relogio. Padrao: `RvmTimePickerMode.List`. |
+| `Name` | `string?` | — | `name` para envio de formulario (valor em `HH:mm`). |
+| `Placeholder` | `string?` | — | Texto no campo vazio. |
+| `Required` | `bool` | `false` | Asterisco e aria-required. |
+| `Searchable` | `bool` | `true` | Busca no topo da lista: digitar "18" acha 18:00 e 18:30. Padrao: sim. So na lista. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px. |
+| `Step` | `int?` | — | Minutos entre um horario e o proximo. Padrao: 30 na lista, 1 no relogio (que aceita ate 30). |
+| `Use24Hours` | `bool` | `true` | Relogio de 24 h ("18:30", padrao) ou de 12 h ("6:30 PM"). |
+| `Value` | `TimeOnly?` | — | O horario escolhido. Aceita `@bind-Value`. |
+| `ValueChanged` | `EventCallback<TimeOnly?>` | — | Disparado quando o horario muda. |
+| `ValueExpression` | `Expression<Func<TimeOnly?>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+| `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo do campo. Padrao: contorno. O relogio usa sempre o contorno. |
+
+### RvmTimeline
+
+`@using RVM.DesignSystem.Components.Timeline` · exemplos: https://design.rvmit.com.br/componentes/timeline
+
+Alternada, alinhada, com data.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `ol`. |
+| `AriaLabel` | `string?` | — | Nome da lista para o leitor de tela, quando nao ha titulo visivel antes dela. |
+| `ChildContent` | `RenderFragment?` | — | Os `RvmTimelineItem`. |
+| `Position` | `RvmTimelinePosition` | `RvmTimelinePosition.Right` | Lado do conteudo principal. Padrao: `RvmTimelinePosition.Right`. |
+
+### RvmTimelineItem
+
+`@using RVM.DesignSystem.Components.Timeline` · exemplos: https://design.rvmit.com.br/componentes/timeline
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `li`. |
+| `ChildContent` | `RenderFragment?` | — | O acontecimento. |
+| `Color` | `RvmColor?` | — | Papel de cor do ponto. Sem valor, o ponto e neutro ("Standard" no kit). |
+| `OppositeContent` | `RenderFragment?` | — | O outro lado da linha — normalmente a data ou a hora ("Opposing" no kit). |
+| `Outlined` | `bool` | `false` | Ponto cheio (padrao) ou so o contorno. |
+
+### RvmTooltip
+
+`@using RVM.DesignSystem.Components.Tooltip` · exemplos: https://design.rvmit.com.br/componentes/tooltip
+
+Dica curta que aparece ao passar o mouse ou focar o conteudo. Para texto que a pessoa PRECISA ler para seguir, a dica e o lugar errado — use texto de apoio visivel.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Arrow` | `bool` | `true` | Com a seta apontando para o conteudo (padrao) ou sem ("None" no kit). |
+| `ChildContent` | `RenderFragment<string>?` | — | O conteudo que recebe a dica. O contexto e o id da dica: repasse-o como `aria-describedby="@context"` ao elemento focavel, para o leitor de tela ler a dica. |
+| `Id` | `string?` | — | Id da dica. Sem valor, e gerado. |
+| `Placement` | `RvmTooltipPlacement` | `RvmTooltipPlacement.Top` | Lado em que a dica aparece. Padrao: `RvmTooltipPlacement.Top`. |
+| `Text` | `string` | obrigatorio | O texto da dica. |
+
+### RvmTypography
+
+`@using RVM.DesignSystem.Components.Typography` · exemplos: https://design.rvmit.com.br/componentes/typography
+
+Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypography.Variant` e a SEMANTICA pelo `RvmTypography.As` — as duas coisas sao separadas de proposito.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `As` | `RvmTextElement` | `RvmTextElement.Auto` | Elemento HTML gerado. Padrao: deduzido do `RvmTypography.Variant`. |
+| `ChildContent` | `RenderFragment?` | — | O texto. |
+| `Color` | `RvmTextColor` | `RvmTextColor.Inherit` | Papel do texto na hierarquia de leitura. Padrao: herda de quem esta em volta. |
+| `Variant` | `RvmTypographyVariant` | `RvmTypographyVariant.Body1` | Estilo da escala. Padrao: `RvmTypographyVariant.Body1`. |
+
+## Enums
+
+- `RvmAccordionVariant` (`RVM.DesignSystem.Components.Accordion`): Estilo do acordeao — as duas linhas da pagina Accordion do kit.
+  Valores: `Standard`, `Filled`
+- `RvmAlertVariant` (`RVM.DesignSystem.Components.Alert`): Os tres estilos da pagina Alert do kit.
+  Valores: `Standard`, `Filled`, `Outlined`
+- `RvmAvatarShape` (`RVM.DesignSystem.Components.Avatar`): Forma do avatar. As tres estao na pagina Avatar do kit.
+  Valores: `Circle`, `Rounded`, `Square`
+- `RvmAvatarVariant` (`RVM.DesignSystem.Components.Avatar`): Preenchimento do avatar de iniciais ou icone. No kit: a linha "Colors" e o `RvmAvatarVariant.Filled`; a linha "Light" e o `RvmAvatarVariant.Soft`.
+  Valores: `Filled`, `Soft`
+- `RvmBreadcrumbSeparator` (`RVM.DesignSystem.Components.Breadcrumbs`): O que separa os passos — as duas colunas da pagina Breadcrumbs do kit.
+  Valores: `Slash`, `Chevron`
+- `RvmButtonType` (`RVM.DesignSystem.Components.Button`): O `type` do elemento. Importa dentro de formulario: o padrao do HTML e `submit`, e um botao de "cancelar" que esqueca isso envia o formulario sem querer. Aqui o padrao e `RvmButtonType.Button`, e quem envia declara.
+  Valores: `Button`, `Submit`, `Reset`
+- `RvmButtonVariant` (`RVM.DesignSystem.Components.Button`): Peso visual do botao. Uma tela tem UM contained em destaque; o resto apoia.
+  Valores: `Contained`, `Outlined`, `Text`
+- `RvmChartAxis` (`RVM.DesignSystem.Components.Chart`): Em qual eixo de valores a serie e lida.
+  Valores: `Primary`, `Secondary`
+- `RvmChartExportFormat` (`RVM.DesignSystem.Components.Chart`): Em que formato o grafico e exportado.
+  Valores: `Png`, `Svg`, `Csv`, `Xlsx`, `Pdf`
+- `RvmChartSelectionMode` (`RVM.DesignSystem.Components.Chart`): Como o arrasto no grafico se comporta.
+  Valores: `None`, `Range`, `ZoomBox`
+- `RvmChipVariant` (`RVM.DesignSystem.Components.Chip`): Os tres estilos da pagina Chip do kit.
+  Valores: `Filled`, `Outlined`, `Soft`
+- `RvmColor` (`RVM.DesignSystem`): Papel semantico de cor. O componente escolhe o PAPEL; que cor sai dele e problema da camada de tokens, e muda com o tema. Componente nunca conhece cor (`05-api-dos-componentes.md`).
+  Valores: `Primary`, `Secondary`, `Info`, `Success`, `Warning`, `Error`
+- `RvmDrawerAnchor` (`RVM.DesignSystem.Components.Drawer`): De que lado da tela a gaveta sai.
+  Valores: `Left`, `Right`, `Top`, `Bottom`
+- `RvmDrawerVariant` (`RVM.DesignSystem.Components.Drawer`): Como a gaveta convive com a pagina.
+  Valores: `Temporary`, `Permanent`
+- `RvmIconName` (`RVM.DesignSystem.Icons`): Os icones disponiveis. Enum, e nao string: nome de icone errado vira erro de compilacao em vez de um quadrado vazio na tela.
+  Valores: `AlertCircle`, `AlertTriangle`, `ArrowLeft`, `ArrowRight`, `ArrowUp`, `ArrowDown`, `Bell`, `Calendar`, `Check`, `ChevronDown`, `ChevronLeft`, `ChevronRight`, `ChevronUp`, `CircleCheck`, `Clock`, `Close`, `Copy`, `DotsVertical`, `Download`, `ExternalLink`, `Eye`, `EyeOff`, `File`, `Filter`, `Heart`, `Home`, `InfoCircle`, `Loader`, `Lock`, `Logout`, `Mail`, `Menu`, `Minus`, `Pencil`, `Phone`, `Plus`, `Printer`, `Refresh`, `Search`, `Settings`, `Star`, `Table`, `Trash`, `Upload`, `User`, `Users`
+- `RvmInputType` (`RVM.DesignSystem.Components.TextField`): O `type` do campo. Importa no celular: `RvmInputType.Email` abre o teclado com arroba, `RvmInputType.Tel` abre o numerico, e `RvmInputType.Password` esconde o que se digita.
+  Valores: `Text`, `Email`, `Password`, `Number`, `Tel`, `Url`, `Search`
+- `RvmNavMatch` (`RVM.DesignSystem.Components.AppShell`): Como o item de menu decide que e a pagina atual.
+  Valores: `Prefix`, `All`
+- `RvmOrientation` (`RVM.DesignSystem`): Orientacao de um elemento que separa ou empilha conteudo.
+  Valores: `Horizontal`, `Vertical`
+- `RvmPaginationShape` (`RVM.DesignSystem.Components.Pagination`): Forma dos itens.
+  Valores: `Circular`, `Rounded`
+- `RvmPaginationVariant` (`RVM.DesignSystem.Components.Pagination`): Estilo dos itens — as duas metades da pagina Pagination do kit.
+  Valores: `Text`, `Outlined`
+- `RvmProgressVariant` (`RVM.DesignSystem.Components.Progress`): Forma do indicador de progresso.
+  Valores: `Linear`, `Circular`
+- `RvmSize` (`RVM.DesignSystem`): Tamanho de componente interativo. Botao, campo, chip e avatar usam os tres.
+  Valores: `Small`, `Medium`, `Large`
+- `RvmSkeletonVariant` (`RVM.DesignSystem.Components.Skeleton`): Forma do espaco reservado.
+  Valores: `Text`, `Rectangular`, `Circular`
+- `RvmSortDirection` (`RVM.DesignSystem.Components.Table`): Sentido da ordenacao de uma coluna.
+  Valores: `Ascending`, `Descending`
+- `RvmStepperLabelPlacement` (`RVM.DesignSystem.Components.Stepper`): Onde o texto de cada etapa fica em relacao ao marcador.
+  Valores: `End`, `Bottom`
+- `RvmTableAlign` (`RVM.DesignSystem.Components.Table`): Alinhamento do conteudo de uma coluna.
+  Valores: `Start`, `Center`, `End`
+- `RvmTabsVariant` (`RVM.DesignSystem.Components.Tabs`): Estilo das abas — as duas linhas da pagina Tabs do kit.
+  Valores: `Standard`, `Contained`
+- `RvmTextColor` (`RVM.DesignSystem.Components.Typography`): Papel do texto na hierarquia de leitura. Sao os tokens de texto, nao as cores de marca: para escrever com a cor de um papel semantico, use a classe do token `-text`.
+  Valores: `Inherit`, `Primary`, `Secondary`, `Disabled`
+- `RvmTextElement` (`RVM.DesignSystem.Components.Typography`): Que elemento HTML o texto vira. Existe porque ESTILO e SEMANTICA sao coisas diferentes: um titulo de secao pode precisar do tamanho de `H5` e continuar sendo um `h2` na ordem do documento. Trocar um pelo outro quebra a navegacao por cabecalho no leitor de tela.
+  Valores: `Auto`, `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `P`, `Span`, `Div`, `Label`
+- `RvmTextFieldVariant` (`RVM.DesignSystem.Components.TextField`): Os tres estilos da pagina Text Field do kit.
+  Valores: `Outlined`, `Filled`, `Standard`
+- `RvmTheme` (`RVM.DesignSystem.Theming`): Os dois temas do design system. Enum, nunca string magica: o valor entra em atributo HTML e em armazenamento local, e um typo em string so apareceria na tela do usuario.
+  Valores: `Light`, `Dark`
+- `RvmTimeClockView` (`RVM.DesignSystem.Components.TimePicker`): O que o mostrador do relogio esta escolhendo.
+  Valores: `Hours`, `Minutes`
+- `RvmTimePickerMode` (`RVM.DesignSystem.Components.TimePicker`): Como o `RvmTimePicker` oferece os horarios.
+  Valores: `List`, `Clock`
+- `RvmTimelinePosition` (`RVM.DesignSystem.Components.Timeline`): De que lado da linha fica o conteudo principal.
+  Valores: `Right`, `Left`, `Alternate`
+- `RvmTooltipPlacement` (`RVM.DesignSystem.Components.Tooltip`): De que lado do conteudo a dica aparece.
+  Valores: `Top`, `Bottom`, `Left`, `Right`
+- `RvmTypographyVariant` (`RVM.DesignSystem.Components.Typography`): Os 24 estilos da escala tipografica do kit (`06-tokens-e-tematizacao.md`). Cada um vira a classe `rvm-text-*` correspondente, que le tamanho, entrelinha e peso dos tokens.
+  Valores: `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `Subtitle1`, `Subtitle2`, `Body1`, `Body2`, `Caption`, `Overline`, `ButtonLarge`, `ButtonMedium`, `ButtonSmall`, `InputLabel`, `Helper`, `Input`, `AvatarInitials`, `Chip`, `Tooltip`, `AlertTitle`, `TableHeader`, `BadgeLabel`
+
+## Tipos de apoio
+
+Classes e records usados nos parametros dos componentes.
+
+### RvmBreadcrumbItem
+
+`RVM.DesignSystem.Components.Breadcrumbs` · Um passo da trilha.
+- `Disabled`: `bool` — Visivel, mas sem link.
+- `Href`: `string?` — Para onde o passo leva. Sem valor, o passo e so texto.
+- `Icon`: `RvmIconName?` — Icone antes do texto.
+- `Text`: `string` — O texto do passo.
+
+### RvmChartCsv
+
+`RVM.DesignSystem.Components.Chart` · A tabela de dados do grafico em CSV. Separador `;` e BOM: o Excel em PT-BR abre CSV com virgula numa coluna so, e sem BOM come os acentos.
+- `string Gerar(IReadOnlyList<string> cabecalho, IReadOnlyList<IReadOnlyList<string>> linhas)`
+
+### RvmChartFormat
+
+`RVM.DesignSystem.Components.Chart` · Formatos de numero dos graficos, em PT-BR fixo (nao dependem da cultura do navegador).
+- `string Compact(double valor)`
+- `string Number(double valor)`
+
+### RvmChartPdf
+
+`RVM.DesignSystem.Components.Chart` · Um PDF de uma pagina com a imagem do grafico dentro, montado byte a byte — sem biblioteca de terceiros (decisao do projeto) e sem compressao propria: o JPEG que vem do `canvas` ja e comprimido e entra como imagem `DCTDecode`, o unico filtro que o PDF aceita sem reescrever os pixels.
+- `Byte[] Criar(Byte[] jpeg, int largura, int altura)`
+
+### RvmChartRange
+
+`RVM.DesignSystem.Components.Chart` · A faixa marcada no grafico, em indices dos itens (os dois extremos entram). Quem recebe filtra os proprios dados: `Items.Take(range.End + 1).Skip(range.Start)`.
+- `Count`: `int` — Quantos itens a faixa cobre.
+- `End`: `int` — O ultimo item da faixa.
+- `Start`: `int` — O primeiro item da faixa.
+- `bool Contains(int indice)`
+
+### RvmChartXlsx
+
+`RVM.DesignSystem.Components.Chart` · A tabela de dados do grafico como planilha do Excel. Um `.xlsx` e um ZIP de arquivos XML, e e isso que esta classe monta — sem biblioteca de terceiros (decisao do projeto). O que o CSV nao da: numero continua numero, entao a soma da coluna funciona sem ninguem reescrever nada.
+- `Byte[] Gerar(IReadOnlyList<string> cabecalho, IReadOnlyList<IReadOnlyList<string>> linhas, string aba)`
+
+### RvmDateRange
+
+`RVM.DesignSystem.Components.Calendar` · Um intervalo de datas. `RvmDateRange.End` vazio enquanto a pessoa ainda escolhe o fim.
+- `End`: `DateOnly?` — Ultimo dia (inclusive).
+- `Start`: `DateOnly` — Primeiro dia.
+- `bool Contains(DateOnly dia)`
+
+### RvmSnackbarMessage
+
+`RVM.DesignSystem.Components.Snackbar` · Uma mensagem na fila do `RvmSnackbarService`. Serve para fecha-la depois.
+- `Options`: `RvmSnackbarOptions` — As opcoes com que foi mostrada.
+- `Text`: `string` — O texto da mensagem.
+
+### RvmSnackbarOptions
+
+`RVM.DesignSystem.Components.Snackbar` · Como uma mensagem do `RvmSnackbarService` aparece e se comporta.
+- `ActionText`: `string?` — Texto do botao de acao ("Desfazer"). Aparece so junto com `RvmSnackbarOptions.OnAction`.
+- `Color`: `RvmColor?` — Papel de cor. Sem valor, e o snackbar neutro (a pagina Snackbar do kit); com valor, ganha o icone do papel no fundo do papel (a pagina Toast). `RvmColor.Error` e anunciado com urgencia (`role="alert"`); os demais, com educacao (`role="status"`).
+- `Duration`: `TimeSpan?` — Quanto tempo fica na tela. Padrao: 6 segundos. `null` deixa a mensagem ate alguem fechar — use para erro que a pessoa precisa ler com calma. O tempo para enquanto o mouse ou o foco estao na mensagem.
+- `Loading`: `bool` — Indicador girando no lugar do icone ("Enviando...").
+- `OnAction`: `Func<Task>?` — O que o botao de acao faz. A mensagem fecha depois.
+- `ShowCloseButton`: `bool` — Botao de fechar (x). Padrao: sim.
+
+### RvmSnackbarService
+
+`RVM.DesignSystem.Components.Snackbar` · Mostra mensagens curtas no canto da tela, em fila. Registrado por `services.AddRvmDesignSystem()`; as mensagens aparecem onde houver um `RvmSnackbarHost` (normalmente no layout).
+- `MaxVisible`: `int` — Quantas mensagens ficam na tela ao mesmo tempo; as outras esperam. Padrao: 3.
+- `void Close(RvmSnackbarMessage message)`
+- `void CloseAll()`
+- `RvmSnackbarMessage Show(string text, RvmSnackbarOptions options)`
+
+### RvmStep
+
+`RVM.DesignSystem.Components.Stepper` · Uma etapa do `RvmStepper`.
+- `Description`: `string?` — A linha de apoio ("Informe e-mail e senha").
+- `HasError`: `bool` — A etapa tem problema a resolver — a validacao do "com validacao" do catalogo.
+- `Title`: `string` — O nome da etapa ("Dados da conta").
+
+## Tokens
+
+Use sempre `var(--rvm-...)`. Coluna escuro vazia = o valor nao muda no tema escuro. Os mesmos tokens em formato DTCG: https://design.rvmit.com.br/tokens.json
+
+| Variavel CSS | Claro | Escuro |
+|---|---|---|
+| `--rvm-color-primary-main` | `#264CC8` |  |
+| `--rvm-color-primary-alt-light` | `#4067E9` |  |
+| `--rvm-color-primary-alt-dark` | `#1B368F` |  |
+| `--rvm-color-primary-hover` | `#264CC8` |  |
+| `--rvm-color-secondary-main` | `#8A8D93` |  |
+| `--rvm-color-secondary-alt-light` | `#9C9FA4` |  |
+| `--rvm-color-secondary-alt-dark` | `#4D5056` |  |
+| `--rvm-color-secondary-hover` | `#777B82` |  |
+| `--rvm-color-info-main` | `#16B1FF` |  |
+| `--rvm-color-info-alt-light` | `#32BAFF` |  |
+| `--rvm-color-info-alt-dark` | `#0E71A3` |  |
+| `--rvm-color-info-hover` | `#139CE0` |  |
+| `--rvm-color-success-main` | `#56CA00` |  |
+| `--rvm-color-success-alt-light` | `#6AD01F` |  |
+| `--rvm-color-success-alt-dark` | `#378100` |  |
+| `--rvm-color-success-hover` | `#4CB200` |  |
+| `--rvm-color-warning-main` | `#FFB400` |  |
+| `--rvm-color-warning-alt-light` | `#FFB547` |  |
+| `--rvm-color-warning-alt-dark` | `#A37300` |  |
+| `--rvm-color-warning-hover` | `#E09E00` |  |
+| `--rvm-color-error-main` | `#FF4C51` |  |
+| `--rvm-color-error-alt-light` | `#FF6166` |  |
+| `--rvm-color-error-alt-dark` | `#A33134` |  |
+| `--rvm-color-error-hover` | `#E04347` |  |
+| `--rvm-color-primary-text` | `#264CC8` | `#A0B3F4` |
+| `--rvm-color-secondary-text` | `#4D5056` | `#B0B2B6` |
+| `--rvm-color-info-text` | `#0E71A3` | `#32BAFF` |
+| `--rvm-color-success-text` | `#327400` | `#6AD01F` |
+| `--rvm-color-warning-text` | `#8B6200` | `#FFB547` |
+| `--rvm-color-error-text` | `#A33134` | `#FF9094` |
+| `--rvm-color-primary-contrast` | `#FFFFFF` |  |
+| `--rvm-color-secondary-contrast` | `#212121` |  |
+| `--rvm-color-info-contrast` | `#212121` |  |
+| `--rvm-color-success-contrast` | `#212121` |  |
+| `--rvm-color-warning-contrast` | `#212121` |  |
+| `--rvm-color-error-contrast` | `#212121` |  |
+| `--rvm-color-primary-outlined-hover` | `#F5F7FE` | `#797992` |
+| `--rvm-color-primary-outlined-resting` | `#CBD6F9` | `#646D9F` |
+| `--rvm-color-secondary-outlined-hover` | `#F6F6F7` | `#383451` |
+| `--rvm-color-secondary-outlined-resting` | `#C5C6C9` | `#5E5D6F` |
+| `--rvm-color-info-outlined-hover` | `#EFFAFF` | `#313859` |
+| `--rvm-color-info-outlined-resting` | `#99DDFF` | `#3274A5` |
+| `--rvm-color-success-outlined-hover` | `#F2FBEB` | `#343945` |
+| `--rvm-color-success-outlined-resting` | `#ABE580` | `#447C26` |
+| `--rvm-color-warning-outlined-hover` | `#FFF9EB` | `#413745` |
+| `--rvm-color-warning-outlined-resting` | `#FFDA80` | `#987126` |
+| `--rvm-color-error-outlined-hover` | `#FFF1F1` | `#412F4B` |
+| `--rvm-color-error-outlined-resting` | `#FFA6A8` | `#983D4E` |
+| `--rvm-color-primary-soft` | `#E5EAF8` | `#30315B` |
+| `--rvm-color-secondary-soft` | `#F1F1F2` | `#3C3954` |
+| `--rvm-color-info-soft` | `#E4F2FE` | `#2F3A60` |
+| `--rvm-color-success-soft` | `#E9F5EA` | `#343D4C` |
+| `--rvm-color-warning-soft` | `#FDEDE0` | `#4A3E42` |
+| `--rvm-color-error-soft` | `#FEE8E7` | `#493049` |
+| `--rvm-color-menu-active` | `#2C78E1` | `var(--rvm-color-primary-main)` |
+| `--rvm-color-menu-active-gradient` | `linear-gradient(90deg, #31A1F9 0%, #274FCA 100%)` |  |
+| `--rvm-color-background-body` | `#F4F5FA` | `#28243D` |
+| `--rvm-color-background-paper` | `#FFFFFF` | `#312D4B` |
+| `--rvm-color-divider` | `#E7E6E8` | `#474360` |
+| `--rvm-color-outline` | `#D1D0D3` | `#5B5774` |
+| `--rvm-color-input-line` | `#D4D3D5` | `#595572` |
+| `--rvm-color-input-border` | `var(--rvm-color-secondary-main)` |  |
+| `--rvm-color-overlay` | `#9D9AA0` | `#2C2A43` |
+| `--rvm-color-snackbar-background` | `#212121` | `#212121` |
+| `--rvm-color-snackbar-text` | `#FFFFFF` | `#FFFFFF` |
+| `--rvm-color-switch-thumb` | `#FFFFFF` |  |
+| `--rvm-color-tooltip-background` | `#212121` |  |
+| `--rvm-color-tooltip-text` | `#FFFFFF` |  |
+| `--rvm-color-text-primary` | `#676C74` | `rgba(231, 227, 252, 0.87)` |
+| `--rvm-color-text-secondary` | `rgba(58, 53, 65, 0.72)` | `rgba(231, 227, 252, 0.68)` |
+| `--rvm-color-text-disabled` | `rgba(58, 53, 65, 0.26)` | `rgba(231, 227, 252, 0.26)` |
+| `--rvm-color-action-hover` | `#F7F7F8` | `#383452` |
+| `--rvm-color-action-selected` | `#F0EFF0` | `#3F3B59` |
+| `--rvm-color-action-disabled` | `#CCCBCE` | `#605C79` |
+| `--rvm-color-action-focus` | `#E7E6E8` | `#474360` |
+| `--rvm-font-family` | `'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif` |  |
+| `--rvm-font-weight-light` | `300` |  |
+| `--rvm-font-weight-regular` | `400` |  |
+| `--rvm-font-weight-medium` | `500` |  |
+| `--rvm-text-h1-size` | `6rem` |  |
+| `--rvm-text-h1-line` | `7rem` |  |
+| `--rvm-text-h1-weight` | `300` |  |
+| `--rvm-text-h2-size` | `3.75rem` |  |
+| `--rvm-text-h2-line` | `4.5rem` |  |
+| `--rvm-text-h2-weight` | `300` |  |
+| `--rvm-text-h3-size` | `3rem` |  |
+| `--rvm-text-h3-line` | `3.5rem` |  |
+| `--rvm-text-h3-weight` | `400` |  |
+| `--rvm-text-h4-size` | `2.125rem` |  |
+| `--rvm-text-h4-line` | `2.625rem` |  |
+| `--rvm-text-h4-weight` | `400` |  |
+| `--rvm-text-h5-size` | `1.5rem` |  |
+| `--rvm-text-h5-line` | `2rem` |  |
+| `--rvm-text-h5-weight` | `400` |  |
+| `--rvm-text-h6-size` | `1.25rem` |  |
+| `--rvm-text-h6-line` | `2rem` |  |
+| `--rvm-text-h6-weight` | `500` |  |
+| `--rvm-text-subtitle1-size` | `1rem` |  |
+| `--rvm-text-subtitle1-line` | `1.75rem` |  |
+| `--rvm-text-subtitle1-weight` | `400` |  |
+| `--rvm-text-subtitle2-size` | `0.875rem` |  |
+| `--rvm-text-subtitle2-line` | `1.375rem` |  |
+| `--rvm-text-subtitle2-weight` | `500` |  |
+| `--rvm-text-body1-size` | `0.875rem` |  |
+| `--rvm-text-body1-line` | `1.5rem` |  |
+| `--rvm-text-body1-weight` | `400` |  |
+| `--rvm-text-body2-size` | `0.875rem` |  |
+| `--rvm-text-body2-line` | `1.25rem` |  |
+| `--rvm-text-body2-weight` | `400` |  |
+| `--rvm-text-caption-size` | `0.75rem` |  |
+| `--rvm-text-caption-line` | `1.25rem` |  |
+| `--rvm-text-caption-weight` | `400` |  |
+| `--rvm-text-overline-size` | `0.75rem` |  |
+| `--rvm-text-overline-line` | `2rem` |  |
+| `--rvm-text-overline-weight` | `400` |  |
+| `--rvm-text-button-lg-size` | `0.9375rem` |  |
+| `--rvm-text-button-lg-line` | `1.625rem` |  |
+| `--rvm-text-button-lg-weight` | `500` |  |
+| `--rvm-text-button-md-size` | `0.875rem` |  |
+| `--rvm-text-button-md-line` | `1.5rem` |  |
+| `--rvm-text-button-md-weight` | `500` |  |
+| `--rvm-text-button-sm-size` | `0.8125rem` |  |
+| `--rvm-text-button-sm-line` | `1.375rem` |  |
+| `--rvm-text-button-sm-weight` | `500` |  |
+| `--rvm-text-input-label-size` | `0.75rem` |  |
+| `--rvm-text-input-label-line` | `0.75rem` |  |
+| `--rvm-text-input-label-weight` | `400` |  |
+| `--rvm-text-helper-size` | `0.75rem` |  |
+| `--rvm-text-helper-line` | `1.25rem` |  |
+| `--rvm-text-helper-weight` | `400` |  |
+| `--rvm-text-input-size` | `1rem` |  |
+| `--rvm-text-input-line` | `1.5rem` |  |
+| `--rvm-text-input-weight` | `400` |  |
+| `--rvm-text-avatar-size` | `1.25rem` |  |
+| `--rvm-text-avatar-line` | `1.25rem` |  |
+| `--rvm-text-avatar-weight` | `400` |  |
+| `--rvm-text-chip-size` | `0.8125rem` |  |
+| `--rvm-text-chip-line` | `1.125rem` |  |
+| `--rvm-text-chip-weight` | `400` |  |
+| `--rvm-text-tooltip-size` | `0.625rem` |  |
+| `--rvm-text-tooltip-line` | `0.875rem` |  |
+| `--rvm-text-tooltip-weight` | `500` |  |
+| `--rvm-text-alert-title-size` | `1rem` |  |
+| `--rvm-text-alert-title-line` | `1.5rem` |  |
+| `--rvm-text-alert-title-weight` | `500` |  |
+| `--rvm-text-table-header-size` | `0.875rem` |  |
+| `--rvm-text-table-header-line` | `1.5rem` |  |
+| `--rvm-text-table-header-weight` | `500` |  |
+| `--rvm-text-badge-size` | `0.75rem` |  |
+| `--rvm-text-badge-line` | `1.25rem` |  |
+| `--rvm-text-badge-weight` | `500` |  |
+| `--rvm-space-1` | `0.25rem` |  |
+| `--rvm-space-2` | `0.5rem` |  |
+| `--rvm-space-3` | `0.75rem` |  |
+| `--rvm-space-4` | `1rem` |  |
+| `--rvm-space-5` | `1.25rem` |  |
+| `--rvm-space-6` | `1.5rem` |  |
+| `--rvm-space-8` | `2rem` |  |
+| `--rvm-space-10` | `2.5rem` |  |
+| `--rvm-space-12` | `3rem` |  |
+| `--rvm-radius-sm` | `6px` |  |
+| `--rvm-radius-md` | `8px` |  |
+| `--rvm-radius-lg` | `10px` |  |
+| `--rvm-radius-pill` | `999px` |  |
+| `--rvm-radius-circle` | `50%` |  |
+| `--rvm-shadow-1` | `0 1px 2px rgba(52, 51, 73, 0.47)` | `0 1px 2px rgba(19, 17, 32, 0.6)` |
+| `--rvm-shadow-2` | `0 4px 4px rgba(52, 51, 73, 0.12)` | `0 4px 4px rgba(19, 17, 32, 0.3)` |
+| `--rvm-shadow-3` | `0 6px 11px rgba(52, 51, 73, 0.3)` | `0 6px 11px rgba(19, 17, 32, 0.45)` |
+| `--rvm-shadow-4` | `0 10px 19px rgba(52, 51, 73, 0.31)` | `0 10px 19px rgba(19, 17, 32, 0.47)` |
+| `--rvm-shadow-5` | `0 14px 32px rgba(52, 51, 73, 0.31)` | `0 14px 32px rgba(19, 17, 32, 0.47)` |
+| `--rvm-focus-ring-width` | `2px` |  |
+| `--rvm-focus-ring-offset` | `2px` |  |
+| `--rvm-focus-ring-color` | `var(--rvm-color-primary-text)` |  |
+| `--rvm-transition-fast` | `150ms ease` |  |
+| `--rvm-transition-medium` | `250ms ease` |  |

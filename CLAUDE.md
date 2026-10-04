@@ -86,6 +86,15 @@ ecossistema, e sem sentido numa biblioteca de UI).
 - Todo interativo: alcançável por teclado, foco visível, todos os estados (normal, hover, foco,
   ativo, desabilitado, erro, carregando).
 
+## Arquivos para agentes de IA (`DSGN-016`)
+
+`llms.txt`, `llms-full.txt` e `tokens.json` (DTCG) moram em `src/RVM.DesignSystem.Docs/wwwroot/`,
+saem no site e na raiz do pacote. **São gerados, nunca editados à mão**: o `ArquivosDeIaTests` lê o
+CSS dos tokens, o XML doc e o `Catalogo.cs` do site, e **reprova** quando o arquivo commitado diverge.
+Mexeu em token, parâmetro, XML doc ou catálogo? Regere e commite junto:
+`RVM_ATUALIZAR_IA=1 dotnet test test/RVM.DesignSystem.Tests -c Release --filter FullyQualifiedName~ArquivosDeIaTests`.
+O CSS continua sendo a fonte da verdade dos tokens.
+
 ## Qualidade — portões
 
 1. Cobertura **≥ 80%**
