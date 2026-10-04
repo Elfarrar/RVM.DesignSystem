@@ -21,7 +21,8 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 > gráficos, publicada na **`1.2.0`** em 17/09). Em 18/09, `DSGN-012` (documentação dos gráficos) e
 > `DSGN-013` (eixo duplo em barras, zoom por caixa, exportar `.xlsx` e imprimir) saíram na **`1.3.0`**,
 > a `DSGN-014` (tokens do kit medidos por amostragem de pixel) na **`1.4.0`** e a `DSGN-015` (animação
-> de entrada por tipo de gráfico) na **`1.5.0`**. Alphas de `dev` são `1.6.0-alpha.N`.
+> de entrada por tipo de gráfico) na **`1.5.0`**. Em 04/10, a `DSGN-016` (tokens DTCG e `llms.txt` para
+> agentes de IA, no site e no pacote) saiu na **`1.6.0`**. Alphas de `dev` são `1.7.0-alpha.N`.
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 
