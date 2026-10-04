@@ -36,6 +36,16 @@ começam na `DSGN-002`, depois da camada de tokens.
 | `CLAUDE.md` | Contrato de desenvolvimento |
 | `referencia-neatlab/` | 141 telas do kit em PNG, claro e escuro (99 MB) |
 
+## Para agentes de IA
+
+Três arquivos gerados da própria biblioteca, no site e na raiz do pacote NuGet:
+
+| Arquivo | Conteúdo |
+|---|---|
+| [`llms.txt`](https://design.rvmit.com.br/llms.txt) | Índice no formato llmstxt.org: cada componente com o link da página |
+| [`llms-full.txt`](https://design.rvmit.com.br/llms-full.txt) | Regras de uso, parâmetros de todos os componentes, enums e tokens |
+| [`tokens.json`](https://design.rvmit.com.br/tokens.json) | Os tokens no formato DTCG (W3C Design Tokens), claro e escuro |
+
 ## Stack
 
 .NET 10 · Blazor (Server e WebAssembly) · Razor Class Library · bUnit · Playwright + axe ·

@@ -10,6 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
+| [[DSGN-016]] | Tokens e API legiveis por IA (tokens.json DTCG + llms.txt), no site e no pacote | em andamento |
 
 ## Concluido
 
