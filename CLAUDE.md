@@ -20,8 +20,8 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 > gráficos, publicados na `1.1.0`) e `DSGN-011` (exportar, eixo duplo, zoom, arrastar e seleção nos
 > gráficos, publicada na **`1.2.0`** em 17/09). Em 18/09, `DSGN-012` (documentação dos gráficos) e
 > `DSGN-013` (eixo duplo em barras, zoom por caixa, exportar `.xlsx` e imprimir) saíram na **`1.3.0`**,
-> e a `DSGN-014` (tokens do kit medidos por amostragem de pixel) na **`1.4.0`**. Alphas de `dev` são
-> `1.5.0-alpha.N`.
+> a `DSGN-014` (tokens do kit medidos por amostragem de pixel) na **`1.4.0`** e a `DSGN-015` (animação
+> de entrada por tipo de gráfico) na **`1.5.0`**. Alphas de `dev` são `1.6.0-alpha.N`.
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 
@@ -85,6 +85,15 @@ ecossistema, e sem sentido numa biblioteca de UI).
   que contornar por fora.
 - Todo interativo: alcançável por teclado, foco visível, todos os estados (normal, hover, foco,
   ativo, desabilitado, erro, carregando).
+
+## Arquivos para agentes de IA (`DSGN-016`)
+
+`llms.txt`, `llms-full.txt` e `tokens.json` (DTCG) moram em `src/RVM.DesignSystem.Docs/wwwroot/`,
+saem no site e na raiz do pacote. **São gerados, nunca editados à mão**: o `ArquivosDeIaTests` lê o
+CSS dos tokens, o XML doc e o `Catalogo.cs` do site, e **reprova** quando o arquivo commitado diverge.
+Mexeu em token, parâmetro, XML doc ou catálogo? Regere e commite junto:
+`RVM_ATUALIZAR_IA=1 dotnet test test/RVM.DesignSystem.Tests -c Release --filter FullyQualifiedName~ArquivosDeIaTests`.
+O CSS continua sendo a fonte da verdade dos tokens.
 
 ## Qualidade — portões
 
