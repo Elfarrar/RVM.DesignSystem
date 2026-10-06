@@ -10,6 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
+| [[DSGN-017]] | Paridade de API com o RVM.UI (etapa 3): 101 componentes do UI no DS no visual NEATLAB, contrato no CI, 2.0.0 | a fazer (depois da RUI-066) |
 | [[DSGN-016]] | Tokens e API legiveis por IA (tokens.json DTCG + llms.txt), no site e no pacote | em andamento |
 
 ## Concluido
