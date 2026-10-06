@@ -10,12 +10,12 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-016]] | Tokens e API legiveis por IA (tokens.json DTCG + llms.txt), no site e no pacote | em andamento |
 
 ## Concluido
 
 | Card | O que |
 |---|---|
+| [[DSGN-016]] | Arquivos para agentes de IA (04/10): `tokens.json` em DTCG, `llms.txt` e `llms-full.txt` gerados da biblioteca, com teste de sincronia; no site e na raiz do pacote. `1.6.0` publicada e em producao |
 | [[DSGN-015]] | Animacao de entrada por tipo de grafico (18/09): colunas e histograma descem do topo, barras abrem da esquerda, pontos saem de (0,0), rosca varre como relogio, dispersao sai de (0,0) e o radar cresce do centro; 1 s para todos. `1.5.0` publicada e em producao |
 | [[DSGN-014]] | Tokens medidos por amostragem (18/09): as 24 elevacoes, os alphas de texto do tema escuro e a origem do roxo dos fundos suaves; icones em vetor encerrado; fundo suave harmonizado com o primary. As quatro pendencias de token fecharam. `1.4.0` publicada e em producao |
 | [[DSGN-013]] | Graficos (18/09): eixo duplo em barras (segundo eixo no topo), zoom por caixa desenhada, exportar `.xlsx` e imprimir; icones Printer e Table. `1.3.0` publicada e em producao |
