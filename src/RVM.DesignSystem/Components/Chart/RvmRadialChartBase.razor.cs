@@ -40,7 +40,10 @@ public abstract partial class RvmRadialChartBase
     [Parameter] public double? Total { get; set; }
 
     /// <summary>As fatias recebidas, nunca nulas.</summary>
-    internal IReadOnlyList<RvmChartSlice> Fatias => Slices ?? [];
+    // Valor NaN ou infinito (um 0/0 do app) vira zero aqui, na origem: Math.Max(0, NaN) e NaN, e um NaN chegava aos
+    // angulos e ao laco do tracejado da rosca, que nunca terminava (achado do review das ondas 4 e 5).
+    internal IReadOnlyList<RvmChartSlice> Fatias
+        => Slices is null ? [] : Slices.Select(f => double.IsFinite(f.Value) ? f : f with { Value = 0 }).ToList();
 
     /// <summary>A soma dos valores positivos.</summary>
     internal double Soma => Fatias.Sum(f => Math.Max(0, f.Value));

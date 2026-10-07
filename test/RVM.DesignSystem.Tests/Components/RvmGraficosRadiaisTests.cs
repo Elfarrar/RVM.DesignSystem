@@ -245,4 +245,16 @@ public class RvmGraficosRadiaisTests : BunitContext
         Assert.Equal(["1 1", "0.25 1"], cortado.FindAll("circle.rvm-radial-fatia").Select(c => c.GetAttribute("stroke-dasharray")));
         Assert.Equal(2, cortado.FindAll("table tbody tr").Count);
     }
+
+    [Theory]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    public void Valor_nao_finito_vale_zero_e_a_rosca_tracejada_termina(double valor)
+    {
+        var cortado = Rosca(p => p.Add(x => x.Dashed, true),
+            [new("Soja", 40), new("Milho", valor)]);
+
+        Assert.DoesNotContain("NaN", cortado.Markup);
+        Assert.DoesNotContain("Infinity", cortado.Markup);
+    }
 }

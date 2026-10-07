@@ -319,9 +319,10 @@ public class RvmPieChartPaletaTotalTests : BunitContext
     }
 
     [Fact]
-    public void Total_menor_que_a_soma_e_erro()
+    public void Total_menor_que_a_soma_vale_a_soma_sem_derrubar_o_render()
     {
-        var erro = Assert.Throws<ArgumentOutOfRangeException>(() => Pizza(p => p.Add(x => x.Total, 500)));
-        Assert.Equal("Total", erro.ParamName);
+        var pizza = Pizza(p => p.Add(x => x.Total, 500));
+
+        Assert.Empty(pizza.FindAll("path.rvm-grafico-trilha"));
     }
 }

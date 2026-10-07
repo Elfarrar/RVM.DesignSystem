@@ -17,7 +17,7 @@
         @foreach (var item in Linhas)
         {
             var linha = item;
-            <RvmRow @key="linha" Selectable="Selectable" Selected="@(Selectable && IsSelected is { } escolhida && escolhida(linha))">
+            <RvmRow Selectable="Selectable" Selected="@(Selectable && IsSelected is { } escolhida && escolhida(linha))">
                 <CascadingValue Value="ContextoDaLinha(linha)">@Columns</CascadingValue>
             </RvmRow>
         }

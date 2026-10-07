@@ -45,7 +45,9 @@
 
     private double Soma => Memo("Soma", () => Dados.Sum(item => Math.Max(0, ValorDe(item))));
 
-    private double TotalEfetivo => Total ?? Soma;
+    // Total menor que a soma vale como a soma, como nos graficos radiais: lancar no render derrubava o circuito por
+    // um dado que vem do app (achado do review das ondas 4 e 5).
+    private double TotalEfetivo => Total is { } total && total > Soma ? total : Soma;
 
     /// <summary>Sobra volta para a trilha: sem ela, 75% pareceria 100%.</summary>
     private bool ComTrilha => TotalEfetivo > Soma + 1e-9;
@@ -67,13 +69,6 @@
 
     private List<Fatia> Fatias => Memo("Fatias", () =>
         {
-            // Total menor que a soma faria as fatias darem mais de uma volta, uma por cima da outra.
-            if (Total is { } informado && informado < Soma - 1e-9)
-            {
-                throw new ArgumentOutOfRangeException(nameof(Total), informado,
-                    $"O Total ({informado}) nao pode ser menor que a soma das fatias ({Soma}): elas dariam mais de uma volta.");
-            }
-
             var total = TotalEfetivo;
             var lista = new List<Fatia>();
             if (total <= 0)

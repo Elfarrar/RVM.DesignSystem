@@ -19,6 +19,7 @@ public partial class RvmFilter : ComponentBase
     private bool _aberto;
     private bool _ultimoDoPai;
     private bool _focarPainel;
+    private bool _jaRecebeu;
 
     /// <summary>Texto do botao. Padrao: "Filtros".</summary>
     [Parameter] public string Label { get; set; } = "Filtros";
@@ -96,6 +97,8 @@ public partial class RvmFilter : ComponentBase
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
+        var primeiraVez = !_jaRecebeu;
+        _jaRecebeu = true;
         if (Open == _ultimoDoPai)
         {
             return;
@@ -103,7 +106,8 @@ public partial class RvmFilter : ComponentBase
 
         _ultimoDoPai = Open;
         _aberto = Open;
-        _focarPainel = Open;
+        // Aberto ja no primeiro render nao rouba o foco da pagina: so a abertura pedida depois leva o foco ao painel.
+        _focarPainel = Open && !primeiraVez;
     }
 
     private async Task AlternarAsync()

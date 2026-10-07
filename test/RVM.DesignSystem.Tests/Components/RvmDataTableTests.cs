@@ -320,4 +320,13 @@ public class RvmDataTableTests : BunitContext
         Assert.Equal("cultura", th.GetAttribute("data-coluna"));
         Assert.Contains("rvm-inicio", th.ClassList);
     }
+
+    [Fact]
+    public void Itens_iguais_nao_derrubam_a_tabela()
+    {
+        // Record com igualdade por valor: duas linhas iguais davam "More than one sibling has the same key" com @key.
+        var cortado = Tabela(itens: [Lavouras[0], Lavouras[0] with { }]);
+
+        Assert.Equal(2, cortado.FindAll("tbody tr").Count);
+    }
 }
