@@ -1,0 +1,64 @@
+@page "/componentes/color-picker"
+@using RVM.DesignSystem.Components.ColorPicker
+
+<PageTitle>RvmColorPicker — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmColorPicker</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Escolha de uma cor numa lista de itens do app. Cada bolinha e um radio nativo dentro de um fieldset: as setas trocam
+    a cor, o formulario posta o valor (inclusive em SSR estatico) e o leitor de tela le o nome que vem do
+    <code>ItemText</code>. A cor de cada item vem do <code>ItemColor</code>; a escolhida ganha um anel e um check.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. <code>Placeholder</code> e
+    <code>Shape</code> sao aceitos pelo contrato de campo, mas nao tem efeito aqui: a paleta nao tem caixa nem texto de
+    exemplo.
+</p>
+
+<BlocoExemplo Titulo="Cor da etiqueta"
+              Descricao="Os itens podem ser de qualquer tipo; aqui, um enum com a cor e o nome de cada um."
+              Codigo="@Codigo">
+    <div class="pilha-exemplos">
+        <RvmColorPicker TValue="Etiqueta" Label="Cor da etiqueta" Items="Etiquetas" @bind-Value="_etiqueta"
+                        ItemColor="CorDa" ItemText="NomeDa" HelperText="@($"Escolhida: {NomeDa(_etiqueta)}")" />
+        <RvmColorPicker TValue="Etiqueta" Label="Indisponivel" Items="Etiquetas" @bind-Value="_desabilitada"
+                        ItemColor="CorDa" ItemText="NomeDa" Disabled="true" />
+        <RvmColorPicker TValue="Etiqueta" Label="Com erro" Items="Etiquetas" @bind-Value="_comErro"
+                        ItemColor="CorDa" ItemText="NomeDa" ErrorText="Escolha a cor para o quadro mostrar a etiqueta." />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmColorPicker" />
+
+@code {
+    private enum Etiqueta { Urgente, Normal, Revisar, Concluida }
+
+    private static readonly Etiqueta[] Etiquetas = Enum.GetValues<Etiqueta>();
+
+    private Etiqueta _etiqueta = Etiqueta.Normal;
+    private Etiqueta _desabilitada = Etiqueta.Revisar;
+    private Etiqueta _comErro = Etiqueta.Urgente;
+
+    private static string CorDa(Etiqueta e) => e switch
+    {
+        Etiqueta.Urgente => "#FF4C51",
+        Etiqueta.Normal => "#264CC8",
+        Etiqueta.Revisar => "#FFB400",
+        _ => "#56CA00",
+    };
+
+    private static string NomeDa(Etiqueta e) => e switch
+    {
+        Etiqueta.Urgente => "Urgente (vermelho)",
+        Etiqueta.Normal => "Normal (azul)",
+        Etiqueta.Revisar => "Revisar (amarelo)",
+        _ => "Concluida (verde)",
+    };
+
+    private const string Codigo = """
+        <RvmColorPicker TValue="Etiqueta" Label="Cor da etiqueta" Items="Etiquetas" @bind-Value="etiqueta"
+                        ItemColor="e => cores[e]" ItemText="e => nomes[e]" />
+        """;
+}
