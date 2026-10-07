@@ -1,0 +1,53 @@
+@namespace RVM.DesignSystem.Components.Chart
+
+@* Legenda solta, para quando o grafico esconde a propria (ShowLegend=false) e a legenda vai para outro lugar
+   (ao lado da rosca, num cartao). O mesmo desenho da legenda embutida dos graficos: marca redonda de 10 px, o
+   nome e o valor em destaque. A cor de cada posicao sai do RampaDoGrafico, o mesmo que pinta o grafico. *@
+<ul @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    @for (var i = 0; i < Itens.Count; i++)
+    {
+        var item = Itens[i];
+        <li class="@RampaDoGrafico.DaLegenda(Ramp, Palette, i, Itens.Count)">
+            @* aria-hidden: a cor nao e informacao para quem nao a ve, e o nome ao lado ja identifica a serie. *@
+            <span class="rvm-legenda-do-grafico-marca" aria-hidden="true"></span>
+            <span>@item.Name</span>
+            @if (!string.IsNullOrEmpty(item.Value))
+            {
+                <strong>@item.Value</strong>
+            }
+        </li>
+    }
+</ul>
+
+@code {
+    /// <summary>As entradas, na mesma ordem em que o grafico desenha as series ou as fatias.</summary>
+    [Parameter, EditorRequired] public IReadOnlyList<RvmChartLegendEntry> Items { get; set; } = [];
+
+    /// <summary>
+    /// A paleta do grafico ao lado. <b>Tem de ser a mesma do grafico</b>, senao a legenda aponta para a cor errada.
+    /// Padrao: <see cref="RvmChartPalette.FullColor"/>, o mesmo padrao da pizza do DS (no RVM.UI o padrao e o
+    /// monocromatico). So conta com <see cref="RvmLegendRamp.Radial"/> e <see cref="RvmLegendRamp.Meter"/>.
+    /// </summary>
+    [Parameter] public RvmChartPalette Palette { get; set; } = RvmChartPalette.FullColor;
+
+    /// <summary>
+    /// Qual grafico esta ao lado: cada um da as cores por posicao do seu jeito. Padrao:
+    /// <see cref="RvmLegendRamp.Radial"/> (pizza e rosca).
+    /// </summary>
+    [Parameter] public RvmLegendRamp Ramp { get; set; } = RvmLegendRamp.Radial;
+
+    /// <summary>Uma entrada por linha, em vez de lado a lado.</summary>
+    [Parameter] public bool Stacked { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private IReadOnlyList<RvmChartLegendEntry> Itens => Items ?? [];
+
+    private string ClassesDaRaiz => ClassesCss.Juntar(
+        Stacked ? "rvm-legenda-do-grafico rvm-legenda-do-grafico-empilhada" : "rvm-legenda-do-grafico", Class, AdditionalAttributes);
+}

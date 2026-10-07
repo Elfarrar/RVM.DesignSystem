@@ -1,0 +1,50 @@
+/* O mesmo desenho da legenda embutida dos graficos (RvmChartBase.razor.css): marca redonda de 10 px, texto
+   de legenda no secundario e o valor em destaque. As cores repetem as de la porque o CSS isolado nao deixa
+   uma regra valer nos dois componentes: mudou uma, mude a outra. */
+
+.rvm-legenda-do-grafico {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-1) var(--rvm-space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-caption-size);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-legenda-do-grafico-empilhada {
+    flex-direction: column;
+}
+
+.rvm-legenda-do-grafico li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-legenda-do-grafico strong {
+    color: var(--rvm-color-text-primary);
+    font-weight: 600;
+}
+
+.rvm-legenda-do-grafico-marca {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--rvm-grafico-cor);
+}
+
+.rvm-legenda-do-grafico .rvm-cor-primary { --rvm-grafico-cor: var(--rvm-color-primary-text); }
+.rvm-legenda-do-grafico .rvm-cor-secondary { --rvm-grafico-cor: var(--rvm-color-secondary-text); }
+.rvm-legenda-do-grafico .rvm-cor-info { --rvm-grafico-cor: var(--rvm-color-info-text); }
+.rvm-legenda-do-grafico .rvm-cor-success { --rvm-grafico-cor: var(--rvm-color-success-text); }
+.rvm-legenda-do-grafico .rvm-cor-warning { --rvm-grafico-cor: var(--rvm-color-warning-text); }
+.rvm-legenda-do-grafico .rvm-cor-error { --rvm-grafico-cor: var(--rvm-color-error-text); }
+.rvm-legenda-do-grafico .rvm-cor-inverse { --rvm-grafico-cor: var(--rvm-color-inverse-text); }
+.rvm-legenda-do-grafico .rvm-cor-primary-400 { --rvm-grafico-cor: color-mix(in srgb, var(--rvm-color-primary-text) 80%, var(--rvm-color-background-paper)); }
+.rvm-legenda-do-grafico .rvm-cor-primary-300 { --rvm-grafico-cor: color-mix(in srgb, var(--rvm-color-primary-text) 60%, var(--rvm-color-background-paper)); }
+.rvm-legenda-do-grafico .rvm-cor-primary-200 { --rvm-grafico-cor: color-mix(in srgb, var(--rvm-color-primary-text) 42%, var(--rvm-color-background-paper)); }
+.rvm-legenda-do-grafico .rvm-cor-primary-100 { --rvm-grafico-cor: color-mix(in srgb, var(--rvm-color-primary-text) 26%, var(--rvm-color-background-paper)); }

@@ -423,7 +423,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// esquerda. Se TODAS pedirem o secundario, o grafico segue com um eixo so — dois eixos iguais
     /// ocupariam as duas bordas para dizer a mesma coisa.
     /// </summary>
-    internal bool TemEixoSecundario
+    internal virtual bool TemEixoSecundario
         => _series.Any(s => s.Axis == RvmChartAxis.Secondary) && _series.Any(s => s.Axis == RvmChartAxis.Primary);
 
     /// <summary>As series lidas naquele eixo (todas, quando o grafico tem um eixo so).</summary>
@@ -532,9 +532,17 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>Conteudo sobre o centro do desenho (o total da rosca).</summary>
     internal virtual RenderFragment? Centro => null;
 
-    internal sealed record LinhaDaDica(string Nome, string Valor, RvmColor Cor);
+    /// <summary>Uma linha da dica. <c>Classe</c> substitui a classe da <c>Cor</c> quando a cor nao e um papel (os degraus do monocromatico).</summary>
+    internal sealed record LinhaDaDica(string Nome, string Valor, RvmColor Cor, string? Classe = null)
+    {
+        internal string ClasseCss => Classe ?? ClasseDaCor(Cor);
+    }
 
-    internal sealed record ItemDaLegenda(string Nome, RvmColor Cor, string? Detalhe);
+    /// <summary>Um item da legenda embutida. <c>Classe</c> como na <see cref="LinhaDaDica"/>.</summary>
+    internal sealed record ItemDaLegenda(string Nome, RvmColor Cor, string? Detalhe, string? Classe = null)
+    {
+        internal string ClasseCss => Classe ?? ClasseDaCor(Cor);
+    }
 
     internal sealed record TabelaDeDados(IReadOnlyList<string> Cabecalho, IReadOnlyList<IReadOnlyList<string>> Linhas);
 

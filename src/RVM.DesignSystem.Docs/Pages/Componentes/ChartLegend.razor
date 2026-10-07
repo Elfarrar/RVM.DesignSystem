@@ -1,0 +1,76 @@
+@page "/componentes/chart-legend"
+@using RVM.DesignSystem.Components.Chart
+
+<PageTitle>RvmChartLegend — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmChartLegend</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A legenda de um grafico, solta: para quando ela vai para outro lugar que nao embaixo do desenho, como ao lado
+    da rosca num cartao. O grafico esconde a propria (ShowLegend="false") e a legenda recebe as entradas na mesma
+    ordem em que ele desenha, com o valor ja formatado.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    A cor de cada posicao sai da mesma regra que pinta o grafico. Por isso a legenda precisa saber qual grafico
+    esta ao lado (Ramp) e com qual paleta (Palette): Radial para pizza e rosca, Bar e Line para os cartesianos,
+    Diverging para as barras divergentes. Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do
+    NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Ao lado da rosca"
+              Descricao="Uma entrada por linha (Stacked), na paleta monocromatica da rosca."
+              Codigo="@CodigoRosca">
+    <div class="legenda-ao-lado">
+        <RvmPieChart Items="Culturas" Label="c => c.Nome" Value="c => c.Hectares" AriaLabel="Area plantada por cultura"
+                     Donut="true" Height="220" ShowLegend="false" Palette="RvmChartPalette.Monochromatic"
+                     ValueFormat="@(v => $"{RvmChartFormat.Number(v)} ha")" />
+        <RvmChartLegend Items="EntradasDasCulturas" Palette="RvmChartPalette.Monochromatic" Stacked="true" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Para barras"
+              Descricao="Com Ramp=Bar a legenda usa as cores de serie, na ordem, como o grafico de barras."
+              Codigo="@CodigoBarras">
+    <div class="pilha-exemplos">
+        <RvmChartLegend Items="Insumos" Ramp="RvmLegendRamp.Bar" />
+        <RvmBarChart Items="Custos" Label="c => c.Cultura" AriaLabel="Custo por hectare de cada cultura" Stacked="true"
+                     Height="200" ShowLegend="false" ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)}")" Class="legenda-largura-toda">
+            <RvmChartSeries Name="Sementes" Value="c => c.Sementes" />
+            <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" />
+            <RvmChartSeries Name="Defensivos" Value="c => c.Defensivos" />
+        </RvmBarChart>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmChartLegend" />
+
+@code {
+    private static readonly (string Nome, double Hectares)[] Culturas =
+        [("Soja", 620), ("Milho", 340), ("Algodao", 180), ("Feijao", 100)];
+
+    private static readonly RvmChartLegendEntry[] EntradasDasCulturas =
+        [.. Culturas.Select(c => new RvmChartLegendEntry(c.Nome, $"{RvmChartFormat.Number(c.Hectares)} ha"))];
+
+    private static readonly (string Cultura, double Sementes, double Fertilizantes, double Defensivos)[] Custos =
+        [("Soja", 620, 980, 740), ("Milho safrinha", 890, 1240, 520), ("Algodao", 710, 1650, 1980)];
+
+    private static readonly RvmChartLegendEntry[] Insumos =
+        [new("Sementes"), new("Fertilizantes"), new("Defensivos")];
+
+    private const string CodigoRosca = """
+        <RvmPieChart Items="culturas" Label="c => c.Nome" Value="c => c.Hectares" AriaLabel="Area plantada por cultura"
+                     Donut="true" ShowLegend="false" Palette="RvmChartPalette.Monochromatic" />
+        <RvmChartLegend Items="@(culturas.Select(c => new RvmChartLegendEntry(c.Nome, $"{c.Hectares} ha")).ToList())"
+                        Palette="RvmChartPalette.Monochromatic" Stacked="true" />
+        """;
+
+    private const string CodigoBarras = """
+        <RvmChartLegend Items="@([new("Sementes"), new("Fertilizantes"), new("Defensivos")])" Ramp="RvmLegendRamp.Bar" />
+        <RvmBarChart Items="custos" Label="c => c.Cultura" AriaLabel="Custo por hectare" Stacked="true" ShowLegend="false">
+            <RvmChartSeries Name="Sementes" Value="c => c.Sementes" />
+            <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" />
+            <RvmChartSeries Name="Defensivos" Value="c => c.Defensivos" />
+        </RvmBarChart>
+        """;
+}
