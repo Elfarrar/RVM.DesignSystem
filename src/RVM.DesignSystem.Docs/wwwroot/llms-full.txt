@@ -302,10 +302,11 @@ Barras horizontais para nomes longos.
 | `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Layout` | `RvmBarLayout` | `RvmBarLayout.Horizontal` | Como as barras se arrumam. Padrao: `RvmBarLayout.Horizontal`, as barras deitadas de sempre (no RVM.UI o padrao e o vertical). `RvmBarLayout.Vertical` desenha colunas, como o `RvmColumnChart`, e so nele valem o zoom e a selecao de faixa. `RvmBarLayout.Diverging` poe o zero no meio, com o eixo simetrico: com duas series, a primeira vai para a direita e a segunda para a esquerda, nas cores primary e erro (sem `Color` na serie), e o eixo mostra o tamanho dos dois lados; com outra quantidade, o negativo vai para a esquerda. No divergente o eixo secundario e o `RvmBarChart.Stacked` nao tem efeito. |
 | `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
 | `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
 | `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
-| `MaxBarThickness` | `int` | `24` | Espessura maxima de cada barra, em px. Padrao: 24. |
+| `MaxBarThickness` | `int` | `24` | Espessura maxima de cada barra, em px (a largura da coluna no vertical). Padrao: 24. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
@@ -315,7 +316,7 @@ Barras horizontais para nomes longos.
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
 | `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
 | `Size` | `RvmChartSize` | `RvmChartSize.Large` | Largura maxima do grafico: Small (504 px), Medium (696 px) ou Large (toda a largura, o padrao). |
-| `Stacked` | `bool` | `false` | Barras empilhadas em vez de lado a lado. |
+| `Stacked` | `bool` | `false` | Barras empilhadas em vez de lado a lado. No divergente nao tem efeito. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
@@ -332,6 +333,35 @@ Trilha de navegacao: onde a pessoa esta dentro da hierarquia, com atalho para ca
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Items` | `IReadOnlyList<RvmBreadcrumbItem>` | obrigatorio | Os passos, do mais alto ao atual. |
 | `Separator` | `RvmBreadcrumbSeparator` | `RvmBreadcrumbSeparator.Slash` | Barra ou seta entre os passos. Padrao: `RvmBreadcrumbSeparator.Slash`. |
+
+### RvmBubbleChart
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/bubble-chart
+
+Bolhas com a area proporcional ao valor.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema, sem depender deste parametro. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
+| `FormatValue` | `Func<double, string>?` | — | Como escrever o valor na tabela, na dica e no centro ("R$ 26.500", "1.240 ha"). Sem isto sai o numero na cultura corrente. O percentual vai junto, sempre. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
+| `Label` | `string` | obrigatorio | O que o grafico mostra, para quem usa leitor de tela ("Area plantada por cultura"). Obrigatorio: grafico sem nome e um desenho mudo. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
+| `Palette` | `RvmChartPalette` | `RvmChartPalette.Monochromatic` | De onde saem as cores: degraus do primary (`RvmChartPalette.Monochromatic`, o padrao) ou os papeis do tema. Fatia com `RvmChartSlice.Color` valida usa a propria cor. |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco numa fatia, com o nome, o valor e o percentual. Sem JS: aparece por `:hover` e `:focus-visible`. Custa uma parada de Tab por fatia; desligue num grafico decorativo, dentro de um cartao que ja diz o numero. A tabela de dados para leitor de tela continua. |
+| `Slices` | `IReadOnlyList<RvmChartSlice>` | obrigatorio | As fatias, na ordem em que o desenho as percorre. |
+| `Total` | `double?` | — | O total que vale 100%. Sem ele, o total e a soma das fatias ("como o bolo se divide"); com ele, o grafico responde "quanto de quanto" e o que falta aparece na trilha. Um total menor que a soma vale como a soma: as fatias nao dao mais de uma volta. |
 
 ### RvmButton
 
@@ -487,20 +517,6 @@ Superficie que agrupa um assunto: midia no topo, cabecalho, conteudo e acoes —
 | `Supporting` | `string?` | — | Segunda linha, geralmente o tamanho ("400 KB"). |
 | `Type` | `RvmFileIconName` | `RvmFileIconName.Ai` | Tipo do arquivo, que escolhe o icone. |
 
-### RvmCellFrame
-
-`@using RVM.DesignSystem.Components.Table`
-
-O `<td>` comum das celulas da tabela: alinhamento, espacamento e a fileira do conteudo. E a peca que as `RvmCell*` usam por baixo; para montar uma celula, prefira uma delas.
-
-| Parametro | Tipo | Padrao | Descricao |
-|---|---|---|---|
-| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
-| `Align` | `RvmAlign?` | — | Alinhamento do conteudo. Nulo na coluna de escolha, que tem so a largura da caixa. |
-| `ChildContent` | `RenderFragment?` | — | O conteudo da celula. |
-| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
-| `FrameClass` | `string?` | — | Classe da celula que usa a moldura (`rvm-celula-numero`, `rvm-celula-escolha`...). |
-
 ### RvmCellLabelBadge
 
 `@using RVM.DesignSystem.Components.Table`
@@ -513,19 +529,6 @@ O `<td>` comum das celulas da tabela: alinhamento, espacamento e a fileira do co
 | `Class` | `string?` | — | Classe CSS extra no `<td>`. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Accent`. |
 | `Text` | `string?` | — | O texto da etiqueta. |
-
-### RvmCellLines
-
-`@using RVM.DesignSystem.Components.Table`
-
-Titulo e segunda linha de uma celula da tabela — a peca de texto que as `RvmCell*` usam por baixo.
-
-| Parametro | Tipo | Padrao | Descricao |
-|---|---|---|---|
-| `ChildContent` | `RenderFragment?` | — | Conteudo livre no lugar do titulo. |
-| `Highlight` | `bool` | `false` | Destaque: o titulo mais pesado. |
-| `Supporting` | `string?` | — | A segunda linha, menor e mais clara. |
-| `Text` | `string?` | — | O titulo. |
 
 ### RvmCellNumber
 
@@ -648,6 +651,21 @@ Titulo e segunda linha de uma celula da tabela — a peca de texto que as `RvmCe
 | `Items` | `IReadOnlyList<RvmAvatarItem>` | obrigatorio | Pessoas do grupo. |
 | `Label` | `string?` | — | Nome do grupo para o leitor de tela ("Equipe do talhao 3"). Sem ele, o do RvmAvatarGroup. |
 | `Max` | `int` | `4` | Quantos avatares aparecem antes do "+N". Padrao: 4. |
+
+### RvmChartLegend
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/chart-legend
+
+Legenda solta, com as cores dos graficos.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Items` | `IReadOnlyList<RvmChartLegendEntry>` | obrigatorio | As entradas, na mesma ordem em que o grafico desenha as series ou as fatias. |
+| `Palette` | `RvmChartPalette` | `RvmChartPalette.FullColor` | A paleta do grafico ao lado. Tem de ser a mesma do grafico , senao a legenda aponta para a cor errada. Padrao: `RvmChartPalette.FullColor`, o mesmo padrao da pizza do DS (no RVM.UI o padrao e o monocromatico). So conta com `RvmLegendRamp.Radial` e `RvmLegendRamp.Meter`. |
+| `Ramp` | `RvmLegendRamp` | `RvmLegendRamp.Radial` | Qual grafico esta ao lado: cada um da as cores por posicao do seu jeito. Padrao: `RvmLegendRamp.Radial` (pizza e rosca). |
+| `Stacked` | `bool` | `false` | Uma entrada por linha, em vez de lado a lado. |
 
 ### RvmChartSeries<TItem>
 
@@ -1075,6 +1093,40 @@ Linha que separa blocos de conteudo. Com `RvmDivider.ChildContent`, a linha abre
 | `ChildContent` | `RenderFragment?` | — | Rotulo no meio da linha. Sem ele, sai um `<hr>` simples. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Deitado (padrao) ou em pe. O rotulo so vale no deitado. |
+
+### RvmDonutChart
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/donut-chart
+
+Rosca inteira ou meia, fina ou grossa, com o valor no centro.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema, sem depender deste parametro. |
+| `CenterDetail` | `RenderFragment?` | — | O que vem abaixo do numero grande: um texto curto ("hectares", "da meta"). |
+| `CenterValue` | `string?` | — | O numero grande no meio do anel ("75%", "1.240 ha"). O componente nao o calcula: quem chama decide o que o meio responde, que nem sempre e a soma das fatias. Visual: a tabela de dados ja diz tudo ao leitor de tela. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Dashed` | `bool` | `false` | Parte o anel em tracos, como o medidor "Total Profit" do kit. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
+| `FormatValue` | `Func<double, string>?` | — | Como escrever o valor na tabela, na dica e no centro ("R$ 26.500", "1.240 ha"). Sem isto sai o numero na cultura corrente. O percentual vai junto, sempre. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
+| `Label` | `string` | obrigatorio | O que o grafico mostra, para quem usa leitor de tela ("Area plantada por cultura"). Obrigatorio: grafico sem nome e um desenho mudo. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
+| `Palette` | `RvmChartPalette` | `RvmChartPalette.Monochromatic` | De onde saem as cores: degraus do primary (`RvmChartPalette.Monochromatic`, o padrao) ou os papeis do tema. Fatia com `RvmChartSlice.Color` valida usa a propria cor. |
+| `Shape` | `RvmDonutShape` | `RvmDonutShape.Full` | A volta inteira (o padrao) ou so a metade de cima. |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco numa fatia, com o nome, o valor e o percentual. Sem JS: aparece por `:hover` e `:focus-visible`. Custa uma parada de Tab por fatia; desligue num grafico decorativo, dentro de um cartao que ja diz o numero. A tabela de dados para leitor de tela continua. |
+| `Slices` | `IReadOnlyList<RvmChartSlice>` | obrigatorio | As fatias, na ordem em que o desenho as percorre. |
+| `Thickness` | `RvmDonutThickness` | `RvmDonutThickness.Thin` | A espessura do anel. Padrao: fino. |
+| `Total` | `double?` | — | O total que vale 100%. Sem ele, o total e a soma das fatias ("como o bolo se divide"); com ele, o grafico responde "quanto de quanto" e o que falta aparece na trilha. Um total menor que a soma vale como a soma: as fatias nao dao mais de uma volta. |
 
 ### RvmDrawer
 
@@ -1641,6 +1693,35 @@ Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
 | `OnClick` | `EventCallback` | — | O que fazer ao escolher o item. |
 | `Text` | `string` | `""` | Texto da acao, quando nao ha `RvmMenuItem.ChildContent`. |
 
+### RvmMeterChart
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/meter-chart
+
+Medidor em arco: quanto da meta foi atingido.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema, sem depender deste parametro. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
+| `FormatValue` | `Func<double, string>?` | — | Como escrever o valor na tabela, na dica e no centro ("R$ 26.500", "1.240 ha"). Sem isto sai o numero na cultura corrente. O percentual vai junto, sempre. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
+| `Label` | `string` | obrigatorio | O que o grafico mostra, para quem usa leitor de tela ("Area plantada por cultura"). Obrigatorio: grafico sem nome e um desenho mudo. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
+| `Palette` | `RvmChartPalette` | `RvmChartPalette.Monochromatic` | De onde saem as cores: degraus do primary (`RvmChartPalette.Monochromatic`, o padrao) ou os papeis do tema. Fatia com `RvmChartSlice.Color` valida usa a propria cor. |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco numa fatia, com o nome, o valor e o percentual. Sem JS: aparece por `:hover` e `:focus-visible`. Custa uma parada de Tab por fatia; desligue num grafico decorativo, dentro de um cartao que ja diz o numero. A tabela de dados para leitor de tela continua. |
+| `Slices` | `IReadOnlyList<RvmChartSlice>` | obrigatorio | As fatias, na ordem em que o desenho as percorre. |
+| `Total` | `double?` | — | O total que vale 100%. Sem ele, o total e a soma das fatias ("como o bolo se divide"); com ele, o grafico responde "quanto de quanto" e o que falta aparece na trilha. Um total menor que a soma vale como a soma: as fatias nao dao mais de uma volta. |
+
 ### RvmModal
 
 `@using RVM.DesignSystem.Components.Dialog` · exemplos: https://design.rvmit.com.br/componentes/modal
@@ -1723,6 +1804,37 @@ Varios textos como tags dentro do campo.
 | `Value` | `IReadOnlyList<string>?` | — |  |
 | `ValueChanged` | `EventCallback<IReadOnlyList<string>>` | — |  |
 | `ValueExpression` | `Expression<Func<IReadOnlyList<string>>>?` | — |  |
+
+### RvmMultilayerDonutChart
+
+`@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/multilayer-donut-chart
+
+Aneis concentricos, um por item, ate o maximo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a figura. |
+| `Animated` | `bool` | `true` | Anima o desenho ao aparecer. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema, sem depender deste parametro. |
+| `CenterValue` | `string?` | — | O numero grande no meio ("89 mil"), quando fizer sentido para o conjunto. O componente nao o calcula. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
+| `FormatValue` | `Func<double, string>?` | — | Como escrever o valor na tabela, na dica e no centro ("R$ 26.500", "1.240 ha"). Sem isto sai o numero na cultura corrente. O percentual vai junto, sempre. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
+| `Label` | `string` | obrigatorio | O que o grafico mostra, para quem usa leitor de tela ("Area plantada por cultura"). Obrigatorio: grafico sem nome e um desenho mudo. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
+| `Maximum` | `double?` | — | O teto de cada anel: o valor que fecha a volta. Sem ele, o teto e o maior valor entre as fatias, e o anel dele fecha a volta inteira. O `Total` herdado nao vale aqui: as fatias nao dividem um total. |
+| `Palette` | `RvmChartPalette` | `RvmChartPalette.Monochromatic` | De onde saem as cores: degraus do primary (`RvmChartPalette.Monochromatic`, o padrao) ou os papeis do tema. Fatia com `RvmChartSlice.Color` valida usa a propria cor. |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco numa fatia, com o nome, o valor e o percentual. Sem JS: aparece por `:hover` e `:focus-visible`. Custa uma parada de Tab por fatia; desligue num grafico decorativo, dentro de um cartao que ja diz o numero. A tabela de dados para leitor de tela continua. |
+| `Slices` | `IReadOnlyList<RvmChartSlice>` | obrigatorio | As fatias, na ordem em que o desenho as percorre. |
+| `Total` | `double?` | — | O total que vale 100%. Sem ele, o total e a soma das fatias ("como o bolo se divide"); com ele, o grafico responde "quanto de quanto" e o que falta aparece na trilha. Um total menor que a soma vale como a soma: as fatias nao dao mais de uma volta. |
 
 ### RvmNavGroup
 
@@ -1928,6 +2040,7 @@ Pizza e rosca, com percentuais.
 | `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
 | `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
 | `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
+| `Palette` | `RvmChartPalette` | `RvmChartPalette.FullColor` | De onde saem as cores das fatias sem `RvmPieChart.SliceColor`. Padrao: `RvmChartPalette.FullColor`, as cores dos papeis na ordem (o desenho de sempre da pizza do DS; no RVM.UI o padrao e o monocromatico). `RvmChartPalette.Monochromatic` usa degraus do primary e, com mais de cinco fatias, volta as cores dos papeis. A `RvmChartLegend` ao lado leva a mesma paleta. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
@@ -1935,7 +2048,8 @@ Pizza e rosca, com percentuais.
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
 | `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
-| `SliceColor` | `Func<object, RvmColor>?` | — | Cor de cada fatia. Sem valor, segue a paleta na ordem dos itens. |
+| `SliceColor` | `Func<object, RvmColor>?` | — | Cor de cada fatia. Sem valor, segue a `RvmPieChart.Palette` na ordem dos itens. |
+| `Total` | `double?` | — | O total sobre o qual as fatias sao medidas (o 100%). Sem ele, a soma das fatias: "como o todo se divide". Com ele, "quanto de quanto": 9 com `Total` 12 desenha 75% e deixa o resto da volta vazio, so com o contorno tracejado. Menor que a soma das fatias e erro (elas dariam mais de uma volta). |
 | `Value` | `Func<object, double>?` | obrigatorio | O valor de cada fatia. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
@@ -2766,6 +2880,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Circle`, `Rounded`, `Square`
 - `RvmAvatarVariant` (`RVM.DesignSystem.Components.Avatar`): Preenchimento do avatar de iniciais ou icone. No kit: a linha "Colors" e o `RvmAvatarVariant.Filled`; a linha "Light" e o `RvmAvatarVariant.Soft`.
   Valores: `Filled`, `Soft`
+- `RvmBarLayout` (`RVM.DesignSystem.Components.Chart`): Como o `RvmBarChart` arruma as barras (contrato com o RVM.UI, DSGN-017).
+  Valores: `Vertical`, `Horizontal`, `Diverging`
 - `RvmBreadcrumbSeparator` (`RVM.DesignSystem.Components.Breadcrumbs`): O que separa os passos — as duas colunas da pagina Breadcrumbs do kit.
   Valores: `Slash`, `Chevron`
 - `RvmButtonType` (`RVM.DesignSystem.Components.Button`): O `type` do elemento. Importa dentro de formulario: o padrao do HTML e `submit`, e um botao de "cancelar" que esqueca isso envia o formulario sem querer. Aqui o padrao e `RvmButtonType.Button`, e quem envia declara.
@@ -2792,6 +2908,10 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Primary`, `Accent`, `Secondary`, `Neutral`, `Info`, `Success`, `Warning`, `Error`, `Danger`, `Inverse`
 - `RvmDialogAlign` (`RVM.DesignSystem.Components.Dialog`): Forma do `RvmConfirmModal`: texto centralizado ou alinhado a esquerda.
   Valores: `Center`, `Left`
+- `RvmDonutShape` (`RVM.DesignSystem.Components.Chart`): A forma da `RvmDonutChart` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Full`, `Half`
+- `RvmDonutThickness` (`RVM.DesignSystem.Components.Chart`): A espessura do anel da `RvmDonutChart` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Thin`, `Thick`
 - `RvmDrawerAnchor` (`RVM.DesignSystem.Components.Drawer`): De que lado da tela a gaveta sai.
   Valores: `Left`, `Right`, `Top`, `Bottom`
 - `RvmDrawerVariant` (`RVM.DesignSystem.Components.Drawer`): Como a gaveta convive com a pagina.
@@ -2818,6 +2938,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `End`, `Start`
 - `RvmLabelVariant` (`RVM.DesignSystem.Components.Label`): Preenchimento da etiqueta.
   Valores: `Soft`, `Solid`
+- `RvmLegendRamp` (`RVM.DesignSystem.Components.Chart`): Qual grafico a `RvmChartLegend` acompanha (contrato com o RVM.UI, DSGN-017). Cada grafico tem a sua rampa de cores por posicao; escolher o errado faz a legenda apontar para uma cor que o desenho nao usou.
+  Valores: `Radial`, `Bar`, `Line`, `Meter`, `Diverging`
 - `RvmListItemLayout` (`RVM.DesignSystem.Components.Lists`): Forma do `RvmListItem` (contrato com o RVM.UI, DSGN-017). Muda a hierarquia de cor do texto.
   Valores: `TwoColumn`, `OneColumn`
 - `RvmMascotName` (`RVM.DesignSystem.Icons`): Os mascotes do contrato com o RVM.UI (DSGN-017). O nome diz a FUNCAO na interface (erro, carregando, vazio), nao o personagem. No Design System nao ha ilustracao: cada um vira um icone Tabler grande num circulo de fundo suave, no estilo NEATLAB — invencao declarada. Ver `RvmMascot`.

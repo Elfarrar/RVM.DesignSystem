@@ -141,7 +141,12 @@ public static class Catalogo
             new("componentes/area-chart", "RvmAreaChart", "Linha com o volume preenchido em degrade."),
             new("componentes/scatter-chart", "RvmScatterChart", "Relacao entre duas variaveis numericas."),
             new("componentes/pie-chart", "RvmPieChart", "Pizza e rosca, com percentuais."),
-            new("componentes/radar-chart", "RvmRadarChart", "Varias variaveis a partir de um centro.")
+            new("componentes/radar-chart", "RvmRadarChart", "Varias variaveis a partir de um centro."),
+            new("componentes/donut-chart", "RvmDonutChart", "Rosca inteira ou meia, fina ou grossa, com o valor no centro."),
+            new("componentes/meter-chart", "RvmMeterChart", "Medidor em arco: quanto da meta foi atingido."),
+            new("componentes/bubble-chart", "RvmBubbleChart", "Bolhas com a area proporcional ao valor."),
+            new("componentes/multilayer-donut-chart", "RvmMultilayerDonutChart", "Aneis concentricos, um por item, ate o maximo."),
+            new("componentes/chart-legend", "RvmChartLegend", "Legenda solta, com as cores dos graficos.")
         ])
     ];
 }

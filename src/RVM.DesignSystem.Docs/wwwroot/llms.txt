@@ -24,6 +24,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmBadge](https://design.rvmit.com.br/componentes/badge): Contador ou ponto de aviso. Sozinho, ou por cima de um icone ou avatar passado como conteudo.
 - [RvmBarChart<TItem>](https://design.rvmit.com.br/componentes/bar-chart): Barras horizontais para nomes longos.
 - [RvmBreadcrumbs](https://design.rvmit.com.br/componentes/breadcrumbs): Trilha de navegacao: onde a pessoa esta dentro da hierarquia, com atalho para cada nivel acima. O ultimo passo e a pagina atual.
+- [RvmBubbleChart](https://design.rvmit.com.br/componentes/bubble-chart): Bolhas com a area proporcional ao valor.
 - [RvmButton](https://design.rvmit.com.br/componentes/button): O botao do design system. Tres pesos visuais, tres tamanhos, icone dos dois lados e estado de carregando.
 - [RvmButtonGroup<TValue>](https://design.rvmit.com.br/componentes/button-group): Escolha unica em botoes colados.
 - `RvmCalendar`: Calendario de um mes para escolher uma data ou um intervalo. Aparece solto na pagina ou dentro do `RvmDatePicker`.
@@ -33,9 +34,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - `RvmCellCircleImage`
 - `RvmCellCode`
 - `RvmCellFiles`
-- `RvmCellFrame`: O `<td>` comum das celulas da tabela: alinhamento, espacamento e a fileira do conteudo. E a peca que as `RvmCell*` usam por baixo; para montar uma celula, prefira uma delas.
 - `RvmCellLabelBadge`
-- `RvmCellLines`: Titulo e segunda linha de uma celula da tabela — a peca de texto que as `RvmCell*` usam por baixo.
 - `RvmCellNumber`
 - `RvmCellProgress`
 - `RvmCellRating`
@@ -45,6 +44,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - `RvmCellText`
 - `RvmCellUser`
 - `RvmCellUserGroup`
+- [RvmChartLegend](https://design.rvmit.com.br/componentes/chart-legend): Legenda solta, com as cores dos graficos.
 - `RvmChartSeries<TItem>`: Uma serie de um grafico: o nome na legenda, o valor de cada item e a cor. Nao desenha nada sozinha; so se apresenta ao grafico em que foi declarada.
 - [RvmCheckbox](https://design.rvmit.com.br/componentes/checkbox): Caixa de marcar. Sozinha, com rotulo ou indeterminada. Dentro de um `EditForm` participa da validacao; em formulario SSR estatico funciona sem JS.
 - [RvmChip](https://design.rvmit.com.br/componentes/chip): Rotulo compacto: um filtro aplicado, uma etiqueta, uma pessoa num campo de destinatarios. Removivel quando `RvmChip.OnRemove` tem quem escute.
@@ -62,6 +62,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmDetailProfileLayout](https://design.rvmit.com.br/componentes/detail-profile-layout): Ficha de detalhe: miolo e perfil numa coluna fixa.
 - [RvmDialog](https://design.rvmit.com.br/componentes/dialog): Janela modal por cima da pagina: aviso, confirmacao, formulario curto ou tela cheia.
 - [RvmDivider](https://design.rvmit.com.br/componentes/divider): Linha que separa blocos de conteudo. Com `RvmDivider.ChildContent`, a linha abre espaco para um rotulo no meio ("ou", "ontem", "mais opcoes").
+- [RvmDonutChart](https://design.rvmit.com.br/componentes/donut-chart): Rosca inteira ou meia, fina ou grossa, com o valor no centro.
 - [RvmDrawer](https://design.rvmit.com.br/componentes/drawer): Painel que sai de um lado da tela: menu de navegacao, filtros, detalhe de um item.
 - [RvmEmptyState](https://design.rvmit.com.br/componentes/empty-state): Tela ou bloco sem conteudo que diz o que aconteceu e o proximo passo. Serve para lista vazia, busca sem resultado, erro de carregamento e pagina nao encontrada.
 - [RvmExpansionPanel](https://design.rvmit.com.br/componentes/expansion-panel): Painel expansivel sozinho, que mantem o conteudo montado.
@@ -88,9 +89,11 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmMenuButton](https://design.rvmit.com.br/componentes/menu-button): Botao com texto que abre um menu.
 - [RvmMenuDivider](https://design.rvmit.com.br/componentes/menu)
 - [RvmMenuItem](https://design.rvmit.com.br/componentes/menu): Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
+- [RvmMeterChart](https://design.rvmit.com.br/componentes/meter-chart): Medidor em arco: quanto da meta foi atingido.
 - [RvmModal](https://design.rvmit.com.br/componentes/modal): Casca de dialogo modal: fundo escurecido, caixa com titulo opcional e conteudo livre. Esc e clique no fundo fecham; o foco entra, fica preso la dentro e volta para quem abriu.
 - `RvmMultiSelect<TValue>`: Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enquanto se marca; Esc, Tab ou clicar fora fecham.
 - [RvmMultiTextField](https://design.rvmit.com.br/componentes/multi-text-field): Varios textos como tags dentro do campo.
+- [RvmMultilayerDonutChart](https://design.rvmit.com.br/componentes/multilayer-donut-chart): Aneis concentricos, um por item, ate o maximo.
 - `RvmNavGroup`
 - `RvmNavItem`: Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o destaque do kit.
 - `RvmNavSection`
