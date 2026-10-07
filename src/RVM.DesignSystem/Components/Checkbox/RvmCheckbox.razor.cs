@@ -155,7 +155,22 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
             : null;
 
     internal IReadOnlyDictionary<string, object>? AtributosDoInput
-        => AtributosDoControle.Montar(AdditionalAttributes, Id, Name, MensagemDeApoio is null ? null : IdDoApoio, MensagemDeErro is not null, Required);
+    {
+        get
+        {
+            var atributos = AtributosDoControle.Montar(AdditionalAttributes, Id, Name, MensagemDeApoio is null ? null : IdDoApoio, MensagemDeErro is not null, Required);
+
+            // Fora de um EditForm (formulario SSR comum), o required nativo e quem barra o envio — era o que o
+            // atributo `required` fazia antes de virar parametro. Dentro dele, so aria-required: o balao do navegador
+            // sairia em ingles e antes da validacao em PT-BR (a mesma regra do RvmTextField).
+            if (Required && ContextoDoFormulario is null)
+            {
+                atributos = new Dictionary<string, object>(atributos ?? new Dictionary<string, object>()) { ["required"] = true };
+            }
+
+            return atributos;
+        }
+    }
 
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)

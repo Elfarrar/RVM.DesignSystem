@@ -19,6 +19,22 @@
     </RvmLineChart>
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="O grafico decide o que mostrar no lugar do desenho, na mesma altura: Error vence Loading, que vence IsEmpty. Os dados chegam depois e o desenho aparece ja medido. FormatAxisValue abrevia so o eixo; ShowAxis esconde os valores dele."
+              Codigo="@CodigoEstados">
+    <div class="pilha-exemplos largura-cheia">
+        <div class="linha-exemplos">
+            <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="() => _estado = _estado == 0 ? 1 : 0">@(_estado == 0 ? "Carregar os dados" : "Voltar a carregar")</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Text" OnClick="() => _estado = 2">Simular erro</RvmButton>
+        </div>
+        <RvmLineChart Items="Vendas" Label="v => v.Mes" AriaLabel="Vendas por mes, com estados" Height="240"
+                      Loading="@(_estado == 0)" Error="@(_estado == 2)" LoadingMascot="RvmMascotName.RobotLoading"
+                      FormatAxisValue="@(v => RvmChartFormat.Compact(v))" ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)}")">
+            <RvmChartSeries Name="Vendas" Value="v => v.Valor" />
+        </RvmLineChart>
+    </div>
+</BlocoExemplo>
+
 <BlocoExemplo Titulo="Varias series com pontos, aproximavel"
               Descricao="Chuva mensal em tres fazendas, em mm. Com Zoomable, a roda do mouse aproxima o eixo dos meses (Shift para o dos milimetros), o arrasto desloca e o duplo clique volta; pelo teclado, + - 0 e Ctrl com as setas."
               Codigo="@CodigoSeries">
@@ -48,6 +64,17 @@
               Alt="Recorte do kit NEATLAB com um grafico de linha suave" />
 
 @code {
+    // 0 = carregando, 1 = com dados, 2 = erro.
+    private int _estado;
+
+    private const string CodigoEstados = """
+        <RvmLineChart Items="vendas" Label="v => v.Mes" AriaLabel="Vendas por mes"
+                      Loading="@carregando" Error="@falhou" LoadingMascot="RvmMascotName.RobotLoading"
+                      FormatAxisValue="@(v => RvmChartFormat.Compact(v))">
+            <RvmChartSeries Name="Vendas" Value="v => v.Valor" />
+        </RvmLineChart>
+        """;
+
     private static readonly (string Mes, double Valor)[] Vendas =
         [("Jan", 12_400), ("Fev", 31_800), ("Mar", 14_200), ("Abr", 28_900), ("Mai", 17_500), ("Jun", 38_200)];
 

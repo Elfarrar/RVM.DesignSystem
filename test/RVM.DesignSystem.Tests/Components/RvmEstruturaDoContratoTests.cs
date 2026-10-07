@@ -175,3 +175,15 @@ public class RvmEstruturaDoContratoTests : BunitContext
         Assert.Empty(cortado.FindAll(".rvm-fundo-menu"));
     }
 }
+
+public class RvmReviewOnda0ListaTests : BunitContext
+{
+    [Fact]
+    public void Title_com_conteudo_continua_dica_do_item()
+    {
+        var item = Render<RvmList>(p => p.AddChildContent<RvmListItem>(i => i.Add(x => x.Title, "Dica").AddChildContent("Pedido 12"))).Find("li");
+
+        Assert.Equal("Dica", item.GetAttribute("title"));
+        Assert.Contains("Pedido 12", item.TextContent);
+    }
+}

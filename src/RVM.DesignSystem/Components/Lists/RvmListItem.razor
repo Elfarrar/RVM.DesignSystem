@@ -5,7 +5,9 @@
 @* O item e um <li> com duas areas lado a lado: a principal (link, botao ou texto parado) e a acao
    da direita. A acao fica FORA da principal de proposito — botao dentro de botao e HTML invalido e o
    leitor de tela so enxerga um dos dois. *@
-<li @attributes="AdditionalAttributes" class="@ClassesDoItem">
+@* `title="..."` no item caia nos atributos e virava dica do <li>; agora o Blazor casa com o parametro Title.
+   Com ChildContent (o Title nao e o texto), ele continua sendo a dica, como antes. *@
+<li @attributes="AdditionalAttributes" class="@ClassesDoItem" title="@(ChildContent is not null ? Title : null)">
     <div class="rvm-linha">
         @if (!string.IsNullOrWhiteSpace(Href))
         {

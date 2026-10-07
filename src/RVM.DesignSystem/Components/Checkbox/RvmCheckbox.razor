@@ -6,25 +6,17 @@
    gera o `name` certo para o POST. O que e desenhado por cima e so aparencia.
 
    O <label> envolve tudo: clicar no texto marca a caixa, e o texto vira o nome acessivel. *@
-@* Apoio, erro e link ficam FORA do <label>: dentro dele, o texto entraria no nome acessivel e o link seria
-   interacao dentro de interacao. Sem eles a marcacao e a de sempre, so o label. *@
-@if (MensagemDeApoio is null && !TemLink)
+@* Apoio, erro e link ficam FORA do <label> (dentro, o texto entraria no nome acessivel e o link seria interacao
+   dentro de interacao), como IRMAOS dele, e nao num involucro que aparece e some: trocar a arvore recriaria o
+   input e o foco se perderia quando a mensagem de validacao surge (achado do review da onda 0, DSGN-017). *@
+@Controle
+@if (TemLink)
 {
-    @Controle
+    <a class="rvm-link-do-campo" href="@LinkHref">@LinkText</a>
 }
-else
+@if (MensagemDeApoio is not null)
 {
-    <div class="rvm-campo-marcar">
-        @Controle
-        @if (TemLink)
-        {
-            <a class="rvm-link-do-campo" href="@LinkHref">@LinkText</a>
-        }
-        @if (MensagemDeApoio is not null)
-        {
-            <div id="@IdDoApoio" class="@(MensagemDeErro is null ? "rvm-apoio rvm-text-helper" : "rvm-apoio rvm-text-helper rvm-apoio-erro")">@MensagemDeApoio</div>
-        }
-    </div>
+    <div id="@IdDoApoio" class="@(MensagemDeErro is null ? "rvm-apoio rvm-text-helper" : "rvm-apoio rvm-text-helper rvm-apoio-erro")">@MensagemDeApoio</div>
 }
 
 @code {

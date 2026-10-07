@@ -27,7 +27,8 @@ public partial class RvmAvatarGroup : ComponentBase
     internal int Sobra => PorLista ? Math.Max(0, Items.Count - Math.Max(1, Max)) + Surplus : Surplus;
 
     internal static string IniciaisDe(string nome)
-        => string.Concat(nome.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpperInvariant(p[0])));
+        => string.Concat((nome ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2)
+            .Select(p => System.Globalization.StringInfo.GetNextTextElement(p).ToUpperInvariant()));
 
     /// <summary>Tamanho do avatar "+N". Padrao: <see cref="RvmSize.Medium"/>.</summary>
     [Parameter] public RvmSize Size { get; set; } = RvmSize.Medium;

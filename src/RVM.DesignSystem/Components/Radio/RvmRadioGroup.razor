@@ -8,9 +8,11 @@
 
    Por baixo e o <InputRadioGroup> do Blazor: gera o `name` do grupo, faz as setas moverem a
    selecao (comportamento nativo de radio) e entra no EditForm. *@
-<fieldset @attributes="AdditionalAttributes" id="@Id" class="@ClassesDaRaiz" disabled="@Disabled"
+@* Os atributos do consumidor por ultimo: aria-describedby e aria-invalid nulos nao apagam os dele. *@
+<fieldset id="@Id" class="@ClassesDaRaiz" disabled="@Disabled"
           aria-describedby="@(MensagemDeApoio is null ? null : IdDoApoio)"
-          aria-invalid="@(MensagemDeErro is null ? null : "true")">
+          aria-invalid="@(MensagemDeErro is null ? null : "true")"
+          @attributes="AtributosSemClasse">
     @if (!string.IsNullOrWhiteSpace(Label))
     {
         <legend class="rvm-legenda">@Label</legend>

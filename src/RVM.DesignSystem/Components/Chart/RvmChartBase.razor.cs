@@ -973,7 +973,15 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender)
+        // Liga o JS quando o DESENHO aparece, e nao so no primeiro render: o grafico que nasce em Loading, Error ou
+        // IsEmpty nao tem area nem camada ainda, e a que volta depois de um estado e outro elemento (achado do review
+        // da onda 0, DSGN-017).
+        if (Estado != EstadoDosDados.Conteudo)
+        {
+            return;
+        }
+
+        if (_area.Id is not null && _area.Id == _areaLigada)
         {
             // Zoomable pode ser ligado depois (um interruptor na tela): a roda acompanha.
             await AcertarARoda();
@@ -982,16 +990,38 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
         try
         {
-            _referencia = DotNetObjectReference.Create(this);
-            _modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
+            await PararOuvintesAsync();
+            _referencia ??= DotNetObjectReference.Create(this);
+            _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
             _observador = await _modulo.InvokeAsync<IJSObjectReference?>("observar", _area, _referencia);
+            _areaLigada = _area.Id;
             await AcertarARoda();
-            _teclado = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
+            _teclado ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
             await _teclado.InvokeVoidAsync("prenderTeclas", _camada, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" });
         }
         catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
             // Sem JS (pre-renderizacao, bUnit): o grafico fica na largura padrao, escalado para caber.
+        }
+    }
+
+    private string? _areaLigada;
+
+    /// <summary>Solta o observador e a roda presos a um desenho que saiu da tela.</summary>
+    private async Task PararOuvintesAsync()
+    {
+        if (_observador is { } observador)
+        {
+            _observador = null;
+            await observador.InvokeVoidAsync("parar");
+            await observador.DisposeAsync();
+        }
+
+        if (_roda is { } roda)
+        {
+            _roda = null;
+            await roda.InvokeVoidAsync("parar");
+            await roda.DisposeAsync();
         }
     }
 

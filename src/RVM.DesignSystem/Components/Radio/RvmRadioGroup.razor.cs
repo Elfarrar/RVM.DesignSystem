@@ -85,6 +85,10 @@ public partial class RvmRadioGroup<TValue> : ComponentBase
 
     internal string IdDoApoio => _idDoApoio;
 
+    // class ja entrou no ClassesDaRaiz; repassada por ultimo, ela apagaria as classes do proprio grupo.
+    internal IReadOnlyDictionary<string, object>? AtributosSemClasse
+        => AdditionalAttributes?.Where(a => !string.Equals(a.Key, "class", StringComparison.OrdinalIgnoreCase)).ToDictionary(a => a.Key, a => a.Value);
+
     internal string? MensagemDeErro
         => !string.IsNullOrWhiteSpace(ErrorText) ? ErrorText
             : ContextoDoFormulario?.GetValidationMessages(FieldIdentifier.Create(ExpressaoEfetiva)).FirstOrDefault();

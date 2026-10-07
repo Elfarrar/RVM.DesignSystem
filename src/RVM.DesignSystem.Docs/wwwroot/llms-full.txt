@@ -96,11 +96,11 @@ A moldura da aplicacao: menu lateral, barra do topo, conteudo e rodape. Em telas
 | `Brand` | `RenderFragment?` | — | Marca no alto do menu (logo e nome). Recolhido, aparece so o inicio dela: ponha o logo primeiro. |
 | `ChildContent` | `RenderFragment?` | — | O conteudo da pagina. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
-| `CloseMenuLabel` | `string` | `"Fechar menu"` | Nome do mesmo botao com a gaveta aberta. |
+| `CloseMenuLabel` | `string` | `"Fechar menu"` | Nome da cortina que fecha a gaveta aberta no celular (o botao do topo segue com `RvmAppShell.MenuLabel` e `aria-expanded`). |
 | `Collapsed` | `bool` | `false` | Menu recolhido aos icones (so em tela larga). Aceita `@bind-Collapsed`. |
 | `CollapsedChanged` | `EventCallback<bool>` | — | Disparado quando a pessoa recolhe ou expande o menu. |
 | `Footer` | `RenderFragment?` | — | Rodape abaixo do conteudo. |
-| `Id` | `string?` | — | Id da lateral. Sem ele, um id unico e gerado. |
+| `Id` | `string?` | — | Id da LATERAL (o `aside`), como no RVM.UI. Sem ele, um id unico e gerado. ⚠️ Na 1.x, `id="..."` no `RvmAppShell` ia para a raiz; o Blazor casa o atributo com este parametro, entao na 2.0 ele vai para a lateral. |
 | `MenuLabel` | `string` | `"Abrir menu"` | Nome do botao que abre a gaveta no celular. |
 | `MenuOpen` | `bool` | `false` | Gaveta do menu aberta (so em tela estreita). Aceita `@bind-MenuOpen`. |
 | `MenuOpenChanged` | `EventCallback<bool>` | — | Disparado quando a gaveta abre ou fecha. |

@@ -69,10 +69,13 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     /// <summary>Nome do botao que abre a gaveta no celular.</summary>
     [Parameter] public string MenuLabel { get; set; } = "Abrir menu";
 
-    /// <summary>Nome do mesmo botao com a gaveta aberta.</summary>
+    /// <summary>Nome da cortina que fecha a gaveta aberta no celular (o botao do topo segue com <see cref="MenuLabel"/> e <c>aria-expanded</c>).</summary>
     [Parameter] public string CloseMenuLabel { get; set; } = "Fechar menu";
 
-    /// <summary>Id da lateral. Sem ele, um id unico e gerado.</summary>
+    /// <summary>
+    /// Id da LATERAL (o <c>aside</c>), como no RVM.UI. Sem ele, um id unico e gerado. ⚠️ Na 1.x, <c>id="..."</c> no
+    /// <c>RvmAppShell</c> ia para a raiz; o Blazor casa o atributo com este parametro, entao na 2.0 ele vai para a lateral.
+    /// </summary>
     [Parameter] public string? Id { get; set; }
 
     /// <summary>Classe CSS extra no elemento raiz.</summary>

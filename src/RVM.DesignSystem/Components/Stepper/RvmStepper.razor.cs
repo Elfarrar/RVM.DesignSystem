@@ -19,7 +19,8 @@ public partial class RvmStepper : ComponentBase
     /// <summary>Nome do indicador de bolinhas para o leitor de tela. Nas etapas, o nome e o <see cref="AriaLabel"/>.</summary>
     [Parameter] public string Label { get; set; } = "Progresso";
 
-    internal bool SoBolinhas => Steps.Count == 0;
+    // So com mais de um passo: Steps vazio (a lista ainda carregando) continua a lista de etapas vazia de antes.
+    internal bool SoBolinhas => Steps.Count == 0 && Count > 1;
 
     internal int AtualNasBolinhas => Math.Clamp(Current, 1, Math.Max(1, Count));
 

@@ -4,6 +4,7 @@ using RVM.DesignSystem.Components.Checkbox;
 using RVM.DesignSystem.Components.DatePicker;
 using RVM.DesignSystem.Components.Radio;
 using RVM.DesignSystem.Components.Select;
+using RVM.DesignSystem.Components.Stepper;
 using RVM.DesignSystem.Components.Switch;
 using RVM.DesignSystem.Components.TextField;
 using RVM.DesignSystem.Components.TimePicker;
@@ -183,7 +184,7 @@ public class RvmCamposDoContratoTests : BunitContext
         var apoio = cortado.Find(".rvm-apoio");
         Assert.Equal(apoio.GetAttribute("id"), input.GetAttribute("aria-describedby"));
         Assert.Equal("*", cortado.Find(".rvm-obrigatorio").TextContent);
-        Assert.Equal("/termos", cortado.Find(".rvm-campo-marcar > a").GetAttribute("href"));
+        Assert.Equal("/termos", cortado.Find("label + a.rvm-link-do-campo").GetAttribute("href"));
         Assert.Contains("rvm-rotulo-antes", cortado.Find("label").ClassList);
     }
 
@@ -214,5 +215,49 @@ public class RvmCamposDoContratoTests : BunitContext
         Assert.Contains("rvm-rotulo-antes", opcao.ClassList);
         Assert.Contains("rvm-desabilitado", opcao.ClassList);
         Assert.Contains("minha", opcao.ClassList);
+    }
+}
+
+/// <summary>Achados do review independente da onda 0 (DSGN-017).</summary>
+public class RvmReviewOnda0Tests : BunitContext
+{
+    public RvmReviewOnda0Tests() => JSInterop.Mode = JSRuntimeMode.Loose;
+
+    [Fact]
+    public void Apoio_que_surge_nao_recria_o_input_da_caixa_de_marcar()
+    {
+        // A raiz continua o mesmo <label> com e sem a mensagem: o Blazor so acrescenta o irmao, nao refaz o input.
+        var cortado = Render<RvmCheckbox>(p => p.Add(x => x.Label, "Aceito"));
+        Assert.Equal("LABEL", cortado.Nodes.OfType<AngleSharp.Dom.IElement>().First().TagName);
+
+        cortado.Render(p => p.Add(x => x.Label, "Aceito").Add(x => x.ErrorText, "Obrigatorio"));
+
+        var elementos = cortado.Nodes.OfType<AngleSharp.Dom.IElement>().ToList();
+        Assert.Equal("LABEL", elementos[0].TagName);
+        Assert.Contains("rvm-apoio", elementos[1].ClassList);
+    }
+
+    [Fact]
+    public void Obrigatorio_fora_de_formulario_usa_o_required_nativo()
+        => Assert.True(Render<RvmCheckbox>(p => p.Add(x => x.Label, "Aceito").Add(x => x.Required, true)).Find("input").HasAttribute("required"));
+
+    [Fact]
+    public void Stepper_com_etapas_ainda_vazias_continua_lista()
+    {
+        var cortado = Render<RvmStepper>(p => p.Add(x => x.Steps, []));
+
+        Assert.NotNull(cortado.Find("ol"));
+        Assert.Empty(cortado.FindAll("[role=progressbar]"));
+    }
+
+    [Fact]
+    public void Grupo_de_opcoes_mantem_a_propria_classe_com_class_repassada()
+    {
+        var cortado = Render<RvmRadioGroup<string>>(p => p.Add(x => x.Label, "Safra").AddUnmatched("class", "minha").AddUnmatched("aria-describedby", "dica"));
+
+        var grupo = cortado.Find("fieldset");
+        Assert.Contains("rvm-grupo", grupo.ClassList);
+        Assert.Contains("minha", grupo.ClassList);
+        Assert.Equal("dica", grupo.GetAttribute("aria-describedby"));
     }
 }

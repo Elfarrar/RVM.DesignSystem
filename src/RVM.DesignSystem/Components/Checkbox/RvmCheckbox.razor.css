@@ -129,21 +129,15 @@
 
 .rvm-rotulo-antes { flex-direction: row-reverse; }
 
-.rvm-campo-marcar {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    column-gap: var(--rvm-space-1);
-    font-family: var(--rvm-font-family);
-}
-
 .rvm-link-do-campo {
     color: var(--rvm-color-primary-text);
     font-size: var(--rvm-text-body1-size);
 }
 
+.rvm-link-do-campo { margin-inline-start: var(--rvm-space-1); }
+
 .rvm-apoio {
-    flex-basis: 100%;
+    margin-top: 2px;
     color: var(--rvm-color-text-secondary);
 }
 
