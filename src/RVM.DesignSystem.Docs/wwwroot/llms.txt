@@ -47,6 +47,12 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - `RvmCellUserGroup`
 - [RvmChartLegend](https://design.rvmit.com.br/componentes/chart-legend): Legenda solta, com as cores dos graficos.
 - `RvmChartSeries<TItem>`: Uma serie de um grafico: o nome na legenda, o valor de cada item e a cor. Nao desenha nada sozinha; so se apresenta ao grafico em que foi declarada.
+- [RvmChat](https://design.rvmit.com.br/componentes/chat): Conversa: contatos, grupos de mensagens, arquivo e audio.
+- [RvmChatContact](https://design.rvmit.com.br/componentes/chat)
+- [RvmChatFile](https://design.rvmit.com.br/componentes/chat)
+- [RvmChatGroup](https://design.rvmit.com.br/componentes/chat)
+- [RvmChatMessage](https://design.rvmit.com.br/componentes/chat)
+- [RvmChatVoice](https://design.rvmit.com.br/componentes/chat)
 - [RvmCheckbox](https://design.rvmit.com.br/componentes/checkbox): Caixa de marcar. Sozinha, com rotulo ou indeterminada. Dentro de um `EditForm` participa da validacao; em formulario SSR estatico funciona sem JS.
 - [RvmChip](https://design.rvmit.com.br/componentes/chip): Rotulo compacto: um filtro aplicado, uma etiqueta, uma pessoa num campo de destinatarios. Removivel quando `RvmChip.OnRemove` tem quem escute.
 - [RvmChoiceChip<TValue>](https://design.rvmit.com.br/componentes/choice-chip): Opcao de escolha unica em forma de chip, dentro de um `RvmRadioGroup`. O grupo da a pergunta, o `name` e o `@bind-Value`; o chip e um radio nativo com cara de chip.
@@ -68,9 +74,14 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmDonutChart](https://design.rvmit.com.br/componentes/donut-chart): Rosca inteira ou meia, fina ou grossa, com o valor no centro.
 - [RvmDrawer](https://design.rvmit.com.br/componentes/drawer): Painel que sai de um lado da tela: menu de navegacao, filtros, detalhe de um item.
 - [RvmEmptyState](https://design.rvmit.com.br/componentes/empty-state): Tela ou bloco sem conteudo que diz o que aconteceu e o proximo passo. Serve para lista vazia, busca sem resultado, erro de carregamento e pagina nao encontrada.
+- [RvmEventCalendar](https://design.rvmit.com.br/componentes/event-calendar): Agenda de compromissos em mes, semana ou dia (contrato com o RVM.UI, DSGN-017). A agenda nao busca nada: os compromissos chegam por `RvmEventCalendar.Events`.
+- `RvmEventCard`
+- `RvmEventPill`
 - [RvmExpansionPanel](https://design.rvmit.com.br/componentes/expansion-panel): Painel expansivel sozinho, que mantem o conteudo montado.
 - `RvmFieldFrame`
+- [RvmFileCard](https://design.rvmit.com.br/componentes/file-card): Cartoes de arquivo e de pasta, e o cartao de envio por tipo.
 - [RvmFileIcon](https://design.rvmit.com.br/componentes/file-icon): Icone de tipo de arquivo: uma folha com a etiqueta da extensao na cor do tipo, ou a pasta. Colorido de proposito — a cor ajuda a achar o PDF numa lista, mas a extensao escrita e quem diz o tipo.
+- `RvmFileTypeCard`
 - [RvmFileUpload](https://design.rvmit.com.br/componentes/file-upload): Envio de arquivos por botao ou caixa de arrastar, com progresso.
 - [RvmFilter](https://design.rvmit.com.br/componentes/filter): Botao "Filtros" com o contador de filtros ativos, que abre um painel com os grupos (`RvmFilterGroup`) e os botoes Limpar e Aplicar (contrato com o RVM.UI, DSGN-017).
 - [RvmFilterGroup](https://design.rvmit.com.br/componentes/filter)
@@ -81,12 +92,14 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmIconBadge](https://design.rvmit.com.br/componentes/icon-badge): Um icone num quadrado de cantos arredondados com fundo do papel de cor — o dos cards de estatistica do kit. Decorativo por padrao; com `RvmIconBadge.Label`, vira imagem com nome acessivel.
 - [RvmIconButton](https://design.rvmit.com.br/componentes/icon-button): Botao so de icone, com nome acessivel obrigatorio.
 - [RvmIconSelector](https://design.rvmit.com.br/componentes/icon-selector): Seletor de icone do contrato com o RVM.UI (DSGN-017): um circulo com o icone escolhido (ou um "+") e o botao que abre a janela com a busca e a grade de icones. Valor nulo = nenhum icone.
+- [RvmKanbanBoard<TItem>](https://design.rvmit.com.br/componentes/kanban-board): Quadro de tarefas em colunas. Mover avisa `RvmKanbanBoard.OnMove` — o quadro NAO altera as listas: o aplicativo atualiza `RvmKanbanBoard.Columns`. Move-se arrastando com o mouse ou, pelo teclado e no toque, pelos itens "Mover para X" que o `RvmKanbanBoard.ItemTemplate` recebe para por no menu do cartao.
 - [RvmLabel](https://design.rvmit.com.br/componentes/label): Etiqueta de texto com fundo na cor de um papel — o status de uma linha ("Pago", "Em atraso", "Colhido"). Nao e o `<label>` de formulario: para rotulo de campo, use o `Label` do proprio campo. Do contrato com o RVM.UI (DSGN-017).
 - [RvmLineChart<TItem>](https://design.rvmit.com.br/componentes/line-chart): Evolucao no tempo, reta ou suave.
 - [RvmLink](https://design.rvmit.com.br/componentes/link): Link de texto na cor do papel, com icone.
 - [RvmList](https://design.rvmit.com.br/componentes/list): Simples, com icone, com acao e aninhada.
 - [RvmListGroup](https://design.rvmit.com.br/componentes/list-group): Cartao de lista com cabecalho, menu e abas.
 - [RvmListItem](https://design.rvmit.com.br/componentes/list): Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao no fim. Com `RvmListItem.Href` vira link; com `RvmListItem.OnClick`, botao; com `RvmListItem.NestedContent`, abre uma sublista.
+- [RvmMap](https://design.rvmit.com.br/componentes/map): Cartao de mapa: titulo, marcadores posicionados por latitude e longitude sobre uma grade enquadrada neles, e a lista de lugares em texto. Sem biblioteca de mapa nem tiles externos.
 - [RvmMarkerButton](https://design.rvmit.com.br/componentes/marker-button): Favoritar ou salvar, como botao de alternancia.
 - [RvmMascot](https://design.rvmit.com.br/componentes/mascot): O mascote do contrato com o RVM.UI (DSGN-017): o icone da funcao (erro, carregando, vazio) num circulo de fundo suave. Usado sozinho ou pelos estados de `RvmEmptyState`, listas, tabelas e graficos.
 - [RvmMediaUpload](https://design.rvmit.com.br/componentes/media-upload): Envio de imagens com miniaturas, remover e tentar de novo.
@@ -95,6 +108,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmMenuDivider](https://design.rvmit.com.br/componentes/menu)
 - [RvmMenuItem](https://design.rvmit.com.br/componentes/menu): Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
 - [RvmMeterChart](https://design.rvmit.com.br/componentes/meter-chart): Medidor em arco: quanto da meta foi atingido.
+- [RvmMiniCalendar](https://design.rvmit.com.br/componentes/mini-calendar): Calendario mensal compacto de agenda lateral (contrato com o RVM.UI, DSGN-017): mostra o mes, marca cada dia com o que o aplicativo informa em `RvmMiniCalendar.DayInfo` e deixa escolher (ou filtrar por) um dia.
 - [RvmModal](https://design.rvmit.com.br/componentes/modal): Casca de dialogo modal: fundo escurecido, caixa com titulo opcional e conteudo livre. Esc e clique no fundo fecham; o foco entra, fica preso la dentro e volta para quem abriu.
 - `RvmMultiSelect<TValue>`: Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enquanto se marca; Esc, Tab ou clicar fora fecham.
 - [RvmMultiTextField](https://design.rvmit.com.br/componentes/multi-text-field): Varios textos como tags dentro do campo.

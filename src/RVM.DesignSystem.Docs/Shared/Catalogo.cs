@@ -127,7 +127,13 @@ public static class Catalogo
             new("componentes/comment", "RvmComment", "Comentarios com resposta e avaliacoes com nota."),
             new("componentes/notification-item", "RvmNotificationItem", "Item de notificacao com marcar como lida."),
             new("componentes/marker-button", "RvmMarkerButton", "Favoritar ou salvar, como botao de alternancia."),
-            new("componentes/widget", "RvmWidget", "Gatilho de icone ou cartao que abre um painel.")
+            new("componentes/widget", "RvmWidget", "Gatilho de icone ou cartao que abre um painel."),
+            new("componentes/chat", "RvmChat", "Conversa: contatos, grupos de mensagens, arquivo e audio."),
+            new("componentes/file-card", "RvmFileCard", "Cartoes de arquivo e de pasta, e o cartao de envio por tipo."),
+            new("componentes/event-calendar", "RvmEventCalendar", "Agenda de eventos em mes, semana e dia."),
+            new("componentes/mini-calendar", "RvmMiniCalendar", "Calendario compacto com marcas por dia, pilula e cartao de evento."),
+            new("componentes/kanban-board", "RvmKanbanBoard", "Quadro kanban que move por mouse e por teclado."),
+            new("componentes/map", "RvmMap", "Lugares marcados por latitude e longitude, com lista em texto.")
         ]),
         new("Navegacao e pagina",
         [
