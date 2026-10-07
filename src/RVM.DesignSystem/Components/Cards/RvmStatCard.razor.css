@@ -1,0 +1,142 @@
+/* CSS isolado do RvmStatCard. So custom properties — hex literal aqui quebra o tema escuro.
+   Papel, raio, sombra e respiro de 20 px sao os do RvmCard (Basic Card.png); a hierarquia titulo -> numero ->
+   variacao vem do Statistics Card.png. */
+
+.rvm-stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    min-width: 0;
+    padding: var(--rvm-space-5);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-grande { gap: var(--rvm-space-4); padding: var(--rvm-space-6); }
+.rvm-extra { gap: var(--rvm-space-4); padding: var(--rvm-space-6); min-height: 300px; }
+
+.rvm-topo {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-titulos {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-titulo,
+.rvm-subtitulo,
+.rvm-valor,
+.rvm-variacao {
+    margin: 0;
+}
+
+.rvm-subtitulo,
+.rvm-detalhe {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-acao {
+    flex: none;
+    margin-block-start: calc(var(--rvm-space-1) * -1);
+}
+
+.rvm-corpo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-4);
+}
+
+.rvm-numeros {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    min-width: 0;
+}
+
+.rvm-variacao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-tendencia {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+/* A cor do papel como TEXTO: o -main reprova AA sobre o papel; o -text passa nos dois temas. */
+.rvm-sobe { color: var(--rvm-color-success-text); }
+.rvm-desce { color: var(--rvm-color-error-text); }
+
+.rvm-visual {
+    margin-block-start: auto;
+    min-width: 0;
+}
+
+.rvm-com-imagem {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.rvm-imagem {
+    display: block;
+    max-width: 100%;
+    max-height: 160px;
+    object-fit: contain;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- Cheio (Surface Dark): o card na cor do papel, o texto no -contrast dele. Branco so passa AA no primary;
+   nos outros o par e o grafite (4.84 a 9.03:1), e -main/-contrast nao mudam com o tema. As pecas do DS dentro
+   (selo, botao, menu, progresso) vao no papel Inverse, que aqui e redefinido para a tinta do card: sem isso o
+   Inverse seria branco e sumiria no amarelo do warning. --- */
+.rvm-cheio {
+    background-color: var(--rvm-cartao-fundo);
+    color: var(--rvm-cartao-tinta);
+    --rvm-color-text-primary: var(--rvm-cartao-tinta);
+    --rvm-color-text-secondary: var(--rvm-cartao-tinta);
+    --rvm-color-inverse-main: var(--rvm-cartao-tinta);
+    --rvm-color-inverse-hover: var(--rvm-cartao-tinta);
+    --rvm-color-inverse-text: var(--rvm-cartao-tinta);
+    --rvm-color-inverse-contrast: var(--rvm-cartao-fundo);
+    --rvm-color-inverse-soft: color-mix(in srgb, var(--rvm-cartao-tinta) 16%, transparent);
+    --rvm-color-inverse-outlined-hover: color-mix(in srgb, var(--rvm-cartao-tinta) 12%, transparent);
+    --rvm-color-inverse-outlined-resting: color-mix(in srgb, var(--rvm-cartao-tinta) 56%, transparent);
+    --rvm-focus-ring-color: var(--rvm-cartao-tinta);
+}
+
+.rvm-cheio .rvm-sobe,
+.rvm-cheio .rvm-desce {
+    color: inherit;
+}
+
+.rvm-cheio.rvm-primary { --rvm-cartao-fundo: var(--rvm-color-primary-main); --rvm-cartao-tinta: var(--rvm-color-primary-contrast); }
+.rvm-cheio.rvm-secondary { --rvm-cartao-fundo: var(--rvm-color-secondary-main); --rvm-cartao-tinta: var(--rvm-color-secondary-contrast); }
+.rvm-cheio.rvm-info { --rvm-cartao-fundo: var(--rvm-color-info-main); --rvm-cartao-tinta: var(--rvm-color-info-contrast); }
+.rvm-cheio.rvm-success { --rvm-cartao-fundo: var(--rvm-color-success-main); --rvm-cartao-tinta: var(--rvm-color-success-contrast); }
+.rvm-cheio.rvm-warning { --rvm-cartao-fundo: var(--rvm-color-warning-main); --rvm-cartao-tinta: var(--rvm-color-warning-contrast); }
+.rvm-cheio.rvm-error { --rvm-cartao-fundo: var(--rvm-color-error-main); --rvm-cartao-tinta: var(--rvm-color-error-contrast); }
+/* Inverse cheio: o card branco com a tinta do primary. Lido do primary, e nao do proprio inverse, porque os tokens
+   do inverse sao redefinidos logo acima a partir destes — referencia circular invalidaria os dois. */
+.rvm-cheio.rvm-inverse { --rvm-cartao-fundo: var(--rvm-color-primary-contrast); --rvm-cartao-tinta: var(--rvm-color-primary-main); }

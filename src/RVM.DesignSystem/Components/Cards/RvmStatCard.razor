@@ -1,0 +1,81 @@
+@namespace RVM.DesignSystem.Components.Cards
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.IconBadge
+@using RVM.DesignSystem.Components.IconButton
+@using RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Progress
+@using RVM.DesignSystem.Icons
+
+@* O card de estatistica do kit (Statistics Card.png): titulo, numero e variacao, com enfeite, acao e uma area abaixo
+   do numero — um componente so para as ~30 combinacoes, como no RVM.UI. A variacao nunca fala so por seta e cor:
+   o leitor de tela ouve "Alta de 12%" / "Queda de 3%". *@
+<div @attributes="AdditionalAttributes" class="@CssClass">
+    <div class="rvm-topo">
+        @if (Adornment == RvmStatCardAdornment.Icon && AdornmentIcon is { } icone)
+        {
+            <RvmIconBadge Icon="icone" Variant="RvmIconBadgeVariant.Soft" Color="CorDasPecas" Size="RvmIconBadgeSize.Medium" />
+        }
+        <div class="rvm-titulos">
+            <h3 class="rvm-titulo rvm-text-subtitle1">@Title</h3>
+            @if (!string.IsNullOrWhiteSpace(Subtitle))
+            {
+                <p class="rvm-subtitulo rvm-text-body2">@Subtitle</p>
+            }
+        </div>
+        @if (Action == RvmCardAction.Button)
+        {
+            <RvmIconButton Icon="ActionIcon" Label="@(ActionLabel ?? string.Empty)" Variant="RvmButtonVariant.Soft"
+                           Color="CorDasPecas" Class="rvm-acao" OnClick="() => OnActionClick.InvokeAsync()" />
+        }
+        else if (Action == RvmCardAction.Menu)
+        {
+            <RvmMenu Label="@(ActionLabel ?? string.Empty)" Trigger="RvmMenuTrigger.Icon" ButtonColor="CorDoMenu" AlignEnd="true"
+                     Class="rvm-acao">@ActionMenu</RvmMenu>
+        }
+    </div>
+
+    <div class="rvm-corpo">
+        @if (Adornment == RvmStatCardAdornment.Badge && AdornmentIcon is { } selo)
+        {
+            <RvmArtisticIconBadge Icon="selo" Color="CorDasPecas" />
+        }
+        <div class="rvm-numeros">
+            <p class="@ClasseDoValor">@Value</p>
+            @if (Trend != RvmStatCardTrend.None || !string.IsNullOrWhiteSpace(TrendDetail))
+            {
+                <p class="rvm-variacao rvm-text-body2">
+                    @if (Trend != RvmStatCardTrend.None)
+                    {
+                        <span class="@(Trend == RvmStatCardTrend.Up ? "rvm-tendencia rvm-sobe" : "rvm-tendencia rvm-desce")">
+                            <RvmIcon Name="@(Trend == RvmStatCardTrend.Up ? RvmIconName.ArrowUp : RvmIconName.ArrowDown)" Size="RvmSize.Small" />
+                            <span class="rvm-so-leitor">@(Trend == RvmStatCardTrend.Up ? "Alta de " : "Queda de ")</span>@TrendValue
+                        </span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(TrendDetail))
+                    {
+                        <span class="rvm-detalhe">@TrendDetail</span>
+                    }
+                </p>
+            }
+        </div>
+    </div>
+
+    @if (Chart is not null)
+    {
+        <div class="rvm-visual">@Chart</div>
+    }
+    else if (Visual == RvmStatCardVisual.Progress)
+    {
+        <div class="rvm-visual">
+            <RvmProgressBar Value="@(VisualValue ?? 0)" AriaLabel="@(string.IsNullOrWhiteSpace(VisualLabel) ? Title : VisualLabel)"
+                            ShowValue="true" Color="CorDasPecas" Surface="Surface" Size="RvmSize.Small" />
+        </div>
+    }
+    else if (Visual == RvmStatCardVisual.Image)
+    {
+        <div class="rvm-visual rvm-com-imagem">
+            <img class="rvm-imagem" src="@ImageUrl" alt="" />
+        </div>
+    }
+</div>

@@ -1,0 +1,38 @@
+@namespace RVM.DesignSystem.Components.Cards
+@using RVM.DesignSystem.Components.IconBadge
+@using RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Progress
+
+@* Progress Card do kit: selo, titulo e descricao, menu opcional e a barra com o valor a esquerda e a porcentagem a
+   direita. O cabecalho da barra e desenho (aria-hidden): quem le a tela ouve tudo pelo proprio progressbar, com o
+   titulo e o valor no nome — so o valor ("R$ 40.000") nao diria de que e a barra. *@
+<div @attributes="AdditionalAttributes" class="@CssClass">
+    <div class="rvm-topo">
+        <RvmIconBadge Icon="Icon" Variant="IconVariant" Color="Color" Size="RvmIconBadgeSize.Medium" />
+        <div class="rvm-titulos">
+            <h3 class="rvm-titulo rvm-text-subtitle2">@Title</h3>
+            @if (!string.IsNullOrWhiteSpace(Description))
+            {
+                <p class="rvm-descricao rvm-text-body2">@Description</p>
+            }
+        </div>
+        @if (MenuItems is not null)
+        {
+            <RvmMenu Label="@MenuLabel" Trigger="RvmMenuTrigger.Icon" ButtonColor="RvmColor.Secondary" AlignEnd="true"
+                     Class="rvm-acao">@MenuItems</RvmMenu>
+        }
+    </div>
+
+    <div class="rvm-progresso">
+        <div class="rvm-linha" aria-hidden="true">
+            <span class="rvm-quantia rvm-text-subtitle2">@Value</span>
+            <span class="rvm-porcentagem rvm-text-body2">@Porcentagem</span>
+        </div>
+        <RvmProgressBar Value="Percent" Color="Color" AriaLabel="@NomeDaBarra" Size="RvmSize.Medium" />
+    </div>
+
+    @if (Footer is not null)
+    {
+        <div class="rvm-rodape">@Footer</div>
+    }
+</div>

@@ -1,0 +1,117 @@
+/* CSS isolado do RvmPaymentCard. So custom properties — hex literal aqui quebra o tema escuro.
+   Proporcao de cartao de banco (~1,6:1) e o enfeite de dois circulos translucidos do Debit Card do kit. */
+
+.rvm-payment-card {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 380px;
+    border-radius: var(--rvm-radius-md);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-com-acoes {
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-1);
+}
+
+.rvm-face {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--rvm-space-6);
+    box-sizing: border-box;
+    min-height: 200px;
+    padding: var(--rvm-space-6);
+    overflow: hidden;
+    border-radius: var(--rvm-radius-md);
+    box-shadow: var(--rvm-shadow-2);
+}
+
+.rvm-com-acoes .rvm-face {
+    box-shadow: none;
+}
+
+.rvm-enfeite {
+    position: absolute;
+    inset-block-start: -40%;
+    inset-inline-end: -20%;
+    width: 240px;
+    height: 240px;
+    border-radius: var(--rvm-radius-circle);
+    background-color: color-mix(in srgb, var(--rvm-cartao-tinta) 10%, transparent);
+    box-shadow: -90px 120px 0 0 color-mix(in srgb, var(--rvm-cartao-tinta) 8%, transparent);
+    pointer-events: none;
+}
+
+.rvm-topo,
+.rvm-base {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-base {
+    align-items: flex-end;
+}
+
+.rvm-saldo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    margin: 0;
+}
+
+.rvm-bandeira {
+    display: inline-flex;
+    flex: none;
+}
+
+.rvm-numero {
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+}
+
+.rvm-acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-4) var(--rvm-space-5);
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- Cheio: o cartao na cor do papel, o texto no -contrast dele (branco so no primary; grafite nos outros, 4.84 a
+   9.03:1 — -main/-contrast nao mudam com o tema). O Inverse dentro da face e redefinido para a tinta, como no
+   RvmStatCard, para um botao Inverse na bandeira nao sumir. --- */
+.rvm-cheio {
+    background-color: var(--rvm-cartao-fundo);
+    color: var(--rvm-cartao-tinta);
+    --rvm-color-inverse-main: var(--rvm-cartao-tinta);
+    --rvm-color-inverse-text: var(--rvm-cartao-tinta);
+    --rvm-color-inverse-contrast: var(--rvm-cartao-fundo);
+    --rvm-focus-ring-color: var(--rvm-cartao-tinta);
+}
+
+.rvm-cheio.rvm-primary { --rvm-cartao-fundo: var(--rvm-color-primary-main); --rvm-cartao-tinta: var(--rvm-color-primary-contrast); }
+.rvm-cheio.rvm-secondary { --rvm-cartao-fundo: var(--rvm-color-secondary-main); --rvm-cartao-tinta: var(--rvm-color-secondary-contrast); }
+.rvm-cheio.rvm-info { --rvm-cartao-fundo: var(--rvm-color-info-main); --rvm-cartao-tinta: var(--rvm-color-info-contrast); }
+.rvm-cheio.rvm-success { --rvm-cartao-fundo: var(--rvm-color-success-main); --rvm-cartao-tinta: var(--rvm-color-success-contrast); }
+.rvm-cheio.rvm-warning { --rvm-cartao-fundo: var(--rvm-color-warning-main); --rvm-cartao-tinta: var(--rvm-color-warning-contrast); }
+.rvm-cheio.rvm-error { --rvm-cartao-fundo: var(--rvm-color-error-main); --rvm-cartao-tinta: var(--rvm-color-error-contrast); }
+/* Lido do primary, e nao do proprio inverse, que e redefinido acima a partir destes (referencia circular). */
+.rvm-cheio.rvm-inverse { --rvm-cartao-fundo: var(--rvm-color-primary-contrast); --rvm-cartao-tinta: var(--rvm-color-primary-main); }

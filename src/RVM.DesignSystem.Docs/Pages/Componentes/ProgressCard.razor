@@ -1,0 +1,66 @@
+@page "/componentes/progress-card"
+@using RVM.DesignSystem.Components.Cards
+
+<PageTitle>RvmProgressCard — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmProgressCard</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O card de progresso do painel: selo, titulo e descricao, menu opcional e uma barra com o valor a esquerda e a
+    porcentagem a direita — meta de vendas, orcamento da safra, carga embarcada.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O leitor de tela ouve a barra
+    com o titulo e o valor no nome ("Orcamento de insumos: R$ 312.000, 78%").
+</p>
+
+<BlocoExemplo Titulo="Valor, porcentagem e selo"
+              Descricao="IconVariant escolhe o fundo do selo: Neutral (padrao), Soft ou Solid. Color pinta o selo e a barra."
+              Codigo="@CodigoBasico">
+    <div class="grade-cards largura-cheia">
+        <RvmProgressCard Icon="RvmIconName.Wallet" Title="Orcamento de insumos" Description="Safra 25/26" Value="R$ 312.000" Percent="78" />
+        <RvmProgressCard Icon="RvmIconName.Box" IconVariant="RvmIconBadgeVariant.Soft" Color="RvmColor.Success"
+                         Title="Soja embarcada" Value="18.400 sacas" Percent="46" />
+        <RvmProgressCard Icon="RvmIconName.DollarMinimalistic" IconVariant="RvmIconBadgeVariant.Solid" Color="RvmColor.Warning"
+                         Title="Contas a receber" Description="Vencem este mes" Value="R$ 96.500" Percent="92.4" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Menu e rodape"
+              Descricao="MenuItems liga o menu de tres pontos; MenuLabel e o nome dele (padrao: Mais acoes). Footer e livre, abaixo da barra."
+              Codigo="@CodigoMenu">
+    <div class="grade-cards largura-cheia">
+        <RvmProgressCard Icon="RvmIconName.ChartSquare" Color="RvmColor.Info" Title="Meta de vendas do trimestre"
+                         Value="R$ 1,4 mi" Percent="61" MenuLabel="Opcoes da meta de vendas">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Pencil">Editar meta</RvmMenuItem>
+                <RvmMenuItem Icon="RvmIconName.Download">Exportar</RvmMenuItem>
+            </MenuItems>
+            <Footer>
+                <span class="rvm-text-body2 site-apoio">Faltam R$ 546 mil em 23 dias.</span>
+            </Footer>
+        </RvmProgressCard>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmProgressCard" />
+
+@code {
+    private const string CodigoBasico = """
+        <RvmProgressCard Icon="RvmIconName.Wallet" Title="Orcamento de insumos" Description="Safra 25/26"
+                         Value="R$ 312.000" Percent="78" />
+        <RvmProgressCard Icon="RvmIconName.Box" IconVariant="RvmIconBadgeVariant.Soft" Color="RvmColor.Success"
+                         Title="Soja embarcada" Value="18.400 sacas" Percent="46" />
+        """;
+
+    private const string CodigoMenu = """
+        <RvmProgressCard Icon="RvmIconName.ChartSquare" Color="RvmColor.Info" Title="Meta de vendas do trimestre"
+                         Value="R$ 1,4 mi" Percent="61" MenuLabel="Opcoes da meta de vendas">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Pencil">Editar meta</RvmMenuItem>
+            </MenuItems>
+            <Footer>Faltam R$ 546 mil em 23 dias.</Footer>
+        </RvmProgressCard>
+        """;
+}
