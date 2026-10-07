@@ -44,10 +44,13 @@ export function observarRoda(elemento, dotnet) {
     };
 
     elemento.addEventListener('wheel', aoRodar, { passive: false });
+    // Sinal de que a roda ja aproxima: o E2E espera por ele antes de rodar, em vez de torcer pelo tempo.
+    elemento.dataset.rvmRoda = 'ligada';
 
     return {
         parar() {
             elemento.removeEventListener('wheel', aoRodar);
+            delete elemento.dataset.rvmRoda;
         }
     };
 }

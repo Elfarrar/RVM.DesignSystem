@@ -29,6 +29,19 @@
                  SliceColor="s => s.Cor" Height="240" ValueFormat="@(v => $"{RvmChartFormat.Number(v)} pedidos")" />
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="Paleta monocromatica e Total"
+              Descricao="Palette=Monochromatic pinta as fatias em degraus do primary (o padrao continua FullColor, as cores dos papeis). Total muda o 100%: 1.050 de 1.400 hectares colhidos ocupam 75% da volta, e o resto da volta fica vazio, so com o contorno tracejado."
+              Codigo="@CodigoTotal">
+    <RvmPieChart Items="Colheita" Label="c => c.Nome" Value="c => c.Hectares" AriaLabel="Area colhida da safra, por cultura"
+                 Palette="RvmChartPalette.Monochromatic" Total="1400" Donut="true" Height="260"
+                 ValueFormat="@(v => $"{RvmChartFormat.Number(v)} ha")">
+        <CenterContent>
+            <span class="rvm-text-h5">75%</span>
+            <span class="rvm-text-caption site-apoio">colhido</span>
+        </CenterContent>
+    </RvmPieChart>
+</BlocoExemplo>
+
 <TabelaParametros Componente="RvmPieChart" />
 
 <RecorteDoKit Origem="kit/pie-chart.png"
@@ -42,6 +55,15 @@
 
     private static readonly (string Nome, double Quantidade, RvmColor Cor)[] Situacoes =
         [("Faturados", 212, RvmColor.Success), ("Aprovados", 78, RvmColor.Info), ("Em analise", 39, RvmColor.Warning), ("Cancelados", 13, RvmColor.Error)];
+
+    private static readonly (string Nome, double Hectares)[] Colheita =
+        [("Soja", 620), ("Milho", 300), ("Feijao", 130)];
+
+    private const string CodigoTotal = """
+        <RvmPieChart Items="colheita" Label="c => c.Nome" Value="c => c.Hectares"
+                     AriaLabel="Area colhida da safra" Donut="true"
+                     Palette="RvmChartPalette.Monochromatic" Total="1400" />
+        """;
 
     private const string CodigoRosca = """
         <RvmPieChart Items="culturas" Label="c => c.Nome" Value="c => c.Hectares"

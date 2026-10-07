@@ -1,0 +1,124 @@
+@page "/componentes/table-layout"
+@using RVM.DesignSystem.Components.Table
+
+<PageTitle>RvmTableLayout — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTableLayout</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A casca da tabela, para montar a mao: cartao, titulo com acoes, a <code>&lt;table&gt;</code> e o rodape. O
+    cabecalho vem em <code>Head</code> com <code>RvmHeaderCell</code>, e as linhas em <code>Body</code> com
+    <code>RvmRow</code>. Carregando, erro e vazio sao da casca, como no <code>RvmDataTable</code>, que e esta mesma
+    casca ligada a uma lista.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O titulo ordenavel e um botao
+    dentro do <code>th</code> (alcancavel por teclado) que avisa <code>DirectionChanged</code> com a direcao nova; a
+    coluna ordenada leva <code>aria-sort</code>.
+</p>
+
+<BlocoExemplo Titulo="Montagem manual"
+              Descricao="Chuva por estacao da fazenda. O titulo Chuva ordena; a linha da estacao em alerta aparece escolhida."
+              Codigo="@Codigo">
+    <div class="largura-cheia">
+        <RvmTableLayout Caption="Chuva acumulada por estacao">
+            <Header>
+                <h4 class="rvm-text-subtitle1" style="margin: 0">Chuva acumulada em outubro</h4>
+            </Header>
+            <Toolbar>
+                <RvmButton Variant="RvmButtonVariant.Outlined" StartIcon="RvmIconName.Download">Exportar</RvmButton>
+            </Toolbar>
+            <Head>
+                <RvmHeaderCell>Estacao</RvmHeaderCell>
+                <RvmHeaderCell>Talhao</RvmHeaderCell>
+                <RvmHeaderCell Align="RvmAlign.End" Sortable="true" @bind-Direction="_direcao">Chuva (mm)</RvmHeaderCell>
+            </Head>
+            <Body>
+                @foreach (var estacao in Ordenadas)
+                {
+                    <RvmRow @key="estacao.Nome" Selectable="true" Selected="@(estacao.Milimetros < 20)">
+                        <td>@estacao.Nome</td>
+                        <td>@estacao.Talhao</td>
+                        <td style="text-align: end">@estacao.Milimetros.ToString("N1")</td>
+                    </RvmRow>
+                }
+            </Body>
+            <Footer>
+                <span>@Estacoes.Length estacoes</span>
+                <span>Media: @Estacoes.Average(e => e.Milimetros).ToString("N1") mm</span>
+            </Footer>
+        </RvmTableLayout>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Vazio"
+              Descricao="IsEmpty troca o corpo pelo vazio padrao (ou pelo Empty do app)."
+              Codigo="@CodigoVazio">
+    <div class="largura-cheia">
+        <RvmTableLayout Caption="Ordens de servico abertas" IsEmpty="true" EmptyText="Nenhuma ordem de servico aberta.">
+            <Head>
+                <RvmHeaderCell>Ordem</RvmHeaderCell>
+                <RvmHeaderCell>Maquina</RvmHeaderCell>
+                <RvmHeaderCell Align="RvmAlign.End">Horas</RvmHeaderCell>
+            </Head>
+        </RvmTableLayout>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmTableLayout" />
+
+<TabelaParametros Componente="RvmHeaderCell" />
+
+<TabelaParametros Componente="RvmRow" />
+
+@code {
+    private sealed record Estacao(string Nome, string Talhao, decimal Milimetros);
+
+    private static readonly Estacao[] Estacoes =
+    [
+        new("EST-01", "Talhao Norte", 82.4m),
+        new("EST-02", "Baixada", 15.2m),
+        new("EST-03", "Sede", 46m),
+        new("EST-04", "Cerrado", 120.8m)
+    ];
+
+    private RvmSortDirection _direcao = RvmSortDirection.None;
+
+    private IEnumerable<Estacao> Ordenadas => _direcao switch
+    {
+        RvmSortDirection.Ascending => Estacoes.OrderBy(e => e.Milimetros),
+        RvmSortDirection.Descending => Estacoes.OrderByDescending(e => e.Milimetros),
+        _ => Estacoes
+    };
+
+    private const string Codigo = """
+        <RvmTableLayout Caption="Chuva acumulada por estacao">
+            <Head>
+                <RvmHeaderCell>Estacao</RvmHeaderCell>
+                <RvmHeaderCell Align="RvmAlign.End" Sortable="true"
+                               @bind-Direction="direcao">Chuva (mm)</RvmHeaderCell>
+            </Head>
+            <Body>
+                @foreach (var estacao in Ordenadas)
+                {
+                    <RvmRow @key="estacao.Nome" Selectable="true" Selected="@(estacao.Milimetros < 20)">
+                        <td>@estacao.Nome</td>
+                        <td style="text-align: end">@estacao.Milimetros.ToString("N1")</td>
+                    </RvmRow>
+                }
+            </Body>
+            <Footer>@estacoes.Length estacoes</Footer>
+        </RvmTableLayout>
+        """;
+
+    private const string CodigoVazio = """
+        <RvmTableLayout Caption="Ordens de servico abertas" IsEmpty="true"
+                        EmptyText="Nenhuma ordem de servico aberta.">
+            <Head>
+                <RvmHeaderCell>Ordem</RvmHeaderCell>
+                <RvmHeaderCell Align="RvmAlign.End">Horas</RvmHeaderCell>
+            </Head>
+        </RvmTableLayout>
+        """;
+}

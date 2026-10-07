@@ -1,0 +1,11 @@
+/* As linhas da RvmTable: sem divisoria, hover no action-hover e a escolhida no action-selected (o selecionado do
+   kit, cinza no escuro, nao chega a 4.5:1 com o texto). */
+
+.rvm-linha-dados:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-linha-escolhida,
+.rvm-linha-escolhida:hover {
+    background-color: var(--rvm-color-action-selected);
+}

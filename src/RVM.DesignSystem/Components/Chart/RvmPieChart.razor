@@ -21,18 +21,43 @@
     /// <summary>Conteudo no centro da rosca (o total, um rotulo).</summary>
     [Parameter] public RenderFragment? CenterContent { get; set; }
 
-    /// <summary>Cor de cada fatia. Sem valor, segue a paleta na ordem dos itens.</summary>
+    /// <summary>Cor de cada fatia. Sem valor, segue a <see cref="Palette"/> na ordem dos itens.</summary>
     [Parameter] public Func<TItem, RvmColor>? SliceColor { get; set; }
+
+    /// <summary>
+    /// De onde saem as cores das fatias sem <see cref="SliceColor"/>. Padrao: <see cref="RvmChartPalette.FullColor"/>,
+    /// as cores dos papeis na ordem (o desenho de sempre da pizza do DS; no RVM.UI o padrao e o monocromatico).
+    /// <see cref="RvmChartPalette.Monochromatic"/> usa degraus do primary e, com mais de cinco fatias, volta as
+    /// cores dos papeis. A <c>RvmChartLegend</c> ao lado leva a mesma paleta.
+    /// </summary>
+    [Parameter] public RvmChartPalette Palette { get; set; } = RvmChartPalette.FullColor;
+
+    /// <summary>
+    /// O total sobre o qual as fatias sao medidas (o 100%). Sem ele, a soma das fatias: "como o todo se divide".
+    /// Com ele, "quanto de quanto": 9 com <c>Total</c> 12 desenha 75% e deixa o resto da volta vazio, so com o
+    /// contorno tracejado. Menor que a soma das fatias e erro (elas dariam mais de uma volta).
+    /// </summary>
+    [Parameter] public double? Total { get; set; }
 
     private const double Afastamento = 6;
 
     internal sealed record Fatia(int Indice, double Valor, double Inicio, double Fim);
 
-    private double Total => Memo("Total", () => Dados.Sum(item => Math.Max(0, ValorDe(item))));
+    private double Soma => Memo("Soma", () => Dados.Sum(item => Math.Max(0, ValorDe(item))));
+
+    // Total menor que a soma vale como a soma, como nos graficos radiais: lancar no render derrubava o circuito por
+    // um dado que vem do app (achado do review das ondas 4 e 5).
+    private double TotalEfetivo => Total is { } total && total > Soma ? total : Soma;
+
+    /// <summary>Sobra volta para a trilha: sem ela, 75% pareceria 100%.</summary>
+    private bool ComTrilha => TotalEfetivo > Soma + 1e-9;
 
     private double ValorDe(TItem item) => Value?.Invoke(item) ?? 0;
 
     private RvmColor CorDe(int indice) => SliceColor?.Invoke(Dados[indice]) ?? CorDaPaleta(indice);
+
+    private string ClasseDe(int indice)
+        => SliceColor is { } cor ? ClasseDaCor(cor(Dados[indice])) : RampaDoGrafico.Radial(Palette, indice, Dados.Count);
 
     private double CentroX => Largura / 2;
 
@@ -44,7 +69,7 @@
 
     private List<Fatia> Fatias => Memo("Fatias", () =>
         {
-            var total = Total;
+            var total = TotalEfetivo;
             var lista = new List<Fatia>();
             if (total <= 0)
             {
@@ -69,7 +94,7 @@
         });
 
     private string Percentual(double valor)
-        => Total <= 0 ? "0%" : RvmChartFormat.Number(Math.Round(valor / Total * 100, 1)) + "%";
+        => TotalEfetivo <= 0 ? "0%" : RvmChartFormat.Number(Math.Round(valor / TotalEfetivo * 100, 1)) + "%";
 
     /// <summary>Ponto na circunferencia; o angulo conta em graus a partir do alto, no sentido horario.</summary>
     private (double X, double Y) Ponto(double angulo, double raio, double dx = 0, double dy = 0)
@@ -105,9 +130,23 @@
                + $"L {N(xi1)} {N(yi1)} A {N(RaioInterno)} {N(RaioInterno)} 0 {grande} 0 {N(xi0)} {N(yi0)} Z";
     }
 
+    /// <summary>A volta inteira (disco, ou anel na rosca), por baixo das fatias: o que falta para o Total.</summary>
+    private string CaminhoDaTrilha
+    {
+        get
+        {
+            string Circulo(double r) => $"M {N(CentroX - r)} {N(CentroY)} a {N(r)} {N(r)} 0 1 0 {N(2 * r)} 0 a {N(r)} {N(r)} 0 1 0 {N(-2 * r)} 0 Z";
+            return RaioInterno > 0 ? $"{Circulo(Raio)} {Circulo(RaioInterno)}" : Circulo(Raio);
+        }
+    }
+
     internal override RenderFragment Desenho => @<g>
         @{ var fatias = Fatias; }
-        @if (fatias.Count == 0)
+        @if (ComTrilha)
+        {
+            <path class="rvm-grafico-trilha" d="@CaminhoDaTrilha" fill-rule="evenodd" />
+        }
+        else if (fatias.Count == 0)
         {
             <circle class="rvm-grafico-teia" cx="@N(CentroX)" cy="@N(CentroY)" r="@N(Raio)" />
         }
@@ -124,7 +163,7 @@
         <g mask="@($"url(#{IdBase}-relogio)")">
             @foreach (var fatia in fatias)
             {
-                <path class="@($"rvm-grafico-fatia {ClasseDaCor(CorDe(fatia.Indice))}")" d="@CaminhoDa(fatia)" />
+                <path class="@($"rvm-grafico-fatia {ClasseDe(fatia.Indice)}")" d="@CaminhoDa(fatia)" />
             }
         </g>
     </g>;
@@ -140,7 +179,7 @@
     internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
     {
         var f = FatiaDoPonto(indice);
-        return [new("", $"{Formatar(f.Valor)} ({Percentual(f.Valor)})", CorDe(f.Indice))];
+        return [new("", $"{Formatar(f.Valor)} ({Percentual(f.Valor)})", CorDe(f.Indice), ClasseDe(f.Indice))];
     }
 
     internal override (double X, double Y) AncoraDoPonto(int indice)
@@ -169,7 +208,7 @@
     private new int? Ativo => base.Ativo is { } i && i < Fatias.Count ? Fatias[i].Indice : null;
 
     internal override IReadOnlyList<ItemDaLegenda> Legenda
-        => [.. Fatias.Select(f => new ItemDaLegenda(NomeDe(Dados[f.Indice], f.Indice), CorDe(f.Indice), Percentual(f.Valor)))];
+        => [.. Fatias.Select(f => new ItemDaLegenda(NomeDe(Dados[f.Indice], f.Indice), CorDe(f.Indice), Percentual(f.Valor), ClasseDe(f.Indice)))];
 
     internal override TabelaDeDados MontarTabela(Func<double, string> formatar)
         => new(["Fatia", "Valor", "Percentual"],

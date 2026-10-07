@@ -1,0 +1,47 @@
+/* CSS isolado do RvmListGroup. So custom properties — hex literal aqui quebra o tema escuro.
+   Os cartoes de lista do dashboard CRM do kit ("Meeting Schedule"): a superficie do RvmCard (papel, raio
+   pequeno, sombra 1), titulo de 20 px a 20 px da borda e o menu de tres pontos no canto. */
+
+.rvm-grupo-lista {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-grupo-lista-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-5) var(--rvm-space-3) 0 var(--rvm-space-5);
+}
+
+.rvm-grupo-lista-textos {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-grupo-lista-linha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+/* O navegador da margem ao p que o RvmTypography gera. */
+.rvm-grupo-lista-textos ::deep p {
+    margin: 0;
+}
+
+.rvm-grupo-lista-abas {
+    padding: var(--rvm-space-3) var(--rvm-space-5) 0;
+}
+
+.rvm-grupo-lista-corpo {
+    padding: var(--rvm-space-2) 0 var(--rvm-space-3);
+}

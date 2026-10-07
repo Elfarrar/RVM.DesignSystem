@@ -1,0 +1,75 @@
+/* CSS isolado do RvmCellSquareImage. So custom properties — hex literal aqui quebra o tema escuro. */
+
+/* --- O <td> (igual em todas as celulas; CSS isolado e por componente, entao cada uma traz o seu) ---
+   Medidas da RvmTable (linha de 52 px, 16 px dos lados), as mesmas do kit nas listas de usuario e de fatura: texto em
+   body2 na tinta principal, conteudo centrado na vertical, figura e texto separados por 12 px. */
+
+.rvm-celula {
+    box-sizing: border-box;
+    height: 52px;
+    padding: 0 var(--rvm-space-4);
+    vertical-align: middle;
+    white-space: nowrap;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-celula-conteudo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+}
+
+.rvm-inicio { text-align: start; }
+.rvm-inicio .rvm-celula-conteudo { justify-content: flex-start; }
+
+.rvm-centro { text-align: center; }
+.rvm-centro .rvm-celula-conteudo { justify-content: center; }
+
+.rvm-fim { text-align: end; }
+.rvm-fim .rvm-celula-conteudo { justify-content: flex-end; }
+
+/* --- Titulo e segunda linha (CelulaCss.Linhas). Sai em C#, sem o atributo do CSS isolado: dai o ::deep a partir do
+   <td>. Kit: o nome em body2 na tinta principal, o e-mail embaixo em caption na tinta de apoio; o destaque e o mesmo
+   texto, mais pesado. --- */
+
+.rvm-celula ::deep .rvm-celula-texto {
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.rvm-celula ::deep .rvm-titulo {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: var(--rvm-font-weight-regular);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-celula ::deep .rvm-destaque .rvm-titulo {
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-celula ::deep .rvm-apoio {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+    color: var(--rvm-color-text-secondary);
+}
+
+/* --- Desta celula ---
+   Miniatura de 40 px (o mesmo lado do avatar da celula de usuario) com o canto pequeno do kit. O fundo suave aparece
+   enquanto a imagem carrega e nas transparentes. */
+
+.rvm-miniatura {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-secondary-soft);
+}

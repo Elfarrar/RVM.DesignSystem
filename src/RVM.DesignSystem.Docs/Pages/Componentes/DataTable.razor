@@ -1,0 +1,157 @@
+@page "/componentes/data-table"
+@using RVM.DesignSystem.Components.Table
+@using RVM.DesignSystem.Components.EmptyState
+
+<PageTitle>RvmDataTable — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDataTable</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Tabela ligada a uma lista tipada. As colunas sao declaradas com <code>RvmColumn</code>: um atalho de texto
+    (<code>Text</code>) ou a celula inteira no <code>ChildContent</code>. Carregando, erro e vazio ja vem prontos.
+    E um <code>&lt;table&gt;</code> de verdade, com o visual da <code>RvmTable</code> medido no kit.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. ⚠️ A tabela <strong>nao
+    ordena sozinha</strong>: o titulo avisa <code>OnSort</code> com a coluna e a direcao, e o app reordena (numa lista
+    paginada ou vinda do servidor, ordenar so a pagina atual mentiria). A selecao tambem e do app:
+    <code>IsSelected</code> diz qual linha esta escolhida, e uma coluna com caixa de marcar captura a escolha.
+</p>
+
+<BlocoExemplo Titulo="Ordenacao e selecao"
+              Descricao="Clique no titulo Talhao ou Area para ordenar: crescente, depois decrescente. A caixa de marcar escolhe a linha, que ganha o fundo de selecao e aria-selected."
+              Codigo="@CodigoOrdenacao">
+    <div class="largura-cheia">
+        <RvmDataTable Items="_talhoes" Caption="Talhoes da safra" SortedBy="@_ordenadoPor" Direction="_direcao" OnSort="Ordenar"
+                      Selectable="true" IsSelected="t => _escolhidos.Contains(t.Id)">
+            <Header>
+                <h4 class="rvm-text-subtitle1" style="margin: 0">Talhoes da safra</h4>
+            </Header>
+            <Columns>
+                <RvmColumn Title="Selecionar">
+                    <td>
+                        <RvmCheckbox Value="@_escolhidos.Contains(context.Id)"
+                                     ValueChanged="@((bool v) => Escolher(context.Id, v))"
+                                     aria-label="@($"Selecionar {context.Nome}")" />
+                    </td>
+                </RvmColumn>
+                <RvmColumn Title="Talhao" Text="t => t.Nome" Highlight="true" Sortable="true" />
+                <RvmColumn Title="Cultura" Text="t => t.Cultura" />
+                <RvmColumn Title="Responsavel" Text="t => t.Responsavel" />
+                <RvmColumn Title="Area (ha)" Text="@(t => t.Hectares.ToString("N1"))" Align="RvmAlign.End" Sortable="true" />
+            </Columns>
+            <Footer>
+                <span aria-live="polite">
+                    @(_escolhidos.Count == 0
+                        ? $"{_talhoes.Count} talhoes, nenhum escolhido."
+                        : $"{_escolhidos.Count} de {_talhoes.Count} escolhido(s).")
+                </span>
+            </Footer>
+        </RvmDataTable>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="A tabela troca o corpo pelo estado; o cabecalho continua, para quem usa leitor de tela saber de que tabela se trata."
+              Codigo="@CodigoEstados">
+    <div class="largura-cheia">
+        <div class="linha-exemplos">
+            <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="() => _estado = 0">Com dados</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="() => _estado = 1">Carregando</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="() => _estado = 2">Erro</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="() => _estado = 3">Vazio</RvmButton>
+        </div>
+        <RvmDataTable Items="@(_estado == 3 ? [] : Pagamentos)" Caption="Pagamentos a fornecedores"
+                      Loading="@(_estado == 1)" Error="@(_estado == 2)" LoadingText="Buscando pagamentos...">
+            <Columns>
+                <RvmColumn Title="Fornecedor" Text="p => p.Fornecedor" Highlight="true" />
+                <RvmColumn Title="Vencimento" Text="@(p => p.Vencimento.ToString("dd/MM/yyyy"))" />
+                <RvmColumn Title="Valor" Text="@(p => p.Valor.ToString("C"))" Align="RvmAlign.End" />
+            </Columns>
+            <Empty>
+                <RvmEmptyState Title="Nenhum pagamento neste mes" Description="Lance a primeira nota de compra para ver os vencimentos aqui." Status="true" />
+            </Empty>
+        </RvmDataTable>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmDataTable" />
+
+<TabelaParametros Componente="RvmColumn" />
+
+@code {
+    private sealed record Pagamento(string Fornecedor, DateOnly Vencimento, decimal Valor);
+
+    private static readonly Pagamento[] Pagamentos =
+    [
+        new("Agropecuaria Boa Safra", new DateOnly(2026, 10, 10), 18_450.00m),
+        new("Sementes Cerrado", new DateOnly(2026, 10, 15), 42_300.50m),
+        new("Posto Rodovia", new DateOnly(2026, 10, 20), 6_980.00m)
+    ];
+
+    private IReadOnlyList<TalhaoExemplo> _talhoes = TalhaoExemplo.Lista[..6];
+    private readonly HashSet<int> _escolhidos = [];
+    private string? _ordenadoPor;
+    private RvmSortDirection _direcao = RvmSortDirection.None;
+    private int _estado;
+
+    // A tabela so avisa; quem reordena e a pagina.
+    private void Ordenar((string Coluna, RvmSortDirection Direcao) pedido)
+    {
+        _ordenadoPor = pedido.Coluna;
+        _direcao = pedido.Direcao;
+        Func<TalhaoExemplo, object> chave = pedido.Coluna == "Talhao" ? t => t.Nome : t => t.Hectares;
+        _talhoes = _direcao == RvmSortDirection.Descending ? [.. _talhoes.OrderByDescending(chave)] : [.. _talhoes.OrderBy(chave)];
+    }
+
+    private void Escolher(int id, bool escolhido)
+    {
+        if (escolhido) _escolhidos.Add(id); else _escolhidos.Remove(id);
+    }
+
+    private const string CodigoOrdenacao = """
+        <RvmDataTable Items="talhoes" Caption="Talhoes da safra"
+                      SortedBy="@ordenadoPor" Direction="direcao" OnSort="Ordenar"
+                      Selectable="true" IsSelected="t => escolhidos.Contains(t.Id)">
+            <Columns>
+                <RvmColumn Title="Selecionar">
+                    <td>
+                        <RvmCheckbox Value="@escolhidos.Contains(context.Id)"
+                                     ValueChanged="@((bool v) => Escolher(context.Id, v))"
+                                     aria-label="@($"Selecionar {context.Nome}")" />
+                    </td>
+                </RvmColumn>
+                <RvmColumn Title="Talhao" Text="t => t.Nome" Highlight="true" Sortable="true" />
+                <RvmColumn Title="Area (ha)" Text="@(t => t.Hectares.ToString("N1"))"
+                           Align="RvmAlign.End" Sortable="true" />
+            </Columns>
+        </RvmDataTable>
+
+        @code {
+            // A tabela so avisa; quem reordena e o app.
+            private void Ordenar((string Coluna, RvmSortDirection Direcao) pedido)
+            {
+                ordenadoPor = pedido.Coluna;
+                direcao = pedido.Direcao;
+                talhoes = direcao == RvmSortDirection.Descending
+                    ? [.. talhoes.OrderByDescending(Chave(pedido.Coluna))]
+                    : [.. talhoes.OrderBy(Chave(pedido.Coluna))];
+            }
+        }
+        """;
+
+    private const string CodigoEstados = """
+        <RvmDataTable Items="pagamentos" Caption="Pagamentos a fornecedores"
+                      Loading="carregando" Error="falhou" LoadingText="Buscando pagamentos...">
+            <Columns>
+                <RvmColumn Title="Fornecedor" Text="p => p.Fornecedor" Highlight="true" />
+                <RvmColumn Title="Valor" Text="@(p => p.Valor.ToString("C"))" Align="RvmAlign.End" />
+            </Columns>
+            <Empty>
+                <RvmEmptyState Title="Nenhum pagamento neste mes" Status="true"
+                               Description="Lance a primeira nota de compra para ver os vencimentos aqui." />
+            </Empty>
+        </RvmDataTable>
+        """;
+}

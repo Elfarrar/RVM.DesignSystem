@@ -1,0 +1,54 @@
+/* Tabela HTML simples so para mostrar as celulas: cabecalho em caixa alta como no kit e uma linha divisoria. */
+
+.rolagem-tabela {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabela-exemplo {
+    border-collapse: collapse;
+    min-width: 100%;
+    background-color: var(--rvm-color-background-paper);
+}
+
+.tabela-larga {
+    width: 100%;
+}
+
+.tabela-exemplo th {
+    height: 48px;
+    padding: 0 var(--rvm-space-4);
+    text-align: start;
+    white-space: nowrap;
+    font-size: var(--rvm-text-caption-size);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--rvm-color-text-primary);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.tabela-exemplo th.centro { text-align: center; }
+.tabela-exemplo th.fim { text-align: end; }
+
+.tabela-exemplo tbody tr {
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.tabela-exemplo tbody tr.escolhida {
+    background-color: var(--rvm-color-action-selected);
+}
+
+.so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.titulo-parametros {
+    margin-top: var(--rvm-space-8);
+}

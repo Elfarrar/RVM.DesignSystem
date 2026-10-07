@@ -1,0 +1,88 @@
+@namespace RVM.DesignSystem.Components.Chart
+@inherits RvmRadialChartBase
+
+@* Bolhas (contrato com o RVM.UI, DSGN-017): uma bolha por fatia, lado a lado na ordem recebida, com o percentual
+   dentro. O diametro acompanha a RAIZ do valor, nao o valor: assim quem cresce em proporcao e a AREA, que e o que o
+   olho le num circulo. A menor bolha tem um piso para o numero caber. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    private const double DiametroMaximo = 200;
+
+    /// <summary>O piso da menor bolha, em fracao da maior: abaixo disto ela some e o percentual nao cabe.</summary>
+    private const double PisoDoDiametro = 0.3;
+
+    private const double Vao = 8;
+
+    private sealed record Bolha(int Indice, double X, double Y, double Diametro);
+
+    private List<Bolha> Bolhas()
+    {
+        var maior = Fatias.Count == 0 ? 0 : Fatias.Max(f => f.Value);
+        var lista = new List<Bolha>();
+        if (maior <= 0)
+        {
+            return lista;
+        }
+
+        var x = 0d;
+        for (var i = 0; i < Fatias.Count; i++)
+        {
+            var valor = Fatias[i].Value;
+            if (valor <= 0)
+            {
+                continue;
+            }
+
+            var diametro = Math.Max(DiametroMaximo * Math.Sqrt(valor / maior), DiametroMaximo * PisoDoDiametro);
+            lista.Add(new Bolha(i, x + diametro / 2, DiametroMaximo / 2, diametro));
+            x += diametro + Vao;
+        }
+
+        return lista;
+    }
+
+    internal override double Largura
+    {
+        get
+        {
+            var bolhas = Bolhas();
+            return bolhas.Count == 0 ? DiametroMaximo : bolhas[^1].X + bolhas[^1].Diametro / 2;
+        }
+    }
+
+    internal override double Altura => DiametroMaximo;
+
+    internal override string ClasseDoTipo => "rvm-bolhas";
+
+    // <text> e reservada do Razor: o rotulo sai pelo construtor, com o conteudo codificado por ele.
+    private static RenderFragment Rotulo(double x, double y, string texto) => b =>
+    {
+        b.OpenElement(0, "text");
+        b.AddAttribute(1, "class", "rvm-radial-rotulo");
+        b.AddAttribute(2, "x", N(x));
+        b.AddAttribute(3, "y", N(y));
+        b.AddAttribute(4, "text-anchor", "middle");
+        b.AddAttribute(5, "dominant-baseline", "central");
+        b.AddContent(6, texto);
+        b.CloseElement();
+    };
+
+    internal override RenderFragment Desenho => @<g>
+        @foreach (var bolha in Bolhas())
+        {
+            <g class="rvm-radial-crescer" style="@EstiloDaCor(bolha.Indice)">
+                <circle class="rvm-radial-bolha" cx="@N(bolha.X)" cy="@N(bolha.Y)" r="@N(bolha.Diametro / 2)" />
+                @Rotulo(bolha.X, bolha.Y, Percentual(FracaoDe(Fatias[bolha.Indice])))
+            </g>
+        }
+    </g>;
+
+    internal override IReadOnlyList<Alvo> Alvos
+        => [.. Bolhas().Select(b =>
+            {
+                // A bolha inteira e o alvo; a menor ja passa dos 44 do minimo da WCAG.
+                var lado = Math.Max(44, b.Diametro * 0.7);
+                return new Alvo(b.Indice, b.X - lado / 2, b.Y - lado / 2, lado, lado);
+            })];
+}

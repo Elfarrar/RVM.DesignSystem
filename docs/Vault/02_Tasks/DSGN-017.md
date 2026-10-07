@@ -79,6 +79,12 @@ com **65**. Faltam no DS **100 componentes**, **399 parâmetros** em 65 componen
    `design/contrato-api.pendentes.json`, que só encolhe. Onda 0 = contrato, enums, ícones e parâmetros dos
    componentes em comum; depois as ondas do card (shell/navegação → formulários → tabelas e listas → feedback →
    restante), cada uma em `dev` com screenshot para aprovação. **2.0.0 só com zero pendentes.**
+4. **Tema — `Accent` (07/10/2026):** `Blue` é o Cobalt de hoje e é o **padrão no DS** (nenhum consumidor muda de
+   cor; no UI o padrão é Roxo, de outro kit). `Purple` e `Black` são rampas **novas desenhadas no DS** a partir dos
+   tokens, com contraste AA medido.
+5. **Tema — paletas de produto (07/10/2026):** Profissional, Acolhedor e Utilitário entram **com as cores e com as
+   fontes** (Hanken Grotesk, Lora e Geist Mono empacotadas no DS, OFL — licença conferida e `OFL.txt` junto, como a
+   Inter do ADR-006).
 
 ## Onda 0 — feita em 07/10/2026 (branch `dsgn-017`)
 
@@ -179,6 +185,26 @@ Pendentes do contrato: **201 → 158**. Grupo "Feedback e texto" no site: `RvmMo
   de 49 dias recusada antes da fila, conjuntos de pausa limpos ao fechar).
 - ⏳ **Limitacao aceita:** toast com acao aberto sobre um modal fica fora do alcance do teclado (o foco esta preso no
   modal). O toast fica acima de tudo de proposito.
+
+## Ondas 4 e 5 — feitas em 07/10/2026 (um PR so)
+
+Pendentes do contrato: **157 → 85**. Grupo "Tabelas e listas" no site: `RvmDataTable<TItem>`, `RvmColumn<TItem>`,
+`RvmRow`, `RvmHeaderCell`, `RvmTableLayout`, `RvmAlign`, as 15 `RvmCell*`, `RvmFileIcon` (+ `RvmFileIconName`),
+`RvmFilter`, `RvmFilterGroup`, `RvmListGroup`. Graficos: bases nao genericas `RvmChartBase` e `RvmRadialChartBase`,
+`RvmDonutChart`, `RvmMeterChart`, `RvmBubbleChart`, `RvmMultilayerDonutChart`, `RvmChartLegend`, `Layout` no
+`RvmBarChart` e `Palette`/`Total` no `RvmPieChart`.
+
+- ⚠️ **Padroes que diferem do RVM.UI para nao quebrar a 1.x:** `RvmBarChart.Layout = Horizontal` (UI: Vertical) e
+  `RvmPieChart.Palette = FullColor` (UI: Monochromatic) — e o visual de hoje.
+- As celulas escrevem o proprio `<td>` com um helper interno (`CelulaCss`): componente publico fora do contrato e
+  barrado pelo `ContratoApiTests`. A rampa monocromatica e uma so (`RampaDoGrafico`), para legenda e grafico casarem.
+- Review: 2 P2 corrigidos (valor NaN travava o laco do tracejado da rosca; `@key` pelo item derrubava a tabela com
+  itens iguais) e 2 P3 (pizza com Total menor que a soma lancava no render; filtro aberto no 1o render roubava o foco).
+- ⏳ **Pendentes do review (nao bloqueiam):** o cartao da tabela corta o painel do `RvmFilter` na toolbar e o menu da
+  ultima linha (`overflow: hidden` herdado do `RvmTable`) — pede decisao de layout; o degrau 100 do monocromatico fica
+  abaixo de 3:1 como objeto grafico (o dado esta na tabela e na dica); `RvmFilterGroup` com `h3` fixo; coluna de selecao
+  sem titulo gera `th` vazio.
+- E2E dev: dois instaveis antigos corrigidos por sinal (zoom espera `data-rvm-roda`; axe espera as animacoes acabarem).
 
 ## Etapa 3 — RVM.DesignSystem
 

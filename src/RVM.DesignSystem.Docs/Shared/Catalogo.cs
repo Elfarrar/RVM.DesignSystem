@@ -95,6 +95,15 @@ public static class Catalogo
             new("componentes/media-upload", "RvmMediaUpload", "Envio de imagens com miniaturas, remover e tentar de novo."),
             new("componentes/profile-image-upload", "RvmProfileImageUpload", "Foto de perfil: avatar e o botao de enviar.")
         ]),
+        new("Tabelas e listas",
+        [
+            new("componentes/data-table", "RvmDataTable", "Tabela de dados com colunas declaradas, ordenacao avisada ao app e selecao."),
+            new("componentes/table-layout", "RvmTableLayout", "Moldura da tabela montada a mao, com linhas e cabecalhos."),
+            new("componentes/table-cells", "RvmCell*", "As celulas prontas: texto, numero, usuario, status, progresso e mais."),
+            new("componentes/file-icon", "RvmFileIcon", "Icone de arquivo pela extensao."),
+            new("componentes/filter", "RvmFilter", "Botao de filtros com painel, grupos, limpar e aplicar."),
+            new("componentes/list-group", "RvmListGroup", "Cartao de lista com cabecalho, menu e abas.")
+        ]),
         new("Feedback e texto",
         [
             new("componentes/modal", "RvmModal", "Janela modal com titulo, foco preso, Esc e clique no fundo."),
@@ -132,7 +141,12 @@ public static class Catalogo
             new("componentes/area-chart", "RvmAreaChart", "Linha com o volume preenchido em degrade."),
             new("componentes/scatter-chart", "RvmScatterChart", "Relacao entre duas variaveis numericas."),
             new("componentes/pie-chart", "RvmPieChart", "Pizza e rosca, com percentuais."),
-            new("componentes/radar-chart", "RvmRadarChart", "Varias variaveis a partir de um centro.")
+            new("componentes/radar-chart", "RvmRadarChart", "Varias variaveis a partir de um centro."),
+            new("componentes/donut-chart", "RvmDonutChart", "Rosca inteira ou meia, fina ou grossa, com o valor no centro."),
+            new("componentes/meter-chart", "RvmMeterChart", "Medidor em arco: quanto da meta foi atingido."),
+            new("componentes/bubble-chart", "RvmBubbleChart", "Bolhas com a area proporcional ao valor."),
+            new("componentes/multilayer-donut-chart", "RvmMultilayerDonutChart", "Aneis concentricos, um por item, ate o maximo."),
+            new("componentes/chart-legend", "RvmChartLegend", "Legenda solta, com as cores dos graficos.")
         ])
     ];
 }

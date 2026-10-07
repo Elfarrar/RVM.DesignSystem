@@ -1,0 +1,32 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula de estado (contrato com o RVM.UI, DSGN-017): bolinha na cor do papel e o estado por extenso. A bolinha e
+   decorativa — quem diz o estado e a palavra, entao cor nenhuma carrega significado sozinha (WCAG 1.4.1). *@
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <span class="@($"rvm-estado {PapelCss.Classe(Color)}")">
+            <span class="rvm-bolinha" aria-hidden="true"></span>
+            <span class="@(Highlight ? "rvm-texto-estado rvm-destaque" : "rvm-texto-estado")">@Text</span>
+        </span>
+    </div>
+</td>
+
+@code {
+    /// <summary>O estado por extenso ("Pago", "Em separacao").</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Papel de cor da bolinha. Padrao: <see cref="RvmColor.Neutral"/>.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Neutral;
+
+    /// <summary>Destaque: o texto mais pesado.</summary>
+    [Parameter] public bool Highlight { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

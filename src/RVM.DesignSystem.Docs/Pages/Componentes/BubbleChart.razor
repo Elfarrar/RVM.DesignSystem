@@ -1,0 +1,71 @@
+@page "/componentes/bubble-chart"
+@using RVM.DesignSystem.Components.Chart
+@using RVM.DesignSystem.Icons
+
+<PageTitle>RvmBubbleChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmBubbleChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Uma bolha por fatia, lado a lado, com o percentual dentro. A AREA da bolha e proporcional ao valor (o diametro
+    segue a raiz), que e o que o olho le num circulo; a menor bolha tem um piso para o numero caber.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Nao tem parametros proprios: tudo
+    vem do RvmRadialChartBase.
+</p>
+
+<BlocoExemplo Titulo="Receita por canal de venda"
+              Descricao="Venda direta, cooperativa, trading e mercado futuro. Degraus do primary (o padrao) e as cores do tema."
+              Codigo="@CodigoCanais">
+    <div class="pilha-exemplos">
+        <div style="width: min(100%, 460px)">
+            <RvmBubbleChart Label="Receita por canal de venda" Slices="Canais" FormatValue="Reais" />
+        </div>
+        <div style="width: min(100%, 460px)">
+            <RvmBubbleChart Label="Receita por canal de venda, nas cores do tema" Slices="Canais" FormatValue="Reais"
+                            Palette="RvmChartPalette.FullColor" />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="No lugar do desenho, na mesma figura."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 220px">
+            <RvmBubbleChart Label="Receita por canal de venda" Slices="Canais" Loading="true" LoadingMascot="RvmMascotName.RobotLoading" />
+        </div>
+        <div style="width: 220px">
+            <RvmBubbleChart Label="Receita por canal de venda" Slices="Canais" Error="true" />
+        </div>
+        <div style="width: 220px">
+            <RvmBubbleChart Label="Receita por canal de venda" Slices="Canais" IsEmpty="true" EmptyText="Nenhuma venda no periodo." />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmBubbleChart" />
+
+@code {
+    private static readonly RvmChartSlice[] Canais =
+        [new("Venda direta", 1840000), new("Cooperativa", 920000), new("Trading", 610000), new("Mercado futuro", 230000)];
+
+    private static string Reais(double v) => $"R$ {RvmChartFormat.Number(v)}";
+
+    private const string CodigoCanais = """
+        <RvmBubbleChart Label="Receita por canal de venda" FormatValue="Reais"
+                        Slices="[new("Venda direta", 1840000), new("Cooperativa", 920000),
+                                 new("Trading", 610000), new("Mercado futuro", 230000)]" />
+
+        <RvmBubbleChart Label="Receita por canal de venda" FormatValue="Reais" Slices="canais"
+                        Palette="RvmChartPalette.FullColor" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmBubbleChart Label="Receita por canal" Slices="canais" Loading="carregando" LoadingMascot="RvmMascotName.RobotLoading" />
+        <RvmBubbleChart Label="Receita por canal" Slices="canais" Error="falhou" />
+        <RvmBubbleChart Label="Receita por canal" Slices="canais" IsEmpty="true" EmptyText="Nenhuma venda no periodo." />
+        """;
+}

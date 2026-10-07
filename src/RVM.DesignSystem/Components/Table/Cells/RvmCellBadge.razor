@@ -1,0 +1,37 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula com selo (contrato com o RVM.UI, DSGN-017): uma figura redonda (RvmAvatar, RvmIconBadge, logo) e o texto ao
+   lado — no kit, a coluna de estado da lista de faturas e o selo do cliente. A figura e do consumidor, entao o nome
+   acessivel dela tambem: se o texto ja diz tudo, ela deve vir decorativa. *@
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        @if (Badge is not null)
+        {
+            <span class="rvm-selo">@Badge</span>
+        }
+        @CelulaCss.Linhas(Text, Supporting, Highlight)
+    </div>
+</td>
+
+@code {
+    /// <summary>A figura: um <c>RvmAvatar</c>, um <c>RvmIconBadge</c> ou uma imagem.</summary>
+    [Parameter] public RenderFragment? Badge { get; set; }
+
+    /// <summary>O texto ao lado da figura.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Segunda linha, menor e mais clara.</summary>
+    [Parameter] public string? Supporting { get; set; }
+
+    /// <summary>Destaque: o texto mais pesado.</summary>
+    [Parameter] public bool Highlight { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

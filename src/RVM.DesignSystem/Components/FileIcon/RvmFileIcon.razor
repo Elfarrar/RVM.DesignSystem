@@ -1,0 +1,23 @@
+@namespace RVM.DesignSystem.Components.FileIcon
+
+@* Icone de tipo de arquivo (contrato com o RVM.UI, DSGN-017). Desenho proprio do DS: a folha com o canto dobrado e a
+   etiqueta da extensao na cor do papel do tipo (PDF no erro, planilha no sucesso...); a pasta e uma pasta no papel de
+   aviso. So tokens: a folha acompanha o tema, e a etiqueta usa o par -main/-contrast, o mesmo do RvmLabel cheio.
+   Com Label e imagem com nome; sem ele, decorativo — quase sempre o nome do arquivo esta escrito ao lado. *@
+<svg @attributes="AdditionalAttributes" class="@ClassesDaRaiz" viewBox="0 0 48 48" width="@Size" height="@Size"
+     role="@(Label is null ? null : "img")" aria-label="@Label" aria-hidden="@(Label is null ? "true" : null)" focusable="false">
+    @if (Name == RvmFileIconName.FolderYellow)
+    {
+        <path class="rvm-pasta-fundo" d="M5 13a3 3 0 0 1 3-3h11l4 4h17a3 3 0 0 1 3 3v3H5z" />
+        <path class="rvm-pasta-frente" d="M5 18h38v19a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z" />
+    }
+    else
+    {
+        <path class="rvm-folha" d="M13 4.5h16.5l11 11V41a2.5 2.5 0 0 1-2.5 2.5H13A2.5 2.5 0 0 1 10.5 41V7A2.5 2.5 0 0 1 13 4.5z" />
+        <path class="rvm-dobra" d="M29.5 4.5V13a2.5 2.5 0 0 0 2.5 2.5h8.5" />
+        <rect class="rvm-faixa" x="4" y="24" width="30" height="13" rx="2.5" />
+        @* A cor e a fonte vem do <g>, por heranca: o <text> sai como markup (o Razor reserva a tag <text> e nao aceita
+           atributos nela), e markup nao recebe o atributo do CSS isolado. A extensao vem do enum, sem texto livre. *@
+        <g class="rvm-extensao">@((MarkupString)$"<text x=\"19\" y=\"33.6\" text-anchor=\"middle\">{Extensao}</text>")</g>
+    }
+</svg>

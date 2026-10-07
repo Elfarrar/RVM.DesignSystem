@@ -1,0 +1,157 @@
+/* A figura dos graficos de fatias. O desenho de cada tipo e marcacao de OUTRO componente (o grafico derivado): as
+   regras do SVG vao com ::deep a partir da area. A cor de cada fatia chega pela custom property --rvm-radial-cor,
+   posta em style pelo componente (degrau do primary, papel do tema ou o hex validado da fatia). */
+
+.rvm-radial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+    /* A duracao da entrada, a mesma dos outros graficos; quem consome pode sobrescrever. */
+    --rvm-grafico-entrada: 1s;
+}
+
+.rvm-radial-estado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 200px;
+}
+
+.rvm-radial-area {
+    position: relative;
+    width: 100%;
+}
+
+.rvm-radial-svg {
+    display: block;
+    height: auto;
+    overflow: visible;
+}
+
+.rvm-radial-centro {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* --- Formas (desenhadas pelo derivado) --- */
+.rvm-radial-area ::deep .rvm-radial-trilha {
+    fill: none;
+    stroke: var(--rvm-color-action-hover);
+}
+
+.rvm-radial-area ::deep .rvm-radial-fatia {
+    fill: none;
+    stroke: var(--rvm-radial-cor);
+}
+
+/* --- Alvos e dica: sem JS, por :hover e :focus-visible --- */
+.rvm-radial-alvo {
+    position: absolute;
+    border-radius: var(--rvm-radius-circle);
+    outline: none;
+}
+
+.rvm-radial-alvo:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-radial-alvo:hover,
+.rvm-radial-alvo:focus-visible {
+    z-index: 2;
+}
+
+.rvm-radial-dica {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-tooltip-background);
+    color: var(--rvm-color-tooltip-text);
+    font-size: var(--rvm-text-caption-size);
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    transform: translateX(-50%);
+}
+
+.rvm-radial-alvo:hover .rvm-radial-dica,
+.rvm-radial-alvo:focus-visible .rvm-radial-dica {
+    display: flex;
+}
+
+.rvm-radial-dica-titulo {
+    font-weight: 600;
+}
+
+.rvm-radial-dica-linha {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-radial-dica-linha strong {
+    font-weight: 600;
+}
+
+/* A marca fica sobre o fundo escuro da dica: contorno claro para nao sumir. */
+.rvm-radial-marca {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--rvm-radial-cor);
+    box-shadow: 0 0 0 1px var(--rvm-color-tooltip-text);
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- Entrada: so com Animated e so para quem nao pediu "reduzir movimento" --- */
+@media (prefers-reduced-motion: no-preference) {
+    /* Varredura de relogio: a mascara (ou o proprio anel) abre do ponto de partida ate a fracao em
+       --rvm-radial-volta, posta em style; os circulos levam pathLength="1". */
+    .rvm-radial-animado ::deep .rvm-radial-varredura {
+        animation: rvm-radial-varrer var(--rvm-grafico-entrada) ease-out both;
+    }
+
+    /* Bolhas crescem do proprio centro. */
+    .rvm-radial-animado ::deep .rvm-radial-crescer {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: rvm-radial-crescer var(--rvm-grafico-entrada) ease-out both;
+    }
+
+    @keyframes rvm-radial-varrer {
+        from { stroke-dashoffset: var(--rvm-radial-volta, 1); }
+        to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes rvm-radial-crescer {
+        from { transform: scale(0); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+}

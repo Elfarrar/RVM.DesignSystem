@@ -1,0 +1,64 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Titulo de coluna da RvmTableLayout (contrato com o RVM.UI, DSGN-017). Ordenavel vira <button> dentro do <th>:
+   o <th> sozinho nao e alcancavel pelo teclado. A celula nao ordena nada — avisa a direcao nova e o app decide. *@
+<th @attributes="AdditionalAttributes" scope="col" class="@ClassesDaRaiz" aria-sort="@AriaSort">
+    @if (Sortable)
+    {
+        <button type="button" class="@(Direction == RvmSortDirection.None ? "rvm-ordenar" : "rvm-ordenar rvm-ordenada")" @onclick="AlternarAsync">
+            <span>@ChildContent</span>
+            <RvmIcon Name="@(Direction == RvmSortDirection.Descending ? RvmIconName.ArrowDown : RvmIconName.ArrowUp)" Size="RvmSize.Small" class="rvm-seta" />
+        </button>
+    }
+    else
+    {
+        @ChildContent
+    }
+</th>
+
+@code {
+    /// <summary>O titulo da coluna.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Alinhamento do titulo. Acompanhe o das celulas da coluna.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>A coluna ordena ao clique (ou Enter e espaco, no botao do titulo).</summary>
+    [Parameter] public bool Sortable { get; set; }
+
+    /// <summary>Ordem atual desta coluna. <see cref="RvmSortDirection.None"/> quando a tabela esta ordenada por outra.</summary>
+    [Parameter] public RvmSortDirection Direction { get; set; } = RvmSortDirection.None;
+
+    /// <summary>
+    /// Pediram para ordenar por esta coluna. Vem com a direcao nova: sem ordem e decrescente viram crescente;
+    /// crescente vira decrescente. Nao ha volta para "sem ordem" pelo clique — a mesma regra do RVM.UI.
+    /// </summary>
+    [Parameter] public EventCallback<RvmSortDirection> DirectionChanged { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // aria-sort so em coluna ordenavel; a ordenada diz o sentido, as outras "none".
+    private string? AriaSort => !Sortable ? null : Direction switch
+    {
+        RvmSortDirection.Ascending => "ascending",
+        RvmSortDirection.Descending => "descending",
+        _ => "none"
+    };
+
+    private string ClassesDaRaiz => ClassesCss.Juntar($"rvm-titulo-coluna {ClasseDoAlinhamento(Align)}", Class, AdditionalAttributes);
+
+    internal static string ClasseDoAlinhamento(RvmAlign alinhamento) => alinhamento switch
+    {
+        RvmAlign.Center => "rvm-centro",
+        RvmAlign.End => "rvm-fim",
+        _ => "rvm-inicio"
+    };
+
+    private Task AlternarAsync() => DirectionChanged.InvokeAsync(
+        Direction == RvmSortDirection.Ascending ? RvmSortDirection.Descending : RvmSortDirection.Ascending);
+}

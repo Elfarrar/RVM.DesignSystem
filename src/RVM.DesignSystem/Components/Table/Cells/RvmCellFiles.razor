@@ -1,0 +1,34 @@
+@namespace RVM.DesignSystem.Components.Table
+@using RVM.DesignSystem.Components.FileIcon
+
+@* Celula de arquivo (contrato com o RVM.UI, DSGN-017): o RvmFileIcon e o nome, com o tamanho embaixo. O icone e
+   decorativo — o nome do arquivo ao lado ja diz o tipo pela extensao. *@
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmFileIcon Name="Type" Size="40" />
+        @CelulaCss.Linhas(Name, Supporting, Highlight)
+    </div>
+</td>
+
+@code {
+    /// <summary>Nome do arquivo.</summary>
+    [Parameter, EditorRequired] public string Name { get; set; } = string.Empty;
+
+    /// <summary>Tipo do arquivo, que escolhe o icone.</summary>
+    [Parameter] public RvmFileIconName Type { get; set; }
+
+    /// <summary>Segunda linha, geralmente o tamanho ("400 KB").</summary>
+    [Parameter] public string? Supporting { get; set; }
+
+    /// <summary>Destaque: o nome mais pesado.</summary>
+    [Parameter] public bool Highlight { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}
