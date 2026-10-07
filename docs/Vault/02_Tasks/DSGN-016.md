@@ -3,12 +3,21 @@ id: DSGN-016
 titulo: Tokens e API legiveis por IA (tokens.json DTCG + llms.txt)
 repo: RVM.DesignSystem
 tipo: feature
-status: em-andamento
+status: concluida
 criada: 2026-10-04
 atualizada: 2026-10-04
 ---
 
 # DSGN-016 — Tokens e API legiveis por IA
+
+> **Publicada na `1.6.0` em 04/10/2026** (tag `v1.6.0`, versao conferida no feed do BaGet) e em
+> producao em `https://design.rvmit.com.br/llms.txt`, `/llms-full.txt` e `/tokens.json`. E2E contra
+> producao: **237 testes verdes**, a suite inteira. Alphas de `dev` passam a `1.7.0-alpha.N`.
+>
+> Review independente: um P2 corrigido (ordem de `GetProperties`/`GetMethods` pode diferir entre
+> Windows e o Linux do CI, e o teste de sincronia ficaria vermelho para sempre — tudo que vem de
+> reflexao sai ordenado por nome) e dois P3 (versao do DTCG no `$description`, script anti-piscar
+> do tema nas regras de instalacao).
 
 ## Descricao
 
@@ -43,9 +52,9 @@ de IA nem componente de chat):
 
 ## Validacao
 
-- [ ] `tokens.json` valido em DTCG, com claro e escuro, sincronizado com o CSS por teste
-- [ ] `llms.txt` e `llms-full.txt` cobrem todos os componentes publicos e as regras do DS
-- [ ] Os tres arquivos no pacote NuGet e no site de dev, conferidos por conteudo
-- [ ] Cobertura ≥ 80%, zero warning em Release, E2E verde
-- [ ] Review independente sem P1 aberto
-- [ ] Rafael aprova; `1.6.0` so com sinal verde dele
+- [x] `tokens.json` valido em DTCG, com claro e escuro, sincronizado com o CSS por teste
+- [x] `llms.txt` e `llms-full.txt` cobrem todos os componentes publicos e as regras do DS
+- [x] Os tres arquivos no pacote NuGet e no site de dev, conferidos por conteudo
+- [x] Cobertura ≥ 80%, zero warning em Release, E2E verde
+- [x] Review independente sem P1 aberto
+- [x] Rafael aprova; `1.6.0` so com sinal verde dele
