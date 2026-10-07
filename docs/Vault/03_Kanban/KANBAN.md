@@ -10,7 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
-| [[DSGN-017]] | Paridade de API com o RVM.UI (etapa 3): 101 componentes do UI no DS no visual NEATLAB, contrato no CI, 2.0.0 | `2.0.0` publicada e em producao (07/10); falta a migracao do RVM.TradeBinder (card la) |
+| [[DSGN-017]] | Paridade de API com o RVM.UI (etapa 3): 101 componentes do UI no DS no visual NEATLAB, contrato no CI, 2.0.0 | `2.0.0` publicada e em producao (07/10); falta a migracao do RVM.TradeBinder (`TBIN-018`) |
 
 ## A fazer
 
