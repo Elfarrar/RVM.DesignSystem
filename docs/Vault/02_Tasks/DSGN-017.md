@@ -111,6 +111,8 @@ os graficos radiais, que dividem a mesma API).
 - Invencoes declaradas (o NEATLAB nao desenha): papel Inverse, abas Page, mascotes, link acima do campo, bolinhas do
   stepper, botao limpar da data.
 
+**Onda 0 aprovada pelo Rafael em 07/10/2026** pelos screenshots do dev (PRs #74 a #77).
+
 ## Etapa 3 — RVM.DesignSystem
 
 1. Alinhar os componentes em comum ao contrato (a nomenclatura já é a do DS; entram os acréscimos do UI:
