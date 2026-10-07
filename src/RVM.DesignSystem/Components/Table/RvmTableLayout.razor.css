@@ -1,0 +1,84 @@
+/* O cartao, o cabecalho e a tabela da RvmTable (medidos no referencia-neatlab/Table.png): fundo do papel, raio
+   md, linha de 52 px. As celulas vem de outros componentes (RvmHeaderCell, RvmColumn, RvmCell*) ou do proprio
+   app; a base delas fica aqui com :where(), de especificidade baixa, para a celula com estilo proprio vencer. */
+
+.rvm-tabela-montada {
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+    background-color: var(--rvm-color-background-paper);
+    border-radius: var(--rvm-radius-md);
+    overflow: hidden;
+}
+
+.rvm-cabecalho-tabela {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-4) var(--rvm-space-5);
+}
+
+.rvm-titulo-tabela {
+    min-width: 0;
+}
+
+.rvm-acoes-tabela {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-rolagem {
+    overflow-x: auto;
+}
+
+.rvm-rolagem:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(-1 * var(--rvm-focus-ring-width));
+}
+
+.rvm-tabela-nativa {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+/* Base de toda celula do corpo, inclusive o <td> que o app escreve a mao. */
+:where(.rvm-tabela-nativa) ::deep td {
+    height: 52px;
+    padding: 0 var(--rvm-space-4);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.rvm-linha-estado td {
+    height: auto;
+    padding: 0;
+    white-space: normal;
+}
+
+.rvm-rodape-tabela {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-2) var(--rvm-space-4);
+    min-height: 52px;
+    padding: var(--rvm-space-2) var(--rvm-space-5);
+    font-size: var(--rvm-text-body2-size);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

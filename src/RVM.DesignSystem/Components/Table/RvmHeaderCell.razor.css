@@ -1,0 +1,65 @@
+/* O cabecalho da RvmTable (medido no referencia-neatlab/Table.png): 56 px, caixa alta, negrito, legenda. A seta
+   aparece so na coluna ordenada; nas outras surge no hover e no foco, para mostrar que da para ordenar. */
+
+.rvm-titulo-coluna {
+    height: 56px;
+    padding: 0 var(--rvm-space-4);
+    vertical-align: middle;
+    white-space: nowrap;
+    font-size: var(--rvm-text-caption-size);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-inicio { text-align: start; }
+.rvm-centro { text-align: center; }
+.rvm-fim { text-align: end; }
+
+.rvm-ordenar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    max-width: 100%;
+    margin: 0;
+    padding: var(--rvm-space-1) 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+}
+
+.rvm-fim .rvm-ordenar {
+    flex-direction: row-reverse;
+}
+
+.rvm-ordenar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-ordenar ::deep .rvm-seta {
+    opacity: 0;
+    transition: opacity var(--rvm-transition-fast);
+}
+
+.rvm-ordenar:hover ::deep .rvm-seta,
+.rvm-ordenar:focus-visible ::deep .rvm-seta {
+    opacity: 0.6;
+}
+
+.rvm-ordenada ::deep .rvm-seta,
+.rvm-ordenada:hover ::deep .rvm-seta {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-ordenar ::deep .rvm-seta {
+        transition: none;
+    }
+}

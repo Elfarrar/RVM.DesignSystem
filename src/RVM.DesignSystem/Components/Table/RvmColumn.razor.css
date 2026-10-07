@@ -1,0 +1,13 @@
+/* A celula de texto do atalho Text. Altura e respiro vem da base da RvmTableLayout. */
+
+.rvm-celula-texto {
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-destaque {
+    font-weight: 600;
+}
+
+.rvm-inicio { text-align: start; }
+.rvm-centro { text-align: center; }
+.rvm-fim { text-align: end; }
