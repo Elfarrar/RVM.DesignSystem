@@ -206,6 +206,41 @@ Pendentes do contrato: **157 → 85**. Grupo "Tabelas e listas" no site: `RvmDat
   sem titulo gera `th` vazio.
 - E2E dev: dois instaveis antigos corrigidos por sinal (zoom espera `data-rvm-roda`; axe espera as animacoes acabarem).
 
+## Onda 6 e telas de aplicativo — feitas em 07/10/2026 · **zero pendentes**
+
+Pendentes do contrato: **85 → 0**. Grupo "Painel e aplicativos" no site.
+
+- **Tema** (decisoes 4 e 5): `RvmThemeProvider` com `Accent`/`ColorScheme`/`Settings`/`UserTheme`, `RvmThemePicker`,
+  `RvmThemeSettings`, `RvmPalette(s)`, `RvmThemeState`, `IRvmThemeStore`, `AddRvmTheme()` dentro do
+  `AddRvmDesignSystem()`. Blue identico ao visual de hoje (teste garante); Roxo `#641974` e Preto novos; Profissional,
+  Acolhedor e Utilitario com Hanken Grotesk, Lora e Geist Mono (OFL junto). Review: P1 corrigido (WASM com pre-render
+  nunca restaurava a escolha), P2 (previa com FontScale crescia o `<html>`; Server puro nao restaurava; blocos
+  escuros novos em `:where()` para nao vencer o rebrand de quem usa a 1.x).
+- **Cartoes**: `RvmStatCard`, `RvmProgressCard`, `RvmTaskCard`, `RvmProjectCard`, `RvmPaymentCard`,
+  `RvmCurrencyConverter`. Review: menu aberto no card cheio ficava ilegivel — corrigido.
+- **Atividade e social**: `RvmActivity`, `RvmHistory`, `RvmComment`, `RvmReview`, `RvmNotificationItem`,
+  `RvmMarkerButton`, `RvmWidget`.
+- **Aplicativos**: chat (`RvmChat` e pecas), `RvmFileCard`, `RvmFileTypeCard`, `RvmEventCalendar`, `RvmMiniCalendar`,
+  `RvmEventPill`, `RvmEventCard`, `RvmPlacement`, `RvmKanbanBoard<TItem>`, `RvmMap`.
+- ⚠️ **`RvmMap` sem mapa-mundi:** o do RVM.UI vem da arte de outro kit e o NEATLAB nao tem mapa — aqui e uma grade de
+  latitude/longitude enquadrada nos marcadores (distancias proporcionais, sem contorno de continente).
+- Enums NOVOS desta task seguem a ordem de membros do RVM.UI (valor numerico igual na migracao). Os que ja existiam
+  na 1.x (`RvmColor`, `RvmButtonVariant`, `RvmTabsVariant`, `RvmTextColor`) mantem a ordem do DS — reordenar quebraria
+  valor gravado por consumidor.
+- Validacoes que lancam no render nos cartoes (ex.: `Trend` sem `TrendValue`) ficam como no RVM.UI (mesma API).
+- ⏳ **Pendentes (nao bloqueiam):** `RvmAvatar` corta iniciais em 2 `char` e parte emoji (antigo, fora desta task);
+  `RvmEventCard` clicavel tem `div` dentro de `button` (herdado do UI); arrastar do kanban no Firefox pode exigir
+  `dataTransfer` (o menu "Mover para" funciona).
+- Review das telas de aplicativo: corrigidos a agenda que sumia com evento fora da faixa de horas (vai para a
+  primeira/ultima linha) e lancava por faixa invalida ate no mes; o kanban cuja recusa por excecao derrubava o
+  circuito (agora anuncia que nao moveu) e soltar arquivo do SO abria o arquivo. Axe: nome do `RvmFileCard`
+  selecionado a 4.39:1 — passa a usar o `-text` do primary.
+- ⏳ **Pendentes do review das telas de aplicativo (nao bloqueiam):** kanban sem `@key` nos cartoes e sem foco
+  devolvido depois de "Mover para"; `RvmChat` com `role="log"` pode reler a conversa inteira ao trocar de contato
+  (recriar o `RvmChat` por conversa); evento que atravessa a meia-noite so aparece no dia do inicio; dia fora do mes
+  na agenda so marcado por cor; `RvmMap` repete marcadores e lista para o leitor; `RvmFileCard` exige `@bind-Selected`.
+- Alphas de `dev` passam a `2.0.0-alpha.N` (`VERSION_PREFIX`).
+
 ## Etapa 3 — RVM.DesignSystem
 
 1. Alinhar os componentes em comum ao contrato (a nomenclatura já é a do DS; entram os acréscimos do UI:

@@ -1,0 +1,117 @@
+@namespace RVM.DesignSystem.Components.Activity
+@using System.Globalization
+@using RVM.DesignSystem.Components.Avatar
+@using RVM.DesignSystem.Components.IconBadge
+@using RVM.DesignSystem.Icons
+
+@* Um acontecimento do "Activity Timeline" do kit: marcador a esquerda ligado ao proximo por uma linha, titulo,
+   carimbo, descricao e um corpo livre (etiquetas, arquivo, nota). Dentro do RvmHistory vira <li> da lista
+   ordenada (RvmTimeline); avulso, e um <div> — <li> fora de lista e HTML invalido. A linha do ultimo item some
+   por CSS (:last-child), nao por parametro. *@
+@if (Historico is null)
+{
+    <div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">@Conteudo</div>
+}
+else
+{
+    <li @attributes="AdditionalAttributes" class="@ClassesDaRaiz">@Conteudo</li>
+}
+
+@code {
+    /// <summary>Marcador da coluna esquerda: ponto (padrao), icone ou avatar.</summary>
+    [Parameter] public RvmActivityTracker Tracker { get; set; } = RvmActivityTracker.Dot;
+
+    /// <summary>Icone do marcador. Obrigatorio quando <see cref="Tracker"/> e <see cref="RvmActivityTracker.Icon"/>.</summary>
+    [Parameter] public RvmIconName? Icon { get; set; }
+
+    /// <summary>Foto de quem fez a acao, com <see cref="RvmActivityTracker.Avatar"/>. Sem ela, as iniciais do <see cref="AvatarName"/>.</summary>
+    [Parameter] public string? AvatarSrc { get; set; }
+
+    /// <summary>Nome de quem fez a acao: texto alternativo do avatar.</summary>
+    [Parameter] public string? AvatarName { get; set; }
+
+    /// <summary>Titulo da atividade.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+
+    /// <summary>Descricao abaixo do titulo.</summary>
+    [Parameter] public string? Description { get; set; }
+
+    /// <summary>Carimbo de data e hora, ja formatado por quem chama ("20 dez 2025, 08:00").</summary>
+    [Parameter] public string? Timestamp { get; set; }
+
+    /// <summary>Onde o carimbo aparece. Padrao: <see cref="RvmActivityTimestampPosition.Bottom"/>.</summary>
+    [Parameter] public RvmActivityTimestampPosition TimestampPosition { get; set; } = RvmActivityTimestampPosition.Bottom;
+
+    /// <summary>O corpo livre: etiquetas, arquivo, nota em estrelas, barra de progresso.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [CascadingParameter] private RvmHistory? Historico { get; set; }
+
+    private bool TemCarimbo => !string.IsNullOrWhiteSpace(Timestamp);
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-atividade", Class, AdditionalAttributes);
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (Tracker == RvmActivityTracker.Icon && Icon is null)
+        {
+            throw new ArgumentException("RvmActivity com Tracker=Icon precisa de Icon.", nameof(Icon));
+        }
+    }
+
+    private RenderFragment Conteudo => @<text>
+        <div class="rvm-atividade-trilha" aria-hidden="true">
+            @switch (Tracker)
+            {
+                case RvmActivityTracker.Icon:
+                    <RvmIconBadge Icon="Icon!.Value" Size="RvmIconBadgeSize.Medium" />
+                    break;
+                case RvmActivityTracker.Avatar:
+                    <RvmAvatar Src="@AvatarSrc" Name="@AvatarName" Initials="@Iniciais(AvatarName)" />
+                    break;
+                default:
+                    <span class="rvm-atividade-ponto"></span>
+                    break;
+            }
+            <span class="rvm-atividade-linha"></span>
+        </div>
+        <div class="rvm-atividade-conteudo">
+            <div class="rvm-atividade-cabecalho">
+                <p class="rvm-atividade-titulo">@Title</p>
+                @if (TimestampPosition == RvmActivityTimestampPosition.TopRight && TemCarimbo)
+                {
+                    <span class="rvm-atividade-carimbo">@Timestamp</span>
+                }
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Description))
+            {
+                <p class="rvm-atividade-descricao">@Description</p>
+            }
+            @if (ChildContent is not null)
+            {
+                <div class="rvm-atividade-corpo">@ChildContent</div>
+            }
+            @if (TimestampPosition == RvmActivityTimestampPosition.Bottom && TemCarimbo)
+            {
+                <p class="rvm-atividade-carimbo">@Timestamp</p>
+            }
+        </div>
+    </text>;
+
+    internal static string? Iniciais(string? nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome)) return null;
+        // Primeiro elemento de texto, nao primeiro char: um emoji (par substituto) cortado ao meio vira lixo.
+        var partes = nome.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var primeira = StringInfo.GetNextTextElement(partes[0]);
+        return (partes.Length == 1 ? primeira : primeira + StringInfo.GetNextTextElement(partes[^1])).ToUpperInvariant();
+    }
+}

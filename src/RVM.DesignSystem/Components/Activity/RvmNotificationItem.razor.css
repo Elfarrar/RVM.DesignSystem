@@ -1,0 +1,72 @@
+/* CSS isolado do RvmNotificationItem. So custom properties — hex literal aqui quebra o tema escuro.
+   As linhas do Notification Dropdown-3.png do kit: recuo de 20 px, divisor entre elas, titulo em peso medio e
+   texto secundario. Nao lido: ponto primario de 8 px e o fundo cinza do hover (o suave do primario derruba o texto do tema claro
+   para 4,4:1). */
+
+.rvm-aviso {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: var(--rvm-space-3) var(--rvm-space-5) var(--rvm-space-3) var(--rvm-space-8);
+    list-style: none;
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-aviso:not(:last-child) {
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.rvm-aviso-novo {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-aviso:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(-1 * var(--rvm-focus-ring-width));
+}
+
+.rvm-aviso-ponto {
+    position: absolute;
+    top: calc(var(--rvm-space-3) + 8px);
+    left: var(--rvm-space-3);
+    width: 8px;
+    height: 8px;
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-primary-text);
+}
+
+.rvm-aviso-etiqueta {
+    margin-bottom: var(--rvm-space-1);
+}
+
+.rvm-aviso-titulo {
+    margin: 0;
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-aviso-texto {
+    margin: 2px 0 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+}
+
+.rvm-aviso-corpo ::deep .rvm-aviso-acao {
+    margin-top: var(--rvm-space-1);
+    margin-inline-start: calc(-1 * var(--rvm-space-2));
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

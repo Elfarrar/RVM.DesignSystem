@@ -1,0 +1,69 @@
+/* CSS isolado do RvmCurrencyConverter. So custom properties — hex literal aqui quebra o tema escuro.
+   Papel, raio, sombra e respiro sao os do RvmCard (Basic Card.png). */
+
+.rvm-currency-converter {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-5);
+    box-sizing: border-box;
+    min-width: 0;
+    padding: var(--rvm-space-6);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-topo {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-titulos {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-titulo,
+.rvm-subtitulo,
+.rvm-taxa {
+    margin: 0;
+}
+
+.rvm-subtitulo,
+.rvm-taxa {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-acao {
+    flex: none;
+}
+
+.rvm-campos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-4);
+}
+
+.rvm-taxa {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+/* Sem taxa, a regiao fica no DOM (a role=status precisa existir antes da mudanca) mas nao ocupa espaco. Nao e
+   display: none — regiao escondida assim pode nao ser anunciada quando o texto chega. */
+.rvm-sem-taxa {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+.rvm-currency-converter ::deep .rvm-botao-converter {
+    width: 100%;
+}

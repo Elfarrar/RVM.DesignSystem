@@ -1,0 +1,80 @@
+@namespace RVM.DesignSystem.Components.EventCalendar
+
+@* O calendario compacto de agenda lateral: titulo do mes, setas, seis semanas e, em cada dia, as marcacoes que o
+   APLICATIVO informa (pontos por papel, simbolo no canto, balao). O visual e o do RvmCalendar (dia num circulo de
+   36 px, escolhido no primary), e o teclado tambem: o padrao "grid" do APG, um so dia no Tab (tabindex movel),
+   setas andam um dia ou uma semana e trocam de mes ao passar da borda, Home e End vao ao inicio e ao fim da semana,
+   Page Up e Page Down trocam o mes (com Shift, o ano). Enter e Espaco sao o clique nativo do botao. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <div class="rvm-mini-cabecalho">
+        <h2 id="@IdTitulo" class="rvm-mini-titulo" aria-live="polite">@Titulo</h2>
+        <RvmIconButton Icon="RvmIconName.ChevronLeft" Label="Mes anterior" Size="RvmSize.Small" OnClick="() => TrocarMesAsync(-1)" />
+        <RvmIconButton Icon="RvmIconName.ChevronRight" Label="Proximo mes" Size="RvmSize.Small" OnClick="() => TrocarMesAsync(1)" />
+    </div>
+
+    @* @key pelo mes: trocar de mes recria os botoes e o @ref de cada dia volta a valer (mesma razao do RvmCalendar). *@
+    <table @ref="_grade" class="rvm-mini-grade" role="grid" aria-labelledby="@IdTitulo" @key="_mes" @onkeydown="AoTeclarAsync">
+        <thead>
+            <tr>
+                @foreach (var dia in DatasPorExtenso.Semana)
+                {
+                    <th scope="col" abbr="@DatasPorExtenso.Dia(dia)" class="rvm-mini-dia-semana">@DatasPorExtenso.DiaCurto(dia)[..1]</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (var semana = 0; semana < 6; semana++)
+            {
+                <tr>
+                    @for (var coluna = 0; coluna < 7; coluna++)
+                    {
+                        var indice = semana * 7 + coluna;
+                        var dia = Inicio.AddDays(indice);
+                        var info = DayInfo?.Invoke(dia);
+                        <td role="gridcell" class="rvm-mini-celula" aria-selected="@(dia == Value ? "true" : "false")">
+                            @if (!string.IsNullOrWhiteSpace(info?.Tooltip))
+                            {
+                                <RvmTooltip Text="@info.Tooltip" Placement="LadoDoBalao">
+                                    @Dia(indice, dia, info, context)
+                                </RvmTooltip>
+                            }
+                            else
+                            {
+                                @Dia(indice, dia, info, null)
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private RenderFragment Dia(int indice, DateOnly dia, RvmMiniCalendarDay? info, string? idDoBalao) => @<button
+        @ref="_dias[indice]"
+        type="button"
+        class="@ClassesDoDia(dia)"
+        tabindex="@(dia == _foco ? "0" : "-1")"
+        aria-label="@Rotulo(dia, info)"
+        aria-current="@(dia == Hoje ? "date" : null)"
+        aria-describedby="@idDoBalao"
+        data-date="@dia.ToString("yyyy-MM-dd")"
+        @onclick="() => EscolherAsync(dia)"
+        @onfocus="() => _foco = dia">
+        @if (!string.IsNullOrWhiteSpace(info?.Badge))
+        {
+            <span class="rvm-mini-simbolo" aria-hidden="true">@info.Badge</span>
+        }
+        <span class="rvm-mini-numero" aria-hidden="true">@dia.Day</span>
+        @if (Pontos(info) > 0)
+        {
+            <span class="@($"rvm-mini-pontos {PapelCss.Classe(info!.Color)}")" aria-hidden="true">
+                @for (var p = 0; p < Pontos(info); p++)
+                {
+                    <span class="rvm-mini-ponto"></span>
+                }
+            </span>
+        }
+    </button>;
+}

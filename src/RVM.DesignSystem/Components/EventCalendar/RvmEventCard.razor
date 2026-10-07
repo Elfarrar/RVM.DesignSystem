@@ -1,0 +1,77 @@
+@namespace RVM.DesignSystem.Components.EventCalendar
+
+@* O compromisso fora da grade: numa lista lateral, num painel do dia. O kit nao desenha este cartao nas telas de
+   agenda; ele segue o papel dos cartoes da biblioteca (fundo paper, borda divider, canto md) e leva a categoria numa
+   faixa no rodape, a unica cor do cartao — opcional, como a pilula leva a dela no fundo.
+
+   Clicavel so com OnClick; sem ele e um <article>. Dentro do botao so ha conteudo de frase (span), e o grupo de
+   avatares nao e interativo. *@
+@if (OnClick.HasDelegate)
+{
+    <button @attributes="AdditionalAttributes" type="button" class="@ClassesDaRaiz" @onclick="() => OnClick.InvokeAsync()">
+        @Conteudo
+    </button>
+}
+else
+{
+    <article @attributes="AdditionalAttributes" class="@ClassesDaRaiz">@Conteudo</article>
+}
+
+@code {
+    /// <summary>Titulo do compromisso.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+
+    /// <summary>Horario, ja escrito: o cartao nao formata data.</summary>
+    [Parameter] public string? TimeLabel { get; set; }
+
+    /// <summary>Quem participa, no grupo de avatares sobrepostos.</summary>
+    [Parameter] public IReadOnlyList<RvmAvatarItem> Attendees { get; set; } = [];
+
+    /// <summary>Quantos avatares aparecem antes do "+N". Padrao: 3.</summary>
+    [Parameter] public int MaxAttendees { get; set; } = 3;
+
+    /// <summary>A faixa colorida do rodape, que marca a categoria. Sem ela, o cartao nao tem faixa.</summary>
+    [Parameter] public RvmColor? LineColor { get; set; }
+
+    /// <summary>Clique no cartao. Sem ele o cartao nao e botao.</summary>
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassesDaRaiz => ClassesCss.Juntar(
+        LineColor is { } cor ? $"rvm-cartao-evento rvm-com-faixa {PapelCss.Classe(cor)}" : "rvm-cartao-evento",
+        Class, AdditionalAttributes);
+
+    private RenderFragment Conteudo => @<text>
+        <span class="rvm-cartao-evento-corpo">
+            <span class="rvm-cartao-evento-titulo">@Title</span>
+            @if (!string.IsNullOrWhiteSpace(TimeLabel) || Attendees.Count > 0)
+            {
+                <span class="rvm-cartao-evento-detalhes">
+                    @if (!string.IsNullOrWhiteSpace(TimeLabel))
+                    {
+                        <span class="rvm-cartao-evento-horario">
+                            @* O relogio e decorativo: o horario ao lado ja diz o que ele ilustra. *@
+                            <RvmIcon Name="RvmIconName.Clock" Size="RvmSize.Small" />
+                            <span>@TimeLabel</span>
+                        </span>
+                    }
+                    @if (Attendees.Count > 0)
+                    {
+                        <RvmAvatarGroup Items="Attendees" Max="MaxAttendees" Size="RvmSize.Small" Label="Quem participa"
+                                        Class="rvm-cartao-evento-pessoas" />
+                    }
+                </span>
+            }
+        </span>
+        @if (LineColor is not null)
+        {
+            <span class="rvm-cartao-evento-faixa" aria-hidden="true"></span>
+        }
+    </text>;
+}

@@ -1,0 +1,80 @@
+@namespace RVM.DesignSystem.Components.Chat
+
+@* Conversa na lista lateral (contrato com o RVM.UI, DSGN-017), no desenho da lista de chats do kit: avatar com a
+   bolinha de online, nome, previa da ultima mensagem e, a direita, o horario ou o selo de nao lidas. Selecionada, a
+   linha inteira pinta o primario. E um <button> porque abrir a conversa e uma acao (Enter e Espaco de graca), e
+   aria-current diz qual esta aberta. *@
+<button type="button" @attributes="AdditionalAttributes" class="@ClassesDaRaiz"
+        aria-current="@(Selected ? "true" : null)" @onclick="() => OnClick.InvokeAsync()">
+    @* O retrato inteiro e decorativo: o nome ja esta escrito ao lado, e repetido no nome do botao seria ruido. *@
+    <span class="rvm-retrato" aria-hidden="true">
+        <RvmAvatar Src="@AvatarUrl" Name="@Name" Initials="@Iniciais" Size="RvmSize.Medium" />
+        @if (Online)
+        {
+            <span class="rvm-online"></span>
+        }
+    </span>
+    <span class="rvm-texto">
+        <span class="rvm-nome rvm-text-subtitle2">
+            @Name
+            @* A bolinha e so cor: o estado vai escrito para o leitor de tela, junto do nome. *@
+            @if (Online)
+            {
+                <span class="rvm-so-leitor">(online)</span>
+            }
+        </span>
+        @if (!string.IsNullOrWhiteSpace(Preview))
+        {
+            <span class="rvm-previa rvm-text-body2">@Preview</span>
+        }
+    </span>
+    @if (Unread > 0)
+    {
+        @* O selo mostra o numero; quem ouve a pagina ouve a frase, senao seria so "3". *@
+        <RvmBadge Count="Unread" Color="RvmColor.Error" Label="@TextoDasNaoLidas" Class="rvm-nao-lidas" />
+    }
+    else if (!string.IsNullOrWhiteSpace(TimeLabel))
+    {
+        <span class="rvm-horario rvm-text-caption">@TimeLabel</span>
+    }
+</button>
+
+@code {
+    /// <summary>Foto. Sem ela, as iniciais do <see cref="Name"/>.</summary>
+    [Parameter] public string? AvatarUrl { get; set; }
+
+    /// <summary>Nome de quem conversa, ou do grupo. E o nome acessivel do botao.</summary>
+    [Parameter, EditorRequired] public string? Name { get; set; }
+
+    /// <summary>Clique (ou Enter/Espaco) para abrir a conversa.</summary>
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    /// <summary>Se a pessoa esta online: a bolinha verde, e "(online)" para o leitor de tela.</summary>
+    [Parameter] public bool Online { get; set; }
+
+    /// <summary>Comeco da ultima mensagem. Corta com reticencias em uma linha.</summary>
+    [Parameter] public string? Preview { get; set; }
+
+    /// <summary>Se esta e a conversa aberta: pinta o primario e marca <c>aria-current</c>.</summary>
+    [Parameter] public bool Selected { get; set; }
+
+    /// <summary>Quando, ja escrito ("10 abr", "14:32"). So aparece quando nao ha nao lidas.</summary>
+    [Parameter] public string? TimeLabel { get; set; }
+
+    /// <summary>Quantas mensagens nao lidas. Zero esconde o selo.</summary>
+    [Parameter] public int Unread { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string TextoDasNaoLidas => Unread == 1 ? "1 mensagem nao lida" : $"{Unread} mensagens nao lidas";
+
+    private string Iniciais => RvmAvatarGroup.IniciaisDe(Name ?? string.Empty);
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar(Selected ? "rvm-chat-contato rvm-selecionado" : "rvm-chat-contato", Class, AdditionalAttributes);
+}

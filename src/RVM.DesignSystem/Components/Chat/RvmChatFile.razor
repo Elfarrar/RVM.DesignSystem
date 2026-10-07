@@ -1,0 +1,38 @@
+@namespace RVM.DesignSystem.Components.Chat
+
+@* Arquivo anexado a conversa (contrato com o RVM.UI, DSGN-017): o RvmFileIcon do tipo, o nome e o tamanho, no mesmo
+   balao do texto. O icone e decorativo: a extensao esta no nome, escrito ao lado. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <RvmFileIcon Name="Type" Size="40" Class="rvm-tipo" />
+    <span class="rvm-texto">
+        <span class="rvm-nome rvm-text-subtitle2" title="@Name">@Name</span>
+        @if (!string.IsNullOrWhiteSpace(Size))
+        {
+            <span class="rvm-tamanho rvm-text-caption">@Size</span>
+        }
+    </span>
+</div>
+
+@code {
+    /// <summary>Nome do arquivo, com extensao.</summary>
+    [Parameter, EditorRequired] public string? Name { get; set; }
+
+    /// <summary>De que lado a mensagem aparece; decide a cor. Padrao: <see cref="RvmChatSide.Left"/>.</summary>
+    [Parameter] public RvmChatSide Side { get; set; } = RvmChatSide.Left;
+
+    /// <summary>Tamanho ja escrito ("300 KB"). O componente nao formata bytes.</summary>
+    [Parameter] public string? Size { get; set; }
+
+    /// <summary>Tipo do arquivo: escolhe o icone.</summary>
+    [Parameter] public RvmFileIconName Type { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar(Side == RvmChatSide.Right ? "rvm-balao rvm-direita" : "rvm-balao rvm-esquerda", Class, AdditionalAttributes);
+}

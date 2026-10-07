@@ -27,6 +27,20 @@ internal static class ParametrosGerados
             new("SecondaryTitle", "string?", "—", "Um complemento ao lado do titulo, no tom secundario (\"Secondary heading\" no kit)."),
             new("Title", "string", "obrigatorio", "O titulo do painel."),
         ],
+        ["RvmActivity"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("AvatarName", "string?", "—", "Nome de quem fez a acao: texto alternativo do avatar."),
+            new("AvatarSrc", "string?", "—", "Foto de quem fez a acao, com `RvmActivityTracker.Avatar`. Sem ela, as iniciais do `RvmActivity.AvatarName`."),
+            new("ChildContent", "RenderFragment?", "—", "O corpo livre: etiquetas, arquivo, nota em estrelas, barra de progresso."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Description", "string?", "—", "Descricao abaixo do titulo."),
+            new("Icon", "RvmIconName?", "—", "Icone do marcador. Obrigatorio quando `RvmActivity.Tracker` e `RvmActivityTracker.Icon`."),
+            new("Timestamp", "string?", "—", "Carimbo de data e hora, ja formatado por quem chama (\"20 dez 2025, 08:00\")."),
+            new("TimestampPosition", "RvmActivityTimestampPosition", "RvmActivityTimestampPosition.Bottom", "Onde o carimbo aparece. Padrao: `RvmActivityTimestampPosition.Bottom`."),
+            new("Title", "string", "obrigatorio", "Titulo da atividade."),
+            new("Tracker", "RvmActivityTracker", "RvmActivityTracker.Dot", "Marcador da coluna esquerda: ponto (padrao), icone ou avatar."),
+        ],
         ["RvmAlert"] =
         [
             new("Action", "RenderFragment?", "—", "Acao ao lado da mensagem (\"DESFAZER\", \"VER DETALHES\") — a variacao \"With Action\"."),
@@ -477,6 +491,69 @@ internal static class ParametrosGerados
             new("Value", "Func<object, double>?", "obrigatorio", "O valor de cada item (no grafico de dispersao, o Y)."),
             new("X", "Func<object, double>?", "—", "So no grafico de dispersao: o X de cada item."),
         ],
+        ["RvmChat"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Botoes do canto direito do cabecalho: chamada, busca, menu."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("AvatarUrl", "string?", "—", "Foto de quem conversa. Sem ela, as iniciais do `RvmChat.Title`."),
+            new("ChildContent", "RenderFragment?", "—", "Os grupos de mensagem (`RvmChatGroup`), do mais antigo para o mais novo."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Composer", "RenderFragment?", "—", "O rodape de escrever (campo e botao de enviar), montado pelo app. Sem ele, sem rodape."),
+            new("Label", "string?", "—", "Nome acessivel da conversa. Sem ele: \"Conversa com {Title}\"."),
+            new("Subtitle", "string?", "—", "Linha de apoio: \"online\", \"visto por ultimo as 14:30\", quantos no grupo."),
+            new("Title", "string?", "obrigatorio", "Nome de quem conversa, ou do grupo. Tambem nomeia a secao."),
+        ],
+        ["RvmChatContact"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("AvatarUrl", "string?", "—", "Foto. Sem ela, as iniciais do `RvmChatContact.Name`."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Name", "string?", "obrigatorio", "Nome de quem conversa, ou do grupo. E o nome acessivel do botao."),
+            new("OnClick", "EventCallback", "—", "Clique (ou Enter/Espaco) para abrir a conversa."),
+            new("Online", "bool", "false", "Se a pessoa esta online: a bolinha verde, e \"(online)\" para o leitor de tela."),
+            new("Preview", "string?", "—", "Comeco da ultima mensagem. Corta com reticencias em uma linha."),
+            new("Selected", "bool", "false", "Se esta e a conversa aberta: pinta o primario e marca `aria-current`."),
+            new("TimeLabel", "string?", "—", "Quando, ja escrito (\"10 abr\", \"14:32\"). So aparece quando nao ha nao lidas."),
+            new("Unread", "int", "0", "Quantas mensagens nao lidas. Zero esconde o selo."),
+        ],
+        ["RvmChatFile"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Name", "string?", "obrigatorio", "Nome do arquivo, com extensao."),
+            new("Side", "RvmChatSide", "RvmChatSide.Left", "De que lado a mensagem aparece; decide a cor. Padrao: `RvmChatSide.Left`."),
+            new("Size", "string?", "—", "Tamanho ja escrito (\"300 KB\"). O componente nao formata bytes."),
+            new("Type", "RvmFileIconName", "RvmFileIconName.Ai", "Tipo do arquivo: escolhe o icone."),
+        ],
+        ["RvmChatGroup"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Author", "string?", "obrigatorio", "Quem escreveu. Vira o nome acessivel do avatar (e as iniciais, sem foto)."),
+            new("AvatarUrl", "string?", "—", "Foto de quem escreveu. Sem ela, as iniciais do `RvmChatGroup.Author`."),
+            new("ChildContent", "RenderFragment?", "—", "Os baloes: `RvmChatMessage`, `RvmChatFile` ou `RvmChatVoice`."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Side", "RvmChatSide", "RvmChatSide.Left", "De que lado o grupo aparece. Padrao: `RvmChatSide.Left`."),
+            new("TimeLabel", "string?", "—", "Quando, ja escrito (\"ha 1 dia\", \"14:32\"). O componente nao formata data."),
+        ],
+        ["RvmChatMessage"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O texto da mensagem."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Side", "RvmChatSide", "RvmChatSide.Left", "De que lado a mensagem aparece; decide a cor. Padrao: `RvmChatSide.Left`."),
+        ],
+        ["RvmChatVoice"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Duration", "string?", "—", "Duracao ja escrita (\"0:42\"). Tambem entra no nome acessivel da barra."),
+            new("OnToggle", "EventCallback", "—", "Clique no botao. A biblioteca nao toca nada: ela avisa, e o app alterna `RvmChatVoice.Playing`."),
+            new("PauseLabel", "string", "\"Pausar o audio\"", "Nome acessivel do botao tocando. Padrao: \"Pausar o audio\"."),
+            new("PlayLabel", "string", "\"Ouvir o audio\"", "Nome acessivel do botao parado. Padrao: \"Ouvir o audio\"."),
+            new("Playing", "bool", "false", "Se o audio esta tocando: o botao mostra pausa. Quem controla o som e o app."),
+            new("Progress", "double", "0", "Quanto do audio ja passou, de 0 a 1 (fora disso e limitado)."),
+            new("Side", "RvmChatSide", "RvmChatSide.Left", "De que lado a mensagem aparece; decide a cor. Padrao: `RvmChatSide.Left`."),
+        ],
         ["RvmCheckbox"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras. `class` e `style` vao para a raiz (onde layout faz efeito); o resto vai para o input nativo (`aria-*`, `data-*`, `id`, `name`)."),
@@ -630,6 +707,19 @@ internal static class ParametrosGerados
             new("Text", "Func<object, string>?", "—", "Atalho para a coluna que so mostra texto: `Text=\"t => t.Nome\"`."),
             new("Title", "string", "obrigatorio", "Titulo da coluna. E tambem a chave que identifica a coluna na ordenacao (`SortedBy` e `OnSort`)."),
         ],
+        ["RvmComment"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("AuthorName", "string", "obrigatorio", "Nome de quem comentou."),
+            new("AvatarSrc", "string?", "—", "Foto de quem comentou. Sem ela, as iniciais do nome."),
+            new("ChildContent", "RenderFragment?", "—", "As respostas: outros `RvmComment`, recuados sob este."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("OnReply", "EventCallback", "—", "Pediram para responder. Quem abre o campo de resposta e o app."),
+            new("ReplyLabel", "string", "\"Responder\"", "Texto do botao de responder. Padrao: \"Responder\"."),
+            new("ShowReply", "bool", "true", "Mostra o botao de responder. Padrao: ligado; desligue onde nao cabe resposta (fio arquivado)."),
+            new("Text", "string", "obrigatorio", "O comentario."),
+            new("Timestamp", "string", "obrigatorio", "Data e hora, ja formatadas por quem chama."),
+        ],
         ["RvmConfirmModal"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
@@ -648,6 +738,23 @@ internal static class ParametrosGerados
             new("OpenChanged", "EventCallback<bool>", "—", "Disparado quando a confirmacao se fecha (confirmou ou desistiu)."),
             new("ReturnFocusTo", "ElementReference?", "—", "Quem recebe o foco quando a confirmacao fecha — o botao que a abriu. Sem ele, o foco volta ao elemento que o tinha ao abrir."),
             new("Title", "string", "obrigatorio", "A pergunta. E o nome acessivel do dialogo — sem ela o dialogo nao tem nome."),
+        ],
+        ["RvmCurrencyConverter"] =
+        [
+            new("ActionIcon", "RvmIconName", "RvmIconName.Login3", "Icone do botao. Padrao: `RvmIconName.Login3`, as setas opostas do kit."),
+            new("ActionText", "string", "\"Converter\"", "Texto do botao. Padrao: \"Converter\"."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor do botao. Padrao: Accent."),
+            new("Disabled", "bool", "false", "Desabilita o botao (enquanto a cotacao carrega, por exemplo)."),
+            new("From", "RenderFragment?", "—", "O campo de origem (um `RvmNumericField` com a moeda, por exemplo)."),
+            new("Menu", "RenderFragment?", "—", "Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu."),
+            new("MenuLabel", "string", "\"Acoes do conversor\"", "Nome acessivel do menu. Padrao: \"Acoes do conversor\"."),
+            new("OnConvert", "EventCallback", "—", "Clique no botao. Quem converte e o aplicativo."),
+            new("Rate", "string?", "—", "A taxa, ja escrita pelo aplicativo (\"1 USD = 5,42 BRL\"). A regiao e anunciada pelo leitor de tela quando muda."),
+            new("Subtitle", "string?", "—", "Linha de apoio abaixo do titulo."),
+            new("Title", "string?", "obrigatorio", "Titulo. Sai como cabecalho `h3` e da nome a secao."),
+            new("To", "RenderFragment?", "—", "O campo de destino."),
         ],
         ["RvmDataGrid"] =
         [
@@ -851,6 +958,47 @@ internal static class ParametrosGerados
             new("Status", "bool", "false", "Anuncia ao leitor de tela quando aparece (`role=\"status\"`). Ligue quando o vazio surge depois de uma busca, de um filtro ou de um carregamento; deixe desligado no vazio que ja estava na tela."),
             new("Title", "string", "obrigatorio", "O que aconteceu, em uma frase (\"Nenhum talhao cadastrado ainda\")."),
         ],
+        ["RvmEventCalendar"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Canto direito do cabecalho: troca de visao, filtro, botao de novo compromisso."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Date", "DateOnly?", "—", "Data em foco (no mes, qualquer dia dele). Sem ela, hoje. A navegacao pelas setas e pelo botao de hoje mexe no estado interno e NAO e desfeita por um render do pai: a agenda so volta a seguir este parametro quando ele muda. Quem quer guardar a data escuta `RvmEventCalendar.DateChanged`."),
+            new("DateChanged", "EventCallback<DateOnly>", "—", "Avisa quando as setas ou o botao de hoje levam a agenda para outra data."),
+            new("Events", "IReadOnlyList<RvmCalendarEvent>", "—", "Compromissos a mostrar."),
+            new("FirstHour", "int", "6", "Primeira hora da grade na semana e no dia. Padrao: 6."),
+            new("Label", "string?", "—", "Nome acessivel da agenda. Sem ele sai \"Agenda de {periodo}\"."),
+            new("LastHour", "int", "20", "Ultima hora da grade, inclusive. Padrao: 20."),
+            new("MaxEventsPerDay", "int", "3", "Quantos compromissos aparecem no dia (ou na hora) antes do \"+N\". Padrao: 3."),
+            new("Now", "DateTime?", "—", "O instante tratado como agora: marca hoje e desenha a linha do agora. Sem ele, o relogio local."),
+            new("OnEventClick", "EventCallback<RvmCalendarEvent>", "—", "Clique num compromisso. Sem ele as pilulas nao sao botao."),
+            new("OnOverflowClick", "EventCallback<DateOnly>", "—", "Clique no \"+N\" de um dia. Sem ele o \"+N\" so informa."),
+            new("TodayText", "string", "\"Hoje\"", "Texto do botao que volta para hoje. Padrao: \"Hoje\"."),
+            new("View", "RvmCalendarView", "RvmCalendarView.Month", "Mes, semana ou dia. Padrao: `RvmCalendarView.Month`."),
+        ],
+        ["RvmEventCard"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Attendees", "IReadOnlyList<RvmAvatarItem>", "—", "Quem participa, no grupo de avatares sobrepostos."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("LineColor", "RvmColor?", "—", "A faixa colorida do rodape, que marca a categoria. Sem ela, o cartao nao tem faixa."),
+            new("MaxAttendees", "int", "3", "Quantos avatares aparecem antes do \"+N\". Padrao: 3."),
+            new("OnClick", "EventCallback", "—", "Clique no cartao. Sem ele o cartao nao e botao."),
+            new("TimeLabel", "string?", "—", "Horario, ja escrito: o cartao nao formata data."),
+            new("Title", "string", "obrigatorio", "Titulo do compromisso."),
+        ],
+        ["RvmEventPill"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Categoria, por papel. Padrao: `RvmColor.Accent`."),
+            new("ImageUrl", "string?", "—", "Foto de quem participa. Decorativa: o titulo ja diz do que se trata."),
+            new("OnClick", "EventCallback", "—", "Clique. Sem ele a pilula nao e botao."),
+            new("OnClickElement", "EventCallback<ElementReference>", "—", "O mesmo clique, entregando o botao da pilula — para quem abre um dialogo a partir dela devolver o foco ao fechar. Dispara ANTES do `RvmEventPill.OnClick`. So existe com `RvmEventPill.OnClick` ligado."),
+            new("Selected", "bool", "false", "Selecionada: a pilula fica cheia, e o botao anuncia `aria-pressed`."),
+            new("TimeLabel", "string?", "—", "Horario, ja escrito. Anunciado junto do titulo, mas escondido na pilula (nao cabe)."),
+            new("Title", "string", "obrigatorio", "Titulo do compromisso."),
+        ],
         ["RvmExpansionPanel"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
@@ -884,6 +1032,20 @@ internal static class ParametrosGerados
             new("Size", "RvmSize", "RvmSize.Medium", "Altura: 56 px (Medium, padrao), 40 px (Small) ou 64 px (Large)."),
             new("Variant", "RvmTextFieldVariant", "RvmTextFieldVariant.Outlined", "Estilo da caixa. Padrao: contornada."),
         ],
+        ["RvmFileCard"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Category", "RvmFileCardCategory", "RvmFileCardCategory.File", "O que o cartao representa: decide o icone. Padrao: `RvmFileCardCategory.File`."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Layout", "RvmFileCardLayout", "RvmFileCardLayout.Horizontal", "Linha ou coluna. Padrao: `RvmFileCardLayout.Horizontal`."),
+            new("MenuItems", "RenderFragment?", "—", "Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu."),
+            new("MenuLabel", "string?", "—", "Nome acessivel do menu. Sem ele: \"Mais acoes de {Name}\"."),
+            new("Meta", "string?", "—", "Detalhe abaixo do nome (\"300 KB\", \"12 itens\"). Sem ele, sem a linha."),
+            new("Name", "string", "obrigatorio", "Nome do arquivo (com extensao, que escolhe o icone) ou da pasta."),
+            new("Selectable", "bool", "false", "Mostra a caixa de selecao, nomeada \"Selecionar {Name}\"."),
+            new("Selected", "bool", "false", "Selecionado: a caixa marcada e a borda no primario. Aceita `@bind-Selected`."),
+            new("SelectedChanged", "EventCallback<bool>", "—", "A pessoa marcou ou desmarcou a caixa."),
+        ],
         ["RvmFileIcon"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz (o `<svg>`)."),
@@ -891,6 +1053,18 @@ internal static class ParametrosGerados
             new("Label", "string?", "—", "Nome acessivel (\"Arquivo PDF\"). Sem ele o icone e decorativo."),
             new("Name", "RvmFileIconName", "obrigatorio", "Tipo de arquivo."),
             new("Size", "int", "48", "Lado em pixels. Padrao: 48."),
+        ],
+        ["RvmFileTypeCard"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Botoes no lugar do X (baixar, compartilhar, excluir), montados pelo app."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Icon", "RvmFileIconName?", "—", "Icone do tipo. Sem ele, sai da extensao do `RvmFileTypeCard.Name` (desconhecida vira texto)."),
+            new("Name", "string", "obrigatorio", "Nome do arquivo, com extensao."),
+            new("OnRemove", "EventCallback", "—", "Remover o arquivo: mostra o X, nomeado \"Remover {Name}\". Ignorado quando ha `RvmFileTypeCard.Actions`."),
+            new("Progress", "int?", "—", "Progresso do envio, de 0 a 100 (fora disso e limitado), mostrado em `RvmUploadStatus.Uploading`."),
+            new("Size", "long", "0", "Tamanho em bytes, escrito em PT-BR (\"1,2 MB\")."),
+            new("Status", "RvmUploadStatus", "RvmUploadStatus.None", "Estado do envio. Padrao: `RvmUploadStatus.None` (so nome e tamanho)."),
         ],
         ["RvmFileUpload"] =
         [
@@ -989,6 +1163,26 @@ internal static class ParametrosGerados
             new("ValueFormat", "Func<double, string>?", "—", "Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`."),
             new("Zoomable", "bool", "false", "Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario."),
         ],
+        ["RvmHistory"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "As atividades (`RvmActivity`)."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Empty", "RenderFragment?", "—", "O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmHistory.EmptyText`."),
+            new("EmptyText", "string", "\"Nenhuma atividade por aqui ainda.\"", "Texto do vazio padrao."),
+            new("Error", "bool", "false", "A carga falhou. Vence `RvmHistory.Loading` e `RvmHistory.IsEmpty`."),
+            new("ErrorText", "string", "\"Tivemos um problema tecnico, por favor tente de novo em alguns minutos.\"", "Texto do erro."),
+            new("ErrorTitle", "string", "\"Nao deu para carregar\"", "Titulo do erro."),
+            new("IsEmpty", "bool", "false", "Nao ha nenhuma atividade. Use `RvmHistory.Empty` para ensinar o proximo passo."),
+            new("Label", "string?", "—", "Texto da etiqueta ao lado do titulo. Sem ele, sem etiqueta."),
+            new("LabelColor", "RvmColor", "RvmColor.Primary", "Papel de cor da etiqueta. Padrao: `RvmColor.Accent`."),
+            new("Loading", "bool", "false", "Os dados estao chegando: a lista da lugar ao aviso de carregamento."),
+            new("LoadingText", "string", "\"Carregando...\"", "Texto do carregamento."),
+            new("MenuItems", "RenderFragment?", "—", "Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu."),
+            new("MenuLabel", "string?", "—", "Nome acessivel do menu. Sem ele, \"Mais acoes\"."),
+            new("Text", "string?", "—", "Subtitulo abaixo do titulo."),
+            new("Title", "string", "obrigatorio", "Titulo do cartao."),
+        ],
         ["RvmIcon"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz."),
@@ -1045,6 +1239,17 @@ internal static class ParametrosGerados
             new("Value", "RvmIconName?", "—", ""),
             new("ValueChanged", "EventCallback<RvmIconName?>", "—", ""),
             new("ValueExpression", "Expression<Func<RvmIconName?>>?", "—", ""),
+        ],
+        ["RvmKanbanBoard"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("ColumnActions", "RenderFragment<RvmKanbanColumn<object>>?", "—", "Canto direito do titulo de cada coluna: adicionar, menu."),
+            new("Columns", "IReadOnlyList<RvmKanbanColumn<object>>", "obrigatorio", "As colunas, na ordem em que aparecem."),
+            new("ItemTemplate", "RenderFragment<ValueTuple<object, RenderFragment>>", "obrigatorio", "Como desenhar cada cartao. Recebe o item e os itens de menu \"Mover para X\" ja prontos (`MoveItems`) — coloca-los num `RvmMenu` do cartao e o que faz o quadro funcionar no teclado e no toque."),
+            new("ItemTitleSelector", "Func<object, string>?", "—", "O titulo do cartao, usado no aviso de movimento (\"Colher talhao 3 movido para Feito\")."),
+            new("Label", "string", "\"Quadro de tarefas\"", "Nome acessivel do quadro. Padrao: \"Quadro de tarefas\"."),
+            new("OnMove", "EventCallback<RvmKanbanMove<object>>", "—", "Avisa que um cartao deve mudar de coluna. O aplicativo devolve `RvmKanbanBoard.Columns` com o cartao no lugar novo. Para recusar, lance: o quadro anuncia ao leitor de tela que nao moveu, e a excecao nao derruba a pagina."),
         ],
         ["RvmLabel"] =
         [
@@ -1159,6 +1364,28 @@ internal static class ParametrosGerados
             new("Value", "string?", "—", "O valor a direita, ja formatado (moeda com `CultureInfo` explicito, no app)."),
             new("ValueSubtitle", "string?", "—", "Texto de apoio abaixo do valor."),
         ],
+        ["RvmMap"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Canto direito do cabecalho: menu, filtro, periodo."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "A lista de lugares ao pe do mapa, que carrega o dado em texto. Sem ela, uma lista oculta (so para leitor de tela) e gerada a partir de `RvmMap.Markers`."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Markers", "IReadOnlyList<RvmMapMarker>", "—", "Os lugares marcados no desenho."),
+            new("Subtitle", "string?", "—", "Linha de apoio abaixo do titulo."),
+            new("Title", "string?", "obrigatorio", "Titulo do cartao. Tambem nomeia a secao."),
+        ],
+        ["RvmMarkerButton"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Disabled", "bool", "false", "Indisponivel."),
+            new("Label", "string?", "—", "Nome acessivel e dica quando desmarcado. Sem ele, \"Marcar como favorito\" ou \"Salvar nos marcadores\"."),
+            new("Marked", "bool", "false", "Marcado. Aceita `@bind-Marked`."),
+            new("MarkedChanged", "EventCallback<bool>", "—", "Disparado ao marcar ou desmarcar."),
+            new("MarkedLabel", "string?", "—", "Nome acessivel e dica quando marcado. Sem ele, \"Tirar dos favoritos\" ou \"Tirar dos marcadores\"."),
+            new("Shape", "RvmFieldShape", "RvmFieldShape.Pill", "Canto: o do kit ou pilula (o padrao)."),
+            new("Type", "RvmMarkerType", "RvmMarkerType.Favorite", "Favorito (estrela, o padrao) ou marcador de pagina."),
+        ],
         ["RvmMascot"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
@@ -1263,6 +1490,19 @@ internal static class ParametrosGerados
             new("ShowTooltip", "bool", "true", "A dica ao passar o mouse ou dar foco numa fatia, com o nome, o valor e o percentual. Sem JS: aparece por `:hover` e `:focus-visible`. Custa uma parada de Tab por fatia; desligue num grafico decorativo, dentro de um cartao que ja diz o numero. A tabela de dados para leitor de tela continua."),
             new("Slices", "IReadOnlyList<RvmChartSlice>", "obrigatorio", "As fatias, na ordem em que o desenho as percorre."),
             new("Total", "double?", "—", "O total que vale 100%. Sem ele, o total e a soma das fatias (\"como o bolo se divide\"); com ele, o grafico responde \"quanto de quanto\" e o que falta aparece na trilha. Um total menor que a soma vale como a soma: as fatias nao dao mais de uma volta."),
+        ],
+        ["RvmMiniCalendar"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("AllowDeselect", "bool", "false", "Clicar de novo no dia escolhido desfaz a escolha (filtro liga/desliga)."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("DayInfo", "Func<DateOnly, RvmMiniCalendarDay>?", "—", "Marcacoes de cada dia. Chamado para os 42 dias da grade a cada render: deve ser barato (dicionario, nao consulta)."),
+            new("Month", "DateOnly", "—", "Mes mostrado (qualquer dia dele). Sem ele, o mes do dia escolhido ou o de hoje."),
+            new("MonthChanged", "EventCallback<DateOnly>", "—", "Troca de mes pelo usuario (setas, teclado). Entrega o primeiro dia do mes novo."),
+            new("Today", "DateOnly?", "—", "Hoje. Sem ele, a data local do aparelho — passe o hoje do fuso do negocio quando o servidor roda em UTC."),
+            new("TooltipPlacement", "RvmPlacement", "RvmPlacement.Top", "Lado do balao do dia. Padrao: `RvmPlacement.Top`."),
+            new("Value", "DateOnly?", "—", "Dia escolhido. Aceita `@bind-Value`."),
+            new("ValueChanged", "EventCallback<DateOnly?>", "—", "Aviso do dia escolhido (`null` quando `RvmMiniCalendar.AllowDeselect` desfaz a escolha)."),
         ],
         ["RvmModal"] =
         [
@@ -1396,6 +1636,17 @@ internal static class ParametrosGerados
             new("Match", "NavLinkMatch", "NavLinkMatch.Prefix", "Como decidir que e a pagina atual. Padrao: pelo prefixo."),
             new("Text", "string", "obrigatorio", "Texto do subitem."),
         ],
+        ["RvmNotificationItem"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("OnRead", "EventCallback", "—", "Marcar como lido. Sem ele, a acao nao aparece."),
+            new("Read", "bool", "false", "Ja lido: sem o destaque e sem a acao."),
+            new("ReadText", "string", "\"Marcar como lida\"", "Texto da acao. Padrao: \"Marcar como lida\"."),
+            new("Tag", "RenderFragment?", "—", "Etiqueta acima do titulo (um `RvmLabel` com o tipo do aviso, por exemplo)."),
+            new("Text", "string?", "—", "Texto do aviso."),
+            new("Title", "string", "obrigatorio", "Titulo do aviso."),
+        ],
         ["RvmNumericField"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz."),
@@ -1479,6 +1730,18 @@ internal static class ParametrosGerados
             new("Size", "RvmSize", "RvmSize.Medium", "Itens de 26, 32 (padrao) ou 40 px — medidos no kit."),
             new("Variant", "RvmPaginationVariant", "RvmPaginationVariant.Text", "Estilo. Padrao: `RvmPaginationVariant.Text`."),
         ],
+        ["RvmPaymentCard"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Botoes na faixa abaixo do cartao. Sem eles, so o cartao."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Balance", "string", "obrigatorio", "Saldo, ja formatado por quem chama (\"R$ 12.430,00\")."),
+            new("BalanceLabel", "string", "\"Saldo\"", "Rotulo do saldo. Padrao: \"Saldo\"."),
+            new("CardNumber", "string", "obrigatorio", "Numero ja mascarado (\"   9090\"). Na tela sai como veio; o leitor de tela ouve so os ultimos digitos (\"Cartao final 9090\")."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor do cartao. Padrao: Accent."),
+            new("ExpiresAt", "string", "obrigatorio", "Validade (\"07/28\"). O leitor de tela ouve \"Validade\" antes."),
+            new("NetworkMark", "RenderFragment?", "—", "Marca da bandeira, decorativa. Sem ela, sem marca."),
+        ],
         ["RvmPieChart"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a figura."),
@@ -1558,6 +1821,39 @@ internal static class ParametrosGerados
             new("Size", "RvmSize", "RvmSize.Medium", "Barra de 4 px com texto pequeno, 8 px (padrao) ou 12 px."),
             new("Surface", "RvmSurface", "RvmSurface.Light", "Fundo sobre o qual a barra esta. No `RvmSurface.Dark` (cartao colorido ou escuro), trilho, barra e texto ficam claros: a cor do papel sobre fundo colorido nao garante contraste."),
             new("Value", "double", "0", "Progresso de 0 a 100. Fora disso e limitado (calculo que passa de 100 por arredondamento nao derruba a tela); NaN vira 0. Ignorado com `RvmProgressBar.NoValue`."),
+        ],
+        ["RvmProgressCard"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor do selo e da barra. Padrao: Accent."),
+            new("Description", "string?", "—", "Descricao opcional abaixo do titulo."),
+            new("Footer", "RenderFragment?", "—", "Conteudo livre abaixo da barra."),
+            new("Icon", "RvmIconName", "obrigatorio", "Icone do selo."),
+            new("IconVariant", "RvmIconBadgeVariant", "RvmIconBadgeVariant.Neutral", "Fundo do selo: cinza neutro (padrao, o \"Grey BG\" do kit), suave ou cheio."),
+            new("MenuItems", "RenderFragment?", "—", "Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu."),
+            new("MenuLabel", "string", "\"Mais acoes\"", "Nome acessivel do menu. Padrao: \"Mais acoes\"."),
+            new("Percent", "double", "0", "Progresso de 0 a 100. Fora disso e limitado."),
+            new("Title", "string", "obrigatorio", "Titulo do indicador. Sai como cabecalho `h3`."),
+            new("Value", "string", "obrigatorio", "Valor a esquerda, acima da barra, ja formatado por quem chama (\"R$ 40.000\")."),
+        ],
+        ["RvmProjectCard"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Description", "string?", "—", "Descricao, cortada em duas linhas."),
+            new("DueDate", "string?", "—", "Prazo, ja formatado por quem chama (\"21 out 2026\"). O leitor de tela ouve \"Prazo:\" antes."),
+            new("ImageUrl", "string?", "—", "Capa do projeto, 48 x 48, decorativa. Sem ela, um icone de pasta."),
+            new("Label", "string?", "—", "Texto do selo de status (\"Atrasada\"). Sem ele, sem selo."),
+            new("LabelColor", "RvmColor", "RvmColor.Error", "Papel de cor do selo. Padrao: Danger."),
+            new("Members", "IReadOnlyList<RvmAvatarItem>", "—", "Pessoas da equipe. Sem ninguem, sem grupo de avatares."),
+            new("MembersMax", "int", "4", "Quantos avatares aparecem antes do \"+N\". Padrao: 3 (4 no `RvmProjectCard`)."),
+            new("MenuItems", "RenderFragment?", "—", "Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu."),
+            new("MenuLabel", "string", "\"Mais acoes\"", "Nome acessivel do menu. Padrao: \"Mais acoes\"."),
+            new("ProgressColor", "RvmColor", "RvmColor.Primary", "Papel de cor da barra e do texto de progresso. Padrao: Accent."),
+            new("ProgressPercent", "double", "0", "Progresso da barra, de 0 a 100."),
+            new("ProgressText", "string", "obrigatorio", "Texto a direita de \"Progresso\" (\"Atrasada\", \"75%\"). Livre: quem chama decide."),
+            new("Title", "string", "obrigatorio", "Titulo. Sai como cabecalho `h3`."),
         ],
         ["RvmRadarChart"] =
         [
@@ -1643,6 +1939,18 @@ internal static class ParametrosGerados
             new("SizePx", "int?", "—", "Lado da estrela em pixels, fora dos tres tamanhos. Quando vem, vence `RvmRating.Size`."),
             new("Value", "double", "0", "A nota. Aceita `@bind-Value`. Zero e \"sem nota\"."),
             new("ValueChanged", "EventCallback<double>", "—", "Disparado quando a pessoa escolhe outra nota."),
+        ],
+        ["RvmReview"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("AuthorDetail", "string?", "—", "Detalhe depois do nome (a variante avaliada, a fazenda). Sem ele, so o nome."),
+            new("AuthorName", "string", "obrigatorio", "Nome de quem avaliou."),
+            new("AvatarSrc", "string?", "—", "Foto de quem avaliou. Sem ela, as iniciais do nome."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Images", "IReadOnlyList<string>?", "—", "Enderecos das fotos anexadas. Sem elas, sem a linha de miniaturas."),
+            new("Rating", "double", "0", "Nota de 0 a 5."),
+            new("Text", "string", "obrigatorio", "A avaliacao."),
+            new("Timestamp", "string", "obrigatorio", "Data e hora, ja formatadas por quem chama."),
         ],
         ["RvmRow"] =
         [
@@ -1759,6 +2067,32 @@ internal static class ParametrosGerados
             new("Label", "string", "\"Carregando\"", "O que esta carregando (\"Carregando talhoes\"). Vai para o leitor de tela sempre, e para a tela com `RvmSpinner.ShowLabel`."),
             new("ShowLabel", "bool", "false", "Mostra o texto ao lado do anel. Sem ele, o texto so vai para o leitor de tela."),
             new("Size", "RvmSize", "RvmSize.Medium", "Anel de 24, 40 (padrao) ou 56 px — os tamanhos do `RvmProgress` circular."),
+        ],
+        ["RvmStatCard"] =
+        [
+            new("Action", "RvmCardAction", "RvmCardAction.None", "Acao no canto: nenhuma (padrao), botao de icone ou menu de tres pontos."),
+            new("ActionIcon", "RvmIconName", "RvmIconName.Add", "Icone do botao de acao. Padrao: `RvmIconName.Add`."),
+            new("ActionLabel", "string?", "—", "Nome acessivel do botao ou do menu. Obrigatorio quando `RvmStatCard.Action` nao e None."),
+            new("ActionMenu", "RenderFragment?", "—", "Itens do menu (`RvmMenuItem`), para `RvmCardAction.Menu` (obrigatorio nele)."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Adornment", "RvmStatCardAdornment", "RvmStatCardAdornment.None", "Enfeite: nenhum (padrao), icone ao lado do titulo ou selo circular ao lado do numero."),
+            new("AdornmentIcon", "RvmIconName?", "—", "Icone do enfeite. Obrigatorio quando `RvmStatCard.Adornment` nao e None."),
+            new("Chart", "RenderFragment?", "—", "Encaixe livre abaixo do numero — um grafico pequeno, sem eixo. Preenchido, vence `RvmStatCard.Visual`."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor: do enfeite e do progresso no fundo claro, do card inteiro no escuro. Padrao: Accent."),
+            new("ImageUrl", "string?", "—", "Endereco da imagem, para `RvmStatCardVisual.Image` (obrigatorio nele). Decorativa."),
+            new("OnActionClick", "EventCallback", "—", "Clique do botao de acao (`RvmCardAction.Button`)."),
+            new("Size", "RvmStatCardSize", "RvmStatCardSize.Small", "Tamanho do card. Padrao: `RvmStatCardSize.Small`."),
+            new("Subtitle", "string?", "—", "Linha de apoio abaixo do titulo (o periodo: \"Safra 25/26\")."),
+            new("Surface", "RvmSurface", "RvmSurface.Light", "Fundo do card: claro (papel do tema, padrao) ou cheio na cor de `RvmStatCard.Color`, com o texto no token de contraste do papel (branco no primary, grafite nos outros — o par que passa AA nos dois temas)."),
+            new("Title", "string", "obrigatorio", "Titulo do indicador. Sai como cabecalho `h3`."),
+            new("Trend", "RvmStatCardTrend", "RvmStatCardTrend.None", "Sentido da variacao. Padrao: sem variacao."),
+            new("TrendDetail", "string?", "—", "Detalhe ao lado da variacao (\"frente a safra passada\")."),
+            new("TrendValue", "string?", "—", "A variacao (\"12%\"). Obrigatoria quando `RvmStatCard.Trend` nao e None."),
+            new("Value", "string", "obrigatorio", "Numero principal, ja formatado por quem chama (o card nao formata moeda)."),
+            new("Visual", "RvmStatCardVisual", "RvmStatCardVisual.None", "O que vai abaixo do numero: nada (padrao), progresso ou imagem. Ignorado com `RvmStatCard.Chart`."),
+            new("VisualLabel", "string?", "—", "Nome acessivel da barra de progresso. Sem ele, o `RvmStatCard.Title`."),
+            new("VisualValue", "double?", "—", "Progresso de 0 a 100, para `RvmStatCardVisual.Progress` (obrigatorio nele)."),
         ],
         ["RvmStepIndicator"] =
         [
@@ -1922,6 +2256,23 @@ internal static class ParametrosGerados
             new("Text", "string?", "—", "O texto da tag."),
             new("Variant", "RvmTagVariant", "RvmTagVariant.Soft", "Estilo. Padrao: `RvmTagVariant.Soft`."),
         ],
+        ["RvmTaskCard"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Description", "string?", "—", "Descricao, cortada em duas linhas."),
+            new("DueDate", "string?", "—", "Prazo, ja formatado por quem chama (\"21 out 2026\"). O leitor de tela ouve \"Prazo:\" antes."),
+            new("Label", "string?", "—", "Texto do selo de status (\"Atrasada\"). Sem ele, sem selo."),
+            new("LabelColor", "RvmColor", "RvmColor.Error", "Papel de cor do selo. Padrao: Danger."),
+            new("Members", "IReadOnlyList<RvmAvatarItem>", "—", "Pessoas da equipe. Sem ninguem, sem grupo de avatares."),
+            new("MembersMax", "int", "3", "Quantos avatares aparecem antes do \"+N\". Padrao: 3 (4 no `RvmProjectCard`)."),
+            new("MenuItems", "RenderFragment?", "—", "Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu."),
+            new("MenuLabel", "string", "\"Mais acoes\"", "Nome acessivel do menu. Padrao: \"Mais acoes\"."),
+            new("ProgressColor", "RvmColor", "RvmColor.Primary", "Papel de cor da barra e do texto de progresso. Padrao: Accent."),
+            new("ProgressPercent", "double", "0", "Progresso da barra, de 0 a 100."),
+            new("ProgressText", "string", "obrigatorio", "Texto a direita de \"Progresso\" (\"Atrasada\", \"75%\"). Livre: quem chama decide."),
+            new("Title", "string", "obrigatorio", "Titulo. Sai como cabecalho `h3`."),
+        ],
         ["RvmText"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a raiz."),
@@ -2007,13 +2358,26 @@ internal static class ParametrosGerados
             new("ValueChanged", "EventCallback<string>", "—", ""),
             new("ValueExpression", "Expression<Func<string>>?", "—", ""),
         ],
+        ["RvmThemePicker"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos HTML extras, repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("OnChange", "EventCallback<RvmThemeSettings>", "—", "Chamado depois de cada troca, com a escolha nova."),
+            new("Palettes", "IReadOnlyList<RvmPalette>", "—", "Paletas oferecidas. Padrao: todas (`RvmPalettes.All`)."),
+            new("ShowAccessibility", "bool", "true", "Mostra tamanho da fonte, contraste alto e menos movimento. Padrao: sim."),
+        ],
         ["RvmThemeProvider"] =
         [
+            new("Accent", "RvmAccent", "RvmAccent.Blue", "Cor de destaque (DSGN-017). Padrao `RvmAccent.Blue`, o cobalto do kit: sem informar, nada muda. Ignorada quando `RvmThemeProvider.Settings` ou `RvmThemeProvider.UserTheme` decidem a paleta."),
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz."),
             new("ChildContent", "RenderFragment?", "—", "Conteudo tematizado."),
-            new("Persist", "bool", "true", "Guarda a escolha no navegador de quem esta vendo e a restaura na proxima visita. Desligue quando o tema vier de outro lugar (preferencia do usuario no banco, por exemplo)."),
-            new("Theme", "RvmTheme", "RvmTheme.Light", "Tema em vigor. Aceita ligacao de duas vias (`@bind-Theme`)."),
-            new("ThemeChanged", "EventCallback<RvmTheme>", "—", "Disparado quando o tema muda, inclusive pela preferencia restaurada do navegador."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz (contrato com o RVM.UI, DSGN-017)."),
+            new("ColorScheme", "RvmColorScheme", "RvmColorScheme.Accessible", "Esquema de cor (DSGN-017). `RvmColorScheme.Accessible` (padrao) usa os degraus que passam 4.5:1; `RvmColorScheme.Original` usa os degraus exatos do kit, que reprovam AA como texto. Vale para a subarvore; um provider aninhado pode trocar."),
+            new("Persist", "bool", "true", "Guarda a escolha no navegador de quem esta vendo e a restaura na proxima visita. Desligue quando o tema vier de outro lugar (preferencia do usuario no banco, por exemplo). Ignorado com `RvmThemeProvider.Settings` ou `RvmThemeProvider.UserTheme`, que ja tem o proprio estado."),
+            new("Settings", "RvmThemeSettings?", "—", "Tema completo fixo, sem estado (previa, teste, tema vindo do perfil pelo proprio app). Tem precedencia sobre `RvmThemeProvider.UserTheme`, `RvmThemeProvider.Theme` e `RvmThemeProvider.Accent`."),
+            new("Theme", "RvmTheme", "RvmTheme.Light", "Tema em vigor. Aceita ligacao de duas vias (`@bind-Theme`). Vale quando nao ha `RvmThemeProvider.Settings` nem `RvmThemeProvider.UserTheme`: com eles, manda o `RvmThemeSettings.Mode`."),
+            new("ThemeChanged", "EventCallback<RvmTheme>", "—", "Disparado quando o tema muda, inclusive pela preferencia restaurada do navegador. Com `RvmThemeProvider.UserTheme`, avisa quando o usuario passa para claro ou escuro (acompanhar o sistema nao avisa: so o navegador sabe qual e)."),
+            new("UserTheme", "bool", "false", "Aplica o tema escolhido pelo usuario, lido do `RvmThemeState` (registrado pelo `AddRvmDesignSystem()`), e redesenha quando ele troca no `RvmThemePicker`. Use no provider da raiz do app."),
         ],
         ["RvmTimeClock"] =
         [
@@ -2111,6 +2475,27 @@ internal static class ParametrosGerados
             new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
             new("Color", "RvmTextColor", "RvmTextColor.Inherit", "Papel do texto na hierarquia de leitura. Padrao: herda de quem esta em volta."),
             new("Variant", "RvmTypographyVariant", "RvmTypographyVariant.Body1", "Estilo da escala. Padrao: `RvmTypographyVariant.Body1`."),
+        ],
+        ["RvmWidget"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Badge", "int?", "—", "Contador em cima do gatilho. Zero ou sem valor, sem contador."),
+            new("ChildContent", "RenderFragment?", "—", "Conteudo do painel."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Disabled", "bool", "false", "Indisponivel."),
+            new("Footer", "RenderFragment?", "—", "Rodape do painel (acoes como \"Marcar todas como lidas\")."),
+            new("Icon", "RvmIconName?", "—", "Icone do gatilho."),
+            new("Id", "string?", "—", "Id do gatilho. Sem ele, um id unico e gerado."),
+            new("ImageUrl", "string?", "—", "Imagem redonda no lugar do icone (bandeira, foto). Decorativa: o nome vem do `RvmWidget.Label`."),
+            new("Label", "string", "obrigatorio", "Nome do widget para o leitor de tela e dica do gatilho de icone (\"Notificacoes\")."),
+            new("Open", "bool", "false", "Aberto. Aceita `@bind-Open`; so e seguido quando muda."),
+            new("OpenChanged", "EventCallback<bool>", "—", "Disparado ao abrir e ao fechar."),
+            new("PanelTitle", "string?", "—", "Titulo dentro do painel. Com ele aparecem o cabecalho e o botao de fechar."),
+            new("Placement", "RvmMenuPlacement", "RvmMenuPlacement.BottomEnd", "Onde o painel abre. Padrao: abaixo, alinhado pela direita."),
+            new("Size", "RvmWidgetPanelSize", "RvmWidgetPanelSize.Menu", "Largura do painel: lista (o padrao) ou folha."),
+            new("Subtitle", "string?", "—", "Linha de baixo do cartao (cargo, quantidade de membros)."),
+            new("Title", "string?", "—", "Titulo do cartao (nome da pessoa ou da equipe)."),
+            new("Variant", "RvmWidgetVariant", "RvmWidgetVariant.Icon", "Forma do gatilho: botao de icone (o padrao) ou cartao."),
         ],
     };
 }

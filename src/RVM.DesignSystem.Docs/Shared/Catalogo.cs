@@ -115,6 +115,26 @@ public static class Catalogo
             new("componentes/text", "RvmText", "Texto na escala tipografica do contrato."),
             new("componentes/icon-badge", "RvmIconBadge", "Icone em fundo colorido, simples ou artistico.")
         ]),
+        new("Painel e aplicativos",
+        [
+            new("componentes/theme-provider", "RvmThemeProvider", "Tema do app: modo, destaque, paleta, fonte e acessibilidade."),
+            new("componentes/theme-picker", "RvmThemePicker", "Seletor de tema para o usuario: aparencia, paleta e acessibilidade."),
+            new("componentes/stat-card", "RvmStatCard", "Cartao de indicador com tendencia, visual e acao."),
+            new("componentes/progress-card", "RvmProgressCard", "Cartao de meta com icone e barra de progresso."),
+            new("componentes/project-card", "RvmProjectCard", "Cartoes de projeto e de tarefa, com equipe e prazo."),
+            new("componentes/payment-card", "RvmPaymentCard", "Cartao de pagamento e conversor de moeda."),
+            new("componentes/activity", "RvmActivity", "Linha do tempo de atividades e o cartao de historico."),
+            new("componentes/comment", "RvmComment", "Comentarios com resposta e avaliacoes com nota."),
+            new("componentes/notification-item", "RvmNotificationItem", "Item de notificacao com marcar como lida."),
+            new("componentes/marker-button", "RvmMarkerButton", "Favoritar ou salvar, como botao de alternancia."),
+            new("componentes/widget", "RvmWidget", "Gatilho de icone ou cartao que abre um painel."),
+            new("componentes/chat", "RvmChat", "Conversa: contatos, grupos de mensagens, arquivo e audio."),
+            new("componentes/file-card", "RvmFileCard", "Cartoes de arquivo e de pasta, e o cartao de envio por tipo."),
+            new("componentes/event-calendar", "RvmEventCalendar", "Agenda de eventos em mes, semana e dia."),
+            new("componentes/mini-calendar", "RvmMiniCalendar", "Calendario compacto com marcas por dia, pilula e cartao de evento."),
+            new("componentes/kanban-board", "RvmKanbanBoard", "Quadro kanban que move por mouse e por teclado."),
+            new("componentes/map", "RvmMap", "Lugares marcados por latitude e longitude, com lista em texto.")
+        ]),
         new("Navegacao e pagina",
         [
             new("componentes/sidebar", "RvmSidebar", "O menu lateral: marca, navegacao, rodape; branco ou colorido, recolhivel."),

@@ -1,0 +1,82 @@
+@page "/componentes/comment"
+@using RVM.DesignSystem.Components.Activity
+
+<PageTitle>RvmComment e RvmReview — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmComment e RvmReview</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Conversa e avaliacao. O RvmComment e um comentario de um fio: avatar, autor, quando, o texto e o botao de
+    responder; as respostas sao outros RvmComment dentro dele, recuados. O RvmReview e uma avaliacao: a nota em
+    estrelas (lida por extenso pelo leitor de tela), o autor com um detalhe, o texto e as fotos anexadas.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Fio de comentarios"
+              Descricao="Quem abre o campo de resposta e o app, avisado por OnReply. Sem foto, as iniciais."
+              Codigo="@CodigoComentario">
+    <div class="lista-vertical">
+        <RvmComment AuthorName="Joao Lima" AvatarSrc="@FotoJoao" Timestamp="ha 2 horas"
+                    Text="A chuva de ontem atrasou a colheita do talhao 12. Remarcamos o frete?"
+                    OnReply="@(() => _resposta = "Joao Lima")">
+            <RvmComment AuthorName="Ana Souza" Timestamp="ha 1 hora"
+                        Text="Remarquei para quinta. A transportadora confirmou dois caminhoes."
+                        OnReply="@(() => _resposta = "Ana Souza")" />
+        </RvmComment>
+        <RvmComment AuthorName="Carlos Prado" Timestamp="ontem" ShowReply="false"
+                    Text="Fio arquivado: o contrato de venda ja foi assinado." />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Responder a: @_resposta</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Avaliacoes"
+              Descricao="Varias avaliacoes seguidas ganham um divisor entre elas, nunca depois da ultima."
+              Codigo="@CodigoAvaliacao">
+    <div class="lista-vertical">
+        <RvmReview AuthorName="Marina Alves" AuthorDetail="Fazenda Boa Vista" AvatarSrc="@FotoMarina"
+                   Timestamp="12 mar 2026" Rating="5"
+                   Text="Semente com otima germinacao, estande uniforme em todos os talhoes."
+                   Images="@Fotos" />
+        <RvmReview AuthorName="Pedro Rocha" AuthorDetail="Sitio Santa Rita" Timestamp="8 mar 2026" Rating="3"
+                   Text="Entrega atrasou dois dias, mas o produto chegou bem embalado." />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmComment" />
+
+<TabelaParametros Componente="RvmReview" />
+
+@code {
+    private string _resposta = "ninguem";
+
+    private const string FotoJoao =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' fill='%2316B1FF'/><circle cx='20' cy='16' r='7' fill='%23FFFFFF'/><rect x='9' y='26' width='22' height='14' rx='7' fill='%23FFFFFF'/></svg>";
+
+    private const string FotoMarina =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' fill='%2356CA00'/><circle cx='20' cy='16' r='7' fill='%23FFFFFF'/><rect x='9' y='26' width='22' height='14' rx='7' fill='%23FFFFFF'/></svg>";
+
+    private static readonly string[] Fotos =
+    [
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%2387CEEB'/><rect y='36' width='64' height='28' fill='%2356CA00'/></svg>",
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23FFE7A3'/><rect y='40' width='64' height='24' fill='%23B8860B'/></svg>"
+    ];
+
+    private const string CodigoComentario = """
+        <RvmComment AuthorName="Joao Lima" AvatarSrc="joao.jpg" Timestamp="ha 2 horas"
+                    Text="A chuva de ontem atrasou a colheita do talhao 12. Remarcamos o frete?"
+                    OnReply="AbrirResposta">
+            <RvmComment AuthorName="Ana Souza" Timestamp="ha 1 hora"
+                        Text="Remarquei para quinta." OnReply="AbrirResposta" />
+        </RvmComment>
+        <RvmComment AuthorName="Carlos Prado" Timestamp="ontem" ShowReply="false" Text="Fio arquivado." />
+        """;
+
+    private const string CodigoAvaliacao = """
+        <RvmReview AuthorName="Marina Alves" AuthorDetail="Fazenda Boa Vista" AvatarSrc="marina.jpg"
+                   Timestamp="12 mar 2026" Rating="5" Images="fotos"
+                   Text="Semente com otima germinacao, estande uniforme em todos os talhoes." />
+        """;
+}
