@@ -1,0 +1,24 @@
+@namespace RVM.DesignSystem.Components.Chat
+
+@* Balao de texto (contrato com o RVM.UI, DSGN-017). A cor vem do lado, como no kit: papel a esquerda, primario a
+   direita. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">@ChildContent</div>
+
+@code {
+    /// <summary>O texto da mensagem.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>De que lado a mensagem aparece; decide a cor. Padrao: <see cref="RvmChatSide.Left"/>.</summary>
+    [Parameter] public RvmChatSide Side { get; set; } = RvmChatSide.Left;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar(Side == RvmChatSide.Right ? "rvm-balao rvm-direita rvm-text-body1" : "rvm-balao rvm-esquerda rvm-text-body1",
+            Class, AdditionalAttributes);
+}

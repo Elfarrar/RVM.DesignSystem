@@ -1,0 +1,81 @@
+/* CSS isolado do RvmFileTypeCard. So custom properties. O mesmo cartao dos arquivos do RvmFileUpload (papel, divisor,
+   raio medio), com o RvmFileIcon colorido no lugar do icone de linha. */
+
+.rvm-file-type-card {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+    padding: var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-falhou {
+    border-color: var(--rvm-color-error-main);
+}
+
+.rvm-file-type-card ::deep .rvm-tipo {
+    flex: none;
+}
+
+.rvm-dados {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.rvm-nome {
+    overflow: hidden;
+    color: var(--rvm-color-text-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-detalhes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-estado::before {
+    content: "\00B7";
+    margin-inline-end: var(--rvm-space-1);
+}
+
+.rvm-falhou .rvm-estado {
+    color: var(--rvm-color-error-text);
+}
+
+.rvm-enviado .rvm-estado {
+    color: var(--rvm-color-success-text);
+}
+
+.rvm-dados ::deep .rvm-progresso {
+    margin-top: var(--rvm-space-1);
+}
+
+.rvm-sinal {
+    display: inline-flex;
+    flex: none;
+}
+
+.rvm-sinal-ok { color: var(--rvm-color-success-text); }
+.rvm-sinal-falha { color: var(--rvm-color-error-text); }
+
+.rvm-acoes {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--rvm-space-1);
+}
+
+.rvm-file-type-card ::deep .rvm-remover {
+    flex: none;
+}
