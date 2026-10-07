@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using RVM.DesignSystem.Components.AppShell;
 
 namespace RVM.DesignSystem.Components.Sidebar;
 
@@ -50,6 +51,28 @@ public partial class RvmSidebar : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
+    // Dentro de um RvmAppShell, o RvmSidebar que o consumidor passa em Sidebar segue o recolhido da casca mesmo sem
+    // @bind-Collapsed: a coluna encolhe para 68 px e os itens precisam saber (achado do review da onda 1).
+    [CascadingParameter] private RvmAppShell? Casca { get; set; }
+
+    private bool _recolhido;
+    private bool? _collapsedRecebido;
+
+    /// <summary>O estado que os itens leem: o proprio, ou o da casca em volta.</summary>
+    internal bool Recolhido => _recolhido || Casca?.Collapsed == true;
+
+    // So segue o parametro quando ELE mudou: um re-render do pai nao pode desfazer o que a pessoa fez sem @bind
+    // (achado do review da onda 1, DSGN-017 — o mesmo do RvmAccordionPanel).
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (_collapsedRecebido != Collapsed)
+        {
+            _recolhido = Collapsed;
+            _collapsedRecebido = Collapsed;
+        }
+    }
+
     /// <summary>A lista que rola: o <c>RvmAppShell</c> traz o item atual para a vista dentro dela.</summary>
     internal ElementReference Navegacao => _navegacao;
 
@@ -59,7 +82,7 @@ public partial class RvmSidebar : ComponentBase
         {
             var proprias = "rvm-barra-lateral";
             if (Variant == RvmSidebarVariant.Colored) proprias += " rvm-colorida";
-            if (Collapsed) proprias += " rvm-recolhida";
+            if (Recolhido) proprias += " rvm-recolhida";
             if (ActiveLine) proprias += " rvm-linha-ativa";
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
@@ -67,12 +90,12 @@ public partial class RvmSidebar : ComponentBase
 
     internal async Task DefinirRecolhidoAsync(bool recolhido)
     {
-        if (Collapsed == recolhido)
+        if (_recolhido == recolhido)
         {
             return;
         }
 
-        Collapsed = recolhido;
+        _recolhido = recolhido;
         await CollapsedChanged.InvokeAsync(recolhido);
     }
 }

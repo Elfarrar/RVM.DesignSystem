@@ -3,7 +3,7 @@
 
 @* Titulo de secao do menu ("APPS & PAGES" no kit) com os itens dele numa lista nomeada pelo titulo.
    Recolhido, o titulo vira o traco curto do kit e continua lido pelo leitor de tela. *@
-<li @attributes="AdditionalAttributes" class="@ClassesCss.Juntar(Casca?.Collapsed == true ? "rvm-nav-secao rvm-recolhida" : "rvm-nav-secao", Class, AdditionalAttributes)">
+<li @attributes="AdditionalAttributes" class="@ClassesCss.Juntar(Casca?.Recolhido == true ? "rvm-nav-secao rvm-recolhida" : "rvm-nav-secao", Class, AdditionalAttributes)">
     <span id="@_id" class="rvm-nav-titulo">
         <span class="rvm-nav-titulo-texto">@Title</span>
     </span>

@@ -14,7 +14,7 @@
         case 6: <h6 class="rvm-cabecalho">@Botao</h6> break;
         default: <h3 class="rvm-cabecalho">@Botao</h3> break;
     }
-    <div id="@_idRegiao" role="region" aria-labelledby="@_idBotao" class="rvm-conteudo" hidden="@(!Expanded)">
+    <div id="@_idRegiao" role="region" aria-labelledby="@_idBotao" class="rvm-conteudo" hidden="@(!_aberto)">
         @ChildContent
     </div>
 </div>
@@ -23,14 +23,14 @@
     private readonly string _idBotao = GeradorDeIds.Novo("rvm-expansivel-botao");
     private readonly string _idRegiao = GeradorDeIds.Novo("rvm-expansivel-regiao");
 
-    private RenderFragment Botao => @<button type="button" id="@_idBotao" class="rvm-gatilho" aria-expanded="@(Expanded ? "true" : "false")"
+    private RenderFragment Botao => @<button type="button" id="@_idBotao" class="rvm-gatilho" aria-expanded="@(_aberto ? "true" : "false")"
                                               aria-controls="@_idRegiao" disabled="@Disabled" @onclick="AlternarAsync">
         @if (Icon is { } icone)
         {
             <span class="rvm-icone" aria-hidden="true"><RvmIcon Name="icone" Size="RvmSize.Small" /></span>
         }
         <span class="rvm-titulo">@(TitleContent ?? (b => b.AddContent(0, Title)))</span>
-        <span class="rvm-marca" aria-hidden="true"><RvmIcon Name="@(Expanded ? RvmIconName.ChevronUp : RvmIconName.ChevronDown)" Size="RvmSize.Small" /></span>
+        <span class="rvm-marca" aria-hidden="true"><RvmIcon Name="@(_aberto ? RvmIconName.ChevronUp : RvmIconName.ChevronDown)" Size="RvmSize.Small" /></span>
     </button>;
 
     /// <summary>Texto do cabecalho.</summary>
@@ -66,9 +66,23 @@
 
     private string ClassesDaRaiz => ClassesCss.Juntar(Disabled ? "rvm-painel rvm-desabilitado" : "rvm-painel", Class, AdditionalAttributes);
 
+    private bool _aberto;
+    private bool? _expandedRecebido;
+
+    // So segue o parametro quando ELE mudou: um re-render do pai nao pode desfazer o que a pessoa fez sem @bind
+    // (achado do review da onda 1, DSGN-017 — o mesmo do RvmAccordionPanel).
+    protected override void OnParametersSet()
+    {
+        if (_expandedRecebido != Expanded)
+        {
+            _aberto = Expanded;
+            _expandedRecebido = Expanded;
+        }
+    }
+
     private async Task AlternarAsync()
     {
-        Expanded = !Expanded;
-        await ExpandedChanged.InvokeAsync(Expanded);
+        _aberto = !_aberto;
+        await ExpandedChanged.InvokeAsync(_aberto);
     }
 }

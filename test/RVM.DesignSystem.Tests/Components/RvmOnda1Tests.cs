@@ -274,3 +274,58 @@ public class RvmOnda1Tests : BunitContext
         Assert.NotNull(cortado.Find(".miolo"));
     }
 }
+
+/// <summary>Achados do review independente da onda 1 (DSGN-017).</summary>
+public class RvmReviewOnda1Tests : BunitContext
+{
+    public RvmReviewOnda1Tests() => JSInterop.Mode = JSRuntimeMode.Loose;
+
+    [Fact]
+    public void Painel_aberto_sem_bind_nao_fecha_quando_o_pai_renderiza()
+    {
+        var cortado = Render<RvmExpansionPanel>(p => p.Add(x => x.Title, "Plantio").AddChildContent("x"));
+        cortado.Find("button").Click();
+
+        cortado.Render(p => p.Add(x => x.Title, "Plantio").AddChildContent("y"));
+
+        Assert.Equal("true", cortado.Find("button").GetAttribute("aria-expanded"));
+    }
+
+    [Fact]
+    public void Grupo_sem_bind_mantem_a_escolha_quando_o_pai_renderiza()
+    {
+        var cortado = Render<RvmButtonGroup<string>>(p => p.Add(x => x.Label, "Nivel").Add(x => x.Items, ["A", "B"]));
+        cortado.FindAll("button")[1].Click();
+
+        cortado.Render(p => p.Add(x => x.Label, "Nivel").Add(x => x.Items, ["A", "B"]));
+
+        Assert.Equal("true", cortado.FindAll("button")[1].GetAttribute("aria-pressed"));
+    }
+
+    [Fact]
+    public void Lateral_do_consumidor_segue_o_recolhido_da_casca()
+    {
+        var cortado = Render<RvmAppShell>(p => p
+            .Add(x => x.Collapsed, true)
+            .Add(x => x.Sidebar, (RenderFragment)(b =>
+            {
+                b.OpenComponent<RvmSidebar>(0);
+                b.AddComponentParameter(1, nameof(RvmSidebar.ChildContent), (RenderFragment)(i =>
+                {
+                    i.OpenComponent<RvmNavItem>(0);
+                    i.AddComponentParameter(1, nameof(RvmNavItem.Href), "painel");
+                    i.AddComponentParameter(2, nameof(RvmNavItem.Text), "Painel");
+                    i.AddComponentParameter(3, nameof(RvmNavItem.Icon), RvmIconName.Home);
+                    i.CloseComponent();
+                }));
+                b.CloseComponent();
+            })));
+
+        Assert.Contains("rvm-recolhida", cortado.Find(".rvm-barra-lateral").ClassList);
+        Assert.Contains("rvm-recolhido", cortado.Find("a.rvm-nav-link").ClassList);
+    }
+
+    [Fact]
+    public void Ficha_tem_a_grade_dentro_do_container()
+        => Assert.NotNull(Render<RvmDetailProfileLayout>(p => p.Add(x => x.Name, "Ana")).Find(".rvm-ficha-detalhe > .rvm-ficha-grade"));
+}

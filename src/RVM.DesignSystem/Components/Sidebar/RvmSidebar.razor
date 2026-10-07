@@ -7,7 +7,7 @@
    dentro da coluna dele; sozinho, ele e uma coluna de 260 px (68 recolhida). *@
 <div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
     <CascadingValue Value="this">
-        @if ((Collapsed && LogoCollapsed is not null ? LogoCollapsed : Logo) is { } marca)
+        @if ((Recolhido && LogoCollapsed is not null ? LogoCollapsed : Logo) is { } marca)
         {
             <div class="rvm-area-marca">@marca</div>
         }
@@ -26,9 +26,9 @@
         }
         @if (Collapsible)
         {
-            <button type="button" class="rvm-recolher" aria-label="Recolher menu" aria-pressed="@(Collapsed ? "true" : "false")"
-                    @onclick="() => DefinirRecolhidoAsync(!Collapsed)">
-                <RvmIcon Name="@(Collapsed ? RvmIconName.ChevronRight : RvmIconName.ChevronLeft)" />
+            <button type="button" class="rvm-recolher" aria-label="Recolher menu" aria-pressed="@(Recolhido ? "true" : "false")"
+                    @onclick="() => DefinirRecolhidoAsync(!Recolhido)">
+                <RvmIcon Name="@(Recolhido ? RvmIconName.ChevronRight : RvmIconName.ChevronLeft)" />
             </button>
         }
     </CascadingValue>

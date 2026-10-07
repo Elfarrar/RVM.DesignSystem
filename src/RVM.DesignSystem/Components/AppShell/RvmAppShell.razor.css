@@ -160,6 +160,11 @@
         transition: transform var(--rvm-transition-medium), visibility 0s linear var(--rvm-transition-medium);
     }
 
+    /* O RvmSidebar pinta o fundo do corpo; na gaveta, o papel, como antes da DSGN-017. */
+    .rvm-lateral ::deep .rvm-barra-lateral {
+        background-color: var(--rvm-color-background-paper);
+    }
+
     .rvm-menu-aberto .rvm-lateral {
         transform: none;
         visibility: visible;

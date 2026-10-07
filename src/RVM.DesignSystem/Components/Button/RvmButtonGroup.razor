@@ -8,7 +8,7 @@
     @foreach (var item in Items)
     {
         var opcao = item;
-        var escolhido = EqualityComparer<TValue>.Default.Equals(opcao, Value!);
+        var escolhido = EqualityComparer<TValue>.Default.Equals(opcao, _valor!);
         <button type="button"
                 class="@(escolhido ? $"rvm-opcao rvm-escolhida {PapelCss.Classe(SelectedColor?.Invoke(opcao) ?? RvmColor.Primary)}" : "rvm-opcao")"
                 aria-pressed="@(escolhido ? "true" : "false")"
@@ -58,14 +58,30 @@
 
     private string ClassesDaRaiz => ClassesCss.Juntar(Size == RvmSize.Small ? "rvm-grupo-botoes rvm-pequeno" : "rvm-grupo-botoes", Class, AdditionalAttributes);
 
+    private TValue? _valor;
+    private TValue? _valorRecebido;
+    private bool _recebeuAlgum;
+
+    // So segue o parametro quando ELE mudou: um re-render do pai nao pode desfazer o que a pessoa fez sem @bind
+    // (achado do review da onda 1, DSGN-017 — o mesmo do RvmAccordionPanel).
+    protected override void OnParametersSet()
+    {
+        if (!_recebeuAlgum || !EqualityComparer<TValue>.Default.Equals(_valorRecebido!, Value!))
+        {
+            _valor = Value;
+            _valorRecebido = Value;
+            _recebeuAlgum = true;
+        }
+    }
+
     private async Task EscolherAsync(TValue item)
     {
-        if (EqualityComparer<TValue>.Default.Equals(item, Value!))
+        if (EqualityComparer<TValue>.Default.Equals(item, _valor!))
         {
             return;
         }
 
-        Value = item;
+        _valor = item;
         await ValueChanged.InvokeAsync(item);
     }
 }

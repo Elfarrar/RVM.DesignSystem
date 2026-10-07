@@ -47,7 +47,7 @@ public partial class RvmNavItem : ComponentBase, IDisposable
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    internal bool Recolhido => Casca?.Collapsed == true && Grupo is null;
+    internal bool Recolhido => Casca?.Recolhido == true && Grupo is null;
 
     internal bool Ativo
     {

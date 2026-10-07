@@ -3,6 +3,9 @@
 
 .rvm-ficha-detalhe {
     container-type: inline-size;
+}
+
+.rvm-ficha-grade {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
     gap: var(--rvm-space-6);
@@ -87,7 +90,7 @@
 
 /* Estreito: uma coluna so, com o perfil antes do miolo. */
 @container (max-width: 760px) {
-    .rvm-ficha-detalhe { grid-template-columns: minmax(0, 1fr); }
+    .rvm-ficha-grade { grid-template-columns: minmax(0, 1fr); }
     .rvm-perfil-detalhe { grid-column: 1; grid-row: 1; }
     .rvm-miolo-detalhe { grid-row: 2; }
 }

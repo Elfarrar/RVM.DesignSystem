@@ -4,7 +4,9 @@
 @* A ficha de detalhe (cliente, vendedor, projeto): o miolo a esquerda (numeros, abas) e o perfil numa coluna
    fixa a direita, que nao muda quando a aba troca. No celular o perfil vem primeiro. A ficha e uma lista de
    definicoes (dl): o leitor de tela anuncia "E-mail: ana@...". *@
+@* O container da consulta de largura e o elemento de fora: @container nao vale para o proprio container. *@
 <div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-ficha-detalhe", Class, AdditionalAttributes)">
+  <div class="rvm-ficha-grade">
     <aside class="rvm-perfil-detalhe" aria-labelledby="@_idNome">
         <RvmAvatar Initials="@Iniciais" Name="@Name" Size="RvmSize.Large" Variant="RvmAvatarVariant.Soft" aria-hidden="true" />
         <h2 id="@_idNome" class="rvm-nome">@Name</h2>
@@ -29,6 +31,7 @@
         }
     </aside>
     <div class="rvm-miolo-detalhe">@ChildContent</div>
+  </div>
 </div>
 
 @code {
