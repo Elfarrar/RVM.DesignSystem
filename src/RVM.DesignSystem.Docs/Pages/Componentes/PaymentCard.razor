@@ -1,0 +1,95 @@
+@page "/componentes/payment-card"
+@using System.Globalization
+@using RVM.DesignSystem.Components.Cards
+
+<PageTitle>RvmPaymentCard e RvmCurrencyConverter — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmPaymentCard e RvmCurrencyConverter</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Os cards de financas do painel. O RvmPaymentCard e o cartao de debito ou credito na cor do papel, com saldo,
+    numero mascarado e validade. O RvmCurrencyConverter e a casca do conversor de moeda: os campos sao do consumidor e
+    quem calcula a taxa e o aplicativo — a biblioteca nao tem cotacao.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O numero mascarado e desenho: o
+    leitor de tela ouve "Cartao final 9090".
+</p>
+
+<BlocoExemplo Titulo="Cartao de pagamento"
+              Descricao="Color pinta o cartao; o texto vai no token de contraste do papel, que passa AA nos dois temas. NetworkMark e a bandeira, decorativa. Actions liga a faixa de botoes."
+              Codigo="@CodigoCartao">
+    <div class="grade-cards largura-cheia">
+        <RvmPaymentCard Balance="R$ 12.430,00" CardNumber="**** **** **** 9090" ExpiresAt="07/28">
+            <NetworkMark><RvmIcon Name="RvmIconName.Card" Size="RvmSize.Large" /></NetworkMark>
+        </RvmPaymentCard>
+        <RvmPaymentCard Color="RvmColor.Warning" BalanceLabel="Limite disponivel" Balance="R$ 38.000,00"
+                        CardNumber="**** **** **** 4512" ExpiresAt="02/29">
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Text" StartIcon="RvmIconName.Eye">Ver fatura</RvmButton>
+                <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Error" StartIcon="RvmIconName.Lock">Bloquear</RvmButton>
+            </Actions>
+        </RvmPaymentCard>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Conversor de moeda"
+              Descricao="From e To sao encaixes; Rate e a taxa ja escrita pelo aplicativo (anunciada quando muda); OnConvert avisa o clique. Menu liga o menu de tres pontos, com MenuLabel como nome."
+              Codigo="@CodigoConversor">
+    <div class="grade-cards largura-cheia">
+        <RvmCurrencyConverter Title="Conversor de moeda" Subtitle="Cotacao para contratos de exportacao" Rate="@Taxa"
+                              OnConvert="Converter">
+            <From>
+                <RvmNumericField @bind-Value="_dolares" Label="Valor em dolar" Prefix="US$" Decimals="2" />
+            </From>
+            <To>
+                <RvmNumericField Value="_reais" ValueExpression="() => _reais" Label="Valor em real" Prefix="R$" Decimals="2" ReadOnly="true" />
+            </To>
+            <Menu>
+                <RvmMenuItem Icon="RvmIconName.Refresh" OnClick="AtualizarCotacao">Atualizar cotacao</RvmMenuItem>
+            </Menu>
+        </RvmCurrencyConverter>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmPaymentCard" />
+
+<TabelaParametros Componente="RvmCurrencyConverter" />
+
+@code {
+    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
+
+    private decimal _cotacao = 5.42m;
+    private decimal _dolares = 1000m;
+    private decimal _reais = 5420m;
+
+    private string Taxa => $"1 USD = {_cotacao.ToString("N2", PtBr)} BRL";
+
+    private void Converter() => _reais = Math.Round(_dolares * _cotacao, 2);
+
+    private void AtualizarCotacao() => _cotacao = _cotacao == 5.42m ? 5.47m : 5.42m;
+
+    private const string CodigoCartao = """
+        <RvmPaymentCard Balance="R$ 12.430,00" CardNumber="**** **** **** 9090" ExpiresAt="07/28">
+            <NetworkMark><img src="img/bandeira.svg" alt="" /></NetworkMark>
+        </RvmPaymentCard>
+        <RvmPaymentCard Color="RvmColor.Warning" BalanceLabel="Limite disponivel" Balance="R$ 38.000,00"
+                        CardNumber="**** **** **** 4512" ExpiresAt="02/29">
+            <Actions>
+                <RvmButton Variant="RvmButtonVariant.Text">Ver fatura</RvmButton>
+            </Actions>
+        </RvmPaymentCard>
+        """;
+
+    private const string CodigoConversor = """
+        <RvmCurrencyConverter Title="Conversor de moeda" Rate="@Taxa" OnConvert="Converter">
+            <From>
+                <RvmNumericField @bind-Value="_dolares" Label="Valor em dolar" Prefix="US$" Decimals="2" />
+            </From>
+            <To>
+                <RvmNumericField Value="_reais" ValueExpression="() => _reais" Label="Valor em real" Prefix="R$" Decimals="2" ReadOnly="true" />
+            </To>
+        </RvmCurrencyConverter>
+        """;
+}
