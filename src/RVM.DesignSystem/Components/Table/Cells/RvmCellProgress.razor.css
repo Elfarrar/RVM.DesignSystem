@@ -1,0 +1,8 @@
+/* CSS isolado do RvmCellProgress. So custom properties — hex literal aqui quebra o tema escuro.
+   A barra ocupa a coluna, com um minimo para continuar legivel quando a tabela aperta. */
+
+.rvm-barra-da-celula {
+    flex: 1 1 auto;
+    min-width: 140px;
+    max-width: 240px;
+}

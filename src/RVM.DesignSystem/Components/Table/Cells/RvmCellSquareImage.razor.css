@@ -1,0 +1,12 @@
+/* CSS isolado do RvmCellSquareImage. So custom properties — hex literal aqui quebra o tema escuro.
+   Miniatura de 40 px (o mesmo lado do avatar da celula de usuario) com o canto pequeno do kit. O fundo suave aparece
+   enquanto a imagem carrega e nas transparentes. */
+
+.rvm-miniatura {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-secondary-soft);
+}

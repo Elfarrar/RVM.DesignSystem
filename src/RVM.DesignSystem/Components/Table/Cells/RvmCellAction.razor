@@ -1,0 +1,22 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula de acoes (contrato com o RVM.UI, DSGN-017): uma fileira livre. O kit desenha lixeira, olho e o menu de tres
+   pontos lado a lado (lista de faturas) — sao RvmIconButton, RvmMenu e RvmLink, entao a celula e um slot, e quem
+   escolhe o arranjo e a pagina. *@
+<RvmCellFrame Align="Align" FrameClass="rvm-celula-acao" Class="@Class" AdditionalAttributes="AdditionalAttributes">
+    @ChildContent
+</RvmCellFrame>
+
+@code {
+    /// <summary>As acoes: <c>RvmIconButton</c>, <c>RvmMenu</c>, <c>RvmLink</c> ou qualquer combinacao deles.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

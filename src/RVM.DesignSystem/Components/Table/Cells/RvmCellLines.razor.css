@@ -1,0 +1,28 @@
+/* CSS isolado do texto das celulas. So custom properties — hex literal aqui quebra o tema escuro.
+   Kit (listas de usuario e de fatura): o nome em body2 na tinta principal, o e-mail embaixo em caption na tinta
+   de apoio. O destaque e a coluna que identifica a linha: o mesmo texto, mais pesado. */
+
+.rvm-celula-texto {
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.rvm-titulo {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: var(--rvm-font-weight-regular);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-destaque .rvm-titulo {
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-apoio {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+    color: var(--rvm-color-text-secondary);
+}
