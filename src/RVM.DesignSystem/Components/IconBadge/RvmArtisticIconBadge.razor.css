@@ -1,0 +1,39 @@
+/* CSS isolado do RvmArtisticIconBadge. So custom properties e color-mix delas — hex literal quebra o tema escuro.
+
+   Cada papel define tres tons: o do topo do degrade, o da base (que tambem e o fundo do brilho) e o do icone.
+   O par do degrade e escolhido para os DOIS extremos passarem com folga dos 3:1 de objeto grafico contra o icone:
+   -alt-light e -main, que sao iguais nos dois temas. Pior caso: secondary-main contra o #212121 do contraste, 4.8:1.
+   O primary e o unico de icone branco; o alt-light dele ainda da 4.8:1. O inverse vai do branco ao hover dele. */
+
+.rvm-artistic-icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--rvm-radius-circle);
+    user-select: none;
+    color: var(--rvm-ab-icone);
+}
+
+.rvm-primary { --rvm-ab-topo: var(--rvm-color-primary-alt-light); --rvm-ab-base: var(--rvm-color-primary-main); --rvm-ab-icone: var(--rvm-color-primary-contrast); }
+.rvm-secondary { --rvm-ab-topo: var(--rvm-color-secondary-alt-light); --rvm-ab-base: var(--rvm-color-secondary-main); --rvm-ab-icone: var(--rvm-color-secondary-contrast); }
+.rvm-inverse { --rvm-ab-topo: var(--rvm-color-inverse-main); --rvm-ab-base: var(--rvm-color-inverse-hover); --rvm-ab-icone: var(--rvm-color-inverse-contrast); }
+.rvm-info { --rvm-ab-topo: var(--rvm-color-info-alt-light); --rvm-ab-base: var(--rvm-color-info-main); --rvm-ab-icone: var(--rvm-color-info-contrast); }
+.rvm-success { --rvm-ab-topo: var(--rvm-color-success-alt-light); --rvm-ab-base: var(--rvm-color-success-main); --rvm-ab-icone: var(--rvm-color-success-contrast); }
+.rvm-warning { --rvm-ab-topo: var(--rvm-color-warning-alt-light); --rvm-ab-base: var(--rvm-color-warning-main); --rvm-ab-icone: var(--rvm-color-warning-contrast); }
+.rvm-error { --rvm-ab-topo: var(--rvm-color-error-alt-light); --rvm-ab-base: var(--rvm-color-error-main); --rvm-ab-icone: var(--rvm-color-error-contrast); }
+
+/* Degrade diagonal, com um anel fino do proprio papel por fora para separar do card em qualquer tema. */
+.rvm-degrade {
+    background-image: linear-gradient(135deg, var(--rvm-ab-topo) 0%, var(--rvm-ab-base) 100%);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--rvm-ab-base) 16%, transparent);
+}
+
+/* Brilho: fundo cheio e a sombra na cor do papel, abaixo, como luz refletida. */
+.rvm-brilho {
+    background-color: var(--rvm-ab-base);
+    box-shadow: 0 8px 20px -4px color-mix(in srgb, var(--rvm-ab-base) 60%, transparent);
+}
