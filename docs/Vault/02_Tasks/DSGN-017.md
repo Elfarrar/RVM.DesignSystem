@@ -244,7 +244,7 @@ Pendentes do contrato: **85 → 0**. Grupo "Painel e aplicativos" no site.
 ## Publicada — 07/10/2026
 
 Aprovada pelo Rafael pela galeria de capturas do dev. PR #86 (`dev` → `master`), tag **`v2.0.0`**, versao conferida
-no feed pelo workflow, conteudo conferido em `design.rvmit.com.br`. Alphas de `dev` em `2.1.0-alpha.N`. O CI do #86
+no feed pelo workflow, conteudo conferido em `design.rvmit.com.br` e E2E completo contra producao: 432 de 432. Alphas de `dev` em `2.1.0-alpha.N`. O CI do #86
 pegou um teste instavel por prazo (`RvmAutocomplete`, espera da busca): prazo folgado no PR #87.
 
 Falta para fechar o card: **migracao do RVM.TradeBinder** (`TBIN-018`, aberto no repo dele, PR #53 de la).
