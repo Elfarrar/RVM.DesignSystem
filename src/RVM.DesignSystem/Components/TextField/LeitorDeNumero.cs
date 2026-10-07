@@ -11,8 +11,29 @@ namespace RVM.DesignSystem.Components.TextField;
 /// </summary>
 internal static class LeitorDeNumero
 {
-    /// <summary>Cultura padrao do campo: a do ecossistema, nunca a do servidor.</summary>
-    public static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
+    /// <summary>
+    /// Cultura padrao do campo: a do ecossistema, nunca a do servidor. Sem os dados de cultura (InvariantGlobalization,
+    /// container sem ICU), pedir "pt-BR" lanca — e no inicializador estatico derrubaria todo campo numerico. Ai sai uma
+    /// copia da invariante com os separadores e a moeda do Brasil (achado do review da onda 2a, DSGN-017).
+    /// </summary>
+    public static readonly CultureInfo PtBr = CriarPtBr();
+
+    private static CultureInfo CriarPtBr()
+    {
+        try
+        {
+            return CultureInfo.GetCultureInfo("pt-BR");
+        }
+        catch (CultureNotFoundException)
+        {
+            var cultura = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+            var numeros = cultura.NumberFormat;
+            numeros.NumberDecimalSeparator = numeros.CurrencyDecimalSeparator = numeros.PercentDecimalSeparator = ",";
+            numeros.NumberGroupSeparator = numeros.CurrencyGroupSeparator = numeros.PercentGroupSeparator = ".";
+            numeros.CurrencySymbol = "R$";
+            return CultureInfo.ReadOnly(cultura);
+        }
+    }
 
     /// <summary>Le o texto digitado ou colado. Vazio devolve <c>true</c> com valor nulo: quem decide e o tipo.</summary>
     public static bool TryParse(string? texto, CultureInfo cultura, bool aceitaDecimais, int? casas, string? prefixo,

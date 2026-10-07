@@ -8,7 +8,7 @@
    LeitorDeNumero. input type="text" com inputmode, NUNCA type="number": o type="number" le o numero na cultura do
    NAVEGADOR, nao na do campo — o caminho mais curto para o erro de 1000x. Prefixo e sufixo entram no
    aria-describedby (quem nao enxerga ouve a unidade), como no RvmTextField. Immediate troca o @onchange pelo
-   @oninput: um @oninput sempre ligado seria uma ida ao servidor por tecla. *@
+   @oninput: os dois eventos ficam ligados e o handler confere a flag, como no RvmTextField (no Blazor Server, uma ida ao servidor por tecla mesmo sem Immediate). *@
 <RvmFieldFrame Label="@Label" InputId="@IdDoControle" LinkText="@LinkText" LinkHref="@LinkHref" Error="@ErroExibido"
                ErrorId="@IdDoErro" HelperText="@HelperText" HelperId="@IdDoApoio" Disabled="Disabled" Shape="Shape"
                Class="@ClassesDoConsumidor">
@@ -86,6 +86,7 @@
     private static bool AceitaDecimais => TipoBase == typeof(decimal) || TipoBase == typeof(double) || TipoBase == typeof(float);
 
     private string? _erroDeLeitura;
+    private TValue? _valorConhecido;
 
     private CultureInfo Cultura => Culture ?? LeitorDeNumero.PtBr;
 
@@ -118,6 +119,13 @@
         {
             throw new InvalidOperationException(
                 $"RvmNumericField nao suporta {typeof(TValue).Name}: use int, long, decimal, double ou float (com ou sem ?).");
+        }
+
+        // O valor mudou por fora (o formulario foi limpo): o erro do texto antigo nao vale mais.
+        if (!EqualityComparer<TValue>.Default.Equals(Value!, _valorConhecido!))
+        {
+            _valorConhecido = Value;
+            _erroDeLeitura = null;
         }
 
         base.OnParametersSet();

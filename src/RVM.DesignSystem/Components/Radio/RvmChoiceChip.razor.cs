@@ -48,7 +48,10 @@ public partial class RvmChoiceChip<TValue> : ComponentBase
     [Parameter] public EventCallback OnRemove { get; set; }
 
     /// <summary>Nome acessivel do botao de remover. Padrao: "Remover".</summary>
-    [Parameter] public string RemoveLabel { get; set; } = "Remover";
+    [Parameter] public string? RemoveLabel { get; set; }
+
+    // Varios chips lado a lado: "Remover" sozinho nao diz qual (achado do review da onda 2a).
+    internal string NomeDoRemover => RemoveLabel ?? (string.IsNullOrWhiteSpace(Label) ? "Remover" : $"Remover {Label}");
 
     /// <summary>So esta opcao indisponivel: desabilita o radio e o botao de remover. O <c>Disabled</c> do grupo desabilita todas.</summary>
     [Parameter] public bool Disabled { get; set; }

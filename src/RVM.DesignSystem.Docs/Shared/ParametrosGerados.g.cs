@@ -346,7 +346,7 @@ internal static class ParametrosGerados
             new("Disabled", "bool", "false", "So esta opcao indisponivel: desabilita o radio e o botao de remover. O `Disabled` do grupo desabilita todas."),
             new("Label", "string?", "—", "Texto da opcao, quando nao ha `RvmChoiceChip.ChildContent`. Tambem e o nome acessivel."),
             new("OnRemove", "EventCallback", "—", "Chamado ao remover. Com alguem escutando, aparece o botao de remover ao lado do chip."),
-            new("RemoveLabel", "string", "\"Remover\"", "Nome acessivel do botao de remover. Padrao: \"Remover\"."),
+            new("RemoveLabel", "string?", "—", "Nome acessivel do botao de remover. Padrao: \"Remover\"."),
             new("Size", "RvmSize", "RvmSize.Medium", "24 px (`RvmSize.Small`) ou 32 px, como o RvmChip. `RvmSize.Large` sai igual ao medio."),
             new("StartIcon", "RvmIconName?", "—", "Icone antes do rotulo."),
             new("Value", "object?", "obrigatorio", "O valor que esta opcao representa."),

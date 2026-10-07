@@ -248,3 +248,52 @@ public class RvmCamposDeTagsTests : BunitContext
         Assert.True(cortado.Find("option[value='USD']").HasAttribute("selected"));
     }
 }
+
+/// <summary>Achados do review independente da onda 2a (DSGN-017).</summary>
+public class RvmReviewOnda2aTests : Bunit.BunitContext
+{
+    public RvmReviewOnda2aTests() => JSInterop.Mode = Bunit.JSRuntimeMode.Loose;
+
+    [Fact]
+    public void Unidade_sem_escolha_e_a_primeira_como_na_tela()
+    {
+        string? texto = "10";
+        var cortado = Render<RVM.DesignSystem.Components.TextField.RvmTextFieldSelect<string>>(p => p
+            .Add(x => x.Label, "Valor").Add(x => x.Options, ["BRL", "USD"])
+            .Add(x => x.Value, texto).Add(x => x.ValueExpression, () => texto));
+
+        Assert.True(cortado.Find("option[value=BRL]").HasAttribute("selected"));
+    }
+
+    [Fact]
+    public void Remover_do_chip_diz_qual_chip()
+    {
+        var cortado = Render<RVM.DesignSystem.Components.Radio.RvmRadioGroup<string>>(p => p
+            .Add(x => x.Label, "Filtros")
+            .AddChildContent<RVM.DesignSystem.Components.Radio.RvmChoiceChip<string>>(c => c
+                .Add(x => x.Value, "q").Add(x => x.Label, "Quente")
+                .Add(x => x.OnRemove, Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, () => { }))));
+
+        Assert.Equal("Remover Quente", cortado.Find("button.rvm-remover").GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public void Lista_sem_quem_nomeie_ganha_nome_padrao()
+        => Assert.Equal("Opcoes", Render<RVM.DesignSystem.Components.Select.RvmOptionList<string>>(p => p
+            .Add(x => x.Id, "l").Add(x => x.Items, ["A"]).Add(x => x.ItemText, s => s).Add(x => x.IsSelected, _ => false))
+            .Find("[role=listbox]").GetAttribute("aria-label"));
+
+    [Fact]
+    public void Erro_de_leitura_some_quando_o_valor_muda_por_fora()
+    {
+        decimal? valor = 1;
+        var cortado = Render<RVM.DesignSystem.Components.TextField.RvmNumericField<decimal?>>(p => p
+            .Add(x => x.Label, "Peso").Add(x => x.Value, valor).Add(x => x.ValueExpression, () => valor));
+        cortado.Find("input").Change("abc");
+        Assert.NotEmpty(cortado.FindAll(".rvm-apoio"));
+
+        cortado.Render(p => p.Add(x => x.Label, "Peso").Add(x => x.Value, (decimal?)5).Add(x => x.ValueExpression, () => valor));
+
+        Assert.Empty(cortado.FindAll(".rvm-apoio"));
+    }
+}

@@ -490,7 +490,7 @@ Opcao de escolha unica em forma de chip, dentro de um `RvmRadioGroup`. O grupo d
 | `Disabled` | `bool` | `false` | So esta opcao indisponivel: desabilita o radio e o botao de remover. O `Disabled` do grupo desabilita todas. |
 | `Label` | `string?` | — | Texto da opcao, quando nao ha `RvmChoiceChip.ChildContent`. Tambem e o nome acessivel. |
 | `OnRemove` | `EventCallback` | — | Chamado ao remover. Com alguem escutando, aparece o botao de remover ao lado do chip. |
-| `RemoveLabel` | `string` | `"Remover"` | Nome acessivel do botao de remover. Padrao: "Remover". |
+| `RemoveLabel` | `string?` | — | Nome acessivel do botao de remover. Padrao: "Remover". |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 24 px (`RvmSize.Small`) ou 32 px, como o RvmChip. `RvmSize.Large` sai igual ao medio. |
 | `StartIcon` | `RvmIconName?` | — | Icone antes do rotulo. |
 | `Value` | `object?` | obrigatorio | O valor que esta opcao representa. |

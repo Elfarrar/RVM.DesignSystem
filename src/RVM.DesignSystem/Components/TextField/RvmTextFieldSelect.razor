@@ -70,6 +70,12 @@
             _optionRecebido = Option;
             _recebeuOption = true;
         }
+
+        // Sem unidade escolhida, o <select> mostra a primeira; o valor tem que ser o mesmo que a tela (achado do review).
+        if (_opcao is null && Options is not null && Options.FirstOrDefault() is { } primeira)
+        {
+            _opcao = primeira;
+        }
     }
 
     private bool Escolhida(TOption opcao) => EqualityComparer<TOption>.Default.Equals(opcao, _opcao);

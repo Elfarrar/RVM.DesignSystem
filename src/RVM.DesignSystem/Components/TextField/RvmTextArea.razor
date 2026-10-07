@@ -3,7 +3,7 @@
 
 @* Area de texto: a moldura do RvmTextField com varias linhas. Obrigatorio e so aria-required (o required nativo
    barraria o envio com o balao do navegador, em ingles, antes da validacao em PT-BR — a regra do RvmTextField).
-   Immediate troca o @onchange pelo @oninput: um @oninput sempre ligado seria uma ida ao servidor por tecla. *@
+   Immediate troca o @onchange pelo @oninput: os dois eventos ficam ligados e o handler confere a flag, como no RvmTextField (no Blazor Server, uma ida ao servidor por tecla mesmo sem Immediate). *@
 <RvmFieldFrame Label="@Label" InputId="@IdDoControle" LinkText="@LinkText" LinkHref="@LinkHref" Error="@MensagemDeErro"
                ErrorId="@IdDoErro" HelperText="@HelperText" HelperId="@IdDoApoio" Required="Required" Disabled="Disabled"
                Multiline="true" Shape="Shape" Class="@ClassesDoConsumidor">

@@ -132,6 +132,22 @@ Pendentes do contrato: **241 → 224**. Os 15 componentes de menu lateral, pagin
 em 4 noturnos do `master` antes desta task (29/09 a 06/10) e numa rodada do dev em 07/10. Nao e da DSGN-017; fica para
 um card proprio.
 
+## Onda 2a — feita em 07/10/2026
+
+Pendentes do contrato: **224 → 211**. Campos de formulario do contrato: bases `RvmInputBase<TValue>` e
+`RvmStringInputBase`, a moldura `RvmFieldFrame` (o visual do `RvmTextField`; o CSS dela e GERADO do CSS do campo de
+texto por `tools/moldura-do-campo.py` — mudou o campo, regere), `RvmTextArea`, `RvmNumericField<TValue>`,
+`RvmMultiTextField`, `RvmTextFieldSelect<TOption>`, `RvmAutocomplete<TValue>`, `RvmOptionList<TItem>`, `RvmTagOption`,
+`RvmChoiceChip<TValue>`. Quatro deles feitos por agentes em paralelo (worktrees), integrados e revisados.
+
+- ⚠️ O `RvmNumericField` traz a leitura de numero do `RvmNumberParser` do RVM.UI (codigo, nao visual): o milhar so vale
+  em grupos de 3, para nao virar 1000x.
+- Review independente: 1 P1 (cultura pt-BR criada no estatico derrubava o campo sem ICU — agora cai numa copia da
+  invariante com os separadores do Brasil), 2 P2 e 3 P3 corrigidos.
+- ⏳ **P3 que ficaram** (nao bloqueiam): seta do `RvmNumericField` sem Immediate parte do valor antigo, e nao do texto
+  digitado; o Enter no `RvmAutocomplete` nunca envia o formulario (barrado pelo JS mesmo com a lista fechada);
+  `Required` so existe no `RvmTextArea` (o contrato nao tem nos outros campos).
+
 ## Etapa 3 — RVM.DesignSystem
 
 1. Alinhar os componentes em comum ao contrato (a nomenclatura já é a do DS; entram os acréscimos do UI:

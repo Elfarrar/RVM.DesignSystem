@@ -49,7 +49,7 @@
             }
             @if (ListaVisivel)
             {
-                <ul id="@IdDaLista" role="listbox" class="rvm-opcoes" aria-label="@(Label ?? DisplayName)">
+                <ul id="@IdDaLista" role="listbox" class="rvm-opcoes" aria-label="@(Label ?? DisplayName ?? "Sugestoes")">
                     @for (var i = 0; i < _resultados.Count; i++)
                     {
                         var indice = i;

@@ -13,6 +13,7 @@
     tabindex="0"
     class="@Classes"
     aria-labelledby="@(string.IsNullOrWhiteSpace(LabelledBy) ? null : LabelledBy)"
+    aria-label="@(string.IsNullOrWhiteSpace(LabelledBy) ? "Opcoes" : null)"
     aria-multiselectable="@(Multiple ? "true" : null)"
     aria-activedescendant="@(_ativo >= 0 ? IdDaOpcao(_ativo) : null)"
     @onfocus="AoFocar"

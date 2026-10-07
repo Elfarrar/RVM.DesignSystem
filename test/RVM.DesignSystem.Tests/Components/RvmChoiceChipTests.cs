@@ -132,12 +132,12 @@ public class RvmChoiceChipTests : BunitContext
     }
 
     [Fact]
-    public void Sem_OnRemove_nao_ha_botao_e_o_nome_padrao_e_Remover()
+    public void Sem_OnRemove_nao_ha_botao_e_o_nome_padrao_diz_qual_chip()
     {
         Assert.Empty(Grupo(null, null, c => c.Add(x => x.Value, "A").Add(x => x.Label, "A")).FindAll("button"));
 
         var padrao = Grupo(null, null, c => c.Add(x => x.Value, "A").Add(x => x.Label, "A").Add(x => x.OnRemove, EventCallback.Factory.Create(this, () => { })));
-        Assert.Equal("Remover", padrao.Find("button").GetAttribute("aria-label"));
+        Assert.Equal("Remover A", padrao.Find("button").GetAttribute("aria-label"));
     }
 
     [Fact]
