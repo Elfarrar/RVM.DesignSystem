@@ -22,8 +22,8 @@
                 <RvmNavSection Title="Gestao">
                     <RvmNavItem Href="componentes/sidebar" Text="Painel" Icon="RvmIconName.Home" Match="RvmNavMatch.All" />
                     <RvmNavGroup Text="Financeiro" Icon="RvmIconName.File" @bind-Expanded="_financeiro">
-                        <RvmNavSubItem Href="componentes/sidebar#receber" Text="A receber" Badge="3" />
-                        <RvmNavSubItem Href="componentes/sidebar#pagar" Text="A pagar" />
+                        <RvmNavSubItem Href="financeiro/receber" Text="A receber" Badge="3" />
+                        <RvmNavSubItem Href="financeiro/pagar" Text="A pagar" />
                     </RvmNavGroup>
                 </RvmNavSection>
             </ChildContent>
@@ -32,7 +32,7 @@
             <Logo><strong class="rvm-text-subtitle1">Fazenda</strong></Logo>
             <ChildContent>
                 <RvmNavItem Href="componentes/sidebar" Text="Painel" Icon="RvmIconName.Home" Match="RvmNavMatch.All" />
-                <RvmNavItem Href="componentes/sidebar#safras" Text="Safras" Icon="RvmIconName.Calendar" />
+                <RvmNavItem Href="safras" Text="Safras" Icon="RvmIconName.Calendar" />
             </ChildContent>
         </RvmSidebar>
     </div>
