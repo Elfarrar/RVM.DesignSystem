@@ -3,9 +3,9 @@ id: DSGN-017
 titulo: Paridade de API com o RVM.UI — etapa 3 (componentes do UI no DS, comuns alinhados ao contrato, 2.0.0)
 repo: RVM.DesignSystem
 tipo: feature
-status: todo
+status: em-andamento
 criada: 2026-10-06
-atualizada: 2026-10-06
+atualizada: 2026-10-07
 ---
 
 # DSGN-017 — Paridade de API com o RVM.UI (etapa 3)
@@ -56,6 +56,29 @@ formulário) podem aparecer como ausentes. Refazer por reflexão no início da e
 
 Etapa 1 (`RUI-066` no RVM.UI) concluída: o `contrato-api.json` existe e foi copiado para este repo. A etapa 2
 (migração dos consumidores do RVM.UI) pode correr em paralelo.
+
+## Execução — remedição e decisões (07/10/2026)
+
+Pré-requisito cumprido: RVM.UI **`v3.0.0`** em prd (`RUI-068`), `contrato-api.pendentes.json` do UI vazio.
+Contrato copiado para `design/contrato-api.json`.
+
+**Remedição por reflexão** (`tools/contrato-api` do UI, DS em `master`): contrato com **166** componentes, DS
+com **65**. Faltam no DS **100 componentes**, **399 parâmetros** em 65 componentes existentes (`Class`, estados
+`Loading`/`Empty`/`Error` nos gráficos, tabela e lista, `Shape`/`LinkHref`/`DisplayName` nos campos, tema),
+**60 enums** (50 novos, 10 com valores a mais) e **1.228 nomes** no `RvmIconName` (os do Solar, do UI).
+
+**Decisões do Rafael (07/10/2026):**
+
+1. **Ícones: mapear para Tabler.** Cada nome Solar do contrato aponta para o Tabler mais próximo (estilo
+   `Bold`/`BoldDuotone` → variante *filled* do Tabler onde existir). Mapa gerado por script e revisado; os SVGs
+   entram no pacote. **Reabre o "cresce sob demanda" do ADR-005** — o conjunto continua Tabler, só deixa de ser
+   curado pelo uso.
+2. **Mascotes (`RvmMascotName`): ícone Tabler grande em círculo de fundo suave**, um por mascote — invenção
+   declarada no estilo NEATLAB. Nada da arte do UI entra.
+3. **Entrega em ondas com lista de pendentes**, como no UI: o `ContratoApiTests` nasce com
+   `design/contrato-api.pendentes.json`, que só encolhe. Onda 0 = contrato, enums, ícones e parâmetros dos
+   componentes em comum; depois as ondas do card (shell/navegação → formulários → tabelas e listas → feedback →
+   restante), cada uma em `dev` com screenshot para aprovação. **2.0.0 só com zero pendentes.**
 
 ## Etapa 3 — RVM.DesignSystem
 
