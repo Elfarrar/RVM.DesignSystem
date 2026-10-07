@@ -64,11 +64,19 @@ const PAGINAS = [
     { rota: '/componentes/steps', titulo: 'RvmSteps' },
     { rota: '/componentes/step-indicator', titulo: 'RvmStepIndicator' },
     { rota: '/componentes/detail-profile-layout', titulo: 'RvmDetailProfileLayout' },
+    { rota: '/componentes/text-area', titulo: 'RvmTextArea' },
+    { rota: '/componentes/numeric-field', titulo: 'RvmNumericField' },
+    { rota: '/componentes/multi-text-field', titulo: 'RvmMultiTextField' },
+    { rota: '/componentes/text-field-select', titulo: 'RvmTextFieldSelect' },
+    { rota: '/componentes/autocomplete', titulo: 'RvmAutocomplete' },
+    { rota: '/componentes/option-list', titulo: 'RvmOptionList' },
+    { rota: '/componentes/tag-option', titulo: 'RvmTagOption' },
+    { rota: '/componentes/choice-chip', titulo: 'RvmChoiceChip' },
 ];
 
 // Graficos que o kit nao desenhou: seguem o visual das colunas (DSGN-010).
 // Contrato com o RVM.UI (DSGN-017): componentes que o NEATLAB nao desenha, no visual dele por extensao.
-const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout']);
+const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout', 'RvmTextArea', 'RvmNumericField', 'RvmMultiTextField', 'RvmTextFieldSelect', 'RvmAutocomplete', 'RvmOptionList', 'RvmTagOption', 'RvmChoiceChip']);
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
     await page.goto('/componentes');

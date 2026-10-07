@@ -8,7 +8,6 @@
 @* Lista de opcoes no padrao listbox do APG (contrato com o RVM.UI, DSGN-017): a propria lista recebe o foco e a opcao
    ativa vai por aria-activedescendant — as opcoes nunca recebem foco. O visual e o da lista do RvmSelectBase. *@
 <ul @ref="_lista"
-    @attributes="AdditionalAttributes"
     id="@IdDaLista"
     role="listbox"
     tabindex="0"
@@ -94,12 +93,9 @@
     /// <summary>Classe CSS extra na lista.</summary>
     [Parameter] public string? Class { get; set; }
 
-    /// <summary>Atributos extras, repassados a lista.</summary>
-    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
-
     private string IdDaLista => string.IsNullOrWhiteSpace(Id) ? _idGerado : Id;
 
-    private string Classes => ClassesCss.Juntar("rvm-opcoes", Class, AdditionalAttributes);
+    private string Classes => ClassesCss.Juntar("rvm-opcoes", Class, null);
 
     private string IdDaOpcao(int indice) => $"{IdDaLista}-opcao-{indice}";
 

@@ -1,0 +1,38 @@
+@page "/componentes/text-area"
+
+<PageTitle>RvmTextArea — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTextArea</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Area de texto: a moldura do <code>RvmTextField</code> com varias linhas. Funciona com <code>EditForm</code>,
+    <code>@@bind-Value</code> e validacao; obrigatorio e so <code>aria-required</code>, como no campo de texto.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017). A moldura e o <code>RvmFieldFrame</code>, que os campos do contrato
+    (area de texto, numerico, tags, autocompletar) compartilham — os parametros dela estao no fim da pagina.
+</p>
+
+<BlocoExemplo Titulo="Observacao com ajuda e erro"
+              Descricao="Rows define as linhas visiveis; Immediate atualiza a cada tecla — aqui, o contador embaixo."
+              Codigo="@Codigo">
+    <div class="pilha-exemplos largura-cheia">
+        <RvmTextArea Label="Observacao" @bind-Value="_texto" Immediate="true" Rows="4" Required="true"
+                     HelperText="@($"{_texto?.Length ?? 0} de 280 caracteres")" />
+        <RvmTextArea Label="Motivo da recusa" Rows="3" ErrorText="Conte o motivo para o produtor entender a recusa." />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmTextArea" />
+
+<TabelaParametros Componente="RvmFieldFrame" />
+
+@code {
+    private string? _texto;
+
+    private const string Codigo = """
+        <RvmTextArea Label="Observacao" @bind-Value="texto" Immediate="true" Rows="4" Required="true"
+                     HelperText="@($"{texto?.Length ?? 0} de 280 caracteres")" />
+        """;
+}
