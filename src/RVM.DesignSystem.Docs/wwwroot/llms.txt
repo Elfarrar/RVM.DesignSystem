@@ -13,6 +13,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 
 - [RvmAccordion](https://design.rvmit.com.br/componentes/accordion): Grupo de paineis que abrem e fecham. Os paineis sao `RvmAccordionPanel` filhos.
 - [RvmAccordionPanel](https://design.rvmit.com.br/componentes/accordion): Um painel de `RvmAccordion`: um titulo que abre e fecha o conteudo.
+- [RvmActivity](https://design.rvmit.com.br/componentes/activity): Linha do tempo de atividades e o cartao de historico.
 - [RvmAlert](https://design.rvmit.com.br/componentes/alert): Mensagem de destaque dentro da pagina: o que aconteceu e, quando der, o que fazer. Para aviso que some sozinho, use o snackbar (onda 3).
 - [RvmAppShell](https://design.rvmit.com.br/componentes/app-shell): A moldura da aplicacao: menu lateral, barra do topo, conteudo e rodape. Em telas largas o menu fica fixo e pode ser recolhido aos icones; em telas estreitas (ate 840 px de largura da moldura) vira uma gaveta que abre por cima do conteudo.
 - [RvmAreaChart<TItem>](https://design.rvmit.com.br/componentes/area-chart): Linha com o volume preenchido em degrade.
@@ -54,7 +55,9 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmColorPicker<TValue>](https://design.rvmit.com.br/componentes/color-picker): Escolha de cor entre itens, como bolinhas de radio.
 - [RvmColumnChart<TItem>](https://design.rvmit.com.br/componentes/column-chart): Colunas lado a lado ou empilhadas.
 - `RvmColumn<TItem>`
+- [RvmComment](https://design.rvmit.com.br/componentes/comment): Comentarios com resposta e avaliacoes com nota.
 - [RvmConfirmModal](https://design.rvmit.com.br/componentes/confirm-modal): Pergunta de confirmacao antes de uma acao: icone, titulo, explicacao e os botoes Cancelar e Confirmar. Para acao destrutiva, use `RvmColor.Error`: pinta o icone e o botao de confirmar.
+- `RvmCurrencyConverter`: Card de conversao de moeda: titulo, dois campos do consumidor, a taxa e o botao (contrato com o RVM.UI, DSGN-017). E so a casca: a biblioteca nao tem cotacao — quem calcula e o aplicativo, no `RvmCurrencyConverter.OnConvert`.
 - [RvmDataGrid<TItem>](https://design.rvmit.com.br/componentes/data-grid): A `RvmTable` com paginacao, filtro por coluna e o cabecalho escuro com separadores do kit. Os dados ficam todos na memoria: filtra, ordena e pagina no proprio componente.
 - [RvmDataTable<TItem>](https://design.rvmit.com.br/componentes/data-table): Tabela de dados com colunas declaradas, ordenacao avisada ao app e selecao.
 - [RvmDatePicker](https://design.rvmit.com.br/componentes/date-picker): Campo de data com calendario. Dentro de um EditForm, participa da validacao.
@@ -73,6 +76,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmFilterGroup](https://design.rvmit.com.br/componentes/filter)
 - `RvmHeaderCell`
 - [RvmHistogram](https://design.rvmit.com.br/componentes/histogram): Distribuicao de valores em faixas.
+- `RvmHistory`
 - [RvmIcon](https://design.rvmit.com.br/componentes/icon): Um icone do conjunto Tabler, desenhado inline. A cor vem por heranca (`currentColor`), ou do papel semantico quando `RvmIcon.Color` e informado.
 - [RvmIconBadge](https://design.rvmit.com.br/componentes/icon-badge): Um icone num quadrado de cantos arredondados com fundo do papel de cor — o dos cards de estatistica do kit. Decorativo por padrao; com `RvmIconBadge.Label`, vira imagem com nome acessivel.
 - [RvmIconButton](https://design.rvmit.com.br/componentes/icon-button): Botao so de icone, com nome acessivel obrigatorio.
@@ -83,6 +87,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmList](https://design.rvmit.com.br/componentes/list): Simples, com icone, com acao e aninhada.
 - [RvmListGroup](https://design.rvmit.com.br/componentes/list-group): Cartao de lista com cabecalho, menu e abas.
 - [RvmListItem](https://design.rvmit.com.br/componentes/list): Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao no fim. Com `RvmListItem.Href` vira link; com `RvmListItem.OnClick`, botao; com `RvmListItem.NestedContent`, abre uma sublista.
+- [RvmMarkerButton](https://design.rvmit.com.br/componentes/marker-button): Favoritar ou salvar, como botao de alternancia.
 - [RvmMascot](https://design.rvmit.com.br/componentes/mascot): O mascote do contrato com o RVM.UI (DSGN-017): o icone da funcao (erro, carregando, vazio) num circulo de fundo suave. Usado sozinho ou pelos estados de `RvmEmptyState`, listas, tabelas e graficos.
 - [RvmMediaUpload](https://design.rvmit.com.br/componentes/media-upload): Envio de imagens com miniaturas, remover e tentar de novo.
 - [RvmMenu](https://design.rvmit.com.br/componentes/menu): Botao que abre uma lista de acoes. Os itens sao `RvmMenuItem` e `RvmMenuDivider` filhos.
@@ -98,19 +103,24 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - `RvmNavItem`: Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o destaque do kit.
 - `RvmNavSection`
 - `RvmNavSubItem`
+- [RvmNotificationItem](https://design.rvmit.com.br/componentes/notification-item): Item de notificacao com marcar como lida.
 - [RvmNumericField<TValue>](https://design.rvmit.com.br/componentes/numeric-field): Numero lido na cultura do campo, com faixa, setas, casas e formato.
 - [RvmOptionList<TItem>](https://design.rvmit.com.br/componentes/option-list): Lista de opcoes no padrao listbox.
 - [RvmPageHeader](https://design.rvmit.com.br/componentes/page-header): O cabecalho da pagina: voltar, foto, trilha, titulo e acoes.
 - [RvmPageToolbar](https://design.rvmit.com.br/componentes/page-toolbar): A faixa de busca, abas e filtros abaixo do cabecalho.
 - [RvmPagination](https://design.rvmit.com.br/componentes/pagination): Paginacao numerica, com setas e reticencias quando as paginas nao cabem.
+- [RvmPaymentCard](https://design.rvmit.com.br/componentes/payment-card): Cartao de pagamento (debito ou credito) na cor do papel: saldo, numero mascarado e validade, com uma faixa de acoes opcional (contrato com o RVM.UI, DSGN-017). O texto vai no token de contraste do papel, que passa AA nos dois temas.
 - [RvmPieChart<TItem>](https://design.rvmit.com.br/componentes/pie-chart): Pizza e rosca, com percentuais.
 - [RvmProfileImageUpload](https://design.rvmit.com.br/componentes/profile-image-upload): Foto de perfil: avatar e o botao de enviar.
 - [RvmProgress](https://design.rvmit.com.br/componentes/progress): Progresso de uma tarefa: com valor (determinado) ou so "esta andando" (indeterminado).
 - [RvmProgressBar](https://design.rvmit.com.br/componentes/progress-bar): Barra de progresso com rotulo e porcentagem por cima — meta, orcamento, etapa de uma safra. Do contrato com o RVM.UI (DSGN-017). Para "carregando" sem rotulo, use `RvmProgress`.
+- [RvmProgressCard](https://design.rvmit.com.br/componentes/progress-card): Card de progresso de painel: selo, titulo, descricao e uma barra com o valor e a porcentagem — meta de vendas, orcamento de safra (contrato com o RVM.UI, DSGN-017).
+- [RvmProjectCard](https://design.rvmit.com.br/componentes/project-card): Card de projeto de painel: o `RvmTaskCard` com uma capa no alto (contrato com o RVM.UI, DSGN-017). Sem `RvmProjectCard.ImageUrl`, um icone de pasta no lugar da capa. Herda o desenho do card de tarefa — sem `.razor` proprio, o CSS isolado e o dele.
 - [RvmRadarChart<TItem>](https://design.rvmit.com.br/componentes/radar-chart): Varias variaveis a partir de um centro.
 - [RvmRadioGroup<TValue>](https://design.rvmit.com.br/componentes/radio): Grupo de opcoes em que so uma vale. Os filhos sao `RvmRadio`, que herdam a cor, o tamanho e o estado desabilitado daqui.
 - [RvmRadio<TValue>](https://design.rvmit.com.br/componentes/radio): Uma opcao de um `RvmRadioGroup`.
 - [RvmRating](https://design.rvmit.com.br/componentes/rating): Nota em estrelas: para mostrar uma avaliacao ou para a pessoa dar a dela.
+- `RvmReview`
 - `RvmRow`
 - [RvmScatterChart<TItem>](https://design.rvmit.com.br/componentes/scatter-chart): Relacao entre duas variaveis numericas.
 - [RvmSelect<TValue>](https://design.rvmit.com.br/componentes/select): Escolha de UMA opcao numa lista, com busca opcional. Dentro de um `EditForm` participa da validacao pelo `@bind-Value`.
@@ -118,6 +128,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmSkeleton](https://design.rvmit.com.br/componentes/skeleton): Espaco reservado com a forma do conteudo que ainda vai chegar. Evita que a tela pule quando os dados aparecem.
 - [RvmSnackbarHost](https://design.rvmit.com.br/componentes/snackbar): Onde as mensagens do `RvmSnackbarService` aparecem. Um por layout, fora de qualquer area que role.
 - [RvmSpinner](https://design.rvmit.com.br/componentes/spinner): "Esta carregando", sem previsao: o anel indeterminado com um texto para o leitor de tela (`role="status"`). Do contrato com o RVM.UI (DSGN-017).
+- [RvmStatCard](https://design.rvmit.com.br/componentes/stat-card): Card de estatistica de painel: titulo, numero, variacao e, abaixo, progresso, imagem ou um grafico do consumidor (contrato com o RVM.UI, DSGN-017). Com `RvmStatCard.Surface` = `RvmSurface.Dark`, o card inteiro fica na cor do papel, com o texto no token de contraste dele.
 - [RvmStepIndicator](https://design.rvmit.com.br/componentes/step-indicator): O numero do passo num circulo.
 - [RvmStepper](https://design.rvmit.com.br/componentes/stepper): As etapas de um processo e em qual a pessoa esta: cadastro em partes, assistente de configuracao.
 - [RvmSteps](https://design.rvmit.com.br/componentes/steps): Etapas de um fluxo, com conteudo e Voltar/Avancar.
@@ -128,11 +139,13 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmTable<TItem>](https://design.rvmit.com.br/componentes/table): Tabela de dados: colunas declaradas com `RvmTableColumn`, ordenacao pelo titulo, selecao por caixa de marcar e versao densa. Para paginar e filtrar, `RvmDataGrid`.
 - [RvmTabs](https://design.rvmit.com.br/componentes/tabs): Abas: uma lista de titulos e o painel da aba escolhida. As abas sao `RvmTab` filhas.
 - [RvmTagOption](https://design.rvmit.com.br/componentes/tag-option): Tag em pilula, com remover.
+- `RvmTaskCard`: Card de tarefa de painel: status, titulo, descricao, progresso com texto livre, equipe e prazo (contrato com o RVM.UI, DSGN-017). O `RvmProjectCard` e este mesmo card com uma capa.
 - [RvmText](https://design.rvmit.com.br/componentes/text): Texto com os niveis do contrato com o RVM.UI (DSGN-017). Cada `RvmTextVariant` aponta para um estilo da escala do design system (as classes `rvm-text-*`); o `RvmText.Weight` troca so o peso. Para a escala completa, use o `RvmTypography`.
 - [RvmTextArea](https://design.rvmit.com.br/componentes/text-area): Area de texto: a moldura do campo de texto com varias linhas.
 - [RvmTextField](https://design.rvmit.com.br/componentes/text-field): Campo de texto com rotulo flutuante, apoio, erro, prefixo e sufixo. Herda de `InputBase`: dentro de um `EditForm` ele participa da validacao, e fora de um tambem funciona.
 - [RvmTextFieldSelect<TOption>](https://design.rvmit.com.br/componentes/text-field-select): Texto livre com a unidade escolhida no fim do campo.
-- `RvmThemeProvider`: Envolve a arvore que usa o design system e define qual tema vale nela. Componente filho nenhum precisa saber do tema: os tokens chegam por CSS a partir do `data-theme` deste elemento.
+- [RvmThemePicker](https://design.rvmit.com.br/componentes/theme-picker): Preferencias de aparencia do usuario: claro, escuro ou automatico, a paleta e, com `RvmThemePicker.ShowAccessibility`, tamanho da fonte, contraste alto e menos movimento. Escreve no `RvmThemeState`; quem aplica e o `RvmThemeProvider` com `UserTheme`. Contrato com o RVM.UI (DSGN-017).
+- [RvmThemeProvider](https://design.rvmit.com.br/componentes/theme-provider): Envolve a arvore que usa o design system e define qual tema vale nela. Componente filho nenhum precisa saber do tema: os tokens chegam por CSS a partir dos atributos deste elemento. Tres jeitos de decidir o tema, do mais simples ao mais completo: `RvmThemeProvider.Theme` (claro ou escuro, com `RvmThemeProvider.Persist` no navegador), `RvmThemeProvider.Settings` (um tema completo fixo) e `RvmThemeProvider.UserTheme` (o que o usuario escolheu no `RvmThemePicker`, lido do `RvmThemeState`).
 - `RvmTimeClock`: Relogio circular para escolher um horario: primeiro a hora, depois os minutos. Aparece solto na pagina ou dentro do `RvmTimePicker` no modo `RvmTimePickerMode.Clock`.
 - [RvmTimePicker](https://design.rvmit.com.br/componentes/time-picker): Campo de horario em 24 h (padrao) ou 12 h: uma lista de horarios em intervalos fixos, ou um relogio circular num dialogo (`RvmTimePicker.Mode`).
 - [RvmTimeline](https://design.rvmit.com.br/componentes/timeline): Alternada, alinhada, com data.
@@ -141,3 +154,4 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmTooltip](https://design.rvmit.com.br/componentes/tooltip): Dica curta que aparece ao passar o mouse ou focar o conteudo. Para texto que a pessoa PRECISA ler para seguir, a dica e o lugar errado — use texto de apoio visivel.
 - [RvmTopbar](https://design.rvmit.com.br/componentes/topbar): A barra do topo: titulo ou busca a esquerda, widgets e perfil a direita.
 - [RvmTypography](https://design.rvmit.com.br/componentes/typography): Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypography.Variant` e a SEMANTICA pelo `RvmTypography.As` — as duas coisas sao separadas de proposito.
+- [RvmWidget](https://design.rvmit.com.br/componentes/widget): Gatilho de icone ou cartao que abre um painel.

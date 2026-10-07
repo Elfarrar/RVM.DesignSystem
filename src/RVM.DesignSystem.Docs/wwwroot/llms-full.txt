@@ -63,6 +63,26 @@ Um painel de `RvmAccordion`: um titulo que abre e fecha o conteudo.
 | `SecondaryTitle` | `string?` | — | Um complemento ao lado do titulo, no tom secundario ("Secondary heading" no kit). |
 | `Title` | `string` | obrigatorio | O titulo do painel. |
 
+### RvmActivity
+
+`@using RVM.DesignSystem.Components.Activity` · exemplos: https://design.rvmit.com.br/componentes/activity
+
+Linha do tempo de atividades e o cartao de historico.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `AvatarName` | `string?` | — | Nome de quem fez a acao: texto alternativo do avatar. |
+| `AvatarSrc` | `string?` | — | Foto de quem fez a acao, com `RvmActivityTracker.Avatar`. Sem ela, as iniciais do `RvmActivity.AvatarName`. |
+| `ChildContent` | `RenderFragment?` | — | O corpo livre: etiquetas, arquivo, nota em estrelas, barra de progresso. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Description` | `string?` | — | Descricao abaixo do titulo. |
+| `Icon` | `RvmIconName?` | — | Icone do marcador. Obrigatorio quando `RvmActivity.Tracker` e `RvmActivityTracker.Icon`. |
+| `Timestamp` | `string?` | — | Carimbo de data e hora, ja formatado por quem chama ("20 dez 2025, 08:00"). |
+| `TimestampPosition` | `RvmActivityTimestampPosition` | `RvmActivityTimestampPosition.Bottom` | Onde o carimbo aparece. Padrao: `RvmActivityTimestampPosition.Bottom`. |
+| `Title` | `string` | obrigatorio | Titulo da atividade. |
+| `Tracker` | `RvmActivityTracker` | `RvmActivityTracker.Dot` | Marcador da coluna esquerda: ponto (padrao), icone ou avatar. |
+
 ### RvmAlert
 
 `@using RVM.DesignSystem.Components.Alert` · exemplos: https://design.rvmit.com.br/componentes/alert
@@ -880,6 +900,25 @@ Colunas lado a lado ou empilhadas.
 | `Text` | `Func<object, string>?` | — | Atalho para a coluna que so mostra texto: `Text="t => t.Nome"`. |
 | `Title` | `string` | obrigatorio | Titulo da coluna. E tambem a chave que identifica a coluna na ordenacao (`SortedBy` e `OnSort`). |
 
+### RvmComment
+
+`@using RVM.DesignSystem.Components.Activity` · exemplos: https://design.rvmit.com.br/componentes/comment
+
+Comentarios com resposta e avaliacoes com nota.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `AuthorName` | `string` | obrigatorio | Nome de quem comentou. |
+| `AvatarSrc` | `string?` | — | Foto de quem comentou. Sem ela, as iniciais do nome. |
+| `ChildContent` | `RenderFragment?` | — | As respostas: outros `RvmComment`, recuados sob este. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `OnReply` | `EventCallback` | — | Pediram para responder. Quem abre o campo de resposta e o app. |
+| `ReplyLabel` | `string` | `"Responder"` | Texto do botao de responder. Padrao: "Responder". |
+| `ShowReply` | `bool` | `true` | Mostra o botao de responder. Padrao: ligado; desligue onde nao cabe resposta (fio arquivado). |
+| `Text` | `string` | obrigatorio | O comentario. |
+| `Timestamp` | `string` | obrigatorio | Data e hora, ja formatadas por quem chama. |
+
 ### RvmConfirmModal
 
 `@using RVM.DesignSystem.Components.Dialog` · exemplos: https://design.rvmit.com.br/componentes/confirm-modal
@@ -904,6 +943,29 @@ Pergunta de confirmacao antes de uma acao: icone, titulo, explicacao e os botoes
 | `OpenChanged` | `EventCallback<bool>` | — | Disparado quando a confirmacao se fecha (confirmou ou desistiu). |
 | `ReturnFocusTo` | `ElementReference?` | — | Quem recebe o foco quando a confirmacao fecha — o botao que a abriu. Sem ele, o foco volta ao elemento que o tinha ao abrir. |
 | `Title` | `string` | obrigatorio | A pergunta. E o nome acessivel do dialogo — sem ela o dialogo nao tem nome. |
+
+### RvmCurrencyConverter
+
+`@using RVM.DesignSystem.Components.Cards`
+
+Card de conversao de moeda: titulo, dois campos do consumidor, a taxa e o botao (contrato com o RVM.UI, DSGN-017). E so a casca: a biblioteca nao tem cotacao — quem calcula e o aplicativo, no `RvmCurrencyConverter.OnConvert`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `ActionIcon` | `RvmIconName` | `RvmIconName.Login3` | Icone do botao. Padrao: `RvmIconName.Login3`, as setas opostas do kit. |
+| `ActionText` | `string` | `"Converter"` | Texto do botao. Padrao: "Converter". |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do botao. Padrao: Accent. |
+| `Disabled` | `bool` | `false` | Desabilita o botao (enquanto a cotacao carrega, por exemplo). |
+| `From` | `RenderFragment?` | — | O campo de origem (um `RvmNumericField` com a moeda, por exemplo). |
+| `Menu` | `RenderFragment?` | — | Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu. |
+| `MenuLabel` | `string` | `"Acoes do conversor"` | Nome acessivel do menu. Padrao: "Acoes do conversor". |
+| `OnConvert` | `EventCallback` | — | Clique no botao. Quem converte e o aplicativo. |
+| `Rate` | `string?` | — | A taxa, ja escrita pelo aplicativo ("1 USD = 5,42 BRL"). A regiao e anunciada pelo leitor de tela quando muda. |
+| `Subtitle` | `string?` | — | Linha de apoio abaixo do titulo. |
+| `Title` | `string?` | obrigatorio | Titulo. Sai como cabecalho `h3` e da nome a secao. |
+| `To` | `RenderFragment?` | — | O campo de destino. |
 
 ### RvmDataGrid<TItem>
 
@@ -1347,6 +1409,30 @@ Distribuicao de valores em faixas.
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
+### RvmHistory
+
+`@using RVM.DesignSystem.Components.Activity`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | As atividades (`RvmActivity`). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmHistory.EmptyText`. |
+| `EmptyText` | `string` | `"Nenhuma atividade por aqui ainda."` | Texto do vazio padrao. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmHistory.Loading` e `RvmHistory.IsEmpty`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar"` | Titulo do erro. |
+| `IsEmpty` | `bool` | `false` | Nao ha nenhuma atividade. Use `RvmHistory.Empty` para ensinar o proximo passo. |
+| `Label` | `string?` | — | Texto da etiqueta ao lado do titulo. Sem ele, sem etiqueta. |
+| `LabelColor` | `RvmColor` | `RvmColor.Primary` | Papel de cor da etiqueta. Padrao: `RvmColor.Accent`. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: a lista da lugar ao aviso de carregamento. |
+| `LoadingText` | `string` | `"Carregando..."` | Texto do carregamento. |
+| `MenuItems` | `RenderFragment?` | — | Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu. |
+| `MenuLabel` | `string?` | — | Nome acessivel do menu. Sem ele, "Mais acoes". |
+| `Text` | `string?` | — | Subtitulo abaixo do titulo. |
+| `Title` | `string` | obrigatorio | Titulo do cartao. |
+
 ### RvmIcon
 
 `@using RVM.DesignSystem.Components.Icon` · exemplos: https://design.rvmit.com.br/componentes/icon
@@ -1576,6 +1662,24 @@ Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao n
 | `TrendLabel` | `string?` | — | O quanto variou ("10%"). Sem ele, a variacao nao aparece. |
 | `Value` | `string?` | — | O valor a direita, ja formatado (moeda com `CultureInfo` explicito, no app). |
 | `ValueSubtitle` | `string?` | — | Texto de apoio abaixo do valor. |
+
+### RvmMarkerButton
+
+`@using RVM.DesignSystem.Components.MarkerButton` · exemplos: https://design.rvmit.com.br/componentes/marker-button
+
+Favoritar ou salvar, como botao de alternancia.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `Label` | `string?` | — | Nome acessivel e dica quando desmarcado. Sem ele, "Marcar como favorito" ou "Salvar nos marcadores". |
+| `Marked` | `bool` | `false` | Marcado. Aceita `@bind-Marked`. |
+| `MarkedChanged` | `EventCallback<bool>` | — | Disparado ao marcar ou desmarcar. |
+| `MarkedLabel` | `string?` | — | Nome acessivel e dica quando marcado. Sem ele, "Tirar dos favoritos" ou "Tirar dos marcadores". |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Pill` | Canto: o do kit ou pilula (o padrao). |
+| `Type` | `RvmMarkerType` | `RvmMarkerType.Favorite` | Favorito (estrela, o padrao) ou marcador de pagina. |
 
 ### RvmMascot
 
@@ -1896,6 +2000,23 @@ Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o dest
 | `Match` | `NavLinkMatch` | `NavLinkMatch.Prefix` | Como decidir que e a pagina atual. Padrao: pelo prefixo. |
 | `Text` | `string` | obrigatorio | Texto do subitem. |
 
+### RvmNotificationItem
+
+`@using RVM.DesignSystem.Components.Activity` · exemplos: https://design.rvmit.com.br/componentes/notification-item
+
+Item de notificacao com marcar como lida.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `OnRead` | `EventCallback` | — | Marcar como lido. Sem ele, a acao nao aparece. |
+| `Read` | `bool` | `false` | Ja lido: sem o destaque e sem a acao. |
+| `ReadText` | `string` | `"Marcar como lida"` | Texto da acao. Padrao: "Marcar como lida". |
+| `Tag` | `RenderFragment?` | — | Etiqueta acima do titulo (um `RvmLabel` com o tipo do aviso, por exemplo). |
+| `Text` | `string?` | — | Texto do aviso. |
+| `Title` | `string` | obrigatorio | Titulo do aviso. |
+
 ### RvmNumericField<TValue>
 
 `@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/numeric-field
@@ -2009,6 +2130,24 @@ Paginacao numerica, com setas e reticencias quando as paginas nao cabem.
 | `Size` | `RvmSize` | `RvmSize.Medium` | Itens de 26, 32 (padrao) ou 40 px — medidos no kit. |
 | `Variant` | `RvmPaginationVariant` | `RvmPaginationVariant.Text` | Estilo. Padrao: `RvmPaginationVariant.Text`. |
 
+### RvmPaymentCard
+
+`@using RVM.DesignSystem.Components.Cards` · exemplos: https://design.rvmit.com.br/componentes/payment-card
+
+Cartao de pagamento (debito ou credito) na cor do papel: saldo, numero mascarado e validade, com uma faixa de acoes opcional (contrato com o RVM.UI, DSGN-017). O texto vai no token de contraste do papel, que passa AA nos dois temas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Actions` | `RenderFragment?` | — | Botoes na faixa abaixo do cartao. Sem eles, so o cartao. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Balance` | `string` | obrigatorio | Saldo, ja formatado por quem chama ("R$ 12.430,00"). |
+| `BalanceLabel` | `string` | `"Saldo"` | Rotulo do saldo. Padrao: "Saldo". |
+| `CardNumber` | `string` | obrigatorio | Numero ja mascarado ("**** **** **** 9090"). Na tela sai como veio; o leitor de tela ouve so os ultimos digitos ("Cartao final 9090"). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do cartao. Padrao: Accent. |
+| `ExpiresAt` | `string` | obrigatorio | Validade ("07/28"). O leitor de tela ouve "Validade" antes. |
+| `NetworkMark` | `RenderFragment?` | — | Marca da bandeira, decorativa. Sem ela, sem marca. |
+
 ### RvmPieChart<TItem>
 
 `@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/pie-chart
@@ -2112,6 +2251,51 @@ Barra de progresso com rotulo e porcentagem por cima — meta, orcamento, etapa 
 | `Size` | `RvmSize` | `RvmSize.Medium` | Barra de 4 px com texto pequeno, 8 px (padrao) ou 12 px. |
 | `Surface` | `RvmSurface` | `RvmSurface.Light` | Fundo sobre o qual a barra esta. No `RvmSurface.Dark` (cartao colorido ou escuro), trilho, barra e texto ficam claros: a cor do papel sobre fundo colorido nao garante contraste. |
 | `Value` | `double` | `0` | Progresso de 0 a 100. Fora disso e limitado (calculo que passa de 100 por arredondamento nao derruba a tela); NaN vira 0. Ignorado com `RvmProgressBar.NoValue`. |
+
+### RvmProgressCard
+
+`@using RVM.DesignSystem.Components.Cards` · exemplos: https://design.rvmit.com.br/componentes/progress-card
+
+Card de progresso de painel: selo, titulo, descricao e uma barra com o valor e a porcentagem — meta de vendas, orcamento de safra (contrato com o RVM.UI, DSGN-017).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do selo e da barra. Padrao: Accent. |
+| `Description` | `string?` | — | Descricao opcional abaixo do titulo. |
+| `Footer` | `RenderFragment?` | — | Conteudo livre abaixo da barra. |
+| `Icon` | `RvmIconName` | obrigatorio | Icone do selo. |
+| `IconVariant` | `RvmIconBadgeVariant` | `RvmIconBadgeVariant.Neutral` | Fundo do selo: cinza neutro (padrao, o "Grey BG" do kit), suave ou cheio. |
+| `MenuItems` | `RenderFragment?` | — | Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu. |
+| `MenuLabel` | `string` | `"Mais acoes"` | Nome acessivel do menu. Padrao: "Mais acoes". |
+| `Percent` | `double` | `0` | Progresso de 0 a 100. Fora disso e limitado. |
+| `Title` | `string` | obrigatorio | Titulo do indicador. Sai como cabecalho `h3`. |
+| `Value` | `string` | obrigatorio | Valor a esquerda, acima da barra, ja formatado por quem chama ("R$ 40.000"). |
+
+### RvmProjectCard
+
+`@using RVM.DesignSystem.Components.Cards` · exemplos: https://design.rvmit.com.br/componentes/project-card
+
+Card de projeto de painel: o `RvmTaskCard` com uma capa no alto (contrato com o RVM.UI, DSGN-017). Sem `RvmProjectCard.ImageUrl`, um icone de pasta no lugar da capa. Herda o desenho do card de tarefa — sem `.razor` proprio, o CSS isolado e o dele.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Description` | `string?` | — | Descricao, cortada em duas linhas. |
+| `DueDate` | `string?` | — | Prazo, ja formatado por quem chama ("21 out 2026"). O leitor de tela ouve "Prazo:" antes. |
+| `ImageUrl` | `string?` | — | Capa do projeto, 48 x 48, decorativa. Sem ela, um icone de pasta. |
+| `Label` | `string?` | — | Texto do selo de status ("Atrasada"). Sem ele, sem selo. |
+| `LabelColor` | `RvmColor` | `RvmColor.Error` | Papel de cor do selo. Padrao: Danger. |
+| `Members` | `IReadOnlyList<RvmAvatarItem>` | — | Pessoas da equipe. Sem ninguem, sem grupo de avatares. |
+| `MembersMax` | `int` | `4` | Quantos avatares aparecem antes do "+N". Padrao: 3 (4 no `RvmProjectCard`). |
+| `MenuItems` | `RenderFragment?` | — | Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu. |
+| `MenuLabel` | `string` | `"Mais acoes"` | Nome acessivel do menu. Padrao: "Mais acoes". |
+| `ProgressColor` | `RvmColor` | `RvmColor.Primary` | Papel de cor da barra e do texto de progresso. Padrao: Accent. |
+| `ProgressPercent` | `double` | `0` | Progresso da barra, de 0 a 100. |
+| `ProgressText` | `string` | obrigatorio | Texto a direita de "Progresso" ("Atrasada", "75%"). Livre: quem chama decide. |
+| `Title` | `string` | obrigatorio | Titulo. Sai como cabecalho `h3`. |
 
 ### RvmRadarChart<TItem>
 
@@ -2221,6 +2405,22 @@ Nota em estrelas: para mostrar uma avaliacao ou para a pessoa dar a dela.
 | `SizePx` | `int?` | — | Lado da estrela em pixels, fora dos tres tamanhos. Quando vem, vence `RvmRating.Size`. |
 | `Value` | `double` | `0` | A nota. Aceita `@bind-Value`. Zero e "sem nota". |
 | `ValueChanged` | `EventCallback<double>` | — | Disparado quando a pessoa escolhe outra nota. |
+
+### RvmReview
+
+`@using RVM.DesignSystem.Components.Activity`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `AuthorDetail` | `string?` | — | Detalhe depois do nome (a variante avaliada, a fazenda). Sem ele, so o nome. |
+| `AuthorName` | `string` | obrigatorio | Nome de quem avaliou. |
+| `AvatarSrc` | `string?` | — | Foto de quem avaliou. Sem ela, as iniciais do nome. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Images` | `IReadOnlyList<string>?` | — | Enderecos das fotos anexadas. Sem elas, sem a linha de miniaturas. |
+| `Rating` | `double` | `0` | Nota de 0 a 5. |
+| `Text` | `string` | obrigatorio | A avaliacao. |
+| `Timestamp` | `string` | obrigatorio | Data e hora, ja formatadas por quem chama. |
 
 ### RvmRow
 
@@ -2377,6 +2577,38 @@ Onde as mensagens do `RvmSnackbarService` aparecem. Um por layout, fora de qualq
 | `Label` | `string` | `"Carregando"` | O que esta carregando ("Carregando talhoes"). Vai para o leitor de tela sempre, e para a tela com `RvmSpinner.ShowLabel`. |
 | `ShowLabel` | `bool` | `false` | Mostra o texto ao lado do anel. Sem ele, o texto so vai para o leitor de tela. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | Anel de 24, 40 (padrao) ou 56 px — os tamanhos do `RvmProgress` circular. |
+
+### RvmStatCard
+
+`@using RVM.DesignSystem.Components.Cards` · exemplos: https://design.rvmit.com.br/componentes/stat-card
+
+Card de estatistica de painel: titulo, numero, variacao e, abaixo, progresso, imagem ou um grafico do consumidor (contrato com o RVM.UI, DSGN-017). Com `RvmStatCard.Surface` = `RvmSurface.Dark`, o card inteiro fica na cor do papel, com o texto no token de contraste dele.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Action` | `RvmCardAction` | `RvmCardAction.None` | Acao no canto: nenhuma (padrao), botao de icone ou menu de tres pontos. |
+| `ActionIcon` | `RvmIconName` | `RvmIconName.Add` | Icone do botao de acao. Padrao: `RvmIconName.Add`. |
+| `ActionLabel` | `string?` | — | Nome acessivel do botao ou do menu. Obrigatorio quando `RvmStatCard.Action` nao e None. |
+| `ActionMenu` | `RenderFragment?` | — | Itens do menu (`RvmMenuItem`), para `RvmCardAction.Menu` (obrigatorio nele). |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Adornment` | `RvmStatCardAdornment` | `RvmStatCardAdornment.None` | Enfeite: nenhum (padrao), icone ao lado do titulo ou selo circular ao lado do numero. |
+| `AdornmentIcon` | `RvmIconName?` | — | Icone do enfeite. Obrigatorio quando `RvmStatCard.Adornment` nao e None. |
+| `Chart` | `RenderFragment?` | — | Encaixe livre abaixo do numero — um grafico pequeno, sem eixo. Preenchido, vence `RvmStatCard.Visual`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor: do enfeite e do progresso no fundo claro, do card inteiro no escuro. Padrao: Accent. |
+| `ImageUrl` | `string?` | — | Endereco da imagem, para `RvmStatCardVisual.Image` (obrigatorio nele). Decorativa. |
+| `OnActionClick` | `EventCallback` | — | Clique do botao de acao (`RvmCardAction.Button`). |
+| `Size` | `RvmStatCardSize` | `RvmStatCardSize.Small` | Tamanho do card. Padrao: `RvmStatCardSize.Small`. |
+| `Subtitle` | `string?` | — | Linha de apoio abaixo do titulo (o periodo: "Safra 25/26"). |
+| `Surface` | `RvmSurface` | `RvmSurface.Light` | Fundo do card: claro (papel do tema, padrao) ou cheio na cor de `RvmStatCard.Color`, com o texto no token de contraste do papel (branco no primary, grafite nos outros — o par que passa AA nos dois temas). |
+| `Title` | `string` | obrigatorio | Titulo do indicador. Sai como cabecalho `h3`. |
+| `Trend` | `RvmStatCardTrend` | `RvmStatCardTrend.None` | Sentido da variacao. Padrao: sem variacao. |
+| `TrendDetail` | `string?` | — | Detalhe ao lado da variacao ("frente a safra passada"). |
+| `TrendValue` | `string?` | — | A variacao ("12%"). Obrigatoria quando `RvmStatCard.Trend` nao e None. |
+| `Value` | `string` | obrigatorio | Numero principal, ja formatado por quem chama (o card nao formata moeda). |
+| `Visual` | `RvmStatCardVisual` | `RvmStatCardVisual.None` | O que vai abaixo do numero: nada (padrao), progresso ou imagem. Ignorado com `RvmStatCard.Chart`. |
+| `VisualLabel` | `string?` | — | Nome acessivel da barra de progresso. Sem ele, o `RvmStatCard.Title`. |
+| `VisualValue` | `double?` | — | Progresso de 0 a 100, para `RvmStatCardVisual.Progress` (obrigatorio nele). |
 
 ### RvmStepIndicator
 
@@ -2600,6 +2832,29 @@ Tag em pilula, com remover.
 | `Text` | `string?` | — | O texto da tag. |
 | `Variant` | `RvmTagVariant` | `RvmTagVariant.Soft` | Estilo. Padrao: `RvmTagVariant.Soft`. |
 
+### RvmTaskCard
+
+`@using RVM.DesignSystem.Components.Cards`
+
+Card de tarefa de painel: status, titulo, descricao, progresso com texto livre, equipe e prazo (contrato com o RVM.UI, DSGN-017). O `RvmProjectCard` e este mesmo card com uma capa.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Description` | `string?` | — | Descricao, cortada em duas linhas. |
+| `DueDate` | `string?` | — | Prazo, ja formatado por quem chama ("21 out 2026"). O leitor de tela ouve "Prazo:" antes. |
+| `Label` | `string?` | — | Texto do selo de status ("Atrasada"). Sem ele, sem selo. |
+| `LabelColor` | `RvmColor` | `RvmColor.Error` | Papel de cor do selo. Padrao: Danger. |
+| `Members` | `IReadOnlyList<RvmAvatarItem>` | — | Pessoas da equipe. Sem ninguem, sem grupo de avatares. |
+| `MembersMax` | `int` | `3` | Quantos avatares aparecem antes do "+N". Padrao: 3 (4 no `RvmProjectCard`). |
+| `MenuItems` | `RenderFragment?` | — | Itens do menu de tres pontos (`RvmMenuItem`). Sem eles, sem menu. |
+| `MenuLabel` | `string` | `"Mais acoes"` | Nome acessivel do menu. Padrao: "Mais acoes". |
+| `ProgressColor` | `RvmColor` | `RvmColor.Primary` | Papel de cor da barra e do texto de progresso. Padrao: Accent. |
+| `ProgressPercent` | `double` | `0` | Progresso da barra, de 0 a 100. |
+| `ProgressText` | `string` | obrigatorio | Texto a direita de "Progresso" ("Atrasada", "75%"). Livre: quem chama decide. |
+| `Title` | `string` | obrigatorio | Titulo. Sai como cabecalho `h3`. |
+
 ### RvmText
 
 `@using RVM.DesignSystem.Components.Typography` · exemplos: https://design.rvmit.com.br/componentes/text
@@ -2709,19 +2964,38 @@ Texto livre com a unidade escolhida no fim do campo.
 | `ValueChanged` | `EventCallback<string>` | — |  |
 | `ValueExpression` | `Expression<Func<string>>?` | — |  |
 
-### RvmThemeProvider
+### RvmThemePicker
 
-`@using RVM.DesignSystem.Theming`
+`@using RVM.DesignSystem.Theming` · exemplos: https://design.rvmit.com.br/componentes/theme-picker
 
-Envolve a arvore que usa o design system e define qual tema vale nela. Componente filho nenhum precisa saber do tema: os tokens chegam por CSS a partir do `data-theme` deste elemento.
+Preferencias de aparencia do usuario: claro, escuro ou automatico, a paleta e, com `RvmThemePicker.ShowAccessibility`, tamanho da fonte, contraste alto e menos movimento. Escreve no `RvmThemeState`; quem aplica e o `RvmThemeProvider` com `UserTheme`. Contrato com o RVM.UI (DSGN-017).
 
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras, repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `OnChange` | `EventCallback<RvmThemeSettings>` | — | Chamado depois de cada troca, com a escolha nova. |
+| `Palettes` | `IReadOnlyList<RvmPalette>` | — | Paletas oferecidas. Padrao: todas (`RvmPalettes.All`). |
+| `ShowAccessibility` | `bool` | `true` | Mostra tamanho da fonte, contraste alto e menos movimento. Padrao: sim. |
+
+### RvmThemeProvider
+
+`@using RVM.DesignSystem.Theming` · exemplos: https://design.rvmit.com.br/componentes/theme-provider
+
+Envolve a arvore que usa o design system e define qual tema vale nela. Componente filho nenhum precisa saber do tema: os tokens chegam por CSS a partir dos atributos deste elemento. Tres jeitos de decidir o tema, do mais simples ao mais completo: `RvmThemeProvider.Theme` (claro ou escuro, com `RvmThemeProvider.Persist` no navegador), `RvmThemeProvider.Settings` (um tema completo fixo) e `RvmThemeProvider.UserTheme` (o que o usuario escolheu no `RvmThemePicker`, lido do `RvmThemeState`).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Accent` | `RvmAccent` | `RvmAccent.Blue` | Cor de destaque (DSGN-017). Padrao `RvmAccent.Blue`, o cobalto do kit: sem informar, nada muda. Ignorada quando `RvmThemeProvider.Settings` ou `RvmThemeProvider.UserTheme` decidem a paleta. |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | Conteudo tematizado. |
-| `Persist` | `bool` | `true` | Guarda a escolha no navegador de quem esta vendo e a restaura na proxima visita. Desligue quando o tema vier de outro lugar (preferencia do usuario no banco, por exemplo). |
-| `Theme` | `RvmTheme` | `RvmTheme.Light` | Tema em vigor. Aceita ligacao de duas vias (`@bind-Theme`). |
-| `ThemeChanged` | `EventCallback<RvmTheme>` | — | Disparado quando o tema muda, inclusive pela preferencia restaurada do navegador. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz (contrato com o RVM.UI, DSGN-017). |
+| `ColorScheme` | `RvmColorScheme` | `RvmColorScheme.Accessible` | Esquema de cor (DSGN-017). `RvmColorScheme.Accessible` (padrao) usa os degraus que passam 4.5:1; `RvmColorScheme.Original` usa os degraus exatos do kit, que reprovam AA como texto. Vale para a subarvore; um provider aninhado pode trocar. |
+| `Persist` | `bool` | `true` | Guarda a escolha no navegador de quem esta vendo e a restaura na proxima visita. Desligue quando o tema vier de outro lugar (preferencia do usuario no banco, por exemplo). Ignorado com `RvmThemeProvider.Settings` ou `RvmThemeProvider.UserTheme`, que ja tem o proprio estado. |
+| `Settings` | `RvmThemeSettings?` | — | Tema completo fixo, sem estado (previa, teste, tema vindo do perfil pelo proprio app). Tem precedencia sobre `RvmThemeProvider.UserTheme`, `RvmThemeProvider.Theme` e `RvmThemeProvider.Accent`. |
+| `Theme` | `RvmTheme` | `RvmTheme.Light` | Tema em vigor. Aceita ligacao de duas vias (`@bind-Theme`). Vale quando nao ha `RvmThemeProvider.Settings` nem `RvmThemeProvider.UserTheme`: com eles, manda o `RvmThemeSettings.Mode`. |
+| `ThemeChanged` | `EventCallback<RvmTheme>` | — | Disparado quando o tema muda, inclusive pela preferencia restaurada do navegador. Com `RvmThemeProvider.UserTheme`, avisa quando o usuario passa para claro ou escuro (acompanhar o sistema nao avisa: so o navegador sabe qual e). |
+| `UserTheme` | `bool` | `false` | Aplica o tema escolhido pelo usuario, lido do `RvmThemeState` (registrado pelo `AddRvmDesignSystem()`), e redesenha quando ele troca no `RvmThemePicker`. Use no provider da raiz do app. |
 
 ### RvmTimeClock
 
@@ -2866,10 +3140,43 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
 | `Color` | `RvmTextColor` | `RvmTextColor.Inherit` | Papel do texto na hierarquia de leitura. Padrao: herda de quem esta em volta. |
 | `Variant` | `RvmTypographyVariant` | `RvmTypographyVariant.Body1` | Estilo da escala. Padrao: `RvmTypographyVariant.Body1`. |
 
+### RvmWidget
+
+`@using RVM.DesignSystem.Components.Widget` · exemplos: https://design.rvmit.com.br/componentes/widget
+
+Gatilho de icone ou cartao que abre um painel.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Badge` | `int?` | — | Contador em cima do gatilho. Zero ou sem valor, sem contador. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo do painel. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `Footer` | `RenderFragment?` | — | Rodape do painel (acoes como "Marcar todas como lidas"). |
+| `Icon` | `RvmIconName?` | — | Icone do gatilho. |
+| `Id` | `string?` | — | Id do gatilho. Sem ele, um id unico e gerado. |
+| `ImageUrl` | `string?` | — | Imagem redonda no lugar do icone (bandeira, foto). Decorativa: o nome vem do `RvmWidget.Label`. |
+| `Label` | `string` | obrigatorio | Nome do widget para o leitor de tela e dica do gatilho de icone ("Notificacoes"). |
+| `Open` | `bool` | `false` | Aberto. Aceita `@bind-Open`; so e seguido quando muda. |
+| `OpenChanged` | `EventCallback<bool>` | — | Disparado ao abrir e ao fechar. |
+| `PanelTitle` | `string?` | — | Titulo dentro do painel. Com ele aparecem o cabecalho e o botao de fechar. |
+| `Placement` | `RvmMenuPlacement` | `RvmMenuPlacement.BottomEnd` | Onde o painel abre. Padrao: abaixo, alinhado pela direita. |
+| `Size` | `RvmWidgetPanelSize` | `RvmWidgetPanelSize.Menu` | Largura do painel: lista (o padrao) ou folha. |
+| `Subtitle` | `string?` | — | Linha de baixo do cartao (cargo, quantidade de membros). |
+| `Title` | `string?` | — | Titulo do cartao (nome da pessoa ou da equipe). |
+| `Variant` | `RvmWidgetVariant` | `RvmWidgetVariant.Icon` | Forma do gatilho: botao de icone (o padrao) ou cartao. |
+
 ## Enums
 
+- `RvmAccent` (`RVM.DesignSystem.Theming`): Cor de destaque do app: a familia que alimenta os tokens `--rvm-color-primary-*` (botao cheio, link, foco, aba ativa, menu ativo). Contrato com o RVM.UI (DSGN-017). No DS o padrao e `RvmAccent.Blue`, o cobalto do kit NEATLAB: quem nao escolhe nada continua com a mesma cor de sempre.
+  Valores: `Purple`, `Blue`, `Black`
 - `RvmAccordionVariant` (`RVM.DesignSystem.Components.Accordion`): Estilo do acordeao — as duas linhas da pagina Accordion do kit.
   Valores: `Standard`, `Filled`
+- `RvmActivityTimestampPosition` (`RVM.DesignSystem.Components.Activity`): Onde o carimbo de data e hora do `RvmActivity` aparece (contrato com o RVM.UI, DSGN-017).
+  Valores: `TopRight`, `Bottom`
+- `RvmActivityTracker` (`RVM.DesignSystem.Components.Activity`): Marcador da coluna esquerda do `RvmActivity` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Dot`, `Icon`, `Avatar`
 - `RvmAlertVariant` (`RVM.DesignSystem.Components.Alert`): Os tres estilos da pagina Alert do kit.
   Valores: `Standard`, `Filled`, `Outlined`
 - `RvmAlign` (`RVM.DesignSystem.Components.Table`): Alinhamento do conteudo de uma celula ou coluna da tabela de dados (contrato com o RVM.UI, DSGN-017). Os mesmos tres do `RvmTableAlign`, que a `RvmTable` usa.
@@ -2888,6 +3195,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Button`, `Submit`, `Reset`
 - `RvmButtonVariant` (`RVM.DesignSystem.Components.Button`): Peso visual do botao. Uma tela tem UM contained em destaque; o resto apoia.
   Valores: `Contained`, `Filled`, `Outlined`, `Text`, `Soft`
+- `RvmCardAction` (`RVM.DesignSystem.Components.Cards`): Acao no canto de um cartao de painel (contrato com o RVM.UI, DSGN-017).
+  Valores: `None`, `Button`, `Menu`
 - `RvmCardPadding` (`RVM.DesignSystem.Components.Card`): Respiro interno do `RvmCard` (contrato com o RVM.UI, DSGN-017).
   Valores: `None`, `Small`, `Medium`, `Large`
 - `RvmCardVariant` (`RVM.DesignSystem.Components.Card`): Aparencia da superficie do `RvmCard` (contrato com o RVM.UI, DSGN-017).
@@ -2906,6 +3215,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Filled`, `Outlined`, `Soft`
 - `RvmColor` (`RVM.DesignSystem`): Papel semantico de cor. O componente escolhe o PAPEL; que cor sai dele e problema da camada de tokens, e muda com o tema. Componente nunca conhece cor (`05-api-dos-componentes.md`).
   Valores: `Primary`, `Accent`, `Secondary`, `Neutral`, `Info`, `Success`, `Warning`, `Error`, `Danger`, `Inverse`
+- `RvmColorScheme` (`RVM.DesignSystem.Theming`): Esquema de cor: os degraus corrigidos para AA ou os degraus exatos do kit. Contrato com o RVM.UI (DSGN-017).
+  Valores: `Accessible`, `Original`
 - `RvmDialogAlign` (`RVM.DesignSystem.Components.Dialog`): Forma do `RvmConfirmModal`: texto centralizado ou alinhado a esquerda.
   Valores: `Center`, `Left`
 - `RvmDonutShape` (`RVM.DesignSystem.Components.Chart`): A forma da `RvmDonutChart` (contrato com o RVM.UI, DSGN-017).
@@ -2922,6 +3233,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Rounded`, `Pill`
 - `RvmFileIconName` (`RVM.DesignSystem.Components.FileIcon`): Tipo de arquivo desenhado pelo `RvmFileIcon` (contrato com o RVM.UI, DSGN-017).
   Valores: `Ai`, `Avi`, `Doc`, `Eps`, `Fig`, `FolderYellow`, `Gif`, `Jpg`, `Mkv`, `Mov`, `Mp3`, `Mp4`, `Pdf`, `Png`, `Ppt`, `Psd`, `Rar`, `Svg`, `Txt`, `Wav`, `Xls`, `Zip`
+- `RvmFontScale` (`RVM.DesignSystem.Theming`): Tamanho da fonte escolhido pelo usuario. Muda o tamanho base do documento, entao todo valor em `rem` (texto e espacamento) acompanha, como no ajuste de fonte do proprio navegador. Contrato com o RVM.UI (DSGN-017).
+  Valores: `Small`, `Default`, `Large`, `ExtraLarge`
 - `RvmFontWeight` (`RVM.DesignSystem.Components.Typography`): Peso da fonte. O valor numerico e o do CSS (`font-weight`).
   Valores: `Regular`, `Medium`, `SemiBold`, `Bold`
 - `RvmIconBadgeSize` (`RVM.DesignSystem.Components.IconBadge`): Lado do `RvmIconBadge`. O kit desenha o de 40 px nos cards de estatistica.
@@ -2942,6 +3255,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Radial`, `Bar`, `Line`, `Meter`, `Diverging`
 - `RvmListItemLayout` (`RVM.DesignSystem.Components.Lists`): Forma do `RvmListItem` (contrato com o RVM.UI, DSGN-017). Muda a hierarquia de cor do texto.
   Valores: `TwoColumn`, `OneColumn`
+- `RvmMarkerType` (`RVM.DesignSystem.Components.MarkerButton`): O que o `RvmMarkerButton` marca (contrato com o RVM.UI, DSGN-017).
+  Valores: `Favorite`, `Bookmark`
 - `RvmMascotName` (`RVM.DesignSystem.Icons`): Os mascotes do contrato com o RVM.UI (DSGN-017). O nome diz a FUNCAO na interface (erro, carregando, vazio), nao o personagem. No Design System nao ha ilustracao: cada um vira um icone Tabler grande num circulo de fundo suave, no estilo NEATLAB — invencao declarada. Ver `RvmMascot`.
   Valores: `AlienDocumentation`, `AlienIntegrations`, `AlienNotifications`, `AlienOnboardingSteps`, `AlienSecureLogin`, `AlienSessionExpired`, `DogEmptyState`, `DogFeedback`, `DogNoConnection`, `DogSearch`, `RafaelCodeReview`, `RobotAccessDenied`, `RobotDogSmallSuccess`, `RobotError`, `RobotLoading`, `RobotMaintenance`, `RobotPermissionRequested`, `RobotSettings`, `RobotUpdateAvailable`, `RobotUploadingFile`, `TeamAnalytics`, `TeamIdeaToProduct`, `TeamSecurity`
 - `RvmMenuPlacement` (`RVM.DesignSystem.Components.Menu`): Onde o menu abre em relacao ao gatilho (contrato com o RVM.UI, DSGN-017).
@@ -2972,6 +3287,14 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Text`, `Rectangular`, `Circular`
 - `RvmSortDirection` (`RVM.DesignSystem.Components.Table`): Sentido da ordenacao de uma coluna.
   Valores: `Ascending`, `Descending`, `None`
+- `RvmStatCardAdornment` (`RVM.DesignSystem.Components.Cards`): Enfeite do `RvmStatCard` (contrato com o RVM.UI, DSGN-017).
+  Valores: `None`, `Icon`, `Badge`
+- `RvmStatCardSize` (`RVM.DesignSystem.Components.Cards`): Tamanho do `RvmStatCard` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Small`, `Large`, `XtraLarge`
+- `RvmStatCardTrend` (`RVM.DesignSystem.Components.Cards`): Sentido da variacao no `RvmStatCard` (contrato com o RVM.UI, DSGN-017).
+  Valores: `None`, `Up`, `Down`
+- `RvmStatCardVisual` (`RVM.DesignSystem.Components.Cards`): O que o `RvmStatCard` desenha abaixo do numero (contrato com o RVM.UI, DSGN-017). Para grafico, use o encaixe `Chart`: ele vence este parametro.
+  Valores: `None`, `Progress`, `Image`
 - `RvmStepperLabelPlacement` (`RVM.DesignSystem.Components.Stepper`): Onde o texto de cada etapa fica em relacao ao marcador.
   Valores: `End`, `Bottom`
 - `RvmSurface` (`RVM.DesignSystem.Components.Progress`): Superficie sobre a qual o componente esta: fundo claro ou escuro/colorido.
@@ -2992,6 +3315,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `DisplayXl`, `DisplayL`, `DisplayM`, `DisplayS`, `TextXl`, `TextL`, `TextM`, `TextS`, `TextXs`
 - `RvmTheme` (`RVM.DesignSystem.Theming`): Os dois temas do design system. Enum, nunca string magica: o valor entra em atributo HTML e em armazenamento local, e um typo em string so apareceria na tela do usuario.
   Valores: `Light`, `Dark`
+- `RvmThemeMode` (`RVM.DesignSystem.Theming`): Aparencia escolhida pelo usuario no `RvmThemePicker`. Contrato com o RVM.UI (DSGN-017).
+  Valores: `Light`, `Dark`, `System`
 - `RvmTimeClockView` (`RVM.DesignSystem.Components.TimePicker`): O que o mostrador do relogio esta escolhendo.
   Valores: `Hours`, `Minutes`
 - `RvmTimePickerMode` (`RVM.DesignSystem.Components.TimePicker`): Como o `RvmTimePicker` oferece os horarios.
@@ -3010,10 +3335,20 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `Subtitle1`, `Subtitle2`, `Body1`, `Body2`, `Caption`, `Overline`, `ButtonLarge`, `ButtonMedium`, `ButtonSmall`, `InputLabel`, `Helper`, `Input`, `AvatarInitials`, `Chip`, `Tooltip`, `AlertTitle`, `TableHeader`, `BadgeLabel`
 - `RvmUploadStatus` (`RVM.DesignSystem.Components.Upload`): Em que ponto do envio um arquivo esta. Quem envia e o app; o componente so mostra.
   Valores: `None`, `Uploading`, `Uploaded`, `Failed`
+- `RvmWidgetPanelSize` (`RVM.DesignSystem.Components.Widget`): Largura do painel do `RvmWidget` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Menu`, `Sheet`
+- `RvmWidgetVariant` (`RVM.DesignSystem.Components.Widget`): Forma do gatilho do `RvmWidget` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Icon`, `Card`
 
 ## Tipos de apoio
 
 Classes e records usados nos parametros dos componentes.
+
+### IRvmThemeStore
+
+`RVM.DesignSystem.Theming` · Onde a escolha do usuario fica guardada. A biblioteca nao conhece o banco do app: quem sabe quem e o usuario e onde salvar o perfil dele e o app. Implemente e registre com `RvmThemeServiceCollectionExtensions.AddRvmTheme``. Contrato com o RVM.UI (DSGN-017). ⚠️ Para a pagina nao piscar no tema padrao ao carregar, o `IRvmThemeStore.LoadAsync` precisa responder JA NA PRE-RENDERIZACAO (no servidor): leia do perfil do usuario ou do cookie `RvmThemeState.CookieName`, que a biblioteca grava a cada troca.
+- `ValueTask<RvmThemeSettings> LoadAsync(CancellationToken cancellationToken)`
+- `ValueTask SaveAsync(RvmThemeSettings settings, CancellationToken cancellationToken)`
 
 ### IRvmToast
 
@@ -3039,6 +3374,12 @@ Classes e records usados nos parametros dos componentes.
 - `Href`: `string?` — Para onde o passo leva. Sem valor, o passo e so texto.
 - `Icon`: `RvmIconName?` — Icone antes do texto.
 - `Text`: `string` — O texto do passo.
+
+### RvmBrowserThemeStore
+
+`RVM.DesignSystem.Theming` · Guarda a escolha so no navegador (localStorage e cookie, gravados pelo `RvmThemeState`). Basta sozinho em app WebAssembly: la a leitura e sincrona, antes da primeira renderizacao, e nada pisca. Em app com servidor, e o padrao de quem ainda nao tem um store que leia o cookie ou o perfil na pre-renderizacao.
+- `ValueTask<RvmThemeSettings> LoadAsync(CancellationToken cancellationToken)`
+- `ValueTask SaveAsync(RvmThemeSettings settings, CancellationToken cancellationToken)`
 
 ### RvmChartCsv
 
@@ -3095,6 +3436,17 @@ Classes e records usados nos parametros dos componentes.
 - `Hex`: `string` — A cor no formato `#RRGGBB`.
 - `Name`: `string` — Nome mostrado e lido pelo leitor de tela ("Verde").
 
+### RvmPalette
+
+`RVM.DesignSystem.Theming` · Uma paleta que o usuario pode escolher no `RvmThemePicker`: a cor de destaque e, nas paletas de produto, a fonte. O CSS de cada uma mora no `rvm-design-system.css`, no seletor `[data-rvm-accent="Id"]` (e `[data-theme='dark'][data-rvm-accent="Id"]` para o escuro). Um app pode ter as proprias: declara esses seletores no CSS dele, sobrescrevendo os tokens `--rvm-color-primary-*`, e passa a paleta ao picker. Contrato com o RVM.UI (DSGN-017).
+- `Description`: `string` — Uma frase dizendo o carater da paleta.
+- `Id`: `string` — Valor do atributo `data-rvm-accent`. Letras minusculas, digitos e hifen.
+- `Name`: `string` — Nome mostrado ao usuario.
+
+### RvmPalettes
+
+`RVM.DesignSystem.Theming` · Catalogo das paletas que o DS ja traz. Contrato com o RVM.UI (DSGN-017).
+
 ### RvmSnackbarMessage
 
 `RVM.DesignSystem.Components.Snackbar` · Uma mensagem na fila do `RvmSnackbarService`. Serve para fecha-la depois.
@@ -3125,6 +3477,26 @@ Classes e records usados nos parametros dos componentes.
 - `Description`: `string?` — A linha de apoio ("Informe e-mail e senha").
 - `HasError`: `bool` — A etapa tem problema a resolver — a validacao do "com validacao" do catalogo.
 - `Title`: `string` — O nome da etapa ("Dados da conta").
+
+### RvmThemeSettings
+
+`RVM.DesignSystem.Theming` · O que o usuario escolheu no `RvmThemePicker`. Imutavel: troque com `with` e entregue ao `RvmThemeState`, ou passe direto ao `RvmThemeProvider.Settings`. Contrato com o RVM.UI (DSGN-017).
+- `FontScale`: `RvmFontScale` — Tamanho da fonte.
+- `HighContrast`: `bool` — Texto de apoio vira texto principal e as linhas ganham 3:1.
+- `Mode`: `RvmThemeMode` — Claro, escuro ou acompanhando o sistema.
+- `Palette`: `string` — Id da paleta (`RvmPalette.Id`). Padrao: `"blue"`, o cobalto do kit.
+- `ReducedMotion`: `bool` — Desliga animacoes e transicoes.
+- `RvmThemeSettings Parse(string texto)`
+- `string Serialize()`
+
+### RvmThemeState
+
+`RVM.DesignSystem.Theming` · O tema do usuario nesta sessao (escopo do circuito no Server, da aba no WebAssembly). O `RvmThemeProvider` com `UserTheme` le daqui e redesenha quando muda; o `RvmThemePicker` escreve aqui. Registre com `AddRvmDesignSystem()` (ja chama `RvmThemeServiceCollectionExtensions.AddRvmTheme`).
+- `Current`: `RvmThemeSettings` — A escolha em vigor.
+- `IsLoaded`: `bool` — Ja carregou (do store ou do estado da pre-renderizacao).
+- `Task EnsureLoadedAsync(CancellationToken cancellationToken)`
+- `void Restore(RvmThemeSettings settings)`
+- `Task SetAsync(RvmThemeSettings settings, CancellationToken cancellationToken)`
 
 ### RvmToastAction
 

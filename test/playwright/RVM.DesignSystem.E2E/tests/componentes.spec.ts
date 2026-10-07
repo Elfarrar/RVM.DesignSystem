@@ -97,11 +97,22 @@ const PAGINAS = [
     { rota: '/componentes/file-icon', titulo: 'RvmFileIcon' },
     { rota: '/componentes/filter', titulo: 'RvmFilter' },
     { rota: '/componentes/list-group', titulo: 'RvmListGroup' },
+    { rota: '/componentes/theme-provider', titulo: 'RvmThemeProvider' },
+    { rota: '/componentes/theme-picker', titulo: 'RvmThemePicker' },
+    { rota: '/componentes/stat-card', titulo: 'RvmStatCard' },
+    { rota: '/componentes/progress-card', titulo: 'RvmProgressCard' },
+    { rota: '/componentes/project-card', titulo: 'RvmProjectCard' },
+    { rota: '/componentes/payment-card', titulo: 'RvmPaymentCard' },
+    { rota: '/componentes/activity', titulo: 'RvmActivity' },
+    { rota: '/componentes/comment', titulo: 'RvmComment' },
+    { rota: '/componentes/notification-item', titulo: 'RvmNotificationItem' },
+    { rota: '/componentes/marker-button', titulo: 'RvmMarkerButton' },
+    { rota: '/componentes/widget', titulo: 'RvmWidget' },
 ];
 
 // Graficos que o kit nao desenhou: seguem o visual das colunas (DSGN-010).
 // Contrato com o RVM.UI (DSGN-017): componentes que o NEATLAB nao desenha, no visual dele por extensao.
-const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout', 'RvmTextArea', 'RvmNumericField', 'RvmMultiTextField', 'RvmTextFieldSelect', 'RvmAutocomplete', 'RvmOptionList', 'RvmTagOption', 'RvmChoiceChip', 'RvmColorPicker', 'RvmColorField', 'RvmIconSelector', 'RvmFileUpload', 'RvmMediaUpload', 'RvmProfileImageUpload', 'RvmModal', 'RvmConfirmModal', 'RvmToastProvider', 'RvmSpinner', 'RvmProgressBar', 'RvmLabel', 'RvmText', 'RvmIconBadge', 'RvmDataTable', 'RvmTableLayout', 'RvmCell*', 'RvmFileIcon', 'RvmFilter', 'RvmListGroup', 'RvmDonutChart', 'RvmMeterChart', 'RvmBubbleChart', 'RvmMultilayerDonutChart', 'RvmChartLegend']);
+const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout', 'RvmTextArea', 'RvmNumericField', 'RvmMultiTextField', 'RvmTextFieldSelect', 'RvmAutocomplete', 'RvmOptionList', 'RvmTagOption', 'RvmChoiceChip', 'RvmColorPicker', 'RvmColorField', 'RvmIconSelector', 'RvmFileUpload', 'RvmMediaUpload', 'RvmProfileImageUpload', 'RvmModal', 'RvmConfirmModal', 'RvmToastProvider', 'RvmSpinner', 'RvmProgressBar', 'RvmLabel', 'RvmText', 'RvmIconBadge', 'RvmDataTable', 'RvmTableLayout', 'RvmCell*', 'RvmFileIcon', 'RvmFilter', 'RvmListGroup', 'RvmDonutChart', 'RvmMeterChart', 'RvmBubbleChart', 'RvmMultilayerDonutChart', 'RvmChartLegend', 'RvmThemeProvider', 'RvmThemePicker', 'RvmStatCard', 'RvmProgressCard', 'RvmProjectCard', 'RvmPaymentCard', 'RvmActivity', 'RvmComment', 'RvmNotificationItem', 'RvmMarkerButton', 'RvmWidget']);
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
     await page.goto('/componentes');
