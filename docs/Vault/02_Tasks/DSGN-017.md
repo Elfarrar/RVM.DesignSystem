@@ -113,6 +113,25 @@ os graficos radiais, que dividem a mesma API).
 
 **Onda 0 aprovada pelo Rafael em 07/10/2026** pelos screenshots do dev (PRs #74 a #77).
 
+## Onda 1 — feita em 07/10/2026 (PR #79)
+
+Pendentes do contrato: **241 → 224**. Os 15 componentes de menu lateral, pagina e navegacao: `RvmSidebar`,
+`RvmTopbar`, `RvmPageHeader`, `RvmPageToolbar`, `RvmNavSubItem`, `RvmBackButton`, `RvmLink`, `RvmIconButton`,
+`RvmMenuButton`, `RvmButtonGroup`, `RvmCollapse`, `RvmExpansionPanel`, `RvmSteps`, `RvmStepIndicator`,
+`RvmDetailProfileLayout`.
+
+- **Refactor:** o conteudo do menu lateral do `RvmAppShell` virou o `RvmSidebar`; a casca o usa na coluna e so cuida da
+  coluna e da gaveta. Os itens de navegacao leem o recolhido do Sidebar (e, se o Sidebar for do consumidor, o da
+  casca). O CSS dos itens mudou de casa — mexeu no visual do menu, e no `RvmSidebar.razor.css`.
+- O tema (`RvmThemeProvider`, `RvmThemePicker`, `RvmThemeSettings`, paletas) vai numa onda propria.
+- Site: secao "Navegacao e pagina" com 14 paginas, todas no E2E; o `RvmMascot` entrou no E2E tambem.
+- Review independente: 4 P2 (container da ficha, fundo da gaveta, Sidebar do consumidor, componentes que escreviam o
+  proprio parametro) e 1 P3 corrigidos, com teste.
+
+⚠️ **Teste instavel que ja existia:** `planner: criar tarefa com hora no relogio` (foco no mostrador do relogio) falhou
+em 4 noturnos do `master` antes desta task (29/09 a 06/10) e numa rodada do dev em 07/10. Nao e da DSGN-017; fica para
+um card proprio.
+
 ## Etapa 3 — RVM.DesignSystem
 
 1. Alinhar os componentes em comum ao contrato (a nomenclatura já é a do DS; entram os acréscimos do UI:
