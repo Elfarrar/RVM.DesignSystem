@@ -1,0 +1,68 @@
+@page "/componentes/option-list"
+
+<PageTitle>RvmOptionList — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmOptionList</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Lista de opcoes solta, no padrao listbox: a lista recebe o foco, as setas andam pulando as indisponiveis, Home e End
+    vao as pontas, Enter ou Espaco escolhem e Esc ou Tab pedem para fechar. Quem guarda a escolha e quem usa a lista
+    (IsSelected e OnPick) — e a peca para montar um seletor proprio.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Uma escolha, com imagem"
+              Descricao="ItemImage poe uma imagem redonda de 24 px antes do texto. A opcao Trigo esta indisponivel."
+              Codigo="@CodigoSimples">
+    <div class="grade-campos">
+        <div class="amostra borda">
+            <span id="rotulo-cultura" class="rvm-text-subtitle2">Cultura</span>
+            <RvmOptionList TItem="string" Items="Culturas" LabelledBy="rotulo-cultura" IsSelected="@(c => c == _cultura)"
+                           ItemDisabled="@(c => c == "Trigo")" ItemImage="@(_ => "icon-192.png")"
+                           OnPick="@(c => _cultura = c)" OnClose="@(() => _fechou++)" />
+        </div>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary">Escolhida: @_cultura · pedidos de fechar: @_fechou</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Varias escolhas"
+              Descricao="Com Multiple, a lista diz que aceita varias (aria-multiselectable) e cada opcao ganha a caixinha de marcar."
+              Codigo="@CodigoMultiplo">
+    <div class="grade-campos">
+        <div class="amostra borda">
+            <span id="rotulo-culturas" class="rvm-text-subtitle2">Culturas</span>
+            <RvmOptionList TItem="string" Items="Culturas" LabelledBy="rotulo-culturas" Multiple="true"
+                           IsSelected="@(c => _culturas.Contains(c))" OnPick="Alternar" />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmOptionList" />
+
+@code {
+    private static readonly string[] Culturas = ["Soja", "Milho", "Cafe", "Trigo", "Algodao"];
+
+    private string _cultura = "Milho";
+    private int _fechou;
+    private readonly HashSet<string> _culturas = ["Soja"];
+
+    private void Alternar(string cultura)
+    {
+        if (!_culturas.Remove(cultura)) _culturas.Add(cultura);
+    }
+
+    private const string CodigoSimples = """
+        <span id="rotulo-cultura">Cultura</span>
+        <RvmOptionList TItem="string" Items="Culturas" LabelledBy="rotulo-cultura"
+                       IsSelected="@(c => c == _cultura)" ItemDisabled="@(c => c == "Trigo")"
+                       OnPick="@(c => _cultura = c)" OnClose="Fechar" />
+        """;
+
+    private const string CodigoMultiplo = """
+        <RvmOptionList TItem="string" Items="Culturas" LabelledBy="rotulo-culturas" Multiple="true"
+                       IsSelected="@(c => _culturas.Contains(c))" OnPick="Alternar" />
+        """;
+}

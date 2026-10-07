@@ -1,0 +1,94 @@
+/* CSS isolado do RvmAutocomplete (DSGN-017). A moldura e o RvmFieldFrame; aqui so o que e do autocomplete: o botao de
+   limpar e a lista suspensa — a mesma do RvmSelectBase (popup, opcoes de 36 px, opcao ativa com o anel por dentro). */
+
+.rvm-limpar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    margin-inline-start: var(--rvm-space-1);
+    margin-inline-end: -6px;
+    padding: 0;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: var(--rvm-color-text-secondary);
+    cursor: pointer;
+}
+
+.rvm-limpar:hover {
+    background-color: var(--rvm-color-action-hover);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-limpar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 0;
+}
+
+.rvm-popup {
+    position: absolute;
+    top: calc(100% + var(--rvm-space-1));
+    left: 0;
+    right: 0;
+    z-index: 1300;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: var(--rvm-space-2) 0;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-3);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-mensagem {
+    padding: var(--rvm-space-2) var(--rvm-space-4);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-opcoes {
+    max-height: 264px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+/* Mesmo item do RvmMenu: 36 px, hover no action-hover. */
+.rvm-opcao {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 36px;
+    padding: 0 var(--rvm-space-4);
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    cursor: pointer;
+}
+
+.rvm-opcao:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+/* A opcao ativa nao tem foco de verdade (o foco fica no campo): fundo de selecionada e o anel por dentro. */
+.rvm-opcao.rvm-ativa {
+    background-color: var(--rvm-color-action-selected);
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
