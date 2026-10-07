@@ -8,16 +8,23 @@
 
    Por baixo e o <InputRadioGroup> do Blazor: gera o `name` do grupo, faz as setas moverem a
    selecao (comportamento nativo de radio) e entra no EditForm. *@
-<fieldset @attributes="AdditionalAttributes" class="@ClassesDaRaiz" disabled="@Disabled">
+<fieldset @attributes="AdditionalAttributes" id="@Id" class="@ClassesDaRaiz" disabled="@Disabled"
+          aria-describedby="@(MensagemDeApoio is null ? null : IdDoApoio)"
+          aria-invalid="@(MensagemDeErro is null ? null : "true")">
     @if (!string.IsNullOrWhiteSpace(Label))
     {
         <legend class="rvm-legenda">@Label</legend>
+    }
+    @if (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref))
+    {
+        <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
     }
 
     <InputRadioGroup TValue="TValue"
                      Value="Value"
                      ValueChanged="ValueChanged"
                      ValueExpression="ExpressaoEfetiva"
+                     DisplayName="@DisplayName"
                      Name="@Name">
         <CascadingValue TValue="RvmRadioGroup<TValue>" Value="this" IsFixed="false">
             <div class="rvm-opcoes">
@@ -25,4 +32,8 @@
             </div>
         </CascadingValue>
     </InputRadioGroup>
+    @if (MensagemDeApoio is not null)
+    {
+        <div id="@IdDoApoio" class="@(MensagemDeErro is null ? "rvm-apoio rvm-text-helper" : "rvm-apoio rvm-text-helper rvm-apoio-erro")">@MensagemDeApoio</div>
+    }
 </fieldset>

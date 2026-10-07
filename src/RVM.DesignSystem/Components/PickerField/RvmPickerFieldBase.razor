@@ -7,6 +7,10 @@
    foco ao botao. O valor aparece no proprio botao e entra no nome acessivel junto com o rotulo.
    Fechado, o conteudo nao existe no DOM: o estado inicial sai pronto sem JS. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
+    @if (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref))
+    {
+        <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
+    }
     <div class="rvm-caixa">
         <button @ref="_gatilho"
                 @attributes="AtributosDoGatilho"
@@ -32,6 +36,13 @@
                 <span class="rvm-so-leitor">(obrigatorio)</span>
             }
         </span>
+
+        @if (PodeLimpar && TemValor && !Disabled)
+        {
+            <button type="button" class="rvm-limpar" aria-label="@($"Limpar {Label}")" @onclick="LimparAsync">
+                <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+            </button>
+        }
 
         <span class="rvm-icone-campo" aria-hidden="true">
             <RvmIcon Name="IconeDoCampo" Size="RvmSize.Small" />

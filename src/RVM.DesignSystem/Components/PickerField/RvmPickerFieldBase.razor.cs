@@ -58,6 +58,24 @@ public abstract partial class RvmPickerFieldBase : ComponentBase, IAsyncDisposab
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
+    /// <summary>Id do botao do campo. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>
+    /// Nome do campo nas mensagens de validacao. O campo escolhe num dialogo e nao interpreta texto, entao nao gera
+    /// mensagem propria: as do <c>EditForm</c> ja vem com o nome do modelo.
+    /// </summary>
+    [Parameter] public string? DisplayName { get; set; }
+
+    /// <summary>Texto do link acima do campo, a direita.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link acima do campo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Canto da caixa: o do kit ou pilula.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Rounded;
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto no botao do campo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -99,7 +117,15 @@ public abstract partial class RvmPickerFieldBase : ComponentBase, IAsyncDisposab
 
     internal FieldIdentifier? Campo { get; private set; }
 
-    internal string IdGatilho => $"{_idBase}-campo";
+    internal string IdGatilho => string.IsNullOrWhiteSpace(Id) ? $"{_idBase}-campo" : Id;
+
+    /// <summary>Onde o dialogo abre. So o seletor de data escolhe (o <c>Alignment</c> do contrato).</summary>
+    internal virtual RvmPopupAlignment AlinhamentoDaJanela => RvmPopupAlignment.Start;
+
+    /// <summary>Mostra o botao de limpar (o <c>Clearable</c> do <c>RvmDatePicker</c>).</summary>
+    internal virtual bool PodeLimpar => false;
+
+    internal virtual Task LimparAsync() => Task.CompletedTask;
 
     internal string IdRotulo => $"{_idBase}-rotulo";
 
@@ -125,6 +151,14 @@ public abstract partial class RvmPickerFieldBase : ComponentBase, IAsyncDisposab
             if (_aberto) proprias += " rvm-aberto";
             if (TemErro) proprias += " rvm-erro";
             if (Disabled) proprias += " rvm-desabilitado";
+            if (Shape == RvmFieldShape.Pill) proprias += " rvm-pilula";
+            if (PodeLimpar && TemValor) proprias += " rvm-limpavel";
+            proprias += AlinhamentoDaJanela switch
+            {
+                RvmPopupAlignment.End => " rvm-janela-no-fim",
+                RvmPopupAlignment.Stretch => " rvm-janela-esticada",
+                _ => ""
+            };
 
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }

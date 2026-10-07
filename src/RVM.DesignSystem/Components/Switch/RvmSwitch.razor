@@ -3,7 +3,29 @@
 
 @* Um checkbox nativo com role="switch": o leitor de tela anuncia ligado ou desligado, em vez de
    marcado, que e o que o controle significa. Funciona sem JS e gera o name do POST. *@
-<label class="@ClassesDaRaiz" style="@EstiloDoConsumidor" aria-disabled="@(Disabled ? "true" : null)">
+@* Apoio, erro e link ficam FORA do <label>: dentro dele, o texto entraria no nome acessivel e o link seria
+   interacao dentro de interacao. Sem eles a marcacao e a de sempre, so o label. *@
+@if (MensagemDeApoio is null && !TemLink)
+{
+    @Controle
+}
+else
+{
+    <div class="rvm-campo-marcar">
+        @Controle
+        @if (TemLink)
+        {
+            <a class="rvm-link-do-campo" href="@LinkHref">@LinkText</a>
+        }
+        @if (MensagemDeApoio is not null)
+        {
+            <div id="@IdDoApoio" class="@(MensagemDeErro is null ? "rvm-apoio rvm-text-helper" : "rvm-apoio rvm-text-helper rvm-apoio-erro")">@MensagemDeApoio</div>
+        }
+    </div>
+}
+
+@code {
+    private RenderFragment Controle => @<label class="@ClassesDaRaiz" style="@EstiloDoConsumidor" aria-disabled="@(Disabled ? "true" : null)">
     <span class="rvm-alvo">
         <InputCheckbox @attributes="AtributosDoInput"
                        class="rvm-nativo"
@@ -11,6 +33,7 @@
                        Value="Value"
                        ValueChanged="ValueChanged"
                        ValueExpression="ExpressaoEfetiva"
+                       DisplayName="@DisplayName"
                        disabled="@Disabled" />
         <span class="rvm-trilho" aria-hidden="true"></span>
         <span class="rvm-polegar" aria-hidden="true"></span>
@@ -24,4 +47,6 @@
     {
         @ChildContent
     }
-</label>
+</label>;
+}
+

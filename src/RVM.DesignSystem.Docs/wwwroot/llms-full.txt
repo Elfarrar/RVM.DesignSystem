@@ -344,8 +344,19 @@ Caixa de marcar. Sozinha, com rotulo ou indeterminada. Dentro de um `EditForm` p
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da caixa marcada. Padrao: `RvmColor.Primary`. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — | Nome do campo nas mensagens de validacao do `EditForm`. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do controle. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do input nativo. Sem ele, o Blazor nao gera um: o rotulo envolve o input e dispensa o `for`. |
 | `Indeterminate` | `bool` | `false` | Estado "alguns marcados" — a caixa-mae de uma lista. O visual sai por CSS ja no primeiro render; a semantica "misto" para o leitor de tela e completada por JS quando disponivel. Quem liga isto e responsavel por desligar quando os filhos ficarem todos iguais. |
 | `Label` | `string?` | — | Texto ao lado da caixa. Tambem e o nome acessivel. |
+| `LabelPosition` | `RvmLabelPosition` | `RvmLabelPosition.End` | De que lado do controle fica o rotulo. Padrao: depois. |
+| `LinkHref` | `string?` | — | Destino do link depois do rotulo. |
+| `LinkText` | `string?` | — | Texto do link depois do rotulo ("Li e aceito os termos "). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem texto de exemplo: sem efeito. |
+| `Required` | `bool` | `false` | Obrigatorio: asterisco no rotulo e `aria-required` no input. A validacao e do `EditForm`. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem caixa de texto: sem efeito. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 16, 18 (padrao) ou 22 px de caixa — medidos no kit. |
 | `Value` | `bool` | `false` | Marcado ou nao. Aceita `@bind-Value`. |
 | `ValueChanged` | `EventCallback<bool>` | — | Disparado quando a marcacao muda. |
@@ -459,17 +470,24 @@ Campo de data com calendario. Dentro de um EditForm, participa da validacao.
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao do campo. |
+| `Alignment` | `RvmPopupAlignment` | `RvmPopupAlignment.Start` | Onde o calendario abre: alinhado ao inicio do campo (padrao), ao fim, ou com a largura dele. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Clearable` | `bool` | `false` | Botao de limpar a data dentro do campo, quando ha uma escolhida. |
 | `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — | Nome do campo nas mensagens de validacao. O campo escolhe num dialogo e nao interpreta texto, entao nao gera mensagem propria: as do `EditForm` ja vem com o nome do modelo. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do botao do campo. Sem ele, um id unico e gerado. |
 | `Label` | `string` | obrigatorio | Rotulo do campo. Entra no nome acessivel junto com o valor. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita. |
 | `Max` | `DateOnly?` | — | Ultima data escolhivel. |
 | `Min` | `DateOnly?` | — | Primeira data escolhivel. |
 | `Name` | `string?` | — | `name` para envio de formulario: o valor vai em `input hidden` em formato invariante (data em `yyyy-MM-dd`, com `{Name}Inicio` e `{Name}Fim` no intervalo; horario em `HH:mm`). |
 | `Placeholder` | `string?` | — | Texto no campo vazio. Padrao: o formato esperado ("dd/mm/aaaa", "hh:mm"). |
 | `Required` | `bool` | `false` | Asterisco no rotulo. A validacao em si e do EditForm. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
 | `Today` | `DateOnly?` | — | "Hoje" para marcar o dia atual no calendario. Padrao: a data do sistema. |
 | `Value` | `DateOnly?` | — | A data escolhida. Aceita `@bind-Value`. |
@@ -485,17 +503,23 @@ Campo de intervalo de datas: o primeiro clique no calendario marca o inicio, o s
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao do campo. |
+| `Alignment` | `RvmPopupAlignment` | `RvmPopupAlignment.Start` | Onde o calendario abre: alinhado ao inicio do campo (padrao), ao fim, ou com a largura dele. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — | Nome do campo nas mensagens de validacao. O campo escolhe num dialogo e nao interpreta texto, entao nao gera mensagem propria: as do `EditForm` ja vem com o nome do modelo. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do botao do campo. Sem ele, um id unico e gerado. |
 | `Label` | `string` | obrigatorio | Rotulo do campo. Entra no nome acessivel junto com o valor. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita. |
 | `Max` | `DateOnly?` | — | Ultima data escolhivel. |
 | `Min` | `DateOnly?` | — | Primeira data escolhivel. |
 | `Name` | `string?` | — | `name` para envio de formulario: o valor vai em `input hidden` em formato invariante (data em `yyyy-MM-dd`, com `{Name}Inicio` e `{Name}Fim` no intervalo; horario em `HH:mm`). |
 | `Placeholder` | `string?` | — | Texto no campo vazio. Padrao: o formato esperado ("dd/mm/aaaa", "hh:mm"). |
 | `Required` | `bool` | `false` | Asterisco no rotulo. A validacao em si e do EditForm. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
 | `Today` | `DateOnly?` | — | "Hoje" para marcar o dia atual no calendario. Padrao: a data do sistema. |
 | `Value` | `RvmDateRange?` | — | O intervalo escolhido. Aceita `@bind-Value`. |
@@ -796,23 +820,33 @@ Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enq
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no combobox. |
+| `Background` | `RvmFieldBackground` | `RvmFieldBackground.White` | Fundo da caixa contornada: o da superficie ou cinza claro. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — | Nome do campo nas mensagens de validacao. O seletor nao interpreta texto, entao nao gera mensagem propria: as do `EditForm` ja vem com o nome do modelo. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do gatilho do campo. Sem ele, um id unico e gerado. |
 | `ItemDisabled` | `Func<object, bool>?` | — | Opcoes visiveis mas nao escolhiveis. |
+| `ItemImage` | `Func<object, string>?` | — | Imagem redonda antes do texto de cada opcao (endereco da imagem; decorativa). |
 | `ItemText` | `Func<object, string>?` | — | Texto de cada opcao. Padrao: `ToString()`. |
 | `Items` | `IEnumerable<object>` | obrigatorio | As opcoes. Passe uma lista ja materializada: a colecao e percorrida a cada render do pai, e um `IQueryable` iria ao banco toda vez. |
 | `Label` | `string?` | — | Rotulo do campo. Tambem e o nome acessivel do combobox e da lista. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita. |
 | `Name` | `string?` | — | `name` para envio de formulario: cada valor escolhido vira um `input hidden`, com o valor em cultura invariante. |
 | `NoResultsText` | `string` | `"Nenhuma opcao encontrada para essa busca."` | Mensagem quando a busca nao acha nada. |
 | `Placeholder` | `string?` | — | Texto no campo vazio. Com ele, o rotulo fica sempre la em cima. |
 | `Required` | `bool` | `false` | Asterisco no rotulo e `aria-required`. A validacao em si e do EditForm. |
 | `SearchPlaceholder` | `string` | `"Buscar"` | Dica e nome acessivel do campo de busca. Padrao: "Buscar". |
 | `Searchable` | `bool` | `false` | Campo de busca no topo da lista, que filtra as opcoes enquanto se digita. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa contornada: o do kit ou pilula. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
-| `Values` | `IReadOnlyList<object>` | — | As opcoes escolhidas, na ordem da lista. Aceita `@bind-Values`. |
-| `ValuesChanged` | `EventCallback<IReadOnlyList<object>>` | — | Disparado quando a selecao muda. |
+| `Value` | `IReadOnlyList<object>?` | — | As opcoes escolhidas, com o nome do RVM.UI (contrato, DSGN-017). Aceita `@bind-Value`. E o mesmo valor que `RvmMultiSelect.Values`. |
+| `ValueChanged` | `EventCallback<IReadOnlyList<object>>` | — | Disparado quando a selecao muda (junto com `RvmMultiSelect.ValuesChanged`). |
+| `ValueExpression` | `Expression<Func<IReadOnlyList<object>>>?` | — | Expressao do valor ligado. O `@bind-Value` preenche sozinho. |
+| `Values` | `IReadOnlyList<object>?` | — | As opcoes escolhidas, na ordem da lista. Aceita `@bind-Values`. E o mesmo valor que `RvmMultiSelect.Value`: use um par so. Se vierem os dois, vale este. |
+| `ValuesChanged` | `EventCallback<IReadOnlyList<object>>` | — | Disparado quando a selecao muda (junto com `RvmMultiSelect.ValueChanged`). |
 | `ValuesExpression` | `Expression<Func<IReadOnlyList<object>>>?` | — | Expressao do valor ligado. O `@bind-Values` preenche sozinho. |
 | `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo — os mesmos tres do campo de texto. Padrao: `RvmTextFieldVariant.Outlined`. |
 
@@ -994,9 +1028,17 @@ Grupo de opcoes em que so uma vale. Os filhos sao `RvmRadio`, que herdam a cor, 
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da opcao escolhida. Padrao: `RvmColor.Primary`. |
 | `Disabled` | `bool` | `false` | Desabilita o grupo inteiro. |
+| `DisplayName` | `string?` | — | Nome do grupo nas mensagens de validacao do `EditForm`. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo das opcoes. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do fieldset do grupo. |
 | `Label` | `string?` | — | A pergunta do grupo ("Forma de pagamento"). Vira a legenda do fieldset. |
+| `LinkHref` | `string?` | — | Destino do link ao lado da pergunta. |
+| `LinkText` | `string?` | — | Texto do link ao lado da pergunta. |
 | `Name` | `string?` | — | `name` dos radios. Sem ele, o Blazor gera um a partir do `@bind-Value` — que e o que o formulario em SSR estatico precisa. |
 | `Orientation` | `RvmOrientation` | `RvmOrientation.Vertical` | Opcoes em linha (`RvmOrientation.Horizontal`) ou empilhadas (padrao). |
+| `Placeholder` | `string?` | — | Do contrato com o RVM.UI, onde todo campo tem. Grupo de opcoes nao tem texto de exemplo: sem efeito. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Do contrato com o RVM.UI, onde todo campo tem. Grupo de opcoes nao tem caixa: sem efeito. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 18, 20 (padrao) ou 22 px de circulo — medidos no kit. |
 | `Value` | `object?` | — | O valor escolhido. Aceita `@bind-Value`. |
 | `ValueChanged` | `EventCallback<object>` | — | Disparado quando a escolha muda. |
@@ -1013,7 +1055,9 @@ Uma opcao de um `RvmRadioGroup`.
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao input nativo. |
 | `ChildContent` | `RenderFragment?` | — | Rotulo livre, quando `RvmRadio.Label` esta vazio. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | So esta opcao indisponivel. O `Disabled` do grupo desabilita todas. |
 | `Label` | `string?` | — | Texto da opcao. Tambem e o nome acessivel. |
+| `LabelPosition` | `RvmLabelPosition` | `RvmLabelPosition.End` | De que lado da bolinha fica o rotulo. Padrao: depois. |
 | `Value` | `object?` | obrigatorio | O valor que esta opcao representa. |
 
 ### RvmRating
@@ -1087,20 +1131,28 @@ Escolha de UMA opcao numa lista, com busca opcional. Dentro de um `EditForm` par
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no combobox. |
+| `Background` | `RvmFieldBackground` | `RvmFieldBackground.White` | Fundo da caixa contornada: o da superficie ou cinza claro. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — | Nome do campo nas mensagens de validacao. O seletor nao interpreta texto, entao nao gera mensagem propria: as do `EditForm` ja vem com o nome do modelo. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do gatilho do campo. Sem ele, um id unico e gerado. |
 | `ItemDisabled` | `Func<object, bool>?` | — | Opcoes visiveis mas nao escolhiveis. |
+| `ItemImage` | `Func<object, string>?` | — | Imagem redonda antes do texto de cada opcao (endereco da imagem; decorativa). |
 | `ItemText` | `Func<object, string>?` | — | Texto de cada opcao. Padrao: `ToString()`. |
 | `Items` | `IEnumerable<object>` | obrigatorio | As opcoes. Passe uma lista ja materializada: a colecao e percorrida a cada render do pai, e um `IQueryable` iria ao banco toda vez. |
 | `Label` | `string?` | — | Rotulo do campo. Tambem e o nome acessivel do combobox e da lista. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita. |
 | `Name` | `string?` | — | `name` para envio de formulario: cada valor escolhido vira um `input hidden`, com o valor em cultura invariante. |
 | `NoResultsText` | `string` | `"Nenhuma opcao encontrada para essa busca."` | Mensagem quando a busca nao acha nada. |
 | `Placeholder` | `string?` | — | Texto no campo vazio. Com ele, o rotulo fica sempre la em cima. |
+| `ReadOnly` | `bool` | `false` | So mostra o valor escolhido: a lista nao abre e o campo e anunciado como somente leitura. |
 | `Required` | `bool` | `false` | Asterisco no rotulo e `aria-required`. A validacao em si e do EditForm. |
 | `SearchPlaceholder` | `string` | `"Buscar"` | Dica e nome acessivel do campo de busca. Padrao: "Buscar". |
 | `Searchable` | `bool` | `false` | Campo de busca no topo da lista, que filtra as opcoes enquanto se digita. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa contornada: o do kit ou pilula. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), como o campo de texto. |
 | `Value` | `object?` | — | A opcao escolhida. Aceita `@bind-Value`. Para o campo poder comecar vazio com enum ou numero, use o tipo anulavel (`Status?`, `int?`): sem isso o `default` ja e uma escolha. |
 | `ValueChanged` | `EventCallback<object>` | — | Disparado quando a escolha muda. |
@@ -1163,7 +1215,17 @@ Liga e desliga algo que vale na hora (notificacoes, modo compacto). Para uma esc
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do ligado. Padrao: `RvmColor.Primary`. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — | Nome do campo nas mensagens de validacao do `EditForm`. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do controle. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do input nativo. Sem ele, o Blazor nao gera um: o rotulo envolve o input e dispensa o `for`. |
 | `Label` | `string?` | — | Texto ao lado. Tambem e o nome acessivel. |
+| `LabelPosition` | `RvmLabelPosition` | `RvmLabelPosition.End` | De que lado do controle fica o rotulo. Padrao: depois. |
+| `LinkHref` | `string?` | — | Destino do link depois do rotulo. |
+| `LinkText` | `string?` | — | Texto do link depois do rotulo ("Li e aceito os termos "). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem texto de exemplo: sem efeito. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem caixa de texto: sem efeito. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | Trilho de 34 x 14 px (padrao) ou 26 x 10 px (`RvmSize.Small`), medidos no kit. O kit nao define um switch grande, entao `RvmSize.Large` sai igual ao medio. |
 | `Value` | `bool` | `false` | Ligado ou desligado. Aceita `@bind-Value`. |
 | `ValueChanged` | `EventCallback<bool>` | — | Disparado quando muda. |
@@ -1263,15 +1325,24 @@ Campo de texto com rotulo flutuante, apoio, erro, prefixo e sufixo. Herda de `In
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `DisplayName` | `string?` | — |  |
+| `EndIcon` | `RvmIconName?` | — | Icone no fim da caixa (decorativo). |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao do proprio campo ja aparece sozinha — use este parametro para erro que vem de outro lugar (a resposta de uma API, por exemplo). |
 | `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar a mensagem de erro quando ha erro. |
+| `Id` | `string?` | — | Id do input. Sem ele, um id unico e gerado. |
+| `Immediate` | `bool` | `false` | Atualiza o valor a cada tecla (`oninput`), e nao so ao sair do campo. Para busca enquanto digita. |
 | `Label` | `string?` | — | Rotulo do campo. Flutua para cima quando o campo tem valor ou foco. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
 | `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre la em cima. |
 | `Prefix` | `string?` | — | Texto antes do valor ("R$"). |
 | `Required` | `bool` | `false` | Obrigatorio: asterisco no rotulo e `aria-required` no input. A validacao em si e do `EditForm` (`[Required]` no modelo) — o `required` nativo do HTML fica de fora de proposito, porque barraria o envio com a mensagem do navegador, em ingles. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa contornada: o do kit ou pilula. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px (`RvmSize.Small`), medidos no kit. O kit nao define um campo grande, entao `RvmSize.Large` sai igual ao medio. |
+| `StartIcon` | `RvmIconName?` | — | Icone no inicio da caixa (decorativo: o rotulo ja diz o que e o campo). |
 | `Suffix` | `string?` | — | Texto depois do valor ("Kg", "%"). |
 | `Type` | `RvmInputType` | `RvmInputType.Text` | O `type` do campo. Padrao: `RvmInputType.Text`. |
 | `Value` | `string?` | — |  |
@@ -1326,9 +1397,13 @@ Campo de horario em 24 h (padrao) ou 12 h: uma lista de horarios em intervalos f
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao campo. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — | Nome do campo nas mensagens de validacao (o campo nao gera mensagem propria). |
 | `ErrorText` | `string?` | — | Erro informado por fora. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. |
+| `Id` | `string?` | — | Id do campo. Sem ele, um id unico e gerado. |
 | `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita. |
 | `Max` | `TimeOnly` | — | Ultimo horario da lista (inclusive). Padrao: 23:59. |
 | `Min` | `TimeOnly` | — | Primeiro horario escolhivel. Padrao: 00:00. Maior que `RvmTimePicker.Max`, a janela cruza a meia-noite. |
 | `Mode` | `RvmTimePickerMode` | `RvmTimePickerMode.List` | Lista ou relogio. Padrao: `RvmTimePickerMode.List`. |
@@ -1336,6 +1411,7 @@ Campo de horario em 24 h (padrao) ou 12 h: uma lista de horarios em intervalos f
 | `Placeholder` | `string?` | — | Texto no campo vazio. |
 | `Required` | `bool` | `false` | Asterisco e aria-required. |
 | `Searchable` | `bool` | `true` | Busca no topo da lista: digitar "18" acha 18:00 e 18:30. Padrao: sim. So na lista. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 56 px (padrao) ou 40 px. |
 | `Step` | `int?` | — | Minutos entre um horario e o proximo. Padrao: 30 na lista, 1 no relogio (que aceita ate 30). |
 | `Use24Hours` | `bool` | `true` | Relogio de 24 h ("18:30", padrao) ou de 12 h ("6:30 PM"). |
@@ -1434,12 +1510,18 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Left`, `Right`, `Top`, `Bottom`
 - `RvmDrawerVariant` (`RVM.DesignSystem.Components.Drawer`): Como a gaveta convive com a pagina.
   Valores: `Temporary`, `Permanent`
+- `RvmFieldBackground` (`RVM.DesignSystem`): Fundo da caixa do seletor (contrato com o RVM.UI, DSGN-017).
+  Valores: `White`, `Grey`
+- `RvmFieldShape` (`RVM.DesignSystem`): Canto da caixa do campo (contrato com o RVM.UI, DSGN-017).
+  Valores: `Rounded`, `Pill`
 - `RvmIconName` (`RVM.DesignSystem.Icons`): Os icones disponiveis. Enum, e nao string: nome de icone errado vira erro de compilacao em vez de um quadrado vazio na tela.
   Valores: `AlertCircle`, `AlertTriangle`, `ArrowLeft`, `ArrowRight`, `ArrowUp`, `ArrowDown`, `Bell`, `Calendar`, `Check`, `ChevronDown`, `ChevronLeft`, `ChevronRight`, `ChevronUp`, `CircleCheck`, `Clock`, `Close`, `Copy`, `DotsVertical`, `Download`, `ExternalLink`, `Eye`, `EyeOff`, `File`, `Filter`, `Heart`, `Home`, `InfoCircle`, `Loader`, `Lock`, `Logout`, `Mail`, `Menu`, `Minus`, `Pencil`, `Phone`, `Plus`, `Printer`, `Refresh`, `Search`, `Settings`, `Star`, `Table`, `Trash`, `Upload`, `User`, `Users`, `Accessibility`, `Accumulator`, `Add`, `AddCircle`, `AddSquare`, `AdhesivePlaster`, `AdhesivePlaster2`, `Airbuds`, `AirbudsCase`, `AirbudsCaseCharge`, `AirbudsCaseMinimalistic`, `AirbudsCaseOpen`, `AirbudsCharge`, `AirbudsCheck`, `AirbudsLeft`, `AirbudsRemove`, `AirbudsRight`, `Alarm`, `AlarmAdd`, `AlarmPause`, `AlarmPlay`, `AlarmRemove`, `AlarmSleep`, `AlarmTurnOff`, `Album`, `AlignBottom`, `AlignHorizontaSpacing`, `AlignHorizontalCenter`, `AlignLeft`, `AlignRight`, `AlignTop`, `AlignVerticalCenter`, `AlignVerticalSpacing`, `AltArrowDown`, `AltArrowLeft`, `AltArrowRight`, `AltArrowUp`, `Archive`, `ArchiveDown`, `ArchiveDownNotes`, `ArchiveUp`, `ArchiveUpNotes`, `Archived`, `ArchivedMinimalistic`, `Armchair`, `Armchair2`, `ArrowLeftDown`, `ArrowLeftUp`, `ArrowRightDown`, `ArrowRightUp`, `ArrowToDownLeft`, `ArrowToDownRight`, `ArrowToTopLeft`, `ArrowToTopRight`, `Asteroid`, `Atom`, `AugmentedReality`, `Backpack`, `Backspace`, `Bacteria`, `Bag`, `Bag2`, `Bag3`, `Bag4`, `Bag5`, `BagCheck`, `BagCross`, `BagHeart`, `BagMusic`, `BagMusic2`, `BagSmile`, `Balloon`, `Balls`, `Banknote`, `Banknote2`, `BarChair`, `Basketball`, `Bath`, `BatteryCharge`, `BatteryChargeMinimalistic`, `BatteryFull`, `BatteryFullMinimalistic`, `BatteryHalf`, `BatteryHalfMinimalistic`, `BatteryLow`, `BatteryLowMinimalistic`, `Bed`, `BedEssentionalUi`, `BedsideTable`, `BedsideTable2`, `BedsideTable3`, `BedsideTable4`, `BellBing`, `BellOff`, `BenzeneRing`, `Bicycling`, `BicyclingRound`, `Bill`, `BillCheck`, `BillCross`, `BillList`, `BillList2`, `BlackHole`, `BlackHole2`, `BlackHole3`, `Bluetooth`, `BluetoothCircle`, `BluetoothSquare`, `BluetoothWave`, `Body`, `BodyShape`, `BodyShapeMinimalistic`, `Bolt`, `BoltCircle`, `Bomb`, `Bomb2`, `BombMinimalistic`, `Bone`, `BoneBroken`, `BoneCrack`, `Bones`, `Bonfire`, `Book`, `Book2`, `BookBookmark`, `BookBookmarkMinimalistic`, `BookMinimalistic`, `Bookmark`, `BookmarkCircle`, `BookmarkOpened`, `BookmarkSquare`, `BookmarkSquareMinimalistic`, `Boombox`, `Bottle`, `Bowling`, `Box`, `BoxMinimalistic`, `BranchingPathsDown`, `BranchingPathsUp`, `Broom`, `Bug`, `BugMinimalistic`, `Buildings`, `Buildings2`, `Buildings3`, `Bus`, `Calculator`, `CalculatorMinimalistic`, `CalendarAdd`, `CalendarDate`, `CalendarMark`, `CalendarMinimalistic`, `CalendarSearch`, `CallCancel`, `CallCancelRounded`, `CallChat`, `CallChatRounded`, `CallDropped`, `CallDroppedRounded`, `CallMedicine`, `CallMedicineRounded`, `Camera`, `CameraAdd`, `CameraMinimalistic`, `CameraRotate`, `CameraSquare`, `Card`, `Card2`, `CardRecive`, `CardSearch`, `CardSend`, `CardTransfer`, `Cardholder`, `Cart`, `Cart2`, `Cart3`, `Cart4`, `Cart5`, `CartCheck`, `CartCross`, `CartLarge`, `CartLarge2`, `CartLarge3`, `CartLarge4`, `CartLargeMinimalistic`, `CartPlus`, `Case`, `CaseMinimalistic`, `CaseRound`, `CaseRoundMinimalistic`, `CashOut`, `Cassette`, `Cassette2`, `Cat`, `Chair`, `Chair2`, `Chandelier`, `Chart`, `Chart2`, `ChartSquare`, `ChatDots`, `ChatLine`, `ChatRound`, `ChatRoundCall`, `ChatRoundCheck`, `ChatRoundDots`, `ChatRoundLike`, `ChatRoundLine`, `ChatRoundMoney`, `ChatRoundUnread`, `ChatRoundVideo`, `ChatSquare`, `ChatSquare2`, `ChatSquareArrow`, `ChatSquareCall`, `ChatSquareCheck`, `ChatSquareCode`, `ChatSquareLike`, `ChatUnread`, `CheckCircle`, `CheckRead`, `CheckSquare`, `Checklist`, `ChecklistMinimalistic`, `ChefHatHeart`, `ChefHatMinimalistic`, `ChefHet`, `CircleBottomDown`, `CircleBottomUp`, `CircleTopDown`, `CircleTopUp`, `City`, `Clapperboard`, `ClapperboardEdit`, `ClapperboardOpen`, `ClapperboardOpenPlay`, `ClapperboardPlay`, `ClapperboardText`, `Clipboard`, `ClipboardAdd`, `ClipboardCheck`, `ClipboardHeart`, `ClipboardList`, `ClipboardRemove`, `ClipboardText`, `ClockCircle`, `ClockSquare`, `CloseCircle`, `CloseSquare`, `Closet`, `Closet2`, `Cloud`, `CloudBolt`, `CloudBoltMinimalistic`, `CloudCheck`, `CloudDownload`, `CloudFile`, `CloudMinus`, `CloudPlus`, `CloudRain`, `CloudSnowfall`, `CloudSnowfallMinimalistic`, `CloudStorage`, `CloudStorm`, `CloudSun`, `CloudSunWeather`, `CloudUpload`, `CloudWaterdrop`, `CloudWaterdrops`, `Clouds`, `CloudyMoon`, `CloundCross`, `Code`, `Code2`, `CodeCircle`, `CodeFile`, `CodeScan`, `CodeSquare`, `ColourTuneing`, `Command`, `Compass`, `CompassBig`, `CompassSquare`, `Condicioner`, `Condicioner2`, `Confetti`, `ConfettiMinimalistic`, `ConfoundedCircle`, `ConfoundedSquare`, `Copyright`, `Corkscrew`, `Cosmetic`, `CourseDown`, `CourseUp`, `Cpu`, `CpuBolt`, `CreativeCommons`, `Crop`, `CropMinimalistic`, `Crown`, `CrownLine`, `CrownMinimalistic`, `CrownStar`, `Cup`, `CupEssentionalUi`, `CupFirst`, `CupHot`, `CupMusic`, `CupPaper`, `CupStar`, `Cursor`, `CursorSquare`, `Danger`, `DangerCircle`, `DangerSquare`, `DangerTriangle`, `Database`, `Delivery`, `Devices`, `DiagramDown`, `DiagramUp`, `Dialog`, `Dialog2`, `Diploma`, `DiplomaVerified`, `Diskette`, `Dislike`, `Display`, `Dna`, `Document`, `DocumentAdd`, `DocumentMedicine`, `DocumentNotes`, `DocumentText`, `Documents`, `DocumentsMinimalistic`, `Dollar`, `DollarMinimalistic`, `Donut`, `DonutBitton`, `DoubleAltArrowDown`, `DoubleAltArrowLeft`, `DoubleAltArrowRight`, `DoubleAltArrowUp`, `DownloadMinimalistic`, `DownloadSquare`, `DownloadTwiceSquare`, `Dropper`, `Dropper2`, `Dropper3`, `DropperMinimalistic`, `DropperMinimalistic2`, `Dumbbell`, `DumbbellLarge`, `DumbbellLargeMinimalistic`, `DumbbellSmall`, `Dumbbells`, `Dumbbells2`, `Earth`, `ElectricRefueling`, `EmojiFunnyCircle`, `EmojiFunnySquare`, `EndCall`, `EndCallRounded`, `Eraser`, `EraserCircle`, `EraserSquare`, `Euro`, `Exit`, `Explicit`, `Export`, `ExpressionlessCircle`, `ExpressionlessSquare`, `EyeClosed`, `EyeScan`, `FaceScanCircle`, `FaceScanSquare`, `FacemaskCircle`, `FacemaskSquare`, `Feed`, `FerrisWheel`, `Figma`, `FigmaFile`, `FileCheck`, `FileCorrupted`, `FileDownload`, `FileFavourite`, `FileLeft`, `FileRemove`, `FileRight`, `FileSend`, `FileSmile`, `FileText`, `Filters`, `Fire`, `FireMinimalistic`, `FireSquare`, `Flag`, `Flag2`, `Flame`, `Flashlight`, `FlashlightOn`, `FlipHorizontal`, `FlipVertical`, `FloorLamp`, `FloorLampMinimalistic`, `Fog`, `Folder`, `Folder2`, `FolderAdd`, `FolderCheck`, `FolderCloud`, `FolderError`, `FolderFavouriteBookmark`, `FolderFavouriteStar`, `FolderMove`, `FolderOpen`, `FolderPathConnect`, `FolderSecurity`, `FolderWithFiles`, `Football`, `Forbidden`, `ForbiddenCircle`, `Forward`, `Forward2`, `ForwardArrowsAction`, `Fridge`, `Fuel`, `FullScreen`, `FullScreenCircle`, `FullScreenSquare`, `Gallery`, `GalleryAdd`, `GalleryCheck`, `GalleryCircle`, `GalleryDownload`, `GalleryEdit`, `GalleryFavourite`, `GalleryMinimalistic`, `GalleryRemove`, `GalleryRound`, `GallerySend`, `GalleryWide`, `Gameboy`, `Gamepad`, `GamepadCharge`, `GamepadMinimalistic`, `GamepadNoCharge`, `GamepadOld`, `Garage`, `GasStation`, `Ghost`, `GhostSmile`, `Gift`, `Glasses`, `Global`, `Globus`, `Golf`, `Gps`, `Graph`, `GraphDown`, `GraphDownNew`, `GraphNew`, `GraphNewUp`, `GraphUp`, `HamburgerMenu`, `HandHeart`, `HandMoney`, `HandPills`, `HandShake`, `HandStars`, `Hanger`, `Hanger2`, `Hashtag`, `HashtagChat`, `HashtagCircle`, `HashtagSquare`, `HeadphonesRound`, `HeadphonesRoundSound`, `HeadphonesSquare`, `HeadphonesSquareSound`, `Health`, `HeartAngle`, `HeartBroken`, `HeartLock`, `HeartPulse`, `HeartPulse2`, `HeartShine`, `HeartUnlock`, `Hearts`, `Help`, `HighDefinition`, `HighQuality`, `Hiking`, `HikingMinimalistic`, `HikingRound`, `History`, `History2`, `History3`, `Hive`, `Home2`, `HomeAdd`, `HomeAddAngle`, `HomeAngle`, `HomeAngle2`, `HomeBuildingInfrastructure`, `HomeSmile`, `HomeSmileAngle`, `HomeWifi`, `HomeWifiAngle`, `Hospital`, `Hourglass`, `HourglassLine`, `Import`, `Inbox`, `InboxArchive`, `InboxIn`, `InboxLine`, `InboxOut`, `InboxUnread`, `Incognito`, `IncomingCall`, `IncomingCallRounded`, `Infinity`, `InfoSquare`, `Iphone`, `JarOfPills`, `JarOfPills2`, `Key`, `KeyMinimalistic`, `KeyMinimalistic2`, `KeyMinimalisticSquare`, `KeyMinimalisticSquare2`, `KeyMinimalisticSquare3`, `KeySquare`, `KeySquare2`, `Keyboard`, `KickScooter`, `Ladle`, `Lamp`, `Layers`, `LayersMinimalistic`, `Leaf`, `Letter`, `LetterOpened`, `LetterUnread`, `Library`, `Lightbulb`, `LightbulbBolt`, `LightbulbMinimalistic`, `Lightning`, `Like`, `Link`, `LinkBroken`, `LinkBrokenMinimalistic`, `LinkCircle`, `LinkMinimalistic`, `LinkMinimalistic2`, `LinkRound`, `LinkRoundAngle`, `LinkSquare`, `List`, `ListArrowDown`, `ListArrowDownMinimalistic`, `ListArrowUp`, `ListArrowUpMinimalistic`, `ListCheck`, `ListCheckMinimalistic`, `ListCross`, `ListCrossMinimalistic`, `ListDown`, `ListHeart`, `ListHeartMinimalistic`, `ListUp`, `ListUpMinimalistic`, `ListUpMinimalisticList`, `LockKeyhole`, `LockKeyholeMinimalistic`, `LockKeyholeMinimalisticUnlocked`, `LockKeyholeUnlocked`, `LockPassword`, `LockPasswordUnlocked`, `LockUnlocked`, `Login`, `Login2`, `Login3`, `Logout2`, `Logout3`, `MagicStick`, `MagicStick2`, `MagicStick3`, `Magnet`, `MagnetWave`, `Magnifer`, `MagniferBug`, `MagniferBugRounded`, `MagniferMinimalistic`, `MagniferRounded`, `MagniferZoomIn`, `MagniferZoomInMinimalistic`, `MagniferZoomInRounded`, `MagniferZoomOut`, `MagniferZoomOutMinimalistic`, `MagniferZoomOutRounded`, `MagnifierBugMinimalistic`, `Mailbox`, `Map`, `MapArrowDown`, `MapArrowLeft`, `MapArrowRight`, `MapArrowSquare`, `MapArrowUp`, `MapPoint`, `MapPointAdd`, `MapPointFavourite`, `MapPointHospital`, `MapPointRemove`, `MapPointRotate`, `MapPointSchool`, `MapPointSearch`, `MapPointWave`, `MaskHapply`, `MaskSad`, `Masks`, `Maximize`, `MaximizeSquare`, `MaximizeSquare2`, `MaximizeSquare3`, `MaximizeSquareMinimalistic`, `MedalRibbon`, `MedalRibbonStar`, `MedalRibbonsStar`, `MedalStar`, `MedalStarCircle`, `MedalStarSquare`, `MedicalKit`, `Meditation`, `MeditationRound`, `Men`, `MentionCircle`, `MentionSquare`, `MenuDots`, `MenuDots2`, `MenuDotsCircle`, `MenuDotsCircle2`, `MenuDotsSquare`, `MenuDotsSquare2`, `Microphone`, `Microphone2`, `Microphone3`, `MicrophoneLarge`, `Minimize`, `MinimizeSquare`, `MinimizeSquare2`, `MinimizeSquare3`, `MinimizeSquareMinimalistic`, `MinusCircle`, `MinusSquare`, `Mirror`, `MirrorEssentionalUi`, `MirrorLeft`, `MirrorRight`, `MoneyBag`, `Monitor`, `MonitorCamera`, `MonitorSmartphone`, `Moon`, `MoonFog`, `MoonSleep`, `MoonStars`, `Mouse`, `MouseCircle`, `MouseMinimalistic`, `MultipleForwardLeft`, `MultipleForwardRight`, `MusicLibrary`, `MusicLibrary2`, `MusicNote`, `MusicNote2`, `MusicNote3`, `MusicNote4`, `MusicNoteSlider`, `MusicNoteSlider2`, `MusicNotes`, `Muted`, `N4k`, `Notebook`, `Notebook2`, `Notebook2ElectronicDevices`, `NotebookBookmark`, `NotebookElectronicDevices`, `NotebookMinimalistic`, `NotebookMinimalisticElectronicDevices`, `NotebookNotes`, `NotebookSquare`, `Notes`, `NotesMinimalistic`, `NotificationLinesRemove`, `NotificationRemove`, `NotificationUnread`, `NotificationUnreadLines`, `ObjectScan`, `OutgoingCall`, `OutgoingCallRounded`, `OvenMitts`, `OvenMittsMinimalistic`, `PaintRoller`, `Palette`, `PaletteRound`, `Panorama`, `PaperBin`, `Paperclip`, `Paperclip2`, `PaperclipRounded`, `PaperclipRounded2`, `ParagraphSpacing`, `Passport`, `PassportMinimalistic`, `Password`, `PasswordMinimalistic`, `PasswordMinimalisticInput`, `Pause`, `PauseCircle`, `Paw`, `Pen`, `Pen2`, `PenNewRound`, `PenNewSquare`, `PeopleNearby`, `Perfume`, `PhoneCalling`, `PhoneCallingRounded`, `PhoneRounded`, `PieChart`, `PieChart2`, `PieChart3`, `Pill`, `Pills`, `Pills2`, `Pills3`, `Pin`, `PinCircle`, `PinList`, `Pip`, `Pip2`, `Pipette`, `Plain`, `Plain2`, `Plain3`, `Planet`, `Planet2`, `Planet3`, `Planet4`, `Plate`, `Play`, `PlayCircle`, `PlayStream`, `PlaybackSpeed`, `Playlist`, `Playlist2`, `PlaylistMinimalistic`, `PlaylistMinimalistic2`, `PlaylistMinimalistic3`, `PlugCircle`, `PlusMinus`, `Podcast`, `PointOnMap`, `PointOnMapPerspective`, `PostsCarouselHorizontal`, `PostsCarouselVertical`, `Power`, `PresentationGraph`, `Printer2`, `PrinterMinimalistic`, `Programming`, `Projector`, `Property`, `Pulse`, `Pulse2`, `QrCode`, `QuestionCircle`, `QuestionSquare`, `QuitFullScreen`, `QuitFullScreenCircle`, `QuitFullScreenSquare`, `QuitPip`, `Radar`, `Radar2`, `RadialBlur`, `Radio`, `RadioMinimalistic`, `Ranking`, `ReciveSquare`, `ReciveTwiceSquare`, `Record`, `RecordCall`, `RecordCircle`, `RecordCircleCall`, `RecordSquare`, `RecordVideoAudioSound`, `Reel`, `Reel2`, `RefreshCircle`, `RefreshCircle2`, `RefreshSquare`, `RefreshSquare2`, `RemoteController`, `RemoteController2`, `RemoteControllerMinimalistic`, `RemoveFolder`, `Reorder`, `ReorderArrowsAction`, `Repeat`, `RepeatOne`, `RepeatOneMinimalistic`, `Reply`, `Reply2`, `Restart`, `Revote`, `Rewind10SecondsBack`, `Rewind10SecondsForward`, `Rewind15SecondsBack`, `Rewind15SecondsForward`, `Rewind5SecondsBack`, `Rewind5SecondsForward`, `RewindBack`, `RewindBackCircle`, `RewindForward`, `RewindForwardCircle`, `Rocket`, `Rocket2`, `RollingPin`, `RoundAltArrowDown`, `RoundAltArrowLeft`, `RoundAltArrowRight`, `RoundAltArrowUp`, `RoundArrowDown`, `RoundArrowLeft`, `RoundArrowLeftDown`, `RoundArrowLeftUp`, `RoundArrowRight`, `RoundArrowRightDown`, `RoundArrowRightUp`, `RoundArrowUp`, `RoundDoubleAltArrowDown`, `RoundDoubleAltArrowLeft`, `RoundDoubleAltArrowRight`, `RoundDoubleAltArrowUp`, `RoundGraph`, `RoundSortHorizontal`, `RoundSortVertical`, `RoundTransferDiagonal`, `RoundTransferHorizontal`, `RoundTransferVertical`, `Route`, `Routing`, `Routing2`, `Routing3`, `Ruble`, `Rugby`, `Ruler`, `RulerAngular`, `RulerCrossPen`, `RulerPen`, `Running`, `Running2`, `RunningRound`, `SadCircle`, `SadSquare`, `Safe2`, `SafeCircle`, `SafeSquare`, `Sale`, `SaleSquare`, `Satellite`, `Scale`, `Scanner`, `Scanner2`, `Scissors`, `ScissorsSquare`, `Scooter`, `ScreenShare`, `Screencast`, `Screencast2`, `SdCard`, `SendSquare`, `SendTwiceSquare`, `Server`, `Server2`, `ServerMinimalistic`, `ServerPath`, `ServerSquare`, `ServerSquareCloud`, `ServerSquareUpdate`, `SettingsMinimalistic`, `Share`, `ShareCircle`, `Shield`, `ShieldCheck`, `ShieldCross`, `ShieldKeyhole`, `ShieldKeyholeMinimalistic`, `ShieldMinimalistic`, `ShieldMinus`, `ShieldNetwork`, `ShieldPlus`, `ShieldStar`, `ShieldUp`, `ShieldUser`, `ShieldWarning`, `ShockAbsorber`, `Shop`, `Shop2`, `ShopMinimalistic`, `Shuffle`, `SidebarCode`, `SidebarMinimalistic`, `Siderbar`, `Signpost`, `Signpost2`, `SimCard`, `SimCardMinimalistic`, `SimCards`, `Siren`, `SirenRounded`, `Skateboard`, `Skateboarding`, `SkateboardingRound`, `SkipNext`, `SkipPrevious`, `Skirt`, `SlashCircle`, `SlashSquare`, `Sledgehammer`, `SleepingCircle`, `SleepingSquare`, `SliderHorizontal`, `SliderMinimalisticHorizontal`, `SliderVertical`, `SliderVerticalMinimalistic`, `SmartHome`, `SmartHomeAngle`, `SmartSpeaker`, `SmartSpeaker2`, `SmartSpeakerMinimalistic`, `SmartVacuumCleaner`, `SmartVacuumCleaner2`, `Smartphone`, `Smartphone2`, `SmartphoneRotate2`, `SmartphoneRotateAngle`, `SmartphoneRotateOrientation`, `SmartphoneUpdate`, `SmartphoneVibration`, `SmileCircle`, `SmileSquare`, `Snowflake`, `Socket`, `Sofa`, `Sofa2`, `Sofa3`, `Sort`, `SortByAlphabet`, `SortByTime`, `SortEssentionalUi`, `SortFromBottomToTop`, `SortFromTopToBottom`, `SortHorizontal`, `SortVertical`, `Soundwave`, `SoundwaveVideoAudioSound`, `SoundwaveVideoAudioSound2`, `Speaker`, `SpeakerMinimalistic`, `SpecialEffects`, `SpedometerLow`, `SpedometerMax`, `SpedometerMiddle`, `SquareAcademicCap`, `SquareAcademicCap2`, `SquareAltArrowDown`, `SquareAltArrowLeft`, `SquareAltArrowRight`, `SquareAltArrowUp`, `SquareArrowDown`, `SquareArrowLeft`, `SquareArrowLeftDown`, `SquareArrowLeftUp`, `SquareArrowRight`, `SquareArrowRightDown`, `SquareArrowRightUp`, `SquareArrowUp`, `SquareBottomDown`, `SquareBottomUp`, `SquareDoubleAltArrowDown`, `SquareDoubleAltArrowLeft`, `SquareDoubleAltArrowRight`, `SquareDoubleAltArrowUp`, `SquareForward`, `SquareShareLine`, `SquareSortHorizontal`, `SquareSortVertical`, `SquareTopDown`, `SquareTopUp`, `SquareTransferHorizontal`, `SquareTransferVertical`, `SsdRound`, `SsdSquare`, `StarAngle`, `StarAstronomy`, `StarCircle`, `StarFall`, `StarFall2`, `StarFallMinimalistic`, `StarFallMinimalistic2`, `StarRainbow`, `StarRing`, `StarRings`, `StarShine`, `Stars`, `StarsAstronomy`, `StarsLine`, `StarsMinimalistic`, `Station`, `StationMinimalistic`, `Stethoscope`, `StickerCircle`, `StickerSmileCircle`, `StickerSmileCircle2`, `StickerSmileSquare`, `StickerSquare`, `Stop`, `StopCircle`, `Stopwatch`, `StopwatchPause`, `StopwatchPlay`, `Stream`, `Streets`, `StreetsMapPoint`, `StreetsNavigation`, `Stretching`, `StretchingRound`, `Structure`, `Subtitles`, `Suitcase`, `SuitcaseLines`, `SuitcaseTag`, `Sun`, `Sun2`, `SunFog`, `Sunrise`, `Sunset`, `Suspension`, `SuspensionBolt`, `SuspensionCross`, `Swimming`, `Syringe`, `TShirt`, `Tablet`, `Tag`, `TagHorizontal`, `TagPrice`, `Target`, `TeaCup`, `Telescope`, `Temperature`, `Tennis`, `Tennis2`, `TestTube`, `TestTubeMinimalistic`, `Text`, `TextBold`, `TextBoldCircle`, `TextBoldSquare`, `TextCircle`, `TextCross`, `TextCrossCircle`, `TextCrossSquare`, `TextField`, `TextFieldFocus`, `TextItalic`, `TextItalicCircle`, `TextItalicSquare`, `TextSelection`, `TextSquare`, `TextSquare2`, `TextUnderline`, `TextUnderlineCircle`, `TextUnderlineCross`, `Thermometer`, `ThreeSquares`, `TickerStar`, `Ticket`, `TicketSale`, `ToPip`, `Tornado`, `TornadoSmall`, `Traffic`, `TrafficEconomy`, `Tram`, `TransferHorizontal`, `TransferVertical`, `Translation`, `Translation2`, `Transmission`, `TransmissionCircle`, `TransmissionSquare`, `TrashBin`, `TrashBin2`, `TrashBinMinimalistic`, `TrashBinMinimalistic2`, `Treadmill`, `TreadmillRound`, `Trellis`, `Tuning`, `Tuning2`, `Tuning3`, `Tuning4`, `TuningSquare`, `TuningSquare2`, `Turntable`, `TurntableMinimalistic`, `TurntableMusicNote`, `Tv`, `Ufo`, `Ufo2`, `Ufo3`, `Umbrella`, `UndoLeft`, `UndoLeftRound`, `UndoLeftRoundSquare`, `UndoLeftSquare`, `UndoRight`, `UndoRightRound`, `UndoRightRoundArrowsAction`, `UndoRightSquare`, `Unread`, `UploadMinimalistic`, `UploadSquare`, `UploadTrack`, `UploadTrack2`, `UploadTwiceSquare`, `Usb`, `UsbCircle`, `UsbElectronicDevices`, `UsbSquare`, `UserBlock`, `UserBlockRounded`, `UserCheck`, `UserCheckRounded`, `UserCircle`, `UserCross`, `UserCrossRounded`, `UserHandUp`, `UserHands`, `UserHeart`, `UserHeartRounded`, `UserId`, `UserMinus`, `UserMinusRounded`, `UserPlus`, `UserPlusRounded`, `UserRounded`, `UserSpeak`, `UserSpeakRounded`, `UsersGroupRounded`, `UsersGroupTwoRounded`, `VerifiedCheck`, `VideoFrame`, `VideoFrame2`, `VideoFrameCut`, `VideoFrameCut2`, `VideoFramePlayHorizontal`, `VideoFramePlayVertical`, `VideoFrameReplace`, `VideoLibrary`, `Videocamera`, `VideocameraAdd`, `VideocameraRecord`, `VinylRecord`, `Virus`, `Volleyball`, `Volleyball2`, `Volume`, `VolumeCross`, `VolumeKnob`, `VolumeLoud`, `VolumeSmall`, `WadOfMoney`, `Walking`, `WalkingRound`, `Wallet`, `Wallet2`, `WalletMoney`, `Wallpaper`, `WashingMachine`, `WashingMachineMinimalistic`, `WatchRound`, `WatchSquare`, `WatchSquareMinimalistic`, `WatchSquareMinimalisticCharge`, `Water`, `WaterSun`, `Waterdrop`, `Waterdrops`, `Weigher`, `Wheel`, `WheelAngle`, `Whisk`, `WiFiRouter`, `WiFiRouterMinimalistic`, `WiFiRouterRound`, `Widget`, `Widget2`, `Widget3`, `Widget4`, `Widget5`, `Widget6`, `WidgetAdd`, `Wind`, `WindowFrame`, `Wineglass`, `WineglassTriangle`, `Winrar`, `WirelessCharge`, `Women`, `Xxx`, `ZipFile`
 - `RvmIconStyle` (`RVM.DesignSystem.Icons`): Estilo do desenho do icone (contrato com o RVM.UI, DSGN-017). O Tabler tem traco e cheio: `RvmIconStyle.Bold` e `RvmIconStyle.BoldDuotone` saem cheios onde o Tabler desenha a versao cheia; o resto sai no traco.
   Valores: `Bold`, `BoldDuotone`, `Broken`, `Linear`
 - `RvmInputType` (`RVM.DesignSystem.Components.TextField`): O `type` do campo. Importa no celular: `RvmInputType.Email` abre o teclado com arroba, `RvmInputType.Tel` abre o numerico, e `RvmInputType.Password` esconde o que se digita.
   Valores: `Text`, `Email`, `Password`, `Number`, `Tel`, `Url`, `Search`
+- `RvmLabelPosition` (`RVM.DesignSystem`): De que lado do controle fica o rotulo (caixa de marcar, chave, opcao).
+  Valores: `End`, `Start`
 - `RvmMascotName` (`RVM.DesignSystem.Icons`): Os mascotes do contrato com o RVM.UI (DSGN-017). O nome diz a FUNCAO na interface (erro, carregando, vazio), nao o personagem. No Design System nao ha ilustracao: cada um vira um icone Tabler grande num circulo de fundo suave, no estilo NEATLAB — invencao declarada. Ver `RvmMascot`.
   Valores: `AlienDocumentation`, `AlienIntegrations`, `AlienNotifications`, `AlienOnboardingSteps`, `AlienSecureLogin`, `AlienSessionExpired`, `DogEmptyState`, `DogFeedback`, `DogNoConnection`, `DogSearch`, `RafaelCodeReview`, `RobotAccessDenied`, `RobotDogSmallSuccess`, `RobotError`, `RobotLoading`, `RobotMaintenance`, `RobotPermissionRequested`, `RobotSettings`, `RobotUpdateAvailable`, `RobotUploadingFile`, `TeamAnalytics`, `TeamIdeaToProduct`, `TeamSecurity`
 - `RvmNavMatch` (`RVM.DesignSystem.Components.AppShell`): Como o item de menu decide que e a pagina atual.
@@ -1450,6 +1532,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Circular`, `Rounded`
 - `RvmPaginationVariant` (`RVM.DesignSystem.Components.Pagination`): Estilo dos itens — as duas metades da pagina Pagination do kit.
   Valores: `Text`, `Outlined`
+- `RvmPopupAlignment` (`RVM.DesignSystem`): Onde a janela de um campo abre, em relacao a ele.
+  Valores: `Start`, `End`, `Stretch`
 - `RvmProgressVariant` (`RVM.DesignSystem.Components.Progress`): Forma do indicador de progresso.
   Valores: `Linear`, `Circular`
 - `RvmSize` (`RVM.DesignSystem`): Tamanho de componente interativo. Botao, campo, chip e avatar usam os tres.

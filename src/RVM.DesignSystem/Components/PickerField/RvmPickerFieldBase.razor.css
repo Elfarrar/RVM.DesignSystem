@@ -185,3 +185,43 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+.rvm-pilula .rvm-caixa { border-radius: var(--rvm-radius-pill); padding: 0 19px; }
+.rvm-pilula .rvm-caixa:focus-within,
+.rvm-pilula.rvm-aberto .rvm-caixa { padding: 0 18px; }
+.rvm-pilula .rvm-rotulo { left: 19px; }
+
+.rvm-janela-no-fim .rvm-popup { left: auto; right: 0; }
+.rvm-janela-esticada .rvm-popup { right: 0; }
+
+/* Limpar: um botao de verdade (alcancavel por Tab), ao lado do icone do campo. */
+.rvm-limpavel .rvm-entrada { padding-right: calc(var(--rvm-space-6) + 28px); }
+
+.rvm-limpar {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    display: inline-flex;
+    padding: 4px;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: var(--rvm-color-text-secondary);
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.rvm-limpar:hover { background-color: var(--rvm-color-action-hover); }
+
+.rvm-limpar:focus-visible {
+    outline: 2px solid var(--rvm-focus-ring-color);
+    outline-offset: 1px;
+}
+
+.rvm-link-do-campo {
+    align-self: flex-end;
+    margin-bottom: var(--rvm-space-1);
+    color: var(--rvm-color-primary-text);
+}

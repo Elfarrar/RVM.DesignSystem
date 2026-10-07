@@ -6,7 +6,29 @@
    gera o `name` certo para o POST. O que e desenhado por cima e so aparencia.
 
    O <label> envolve tudo: clicar no texto marca a caixa, e o texto vira o nome acessivel. *@
-<label class="@ClassesDaRaiz" style="@EstiloDoConsumidor" aria-disabled="@(Disabled ? "true" : null)">
+@* Apoio, erro e link ficam FORA do <label>: dentro dele, o texto entraria no nome acessivel e o link seria
+   interacao dentro de interacao. Sem eles a marcacao e a de sempre, so o label. *@
+@if (MensagemDeApoio is null && !TemLink)
+{
+    @Controle
+}
+else
+{
+    <div class="rvm-campo-marcar">
+        @Controle
+        @if (TemLink)
+        {
+            <a class="rvm-link-do-campo" href="@LinkHref">@LinkText</a>
+        }
+        @if (MensagemDeApoio is not null)
+        {
+            <div id="@IdDoApoio" class="@(MensagemDeErro is null ? "rvm-apoio rvm-text-helper" : "rvm-apoio rvm-text-helper rvm-apoio-erro")">@MensagemDeApoio</div>
+        }
+    </div>
+}
+
+@code {
+    private RenderFragment Controle => @<label class="@ClassesDaRaiz" style="@EstiloDoConsumidor" aria-disabled="@(Disabled ? "true" : null)">
     <span class="rvm-alvo">
         <InputCheckbox @ref="_entrada"
                        @attributes="AtributosDoInput"
@@ -14,6 +36,7 @@
                        Value="Value"
                        ValueChanged="ValueChanged"
                        ValueExpression="ExpressaoEfetiva"
+                       DisplayName="@DisplayName"
                        disabled="@Disabled" />
         <span class="rvm-caixa" aria-hidden="true">
             @if (Indeterminate)
@@ -29,10 +52,15 @@
 
     @if (!string.IsNullOrWhiteSpace(Label))
     {
-        <span class="rvm-rotulo">@Label</span>
+        <span class="rvm-rotulo">@Label@if (Required)
+            {
+                <span class="rvm-obrigatorio" aria-hidden="true">*</span>
+            }</span>
     }
     else
     {
         @ChildContent
     }
-</label>
+</label>;
+}
+

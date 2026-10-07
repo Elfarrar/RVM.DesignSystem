@@ -22,6 +22,11 @@ public sealed class RvmSelect<TValue> : RvmSelectBase<TValue>
     /// <summary>Expressao do valor ligado. O <c>@bind-Value</c> preenche sozinho.</summary>
     [Parameter] public Expression<Func<TValue?>>? ValueExpression { get; set; }
 
+    /// <summary>So mostra o valor escolhido: a lista nao abre e o campo e anunciado como somente leitura.</summary>
+    [Parameter] public bool ReadOnly { get; set; }
+
+    internal override bool SoLeitura => ReadOnly;
+
     internal override bool Multiplo => false;
 
     internal override LambdaExpression? ExpressaoDoCampo => ValueExpression;

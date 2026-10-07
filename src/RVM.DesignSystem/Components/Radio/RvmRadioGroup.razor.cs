@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace RVM.DesignSystem.Components.Radio;
 
@@ -53,6 +54,42 @@ public partial class RvmRadioGroup<TValue> : ComponentBase
 
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
+
+    /// <summary>Id do fieldset do grupo.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Nome do grupo nas mensagens de validacao do <c>EditForm</c>.</summary>
+    [Parameter] public string? DisplayName { get; set; }
+
+    /// <summary>Texto de apoio abaixo das opcoes. Da lugar ao erro quando ha erro.</summary>
+    [Parameter] public string? HelperText { get; set; }
+
+    /// <summary>Erro informado por fora. Dentro de um <c>EditForm</c>, a mensagem da validacao ja aparece sozinha.</summary>
+    [Parameter] public string? ErrorText { get; set; }
+
+    /// <summary>Texto do link ao lado da pergunta.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link ao lado da pergunta.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Grupo de opcoes nao tem texto de exemplo: sem efeito.</summary>
+    [Parameter] public string? Placeholder { get; set; }
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Grupo de opcoes nao tem caixa: sem efeito.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; }
+
+    [CascadingParameter] private EditContext? ContextoDoFormulario { get; set; }
+
+    private readonly string _idDoApoio = GeradorDeIds.Novo("rvm-grupo-apoio");
+
+    internal string IdDoApoio => _idDoApoio;
+
+    internal string? MensagemDeErro
+        => !string.IsNullOrWhiteSpace(ErrorText) ? ErrorText
+            : ContextoDoFormulario?.GetValidationMessages(FieldIdentifier.Create(ExpressaoEfetiva)).FirstOrDefault();
+
+    internal string? MensagemDeApoio => MensagemDeErro ?? (string.IsNullOrWhiteSpace(HelperText) ? null : HelperText);
 
     /// <summary>Atributos extras, repassados ao fieldset.</summary>
     [Parameter(CaptureUnmatchedValues = true)]

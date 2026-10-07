@@ -115,3 +115,6 @@
         transition: none;
     }
 }
+
+/* LabelPosition do contrato com o RVM.UI (DSGN-017). */
+.rvm-rotulo-antes { flex-direction: row-reverse; justify-content: flex-end; }

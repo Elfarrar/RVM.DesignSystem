@@ -124,3 +124,29 @@
 .rvm-desabilitado.rvm-indeterminado .rvm-caixa {
     background-color: var(--rvm-color-action-disabled);
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+.rvm-rotulo-antes { flex-direction: row-reverse; }
+
+.rvm-campo-marcar {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-link-do-campo {
+    color: var(--rvm-color-primary-text);
+    font-size: var(--rvm-text-body1-size);
+}
+
+.rvm-apoio {
+    flex-basis: 100%;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-apoio-erro { color: var(--rvm-color-error-text); }
+
+.rvm-obrigatorio { margin-inline-start: 2px; color: var(--rvm-color-error-text); }
