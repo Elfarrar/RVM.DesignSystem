@@ -3,10 +3,12 @@
 @* Celula de usuario (contrato com o RVM.UI, DSGN-017): avatar e nome, com o e-mail embaixo — a coluna "User" da lista
    de usuarios do kit. O avatar e DECORATIVO (alt vazio): o nome esta escrito logo ao lado, e anunciar "Ana Ribeiro,
    imagem, Ana Ribeiro" a cada linha so atrasa quem ouve a tabela. Sem foto, o icone de pessoa no fundo suave. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmAvatar Src="@Src" Alt="" Icon="RvmIconName.User" Variant="RvmAvatarVariant.Soft" />
-    <RvmCellLines Text="@Name" Supporting="@Supporting" Highlight="Highlight" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmAvatar Src="@Src" Alt="" Icon="RvmIconName.User" Variant="RvmAvatarVariant.Soft" />
+        @CelulaCss.Linhas(Name, Supporting, Highlight)
+    </div>
+</td>
 
 @code {
     /// <summary>Nome da pessoa: o titulo da celula.</summary>

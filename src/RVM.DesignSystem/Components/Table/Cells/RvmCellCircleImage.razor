@@ -3,10 +3,12 @@
 @* Celula com imagem redonda (contrato com o RVM.UI, DSGN-017): foto e titulo, para entidade que nao e pessoa (fazenda,
    empresa, cultura). Por isso o titulo e o nome acessivel da imagem sao parametros separados (Text e Alt). E o
    RvmAvatar de 40 px; sem foto, o icone de pessoa no fundo suave, que fica decorativo se nao houver Alt. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmAvatar Src="@Src" Alt="@Alt" Icon="RvmIconName.User" Variant="RvmAvatarVariant.Soft" />
-    <RvmCellLines Text="@Text" Supporting="@Supporting" Highlight="Highlight" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmAvatar Src="@Src" Alt="@Alt" Icon="RvmIconName.User" Variant="RvmAvatarVariant.Soft" />
+        @CelulaCss.Linhas(Text, Supporting, Highlight)
+    </div>
+</td>
 
 @code {
     /// <summary>Endereco da foto. Sem ele, o icone no fundo suave.</summary>

@@ -3,9 +3,11 @@
 @* Celula de acoes (contrato com o RVM.UI, DSGN-017): uma fileira livre. O kit desenha lixeira, olho e o menu de tres
    pontos lado a lado (lista de faturas) — sao RvmIconButton, RvmMenu e RvmLink, entao a celula e um slot, e quem
    escolhe o arranjo e a pagina. *@
-<RvmCellFrame Align="Align" FrameClass="rvm-celula-acao" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    @ChildContent
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, "rvm-celula-acao", Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        @ChildContent
+    </div>
+</td>
 
 @code {
     /// <summary>As acoes: <c>RvmIconButton</c>, <c>RvmMenu</c>, <c>RvmLink</c> ou qualquer combinacao deles.</summary>

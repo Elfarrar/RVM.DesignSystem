@@ -4,9 +4,11 @@
    E o RvmCheckbox (input nativo — teclado e semantica de graca, funciona fora de EditForm), sem texto visivel: o Label
    vira o aria-label, e precisa dizer QUAL linha ("Selecionar o lote 4910"), senao a tabela vira uma fila de
    "Selecionar" iguais para quem ouve. Sem alinhamento: a coluna tem so a largura da caixa. *@
-<RvmCellFrame FrameClass="rvm-celula-escolha" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmCheckbox Value="Selected" ValueChanged="SelectedChanged" Disabled="Disabled" aria-label="@Label" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(null, "rvm-celula-escolha", Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmCheckbox Value="Selected" ValueChanged="SelectedChanged" Disabled="Disabled" aria-label="@Label" />
+    </div>
+</td>
 
 @code {
     /// <summary>Linha escolhida.</summary>
