@@ -1,0 +1,53 @@
+@namespace RVM.DesignSystem.Components.BackButton
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Voltar: seta para a esquerda numa caixa contornada. Com Href e um link; sem ele, um botao que avisa por
+   OnClick (o app decide para onde volta). Desabilitado sem Href e botao desabilitado; com Href vira span
+   com aria-disabled, porque um <a> sem href some do teclado sem avisar. *@
+@if (Href is null)
+{
+    <button @attributes="AdditionalAttributes" type="button" class="@ClassesDaRaiz" aria-label="@Label" title="@Label"
+            disabled="@Disabled" @onclick="OnClick">
+        <RvmIcon Name="RvmIconName.ArrowLeft" />
+    </button>
+}
+else if (Disabled)
+{
+    <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" role="link" aria-label="@Label" title="@Label" aria-disabled="true">
+        <RvmIcon Name="RvmIconName.ArrowLeft" />
+    </span>
+}
+else
+{
+    <a @attributes="AdditionalAttributes" href="@Href" class="@ClassesDaRaiz" aria-label="@Label" title="@Label">
+        <RvmIcon Name="RvmIconName.ArrowLeft" />
+    </a>
+}
+
+@code {
+    /// <summary>Nome acessivel e dica. Padrao: "Voltar".</summary>
+    [Parameter] public string Label { get; set; } = "Voltar";
+
+    /// <summary>Destino. Sem ele, o botao avisa por <see cref="OnClick"/>.</summary>
+    [Parameter] public string? Href { get; set; }
+
+    /// <summary>Canto: o do kit ou redondo.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Rounded;
+
+    /// <summary>Indisponivel.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Clique, quando nao ha <see cref="Href"/>.</summary>
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar("rvm-voltar" + (Shape == RvmFieldShape.Pill ? " rvm-pilula" : "") + (Disabled ? " rvm-desabilitado" : ""), Class, AdditionalAttributes);
+}

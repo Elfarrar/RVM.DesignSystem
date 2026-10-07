@@ -1,0 +1,33 @@
+@page "/componentes/step-indicator"
+
+<PageTitle>RvmStepIndicator — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmStepIndicator</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O numero do passo num circulo, dentro de um formulario longo. Nao e botao: o numero nao leva a lugar nenhum. O atual sai cheio e com aria-current="step".
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Passos"
+              Descricao="Text troca o numero (as reticencias)."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmStepIndicator Number="1" />
+        <RvmStepIndicator Number="2" Active="true" />
+        <RvmStepIndicator Number="3" />
+        <RvmStepIndicator Text="..." />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmStepIndicator" />
+
+@code {
+
+    private const string Codigo = """
+        <RvmStepIndicator Number="2" Active="true" />
+        """;
+}

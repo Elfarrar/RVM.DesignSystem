@@ -1,0 +1,35 @@
+@page "/componentes/icon-button"
+
+<PageTitle>RvmIconButton — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmIconButton</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Botao so de icone. O Label e obrigatorio: sem texto visivel, e o unico nome acessivel do botao — e vai tambem na dica.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Pesos e tamanhos"
+              Descricao="Texto (o padrao), contorno, suave e preenchido; 30, 38 e 42 px."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmIconButton Icon="RvmIconName.Pencil" Label="Editar" />
+        <RvmIconButton Icon="RvmIconName.Copy" Label="Copiar" Variant="RvmButtonVariant.Outlined" Color="RvmColor.Primary" />
+        <RvmIconButton Icon="RvmIconName.Heart" Label="Favoritar" Variant="RvmButtonVariant.Soft" Color="RvmColor.Error" />
+        <RvmIconButton Icon="RvmIconName.Plus" Label="Adicionar" Variant="RvmButtonVariant.Contained" Color="RvmColor.Primary" Size="RvmSize.Large" />
+        <RvmIconButton Icon="RvmIconName.Trash" Label="Excluir" Size="RvmSize.Small" Disabled="true" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmIconButton" />
+
+@code {
+
+    private const string Codigo = """
+        <RvmIconButton Icon="RvmIconName.Pencil" Label="Editar" />
+        <RvmIconButton Icon="RvmIconName.Plus" Label="Adicionar" Variant="RvmButtonVariant.Contained" Color="RvmColor.Primary" />
+        """;
+}

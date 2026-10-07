@@ -1,4 +1,5 @@
 @namespace RVM.DesignSystem.Components.AppShell
+@using RVM.DesignSystem.Components.Sidebar
 @using RVM.DesignSystem.Components.Icon
 @using RVM.DesignSystem.Icons
 
@@ -19,15 +20,11 @@
             }
             else
             {
-                @if (Brand is not null)
-                {
-                    <div class="rvm-area-marca">@Brand</div>
-                }
-                <nav @ref="_navegacao" class="rvm-navegacao" aria-label="@NavigationLabel">
-                    <ul class="rvm-nav-lista">
-                        @Navigation
-                    </ul>
-                </nav>
+                @* O conteudo do menu e um RvmSidebar (DSGN-017); a casca so cuida da coluna e da gaveta. *@
+                <RvmSidebar Logo="Brand" Label="@NavigationLabel" Collapsed="Collapsed"
+                            CollapsedChanged="@(EventCallback.Factory.Create<bool>(this, DefinirRecolhidoAsync))">
+                    @Navigation
+                </RvmSidebar>
             }
         </aside>
     </CascadingValue>

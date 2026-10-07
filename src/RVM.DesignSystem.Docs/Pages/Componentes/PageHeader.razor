@@ -1,0 +1,39 @@
+@page "/componentes/page-header"
+
+<PageTitle>RvmPageHeader — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmPageHeader</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O cabecalho da pagina: voltar, foto, trilha, titulo (h1 por padrao — e o titulo da pagina), apoio e as acoes da direita.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Com voltar, trilha e acoes"
+              Descricao="Element troca o nivel do titulo; aqui e h2, porque a pagina do site ja tem o h1."
+              Codigo="@Codigo">
+    <RvmPageHeader Title="Talhao 12" Description="Soja, 48 ha, plantado em 02/10" Element="RvmTextElement.H2"
+                   ShowBack="true" BackHref="componentes/page-header">
+        <Breadcrumbs><RvmBreadcrumbs Items="@Trilha" /></Breadcrumbs>
+        <Actions>
+            <RvmButton Variant="RvmButtonVariant.Outlined">Editar</RvmButton>
+            <RvmButton>Nova aplicacao</RvmButton>
+        </Actions>
+    </RvmPageHeader>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmPageHeader" />
+
+@code {
+    private static readonly RvmBreadcrumbItem[] Trilha = [new("Talhoes", "componentes/page-header"), new("Talhao 12")];
+
+    private const string Codigo = """
+        <RvmPageHeader Title="Talhao 12" Description="Soja, 48 ha" ShowBack="true" BackHref="talhoes">
+            <Breadcrumbs><RvmBreadcrumbs Items="@trilha" /></Breadcrumbs>
+            <Actions><RvmButton>Nova aplicacao</RvmButton></Actions>
+        </RvmPageHeader>
+        """;
+}

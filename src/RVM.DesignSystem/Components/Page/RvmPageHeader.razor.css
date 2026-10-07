@@ -1,0 +1,40 @@
+/* CSS isolado do RvmPageHeader. So custom properties — hex literal aqui quebra o tema escuro. */
+
+.rvm-cabecalho-pagina {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-3) var(--rvm-space-4);
+    padding-block: var(--rvm-space-4);
+    border-bottom: 1px solid var(--rvm-color-divider);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-foto {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--rvm-radius-circle);
+    object-fit: cover;
+}
+
+.rvm-textos {
+    display: flex;
+    flex: 1 1 16rem;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+/* O RvmTypography poe a margem do navegador no h1 e no p; aqui o cabecalho controla o espaco. */
+.rvm-textos ::deep .rvm-titulo,
+.rvm-textos ::deep .rvm-descricao {
+    margin: 0;
+}
+
+.rvm-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}

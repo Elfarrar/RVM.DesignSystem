@@ -1,0 +1,35 @@
+@namespace RVM.DesignSystem.Components.Page
+
+@* A barra do topo: a esquerda o que o app quiser (titulo, busca); a direita os widgets e o perfil. E um
+   <div>, e nao <header>: dentro do RvmAppShell o topo ja e o banner, e dois banners confundem o leitor de tela. *@
+<div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-barra-topo", Class, AdditionalAttributes)">
+    <div class="rvm-inicio">@Start</div>
+    @if (Actions is not null || Profile is not null)
+    {
+        <div class="rvm-fim">
+            @Actions
+            @if (Profile is not null)
+            {
+                <div class="rvm-perfil">@Profile</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>Lado esquerdo: titulo da pagina, busca.</summary>
+    [Parameter] public RenderFragment? Start { get; set; }
+
+    /// <summary>Widgets e botoes da direita (<c>RvmIconButton</c>, avisos).</summary>
+    [Parameter] public RenderFragment? Actions { get; set; }
+
+    /// <summary>O perfil, depois dos widgets.</summary>
+    [Parameter] public RenderFragment? Profile { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

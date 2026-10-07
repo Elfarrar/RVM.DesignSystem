@@ -1,0 +1,37 @@
+@page "/componentes/button-group"
+
+<PageTitle>RvmButtonGroup — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmButtonGroup</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Grupo de botoes de escolha unica: o escolhido sai preenchido e os outros em contorno. Cada botao anuncia aria-pressed e o grupo tem nome.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Nivel de permissao"
+              Descricao="SelectedColor da a cor do escolhido por opcao."
+              Codigo="@Codigo">
+    <div class="pilha-exemplos">
+        <RvmButtonGroup TValue="string" Label="Permissao no financeiro" Items="@Niveis" @bind-Value="_nivel"
+                        SelectedColor="@(n => n == "Editar" ? RvmColor.Success : RvmColor.Primary)" />
+        <RvmButtonGroup TValue="string" Label="Tamanho da fonte" Items="@Tamanhos" @bind-Value="_tamanho" Size="RvmSize.Small" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmButtonGroup" />
+
+@code {
+    private static readonly string[] Niveis = ["Nenhum", "Ler", "Editar"];
+    private static readonly string[] Tamanhos = ["P", "M", "G"];
+    private string? _nivel = "Ler";
+    private string? _tamanho = "M";
+
+    private const string Codigo = """
+        <RvmButtonGroup TValue="string" Label="Permissao no financeiro" Items="@niveis" @bind-Value="nivel"
+                        SelectedColor="@(n => n == "Editar" ? RvmColor.Success : RvmColor.Primary)" />
+        """;
+}

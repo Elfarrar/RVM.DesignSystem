@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using RVM.DesignSystem.Components.Sidebar;
 using Microsoft.AspNetCore.Components.Routing;
 using RVM.DesignSystem.Icons;
 
@@ -11,7 +12,7 @@ public partial class RvmNavItem : ComponentBase, IDisposable
 {
     [Inject] private NavigationManager Navegacao { get; set; } = default!;
 
-    [CascadingParameter] private RvmAppShell? Casca { get; set; }
+    [CascadingParameter] private RvmSidebar? Casca { get; set; }
 
     [CascadingParameter(Name = RvmNavGroup.NomeDaCascata)] private RvmNavGroup? Grupo { get; set; }
 
@@ -46,7 +47,7 @@ public partial class RvmNavItem : ComponentBase, IDisposable
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    internal bool Recolhido => Casca?.Collapsed == true && Grupo is null;
+    internal bool Recolhido => Casca?.Recolhido == true && Grupo is null;
 
     internal bool Ativo
     {
