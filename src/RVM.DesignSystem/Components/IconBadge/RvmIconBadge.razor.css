@@ -1,0 +1,46 @@
+/* CSS isolado do RvmIconBadge. So custom properties — hex literal aqui quebra o tema escuro.
+   O kit (Statistics Card.png, linha "Transactions") desenha um quadrado de 40 px com cantos de ~6 px e o icone de
+   20 px no meio. Os outros tamanhos seguem a grade de 8 px. */
+
+.rvm-icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.rvm-pequeno { width: 32px; height: 32px; border-radius: var(--rvm-radius-sm); }
+.rvm-medio { width: 40px; height: 40px; border-radius: var(--rvm-radius-sm); }
+.rvm-grande { width: 48px; height: 48px; border-radius: var(--rvm-radius-md); }
+.rvm-extra { width: 56px; height: 56px; border-radius: var(--rvm-radius-lg); }
+
+/* --- Cheio: fundo -main, icone no -contrast (pior caso: secondary, 4.8:1 — o icone pede 3:1) --- */
+.rvm-cheio.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-cheio.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-cheio.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
+.rvm-cheio.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-cheio.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-cheio.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-cheio.rvm-error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+
+/* --- Suave: fundo -soft, icone -text. Os mesmos pares do avatar suave, medidos na DSGN-003 (pior: 4.71:1) --- */
+.rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-suave.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
+.rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-suave.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+/* --- Neutro: o mesmo cinza (secondary-soft) para todos, icone -text do papel. O inverse e branco: sobre cinza
+       claro sumiria, entao fica no fundo translucido dele, como no suave (inverse e para fundo colorido). --- */
+.rvm-neutro { background-color: var(--rvm-color-secondary-soft); }
+.rvm-neutro.rvm-primary { color: var(--rvm-color-primary-text); }
+.rvm-neutro.rvm-secondary { color: var(--rvm-color-secondary-text); }
+.rvm-neutro.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
+.rvm-neutro.rvm-info { color: var(--rvm-color-info-text); }
+.rvm-neutro.rvm-success { color: var(--rvm-color-success-text); }
+.rvm-neutro.rvm-warning { color: var(--rvm-color-warning-text); }
+.rvm-neutro.rvm-error { color: var(--rvm-color-error-text); }

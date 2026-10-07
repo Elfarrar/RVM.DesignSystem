@@ -1,0 +1,131 @@
+@page "/componentes/icon-badge"
+@using RVM.DesignSystem.Components.IconBadge
+
+<PageTitle>RvmIconBadge e RvmArtisticIconBadge — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmIconBadge e RvmArtisticIconBadge</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Um icone sobre um fundo do papel de cor, para abrir um card de estatistica ou marcar um item de lista.
+    O RvmIconBadge e o quadrado dos cards do kit, em fundo suave, cheio ou cinza; o RvmArtisticIconBadge e a versao
+    de destaque, um circulo maior com degrade do papel ou brilho na cor dele.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Sem Label os dois sao decorativos e ficam escondidos do leitor de tela — o texto ao lado ja diz o que e. Com Label,
+    viram imagem com aquele nome. Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Num card de estatistica"
+              Descricao="O badge e enfeite: o titulo do card ja diz o que o numero e."
+              Codigo="@CodigoCard">
+    <div class="linha-exemplos">
+        <RvmIconBadge Icon="RvmIconName.Wallet" Size="RvmIconBadgeSize.Medium" Variant="RvmIconBadgeVariant.Solid" />
+        <div>
+            <RvmTypography Variant="RvmTypographyVariant.Caption" As="RvmTextElement.Div" Color="RvmTextColor.Secondary">Receita da safra</RvmTypography>
+            <RvmTypography Variant="RvmTypographyVariant.H6" As="RvmTextElement.Div">R$ 1,24 mi</RvmTypography>
+        </div>
+        <RvmIconBadge Icon="RvmIconName.Leaf" Size="RvmIconBadgeSize.Medium" Variant="RvmIconBadgeVariant.Solid" Color="RvmColor.Success" />
+        <div>
+            <RvmTypography Variant="RvmTypographyVariant.Caption" As="RvmTextElement.Div" Color="RvmTextColor.Secondary">Area plantada</RvmTypography>
+            <RvmTypography Variant="RvmTypographyVariant.H6" As="RvmTextElement.Div">842 ha</RvmTypography>
+        </div>
+        <RvmArtisticIconBadge Icon="RvmIconName.Snowflake" Color="RvmColor.Info" Label="Alerta de geada" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Papeis e variantes"
+              Descricao="Tres fundos do RvmIconBadge e os dois acabamentos do RvmArtisticIconBadge, em cada papel. O Inverse e para fundo colorido."
+              Codigo="@CodigoGrade">
+    <table class="tabela">
+        <caption class="rvm-text-caption site-apoio">Cada linha e um papel de cor; cada coluna, uma variante.</caption>
+        <thead>
+            <tr>
+                <th scope="col">Papel</th>
+                <th scope="col">Solid</th>
+                <th scope="col">Soft</th>
+                <th scope="col">Neutral</th>
+                <th scope="col">Gradient</th>
+                <th scope="col">Glow</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (papel, cor, icone) in Papeis)
+            {
+                <tr>
+                    <th scope="row">@papel</th>
+                    @foreach (var variante in Variantes)
+                    {
+                        <td>
+                            <span class="@(cor == RvmColor.Inverse ? "linha-exemplos faixa-colorida" : "linha-exemplos")">
+                                <RvmIconBadge Icon="icone" Color="cor" Variant="variante" />
+                            </span>
+                        </td>
+                    }
+                    @foreach (var acabamento in Acabamentos)
+                    {
+                        <td>
+                            <span class="@(cor == RvmColor.Inverse ? "linha-exemplos faixa-colorida" : "linha-exemplos")">
+                                <RvmArtisticIconBadge Icon="icone" Color="cor" Variant="acabamento" />
+                            </span>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos"
+              Descricao="32, 40, 48 (padrao) e 56 px, com o icone de 16, 20, 24 e 28 px. O kit usa o de 40 nos cards."
+              Codigo="@CodigoTamanhos">
+    @foreach (var variante in Variantes)
+    {
+        <div class="linha-exemplos">
+            @foreach (var tamanho in Enum.GetValues<RvmIconBadgeSize>())
+            {
+                <RvmIconBadge Icon="RvmIconName.Graph" Variant="variante" Size="tamanho" />
+            }
+        </div>
+    }
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmIconBadge" />
+
+<TabelaParametros Componente="RvmArtisticIconBadge" />
+
+@code {
+    private static readonly (string Papel, RvmColor Cor, RvmIconName Icone)[] Papeis =
+    [
+        ("Primary", RvmColor.Primary, RvmIconName.Wallet),
+        ("Secondary", RvmColor.Secondary, RvmIconName.Box),
+        ("Info", RvmColor.Info, RvmIconName.CloudRain),
+        ("Success", RvmColor.Success, RvmIconName.Leaf),
+        ("Warning", RvmColor.Warning, RvmIconName.Sun),
+        ("Error", RvmColor.Error, RvmIconName.GraphDown),
+        ("Inverse", RvmColor.Inverse, RvmIconName.Star)
+    ];
+
+    private static readonly RvmIconBadgeVariant[] Variantes =
+        [RvmIconBadgeVariant.Solid, RvmIconBadgeVariant.Soft, RvmIconBadgeVariant.Neutral];
+
+    private static readonly RvmArtisticVariant[] Acabamentos = [RvmArtisticVariant.Gradient, RvmArtisticVariant.Glow];
+
+    private const string CodigoCard = """
+        <RvmIconBadge Icon="RvmIconName.Wallet" Size="RvmIconBadgeSize.Medium" Variant="RvmIconBadgeVariant.Solid" />
+        <RvmIconBadge Icon="RvmIconName.Leaf" Size="RvmIconBadgeSize.Medium" Variant="RvmIconBadgeVariant.Solid"
+                      Color="RvmColor.Success" />
+        <RvmArtisticIconBadge Icon="RvmIconName.Snowflake" Color="RvmColor.Info" Label="Alerta de geada" />
+        """;
+
+    private const string CodigoGrade = """
+        <RvmIconBadge Icon="RvmIconName.Leaf" Color="RvmColor.Success" Variant="RvmIconBadgeVariant.Soft" />
+        <RvmIconBadge Icon="RvmIconName.Sun" Color="RvmColor.Warning" Variant="RvmIconBadgeVariant.Neutral" />
+        <RvmArtisticIconBadge Icon="RvmIconName.GraphDown" Color="RvmColor.Danger" Variant="RvmArtisticVariant.Glow" />
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmIconBadge Icon="RvmIconName.Graph" Size="RvmIconBadgeSize.Small" />
+        <RvmIconBadge Icon="RvmIconName.Graph" Size="RvmIconBadgeSize.XLarge" Variant="RvmIconBadgeVariant.Solid" />
+        """;
+}
