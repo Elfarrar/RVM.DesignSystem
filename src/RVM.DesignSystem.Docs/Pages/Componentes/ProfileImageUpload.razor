@@ -1,0 +1,65 @@
+@page "/componentes/profile-image-upload"
+@using RVM.DesignSystem.Components.Upload
+
+<PageTitle>RvmProfileImageUpload — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmProfileImageUpload</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A foto de perfil: avatar de 64 px e, ao lado, "Enviar foto" com o input de arquivo transparente por cima. Sem foto,
+    o avatar mostra as iniciais do AvatarName; sem nome, a silhueta.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Uma foto por vez: OnFileSelected entrega o arquivo, e o app envia e devolve o Src novo. Do contrato de API com o
+    RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Trocar a foto"
+              Descricao="Escolha uma imagem: o exemplo a reduz com RequestImageFileAsync e a usa como Src."
+              Codigo="@Codigo">
+    <div class="linha-exemplos alinhado-topo">
+        <RvmProfileImageUpload Label="Foto de perfil" AvatarName="Rafael Veneroso" Src="@_foto" OnFileSelected="Escolheu"
+                               ErrorText="@_erro" />
+        <RvmProfileImageUpload Label="Sem nome" />
+        <RvmProfileImageUpload Label="Desabilitado" AvatarName="Ana Souza" Disabled="true" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmProfileImageUpload" />
+
+@code {
+    private string? _foto;
+    private string? _erro;
+
+    private async Task Escolheu(IBrowserFile arquivo)
+    {
+        try
+        {
+            var pequena = await arquivo.RequestImageFileAsync("image/png", 128, 128);
+            using var leitura = pequena.OpenReadStream(5 * 1024 * 1024);
+            using var memoria = new MemoryStream();
+            await leitura.CopyToAsync(memoria);
+            _foto = $"data:image/png;base64,{Convert.ToBase64String(memoria.ToArray())}";
+            _erro = null;
+        }
+        catch (Exception)
+        {
+            _erro = "Nao conseguimos ler essa imagem. Escolha um arquivo PNG ou JPG e tente de novo.";
+        }
+    }
+
+    private const string Codigo = """
+        <RvmProfileImageUpload Label="Foto de perfil" AvatarName="Rafael Veneroso" Src="@_foto" OnFileSelected="Enviar" />
+
+        @code {
+            private string? _foto;
+
+            private async Task Enviar(IBrowserFile arquivo)
+            {
+                // envie arquivo.OpenReadStream(...) e guarde a URL devolvida
+                _foto = await _fotos.EnviarAsync(arquivo);
+            }
+        }
+        """;
+}

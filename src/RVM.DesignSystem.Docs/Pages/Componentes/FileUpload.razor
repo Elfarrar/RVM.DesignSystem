@@ -1,0 +1,132 @@
+@page "/componentes/file-upload"
+@using RVM.DesignSystem.Components.Upload
+@implements IDisposable
+
+<PageTitle>RvmFileUpload — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmFileUpload</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Escolher arquivos por um botao ou por uma caixa de arrastar e soltar, e acompanhar cada um num cartao: icone do tipo,
+    nome, tamanho e o estado do envio. Sem JavaScript proprio: o input de arquivo do navegador fica transparente por cima
+    do botao, entao clique, teclado (Enter ou Espaco) e soltar arquivo funcionam como em qualquer pagina.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    A biblioteca nao envia nada. O app recebe os arquivos por OnFilesSelected, envia e atualiza Status e Progress de cada
+    RvmUploadItem. Acima de MaxFiles por escolha, o componente mostra o erro em vez de avisar. Do contrato de API com o
+    RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Botao e lista de arquivos"
+              Descricao="Os quatro estados do RvmUploadStatus. Os arquivos escolhidos aqui simulam o envio, com progresso e uma falha a cada tres."
+              Codigo="@CodigoBotao">
+    <div class="pilha-exemplos" style="max-width: 32rem; width: 100%">
+        <RvmFileUpload Label="Anexos do contrato" LinkText="Ver modelo" LinkHref="componentes/file-upload"
+                       Hint="PDF, Word ou planilha, ate 10 arquivos por vez." Multiple="true"
+                       Items="_arquivos" OnFilesSelected="Escolheu" OnRemove="Remover" Style="width: 100%" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Caixa de arrastar e soltar"
+              Descricao="Com Container, a caixa inteira recebe o clique e o arquivo solto. MaxFiles=2: escolha tres para ver o erro."
+              Codigo="@CodigoCaixa">
+    <div class="pilha-exemplos" style="max-width: 32rem; width: 100%">
+        <RvmFileUpload Container="true" Label="Notas fiscais" Accept=".pdf,.xml" Multiple="true" MaxFiles="2"
+                       Items="_notas" OnFilesSelected="EscolheuNotas" OnRemove="RemoverNota" Style="width: 100%" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Erro e desabilitado"
+              Descricao="ErrorText fica em vermelho e ligado ao input por aria-describedby. Disabled desliga o input e esmaece."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos alinhado-topo">
+        <RvmFileUpload Label="Contrato assinado" ErrorText="Envie o contrato assinado para continuar." />
+        <RvmFileUpload Label="Laudo" Disabled="true" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmFileUpload" />
+
+@code {
+    private readonly CancellationTokenSource _parar = new();
+    private int _escolhidos;
+
+    private readonly List<RvmUploadItem> _arquivos =
+    [
+        new() { Name = "contrato-safra-2026.pdf", Size = 1_258_291, Status = RvmUploadStatus.Uploaded },
+        new() { Name = "talhoes.xlsx", Size = 48_640, Status = RvmUploadStatus.Uploading, Progress = 62 },
+        new() { Name = "fotos-da-colheita.zip", Size = 24_117_248, Status = RvmUploadStatus.Failed },
+        new() { Name = "observacoes.txt", Size = 812 }
+    ];
+
+    private readonly List<RvmUploadItem> _notas = [];
+
+    private Task Escolheu(IReadOnlyList<IBrowserFile> arquivos) => Simular(_arquivos, arquivos);
+
+    private Task EscolheuNotas(IReadOnlyList<IBrowserFile> arquivos) => Simular(_notas, arquivos);
+
+    private void Remover(RvmUploadItem item) => _arquivos.Remove(item);
+
+    private void RemoverNota(RvmUploadItem item) => _notas.Remove(item);
+
+    // So o exemplo finge o envio: o componente nunca espera nem envia nada.
+    private async Task Simular(List<RvmUploadItem> lista, IReadOnlyList<IBrowserFile> arquivos)
+    {
+        var novos = arquivos.Select(a => new RvmUploadItem { Name = a.Name, Size = a.Size, Status = RvmUploadStatus.Uploading }).ToList();
+        lista.AddRange(novos);
+        try
+        {
+            for (var passo = 1; passo <= 10; passo++)
+            {
+                await Task.Delay(250, _parar.Token);
+                foreach (var item in novos) item.Progress = passo * 10;
+                StateHasChanged();
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+        foreach (var item in novos)
+            item.Status = ++_escolhidos % 3 == 0 ? RvmUploadStatus.Failed : RvmUploadStatus.Uploaded;
+    }
+
+    public void Dispose()
+    {
+        _parar.Cancel();
+        _parar.Dispose();
+    }
+
+    private const string CodigoBotao = """
+        <RvmFileUpload Label="Anexos do contrato" LinkText="Ver modelo" LinkHref="modelos/contrato"
+                       Hint="PDF, Word ou planilha, ate 10 arquivos por vez." Multiple="true"
+                       Items="_arquivos" OnFilesSelected="Enviar" OnRemove="Remover" />
+
+        @code {
+            private readonly List<RvmUploadItem> _arquivos = [];
+
+            private async Task Enviar(IReadOnlyList<IBrowserFile> arquivos)
+            {
+                foreach (var arquivo in arquivos)
+                {
+                    var item = new RvmUploadItem { Name = arquivo.Name, Size = arquivo.Size, Status = RvmUploadStatus.Uploading };
+                    _arquivos.Add(item);
+                    // envie arquivo.OpenReadStream(...) e atualize item.Progress; no fim, Uploaded ou Failed
+                }
+            }
+
+            private void Remover(RvmUploadItem item) => _arquivos.Remove(item);
+        }
+        """;
+
+    private const string CodigoCaixa = """
+        <RvmFileUpload Container="true" Label="Notas fiscais" Accept=".pdf,.xml" Multiple="true" MaxFiles="2"
+                       Items="_notas" OnFilesSelected="Enviar" OnRemove="Remover" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmFileUpload Label="Contrato assinado" ErrorText="Envie o contrato assinado para continuar." />
+        <RvmFileUpload Label="Laudo" Disabled="true" />
+        """;
+}
