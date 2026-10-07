@@ -39,6 +39,11 @@ window.rvmTheme = {
         document.cookie = `${chave}=${encodeURIComponent(valor)};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax${seguro}`;
     },
 
+    // Para o "alternar" sair do tema que esta na tela quando a aparencia e automatica.
+    prefersDark() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    },
+
     load(chave) {
         try {
             return localStorage.getItem(chave);

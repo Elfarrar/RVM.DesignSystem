@@ -28,12 +28,25 @@ public sealed class RvmThemeState(IRvmThemeStore store, IJSRuntime js)
     public Task EnsureLoadedAsync(CancellationToken cancellationToken = default) =>
         IsLoaded ? Task.CompletedTask : (_carga ??= CarregarAsync(cancellationToken));
 
+    /// <summary>
+    /// A escolha em vigor veio de algum lugar (store, pre-renderizacao, navegador ou troca do usuario), e nao e so
+    /// o padrao por falta de informacao. So um valor conhecido pode ser passado da pre-renderizacao ao cliente:
+    /// passar o padrao "por falta" apagaria a escolha que o cliente ainda ia ler do localStorage.
+    /// </summary>
+    internal bool IsKnown { get; private set; }
+
+    /// <summary>Um provider ja registrou a passagem do valor da pre-renderizacao ao interativo (so pode um).</summary>
+    internal bool PersistenceRegistered { get; set; }
+
+    private bool _navegadorConsultado;
+
     private async Task CarregarAsync(CancellationToken cancellationToken)
     {
         var salvo = await store.LoadAsync(cancellationToken);
         if (!IsLoaded)
         {
             Current = salvo ?? RvmThemeSettings.Default;
+            IsKnown = salvo is not null;
             IsLoaded = true;
         }
     }
@@ -44,6 +57,37 @@ public sealed class RvmThemeState(IRvmThemeStore store, IJSRuntime js)
         ArgumentNullException.ThrowIfNull(settings);
         Current = settings;
         IsLoaded = true;
+        IsKnown = true;
+    }
+
+    /// <summary>
+    /// Ultimo recurso para app com servidor sem store que leia o cookie: depois do primeiro render, le o
+    /// localStorage pelo JS e aplica (avisando quem desenha). Pisca uma vez no padrao, mas a escolha volta. Uma
+    /// consulta por sessao; nao faz nada quando o valor ja e conhecido.
+    /// </summary>
+    internal async Task LoadFromBrowserAsync()
+    {
+        if (IsKnown || _navegadorConsultado)
+        {
+            return;
+        }
+
+        _navegadorConsultado = true;
+        string? texto;
+        try
+        {
+            texto = await js.InvokeAsync<string?>("rvmTheme.load", CookieName);
+        }
+        catch (Exception e) when (e is JSException or InvalidOperationException or JSDisconnectedException or TaskCanceledException)
+        {
+            return; // sem JS (pre-renderizacao, rvm-theme.js ausente): fica no padrao
+        }
+
+        if (texto is not null && !IsKnown)
+        {
+            Restore(RvmThemeSettings.Parse(texto));
+            Changed?.Invoke();
+        }
     }
 
     /// <summary>
@@ -55,6 +99,7 @@ public sealed class RvmThemeState(IRvmThemeStore store, IJSRuntime js)
         ArgumentNullException.ThrowIfNull(settings);
         Current = settings;
         IsLoaded = true;
+        IsKnown = true;
         Changed?.Invoke();
 
         try

@@ -8,7 +8,7 @@
 <div @attributes="AdditionalAttributes" class="@CssClass" data-theme="@ThemeAttribute"
      data-rvm-accent="@AccentAttribute"
      data-rvm-contrast="@(ColorScheme == RvmColorScheme.Original ? "original" : "accessible")"
-     data-rvm-font-scale="@(_tema?.FontScaleAttribute)"
+     data-rvm-font-scale="@FontScaleAttribute"
      data-rvm-high-contrast="@(_tema?.HighContrast == true ? "true" : null)"
      data-rvm-motion="@(_tema?.ReducedMotion == true ? "reduce" : null)">
     <CascadingValue TValue="RvmThemeProvider" Value="this" IsFixed="true">
