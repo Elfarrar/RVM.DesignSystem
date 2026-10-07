@@ -69,6 +69,8 @@ public sealed class RvmToastService : IRvmToast, IDisposable
         return Adicionar(text, severity, title, duration ?? ActionDuration, action);
     }
 
+    private static readonly TimeSpan DuracaoMaxima = TimeSpan.FromMilliseconds(uint.MaxValue - 1);
+
     private Guid Adicionar(string text, RvmToastSeverity severity, string? title, TimeSpan tempo, RvmToastAction? action)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -79,6 +81,12 @@ public sealed class RvmToastService : IRvmToast, IDisposable
         if (tempo < TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException("duration", tempo, "A duracao nao pode ser negativa.");
+        }
+
+        // O relogio aceita ate ~49 dias; acima, o aviso entraria na fila e o timer lancaria depois, deixando-o preso.
+        if (tempo > DuracaoMaxima)
+        {
+            throw new ArgumentOutOfRangeException("duration", tempo, "A duracao passa do maximo do relogio (49 dias). Use zero para o aviso ficar ate ser fechado.");
         }
 
         var aviso = new RvmToastMessage(Guid.NewGuid(), text, severity, title, tempo) { Action = action };

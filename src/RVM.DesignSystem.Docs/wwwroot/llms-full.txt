@@ -2358,6 +2358,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Standard`, `Filled`
 - `RvmAlertVariant` (`RVM.DesignSystem.Components.Alert`): Os tres estilos da pagina Alert do kit.
   Valores: `Standard`, `Filled`, `Outlined`
+- `RvmAlign` (`RVM.DesignSystem.Components.Table`): Alinhamento do conteudo de uma celula ou coluna da tabela de dados (contrato com o RVM.UI, DSGN-017). Os mesmos tres do `RvmTableAlign`, que a `RvmTable` usa.
+  Valores: `Start`, `Center`, `End`
 - `RvmArtisticVariant` (`RVM.DesignSystem.Components.IconBadge`): Acabamento do `RvmArtisticIconBadge`.
   Valores: `Gradient`, `Glow`
 - `RvmAvatarShape` (`RVM.DesignSystem.Components.Avatar`): Forma do avatar. As tres estao na pagina Avatar do kit.

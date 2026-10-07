@@ -71,6 +71,14 @@ public partial class RvmToastProvider : ComponentBase, IDisposable
 
     // Roda o callback do app e fecha o aviso mesmo se ele falhar: o erro sobe para o tratamento do app, mas o
     // botao nao fica na tela convidando a clicar de novo.
+    // O aviso some com o mouse e o foco em cima: o mouseleave e o focusout nunca chegam, entao limpa aqui.
+    private void Fechar(Guid id)
+    {
+        _comMouse.Remove(id);
+        _comFoco.Remove(id);
+        Toast.Dismiss(id);
+    }
+
     private async Task ExecutarAsync(Guid id, RvmToastAction acao)
     {
         try

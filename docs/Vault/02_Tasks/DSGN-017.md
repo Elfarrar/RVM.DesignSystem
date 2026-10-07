@@ -174,6 +174,11 @@ Pendentes do contrato: **201 → 158**. Grupo "Feedback e texto" no site: `RvmMo
   e abre com o foco no Cancelar (no RVM.UI, `dialog` com foco na caixa); aviso de atencao do toast e `role="alert"`
   (no RVM.UI, `status`). Reverter e uma linha cada, se o Rafael preferir o comportamento antigo.
 - `RvmText`: a Inter do pacote vai so ate 500 — SemiBold e Bold saem sintetizados pelo navegador.
+- Review: P2 do foco corrigido no `rvm-sobreposicao.js` (vale para o `RvmDialog` tambem): foco que cai no body volta
+  para a caixa de cima, e Tab fora dela e puxado de volta. P3 do toast corrigidos (regioes nao atomicas, duracao acima
+  de 49 dias recusada antes da fila, conjuntos de pausa limpos ao fechar).
+- ⏳ **Limitacao aceita:** toast com acao aberto sobre um modal fica fora do alcance do teclado (o foco esta preso no
+  modal). O toast fica acima de tudo de proposito.
 
 ## Etapa 3 — RVM.DesignSystem
 

@@ -373,4 +373,24 @@ public class RvmToastTests : BunitContext
 
         public void Resume(Guid id) { }
     }
+
+    [Fact]
+    public void Duracao_acima_do_relogio_e_recusada_antes_de_entrar_na_fila()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => _toast.Show("Safra fechada", duration: TimeSpan.FromDays(60)));
+
+        Assert.Empty(_toast.Messages);
+    }
+
+    [Fact]
+    public void Regioes_vivas_anunciam_so_o_aviso_que_entra()
+    {
+        var cortado = Render<RvmToastProvider>();
+
+        Assert.All(cortado.FindAll(".rvm-pilha"), pilha =>
+        {
+            Assert.Equal("false", pilha.GetAttribute("aria-atomic"));
+            Assert.Equal("additions", pilha.GetAttribute("aria-relevant"));
+        });
+    }
 }
