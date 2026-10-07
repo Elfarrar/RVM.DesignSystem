@@ -60,6 +60,7 @@ public static class Catalogo
             new("componentes/progress", "RvmProgress", "Barra e anel, determinado e indeterminado."),
             new("componentes/skeleton", "RvmSkeleton", "Texto, retangulo e circulo enquanto carrega."),
             new("componentes/empty-state", "RvmEmptyState", "O vazio que ensina o proximo passo."),
+            new("componentes/mascot", "RvmMascot", "O icone da funcao (erro, vazio, carregando) num circulo, no lugar de ilustracao."),
             new("componentes/list", "RvmList", "Simples, com icone, com acao e aninhada."),
             new("componentes/accordion", "RvmAccordion", "Simples, exclusivo e com icone."),
             new("componentes/dialog", "RvmDialog", "Simples, confirmacao, formulario e tela cheia."),

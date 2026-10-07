@@ -778,7 +778,7 @@ Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao n
 
 ### RvmMascot
 
-`@using RVM.DesignSystem.Components.Mascot`
+`@using RVM.DesignSystem.Components.Mascot` · exemplos: https://design.rvmit.com.br/componentes/mascot
 
 O mascote do contrato com o RVM.UI (DSGN-017): o icone da funcao (erro, carregando, vazio) num circulo de fundo suave. Usado sozinho ou pelos estados de `RvmEmptyState`, listas, tabelas e graficos.
 

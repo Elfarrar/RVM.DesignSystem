@@ -29,10 +29,14 @@
                 {
                     <RvmIcon Name="icone" />
                 }
-                <span>@aba.TituloEfetivo</span>
                 @if (aba.Count is { } contador)
                 {
-                    <span class="rvm-contador">@contador</span>
+                    @* Contador ao lado do texto, e nao embaixo: a aba empilha so icone e texto. *@
+                    <span class="rvm-texto-com-contador"><span>@aba.TituloEfetivo</span><span class="rvm-contador">@contador</span></span>
+                }
+                else
+                {
+                    <span>@aba.TituloEfetivo</span>
                 }
             </button>
         }

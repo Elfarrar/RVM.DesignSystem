@@ -31,7 +31,11 @@
     <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Ultima acao: @_ultima</RvmTypography>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmMenu" />
+
+<TabelaParametros Componente="RvmMenuItem" />
+
+<TabelaParametros Componente="RvmMenuDivider" />
 
 <RecorteDoKit Origem="kit/menu.png"
               Arquivo="referencia-neatlab/Menu.png (recorte)"
@@ -42,21 +46,6 @@
     private string _ultima = "nenhuma";
 
     private void Registrar(string acao) => _ultima = acao;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Label", "string", "—", "Texto do botao."),
-        new("Icon", "RvmIconName?", "—", "Icone antes do texto do botao."),
-        new("ButtonVariant", "RvmButtonVariant", "Outlined", "Estilo do botao."),
-        new("ButtonColor", "RvmColor", "Primary", "Cor do botao."),
-        new("Size", "RvmSize", "Medium", "Tamanho do botao."),
-        new("AlignEnd", "bool", "false", "Alinha o menu pela direita do botao."),
-        new("Disabled", "bool", "false", "Botao indisponivel."),
-        new("RvmMenuItem.OnClick", "EventCallback", "—", "A acao. Escolher fecha o menu."),
-        new("RvmMenuItem.Icon", "RvmIconName?", "—", "Icone antes do texto."),
-        new("RvmMenuItem.Disabled", "bool", "false", "Visivel, mas pulado pelo teclado."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no botao.")
-    ];
 
     private const string CodigoMenu = """
         <RvmMenu Label="Acoes do talhao" Icon="RvmIconName.DotsVertical">

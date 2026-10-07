@@ -38,7 +38,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmDivider" />
 
 <RecorteDoKit Origem="kit/divider.png"
               Arquivo="referencia-neatlab/Border.png (recorte)"
@@ -46,13 +46,6 @@
               Alt="Recorte do kit NEATLAB: dois blocos de saques lado a lado, separados por uma linha vertical" />
 
 @code {
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Orientation", "RvmOrientation", "Horizontal", "Deitado ou em pe. O rotulo so vale no deitado."),
-        new("ChildContent", "RenderFragment", "—", "Rotulo no meio da linha. Sem ele, sai um <hr> simples."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao elemento raiz.")
-    ];
-
     private const string CodigoHorizontal = """
         <RvmTypography>Bloco de cima</RvmTypography>
         <RvmDivider />

@@ -32,6 +32,20 @@
     </div>
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="Carregando, vazio, erro e valores"
+              Descricao="A lista decide o que mostrar: Error vence Loading, que vence IsEmpty. Sem Empty e ErrorContent, saem os padroes; Value, Trend e TrendLabel poem o valor e a variacao a direita."
+              Codigo="@CodigoEstados">
+    <div class="grade-cards">
+        <RvmList Loading="true" LoadingText="Buscando contas..." />
+        <RvmList IsEmpty="true" EmptyText="Nenhuma conta a receber." />
+        <RvmList Error="true" />
+        <RvmList AriaLabel="Contas da semana">
+            <RvmListItem Title="Cooperativa" SecondaryText="vence sexta" Value="R$ 12.400,00" Trend="RvmTrend.Up" TrendLabel="8%" />
+            <RvmListItem Title="Revenda" SecondaryText="vence segunda" Value="R$ 3.150,00" Trend="RvmTrend.Down" TrendLabel="3%" />
+        </RvmList>
+    </div>
+</BlocoExemplo>
+
 <BlocoExemplo Titulo="Navegacao, acao no fim e sublista"
               Descricao="Link com a pagina atual marcada, item que abre sublista (a variante Dropdown do kit) e botao de favoritar fora da area clicavel."
               Codigo="@CodigoNavegacao">
@@ -72,7 +86,9 @@
     <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Contato escolhido: @(_escolhido ?? "nenhum").</RvmTypography>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmList" />
+
+<TabelaParametros Componente="RvmListItem" />
 
 <RecorteDoKit Origem="kit/list.png"
               Arquivo="referencia-neatlab/List.png (recorte)"
@@ -80,6 +96,15 @@
               Alt="Recorte do kit NEATLAB mostrando itens de lista em varias variantes, tamanhos e estados" />
 
 @code {
+    private const string CodigoEstados = """
+        <RvmList Loading="@carregando" Error="@falhou" IsEmpty="@(contas.Count == 0)">
+            @foreach (var c in contas)
+            {
+                <RvmListItem Title="@c.Nome" Value="@c.Valor" Trend="RvmTrend.Up" TrendLabel="8%" />
+            }
+        </RvmList>
+        """;
+
     private static readonly (string Nome, string Fazenda, string Iniciais)[] Produtores =
     [
         ("Caroline Black", "Fazenda Santa Clara", "CB"),
@@ -103,24 +128,6 @@
 
     private bool _safrasAbertas;
     private string? _escolhido;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("RvmList.Dense", "bool", "false", "Itens de 40 px."),
-        new("RvmList.AriaLabel", "string?", "—", "Nome da lista, quando nao ha titulo visivel."),
-        new("ChildContent", "RenderFragment?", "—", "Texto principal do item."),
-        new("SecondaryText", "string?", "—", "Linha de baixo, no tom secundario."),
-        new("Icon", "RvmIconName?", "—", "Icone no inicio."),
-        new("StartContent", "RenderFragment?", "—", "Conteudo livre no inicio (avatar). Nada interativo aqui."),
-        new("EndContent", "RenderFragment?", "—", "Acao na direita, fora da area clicavel."),
-        new("Href", "string?", "—", "Faz do item um link."),
-        new("OnClick", "EventCallback", "—", "Faz do item um botao."),
-        new("Selected", "bool", "false", "aria-current no link, aria-pressed no botao."),
-        new("Disabled", "bool", "false", "Indisponivel."),
-        new("NestedContent", "RenderFragment?", "—", "Sublista que abre pelo item."),
-        new("Expanded", "bool", "false", "Sublista aberta. Aceita @bind-Expanded."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao li.")
-    ];
 
     private const string CodigoSecundario = """
         <RvmList AriaLabel="Produtores">

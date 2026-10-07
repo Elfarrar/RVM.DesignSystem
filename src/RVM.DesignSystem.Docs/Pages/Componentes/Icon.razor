@@ -75,21 +75,9 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmIcon" />
 
 @code {
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Name", "RvmIconName", "—", "Qual icone. Enum: nome errado nao compila."),
-        new("Size", "RvmSize", "Medium", "16, 20 ou 24 px de lado."),
-        new("SizePx", "int?", "—", "Lado em pixels fora dos tres tamanhos. Vence Size."),
-        new("Style", "RvmIconStyle", "Linear", "Traco (Linear, Broken) ou cheio (Bold, BoldDuotone), onde o Tabler tem o cheio."),
-        new("Class", "string?", "—", "Classe CSS extra no SVG."),
-        new("Color", "RvmColor?", "—", "Papel semantico. Sem valor, herda a cor do texto em volta."),
-        new("Title", "string?", "—", "O que o icone significa. So quando ele for a UNICA fonte da informacao."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao SVG.")
-    ];
-
     private string? _filtro;
 
     private IEnumerable<string> Filtrados => Enum.GetNames<RvmIconName>()

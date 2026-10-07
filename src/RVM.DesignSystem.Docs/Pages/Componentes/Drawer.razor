@@ -53,7 +53,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmDrawer" />
 
 <RecorteDoKit Origem="kit/drawer.png"
               Arquivo="referencia-neatlab/Drawer.png (recorte)"
@@ -79,17 +79,6 @@
         RvmDrawerAnchor.Bottom => "Da base",
         _ => "Da esquerda"
     };
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Open", "bool", "false", "Aberta (so na temporaria). Aceita @bind-Open."),
-        new("Anchor", "RvmDrawerAnchor", "Left", "Left, Right, Top ou Bottom."),
-        new("Variant", "RvmDrawerVariant", "Temporary", "Temporary (modal) ou Permanent (no fluxo)."),
-        new("Size", "string", "\"320px\"", "Largura (lados) ou altura (topo e base)."),
-        new("AriaLabel", "string", "—", "Nome da gaveta para o leitor de tela."),
-        new("ChildContent", "RenderFragment?", "—", "O conteudo."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Repassados a gaveta.")
-    ];
 
     private const string CodigoTemporaria = """
         <RvmButton OnClick="@(() => _aberta = true)">Abrir</RvmButton>

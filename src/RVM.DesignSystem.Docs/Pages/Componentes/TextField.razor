@@ -62,7 +62,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmTextField" />
 
 <RecorteDoKit Origem="kit/text-field.png"
               Arquivo="referencia-neatlab/Text Field.png (recorte)"
@@ -86,22 +86,6 @@
         [Required(ErrorMessage = "Informe o CPF para continuar.")]
         public string? Cpf { get; set; }
     }
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Value / @bind-Value", "string?", "—", "O valor. Herdado do InputBase."),
-        new("Label", "string?", "—", "Rotulo; flutua quando o campo tem valor ou foco."),
-        new("HelperText", "string?", "—", "Apoio abaixo do campo. Da lugar ao erro."),
-        new("ErrorText", "string?", "—", "Erro vindo de fora. Dentro de EditForm, a validacao ja aparece sozinha."),
-        new("Variant", "RvmTextFieldVariant", "Outlined", "Outlined, Filled ou Standard."),
-        new("Size", "RvmSize", "Medium", "56 px ou 40 px (Small). Large sai igual ao medio."),
-        new("Type", "RvmInputType", "Text", "Text, Email, Password, Number, Tel, Url ou Search."),
-        new("Prefix / Suffix", "string?", "—", "Texto antes ou depois do valor; entram no aria-describedby."),
-        new("Placeholder", "string?", "—", "Dica no campo vazio. Com ela, o rotulo fica sempre em cima."),
-        new("Required", "bool", "false", "aria-required e asterisco. Sem o required nativo: ele barraria o EditForm com a mensagem do navegador, em ingles."),
-        new("Disabled", "bool", "false", "Indisponivel."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "id vai para o input; class vai para a raiz.")
-    ];
 
     private const string CodigoEstilos = """
         <RvmTextField @bind-Value="_nome" Label="Nome" />

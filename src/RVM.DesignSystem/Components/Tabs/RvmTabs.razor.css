@@ -142,3 +142,9 @@
     line-height: 20px;
     text-align: center;
 }
+
+.rvm-texto-com-contador {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}

@@ -1,0 +1,67 @@
+@page "/componentes/mascot"
+
+<PageTitle>RvmMascot — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMascot</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O mascote do contrato com o RVM.UI: o nome diz a <strong>funcao</strong> na interface (erro, vazio,
+    carregando, sem conexao), nao o personagem. O Design System nao tem ilustracao — cada mascote e o icone
+    da funcao num circulo de fundo suave, na cor do papel. Quem troca o RVM.UI pelo Design System nao
+    reescreve nenhum <code>Mascot</code>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    ⚠️ Invencao declarada: o NEATLAB nao desenha mascote. O circulo e o do icone do <code>RvmEmptyState</code>.
+</p>
+
+<BlocoExemplo Titulo="Sozinho, com nome ou decorativo"
+              Descricao="Sem Decorative, e imagem com o texto alternativo padrao (troque com Alt quando a tela tiver um contexto melhor). Decorative some do leitor de tela — use ao lado de um texto que ja diz tudo."
+              Codigo="@CodigoSozinho">
+    <div class="linha-exemplos">
+        <RvmMascot Name="RvmMascotName.RobotError" />
+        <RvmMascot Name="RvmMascotName.DogEmptyState" Width="96" Alt="Nenhum pedido neste mes" />
+        <RvmMascot Name="RvmMascotName.TeamSecurity" Width="64" Decorative="true" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Nos estados de lista, tabela e grafico"
+              Descricao="LoadingMascot e ErrorMascot trocam o indicador e o icone padrao; o RvmEmptyState aceita Mascot."
+              Codigo="@CodigoEstados">
+    <RvmEmptyState Mascot="RvmMascotName.DogSearch" HeadingLevel="3"
+                   Title="Nada encontrado para essa busca"
+                   Description="Confira a grafia ou tire algum filtro para ver mais resultados." />
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Os 23 mascotes"
+              Descricao="O nome e a funcao; o icone e a cor saem dela."
+              Codigo="@CodigoTodos">
+    <div class="grade-icones">
+        @foreach (var nome in Enum.GetValues<RvmMascotName>())
+        {
+            <div class="item-icone">
+                <RvmMascot Name="nome" Width="56" Decorative="true" />
+                <span class="rvm-text-caption site-apoio">@nome</span>
+            </div>
+        }
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMascot" />
+
+@code {
+    private const string CodigoSozinho = """
+        <RvmMascot Name="RvmMascotName.RobotError" />
+        <RvmMascot Name="RvmMascotName.DogEmptyState" Width="96" Alt="Nenhum pedido neste mes" />
+        <RvmMascot Name="RvmMascotName.TeamSecurity" Width="64" Decorative="true" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmEmptyState Mascot="RvmMascotName.DogSearch" Title="Nada encontrado para essa busca" />
+        <RvmTable Items="@pedidos" Loading="@carregando" LoadingMascot="RvmMascotName.RobotLoading" ... />
+        """;
+
+    private const string CodigoTodos = """
+        <RvmMascot Name="RvmMascotName.RobotMaintenance" Width="56" Decorative="true" />
+        """;
+}

@@ -60,7 +60,7 @@
     </RvmDialog>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmDialog" />
 
 <RecorteDoKit Origem="kit/dialog.png"
               Arquivo="referencia-neatlab/Dailog.png (recorte)"
@@ -92,22 +92,6 @@
         _talhao = new Talhao();
         _formulario = false;
     }
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Open", "bool", "false", "Aberto. Aceita @bind-Open."),
-        new("Title", "string?", "—", "Titulo e nome acessivel."),
-        new("ChildContent", "RenderFragment?", "—", "O corpo. Rola sozinho se for longo."),
-        new("Actions", "RenderFragment?", "—", "Botoes do rodape."),
-        new("Size", "RvmSize", "Medium", "400, 600 ou 900 px de largura maxima."),
-        new("FullScreen", "bool", "false", "Ocupa a tela inteira."),
-        new("Alert", "bool", "false", "Confirmacao: alertdialog, e o fundo nao fecha."),
-        new("CloseOnBackdropClick", "bool", "true", "Clicar fora fecha."),
-        new("CloseOnEscape", "bool", "true", "Esc fecha."),
-        new("ShowCloseButton", "bool", "false", "Botao x no topo."),
-        new("CloseLabel", "string", "\"Fechar\"", "Nome acessivel do x."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Repassados a caixa do dialogo.")
-    ];
 
     private const string CodigoConfirmacao = """
         <RvmDialog @bind-Open="_confirmar" Title="Excluir o Talhao 12?" Alert="true" Size="RvmSize.Small">

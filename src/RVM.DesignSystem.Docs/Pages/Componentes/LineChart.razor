@@ -40,7 +40,7 @@
     </RvmLineChart>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmLineChart" />
 
 <RecorteDoKit Origem="kit/line-chart.png"
               Arquivo="referencia-neatlab/Chart Card.png (recorte)"
@@ -61,22 +61,6 @@
     [
         ("Jan", 128_000, 11.5), ("Fev", 164_000, 14.2), ("Mar", 142_000, 9.8),
         ("Abr", 186_000, 16.4), ("Mai", 172_000, 15.1), ("Jun", 204_000, 18.7)
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
-        new("Smooth", "bool?", "false", "Curva suave (monotona) em vez de segmentos retos."),
-        new("ShowPoints", "bool", "false", "Marca todos os pontos; sem isso, so os da categoria ativa."),
-        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
-        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
-        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Range: arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela. ZoomBox: arrastar desenha a area a aproximar, nos dois eixos de uma vez."),
-        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita (nao herda o ValueFormat, que descreve a unidade da esquerda)."),
-        new("Animated", "bool", "true", "Anima o desenho; silenciada sozinha em \"reduzir movimento\"."),
-        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF; PrintAsync() abre a caixa de impressao."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie."),
-        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida: o da esquerda ou o da direita, com escala propria.")
     ];
 
     private const string CodigoSuave = """
