@@ -1,0 +1,7 @@
+/* Cartoes de lista mais largos que a grade-cards do site: com abas e valor a direita, 17rem aperta. */
+.grade-grupos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+    gap: var(--rvm-space-4);
+    width: 100%;
+}

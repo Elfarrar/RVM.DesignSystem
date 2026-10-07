@@ -1,0 +1,75 @@
+/* CSS isolado do RvmFilterGroup. So custom properties — hex literal aqui quebra o tema escuro.
+   O cabecalho segue o do RvmAccordionPanel (botao de linha inteira, marca a direita), mais baixo para caber
+   no painel; os grupos se separam por divisor. */
+
+.rvm-grupo-filtro + .rvm-grupo-filtro {
+    border-top: 1px solid var(--rvm-color-divider);
+}
+
+.rvm-grupo-cabecalho {
+    margin: 0;
+    font: inherit;
+}
+
+.rvm-grupo-gatilho {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 var(--rvm-space-5);
+    border: none;
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-subtitle2-size);
+    line-height: var(--rvm-text-subtitle2-line);
+    font-weight: var(--rvm-text-subtitle2-weight);
+    text-align: start;
+    cursor: pointer;
+}
+
+.rvm-grupo-gatilho:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-grupo-gatilho:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
+
+.rvm-grupo-titulo {
+    flex: 1;
+}
+
+.rvm-grupo-marca {
+    display: inline-flex;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-aberto .rvm-grupo-marca {
+    color: var(--rvm-color-primary-text);
+}
+
+.rvm-grupo-filtro ::deep .rvm-grupo-corpo {
+    padding: 0 var(--rvm-space-5) var(--rvm-space-4);
+}
+
+/* Opcoes uma por linha, como no kit. So aberto: display no fechado venceria o [hidden]. */
+.rvm-grupo-filtro ::deep .rvm-grupo-corpo:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--rvm-space-1);
+}
+
+.rvm-grupo-filtro ::deep .rvm-rolagem {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.rvm-grupo-filtro ::deep .rvm-rolagem:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
