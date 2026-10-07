@@ -30,6 +30,9 @@ export function rolarAtualParaVer(caixa) {
         return;
     }
 
+    // Quem rola e a navegacao do RvmSidebar, dentro da coluna (DSGN-017).
+    caixa = atual.closest('.rvm-navegacao') ?? caixa;
+
     const item = atual.getBoundingClientRect();
     const area = caixa.getBoundingClientRect();
     if (item.top < area.top || item.bottom > area.bottom) {

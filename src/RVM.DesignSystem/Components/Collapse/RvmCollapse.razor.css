@@ -1,0 +1,18 @@
+/* CSS isolado do RvmCollapse. Fechado, o [hidden] do navegador ja tira o bloco da tela e do leitor de tela. */
+
+.rvm-recolhivel:not([hidden]) {
+    animation: rvm-recolhivel-entra 200ms ease-out;
+}
+
+@keyframes rvm-recolhivel-entra {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-recolhivel:not([hidden]) {
+        animation: none;
+    }
+}

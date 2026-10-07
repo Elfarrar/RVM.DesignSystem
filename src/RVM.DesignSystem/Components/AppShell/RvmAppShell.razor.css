@@ -56,165 +56,12 @@
     width: 68px;
 }
 
-.rvm-area-marca {
-    display: flex;
-    align-items: center;
-    flex: 0 0 64px;
-    padding-inline: 22px;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-/* So a lista rola: a marca fica no alto, como no kit. */
-.rvm-navegacao {
+/* O RvmSidebar ocupa a coluna inteira: a largura (e a transicao) e da coluna. */
+.rvm-lateral ::deep .rvm-barra-lateral,
+.rvm-lateral ::deep .rvm-barra-lateral.rvm-recolhida {
     flex: 1;
+    width: 100%;
     min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding-block: var(--rvm-space-1) var(--rvm-space-4);
-}
-
-.rvm-nav-lista,
-.rvm-navegacao ::deep .rvm-nav-lista {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-/* Item e grupo: a pilula do kit. */
-.rvm-navegacao ::deep .rvm-nav-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-sizing: border-box;
-    width: calc(100% - 18px);
-    height: 42px;
-    margin-block: 3px;
-    padding-inline: 20px 14px;
-    border: 0;
-    border-radius: 0 var(--rvm-radius-pill) var(--rvm-radius-pill) 0;
-    background: none;
-    color: var(--rvm-color-text-primary);
-    font: inherit;
-    font-size: var(--rvm-text-body1-size);
-    text-align: start;
-    text-decoration: none;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background-color var(--rvm-transition-fast);
-}
-
-.rvm-navegacao ::deep .rvm-nav-link:hover {
-    background-color: var(--rvm-color-action-hover);
-}
-
-.rvm-navegacao ::deep .rvm-nav-link:focus-visible {
-    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
-    outline-offset: calc(-1 * var(--rvm-focus-ring-width));
-}
-
-.rvm-navegacao ::deep .rvm-nav-link.rvm-ativo {
-    background: linear-gradient(90deg, var(--rvm-color-menu-active) 0%, var(--rvm-color-primary-main) 100%);
-    color: var(--rvm-color-primary-contrast);
-    box-shadow: var(--rvm-shadow-2);
-}
-
-.rvm-navegacao ::deep .rvm-nav-link.rvm-ativo:focus-visible {
-    outline-color: var(--rvm-color-primary-contrast);
-}
-
-.rvm-navegacao ::deep .rvm-nav-icone {
-    flex: none;
-}
-
-.rvm-navegacao ::deep .rvm-nav-texto {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Subitem sem icone: o circulo vazado do kit, centrado onde fica o icone. */
-.rvm-navegacao ::deep .rvm-nav-ponto {
-    flex: none;
-    box-sizing: border-box;
-    width: 10px;
-    height: 10px;
-    margin-inline: 7px;
-    border: 2px solid currentColor;
-    border-radius: 50%;
-}
-
-.rvm-navegacao ::deep .rvm-nav-selo {
-    flex: none;
-    padding: 0 var(--rvm-space-2);
-    border-radius: var(--rvm-radius-pill);
-    background-color: var(--rvm-color-error-main);
-    color: var(--rvm-color-error-contrast);
-    font-size: var(--rvm-text-caption-size);
-    line-height: 20px;
-}
-
-.rvm-navegacao ::deep .rvm-nav-seta {
-    flex: none;
-    transform: rotate(-90deg);
-    transition: transform var(--rvm-transition-fast);
-}
-
-.rvm-navegacao ::deep .rvm-aberto {
-    background-color: var(--rvm-color-action-hover);
-}
-
-.rvm-navegacao ::deep .rvm-aberto .rvm-nav-seta {
-    transform: none;
-}
-
-/* Titulo de secao: caixa alta pequena seguida de um fio, como "APPS & PAGES —————" no kit. */
-.rvm-navegacao ::deep .rvm-nav-titulo {
-    display: flex;
-    align-items: center;
-    gap: var(--rvm-space-2);
-    height: 32px;
-    margin-block-start: var(--rvm-space-4);
-    padding-inline: 24px 18px;
-    color: var(--rvm-color-text-secondary);
-    font-size: var(--rvm-text-caption-size);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.rvm-navegacao ::deep .rvm-nav-titulo::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background-color: var(--rvm-color-divider);
-}
-
-/* Recolhido: so os icones; texto, selo e seta saem da tela mas o texto segue no nome do link. */
-.rvm-navegacao ::deep .rvm-recolhido {
-    width: 63px;
-    padding-inline: 22px 0;
-}
-
-.rvm-navegacao ::deep .rvm-recolhido .rvm-nav-texto,
-.rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo-texto {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-}
-
-.rvm-navegacao ::deep .rvm-recolhido .rvm-nav-selo,
-.rvm-navegacao ::deep .rvm-recolhido .rvm-nav-seta {
-    display: none;
-}
-
-.rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo {
-    padding-inline: 20px 26px;
 }
 
 /* --- Topo, conteudo e rodape --- */
@@ -335,14 +182,15 @@
         display: none;
     }
 
-    /* Recolher nao existe na gaveta: nela o menu aparece sempre inteiro. */
-    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido {
+    /* Recolher nao existe na gaveta: nela o menu aparece sempre inteiro (o RvmSidebar recebe Collapsed, mas
+       aqui a casca desfaz o visual recolhido por cima dele). */
+    .rvm-recolhida ::deep .rvm-navegacao .rvm-recolhido {
         width: calc(100% - 18px);
         padding-inline: 20px 14px;
     }
 
-    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido .rvm-nav-texto,
-    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo-texto {
+    .rvm-recolhida ::deep .rvm-navegacao .rvm-recolhido .rvm-nav-texto,
+    .rvm-recolhida ::deep .rvm-navegacao .rvm-recolhida .rvm-nav-titulo-texto {
         position: static;
         width: auto;
         height: auto;
@@ -350,12 +198,12 @@
         clip: auto;
     }
 
-    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido .rvm-nav-selo,
-    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhido .rvm-nav-seta {
+    .rvm-recolhida ::deep .rvm-navegacao .rvm-recolhido .rvm-nav-selo,
+    .rvm-recolhida ::deep .rvm-navegacao .rvm-recolhido .rvm-nav-seta {
         display: inline-flex;
     }
 
-    .rvm-recolhida .rvm-navegacao ::deep .rvm-recolhida .rvm-nav-titulo {
+    .rvm-recolhida ::deep .rvm-navegacao .rvm-recolhida .rvm-nav-titulo {
         padding-inline: 24px 18px;
     }
 
@@ -363,20 +211,6 @@
         padding: var(--rvm-space-4) var(--rvm-space-4) 0;
     }
 }
-
-/* ImageUrl do contrato com o RVM.UI (DSGN-017): imagem redonda de 20 px no lugar do icone, centrada no
-   espaco de 24 px dos icones. */
-.rvm-navegacao ::deep .rvm-nav-imagem {
-    flex: none;
-    width: 20px;
-    height: 20px;
-    margin-inline: 2px;
-    border-radius: var(--rvm-radius-circle);
-    object-fit: cover;
-}
-
-/* O item sem Href e um botao com a cara do link. */
-.rvm-navegacao ::deep button.rvm-nav-link { font: inherit; text-align: start; cursor: pointer; }
 
 /* A cortina virou botao (DSGN-017): sem a borda e o recuo do botao nativo. */
 .rvm-fundo-menu {

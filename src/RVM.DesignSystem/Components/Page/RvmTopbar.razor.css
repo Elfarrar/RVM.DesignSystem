@@ -1,0 +1,35 @@
+/* CSS isolado do RvmTopbar. So custom properties — hex literal aqui quebra o tema escuro.
+   A altura e a do topo do RvmAppShell (64 px, MEDIDA no Menu Drawer.png); quebra em duas linhas no celular. */
+
+.rvm-barra-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-2) var(--rvm-space-4);
+    box-sizing: border-box;
+    min-height: 64px;
+    padding: var(--rvm-space-2) var(--rvm-space-6);
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-inicio {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+}
+
+.rvm-fim {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-perfil {
+    display: flex;
+    align-items: center;
+    margin-inline-start: var(--rvm-space-2);
+}

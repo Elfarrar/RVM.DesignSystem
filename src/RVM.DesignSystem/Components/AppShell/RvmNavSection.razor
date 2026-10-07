@@ -1,4 +1,5 @@
 @namespace RVM.DesignSystem.Components.AppShell
+@using RVM.DesignSystem.Components.Sidebar
 
 @* Titulo de secao do menu ("APPS & PAGES" no kit) com os itens dele numa lista nomeada pelo titulo.
    Recolhido, o titulo vira o traco curto do kit e continua lido pelo leitor de tela. *@
@@ -15,7 +16,7 @@
     private static int _proximoId;
     private readonly string _id = $"rvm-nav-secao-{Interlocked.Increment(ref _proximoId)}";
 
-    [CascadingParameter] private RvmAppShell? Casca { get; set; }
+    [CascadingParameter] private RvmSidebar? Casca { get; set; }
 
     /// <summary>Titulo da secao.</summary>
     [Parameter, EditorRequired] public string Title { get; set; } = "";

@@ -49,10 +49,26 @@ const PAGINAS = [
     { rota: '/componentes/scatter-chart', titulo: 'RvmScatterChart' },
     { rota: '/componentes/pie-chart', titulo: 'RvmPieChart' },
     { rota: '/componentes/radar-chart', titulo: 'RvmRadarChart' },
+    { rota: '/componentes/mascot', titulo: 'RvmMascot' },
+    { rota: '/componentes/sidebar', titulo: 'RvmSidebar' },
+    { rota: '/componentes/topbar', titulo: 'RvmTopbar' },
+    { rota: '/componentes/page-header', titulo: 'RvmPageHeader' },
+    { rota: '/componentes/page-toolbar', titulo: 'RvmPageToolbar' },
+    { rota: '/componentes/back-button', titulo: 'RvmBackButton' },
+    { rota: '/componentes/link', titulo: 'RvmLink' },
+    { rota: '/componentes/icon-button', titulo: 'RvmIconButton' },
+    { rota: '/componentes/menu-button', titulo: 'RvmMenuButton' },
+    { rota: '/componentes/button-group', titulo: 'RvmButtonGroup' },
+    { rota: '/componentes/collapse', titulo: 'RvmCollapse' },
+    { rota: '/componentes/expansion-panel', titulo: 'RvmExpansionPanel' },
+    { rota: '/componentes/steps', titulo: 'RvmSteps' },
+    { rota: '/componentes/step-indicator', titulo: 'RvmStepIndicator' },
+    { rota: '/componentes/detail-profile-layout', titulo: 'RvmDetailProfileLayout' },
 ];
 
 // Graficos que o kit nao desenhou: seguem o visual das colunas (DSGN-010).
-const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart']);
+// Contrato com o RVM.UI (DSGN-017): componentes que o NEATLAB nao desenha, no visual dele por extensao.
+const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout']);
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
     await page.goto('/componentes');

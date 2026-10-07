@@ -1,0 +1,37 @@
+@page "/componentes/collapse"
+
+<PageTitle>RvmCollapse — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmCollapse</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Mostra ou esconde um bloco. O conteudo continua montado quando fecha (atributo hidden): o que foi digitado nao se perde. Quem abre deve ter aria-expanded e aria-controls apontando para o Id do bloco.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Formulario que abre acima da lista"
+              Descricao="Digite, feche e abra de novo: o texto continua la."
+              Codigo="@Codigo">
+    <div class="pilha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" aria-expanded="@(_aberto ? "true" : "false")" aria-controls="bloco-novo"
+                   OnClick="() => _aberto = !_aberto">@(_aberto ? "Fechar" : "Novo talhao")</RvmButton>
+        <RvmCollapse Id="bloco-novo" Expanded="_aberto">
+            <RvmTextField Label="Nome do talhao" @bind-Value="_nome" />
+        </RvmCollapse>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmCollapse" />
+
+@code {
+    private bool _aberto;
+    private string? _nome;
+
+    private const string Codigo = """
+        <RvmButton aria-expanded="@(aberto ? "true" : "false")" aria-controls="bloco-novo" OnClick="Alternar">Novo talhao</RvmButton>
+        <RvmCollapse Id="bloco-novo" Expanded="aberto">...</RvmCollapse>
+        """;
+}

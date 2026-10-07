@@ -669,3 +669,9 @@ code {
     border-radius: var(--rvm-radius-md);
     background-color: var(--rvm-color-primary-main);
 }
+
+/* Exemplo de menu lateral (DSGN-017): a coluna precisa de altura para a lista rolar dentro dela. */
+.exemplo-alto {
+    align-items: stretch;
+    height: 22rem;
+}

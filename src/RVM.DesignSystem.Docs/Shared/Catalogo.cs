@@ -78,6 +78,23 @@ public static class Catalogo
             new("componentes/data-grid", "RvmDataGrid", "Paginacao, ordenacao, filtro por coluna."),
             new("componentes/app-shell", "RvmAppShell", "Topo, menu lateral e conteudo, responsivo.")
         ]),
+        new("Navegacao e pagina",
+        [
+            new("componentes/sidebar", "RvmSidebar", "O menu lateral: marca, navegacao, rodape; branco ou colorido, recolhivel."),
+            new("componentes/topbar", "RvmTopbar", "A barra do topo: titulo ou busca a esquerda, widgets e perfil a direita."),
+            new("componentes/page-header", "RvmPageHeader", "O cabecalho da pagina: voltar, foto, trilha, titulo e acoes."),
+            new("componentes/page-toolbar", "RvmPageToolbar", "A faixa de busca, abas e filtros abaixo do cabecalho."),
+            new("componentes/back-button", "RvmBackButton", "Voltar: link com Href, botao sem ele."),
+            new("componentes/link", "RvmLink", "Link de texto na cor do papel, com icone."),
+            new("componentes/icon-button", "RvmIconButton", "Botao so de icone, com nome acessivel obrigatorio."),
+            new("componentes/menu-button", "RvmMenuButton", "Botao com texto que abre um menu."),
+            new("componentes/button-group", "RvmButtonGroup", "Escolha unica em botoes colados."),
+            new("componentes/collapse", "RvmCollapse", "Mostra ou esconde um bloco sem perder o que foi digitado."),
+            new("componentes/expansion-panel", "RvmExpansionPanel", "Painel expansivel sozinho, que mantem o conteudo montado."),
+            new("componentes/steps", "RvmSteps", "Etapas de um fluxo, com conteudo e Voltar/Avancar."),
+            new("componentes/step-indicator", "RvmStepIndicator", "O numero do passo num circulo."),
+            new("componentes/detail-profile-layout", "RvmDetailProfileLayout", "Ficha de detalhe: miolo e perfil numa coluna fixa.")
+        ]),
         new("Graficos",
         [
             new("componentes/column-chart", "RvmColumnChart", "Colunas lado a lado ou empilhadas."),

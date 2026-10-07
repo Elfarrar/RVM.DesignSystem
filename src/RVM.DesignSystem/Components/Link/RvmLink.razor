@@ -1,0 +1,56 @@
+@namespace RVM.DesignSystem.Components.Link
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Link de texto na cor do papel, com icone opcional. Desabilitado nao navega: vira <span> com aria-disabled,
+   porque um <a> sem href some do teclado sem avisar o leitor de tela. *@
+@if (Disabled)
+{
+    <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-disabled="true">@Conteudo</span>
+}
+else
+{
+    <a @attributes="AdditionalAttributes" href="@Href" class="@ClassesDaRaiz">@Conteudo</a>
+}
+
+@code {
+    private RenderFragment Conteudo => @<text>
+        @if (StartIcon is { } inicio)
+        {
+            <RvmIcon Name="inicio" Size="RvmSize.Small" />
+        }
+        <span>@ChildContent</span>
+        @if (EndIcon is { } fim)
+        {
+            <RvmIcon Name="fim" Size="RvmSize.Small" />
+        }
+    </text>;
+
+    /// <summary>Destino.</summary>
+    [Parameter, EditorRequired] public string Href { get; set; } = "";
+
+    /// <summary>Papel de cor. Padrao: primario.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Primary;
+
+    /// <summary>Icone antes do texto (decorativo).</summary>
+    [Parameter] public RvmIconName? StartIcon { get; set; }
+
+    /// <summary>Icone depois do texto (decorativo).</summary>
+    [Parameter] public RvmIconName? EndIcon { get; set; }
+
+    /// <summary>Indisponivel: nao navega e sai esmaecido.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>O texto do link.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar($"rvm-link {PapelCss.Classe(Color)}{(Disabled ? " rvm-desabilitado" : "")}", Class, AdditionalAttributes);
+}

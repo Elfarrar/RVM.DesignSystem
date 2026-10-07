@@ -1,4 +1,5 @@
 @namespace RVM.DesignSystem.Components.AppShell
+@using RVM.DesignSystem.Components.Sidebar
 @using RVM.DesignSystem.Components.Icon
 @using RVM.DesignSystem.Icons
 
@@ -45,7 +46,7 @@
     private static int _proximoId;
     private readonly string _id = $"rvm-nav-grupo-{Interlocked.Increment(ref _proximoId)}";
 
-    [CascadingParameter] private RvmAppShell? Casca { get; set; }
+    [CascadingParameter] private RvmSidebar? Casca { get; set; }
 
     /// <summary>Texto do grupo.</summary>
     [Parameter, EditorRequired] public string Text { get; set; } = "";

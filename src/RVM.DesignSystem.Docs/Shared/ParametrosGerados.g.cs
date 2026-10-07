@@ -125,6 +125,16 @@ internal static class ParametrosGerados
             new("Size", "RvmSize", "RvmSize.Medium", "Tamanho do avatar \"+N\". Padrao: `RvmSize.Medium`."),
             new("Surplus", "int", "0", "Quantos ficaram de fora. Acima de zero, aparece um avatar \"+N\" no fim."),
         ],
+        ["RvmBackButton"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Disabled", "bool", "false", "Indisponivel."),
+            new("Href", "string?", "—", "Destino. Sem ele, o botao avisa por `RvmBackButton.OnClick`."),
+            new("Label", "string", "\"Voltar\"", "Nome acessivel e dica. Padrao: \"Voltar\"."),
+            new("OnClick", "EventCallback", "—", "Clique, quando nao ha `RvmBackButton.Href`."),
+            new("Shape", "RvmFieldShape", "RvmFieldShape.Rounded", "Canto: o do kit ou redondo."),
+        ],
         ["RvmBadge"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a raiz."),
@@ -196,6 +206,20 @@ internal static class ParametrosGerados
             new("StartIcon", "RvmIconName?", "—", "Icone antes do rotulo."),
             new("Type", "RvmButtonType", "RvmButtonType.Button", "O `type` do elemento. Padrao: `RvmButtonType.Button`."),
             new("Variant", "RvmButtonVariant", "RvmButtonVariant.Contained", "Peso visual. Padrao: `RvmButtonVariant.Contained`."),
+        ],
+        ["RvmButtonGroup"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Disabled", "bool", "false", "Desabilita o grupo inteiro."),
+            new("ItemDisabled", "Func<object, bool>?", "—", "Opcao que nao pode ser escolhida."),
+            new("ItemText", "Func<object, string>?", "—", "Texto de cada opcao. Sem ele, `ToString()`."),
+            new("Items", "IEnumerable<object>", "obrigatorio", "As opcoes, na ordem em que aparecem."),
+            new("Label", "string", "obrigatorio", "O que o grupo escolhe (\"Tamanho da fonte\"). Obrigatorio: grupo sem nome nao diz o que se escolhe."),
+            new("SelectedColor", "Func<object, RvmColor>?", "—", "Cor do botao escolhido, por opcao (Ler = Primary, Editar = Success). Sem ela, primario."),
+            new("Size", "RvmSize", "RvmSize.Medium", "Altura: Medium (38 px, a do `RvmButton`) ou Small (30 px, para linhas de tabela)."),
+            new("Value", "object?", "—", "A opcao escolhida. Aceita `@bind-Value`."),
+            new("ValueChanged", "EventCallback<object>", "—", "Avisa a troca de escolha."),
         ],
         ["RvmCalendar"] =
         [
@@ -280,6 +304,14 @@ internal static class ParametrosGerados
             new("Size", "RvmSize", "RvmSize.Medium", "24 px (`RvmSize.Small`) ou 32 px — medidos no kit. O kit nao define um chip grande, entao `RvmSize.Large` sai igual ao medio."),
             new("StartIcon", "RvmIconName?", "—", "Icone antes do rotulo."),
             new("Variant", "RvmChipVariant", "RvmChipVariant.Filled", "Estilo. Padrao: `RvmChipVariant.Filled`."),
+        ],
+        ["RvmCollapse"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O conteudo."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Expanded", "bool", "false", "Aberto."),
+            new("Id", "string?", "—", "Id do bloco: o alvo do `aria-controls` do botao que abre."),
         ],
         ["RvmColumnChart"] =
         [
@@ -400,6 +432,18 @@ internal static class ParametrosGerados
             new("ValueChanged", "EventCallback<RvmDateRange?>", "—", "Disparado quando o intervalo muda (inclusive no primeiro clique, com o fim vazio)."),
             new("ValueExpression", "Expression<Func<RvmDateRange?>>?", "—", "Expressao do valor ligado. O `@bind-Value` preenche sozinho."),
         ],
+        ["RvmDetailProfileLayout"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Botoes de acao (Ligar, Mensagem)."),
+            new("Activity", "RenderFragment?", "—", "Os itens (`li`) da atividade recente, dentro do perfil."),
+            new("ActivityTitle", "string", "\"Atividade recente\"", "Titulo da secao de atividade. So aparece com `RvmDetailProfileLayout.Activity`."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O miolo: numeros, abas e o conteudo de cada aba."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Details", "RenderFragment?", "—", "Os pares `dt`/`dd` da ficha (empresa, e-mail, endereco)."),
+            new("Header", "RenderFragment?", "—", "Linha abaixo do nome (selo, avaliacao, \"@usuario\")."),
+            new("Name", "string", "obrigatorio", "Nome da pessoa ou da loja: vira o titulo do perfil e as iniciais do avatar."),
+        ],
         ["RvmDialog"] =
         [
             new("Actions", "RenderFragment?", "—", "Os botoes do rodape, alinhados a direita."),
@@ -451,6 +495,19 @@ internal static class ParametrosGerados
             new("Status", "bool", "false", "Anuncia ao leitor de tela quando aparece (`role=\"status\"`). Ligue quando o vazio surge depois de uma busca, de um filtro ou de um carregamento; deixe desligado no vazio que ja estava na tela."),
             new("Title", "string", "obrigatorio", "O que aconteceu, em uma frase (\"Nenhum talhao cadastrado ainda\")."),
         ],
+        ["RvmExpansionPanel"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O conteudo do painel."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Disabled", "bool", "false", "Nao abre nem fecha."),
+            new("Expanded", "bool", "false", "Aberto. Aceita `@bind-Expanded`."),
+            new("ExpandedChanged", "EventCallback<bool>", "—", "Avisa quando abre ou fecha."),
+            new("HeadingLevel", "int", "3", "Nivel do titulo (2 a 6). Padrao: 3."),
+            new("Icon", "RvmIconName?", "—", "Icone antes do titulo."),
+            new("Title", "string?", "—", "Texto do cabecalho."),
+            new("TitleContent", "RenderFragment?", "—", "Cabecalho composto (icone, numero, selo). Vence `RvmExpansionPanel.Title`. So conteudo de frase: fica dentro de um botao."),
+        ],
         ["RvmHistogram"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a figura."),
@@ -499,6 +556,19 @@ internal static class ParametrosGerados
             new("Style", "RvmIconStyle", "RvmIconStyle.Linear", "Traco (padrao) ou cheio. Ver `RvmIconStyle`."),
             new("Title", "string?", "—", "O que o icone significa, para quem nao o enxerga. Preencha so quando o icone for a UNICA fonte daquela informacao — botao de icone sem rotulo, por exemplo. Ao lado de um texto que ja diz a mesma coisa, deixe vazio: o leitor de tela repetiria a informacao."),
         ],
+        ["RvmIconButton"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Secondary", "Papel de cor. Padrao: secundario, o cinza dos icones do kit."),
+            new("Disabled", "bool", "false", "Indisponivel."),
+            new("Icon", "RvmIconName", "obrigatorio", "O icone."),
+            new("Label", "string", "obrigatorio", "O que o botao faz (\"Excluir\"). Obrigatorio: e o nome acessivel e a dica."),
+            new("OnClick", "EventCallback<MouseEventArgs>", "—", "Clique."),
+            new("Size", "RvmSize", "RvmSize.Medium", "Lado do botao: 30, 38 (padrao) ou 42 px, as alturas do `RvmButton`."),
+            new("Type", "RvmButtonType", "RvmButtonType.Button", "O `type` do botao. Padrao: `button`, que nao envia formulario."),
+            new("Variant", "RvmButtonVariant", "RvmButtonVariant.Text", "Peso visual. Padrao: so o icone (`RvmButtonVariant.Text`)."),
+        ],
         ["RvmLineChart"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a figura."),
@@ -535,6 +605,17 @@ internal static class ParametrosGerados
             new("Smooth", "bool?", "—", "Curva suave em vez de segmentos retos. Padrao: reta na linha, suave na area."),
             new("ValueFormat", "Func<double, string>?", "—", "Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`."),
             new("Zoomable", "bool", "false", "Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario."),
+        ],
+        ["RvmLink"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O texto do link."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor. Padrao: primario."),
+            new("Disabled", "bool", "false", "Indisponivel: nao navega e sai esmaecido."),
+            new("EndIcon", "RvmIconName?", "—", "Icone depois do texto (decorativo)."),
+            new("Href", "string", "obrigatorio", "Destino."),
+            new("StartIcon", "RvmIconName?", "—", "Icone antes do texto (decorativo)."),
         ],
         ["RvmList"] =
         [
@@ -606,6 +687,20 @@ internal static class ParametrosGerados
             new("StartIcon", "RvmIconName?", "—", "Icone antes do texto do gatilho. `RvmMenu.Icon`, quando vem, vence."),
             new("Text", "string?", "—", "Texto do gatilho. Sem ele, o `RvmMenu.Label`."),
             new("Trigger", "RvmMenuTrigger", "RvmMenuTrigger.Text", "Forma do gatilho. Padrao: botao com texto e seta."),
+        ],
+        ["RvmMenuButton"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao menu (`data-testid`, por exemplo)."),
+            new("AriaLabel", "string?", "—", "Nome acessivel diferente do texto visivel, quando o texto sozinho nao basta."),
+            new("ChildContent", "RenderFragment?", "—", "Os itens (`RvmMenuItem`)."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Secondary", "Papel de cor, como no `RvmButton`. Padrao: secundario."),
+            new("Disabled", "bool", "false", "Indisponivel."),
+            new("Id", "string?", "—", "Id do botao. Sem ele, um id unico e gerado."),
+            new("Placement", "RvmMenuPlacement", "RvmMenuPlacement.BottomStart", "Onde o menu abre."),
+            new("StartIcon", "RvmIconName?", "—", "Icone antes do texto."),
+            new("Text", "string", "obrigatorio", "Texto do botao, que tambem e o nome acessivel."),
+            new("Variant", "RvmButtonVariant", "RvmButtonVariant.Outlined", "Peso visual, como no `RvmButton`. Padrao: contorno."),
         ],
         ["RvmMenuDivider"] =
         [
@@ -690,6 +785,37 @@ internal static class ParametrosGerados
             new("ChildContent", "RenderFragment?", "—", "Os itens da secao."),
             new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
             new("Title", "string", "obrigatorio", "Titulo da secao."),
+        ],
+        ["RvmNavSubItem"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao link."),
+            new("Badge", "int?", "—", "Contador ao lado do texto."),
+            new("Class", "string?", "—", "Classe CSS extra no link."),
+            new("Href", "string", "obrigatorio", "Endereco do link."),
+            new("Match", "NavLinkMatch", "NavLinkMatch.Prefix", "Como decidir que e a pagina atual. Padrao: pelo prefixo."),
+            new("Text", "string", "obrigatorio", "Texto do subitem."),
+        ],
+        ["RvmPageHeader"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Acoes da direita."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("BackHref", "string?", "—", "Destino do voltar. Sem ele, o voltar avisa por `RvmPageHeader.OnBack`."),
+            new("BackLabel", "string", "\"Voltar\"", "Nome acessivel do voltar."),
+            new("Breadcrumbs", "RenderFragment?", "—", "A trilha acima do titulo (um `RvmBreadcrumbs`)."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Description", "string?", "—", "Linha de apoio abaixo do titulo."),
+            new("Element", "RvmTextElement", "RvmTextElement.H1", "Elemento do titulo. Padrao: h1, porque e o titulo da pagina."),
+            new("ImageUrl", "string?", "—", "Foto redonda de 48 px antes do titulo (decorativa)."),
+            new("OnBack", "EventCallback", "—", "Clique do voltar sem `RvmPageHeader.BackHref`."),
+            new("ShowBack", "bool", "false", "Mostra o botao de voltar."),
+            new("Title", "string", "obrigatorio", "Titulo da pagina."),
+        ],
+        ["RvmPageToolbar"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("End", "RenderFragment?", "—", "Lado direito (filtros, botoes)."),
+            new("Start", "RenderFragment?", "—", "Lado esquerdo (busca, abas)."),
         ],
         ["RvmPagination"] =
         [
@@ -909,6 +1035,22 @@ internal static class ParametrosGerados
             new("ValueExpression", "Expression<Func<object>>?", "—", "Expressao do valor ligado. O `@bind-Value` preenche sozinho."),
             new("Variant", "RvmTextFieldVariant", "RvmTextFieldVariant.Outlined", "Estilo — os mesmos tres do campo de texto. Padrao: `RvmTextFieldVariant.Outlined`."),
         ],
+        ["RvmSidebar"] =
+        [
+            new("ActiveLine", "bool", "false", "Barra de 4 px na borda do item ativo, alem do fundo."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "As secoes e os itens do menu."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Collapsed", "bool", "false", "Recolhido aos icones (68 px). Aceita `@bind-Collapsed`."),
+            new("CollapsedChanged", "EventCallback<bool>", "—", "Avisa quando o menu recolhe ou abre."),
+            new("Collapsible", "bool", "false", "Mostra o botao de recolher e abrir no pe do menu."),
+            new("Footer", "RenderFragment?", "—", "Rodape do menu (perfil, avisos)."),
+            new("Header", "RenderFragment?", "—", "Area abaixo da marca (troca de equipe, busca)."),
+            new("Label", "string", "\"Menu principal\"", "Nome da navegacao para o leitor de tela."),
+            new("Logo", "RenderFragment?", "—", "A marca no alto do menu aberto."),
+            new("LogoCollapsed", "RenderFragment?", "—", "A marca do menu recolhido (so o simbolo). Sem ela, a de `RvmSidebar.Logo`."),
+            new("Variant", "RvmSidebarVariant", "RvmSidebarVariant.White", "Fundo do corpo (padrao) ou na cor primaria."),
+        ],
         ["RvmSkeleton"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras: `class` e `style` somados aos proprios; o resto na raiz."),
@@ -925,6 +1067,14 @@ internal static class ParametrosGerados
             new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
             new("CloseLabel", "string", "\"Fechar mensagem\"", "Nome acessivel do botao de fechar de cada mensagem. Padrao: \"Fechar mensagem\"."),
         ],
+        ["RvmStepIndicator"] =
+        [
+            new("Active", "bool", "false", "Passo atual: circulo cheio na cor primaria."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Number", "int", "0", "Numero do passo."),
+            new("Text", "string?", "—", "Texto no lugar do numero (\"...\")."),
+        ],
         ["RvmStepper"] =
         [
             new("ActiveStep", "int", "0", "Indice da etapa atual, a partir de 0. As anteriores contam como concluidas."),
@@ -937,6 +1087,22 @@ internal static class ParametrosGerados
             new("Orientation", "RvmOrientation", "RvmOrientation.Horizontal", "Etapas em linha (padrao) ou empilhadas."),
             new("Placement", "RvmStepperLabelPlacement", "RvmStepperLabelPlacement.End", "Texto ao lado com o numero grande (padrao) ou embaixo, centralizado."),
             new("Steps", "IReadOnlyList<RvmStep>", "—", "As etapas, em ordem. Sem elas, o stepper vira o indicador de bolinhas de `RvmStepper.Count`."),
+        ],
+        ["RvmSteps"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("AllowBackNavigation", "bool", "false", "Etapas concluidas viram botao que volta para elas (nunca avanca por clique)."),
+            new("BackText", "string", "\"Voltar\"", "Texto do botao de voltar."),
+            new("CanAdvance", "bool", "true", "Libera o Avancar. Padrao: livre — valide a etapa e desligue enquanto ela nao estiver pronta."),
+            new("ChildContent", "RenderFragment?", "—", "O conteudo da etapa atual."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Current", "int", "0", "Etapa atual, contando de 0. Aceita `@bind-Current`."),
+            new("CurrentChanged", "EventCallback<int>", "—", "Avisa a troca de etapa pelo Voltar/Avancar ou por uma etapa concluida."),
+            new("Label", "string", "\"Etapas\"", "Nome da lista de etapas para o leitor de tela."),
+            new("NextText", "string", "\"Avancar\"", "Texto do botao de avancar."),
+            new("NumberedTitles", "bool", "false", "Numero tambem no titulo visivel (\"1. Processo e lotes\"), alem do marcador."),
+            new("ShowNavigation", "bool", "false", "Mostra Voltar e Avancar embaixo do conteudo."),
+            new("Steps", "IReadOnlyList<string>", "obrigatorio", "Titulo de cada etapa, na ordem."),
         ],
         ["RvmSwitch"] =
         [
@@ -1141,6 +1307,14 @@ internal static class ParametrosGerados
             new("Text", "string", "obrigatorio", "O texto da dica."),
             new("Trigger", "RvmTooltipTrigger", "RvmTooltipTrigger.Info", "Icone do gatilho padrao, quando nao ha `RvmTooltip.ChildContent`."),
             new("TriggerLabel", "string", "\"Mais informacoes\"", "Nome acessivel do gatilho padrao."),
+        ],
+        ["RvmTopbar"] =
+        [
+            new("Actions", "RenderFragment?", "—", "Widgets e botoes da direita (`RvmIconButton`, avisos)."),
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Profile", "RenderFragment?", "—", "O perfil, depois dos widgets."),
+            new("Start", "RenderFragment?", "—", "Lado esquerdo: titulo da pagina, busca."),
         ],
         ["RvmTypography"] =
         [

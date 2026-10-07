@@ -1,0 +1,64 @@
+/* CSS isolado do RvmButtonGroup. So custom properties — hex literal aqui quebra o tema escuro.
+   As medidas e o texto em caixa alta do RvmButton (38/30 px, Button.png do kit), os botoes colados numa faixa:
+   cantos so nas pontas e uma borda so entre vizinhos. */
+
+.rvm-grupo-botoes {
+    display: inline-flex;
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-opcao {
+    min-height: 38px;
+    padding: 0 18px;
+    margin-inline-start: -1px;
+    border: 1px solid var(--rvm-color-secondary-outlined-resting);
+    background-color: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-button-md-size);
+    font-weight: var(--rvm-text-button-md-weight);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.rvm-pequeno .rvm-opcao {
+    min-height: 30px;
+    padding: 0 12px;
+    font-size: var(--rvm-text-button-sm-size);
+}
+
+.rvm-opcao:first-child {
+    margin-inline-start: 0;
+    border-start-start-radius: var(--rvm-radius-sm);
+    border-end-start-radius: var(--rvm-radius-sm);
+}
+
+.rvm-opcao:last-child {
+    border-start-end-radius: var(--rvm-radius-sm);
+    border-end-end-radius: var(--rvm-radius-sm);
+}
+
+.rvm-opcao:hover:not(:disabled):not(.rvm-escolhida) { background-color: var(--rvm-color-action-hover); }
+
+/* O foco sobe acima dos vizinhos: senao a borda do proximo cobre metade do anel. */
+.rvm-opcao:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-opcao:disabled {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-escolhida.rvm-primary { position: relative; border-color: var(--rvm-color-primary-main); background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-escolhida.rvm-secondary { position: relative; border-color: var(--rvm-color-secondary-main); background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-escolhida.rvm-inverse { position: relative; border-color: var(--rvm-color-inverse-main); background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
+.rvm-escolhida.rvm-info { position: relative; border-color: var(--rvm-color-info-main); background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-escolhida.rvm-success { position: relative; border-color: var(--rvm-color-success-main); background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-escolhida.rvm-warning { position: relative; border-color: var(--rvm-color-warning-main); background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-escolhida.rvm-error { position: relative; border-color: var(--rvm-color-error-main); background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }

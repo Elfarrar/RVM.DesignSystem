@@ -1,0 +1,52 @@
+@namespace RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Icons
+
+@* Botao com texto que abre um menu ("Exportar" + seta). E o RvmMenu com o gatilho de texto, para o caso comum
+   ler bem na tela: <RvmMenuButton Text="Exportar"> em vez de configurar o gatilho. *@
+<RvmMenu @attributes="AtributosDoMenu" Label="@Text" Text="@Text" Trigger="RvmMenuTrigger.Text" StartIcon="StartIcon"
+         ButtonVariant="Variant" ButtonColor="Color" Placement="Placement" Disabled="Disabled" Id="@Id" Class="@Class">
+    @ChildContent
+</RvmMenu>
+
+@code {
+    /// <summary>Texto do botao, que tambem e o nome acessivel.</summary>
+    [Parameter, EditorRequired] public string Text { get; set; } = "";
+
+    /// <summary>Nome acessivel diferente do texto visivel, quando o texto sozinho nao basta.</summary>
+    [Parameter] public string? AriaLabel { get; set; }
+
+    /// <summary>Os itens (<c>RvmMenuItem</c>).</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Icone antes do texto.</summary>
+    [Parameter] public RvmIconName? StartIcon { get; set; }
+
+    /// <summary>Peso visual, como no <c>RvmButton</c>. Padrao: contorno.</summary>
+    [Parameter] public RvmButtonVariant Variant { get; set; } = RvmButtonVariant.Outlined;
+
+    /// <summary>Papel de cor, como no <c>RvmButton</c>. Padrao: secundario.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Secondary;
+
+    /// <summary>Onde o menu abre.</summary>
+    [Parameter] public RvmMenuPlacement Placement { get; set; } = RvmMenuPlacement.BottomStart;
+
+    /// <summary>Indisponivel.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Id do botao. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao menu (<c>data-testid</c>, por exemplo).</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // O AriaLabel chega ao botao pelo aria-label dos atributos, que o RvmMenu ja respeita.
+    private IReadOnlyDictionary<string, object>? AtributosDoMenu
+        => string.IsNullOrWhiteSpace(AriaLabel)
+            ? AdditionalAttributes
+            : new Dictionary<string, object>(AdditionalAttributes ?? new Dictionary<string, object>()) { ["aria-label"] = AriaLabel };
+}

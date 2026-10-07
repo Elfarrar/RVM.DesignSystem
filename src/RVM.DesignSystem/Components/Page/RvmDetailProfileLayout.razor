@@ -1,0 +1,68 @@
+@namespace RVM.DesignSystem.Components.Page
+@using RVM.DesignSystem.Components.Avatar
+
+@* A ficha de detalhe (cliente, vendedor, projeto): o miolo a esquerda (numeros, abas) e o perfil numa coluna
+   fixa a direita, que nao muda quando a aba troca. No celular o perfil vem primeiro. A ficha e uma lista de
+   definicoes (dl): o leitor de tela anuncia "E-mail: ana@...". *@
+<div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-ficha-detalhe", Class, AdditionalAttributes)">
+    <aside class="rvm-perfil-detalhe" aria-labelledby="@_idNome">
+        <RvmAvatar Initials="@Iniciais" Name="@Name" Size="RvmSize.Large" Variant="RvmAvatarVariant.Soft" aria-hidden="true" />
+        <h2 id="@_idNome" class="rvm-nome">@Name</h2>
+        @if (Header is not null)
+        {
+            <div class="rvm-cabecalho-perfil">@Header</div>
+        }
+        @if (Actions is not null)
+        {
+            <div class="rvm-acoes-perfil">@Actions</div>
+        }
+        @if (Details is not null)
+        {
+            <dl class="rvm-dados">@Details</dl>
+        }
+        @if (Activity is not null && !string.IsNullOrWhiteSpace(ActivityTitle))
+        {
+            <section class="rvm-atividade" aria-labelledby="@($"{_idNome}-atividade")">
+                <h3 id="@($"{_idNome}-atividade")" class="rvm-titulo-atividade">@ActivityTitle</h3>
+                <ul class="rvm-lista-atividade">@Activity</ul>
+            </section>
+        }
+    </aside>
+    <div class="rvm-miolo-detalhe">@ChildContent</div>
+</div>
+
+@code {
+    private readonly string _idNome = GeradorDeIds.Novo("rvm-ficha-nome");
+
+    /// <summary>Nome da pessoa ou da loja: vira o titulo do perfil e as iniciais do avatar.</summary>
+    [Parameter, EditorRequired] public string Name { get; set; } = "";
+
+    /// <summary>Linha abaixo do nome (selo, avaliacao, "@usuario").</summary>
+    [Parameter] public RenderFragment? Header { get; set; }
+
+    /// <summary>Botoes de acao (Ligar, Mensagem).</summary>
+    [Parameter] public RenderFragment? Actions { get; set; }
+
+    /// <summary>Os pares <c>dt</c>/<c>dd</c> da ficha (empresa, e-mail, endereco).</summary>
+    [Parameter] public RenderFragment? Details { get; set; }
+
+    /// <summary>Titulo da secao de atividade. So aparece com <see cref="Activity"/>.</summary>
+    [Parameter] public string ActivityTitle { get; set; } = "Atividade recente";
+
+    /// <summary>Os itens (<c>li</c>) da atividade recente, dentro do perfil.</summary>
+    [Parameter] public RenderFragment? Activity { get; set; }
+
+    /// <summary>O miolo: numeros, abas e o conteudo de cada aba.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string Iniciais
+        => string.Concat(Name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2)
+            .Select(p => System.Globalization.StringInfo.GetNextTextElement(p).ToUpperInvariant()));
+}

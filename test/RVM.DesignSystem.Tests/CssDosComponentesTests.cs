@@ -60,10 +60,11 @@ public class CssDosComponentesTests
     {
         // Componente sem `.razor.css` ate pode existir (o RvmTypography e C# puro e usa as classes
         // da escala), mas `.razor` sem CSS costuma ser esquecimento — entao a excecao e nomeada.
-        // Os itens do menu sao pecas do RvmAppShell e so existem dentro dele: o estilo mora no CSS
-        // da moldura (::deep), que precisa enxergar o estado recolhido e o modo estreito juntos.
+        // Os itens do menu sao pecas do menu lateral e so existem dentro dele: o estilo mora no CSS do
+        // RvmSidebar (::deep), que o RvmAppShell usa desde a DSGN-017. O RvmNavSubItem so delega ao RvmNavItem
+        // e o RvmMenuButton ao RvmMenu.
         // Os graficos derivados so desenham SVG dentro da figura da RvmChartBase, que tem o CSS (::deep).
-        string[] semCssPorProjeto = ["RvmNavGroup.razor", "RvmNavItem.razor", "RvmNavSection.razor",
+        string[] semCssPorProjeto = ["RvmNavGroup.razor", "RvmNavItem.razor", "RvmNavSection.razor", "RvmNavSubItem.razor", "RvmMenuButton.razor",
             "RvmColumnChart.razor", "RvmBarChart.razor", "RvmHistogram.razor",
             "RvmLineChart.razor", "RvmAreaChart.razor", "RvmScatterChart.razor",
             "RvmPieChart.razor", "RvmRadarChart.razor"];

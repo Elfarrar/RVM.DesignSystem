@@ -23,7 +23,6 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     private static int _proximoId;
     private readonly string _idBase = $"rvm-casca-{Interlocked.Increment(ref _proximoId)}";
     private ElementReference _lateral;
-    private ElementReference _navegacao;
     private Sobreposicao? _sobreposicao;
     private bool _focoPreso;
     private IJSObjectReference? _teclado;
@@ -179,7 +178,7 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
             try
             {
                 _teclado ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
-                await _teclado.InvokeVoidAsync("rolarAtualParaVer", _navegacao);
+                await _teclado.InvokeVoidAsync("rolarAtualParaVer", _lateral);
             }
             catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
             {

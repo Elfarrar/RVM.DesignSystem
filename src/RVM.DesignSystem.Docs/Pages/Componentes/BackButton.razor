@@ -1,0 +1,35 @@
+@page "/componentes/back-button"
+
+<PageTitle>RvmBackButton — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmBackButton</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A seta de voltar numa caixa contornada. Com Href e um link; sem ele, um botao que avisa por OnClick (o app decide para onde volta).
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Link, botao e pilula"
+              Descricao="O Label e o nome acessivel e a dica."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmBackButton Href="componentes/back-button" Label="Voltar para os talhoes" />
+        <RvmBackButton Shape="RvmFieldShape.Pill" OnClick="() => _voltas++" />
+        <RvmBackButton Disabled="true" />
+        <RvmTypography Color="RvmTextColor.Secondary">Cliques no botao: @_voltas</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmBackButton" />
+
+@code {
+    private int _voltas;
+
+    private const string Codigo = """
+        <RvmBackButton Href="talhoes" Label="Voltar para os talhoes" />
+        <RvmBackButton Shape="RvmFieldShape.Pill" OnClick="Voltar" />
+        """;
+}

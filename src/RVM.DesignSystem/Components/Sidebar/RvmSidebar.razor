@@ -1,0 +1,35 @@
+@namespace RVM.DesignSystem.Components.Sidebar
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* O conteudo do menu lateral: marca, area de topo, navegacao rolavel e rodape. Os itens (RvmNavItem,
+   RvmNavGroup, RvmNavSection) leem o estado recolhido daqui, por cascata. O RvmAppShell poe um destes
+   dentro da coluna dele; sozinho, ele e uma coluna de 260 px (68 recolhida). *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <CascadingValue Value="this">
+        @if ((Collapsed && LogoCollapsed is not null ? LogoCollapsed : Logo) is { } marca)
+        {
+            <div class="rvm-area-marca">@marca</div>
+        }
+        @if (Header is not null)
+        {
+            <div class="rvm-area-topo">@Header</div>
+        }
+        <nav @ref="_navegacao" class="rvm-navegacao" aria-label="@Label">
+            <ul class="rvm-nav-lista">
+                @ChildContent
+            </ul>
+        </nav>
+        @if (Footer is not null)
+        {
+            <div class="rvm-area-rodape">@Footer</div>
+        }
+        @if (Collapsible)
+        {
+            <button type="button" class="rvm-recolher" aria-label="Recolher menu" aria-pressed="@(Collapsed ? "true" : "false")"
+                    @onclick="() => DefinirRecolhidoAsync(!Collapsed)">
+                <RvmIcon Name="@(Collapsed ? RvmIconName.ChevronRight : RvmIconName.ChevronLeft)" />
+            </button>
+        }
+    </CascadingValue>
+</div>
