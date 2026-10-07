@@ -1,0 +1,107 @@
+@page "/componentes/icon-selector"
+@using RVM.DesignSystem.Components.IconSelector
+
+<PageTitle>RvmIconSelector — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmIconSelector</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Escolha de um icone: o circulo mostra o escolhido (ou um "+") e o botao abre uma janela com busca e a grade de
+    icones. A busca ignora acento e maiusculas. Funciona com <code>EditForm</code> e <code>@@bind-Value</code>; com
+    <code>Name</code>, envia o nome do icone num campo escondido.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Teclado: um Tab entra na grade; as setas andam (6 por linha), Home e End vao ao primeiro e ao ultimo, Enter ou
+    Espaco escolhem e fecham, Esc fecha sem escolher. Cada icone e um botao com o nome como rotulo e
+    <code>aria-pressed</code> no escolhido. Sem <code>Icons</code>, a grade oferece todos os icones da biblioteca e
+    mostra so os <code>MaxVisible</code> primeiros (padrao 60) que casam com a busca.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Icone da categoria"
+              Descricao="Icons limita a grade aos icones do assunto; IconText da o nome em portugues, usado na busca, na dica e pelo leitor de tela."
+              Codigo="@Codigo">
+    <div class="pilha-exemplos">
+        <RvmIconSelector Label="Icone da categoria" @bind-Value="_icone" Icons="Agro" IconText="NomeDe"
+                         HelperText="Aparece no menu e nos relatorios." />
+        <RvmTypography Color="RvmTextColor.Secondary">Valor: @(_icone?.ToString() ?? "nenhum")</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Todos os icones, erro e desabilitado"
+              Descricao="Sem Icons, todos os icones; a grade mostra os 60 primeiros e pede para refinar a busca."
+              Codigo="@CodigoTodos">
+    <div class="pilha-exemplos">
+        <RvmIconSelector Label="Qualquer icone" @bind-Value="_qualquer" Shape="RvmFieldShape.Pill" />
+        <RvmIconSelector Label="Icone do talhao" @bind-Value="_comErro" ErrorText="Escolha um icone para o talhao." />
+        <RvmIconSelector Label="Icone bloqueado" @bind-Value="_bloqueado" Disabled="true" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmIconSelector" />
+
+@code {
+    private RvmIconName? _icone = RvmIconName.Leaf;
+    private RvmIconName? _qualquer;
+    private RvmIconName? _comErro;
+    private RvmIconName? _bloqueado = RvmIconName.Wallet;
+
+    private static readonly Dictionary<RvmIconName, string> Nomes = new()
+    {
+        [RvmIconName.Leaf] = "Folha",
+        [RvmIconName.Sun] = "Sol",
+        [RvmIconName.CloudRain] = "Chuva",
+        [RvmIconName.CloudSun] = "Tempo parcialmente nublado",
+        [RvmIconName.Waterdrop] = "Gota de agua",
+        [RvmIconName.Water] = "Irrigacao",
+        [RvmIconName.Wind] = "Vento",
+        [RvmIconName.Temperature] = "Temperatura",
+        [RvmIconName.Map] = "Mapa",
+        [RvmIconName.MapPoint] = "Talhao no mapa",
+        [RvmIconName.Scale] = "Balanca",
+        [RvmIconName.Box] = "Caixa",
+        [RvmIconName.Bug] = "Praga",
+        [RvmIconName.Home] = "Sede",
+        [RvmIconName.Calculator] = "Calculadora",
+        [RvmIconName.Wallet] = "Carteira",
+        [RvmIconName.WalletMoney] = "Caixa da fazenda",
+        [RvmIconName.Dollar] = "Dolar",
+        [RvmIconName.MoneyBag] = "Saco de dinheiro",
+        [RvmIconName.Banknote] = "Cedula",
+        [RvmIconName.HandMoney] = "Pagamento",
+        [RvmIconName.Bill] = "Conta a pagar",
+        [RvmIconName.BillList] = "Notas fiscais",
+        [RvmIconName.Card] = "Cartao",
+        [RvmIconName.Cart] = "Compras",
+        [RvmIconName.TagPrice] = "Preco",
+        [RvmIconName.Chart] = "Grafico",
+        [RvmIconName.GraphUp] = "Alta",
+        [RvmIconName.GraphDown] = "Queda",
+        [RvmIconName.PieChart] = "Participacao",
+    };
+
+    private static readonly RvmIconName[] Agro = [.. Nomes.Keys];
+
+    private static string NomeDe(RvmIconName icone) => Nomes.GetValueOrDefault(icone, icone.ToString());
+
+    private const string Codigo = """
+        <RvmIconSelector Label="Icone da categoria" @bind-Value="icone" Icons="icones" IconText="NomeDe"
+                         HelperText="Aparece no menu e nos relatorios." />
+
+        @code {
+            private RvmIconName? icone;
+            private static readonly RvmIconName[] icones = [RvmIconName.Leaf, RvmIconName.Sun, RvmIconName.Wallet];
+            private static string NomeDe(RvmIconName i) => i switch { RvmIconName.Leaf => "Folha", RvmIconName.Sun => "Sol", _ => "Carteira" };
+        }
+        """;
+
+    private const string CodigoTodos = """
+        <RvmIconSelector Label="Qualquer icone" @bind-Value="icone" Shape="RvmFieldShape.Pill" />
+        <RvmIconSelector Label="Icone do talhao" @bind-Value="icone" ErrorText="Escolha um icone para o talhao." />
+        <RvmIconSelector Label="Icone bloqueado" @bind-Value="icone" Disabled="true" />
+        """;
+}
