@@ -1,0 +1,222 @@
+@namespace RVM.DesignSystem.Components.Widget
+@using RVM.DesignSystem.Components.Badge
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.IconButton
+@using RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Icons
+
+@* Os widgets do topo do kit (sino, bandeira, perfil): um gatilho que abre um painel. Painel nao modal
+   (role="dialog"), que so existe no DOM aberto — o estado inicial nao depende de JS. Abrir leva o foco ao painel;
+   Esc e o X fecham e devolvem o foco ao gatilho; clique fora fecha por uma camada transparente por baixo do
+   painel, a mesma receita do RvmMenu (sem ouvir o documento por JS). *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz" @onkeydown="AoTeclarAsync">
+    <button type="button" id="@IdDoGatilho" class="@ClassesDoGatilho"
+            aria-haspopup="dialog" aria-expanded="@(_aberto ? "true" : "false")" aria-controls="@(_aberto ? IdDoPainel : null)"
+            aria-label="@NomeAcessivel" title="@(Variant == RvmWidgetVariant.Icon ? Label : null)"
+            disabled="@Disabled" @ref="_gatilho" @onclick="AlternarAsync">
+        <span class="rvm-widget-visual" aria-hidden="true">
+            @if (!string.IsNullOrWhiteSpace(ImageUrl))
+            {
+                <img class="rvm-widget-imagem" src="@ImageUrl" alt="" />
+            }
+            else if (Icon is { } icone)
+            {
+                <RvmIcon Name="icone" SizePx="22" />
+            }
+            @if (Badge is > 0)
+            {
+                <RvmBadge Count="Badge.Value" Color="RvmColor.Error" Class="rvm-widget-contador" />
+            }
+        </span>
+        @if (Variant == RvmWidgetVariant.Card)
+        {
+            <span class="rvm-widget-textos" aria-hidden="true">
+                <span class="rvm-widget-titulo">@Title</span>
+                @if (!string.IsNullOrWhiteSpace(Subtitle))
+                {
+                    <span class="rvm-widget-subtitulo">@Subtitle</span>
+                }
+            </span>
+            <span class="rvm-widget-seta" aria-hidden="true">
+                <RvmIcon Name="@(_aberto ? RvmIconName.ChevronUp : RvmIconName.ChevronDown)" />
+            </span>
+        }
+    </button>
+
+    @if (_aberto)
+    {
+        <div class="rvm-widget-fundo" @onclick="FecharPorFora"></div>
+        <div id="@IdDoPainel" class="@ClassesDoPainel" role="dialog" tabindex="-1" @ref="_painel"
+             aria-labelledby="@(string.IsNullOrWhiteSpace(PanelTitle) ? IdDoGatilho : IdDoTitulo)">
+            @if (!string.IsNullOrWhiteSpace(PanelTitle))
+            {
+                <div class="rvm-widget-cabecalho">
+                    <h2 id="@IdDoTitulo" class="rvm-widget-titulo-do-painel">@PanelTitle</h2>
+                    <RvmIconButton Icon="RvmIconName.Close" Label="@($"Fechar {PanelTitle}")" Size="RvmSize.Small"
+                                   OnClick="() => FecharAsync(devolverFoco: true)" />
+                </div>
+            }
+            <div class="rvm-widget-corpo">@ChildContent</div>
+            @if (Footer is not null)
+            {
+                <div class="rvm-widget-rodape">@Footer</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>Nome do widget para o leitor de tela e dica do gatilho de icone ("Notificacoes").</summary>
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+
+    /// <summary>Conteudo do painel.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Rodape do painel (acoes como "Marcar todas como lidas").</summary>
+    [Parameter] public RenderFragment? Footer { get; set; }
+
+    /// <summary>Titulo dentro do painel. Com ele aparecem o cabecalho e o botao de fechar.</summary>
+    [Parameter] public string? PanelTitle { get; set; }
+
+    /// <summary>Forma do gatilho: botao de icone (o padrao) ou cartao.</summary>
+    [Parameter] public RvmWidgetVariant Variant { get; set; }
+
+    /// <summary>Icone do gatilho.</summary>
+    [Parameter] public RvmIconName? Icon { get; set; }
+
+    /// <summary>Imagem redonda no lugar do icone (bandeira, foto). Decorativa: o nome vem do <see cref="Label"/>.</summary>
+    [Parameter] public string? ImageUrl { get; set; }
+
+    /// <summary>Titulo do cartao (nome da pessoa ou da equipe).</summary>
+    [Parameter] public string? Title { get; set; }
+
+    /// <summary>Linha de baixo do cartao (cargo, quantidade de membros).</summary>
+    [Parameter] public string? Subtitle { get; set; }
+
+    /// <summary>Contador em cima do gatilho. Zero ou sem valor, sem contador.</summary>
+    [Parameter] public int? Badge { get; set; }
+
+    /// <summary>Largura do painel: lista (o padrao) ou folha.</summary>
+    [Parameter] public RvmWidgetPanelSize Size { get; set; }
+
+    /// <summary>Onde o painel abre. Padrao: abaixo, alinhado pela direita.</summary>
+    [Parameter] public RvmMenuPlacement Placement { get; set; } = RvmMenuPlacement.BottomEnd;
+
+    /// <summary>Indisponivel.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Aberto. Aceita <c>@bind-Open</c>; so e seguido quando muda.</summary>
+    [Parameter] public bool Open { get; set; }
+
+    /// <summary>Disparado ao abrir e ao fechar.</summary>
+    [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+
+    /// <summary>Id do gatilho. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private readonly string _idGerado = GeradorDeIds.Novo("rvm-widget");
+    private ElementReference _gatilho;
+    private ElementReference _painel;
+    private bool _aberto;
+    private bool? _openAnterior;
+    private bool _focarPainel;
+    private bool _focarGatilho;
+
+    internal bool Aberto => _aberto;
+
+    internal string IdDoGatilho => string.IsNullOrWhiteSpace(Id) ? _idGerado : Id;
+
+    private string IdDoPainel => $"{IdDoGatilho}-painel";
+
+    private string IdDoTitulo => $"{IdDoGatilho}-titulo";
+
+    internal string NomeAcessivel
+    {
+        get
+        {
+            var nome = Variant == RvmWidgetVariant.Card && !string.IsNullOrWhiteSpace(Title) ? $"{Title}, {Label}" : Label;
+            return Badge is > 0 ? $"{nome}, {Badge} novos" : nome;
+        }
+    }
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-widget", Class, AdditionalAttributes);
+
+    private string ClassesDoGatilho => Variant == RvmWidgetVariant.Card
+        ? "rvm-widget-gatilho rvm-widget-cartao"
+        : "rvm-widget-gatilho rvm-widget-icone";
+
+    private string ClassesDoPainel => "rvm-widget-painel"
+        + (Size == RvmWidgetPanelSize.Sheet ? " rvm-widget-folha" : " rvm-widget-lista")
+        + Placement switch
+        {
+            RvmMenuPlacement.BottomStart => " rvm-widget-inicio",
+            RvmMenuPlacement.BottomCenter => " rvm-widget-centro",
+            RvmMenuPlacement.TopEnd => " rvm-widget-acima",
+            RvmMenuPlacement.TopStart => " rvm-widget-acima rvm-widget-inicio",
+            _ => ""
+        };
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        // So segue o Open quando ele MUDA: um pai que re-renderiza com o mesmo valor (sem @bind) nao fecha o
+        // painel que a pessoa abriu.
+        if (_openAnterior != Open)
+        {
+            _openAnterior = Open;
+            _aberto = Open;
+        }
+    }
+
+    private async Task AlternarAsync()
+    {
+        if (_aberto)
+        {
+            await FecharAsync(devolverFoco: false);
+            return;
+        }
+
+        _aberto = true;
+        _focarPainel = true;
+        await OpenChanged.InvokeAsync(true);
+    }
+
+    private async Task AoTeclarAsync(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape" && _aberto)
+        {
+            await FecharAsync(devolverFoco: true);
+        }
+    }
+
+    private Task FecharPorFora() => FecharAsync(devolverFoco: false);
+
+    private async Task FecharAsync(bool devolverFoco)
+    {
+        _aberto = false;
+        _focarGatilho = devolverFoco;
+        await OpenChanged.InvokeAsync(false);
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focarPainel && _aberto)
+        {
+            _focarPainel = false;
+            await _painel.FocusAsync();
+        }
+        else if (_focarGatilho)
+        {
+            _focarGatilho = false;
+            await _gatilho.FocusAsync();
+        }
+    }
+}

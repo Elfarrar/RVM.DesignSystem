@@ -1,0 +1,99 @@
+@page "/componentes/activity"
+@using RVM.DesignSystem.Components.Activity
+
+<PageTitle>RvmActivity e RvmHistory — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmActivity e RvmHistory</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O "Activity Timeline" dos dashboards do kit. O RvmActivity e um acontecimento: marcador a esquerda (ponto,
+    icone ou avatar) ligado ao proximo por uma linha, titulo, carimbo, descricao e um corpo livre. O RvmHistory e o
+    cartao que junta os acontecimentos numa lista ordenada que rola por dentro, com titulo, etiqueta, menu e os
+    estados de carregando, erro e vazio.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Historico do talhao"
+              Descricao="Carimbo no canto superior direito, como no kit, e o corpo livre com etiqueta e nota."
+              Codigo="@CodigoHistorico">
+    <div class="grade-cards">
+        <RvmHistory Title="Talhao 12 — soja" Text="Ultimos 30 dias" Label="Safra 2026" LabelColor="RvmColor.Success">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Download" OnClick="@(() => _acao = "Exportar")">Exportar</RvmMenuItem>
+                <RvmMenuItem Icon="RvmIconName.Refresh" OnClick="@(() => _acao = "Atualizar")">Atualizar</RvmMenuItem>
+            </MenuItems>
+            <ChildContent>
+                <RvmActivity Title="Colheita iniciada" Description="Colhedora 2 no talhao desde as 7h."
+                             Timestamp="Hoje, 07:10" TimestampPosition="RvmActivityTimestampPosition.TopRight" />
+                <RvmActivity Title="Nota fiscal do fungicida" Description="Pagamento confirmado pelo financeiro."
+                             Timestamp="Quarta" TimestampPosition="RvmActivityTimestampPosition.TopRight">
+                    <RvmLabel Color="RvmColor.Info">nf-48213.pdf</RvmLabel>
+                </RvmActivity>
+                <RvmActivity Title="Vistoria do agronomo" Description="Lavoura sem sinal de ferrugem."
+                             Timestamp="12 mar" TimestampPosition="RvmActivityTimestampPosition.TopRight"
+                             Tracker="RvmActivityTracker.Avatar" AvatarName="Ana Souza">
+                    <RvmRating Value="4" ReadOnly="true" Size="RvmSize.Small" Label="Sanidade" />
+                </RvmActivity>
+                <RvmActivity Title="Chuva de 38 mm" Description="Estacao meteorologica da sede."
+                             Timestamp="2 mar" TimestampPosition="RvmActivityTimestampPosition.TopRight"
+                             Tracker="RvmActivityTracker.Icon" Icon="RvmIconName.CloudRain" />
+            </ChildContent>
+        </RvmHistory>
+
+        <div class="lista-vertical">
+            <RvmActivity Title="Pagamento ao fornecedor" Description="Adubo NPK 04-14-08, 30 toneladas."
+                         Timestamp="20 dez 2025, 08:00" Tracker="RvmActivityTracker.Icon" Icon="RvmIconName.Wallet" />
+            <RvmActivity Title="Contrato de venda assinado" Description="Cooperativa, 12 mil sacas."
+                         Timestamp="18 dez 2025, 15:40" />
+        </div>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">Ultima acao do menu: @_acao</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="Erro vence carregando, que vence vazio. O vazio aceita conteudo proprio que ensina o proximo passo."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="@(() => _estado = "carregando")">Carregando</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="@(() => _estado = "erro")">Erro</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="@(() => _estado = "vazio")">Vazio</RvmButton>
+    </div>
+    <div class="grade-cards">
+        <RvmHistory Title="Movimentacoes do caixa" Loading="@(_estado == "carregando")" Error="@(_estado == "erro")"
+                    IsEmpty="@(_estado == "vazio")" EmptyText="Nenhuma movimentacao neste mes." />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmActivity" />
+
+<TabelaParametros Componente="RvmHistory" />
+
+@code {
+    private string _acao = "nenhuma";
+    private string _estado = "carregando";
+
+    private const string CodigoHistorico = """
+        <RvmHistory Title="Talhao 12 — soja" Text="Ultimos 30 dias" Label="Safra 2026" LabelColor="RvmColor.Success">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Download" OnClick="Exportar">Exportar</RvmMenuItem>
+            </MenuItems>
+            <ChildContent>
+                <RvmActivity Title="Colheita iniciada" Description="Colhedora 2 no talhao desde as 7h."
+                             Timestamp="Hoje, 07:10" TimestampPosition="RvmActivityTimestampPosition.TopRight" />
+                <RvmActivity Title="Vistoria do agronomo" Tracker="RvmActivityTracker.Avatar" AvatarName="Ana Souza"
+                             Timestamp="12 mar" TimestampPosition="RvmActivityTimestampPosition.TopRight">
+                    <RvmRating Value="4" ReadOnly="true" Size="RvmSize.Small" Label="Sanidade" />
+                </RvmActivity>
+                <RvmActivity Title="Chuva de 38 mm" Tracker="RvmActivityTracker.Icon" Icon="RvmIconName.CloudRain" />
+            </ChildContent>
+        </RvmHistory>
+        """;
+
+    private const string CodigoEstados = """
+        <RvmHistory Title="Movimentacoes do caixa" Loading="carregando" Error="falhou"
+                    IsEmpty="movimentos.Count == 0" EmptyText="Nenhuma movimentacao neste mes." />
+        """;
+}

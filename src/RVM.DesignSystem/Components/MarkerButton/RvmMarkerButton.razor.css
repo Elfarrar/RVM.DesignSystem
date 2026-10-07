@@ -1,0 +1,44 @@
+/* CSS isolado do RvmMarkerButton. So custom properties — hex literal aqui quebra o tema escuro.
+   A caixa do RvmBackButton (38 px, contorno secundario). Marcado: icone cheio no -text do aviso (3:1 contra o
+   fundo nos dois temas; o -main amarelo do kit fica abaixo disso no claro) e o fundo suave do aviso. */
+
+.rvm-marcador {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--rvm-color-secondary-outlined-resting);
+    border-radius: var(--rvm-radius-sm);
+    background-color: transparent;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+    transition: background-color var(--rvm-transition-fast), color var(--rvm-transition-fast);
+}
+
+.rvm-marcador-pilula { border-radius: var(--rvm-radius-pill); }
+
+.rvm-marcador:hover:not(:disabled) { background-color: var(--rvm-color-action-hover); }
+
+.rvm-marcador-marcado {
+    border-color: var(--rvm-color-warning-outlined-resting);
+    background-color: var(--rvm-color-warning-soft);
+    color: var(--rvm-color-warning-text);
+}
+
+.rvm-marcador-marcado:hover:not(:disabled) { background-color: var(--rvm-color-warning-outlined-hover); }
+
+.rvm-marcador:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-marcador:disabled {
+    border-color: var(--rvm-color-action-disabled);
+    background-color: transparent;
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
