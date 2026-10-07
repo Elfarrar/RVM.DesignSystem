@@ -187,3 +187,10 @@ public class RvmReviewOnda0ListaTests : BunitContext
         Assert.Contains("Pedido 12", item.TextContent);
     }
 }
+
+public class RvmReviewOnda0MenuTests : BunitContext
+{
+    [Fact]
+    public void Aria_label_do_consumidor_chega_ao_gatilho_com_texto()
+        => Assert.Equal("Mover Agro para outra etapa", Render<RvmMenu>(p => p.Add(x => x.Label, "Mover").AddUnmatched("aria-label", "Mover Agro para outra etapa")).Find("button").GetAttribute("aria-label"));
+}

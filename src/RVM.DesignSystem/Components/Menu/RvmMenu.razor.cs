@@ -62,6 +62,13 @@ public partial class RvmMenu : ComponentBase, IAsyncDisposable
 
     internal RvmIconName? IconeDoGatilho => Icon ?? StartIcon ?? (SoIcone ? RvmIconName.DotsVertical : null);
 
+    // O aria-label do consumidor vence; so o gatilho de icone ganha o Label como nome. Um null aqui depois dos
+    // atributos repassados apagaria o do consumidor (pego pelo E2E do CRM na onda 0, DSGN-017).
+    internal string? RotuloDoGatilho
+        => AdditionalAttributes is not null && AdditionalAttributes.TryGetValue("aria-label", out var valor) && valor is string informado
+            ? informado
+            : SoIcone ? Label : null;
+
     internal string TextoDoGatilho => string.IsNullOrWhiteSpace(Text) ? Label : Text;
 
     internal string ClassesDaLista => "rvm-lista" + (AlignEnd ? RvmMenuPlacement.BottomEnd : Placement) switch
