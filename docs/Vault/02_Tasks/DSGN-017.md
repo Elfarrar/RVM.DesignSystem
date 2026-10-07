@@ -79,6 +79,12 @@ com **65**. Faltam no DS **100 componentes**, **399 parâmetros** em 65 componen
    `design/contrato-api.pendentes.json`, que só encolhe. Onda 0 = contrato, enums, ícones e parâmetros dos
    componentes em comum; depois as ondas do card (shell/navegação → formulários → tabelas e listas → feedback →
    restante), cada uma em `dev` com screenshot para aprovação. **2.0.0 só com zero pendentes.**
+4. **Tema — `Accent` (07/10/2026):** `Blue` é o Cobalt de hoje e é o **padrão no DS** (nenhum consumidor muda de
+   cor; no UI o padrão é Roxo, de outro kit). `Purple` e `Black` são rampas **novas desenhadas no DS** a partir dos
+   tokens, com contraste AA medido.
+5. **Tema — paletas de produto (07/10/2026):** Profissional, Acolhedor e Utilitário entram **com as cores e com as
+   fontes** (Hanken Grotesk, Lora e Geist Mono empacotadas no DS, OFL — licença conferida e `OFL.txt` junto, como a
+   Inter do ADR-006).
 
 ## Onda 0 — feita em 07/10/2026 (branch `dsgn-017`)
 
