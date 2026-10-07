@@ -2,20 +2,45 @@
 @using RVM.DesignSystem.Components.Icon
 
 <li role="none">
-    <button @ref="_elemento"
-            @attributes="AdditionalAttributes"
-            type="button"
-            role="menuitem"
-            tabindex="-1"
-            class="@ClassesDoItem"
-            disabled="@Disabled"
-            @onclick="AoClicarAsync"
-            @onfocus="() => TemFoco = true"
-            @onblur="() => TemFoco = false">
+    @if (string.IsNullOrWhiteSpace(Href))
+    {
+        <button @ref="_elemento"
+                @attributes="AdditionalAttributes"
+                type="button"
+                role="menuitem"
+                tabindex="-1"
+                class="@ClassesDoItem"
+                disabled="@Disabled"
+                @onclick="AoClicarAsync"
+                @onfocus="() => TemFoco = true"
+                @onblur="() => TemFoco = false">
+            @Conteudo
+        </button>
+    }
+    else
+    {
+        @* Com Href o item e um link (navegar e o que ele faz); desabilitado, sai sem href e com aria-disabled. *@
+        <a @ref="_elemento"
+           @attributes="AdditionalAttributes"
+           href="@(Disabled ? null : Href)"
+           role="menuitem"
+           tabindex="-1"
+           class="@ClassesDoItem"
+           aria-disabled="@(Disabled ? "true" : null)"
+           @onclick="AoClicarAsync"
+           @onfocus="() => TemFoco = true"
+           @onblur="() => TemFoco = false">
+            @Conteudo
+        </a>
+    }
+</li>
+
+@code {
+    private RenderFragment Conteudo => @<text>
         @if (Icon is { } icone)
         {
             <RvmIcon Name="icone" Size="RvmSize.Medium" />
         }
-        <span class="rvm-texto">@ChildContent</span>
-    </button>
-</li>
+        <span class="rvm-texto">@(ChildContent ?? (b => b.AddContent(0, Text)))</span>
+    </text>;
+}

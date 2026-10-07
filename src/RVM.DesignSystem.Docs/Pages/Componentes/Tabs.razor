@@ -21,6 +21,16 @@
     </RvmTabs>
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="No topo da pagina, por valor e com contador"
+              Descricao="Page poe as abas sublinhadas numa faixa de superficie (invencao declarada). Value identifica a aba pelo valor, e nao pela posicao; Count mostra o contador ao lado do texto."
+              Codigo="@CodigoPagina">
+    <RvmTabs Variant="RvmTabsVariant.Page" @bind-Value="_porValor" Label="Pedidos">
+        <RvmTab Text="Abertos" Value="abertos" Count="3"><RvmTypography>Pedidos aguardando pagamento.</RvmTypography></RvmTab>
+        <RvmTab Text="Pagos" Value="pagos" Count="12"><RvmTypography>Pedidos pagos, a enviar.</RvmTypography></RvmTab>
+        <RvmTab Text="Enviados" Value="enviados"><RvmTypography>Pedidos a caminho.</RvmTypography></RvmTab>
+    </RvmTabs>
+</BlocoExemplo>
+
 <BlocoExemplo Titulo="Preenchida, largura total e com icone"
               Descricao="A linha Customized Tabs e as colunas Full Width e With Icon."
               Codigo="@CodigoPreenchida">
@@ -48,7 +58,9 @@
     </RvmTabs>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmTabs" />
+
+<TabelaParametros Componente="RvmTab" />
 
 <RecorteDoKit Origem="kit/tabs.png"
               Arquivo="referencia-neatlab/Tabs.png (recorte)"
@@ -58,18 +70,14 @@
 @code {
     private int _basica;
 
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("ActiveIndex", "int", "0", "Indice da aba ativa. Aceita @bind-ActiveIndex."),
-        new("Variant", "RvmTabsVariant", "Standard", "Standard (sublinhada) ou Contained (preenchida)."),
-        new("Orientation", "RvmOrientation", "Horizontal", "Horizontal ou Vertical."),
-        new("FullWidth", "bool", "false", "As abas dividem a largura. So na horizontal."),
-        new("AriaLabel", "string?", "—", "Nome da lista de abas para o leitor de tela."),
-        new("RvmTab.Title", "string", "—", "Texto da aba."),
-        new("RvmTab.Icon", "RvmIconName?", "—", "Icone acima do texto."),
-        new("RvmTab.Disabled", "bool", "false", "Visivel, mas pulada pelo teclado e pelo clique."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto na lista de abas.")
-    ];
+    private string? _porValor = "pagos";
+
+    private const string CodigoPagina = """
+        <RvmTabs Variant="RvmTabsVariant.Page" @bind-Value="_aba" Label="Pedidos">
+            <RvmTab Text="Abertos" Value="abertos" Count="3">...</RvmTab>
+            <RvmTab Text="Pagos" Value="pagos" Count="12">...</RvmTab>
+        </RvmTabs>
+        """;
 
     private const string CodigoBasico = """
         <RvmTabs @bind-ActiveIndex="_aba" AriaLabel="Dados do talhao">

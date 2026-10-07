@@ -63,11 +63,29 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     /// <summary>Nome da navegacao para o leitor de tela. Padrao: "Menu principal".</summary>
     [Parameter] public string NavigationLabel { get; set; } = "Menu principal";
 
+    /// <summary>A lateral pronta, no lugar de <see cref="Brand"/> e <see cref="Navigation"/>.</summary>
+    [Parameter] public RenderFragment? Sidebar { get; set; }
+
+    /// <summary>Nome do botao que abre a gaveta no celular.</summary>
+    [Parameter] public string MenuLabel { get; set; } = "Abrir menu";
+
+    /// <summary>Nome da cortina que fecha a gaveta aberta no celular (o botao do topo segue com <see cref="MenuLabel"/> e <c>aria-expanded</c>).</summary>
+    [Parameter] public string CloseMenuLabel { get; set; } = "Fechar menu";
+
+    /// <summary>
+    /// Id da LATERAL (o <c>aside</c>), como no RVM.UI. Sem ele, um id unico e gerado. ⚠️ Na 1.x, <c>id="..."</c> no
+    /// <c>RvmAppShell</c> ia para a raiz; o Blazor casa o atributo com este parametro, entao na 2.0 ele vai para a lateral.
+    /// </summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    internal string IdLateral => $"{_idBase}-menu";
+    internal string IdLateral => string.IsNullOrWhiteSpace(Id) ? $"{_idBase}-menu" : Id;
 
     internal string IdConteudo => $"{_idBase}-conteudo";
 
@@ -79,12 +97,7 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
             if (Collapsed) proprias += " rvm-recolhida";
             if (MenuOpen) proprias += " rvm-menu-aberto";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

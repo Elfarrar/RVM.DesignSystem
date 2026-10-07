@@ -38,6 +38,29 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
     /// <summary>As <see cref="RvmTab"/>.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>
+    /// Valor da aba escolhida (o <c>Value</c> da <see cref="RvmTab"/>). Aceita <c>@bind-Value</c>. Quando casa com uma
+    /// aba, vence <see cref="ActiveIndex"/>. Em lista montada com <c>@foreach</c>, use <c>@key</c> nas abas.
+    /// </summary>
+    [Parameter] public string? Value { get; set; }
+
+    /// <summary>Disparado com o valor da aba escolhida (junto com <see cref="ActiveIndexChanged"/>).</summary>
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+    /// <summary>Nome da lista de abas para o leitor de tela. O mesmo que <see cref="AriaLabel"/>, que vence.</summary>
+    [Parameter] public string Label { get; set; } = "";
+
+    /// <summary>Cor do destaque da aba escolhida. Padrao: o primario.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Primary;
+
+    /// <summary>Canto das abas preenchidas (<see cref="RvmTabsVariant.Contained"/>): o do kit ou pilula.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Rounded;
+
+    internal string? NomeDaLista => !string.IsNullOrWhiteSpace(AriaLabel) ? AriaLabel : string.IsNullOrWhiteSpace(Label) ? null : Label;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto na lista de abas.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -55,7 +78,8 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
                 return -1;
             }
 
-            var indice = Math.Clamp(ActiveIndex, 0, _abas.Count - 1);
+            var porValor = Value is null ? -1 : _abas.FindIndex(a => a.Value == Value && a.Value.Length > 0);
+            var indice = porValor >= 0 ? porValor : Math.Clamp(ActiveIndex, 0, _abas.Count - 1);
             return _abas[indice].Disabled ? _abas.FindIndex(a => !a.Disabled) : indice;
         }
     }
@@ -66,20 +90,31 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
         {
             var proprias = string.Join(' ',
                 "rvm-abas",
-                Variant == RvmTabsVariant.Contained ? "rvm-preenchidas" : "rvm-sublinhadas",
-                Orientation == RvmOrientation.Vertical ? "rvm-vertical" : "rvm-horizontal");
+                Variant switch
+                {
+                    RvmTabsVariant.Contained => "rvm-preenchidas",
+                    RvmTabsVariant.Page => "rvm-sublinhadas rvm-pagina",
+                    _ => "rvm-sublinhadas"
+                },
+                Orientation == RvmOrientation.Vertical ? "rvm-vertical" : "rvm-horizontal",
+                Color switch
+                {
+                    RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
+                    RvmColor.Info => "rvm-info",
+                    RvmColor.Success => "rvm-success",
+                    RvmColor.Warning => "rvm-warning",
+                    RvmColor.Error => "rvm-error",
+                    _ => "rvm-primary"
+                });
+            if (Shape == RvmFieldShape.Pill) proprias += " rvm-pilula";
 
             if (FullWidth && Orientation == RvmOrientation.Horizontal)
             {
                 proprias += " rvm-largura-total";
             }
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 
@@ -97,9 +132,9 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
                         && !string.Equals(a.Key, "style", StringComparison.OrdinalIgnoreCase))
             .ToDictionary(a => a.Key, a => a.Value);
 
-    internal string IdDaAba(RvmTab aba) => $"{_idBase}-aba-{_abas.IndexOf(aba)}";
+    internal string IdDaAba(RvmTab aba) => string.IsNullOrWhiteSpace(aba.Id) ? $"{_idBase}-aba-{_abas.IndexOf(aba)}" : aba.Id;
 
-    internal string IdDoPainel(RvmTab aba) => $"{_idBase}-painel-{_abas.IndexOf(aba)}";
+    internal string IdDoPainel(RvmTab aba) => string.IsNullOrWhiteSpace(aba.PanelId) ? $"{_idBase}-painel-{_abas.IndexOf(aba)}" : aba.PanelId;
 
     internal bool EstaAtiva(RvmTab aba) => _abas.IndexOf(aba) == IndiceAtivo;
 
@@ -130,6 +165,11 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
         {
             ActiveIndex = indice;
             await ActiveIndexChanged.InvokeAsync(indice);
+            if (_abas[indice].Value.Length > 0)
+            {
+                Value = _abas[indice].Value;
+                await ValueChanged.InvokeAsync(Value);
+            }
         }
 
         if (focar)

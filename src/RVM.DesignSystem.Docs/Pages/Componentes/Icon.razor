@@ -38,6 +38,17 @@
     </div>
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="Traco ou cheio"
+              Descricao="Style escolhe o desenho. Bold e BoldDuotone saem cheios onde o Tabler desenha a versao cheia; Linear (o padrao) e Broken saem no traco. SizePx da um lado fora dos tres tamanhos."
+              Codigo="@CodigoEstilo">
+    <div class="linha-exemplos">
+        <RvmIcon Name="RvmIconName.Heart" Size="RvmSize.Large" />
+        <RvmIcon Name="RvmIconName.Heart" Size="RvmSize.Large" Style="RvmIconStyle.Bold" Color="RvmColor.Error" />
+        <RvmIcon Name="RvmIconName.Star" Size="RvmSize.Large" Style="RvmIconStyle.Bold" Color="RvmColor.Warning" />
+        <RvmIcon Name="RvmIconName.Bell" SizePx="32" Style="RvmIconStyle.Bold" Color="RvmColor.Primary" />
+    </div>
+</BlocoExemplo>
+
 <BlocoExemplo Titulo="Icone que carrega a informacao sozinho"
               Descricao="Quando nao ha rotulo ao lado, o icone precisa de Title — e so nesse caso. Ao lado de um texto que diz a mesma coisa, o Title faz o leitor de tela repetir."
               Codigo="@CodigoTitulo">
@@ -49,31 +60,33 @@
     </div>
 </BlocoExemplo>
 
-<BlocoExemplo Titulo="O conjunto curado"
-              Descricao="São os icones que os 35 componentes da v1 precisam. A lista cresce sob demanda, e nao por completude — o Tabler tem mais de 5 mil."
+<BlocoExemplo Titulo="O catalogo"
+              Descricao="Os 46 icones de antes, com o nome do Tabler, e os 1.228 nomes do contrato com o RVM.UI (os nomes do Solar, que o RVM.UI usa), cada um desenhado com o Tabler de significado mais proximo. Quem troca o RVM.UI pelo Design System nao reescreve nenhum Name."
               Codigo="@CodigoCatalogo">
+    <RvmTextField @bind-Value="_filtro" Label="Procurar icone" Placeholder="Digite parte do nome e tecle Enter" />
     <div class="grade-icones">
-        @foreach (var nome in Enum.GetValues<RvmIconName>())
+        @foreach (var nome in Filtrados)
         {
             <div class="item-icone">
-                <RvmIcon Name="nome" Size="RvmSize.Large" />
+                <RvmIcon Name="Enum.Parse<RvmIconName>(nome)" Size="RvmSize.Large" />
                 <span class="rvm-text-caption site-apoio">@nome</span>
             </div>
         }
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmIcon" />
 
 @code {
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Name", "RvmIconName", "—", "Qual icone. Enum: nome errado nao compila."),
-        new("Size", "RvmSize", "Medium", "16, 20 ou 24 px de lado."),
-        new("Color", "RvmColor?", "—", "Papel semantico. Sem valor, herda a cor do texto em volta."),
-        new("Title", "string?", "—", "O que o icone significa. So quando ele for a UNICA fonte da informacao."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao SVG.")
-    ];
+    private string? _filtro;
+
+    private IEnumerable<string> Filtrados => Enum.GetNames<RvmIconName>()
+        .Where(n => string.IsNullOrWhiteSpace(_filtro) || n.Contains(_filtro.Trim(), StringComparison.OrdinalIgnoreCase));
+
+    private const string CodigoEstilo = """
+        <RvmIcon Name="RvmIconName.Heart" Style="RvmIconStyle.Bold" Color="RvmColor.Error" />
+        <RvmIcon Name="RvmIconName.Bell" SizePx="32" />
+        """;
 
     private const string CodigoTamanhos = """
         <RvmIcon Name="RvmIconName.Bell" Size="RvmSize.Small" />

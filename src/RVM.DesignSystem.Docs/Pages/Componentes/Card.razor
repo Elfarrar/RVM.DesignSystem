@@ -45,7 +45,7 @@
     </BlocoExemplo>
 </div>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmCard" />
 
 <RecorteDoKit Origem="kit/card.jpg"
               Arquivo="referencia-neatlab/Basic Card.png (recorte)"
@@ -56,20 +56,6 @@
     // Midia desenhada inline, para o exemplo nao depender de imagem externa nem de rede.
     private const string MidiaDeExemplo =
         "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 140'><rect width='400' height='140' fill='%2356CA00'/><circle cx='320' cy='40' r='22' fill='%23FFB400'/><path d='M0 110 Q100 70 200 105 T400 95 V140 H0Z' fill='%23378100'/></svg>";
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Title", "string?", "—", "Titulo do cabecalho."),
-        new("Subheader", "string?", "—", "Linha de apoio abaixo do titulo."),
-        new("TitleElement", "RvmTextElement", "H3", "Elemento do titulo, para seguir a ordem de cabecalhos da pagina."),
-        new("HeaderAction", "RenderFragment?", "—", "Algo no canto direito do cabecalho."),
-        new("MediaSrc", "string?", "—", "Imagem no topo."),
-        new("MediaAlt", "string?", "—", "Alt da imagem. Vazio quando ela e decorativa."),
-        new("MediaHeight", "int", "200", "Altura da imagem em pixels."),
-        new("ChildContent", "RenderFragment?", "—", "O conteudo."),
-        new("Actions", "RenderFragment?", "—", "Acoes no rodape."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoBasico = """
         <RvmCard>Cancun esta de volta, melhor do que nunca.</RvmCard>

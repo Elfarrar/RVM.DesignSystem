@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using RVM.DesignSystem.Icons;
 
 namespace RVM.DesignSystem.Components.TextField;
 
@@ -58,8 +59,36 @@ public partial class RvmTextField
     /// <summary>Indisponivel.</summary>
     [Parameter] public bool Disabled { get; set; }
 
+    /// <summary>Id do input. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Nome enviado no formulario. Sem ele, vem do <c>@bind-Value</c> (necessario em SSR estatico).</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atualiza o valor a cada tecla (<c>oninput</c>), e nao so ao sair do campo. Para busca enquanto digita.</summary>
+    [Parameter] public bool Immediate { get; set; }
+
+    /// <summary>Icone no inicio da caixa (decorativo: o rotulo ja diz o que e o campo).</summary>
+    [Parameter] public RvmIconName? StartIcon { get; set; }
+
+    /// <summary>Icone no fim da caixa (decorativo).</summary>
+    [Parameter] public RvmIconName? EndIcon { get; set; }
+
+    /// <summary>Canto da caixa contornada: o do kit ou pilula.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Rounded;
+
+    /// <summary>Texto do link acima do campo, a direita ("Esqueci a senha").</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link acima do campo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
     internal string IdEfetivo
-        => AdditionalAttributes is not null
+        => !string.IsNullOrWhiteSpace(Id) ? Id
+           : AdditionalAttributes is not null
            && AdditionalAttributes.TryGetValue("id", out var informado)
            && informado is string texto
            && !string.IsNullOrWhiteSpace(texto)
@@ -71,7 +100,8 @@ public partial class RvmTextField
     /// do <c>@bind-Value</c>. Vazio quando o <see cref="EditContext"/> nao usa nomes de campo — o caso
     /// do WebAssembly, em que nao ha POST. Vazio vira atributo AUSENTE: <c>name=""</c> e ruido.
     /// </summary>
-    internal string? NomeDoCampo => string.IsNullOrEmpty(NameAttributeValue) ? null : NameAttributeValue;
+    internal string? NomeDoCampo => !string.IsNullOrWhiteSpace(Name) ? Name
+        : string.IsNullOrEmpty(NameAttributeValue) ? null : NameAttributeValue;
 
     /// <summary><c>style</c> do consumidor, aplicado na raiz, onde largura e margem fazem efeito.</summary>
     internal string? EstiloDoConsumidor
@@ -167,13 +197,14 @@ public partial class RvmTextField
                 Size == RvmSize.Small ? "rvm-pequeno" : "rvm-medio");
 
             if (!string.IsNullOrEmpty(Placeholder)) proprias += " rvm-rotulo-fixo";
-            if (!string.IsNullOrWhiteSpace(Prefix)) proprias += " rvm-com-prefixo";
+            if (!string.IsNullOrWhiteSpace(Prefix) || StartIcon is not null) proprias += " rvm-com-prefixo";
+            if (Shape == RvmFieldShape.Pill) proprias += " rvm-pilula";
             if (TemErro) proprias += " rvm-erro";
             if (Disabled) proprias += " rvm-desabilitado";
 
             // `CssClass` do InputBase traz as classes de validacao do EditForm ("modified", "invalid")
             // e a `class` que o consumidor mandou.
-            return string.IsNullOrWhiteSpace(CssClass) ? proprias : $"{proprias} {CssClass}";
+            return ClassesCss.Juntar(proprias, Class, null) + (string.IsNullOrWhiteSpace(CssClass) ? "" : $" {CssClass}");
         }
     }
 
@@ -189,4 +220,14 @@ public partial class RvmTextField
     }
 
     private void AoMudar(ChangeEventArgs e) => CurrentValueAsString = e.Value?.ToString();
+
+    private void AoMudarAoSair(ChangeEventArgs e)
+    {
+        if (!Immediate) AoMudar(e);
+    }
+
+    private void AoMudarAoDigitar(ChangeEventArgs e)
+    {
+        if (Immediate) AoMudar(e);
+    }
 }

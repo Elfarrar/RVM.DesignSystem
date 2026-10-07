@@ -25,6 +25,7 @@
 /* --- Preenchido: fundo na cor do papel, conteudo no token de contraste --- */
 .rvm-preenchido.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
 .rvm-preenchido.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-preenchido.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
 .rvm-preenchido.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
 .rvm-preenchido.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
 .rvm-preenchido.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
@@ -34,6 +35,7 @@
        o pior e info no claro, 4.71:1. --- */
 .rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
 .rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-suave.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
 .rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
 .rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
 .rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
@@ -50,3 +52,6 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
 }
+
+/* Ring do contrato com o RVM.UI (DSGN-017): o anel que separa avatares sobrepostos. */
+.rvm-anel { box-shadow: 0 0 0 2px var(--rvm-color-background-paper); }

@@ -123,6 +123,18 @@
     --rvm-color-success-soft: #E9F5EA;
     --rvm-color-warning-soft: #FDEDE0;
     --rvm-color-error-soft: #FEE8E7;
+
+    /* Papel Inverse (contrato com o RVM.UI, DSGN-017): branco para usar SOBRE fundo colorido ou escuro.
+       Invencao declarada — o kit nao tem esse papel. Igual nos dois temas, porque o fundo em volta e
+       que e colorido; o texto sobre o branco cheio e o primary. Sobre a pagina comum ele some, e de
+       proposito: fora de fundo colorido, use outro papel. */
+    --rvm-color-inverse-main: #FFFFFF;
+    --rvm-color-inverse-hover: #EDEFF7;
+    --rvm-color-inverse-text: #FFFFFF;
+    --rvm-color-inverse-contrast: #264CC8;
+    --rvm-color-inverse-outlined-hover: rgba(255, 255, 255, 0.12);
+    --rvm-color-inverse-outlined-resting: rgba(255, 255, 255, 0.56);
+    --rvm-color-inverse-soft: rgba(255, 255, 255, 0.16);
     /* No kit o menu ativo e um GRADIENTE horizontal, nao uma cor: medido de #31A1F9 (esquerda) a
        #274FCA (direita), 214 px de largura, sem variacao vertical. O token solido e o ponto MEDIO
        exato desse degrade — serve onde so cabe uma cor (borda, icone).

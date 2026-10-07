@@ -2,11 +2,28 @@
 
 @* <ul> nativo: o leitor de tela anuncia "lista, 4 itens". O namespace e "Lists", no plural, de
    proposito: um namespace "List" faria o List<T> dos outros componentes resolver para ele. *@
-<ul @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@AriaLabel">
-    <CascadingValue Value="this" IsFixed="true">
-        @ChildContent
-    </CascadingValue>
-</ul>
+@if (Estado is EstadoDosDados.Conteudo)
+{
+    @* Com MaxHeight a lista rola por dentro: tabindex para o teclado alcancar a rolagem (axe, scrollable-region-focusable). *@
+    <ul @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@AriaLabel"
+        style="@(MaxHeight is null ? null : $"max-height: {MaxHeight}; overflow-y: auto")"
+        tabindex="@(MaxHeight is null ? null : "0")">
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    </ul>
+}
+else
+{
+    <div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-lista-estado", Class, AdditionalAttributes)">
+        @switch (Estado)
+        {
+            case EstadoDosDados.Carregando: @EstadosDosDados.Carregando(LoadingText, null) break;
+            case EstadoDosDados.Erro: @EstadosDosDados.Erro(ErrorContent, ErrorTitle, ErrorText, null) break;
+            default: @EstadosDosDados.Vazio(Empty, EmptyText) break;
+        }
+    </div>
+}
 
 @code {
     /// <summary>Itens de 40 px em vez de 48 px (o "Small" do kit).</summary>
@@ -18,21 +35,51 @@
     /// <summary>Os <see cref="RvmListItem"/>.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Altura maxima em CSS (<c>"320px"</c>). Com ela a lista rola por dentro.</summary>
+    [Parameter] public string? MaxHeight { get; set; }
+
+    /// <summary>Os dados estao chegando: a lista da lugar ao aviso de carregamento.</summary>
+    [Parameter] public bool Loading { get; set; }
+
+    /// <summary>Nao ha nada para mostrar. Use <see cref="Empty"/> para ensinar o proximo passo.</summary>
+    [Parameter] public bool IsEmpty { get; set; }
+
+    /// <summary>A carga falhou. Vence <see cref="Loading"/> e <see cref="IsEmpty"/>.</summary>
+    [Parameter] public bool Error { get; set; }
+
+    /// <summary>O vazio que ensina o proximo passo. Sem ele, sai um <c>RvmEmptyState</c> com <see cref="EmptyText"/>.</summary>
+    [Parameter] public RenderFragment? Empty { get; set; }
+
+    /// <summary>O erro. Sem ele, sai o <c>RvmEmptyState</c> de erro com <see cref="ErrorTitle"/> e <see cref="ErrorText"/>.</summary>
+    [Parameter] public RenderFragment? ErrorContent { get; set; }
+
+    /// <summary>Texto do carregamento.</summary>
+    [Parameter] public string LoadingText { get; set; } = "Carregando...";
+
+    /// <summary>Texto do vazio padrao. Prefira <see cref="Empty"/>, que ensina o proximo passo.</summary>
+    [Parameter] public string EmptyText { get; set; } = "Nada para mostrar aqui ainda.";
+
+    /// <summary>Titulo do erro padrao.</summary>
+    [Parameter] public string ErrorTitle { get; set; } = "Nao deu para carregar";
+
+    /// <summary>Texto do erro padrao.</summary>
+    [Parameter] public string ErrorText { get; set; } = EstadosDosDados.TextoDeErro;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao <c>ul</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal EstadoDosDados Estado => EstadosDosDados.Qual(Error, Loading, IsEmpty);
 
     internal string ClassesDaRaiz
     {
         get
         {
             var proprias = Dense ? "rvm-lista rvm-densa" : "rvm-lista";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

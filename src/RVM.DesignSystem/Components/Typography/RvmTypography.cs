@@ -27,6 +27,9 @@ public class RvmTypography : ComponentBase
     /// <summary>O texto.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <inheritdoc cref="ComponentBase" />
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -82,12 +85,7 @@ public class RvmTypography : ComponentBase
         get
         {
             var classe = $"rvm-text-{Sufixo}";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{classe} {texto}"
-                : classe;
+            return ClassesCss.Juntar(classe, Class, AdditionalAttributes);
         }
     }
 
@@ -124,6 +122,11 @@ public class RvmTypography : ComponentBase
         RvmTextColor.Primary => "var(--rvm-color-text-primary)",
         RvmTextColor.Secondary => "var(--rvm-color-text-secondary)",
         RvmTextColor.Disabled => "var(--rvm-color-text-disabled)",
+        RvmTextColor.Accent => "var(--rvm-color-primary-text)",
+        RvmTextColor.Success => "var(--rvm-color-success-text)",
+        RvmTextColor.Danger => "var(--rvm-color-error-text)",
+        RvmTextColor.Warning => "var(--rvm-color-warning-text)",
+        RvmTextColor.Inverse => "var(--rvm-color-inverse-text)",
         _ => null
     };
 

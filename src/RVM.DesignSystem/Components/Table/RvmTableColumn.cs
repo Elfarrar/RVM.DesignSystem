@@ -41,17 +41,23 @@ public sealed class RvmTableColumn<TItem> : ComponentBase, IDisposable
     /// <summary>Largura em CSS (<c>"120px"</c>, <c>"20%"</c>). Sem valor, a tabela distribui.</summary>
     [Parameter] public string? Width { get; set; }
 
+    /// <summary>Cultura do <see cref="Format"/> e do texto do valor. Sem ela, a cultura corrente.</summary>
+    [Parameter] public CultureInfo? Culture { get; set; }
+
+    /// <summary>Classe CSS extra no cabecalho e nas celulas desta coluna.</summary>
+    [Parameter] public string? Class { get; set; }
+
     internal bool Ordenavel => Sortable && Value is not null;
 
     internal bool Filtravel => Filterable && Value is not null;
 
-    /// <summary>O valor como texto, no formato pedido e na cultura corrente — o que a pessoa le.</summary>
+    /// <summary>O valor como texto, no formato e na cultura pedidos — o que a pessoa le.</summary>
     internal string TextoDe(TItem item)
         => Value?.Invoke(item) switch
         {
             null => "",
-            IFormattable f when Format is not null => f.ToString(Format, CultureInfo.CurrentCulture),
-            var v => Convert.ToString(v, CultureInfo.CurrentCulture) ?? ""
+            IFormattable f when Format is not null => f.ToString(Format, Culture ?? CultureInfo.CurrentCulture),
+            var v => Convert.ToString(v, Culture ?? CultureInfo.CurrentCulture) ?? ""
         };
 
     /// <inheritdoc />

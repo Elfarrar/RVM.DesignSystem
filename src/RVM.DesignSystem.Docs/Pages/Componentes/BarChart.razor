@@ -46,7 +46,7 @@
     </RvmBarChart>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmBarChart" />
 
 @code {
     private static readonly (string Nome, double Produtividade, double Area)[] Talhoes =
@@ -58,23 +58,6 @@
     private static readonly (string Cultura, double Sementes, double Fertilizantes, double Defensivos)[] Custos =
     [
         ("Soja", 620, 980, 740), ("Milho safrinha", 890, 1240, 520), ("Algodao", 710, 1650, 1980), ("Feijao", 540, 760, 610)
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
-        new("Stacked", "bool", "false", "Series empilhadas em vez de lado a lado."),
-        new("MaxBarThickness", "int", "24", "Espessura maxima de cada barra, em px."),
-        new("Height", "int", "300", "Altura, em px."),
-        new("ShowLegend / ShowGrid", "bool", "true / true", "Legenda (com mais de uma serie) e grade."),
-        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie."),
-        new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
-        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O CSV e para ler, o XLSX e para somar (numero entra como numero). O nome padrao vem do AriaLabel."),
-        new("PrintAsync()", "Task<bool>", "—", "Abre a caixa de impressao do navegador com o grafico sozinho na pagina."),
-        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo de cima (nao herda o ValueFormat, que descreve a unidade do de baixo)."),
-        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida. Aqui o eixo de valores e o horizontal: Secondary poe a escala no TOPO, nao a direita."),
-        new("Zoomable / SelectionMode", "bool / RvmChartSelectionMode", "false / None", "Aparecem por heranca, mas NAO valem aqui: zoom, arrasto e selecao de faixa pedem o eixo de categorias na horizontal — use RvmColumnChart, RvmLineChart, RvmAreaChart ou RvmScatterChart.")
     ];
 
     private const string CodigoEixoDuplo = """

@@ -33,8 +33,19 @@
     height: 64px;
     margin-bottom: var(--rvm-space-2);
     border-radius: var(--rvm-radius-circle);
-    background-color: var(--rvm-color-primary-soft);
-    color: var(--rvm-color-primary-text);
+}
+
+/* O papel de cor pinta o circulo do icone (contrato com o RVM.UI, DSGN-017). */
+.rvm-primary .rvm-icone { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-secondary .rvm-icone { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-icone { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
+.rvm-info .rvm-icone { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-success .rvm-icone { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-warning .rvm-icone { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-error .rvm-icone { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+::deep .rvm-mascote-do-vazio {
+    margin-bottom: var(--rvm-space-4);
 }
 
 .rvm-titulo {

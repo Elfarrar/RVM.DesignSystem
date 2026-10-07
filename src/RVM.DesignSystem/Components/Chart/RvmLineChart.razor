@@ -15,6 +15,24 @@
     /// <summary>Marca todos os pontos. Sem isso, so os da categoria ativa aparecem. Padrao: nao.</summary>
     [Parameter] public bool ShowPoints { get; set; }
 
+    /// <summary>Mostra os valores do eixo. A grade continua (ver <c>ShowGrid</c>).</summary>
+    [Parameter] public bool ShowAxis { get; set; } = true;
+
+    /// <summary>
+    /// Formato so dos valores do eixo, que tem pouco espaco ("30k"); o <c>ValueFormat</c> continua valendo na dica e na
+    /// tabela de dados. Sem ele, o eixo usa o <c>ValueFormat</c>.
+    /// </summary>
+    [Parameter] public Func<double, string>? FormatAxisValue { get; set; }
+
+    /// <summary>Largura maxima do grafico: Small (504 px), Medium (696 px) ou Large (toda a largura, o padrao).</summary>
+    [Parameter] public RvmChartSize Size { get; set; } = RvmChartSize.Large;
+
+    private protected override Func<double, string>? FormatoDoEixo => FormatAxisValue;
+
+    private protected override bool MostraEixo => ShowAxis;
+
+    private protected override RvmChartSize Tamanho => Size;
+
     /// <summary>Preenche abaixo da linha (a <see cref="RvmAreaChart{TItem}"/>).</summary>
     internal virtual bool Preenchida => false;
 
@@ -156,7 +174,7 @@
             {
                 <line class="rvm-grafico-grade" x1="@N(esquerda)" y1="@N(y)" x2="@N(Largura - MargemDireita)" y2="@N(y)" />
             }
-            @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle")
+            @if (MostraEixo) { @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle") }
         }
         @if (TemEixoSecundario)
         {
@@ -164,7 +182,7 @@
             var secundaria = NaJanela(EscalaSecundaria);
             foreach (var marca in secundaria.Marcas)
             {
-                @Texto(Largura - MargemDireita + 8, Y(secundaria, marca), FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary), "start", "middle")
+                @if (MostraEixo) { @Texto(Largura - MargemDireita + 8, Y(secundaria, marca), FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary), "start", "middle") }
             }
         }
         @if (Ativo is { } ativo && ativo < Dados.Count)

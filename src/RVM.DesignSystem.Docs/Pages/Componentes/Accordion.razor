@@ -42,7 +42,9 @@
     </RvmAccordion>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmAccordion" />
+
+<TabelaParametros Componente="RvmAccordionPanel" />
 
 <RecorteDoKit Origem="kit/accordion.png"
               Arquivo="referencia-neatlab/Accordion.png (recorte)"
@@ -51,19 +53,6 @@
 
 @code {
     private bool _aplicacoesAbertas = true;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("RvmAccordion.Exclusive", "bool", "false", "So um painel aberto por vez."),
-        new("RvmAccordion.Variant", "RvmAccordionVariant", "Standard", "Standard ou Filled."),
-        new("RvmAccordion.HeadingLevel", "int", "3", "Nivel dos cabecalhos, de 2 a 6."),
-        new("Title", "string", "—", "Titulo do painel."),
-        new("SecondaryTitle", "string?", "—", "Complemento ao lado do titulo."),
-        new("Icon", "RvmIconName?", "—", "Icone antes do titulo."),
-        new("Expanded", "bool", "false", "Aberto. Aceita @bind-Expanded."),
-        new("Disabled", "bool", "false", "Nao abre nem fecha."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoPadrao = """
         <RvmAccordion>

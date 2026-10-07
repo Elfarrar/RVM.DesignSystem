@@ -10,6 +10,7 @@
 
 | Card | O que | Estado |
 |---|---|---|
+| [[DSGN-017]] | Paridade de API com o RVM.UI (etapa 3): 101 componentes do UI no DS no visual NEATLAB, contrato no CI, 2.0.0 | em andamento: onda 0 em dev |
 
 ## Concluido
 

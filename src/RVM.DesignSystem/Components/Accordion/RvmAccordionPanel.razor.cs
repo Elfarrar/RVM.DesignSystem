@@ -34,6 +34,9 @@ public partial class RvmAccordionPanel : ComponentBase, IDisposable
     /// <summary>O conteudo.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz do painel.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -58,12 +61,7 @@ public partial class RvmAccordionPanel : ComponentBase, IDisposable
             var proprias = _aberto ? "rvm-painel rvm-aberto" : "rvm-painel";
             if (Disabled) proprias += " rvm-desabilitado";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

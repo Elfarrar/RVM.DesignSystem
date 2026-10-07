@@ -32,7 +32,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmTooltip" />
 
 <RecorteDoKit Origem="kit/tooltip.png"
               Arquivo="referencia-neatlab/Tooltip.png (recorte)"
@@ -40,16 +40,6 @@
               Alt="Recorte do kit NEATLAB mostrando o balao de dica sem seta e com seta nas quatro direcoes" />
 
 @code {
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Text", "string", "—", "O texto da dica."),
-        new("Placement", "RvmTooltipPlacement", "Top", "Top, Bottom, Left ou Right."),
-        new("Arrow", "bool", "true", "Seta apontando para o conteudo."),
-        new("Id", "string?", "gerado", "Id da dica."),
-        new("ChildContent", "RenderFragment<string>", "—", "O conteudo. O contexto e o id da dica, para o aria-describedby."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
-
     private const string CodigoPosicoes = """
         <RvmTooltip Text="Copiar link" Placement="RvmTooltipPlacement.Bottom">
             <RvmButton aria-describedby="@context">Copiar</RvmButton>

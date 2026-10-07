@@ -56,6 +56,32 @@ public partial class RvmListItem : ComponentBase
     /// <summary>Disparado quando a sublista abre ou fecha.</summary>
     [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>A primeira linha em texto, quando nao ha <see cref="ChildContent"/>.</summary>
+    [Parameter] public string? Title { get; set; }
+
+    /// <summary>A segunda linha como conteudo (um selo no lugar do texto). Vence <see cref="SecondaryText"/>.</summary>
+    [Parameter] public RenderFragment? SubtitleContent { get; set; }
+
+    /// <summary>O valor a direita, ja formatado (moeda com <c>CultureInfo</c> explicito, no app).</summary>
+    [Parameter] public string? Value { get; set; }
+
+    /// <summary>Texto de apoio abaixo do valor.</summary>
+    [Parameter] public string? ValueSubtitle { get; set; }
+
+    /// <summary>Subiu, caiu ou nada. A cor e a seta vem daqui; o texto vem de <see cref="TrendLabel"/>.</summary>
+    [Parameter] public RvmTrend Trend { get; set; } = RvmTrend.None;
+
+    /// <summary>O quanto variou ("10%"). Sem ele, a variacao nao aparece.</summary>
+    [Parameter] public string? TrendLabel { get; set; }
+
+    /// <summary>Forma do item: duas colunas (padrao) ou uma, com o titulo como rotulo.</summary>
+    [Parameter] public RvmListItemLayout Layout { get; set; } = RvmListItemLayout.TwoColumn;
+
+    internal bool TemValor => !string.IsNullOrWhiteSpace(Value) || !string.IsNullOrWhiteSpace(TrendLabel) || !string.IsNullOrWhiteSpace(ValueSubtitle);
+
     /// <summary>Atributos extras, repassados ao <c>li</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -70,16 +96,12 @@ public partial class RvmListItem : ComponentBase
         {
             var proprias = "rvm-item";
             if (Lista?.Dense == true) proprias += " rvm-denso";
-            if (!string.IsNullOrWhiteSpace(SecondaryText)) proprias += " rvm-duas-linhas";
+            if (!string.IsNullOrWhiteSpace(SecondaryText) || SubtitleContent is not null) proprias += " rvm-duas-linhas";
+            if (Layout == RvmListItemLayout.OneColumn) proprias += " rvm-uma-coluna";
             if (Selected) proprias += " rvm-selecionado";
             if (Disabled) proprias += " rvm-desabilitado";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

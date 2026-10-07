@@ -26,7 +26,7 @@
     <RvmBreadcrumbs Items="@Estados" AriaLabel="Trilha com passo desabilitado" />
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmBreadcrumbs" />
 
 <RecorteDoKit Origem="kit/breadcrumbs.png"
               Arquivo="referencia-neatlab/Breadcrumbs.png (recorte)"
@@ -42,14 +42,6 @@
 
     private static readonly RvmBreadcrumbItem[] Estados =
         [new("Inicio", "./"), new("Relatorios", Disabled: true), new("Safra 2026")];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items", "IReadOnlyList<RvmBreadcrumbItem>", "[]", "Os passos, do mais alto ao atual. Cada um: Text, Href, Icon, Disabled."),
-        new("Separator", "RvmBreadcrumbSeparator", "Slash", "Slash (/) ou Chevron (seta)."),
-        new("AriaLabel", "string", "\"Trilha de navegacao\"", "Nome da regiao. Troque quando houver mais de uma trilha na pagina."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao nav.")
-    ];
 
     private const string CodigoSeparadores = """
         <RvmBreadcrumbs Separator="RvmBreadcrumbSeparator.Chevron"

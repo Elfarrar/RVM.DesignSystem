@@ -331,3 +331,23 @@
     background-color: var(--rvm-color-primary-text);
     color: var(--rvm-color-background-paper);
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+.rvm-contorno.rvm-pilula .rvm-caixa { border-radius: var(--rvm-radius-pill); padding: 0 19px; }
+.rvm-contorno.rvm-pilula .rvm-rotulo { left: 19px; }
+.rvm-contorno.rvm-fundo-cinza .rvm-caixa { background-color: var(--rvm-color-action-hover); }
+
+.rvm-imagem-opcao {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--rvm-radius-circle);
+    object-fit: cover;
+}
+
+.rvm-link-do-campo {
+    align-self: flex-end;
+    margin-bottom: var(--rvm-space-1);
+    color: var(--rvm-color-primary-text);
+}

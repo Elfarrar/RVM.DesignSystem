@@ -43,6 +43,15 @@ public partial class RvmPagination : ComponentBase
     /// <summary>Nome da regiao para o leitor de tela. Padrao: "Paginacao".</summary>
     [Parameter] public string AriaLabel { get; set; } = "Paginacao";
 
+    /// <summary>Nome acessivel da seta que volta.</summary>
+    [Parameter] public string PreviousLabel { get; set; } = "Pagina anterior";
+
+    /// <summary>Nome acessivel da seta que avanca.</summary>
+    [Parameter] public string NextLabel { get; set; } = "Proxima pagina";
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao <c>nav</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -104,6 +113,7 @@ public partial class RvmPagination : ComponentBase
                 {
                     null => "rvm-neutro",
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",
@@ -111,12 +121,7 @@ public partial class RvmPagination : ComponentBase
                     _ => "rvm-primary"
                 });
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

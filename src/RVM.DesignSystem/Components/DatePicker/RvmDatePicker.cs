@@ -16,6 +16,18 @@ public sealed class RvmDatePicker : RvmDatePickerBase
     /// <summary>Expressao do valor ligado. O <c>@bind-Value</c> preenche sozinho.</summary>
     [Parameter] public Expression<Func<DateOnly?>>? ValueExpression { get; set; }
 
+    /// <summary>Botao de limpar a data dentro do campo, quando ha uma escolhida.</summary>
+    [Parameter] public bool Clearable { get; set; }
+
+    internal override bool PodeLimpar => Clearable;
+
+    internal override async Task LimparAsync()
+    {
+        Value = null;
+        await ValueChanged.InvokeAsync(null);
+        AvisarFormulario();
+    }
+
     internal override bool TemValor => Value is not null;
 
     internal override string TextoExibido => Value is { } d ? Formatar(d) : string.Empty;

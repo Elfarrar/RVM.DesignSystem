@@ -6,14 +6,22 @@
    no DOM quando aberto. Recolhido, clicar expande o menu e abre o grupo — com o menu nos icones nao ha
    onde mostrar os subitens. aria-controls so sai com a lista no DOM: apontar para id inexistente e ARIA
    invalido (achado do review da onda 4). *@
-<li class="rvm-nav-item">
+<li @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-nav-item", Class, AdditionalAttributes)">
     <button type="button"
             class="@ClassesDoBotao"
             aria-expanded="@(Expanded && !Recolhido ? "true" : "false")"
+            aria-current="@(Atual ? "true" : null)"
             aria-controls="@(Expanded && !Recolhido ? _id : null)"
             title="@(Recolhido ? Text : null)"
             @onclick="AlternarAsync">
-        <RvmIcon Name="Icon" Size="RvmSize.Large" class="rvm-nav-icone" />
+        @if (!string.IsNullOrWhiteSpace(ImageUrl))
+        {
+            <img class="rvm-nav-imagem" src="@ImageUrl" alt="" />
+        }
+        else
+        {
+            <RvmIcon Name="Icon" Size="RvmSize.Large" class="rvm-nav-icone" />
+        }
         <span class="rvm-nav-texto">@Text</span>
         @if (!string.IsNullOrWhiteSpace(Badge))
         {
@@ -57,12 +65,62 @@
     /// <summary>Os subitens: <see cref="RvmNavItem"/> sem icone.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Imagem redonda no lugar do icone (decorativa).</summary>
+    [Parameter] public string? ImageUrl { get; set; }
+
+    /// <summary>
+    /// Caminho relativo do grupo (<c>"financeiro"</c>): a rota igual a ele ou abaixo dele marca o grupo como atual e o
+    /// abre na primeira vez.
+    /// </summary>
+    [Parameter] public string? ActivePrefix { get; set; }
+
+    [Inject] private NavigationManager Navegacao { get; set; } = default!;
+
+    private bool _rotaConferida;
+
+    private bool Atual
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(ActivePrefix)) return false;
+            var relativo = "/" + Navegacao.ToBaseRelativePath(Navegacao.Uri).Split('?', '#')[0].Trim('/');
+            var prefixo = "/" + ActivePrefix.Trim('/');
+            return relativo.Equals(prefixo, StringComparison.OrdinalIgnoreCase)
+                   || relativo.StartsWith(prefixo + "/", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnParametersSetAsync()
+    {
+        // So na primeira vez: depois, quem fecha o grupo e a pessoa, e a rota nao reabre.
+        if (_rotaConferida)
+        {
+            return;
+        }
+
+        _rotaConferida = true;
+        if (Atual && !Expanded)
+        {
+            Expanded = true;
+            await ExpandedChanged.InvokeAsync(true);
+        }
+    }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
     private bool Recolhido => Casca?.Collapsed == true;
 
     private string ClassesDoBotao
         => "rvm-nav-link rvm-nav-grupo"
            + (Expanded && !Recolhido ? " rvm-aberto" : "")
-           + (Recolhido ? " rvm-recolhido" : "");
+           + (Recolhido ? " rvm-recolhido" : "")
+           + (Atual ? " rvm-ativo" : "");
 
     private async Task AlternarAsync()
     {

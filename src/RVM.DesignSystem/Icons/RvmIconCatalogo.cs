@@ -7,7 +7,7 @@ namespace RVM.DesignSystem.Icons;
 /// original traz. O traco usa <c>currentColor</c>, entao a cor vem de quem desenha o icone — e por
 /// isso que o <see cref="Components.Icon.RvmIcon" /> so precisa mexer no <c>color</c>.
 /// </summary>
-internal static class RvmIconCatalogo
+internal static partial class RvmIconCatalogo
 {
     // FrozenDictionary: montado uma vez, so leitura, busca mais rapida que Dictionary. Um icone e
     // lido em toda renderizacao de botao, chip e alerta — a tabela e caminho quente.
@@ -59,5 +59,16 @@ internal static class RvmIconCatalogo
         [RvmIconName.Upload] = """<path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /> <path d="M7 9l5 -5l5 5" /> <path d="M12 4l0 12" />""",
         [RvmIconName.User] = """<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /> <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />""",
         [RvmIconName.Users] = """<path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /> <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" /> <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />""",
-    }.ToFrozenDictionary();
+    }.Concat(TablerDoContrato.Select(c => KeyValuePair.Create(c.Key, Tracos[c.Value]))).ToFrozenDictionary();
+
+    /// <summary>
+    /// O desenho no estilo pedido. <c>Bold</c> e <c>BoldDuotone</c> usam o desenho cheio do Tabler quando ele
+    /// existe; sem ele, e o resto dos estilos, ficam no traco — o Tabler nao tem duotone nem "broken".
+    /// </summary>
+    internal static string Desenho(RvmIconName nome, RvmIconStyle estilo)
+        => estilo is RvmIconStyle.Bold or RvmIconStyle.BoldDuotone
+           && (TablerDoContrato.TryGetValue(nome, out var tabler) || TablerDosAntigos.TryGetValue(nome, out tabler))
+           && Cheios.TryGetValue(tabler, out var cheio)
+            ? $"""<g fill="currentColor" stroke="none">{cheio}</g>"""
+            : Desenhos[nome];
 }

@@ -30,6 +30,15 @@ public partial class RvmTooltip : ComponentBase
     /// </summary>
     [Parameter] public RenderFragment<string>? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Icone do gatilho padrao, quando nao ha <see cref="ChildContent"/>.</summary>
+    [Parameter] public RvmTooltipTrigger Trigger { get; set; } = RvmTooltipTrigger.Info;
+
+    /// <summary>Nome acessivel do gatilho padrao.</summary>
+    [Parameter] public string TriggerLabel { get; set; } = "Mais informacoes";
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -41,12 +50,7 @@ public partial class RvmTooltip : ComponentBase
         get
         {
             var proprias = _dispensada ? "rvm-com-dica rvm-dispensada" : "rvm-com-dica";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

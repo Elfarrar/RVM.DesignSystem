@@ -65,6 +65,7 @@
 /* O icone e o que diz o papel sem ler o texto: -text, 3:1 contra o papel nos dois temas. */
 .rvm-primary .rvm-icone { color: var(--rvm-color-primary-text); }
 .rvm-secondary .rvm-icone { color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-icone { color: var(--rvm-color-inverse-text); }
 .rvm-info .rvm-icone { color: var(--rvm-color-info-text); }
 .rvm-success .rvm-icone { color: var(--rvm-color-success-text); }
 .rvm-warning .rvm-icone { color: var(--rvm-color-warning-text); }

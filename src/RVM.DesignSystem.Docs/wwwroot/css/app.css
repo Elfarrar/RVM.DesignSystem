@@ -662,3 +662,10 @@ code {
 .ex-gaveta h2 {
     margin: 0;
 }
+
+/* Faixa colorida para mostrar o papel Inverse (DSGN-017), que so faz sentido sobre fundo colorido. */
+.faixa-colorida {
+    padding: var(--rvm-space-4);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-primary-main);
+}

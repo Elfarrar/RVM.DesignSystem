@@ -163,3 +163,23 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* --- Indicador de bolinhas (contrato com o RVM.UI, DSGN-017) ---
+   Invencao declarada: o kit nao desenha. A atual vira pilula na cor primaria, as feitas ficam no
+   resting do primary e as que faltam no divisor. */
+.rvm-bolinhas {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-bolinha {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--rvm-radius-pill);
+    background-color: var(--rvm-color-divider);
+    transition: width var(--rvm-transition-fast), background-color var(--rvm-transition-fast);
+}
+
+.rvm-bolinha-feita { background-color: var(--rvm-color-primary-outlined-resting); }
+.rvm-bolinha-atual { width: 24px; background-color: var(--rvm-color-primary-text); }

@@ -82,6 +82,33 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
     /// </summary>
     [Parameter] public string? Name { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Id do gatilho do campo. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>
+    /// Nome do campo nas mensagens de validacao. O seletor nao interpreta texto, entao nao gera mensagem propria: as
+    /// do <c>EditForm</c> ja vem com o nome do modelo.
+    /// </summary>
+    [Parameter] public string? DisplayName { get; set; }
+
+    /// <summary>Texto do link acima do campo, a direita.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link acima do campo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Canto da caixa contornada: o do kit ou pilula.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Rounded;
+
+    /// <summary>Fundo da caixa contornada: o da superficie ou cinza claro.</summary>
+    [Parameter] public RvmFieldBackground Background { get; set; }
+
+    /// <summary>Imagem redonda antes do texto de cada opcao (endereco da imagem; decorativa).</summary>
+    [Parameter] public Func<TValue, string>? ItemImage { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto no combobox.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -106,7 +133,8 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
     internal int IndiceAtivo => _ativa;
 
     internal string IdGatilho
-        => AdditionalAttributes is not null
+        => !string.IsNullOrWhiteSpace(Id) ? Id
+           : AdditionalAttributes is not null
            && AdditionalAttributes.TryGetValue("id", out var informado)
            && informado is string texto
            && !string.IsNullOrWhiteSpace(texto)
@@ -162,14 +190,11 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
             if (_aberto) proprias += " rvm-aberto";
             if (TemErro) proprias += " rvm-erro";
             if (Disabled) proprias += " rvm-desabilitado";
+            if (Shape == RvmFieldShape.Pill) proprias += " rvm-pilula";
+            if (Background == RvmFieldBackground.Grey) proprias += " rvm-fundo-cinza";
             if (Campo is { } campo && EditContext!.IsModified(campo)) proprias += " modified";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 
@@ -227,8 +252,11 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
         }
     }
 
+    /// <summary>So mostra o valor: nao abre a lista (o <c>ReadOnly</c> do <see cref="RvmSelect{TValue}"/>).</summary>
+    internal virtual bool SoLeitura => false;
+
     private Task AoClicarNoGatilhoAsync()
-        => Disabled ? Task.CompletedTask : _aberto ? FecharAsync(devolverFoco: true) : AbrirAsync(-1);
+        => Disabled || SoLeitura ? Task.CompletedTask : _aberto ? FecharAsync(devolverFoco: true) : AbrirAsync(-1);
 
     /// <summary>
     /// Clicar no rotulo faz o mesmo que clicar no campo. Com o campo vazio o rotulo fica POR CIMA do
@@ -251,7 +279,7 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
 
     private async Task AoTeclarNoGatilhoAsync(KeyboardEventArgs e)
     {
-        if (Disabled)
+        if (Disabled || SoLeitura)
         {
             return;
         }

@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace RVM.DesignSystem.Components.Switch;
 
@@ -46,6 +47,55 @@ public partial class RvmSwitch : ComponentBase
     /// <summary>Indisponivel.</summary>
     [Parameter] public bool Disabled { get; set; }
 
+    /// <summary>Id do input nativo. Sem ele, o Blazor nao gera um: o rotulo envolve o input e dispensa o <c>for</c>.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Nome enviado no formulario. Sem ele, vem do <c>@bind-Value</c> (necessario em SSR estatico).</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Nome do campo nas mensagens de validacao do <c>EditForm</c>.</summary>
+    [Parameter] public string? DisplayName { get; set; }
+
+    /// <summary>Texto de apoio abaixo do controle. Da lugar ao erro quando ha erro.</summary>
+    [Parameter] public string? HelperText { get; set; }
+
+    /// <summary>Erro informado por fora. Dentro de um <c>EditForm</c>, a mensagem da validacao ja aparece sozinha.</summary>
+    [Parameter] public string? ErrorText { get; set; }
+
+    /// <summary>Texto do link depois do rotulo ("Li e aceito os <u>termos</u>").</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link depois do rotulo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>De que lado do controle fica o rotulo. Padrao: depois.</summary>
+    [Parameter] public RvmLabelPosition LabelPosition { get; set; } = RvmLabelPosition.End;
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem texto de exemplo: sem efeito.</summary>
+    [Parameter] public string? Placeholder { get; set; }
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem caixa de texto: sem efeito.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; }
+
+    [CascadingParameter] private EditContext? ContextoDoFormulario { get; set; }
+
+    private readonly string _idDoApoio = GeradorDeIds.Novo("rvm-controle-apoio");
+
+    internal string? MensagemDeErro
+        => !string.IsNullOrWhiteSpace(ErrorText) ? ErrorText
+            : ContextoDoFormulario is not null && ExpressaoEfetiva is not null
+                ? ContextoDoFormulario.GetValidationMessages(FieldIdentifier.Create(ExpressaoEfetiva)).FirstOrDefault()
+                : null;
+
+    internal string? MensagemDeApoio => MensagemDeErro ?? (string.IsNullOrWhiteSpace(HelperText) ? null : HelperText);
+
+    internal bool TemLink => !string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref);
+
+    internal string IdDoApoio => _idDoApoio;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto no input nativo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -60,6 +110,7 @@ public partial class RvmSwitch : ComponentBase
                 Color switch
                 {
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",
@@ -68,13 +119,9 @@ public partial class RvmSwitch : ComponentBase
                 });
 
             if (Disabled) proprias += " rvm-desabilitado";
+            if (LabelPosition == RvmLabelPosition.Start) proprias += " rvm-rotulo-antes";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 
@@ -87,8 +134,5 @@ public partial class RvmSwitch : ComponentBase
             : null;
 
     internal IReadOnlyDictionary<string, object>? AtributosDoInput
-        => AdditionalAttributes?
-            .Where(a => !string.Equals(a.Key, "class", StringComparison.OrdinalIgnoreCase)
-                        && !string.Equals(a.Key, "style", StringComparison.OrdinalIgnoreCase))
-            .ToDictionary(a => a.Key, a => a.Value);
+        => AtributosDoControle.Montar(AdditionalAttributes, Id, Name, MensagemDeApoio is null ? null : IdDoApoio, MensagemDeErro is not null, false);
 }

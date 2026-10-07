@@ -25,7 +25,7 @@
     </RvmScatterChart>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmScatterChart" />
 
 @code {
     private static readonly (string Nome, double Adubo2025, double Produtividade2025, double Adubo2026, double Produtividade2026)[] Talhoes =
@@ -33,18 +33,6 @@
         ("Talhao Norte", 320, 62, 360, 68), ("Baixada", 280, 55, 300, 58), ("Sede", 410, 66, 420, 71),
         ("Cerrado", 220, 44, 260, 50), ("Varzea", 350, 64, 380, 69), ("Encosta", 260, 49, 290, 54),
         ("Represa", 390, 60, 400, 67), ("Divisa", 300, 57, 340, 61)
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, nome de cada ponto e nome do grafico (obrigatorio)."),
-        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
-        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Range: arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela. ZoomBox: arrastar desenha a area a aproximar, nos dois eixos de uma vez."),
-        new("XLabel / YLabel", "string", "\"X\" / \"Y\"", "Nomes dos eixos na dica e na tabela de dados."),
-        new("XFormat / ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato de X e de Y."),
-        new("PointRadius", "int", "5", "Raio de cada ponto, em px."),
-        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
-        new("RvmChartSeries.Name / X / Value / Color", "string / Func<TItem, double> / Func<TItem, double> / RvmColor?", "—", "Cada serie: X e Y de cada item.")
     ];
 
     private const string CodigoSeries = """

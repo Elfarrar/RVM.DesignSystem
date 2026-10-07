@@ -5,6 +5,21 @@
 @* Lista ordenada: o leitor de tela anuncia "lista, 3 itens". Cada etapa diz o proprio estado em texto
    ("concluida", "etapa atual", "com erro") — o check e a cor sao desenho. A etapa atual leva
    aria-current="step". *@
+@if (SoBolinhas)
+{
+    @* Sem etapas (contrato com o RVM.UI, DSGN-017): o indicador de bolinhas do onboarding. E uma barra de
+       progresso para o leitor de tela ("passo 2 de 4"); as bolinhas sao desenho. *@
+    <div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-bolinhas", Class, AdditionalAttributes)"
+         role="progressbar" aria-label="@Label" aria-valuemin="1" aria-valuemax="@Math.Max(1, Count)"
+         aria-valuenow="@AtualNasBolinhas" aria-valuetext="@($"Passo {AtualNasBolinhas} de {Math.Max(1, Count)}")">
+        @for (var i = 1; i <= Math.Max(1, Count); i++)
+        {
+            <span class="@(i == AtualNasBolinhas ? "rvm-bolinha rvm-bolinha-atual" : i < AtualNasBolinhas ? "rvm-bolinha rvm-bolinha-feita" : "rvm-bolinha")"></span>
+        }
+    </div>
+    return;
+}
+
 <ol @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@AriaLabel">
     @for (var i = 0; i < Steps.Count; i++)
     {

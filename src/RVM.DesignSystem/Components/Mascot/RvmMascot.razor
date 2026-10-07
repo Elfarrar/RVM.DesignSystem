@@ -1,0 +1,13 @@
+@namespace RVM.DesignSystem.Components.Mascot
+@using RVM.DesignSystem.Components.Icon
+
+@* Sem ilustracao no Design System: o icone do mascote num circulo de fundo suave, no papel de cor dele
+   (invencao declarada, DSGN-017). Decorativo some do leitor de tela; senao, e imagem com nome. *@
+<span @attributes="AdditionalAttributes"
+      class="@ClassesDaRaiz"
+      style="@($"--rvm-mascote-lado: {Width}px")"
+      role="@(Decorative ? null : "img")"
+      aria-label="@(Decorative ? null : TextoAlternativo)"
+      aria-hidden="@(Decorative ? "true" : null)">
+    <RvmIcon Name="@Desenho.Icone" SizePx="@LadoDoIcone" />
+</span>

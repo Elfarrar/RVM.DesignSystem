@@ -34,7 +34,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmSnackbarHost" />
 
 <RecorteDoKit Origem="kit/snackbar.png"
               Arquivo="referencia-neatlab/Snackbar.png e Toast.png (recortes)"
@@ -66,19 +66,6 @@
 
     private void MostrarCarregando()
         => Avisos.Show("Enviando notas fiscais...", new RvmSnackbarOptions { Color = RvmColor.Primary, Loading = true, Duration = TimeSpan.FromSeconds(4) });
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Show(text, options)", "RvmSnackbarMessage", "—", "Poe uma mensagem na fila."),
-        new("Close(message) / CloseAll()", "void", "—", "Fecha uma ou todas."),
-        new("MaxVisible", "int", "3", "Quantas na tela ao mesmo tempo."),
-        new("Options.Color", "RvmColor?", "—", "Sem valor: neutro. Com valor: icone do papel. Error usa role=alert."),
-        new("Options.ActionText / OnAction", "string? / Func<Task>?", "—", "Botao de acao; a mensagem fecha depois."),
-        new("Options.Duration", "TimeSpan?", "6 s", "null fica ate alguem fechar."),
-        new("Options.ShowCloseButton", "bool", "true", "Botao x."),
-        new("Options.Loading", "bool", "false", "Indicador girando no lugar do icone."),
-        new("RvmSnackbarHost.CloseLabel", "string", "\"Fechar mensagem\"", "Nome acessivel do x.")
-    ];
 
     private const string CodigoNeutro = """
         // Program.cs: builder.Services.AddRvmDesignSystem();
