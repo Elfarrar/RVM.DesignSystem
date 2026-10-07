@@ -1,0 +1,29 @@
+@namespace RVM.DesignSystem.Components.Progress
+
+@* O cabecalho (rotulo e porcentagem) e desenho: quem le a tela ouve o nome e o valor pelo proprio
+   progressbar. Sem valor (NoValue), nao ha aria-valuenow — o leitor de tela entende "sem valor" e ouve
+   o NoValueText; uma barra vazia diria "0%", que e mentira. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    @if (TemCabecalho)
+    {
+        <div class="rvm-cabecalho" aria-hidden="true">
+            <span class="@(LabelVariant == RvmProgressLabelVariant.Amount ? "rvm-rotulo rvm-quantia" : "rvm-rotulo")">@Label</span>
+            @if (ShowValue)
+            {
+                <span class="rvm-valor">@(NoValue ? NoValueText : Porcentagem)</span>
+            }
+        </div>
+    }
+    <div class="rvm-trilho"
+         role="progressbar"
+         aria-label="@NomeAcessivel"
+         aria-valuemin="@(NoValue ? null : "0")"
+         aria-valuemax="@(NoValue ? null : "100")"
+         aria-valuenow="@(NoValue ? null : ValorArredondado)"
+         aria-valuetext="@(NoValue ? NoValueText : Porcentagem)">
+        @if (!NoValue)
+        {
+            <div class="rvm-barra" style="@EstiloDaBarra"></div>
+        }
+    </div>
+</div>

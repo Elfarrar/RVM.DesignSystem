@@ -1,0 +1,9 @@
+@namespace RVM.DesignSystem.Components.Progress
+
+@* Quem informa e o role="status" com o texto, lido pelo leitor de tela mesmo quando o texto nao
+   aparece. O anel e o do RvmProgress circular indeterminado (o mesmo desenho e o mesmo tratamento de
+   movimento reduzido), escondido do leitor de tela: senao ele leria "Carregando" duas vezes. *@
+<span @attributes="AdditionalAttributes" role="status" class="@ClassesDaRaiz">
+    <RvmProgress Variant="RvmProgressVariant.Circular" Size="Size" aria-hidden="true" />
+    <span class="@(ShowLabel ? "rvm-spinner-texto" : "rvm-so-leitor")">@Label</span>
+</span>

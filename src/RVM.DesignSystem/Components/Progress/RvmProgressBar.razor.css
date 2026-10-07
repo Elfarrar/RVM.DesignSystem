@@ -1,0 +1,101 @@
+/* CSS isolado do RvmProgressBar. So custom properties — hex literal aqui quebra o tema escuro.
+   O kit nao tem pagina de progresso: segue o RvmProgress (trilho neutro, preenchido no -text do papel,
+   que passa 3:1 contra o trilho nos dois temas), com barra mais grossa e rotulo por cima. */
+
+.rvm-barra-de-progresso {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-cabecalho {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-pequeno .rvm-cabecalho {
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+}
+
+.rvm-rotulo {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: var(--rvm-font-weight-regular);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-quantia {
+    font-weight: var(--rvm-font-weight-medium);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-valor {
+    flex: none;
+    font-weight: var(--rvm-font-weight-medium);
+    color: var(--rvm-color-text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.rvm-trilho {
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: var(--rvm-radius-pill);
+    background-color: var(--rvm-color-action-selected);
+}
+
+.rvm-pequeno .rvm-trilho { height: 4px; }
+.rvm-medio .rvm-trilho { height: 8px; }
+.rvm-grande .rvm-trilho { height: 12px; }
+
+.rvm-barra {
+    height: 100%;
+    border-radius: inherit;
+    transition: width var(--rvm-transition-medium);
+}
+
+.rvm-primary .rvm-barra { background-color: var(--rvm-color-primary-text); }
+.rvm-secondary .rvm-barra { background-color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-barra { background-color: var(--rvm-color-inverse-text); }
+.rvm-info .rvm-barra { background-color: var(--rvm-color-info-text); }
+.rvm-success .rvm-barra { background-color: var(--rvm-color-success-text); }
+.rvm-warning .rvm-barra { background-color: var(--rvm-color-warning-text); }
+.rvm-error .rvm-barra { background-color: var(--rvm-color-error-text); }
+
+/* Sem valor: trilho tracejado e vazio. Nada preenchido, porque barra vazia leria "0%". */
+.rvm-sem-valor .rvm-trilho {
+    background-color: transparent;
+    border: 1px dashed var(--rvm-color-outline);
+}
+
+.rvm-sem-valor .rvm-valor {
+    font-weight: var(--rvm-font-weight-regular);
+    color: var(--rvm-color-text-secondary);
+}
+
+/* --- Fundo escuro ou colorido: tudo claro. A cor do papel sobre um cartao colorido nao garante 3:1. --- */
+.rvm-superficie-escura .rvm-rotulo,
+.rvm-superficie-escura .rvm-quantia,
+.rvm-superficie-escura .rvm-valor {
+    color: var(--rvm-color-inverse-text);
+}
+
+.rvm-superficie-escura .rvm-trilho { background-color: var(--rvm-color-inverse-soft); }
+.rvm-superficie-escura .rvm-barra { background-color: var(--rvm-color-inverse-text); }
+
+.rvm-superficie-escura.rvm-sem-valor .rvm-trilho {
+    background-color: transparent;
+    border-color: var(--rvm-color-inverse-outlined-resting);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-barra { transition: none; }
+}
