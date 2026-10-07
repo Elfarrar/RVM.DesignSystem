@@ -1,0 +1,89 @@
+/* A lista de opcoes do RvmSelectBase, como lista solta (DSGN-017): mesmas medidas e cores. */
+
+.rvm-opcoes {
+    max-height: 264px;
+    margin: 0;
+    padding: var(--rvm-space-2) 0;
+    overflow-y: auto;
+    list-style: none;
+    font-family: var(--rvm-font-family);
+    background-color: var(--rvm-color-background-paper);
+    border-radius: var(--rvm-radius-sm);
+}
+
+.rvm-opcoes:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: -1px;
+}
+
+/* Mesmo item do RvmMenu: 36 px, hover no action-hover. */
+.rvm-opcao {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    min-height: 36px;
+    padding: 0 var(--rvm-space-4);
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    cursor: pointer;
+}
+
+.rvm-opcao:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-opcao.rvm-selecionada {
+    background-color: var(--rvm-color-action-selected);
+}
+
+/* A opcao ativa nao tem foco de verdade (o foco fica na lista): o anel por dentro mostra onde o teclado esta. So com a
+   lista focada, para nao parecer uma segunda selecao. */
+.rvm-opcoes:focus .rvm-opcao.rvm-ativa {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(var(--rvm-focus-ring-width) * -1);
+}
+
+.rvm-opcao.rvm-desabilitada {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}
+
+.rvm-opcao.rvm-desabilitada:hover {
+    background-color: transparent;
+}
+
+/* A caixinha do multiplo: a mesma do RvmCheckbox. */
+.rvm-marca {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--rvm-color-input-border);
+    border-radius: 2px;
+}
+
+.rvm-selecionada .rvm-marca {
+    border-color: var(--rvm-color-primary-text);
+    background-color: var(--rvm-color-primary-text);
+    color: var(--rvm-color-background-paper);
+}
+
+.rvm-imagem-opcao {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--rvm-radius-circle);
+    object-fit: cover;
+}
+
+.rvm-texto-opcao {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -1,0 +1,70 @@
+@namespace RVM.DesignSystem.Components.TextField
+@typeparam TValue
+@inherits RvmInputBase<TValue>
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* O padrao "Combobox com lista" do APG (aria-autocomplete=list): o foco FICA no campo e a opcao ativa e apontada por
+   aria-activedescendant — as opcoes nunca recebem foco. A lista so contem opcoes; buscando, sem resultado e erro sao
+   anunciados por uma regiao polite que existe desde o primeiro render (regiao criada junto com o texto nao fala).
+   Fechado, a lista nao existe no DOM: o estado inicial sai pronto sem JS. *@
+<RvmFieldFrame Label="@Label" InputId="@IdDoControle" LinkText="@LinkText" LinkHref="@LinkHref" Error="@MensagemDeErro"
+               ErrorId="@IdDoErro" HelperText="@HelperText" HelperId="@IdDoApoio" Disabled="Disabled"
+               Shape="Shape" Class="@ClassesDoConsumidor">
+    <input @ref="_entrada"
+           @attributes="AtributosDoControle"
+           id="@IdDoControle"
+           name="@NomeDoControle"
+           type="text"
+           class="rvm-entrada"
+           role="combobox"
+           autocomplete="off"
+           placeholder="@PlaceholderEfetivo"
+           disabled="@Disabled"
+           aria-autocomplete="list"
+           aria-expanded="@(ListaVisivel ? "true" : "false")"
+           aria-controls="@(ListaVisivel ? IdDaLista : null)"
+           aria-activedescendant="@(ListaVisivel && _ativo >= 0 ? IdDaOpcao(_ativo) : null)"
+           aria-invalid="@(MensagemDeErro is null ? null : "true")"
+           aria-describedby="@DescritoPor"
+           value="@_texto"
+           @oninput="AoDigitarAsync"
+           @onfocus="AoFocarAsync"
+           @onblur="AoSair"
+           @onkeydown="AoTeclarAsync" />
+
+    @if (Clearable && !Disabled && (_texto.Length > 0 || TemValor))
+    {
+        <button type="button" class="rvm-limpar" aria-label="@ClearLabel" @onclick="LimparAsync">
+            <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+        </button>
+    }
+
+    @if (_aberto)
+    {
+        <div class="rvm-popup" @onmousedown:preventDefault="true">
+            @if (MensagemDaBusca is { } mensagem)
+            {
+                <div class="rvm-mensagem rvm-text-body2" aria-hidden="true">@mensagem</div>
+            }
+            @if (ListaVisivel)
+            {
+                <ul id="@IdDaLista" role="listbox" class="rvm-opcoes" aria-label="@(Label ?? DisplayName)">
+                    @for (var i = 0; i < _resultados.Count; i++)
+                    {
+                        var indice = i;
+                        <li id="@IdDaOpcao(indice)"
+                            role="option"
+                            class="@(indice == _ativo ? "rvm-opcao rvm-ativa" : "rvm-opcao")"
+                            aria-selected="@(indice == _ativo ? "true" : "false")"
+                            @onclick="() => EscolherAsync(indice)">
+                            @TextoDe(_resultados[indice])
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+
+    <div class="rvm-so-leitor" role="status" aria-live="polite">@(_aberto ? MensagemDaBusca : null)</div>
+</RvmFieldFrame>
