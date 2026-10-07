@@ -1,0 +1,8 @@
+/* CSS isolado do RvmCellBadge. So custom properties — hex literal aqui quebra o tema escuro.
+   O selo nao encolhe quando a coluna aperta: quem corta e o texto, com reticencias. */
+
+.rvm-selo {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+}

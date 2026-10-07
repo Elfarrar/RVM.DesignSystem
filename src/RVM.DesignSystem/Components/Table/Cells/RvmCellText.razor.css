@@ -1,0 +1,2 @@
+/* CSS isolado do RvmCellText. Sem regra propria: o <td> e o texto sao do RvmCellFrame e do RvmCellLines, que
+   todas as celulas dividem (um CSS so para a mesma medida em todas). */

@@ -1,0 +1,56 @@
+@page "/componentes/file-icon"
+@using RVM.DesignSystem.Components.FileIcon
+
+<PageTitle>RvmFileIcon — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmFileIcon</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O icone de tipo de arquivo: uma folha com o canto dobrado e a extensao numa etiqueta colorida, ou a pasta. A cor ajuda a
+    achar o PDF numa lista; quem diz o tipo e a extensao escrita.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com desenho proprio do DS. Sem Label o icone e decorativo —
+    quase sempre o nome do arquivo esta escrito ao lado.
+</p>
+
+<BlocoExemplo Titulo="Os 22 tipos"
+              Descricao="Documento pela cor do app dele, imagem em info, video em erro, audio em sucesso, compactado em neutro."
+              Codigo="@CodigoTipos">
+    <div class="grade-arquivos">
+        @foreach (var tipo in Enum.GetValues<RvmFileIconName>())
+        {
+            <div class="item-arquivo">
+                <RvmFileIcon Name="tipo" />
+                <RvmTypography Variant="RvmTypographyVariant.Caption" Color="RvmTextColor.Secondary">@tipo</RvmTypography>
+            </div>
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanho e nome acessivel"
+              Descricao="Size e o lado em pixels (padrao 48). Com Label, o icone vira imagem com nome para o leitor de tela."
+              Codigo="@CodigoTamanho">
+    <div class="linha-exemplos">
+        <RvmFileIcon Name="RvmFileIconName.Pdf" Size="24" Label="Laudo em PDF" />
+        <RvmFileIcon Name="RvmFileIconName.Xls" Size="40" Label="Planilha de colheita" />
+        <RvmFileIcon Name="RvmFileIconName.Doc" Size="64" Label="Contrato de arrendamento" />
+        <RvmFileIcon Name="RvmFileIconName.FolderYellow" Size="64" Label="Pasta da safra 2026" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmFileIcon" />
+
+@code {
+    private const string CodigoTipos = """
+        <RvmFileIcon Name="RvmFileIconName.Pdf" />
+        <RvmFileIcon Name="RvmFileIconName.Xls" />
+        <RvmFileIcon Name="RvmFileIconName.FolderYellow" />
+        """;
+
+    private const string CodigoTamanho = """
+        <RvmFileIcon Name="RvmFileIconName.Pdf" Size="24" Label="Laudo em PDF" />
+        <RvmFileIcon Name="RvmFileIconName.Doc" Size="64" Label="Contrato de arrendamento" />
+        """;
+}

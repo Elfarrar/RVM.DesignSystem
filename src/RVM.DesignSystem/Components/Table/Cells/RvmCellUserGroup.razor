@@ -1,0 +1,27 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula de grupo de pessoas (contrato com o RVM.UI, DSGN-017): o RvmAvatarGroup — avatares sobrepostos e o "+N" — num
+   <td>. O grupo ja e um role="group" com nome ("N pessoas", ou o Label). *@
+<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
+    <RvmAvatarGroup Items="Items" Max="Max" Label="@Label" />
+</RvmCellFrame>
+
+@code {
+    /// <summary>Pessoas do grupo.</summary>
+    [Parameter, EditorRequired] public IReadOnlyList<RvmAvatarItem> Items { get; set; } = [];
+
+    /// <summary>Quantos avatares aparecem antes do "+N". Padrao: 4.</summary>
+    [Parameter] public int Max { get; set; } = 4;
+
+    /// <summary>Nome do grupo para o leitor de tela ("Equipe do talhao 3"). Sem ele, o do RvmAvatarGroup.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

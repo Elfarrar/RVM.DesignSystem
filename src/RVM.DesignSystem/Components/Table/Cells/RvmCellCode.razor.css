@@ -1,0 +1,8 @@
+/* CSS isolado do RvmCellCode. So custom properties — hex literal aqui quebra o tema escuro.
+   Kit (lista de faturas): o "#4910" na cor primaria. O -text, e nao o -main, porque e o par que passa 4.5:1 sobre o
+   papel nos dois temas (o primary -main no escuro reprova). */
+
+.rvm-codigo {
+    font-weight: var(--rvm-font-weight-medium);
+    color: var(--rvm-color-primary-text);
+}

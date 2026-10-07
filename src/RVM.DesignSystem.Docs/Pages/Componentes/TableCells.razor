@@ -1,0 +1,228 @@
+@page "/componentes/table-cells"
+@using RVM.DesignSystem.Components.Table
+@using RVM.DesignSystem.Components.FileIcon
+
+<PageTitle>Celulas da tabela — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">Celulas da tabela</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Quinze celulas prontas, cada uma um &lt;td&gt; com o conteudo montado: texto, codigo, numero com tendencia, usuario,
+    imagem, arquivo, etiqueta, estado, progresso, nota, grupo de pessoas, selo, acoes e a caixa de escolha da linha.
+    Entram em qualquer &lt;tr&gt;, de uma tabela HTML comum ou da tabela de dados.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB (listas de usuarios e de faturas).
+    Todas aceitam Align (inicio, centro ou fim), Class e atributos extras no &lt;td&gt;.
+</p>
+
+<BlocoExemplo Titulo="Lista de pedidos"
+              Descricao="Escolha, codigo, cliente, valor com tendencia, estado, etiqueta e acoes. Marque linhas para ver a escolha."
+              Codigo="@CodigoPedidos">
+    <div class="rolagem-tabela">
+        <table class="tabela-exemplo">
+            <thead>
+                <tr>
+                    <th scope="col"><span class="so-leitor">Escolha</span></th>
+                    <th scope="col">Pedido</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col" class="fim">Total</th>
+                    <th scope="col">Entrega</th>
+                    <th scope="col">Pagamento</th>
+                    <th scope="col" class="fim">Acoes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pedido in Pedidos)
+                {
+                    <tr class="@(_escolhidos.Contains(pedido.Numero) ? "escolhida" : null)">
+                        <RvmCellSelect Label="@($"Selecionar o pedido {pedido.Numero}")"
+                                       Selected="@_escolhidos.Contains(pedido.Numero)"
+                                       SelectedChanged="@(v => Escolher(pedido.Numero, v))" />
+                        <RvmCellCode Text="@($"#{pedido.Numero}")" />
+                        <RvmCellUser Name="@pedido.Cliente" Supporting="@pedido.Email" Highlight="true" />
+                        <RvmCellNumber Text="@pedido.Total" Trend="pedido.Tendencia" TrendLabel="@pedido.Variacao" Align="RvmAlign.End" />
+                        <RvmCellStatus Text="@pedido.Entrega" Color="pedido.CorDaEntrega" />
+                        <RvmCellLabelBadge Text="@pedido.Pagamento" Color="pedido.CorDoPagamento" />
+                        <RvmCellAction Align="RvmAlign.End">
+                            <RvmIconButton Icon="RvmIconName.Eye" Label="@($"Ver o pedido {pedido.Numero}")" Size="RvmSize.Small" />
+                            <RvmIconButton Icon="RvmIconName.Trash" Label="@($"Excluir o pedido {pedido.Numero}")" Size="RvmSize.Small" />
+                        </RvmCellAction>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary">Pedidos escolhidos: @(_escolhidos.Count == 0 ? "nenhum" : string.Join(", ", _escolhidos))</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Insumos, fazendas e arquivos"
+              Descricao="Imagem quadrada e redonda, arquivo, progresso, nota, grupo de pessoas e selo."
+              Codigo="@CodigoInsumos">
+    <div class="rolagem-tabela">
+        <table class="tabela-exemplo">
+            <thead>
+                <tr>
+                    <th scope="col">Insumo</th>
+                    <th scope="col">Fazenda</th>
+                    <th scope="col">Laudo</th>
+                    <th scope="col">Aplicado</th>
+                    <th scope="col">Avaliacao</th>
+                    <th scope="col">Equipe</th>
+                    <th scope="col">Origem</th>
+                    <th scope="col">Observacao</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <RvmCellSquareImage Src="@MiniaturaSoja" Text="Semente de soja" Supporting="Lote 2026-114" Highlight="true" />
+                    <RvmCellCircleImage Src="@FotoFazenda" Alt="Vista aerea da Fazenda Boa Vista" Text="Fazenda Boa Vista" Supporting="Sorriso, MT" />
+                    <RvmCellFiles Name="laudo-solo-talhao3.pdf" Type="RvmFileIconName.Pdf" Supporting="420 KB" />
+                    <RvmCellProgress Value="62" Label="R$ 12.400" Color="RvmColor.Success" />
+                    <RvmCellRating Value="4.5" AriaLabel="Avaliacao do fornecedor: 4,5 de 5" />
+                    <RvmCellUserGroup Items="Equipe" Max="3" Label="Equipe do talhao 3" />
+                    <RvmCellBadge Text="Cooperativa Sul" Supporting="Fornecedor desde 2019">
+                        <Badge><RvmIconBadge Icon="RvmIconName.Leaf" Color="RvmColor.Success" Size="RvmIconBadgeSize.Small" /></Badge>
+                    </RvmCellBadge>
+                    <RvmCellText Text="Aplicar antes da chuva" Supporting="Previsao: quinta-feira" />
+                </tr>
+                <tr>
+                    <RvmCellSquareImage Src="@MiniaturaAdubo" Text="Adubo NPK 04-14-08" Supporting="Lote 2026-087" Highlight="true" />
+                    <RvmCellCircleImage Alt="" Text="Sitio Sao Jose" Supporting="Rio Verde, GO" />
+                    <RvmCellFiles Name="analise-foliar.xls" Type="RvmFileIconName.Xls" Supporting="96 KB" />
+                    <RvmCellProgress Value="18" Label="R$ 3.600" Color="RvmColor.Warning" />
+                    <RvmCellRating Value="3" />
+                    <RvmCellUserGroup Items="Equipe.Take(2).ToList()" />
+                    <RvmCellBadge Text="Agro Centro" Supporting="Fornecedor desde 2023">
+                        <Badge><RvmIconBadge Icon="RvmIconName.Buildings" Color="RvmColor.Info" Size="RvmIconBadgeSize.Small" /></Badge>
+                    </RvmCellBadge>
+                    <RvmCellText Text="Sem pendencias" />
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Alinhamento e tendencia"
+              Descricao="Align leva o conteudo ao inicio, ao centro ou ao fim. Numeros alinham melhor no fim. A direcao da tendencia chega ao leitor de tela por texto."
+              Codigo="@CodigoAlinhamento">
+    <div class="rolagem-tabela">
+        <table class="tabela-exemplo tabela-larga">
+            <thead>
+                <tr>
+                    <th scope="col">Inicio</th>
+                    <th scope="col" class="centro">Centro</th>
+                    <th scope="col" class="fim">Fim</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <RvmCellNumber Text="58 sc/ha" />
+                    <RvmCellNumber Text="61 sc/ha" Trend="RvmTrend.Up" Align="RvmAlign.Center" />
+                    <RvmCellNumber Text="R$ 2.060,00" Trend="RvmTrend.Down" TrendLabel="-10%" Align="RvmAlign.End" Highlight="true" />
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</BlocoExemplo>
+
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellText</h2>
+<TabelaParametros Componente="RvmCellText" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellCode</h2>
+<TabelaParametros Componente="RvmCellCode" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellNumber</h2>
+<TabelaParametros Componente="RvmCellNumber" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellUser</h2>
+<TabelaParametros Componente="RvmCellUser" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellUserGroup</h2>
+<TabelaParametros Componente="RvmCellUserGroup" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellCircleImage</h2>
+<TabelaParametros Componente="RvmCellCircleImage" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellSquareImage</h2>
+<TabelaParametros Componente="RvmCellSquareImage" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellFiles</h2>
+<TabelaParametros Componente="RvmCellFiles" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellStatus</h2>
+<TabelaParametros Componente="RvmCellStatus" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellLabelBadge</h2>
+<TabelaParametros Componente="RvmCellLabelBadge" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellProgress</h2>
+<TabelaParametros Componente="RvmCellProgress" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellRating</h2>
+<TabelaParametros Componente="RvmCellRating" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellBadge</h2>
+<TabelaParametros Componente="RvmCellBadge" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellAction</h2>
+<TabelaParametros Componente="RvmCellAction" />
+<h2 class="rvm-text-h6 titulo-parametros">RvmCellSelect</h2>
+<TabelaParametros Componente="RvmCellSelect" />
+
+@code {
+    private sealed record Pedido(string Numero, string Cliente, string Email, string Total, RvmTrend Tendencia, string? Variacao,
+        string Entrega, RvmColor CorDaEntrega, string Pagamento, RvmColor CorDoPagamento);
+
+    private static readonly Pedido[] Pedidos =
+    [
+        new("4910", "Ana Ribeiro", "ana@fazendaboavista.com.br", "R$ 3.428,00", RvmTrend.Up, "+12%", "Entregue", RvmColor.Success, "Pago", RvmColor.Success),
+        new("4909", "Bruno Carvalho", "bruno@sitiosaojose.com.br", "R$ 2.872,00", RvmTrend.Down, "-4%", "Em separacao", RvmColor.Warning, "Pendente", RvmColor.Warning),
+        new("4908", "Carla Mendes", "carla@agrocentro.com.br", "R$ 4.077,00", RvmTrend.None, null, "Cancelado", RvmColor.Error, "Estornado", RvmColor.Error),
+    ];
+
+    private static readonly IReadOnlyList<RvmAvatarItem> Equipe =
+        [new("Ana Ribeiro"), new("Bruno Carvalho"), new("Carla Mendes"), new("Davi Souza"), new("Eva Lima")];
+
+    // Imagens desenhadas inline, para o exemplo nao depender de imagem externa nem de rede.
+    private const string MiniaturaSoja =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' fill='%23E9F5EA'/><ellipse cx='15' cy='20' rx='6' ry='8' fill='%23FFB400'/><ellipse cx='26' cy='18' rx='6' ry='8' fill='%23E0A000'/></svg>";
+
+    private const string MiniaturaAdubo =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' fill='%23E4F2FE'/><rect x='11' y='8' width='18' height='26' rx='3' fill='%2316B1FF'/><rect x='14' y='14' width='12' height='6' fill='%23FFFFFF'/></svg>";
+
+    private const string FotoFazenda =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' fill='%2316B1FF'/><path d='M0 26 Q12 18 22 25 T40 22 V40 H0Z' fill='%2356CA00'/><circle cx='30' cy='11' r='5' fill='%23FFB400'/></svg>";
+
+    private readonly SortedSet<string> _escolhidos = [];
+
+    private void Escolher(string numero, bool escolhido)
+    {
+        if (escolhido) _escolhidos.Add(numero);
+        else _escolhidos.Remove(numero);
+    }
+
+    private const string CodigoPedidos = """
+        <tr>
+            <RvmCellSelect Label="Selecionar o pedido 4910" @bind-Selected="escolhido" />
+            <RvmCellCode Text="#4910" />
+            <RvmCellUser Name="Ana Ribeiro" Supporting="ana@fazendaboavista.com.br" Highlight="true" />
+            <RvmCellNumber Text="R$ 3.428,00" Trend="RvmTrend.Up" TrendLabel="+12%" Align="RvmAlign.End" />
+            <RvmCellStatus Text="Entregue" Color="RvmColor.Success" />
+            <RvmCellLabelBadge Text="Pago" Color="RvmColor.Success" />
+            <RvmCellAction Align="RvmAlign.End">
+                <RvmIconButton Icon="RvmIconName.Eye" Label="Ver o pedido 4910" Size="RvmSize.Small" />
+                <RvmIconButton Icon="RvmIconName.Trash" Label="Excluir o pedido 4910" Size="RvmSize.Small" />
+            </RvmCellAction>
+        </tr>
+        """;
+
+    private const string CodigoInsumos = """
+        <tr>
+            <RvmCellSquareImage Src="soja.png" Text="Semente de soja" Supporting="Lote 2026-114" Highlight="true" />
+            <RvmCellCircleImage Src="fazenda.jpg" Alt="Vista aerea da Fazenda Boa Vista" Text="Fazenda Boa Vista" Supporting="Sorriso, MT" />
+            <RvmCellFiles Name="laudo-solo-talhao3.pdf" Type="RvmFileIconName.Pdf" Supporting="420 KB" />
+            <RvmCellProgress Value="62" Label="R$ 12.400" Color="RvmColor.Success" />
+            <RvmCellRating Value="4.5" AriaLabel="Avaliacao do fornecedor: 4,5 de 5" />
+            <RvmCellUserGroup Items="equipe" Max="3" Label="Equipe do talhao 3" />
+            <RvmCellBadge Text="Cooperativa Sul" Supporting="Fornecedor desde 2019">
+                <Badge><RvmIconBadge Icon="RvmIconName.Leaf" Color="RvmColor.Success" Size="RvmIconBadgeSize.Small" /></Badge>
+            </RvmCellBadge>
+            <RvmCellText Text="Aplicar antes da chuva" Supporting="Previsao: quinta-feira" />
+        </tr>
+        """;
+
+    private const string CodigoAlinhamento = """
+        <RvmCellNumber Text="58 sc/ha" />
+        <RvmCellNumber Text="61 sc/ha" Trend="RvmTrend.Up" Align="RvmAlign.Center" />
+        <RvmCellNumber Text="R$ 2.060,00" Trend="RvmTrend.Down" TrendLabel="-10%" Align="RvmAlign.End" Highlight="true" />
+        """;
+}

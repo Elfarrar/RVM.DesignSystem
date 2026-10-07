@@ -1,0 +1,27 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula de nota (contrato com o RVM.UI, DSGN-017): o RvmRating so de leitura, na forma compacta (uma estrela e a nota
+   escrita). Para o leitor de tela e uma imagem com a nota por extenso, ou o AriaLabel do consumidor. *@
+<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
+    <RvmRating Value="Value" Max="Max" ReadOnly="true" Display="RvmRatingDisplay.Compact" AriaLabel="@AriaLabel" />
+</RvmCellFrame>
+
+@code {
+    /// <summary>A nota, de 0 a <see cref="Max"/>.</summary>
+    [Parameter, EditorRequired] public double Value { get; set; }
+
+    /// <summary>Teto da nota. Padrao: 5.</summary>
+    [Parameter] public int Max { get; set; } = 5;
+
+    /// <summary>Nome acessivel proprio ("Nota do fornecedor: 4,5 de 5"). Sem ele, o RvmRating anuncia a nota por extenso.</summary>
+    [Parameter] public string? AriaLabel { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

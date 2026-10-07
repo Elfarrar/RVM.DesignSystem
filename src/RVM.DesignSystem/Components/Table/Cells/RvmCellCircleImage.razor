@@ -1,0 +1,35 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula com imagem redonda (contrato com o RVM.UI, DSGN-017): foto e titulo, para entidade que nao e pessoa (fazenda,
+   empresa, cultura). Por isso o titulo e o nome acessivel da imagem sao parametros separados (Text e Alt). E o
+   RvmAvatar de 40 px; sem foto, o icone de pessoa no fundo suave, que fica decorativo se nao houver Alt. *@
+<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
+    <RvmAvatar Src="@Src" Alt="@Alt" Icon="RvmIconName.User" Variant="RvmAvatarVariant.Soft" />
+    <RvmCellLines Text="@Text" Supporting="@Supporting" Highlight="Highlight" />
+</RvmCellFrame>
+
+@code {
+    /// <summary>Endereco da foto. Sem ele, o icone no fundo suave.</summary>
+    [Parameter] public string? Src { get; set; }
+
+    /// <summary>Nome acessivel da imagem (o que ela mostra), independente do titulo. Vazio: a imagem e decorativa.</summary>
+    [Parameter, EditorRequired] public string Alt { get; set; } = string.Empty;
+
+    /// <summary>Titulo da celula.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Segunda linha, menor e mais clara.</summary>
+    [Parameter] public string? Supporting { get; set; }
+
+    /// <summary>Destaque: o titulo mais pesado.</summary>
+    [Parameter] public bool Highlight { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

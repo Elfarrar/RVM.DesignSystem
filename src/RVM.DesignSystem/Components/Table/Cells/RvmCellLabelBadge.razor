@@ -1,0 +1,27 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula de etiqueta (contrato com o RVM.UI, DSGN-017): a pilula de estado das listas do kit ("Paid", "Active",
+   "Pending") — fundo suave e texto na cor do papel, no tamanho pequeno. E o RvmLabel, nada redesenhado. *@
+<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
+    <RvmLabel Color="Color" Variant="RvmLabelVariant.Soft" Size="RvmSize.Small">@(ChildContent is null ? Text : null)@ChildContent</RvmLabel>
+</RvmCellFrame>
+
+@code {
+    /// <summary>O texto da etiqueta.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Conteudo livre, no lugar do texto.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Papel de cor. Padrao: <see cref="RvmColor.Accent"/>.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Accent;
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

@@ -1,0 +1,8 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* A moldura comum das celulas (DSGN-017): o <td>, o alinhamento e a fileira do conteudo — o que e igual em todas as
+   RvmCell*, num CSS so. Publica porque componente Razor nao pode ser internal (como o RvmFieldFrame); o consumidor usa
+   as RvmCell*, que montam o conteudo. *@
+<td @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <div class="rvm-celula-conteudo">@ChildContent</div>
+</td>
