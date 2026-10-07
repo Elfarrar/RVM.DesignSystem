@@ -1,0 +1,33 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Linha do corpo da RvmTableLayout (contrato com o RVM.UI, DSGN-017). A linha so REFLETE a selecao: quem captura a
+   escolha e uma celula de caixa de marcar na propria linha. *@
+<tr @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-selected="@AriaSelected">
+    @ChildContent
+</tr>
+
+@code {
+    /// <summary>As celulas (<c>td</c>, <c>RvmCell*</c>).</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// A linha participa de uma selecao. So com isto o <c>aria-selected</c> aparece: numa tabela sem selecao, ele
+    /// diria ao leitor de tela que ha algo para escolher onde nao ha.
+    /// </summary>
+    [Parameter] public bool Selectable { get; set; }
+
+    /// <summary>Linha escolhida: ganha o fundo de selecao e, com <see cref="Selectable"/>, <c>aria-selected="true"</c>.</summary>
+    [Parameter] public bool Selected { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string? AriaSelected => !Selectable ? null : Selected ? "true" : "false";
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar(Selected ? "rvm-linha-dados rvm-linha-escolhida" : "rvm-linha-dados", Class, AdditionalAttributes);
+}
