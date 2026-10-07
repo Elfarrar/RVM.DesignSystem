@@ -1,0 +1,167 @@
+@namespace RVM.DesignSystem.Components.ColorPicker
+@inherits RvmStringInputBase
+@using System.Text.RegularExpressions
+@using RVM.DesignSystem.Components.TextField
+
+@* Campo de cor: o valor e o hex ("#4CAF50"). A paleta e o RvmColorPicker por dentro — mesmas bolinhas, mesmos radios
+   nativos com o name do campo, entao o formulario posta o hex. Uma cor fora da paleta vira uma bolinha a mais,
+   "Personalizada". Com AllowCustom, um <details> nativo (abre e fecha sem JS) traz o seletor do navegador e o campo
+   do hex; hex invalido mostra o erro e nao mexe no valor. *@
+<div class="@ClassesDaRaiz" @attributes="AtributosDoControle">
+    <RvmColorPicker TValue="string"
+                    Id="@IdDoControle"
+                    Name="@(NomeDoControle ?? IdDoControle)"
+                    Label="@Label"
+                    LinkText="@LinkText"
+                    LinkHref="@LinkHref"
+                    HelperText="@HelperText"
+                    ErrorText="@(_erroDoHex is null ? MensagemDeErro : null)"
+                    DisplayName="@DisplayName"
+                    Disabled="Disabled"
+                    Items="Itens"
+                    ItemColor="@(h => h)"
+                    ItemText="NomeDa"
+                    Value="@ValorNormalizado"
+                    ValueChanged="@((string v) => Definir(v))"
+                    ValueExpression="@(() => Value!)" />
+
+    @if (AllowCustom)
+    {
+        <details class="rvm-compor" open="@Personalizada">
+            <summary class="rvm-compor-titulo">@ComposeText</summary>
+            <div class="rvm-compor-campos">
+                <input type="color"
+                       class="rvm-seletor"
+                       aria-label="Seletor de cor"
+                       value="@(ValorNormalizado?.ToLowerInvariant() ?? "#000000")"
+                       disabled="@Disabled"
+                       @onchange="AoEscolherNoSeletor" />
+                <label class="rvm-hex-rotulo rvm-text-caption" for="@IdDoHex">Codigo da cor</label>
+                <input type="text"
+                       id="@IdDoHex"
+                       class="@(Shape == RvmFieldShape.Pill ? "rvm-hex rvm-pilula" : "rvm-hex")"
+                       value="@_textoDoHex"
+                       placeholder="@(string.IsNullOrEmpty(Placeholder) ? "#4CAF50" : Placeholder)"
+                       maxlength="7"
+                       spellcheck="false"
+                       autocomplete="off"
+                       disabled="@Disabled"
+                       aria-invalid="@(_erroDoHex is null ? null : "true")"
+                       aria-describedby="@(_erroDoHex is null ? null : IdDoErroDoHex)"
+                       @onchange="AoDigitarHex" />
+            </div>
+            @if (_erroDoHex is not null)
+            {
+                <div id="@IdDoErroDoHex" class="rvm-apoio-erro rvm-text-helper">@_erroDoHex</div>
+            }
+        </details>
+    }
+</div>
+
+@code {
+    private const string ErroDeHex = "Digite a cor como #RRGGBB, por exemplo #4CAF50.";
+
+    // Os papeis do tema claro do DS (rvm-design-system.css): primary, info, success, warning, error e secondary.
+    private static readonly IReadOnlyList<RvmNamedColor> PaletaPadrao =
+    [
+        new("Azul", "#264CC8"),
+        new("Azul claro", "#16B1FF"),
+        new("Verde", "#56CA00"),
+        new("Amarelo", "#FFB400"),
+        new("Vermelho", "#FF4C51"),
+        new("Cinza", "#8A8D93"),
+    ];
+
+    /// <summary>A paleta de cores com nome. Padrao: os seis papeis de cor do tema claro do DS.</summary>
+    [Parameter] public IReadOnlyList<RvmNamedColor>? Colors { get; set; } = PaletaPadrao;
+
+    /// <summary>Permite compor uma cor fora da paleta: seletor do navegador e campo do hex.</summary>
+    [Parameter] public bool AllowCustom { get; set; }
+
+    /// <summary>Titulo da area de compor cor. Padrao: "Compor cor".</summary>
+    [Parameter] public string ComposeText { get; set; } = "Compor cor";
+
+    /// <summary>Classe CSS extra na raiz do campo.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <inheritdoc />
+    protected override string? ClasseDoCampo => Class;
+
+    private string? _textoDoHex;
+    private string? _erroDoHex;
+    private string? _ultimoValor;
+
+    private string IdDoHex => $"{IdDoControle}-hex";
+
+    private string IdDoErroDoHex => $"{IdDoControle}-hex-erro";
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-campo-de-cor", ClassesDoConsumidor, null);
+
+    private string? ValorNormalizado => Normalizar(CurrentValue);
+
+    private IEnumerable<RvmNamedColor> Paleta
+        => (Colors ?? PaletaPadrao).Select(c => Normalizar(c.Hex) is { } hex ? c with { Hex = hex } : null).OfType<RvmNamedColor>();
+
+    // Cor valida fora da paleta: aparece como bolinha a mais, para o valor atual continuar visivel e escolhido.
+    private bool Personalizada => ValorNormalizado is { } v && Paleta.All(c => c.Hex != v);
+
+    private List<string> Itens
+    {
+        get
+        {
+            var itens = Paleta.Select(c => c.Hex).Distinct().ToList();
+            if (Personalizada) itens.Add(ValorNormalizado!);
+            return itens;
+        }
+    }
+
+    private string NomeDa(string hex) => Paleta.FirstOrDefault(c => c.Hex == hex)?.Name ?? $"Personalizada ({hex})";
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (_ultimoValor != CurrentValue)
+        {
+            _ultimoValor = CurrentValue;
+            _textoDoHex = ValorNormalizado ?? CurrentValue;
+            _erroDoHex = null;
+        }
+    }
+
+    private void Definir(string? hex)
+    {
+        _erroDoHex = null;
+        _textoDoHex = hex;
+        _ultimoValor = hex;
+        CurrentValue = hex;
+    }
+
+    private void AoEscolherNoSeletor(ChangeEventArgs e)
+    {
+        if (Normalizar(e.Value?.ToString()) is { } hex) Definir(hex);
+    }
+
+    private void AoDigitarHex(ChangeEventArgs e)
+    {
+        var texto = e.Value?.ToString();
+        if (Normalizar(texto) is { } hex)
+        {
+            Definir(hex);
+        }
+        else
+        {
+            _textoDoHex = texto;
+            _erroDoHex = ErroDeHex;
+        }
+    }
+
+    /// <summary>"#4caf50", "4CAF50" e " #4CAF50 " viram "#4CAF50"; qualquer outra coisa, nulo.</summary>
+    private static string? Normalizar(string? valor)
+    {
+        var texto = valor?.Trim();
+        if (string.IsNullOrEmpty(texto)) return null;
+        var m = Regex.Match(texto, "^#?([0-9a-fA-F]{6})$");
+        return m.Success ? "#" + m.Groups[1].Value.ToUpperInvariant() : null;
+    }
+}
