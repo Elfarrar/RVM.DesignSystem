@@ -1,7 +1,7 @@
 # AGENTS.md — RVM.DesignSystem
 
 Guia de desenvolvimento do projeto. Complementa as diretrizes globais
-(`C:\Users\rvene\.claude\CLAUDE.md`) e o padrão do ecossistema (skill `padrao-rvm`).
+(`~/.claude/CLAUDE.md`) e o padrão do ecossistema (skill `padrao-rvm`).
 
 **Prefixo de task:** `DSGN-NNN` · contador próprio, **reiniciado em `DSGN-001`** · card em
 `docs/Vault/02_Tasks/`, índice em `docs/Vault/03_Kanban/KANBAN.md`.
