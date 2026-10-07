@@ -1,0 +1,125 @@
+@namespace RVM.DesignSystem.Components.Chart
+@inherits RvmRadialChartBase
+
+@* Rosca e meia rosca (contrato com o RVM.UI, DSGN-017; visual dos cartoes "Total Visitors", "Sales Overview" e
+   "Total Profit" do kit). O anel e um traco (stroke) sobre a trilha, que mostra o que falta para o Total. A entrada e
+   uma mascara que gira como ponteiro de relogio a partir do ponto de partida. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>A volta inteira (o padrao) ou so a metade de cima.</summary>
+    [Parameter] public RvmDonutShape Shape { get; set; } = RvmDonutShape.Full;
+
+    /// <summary>A espessura do anel. Padrao: fino.</summary>
+    [Parameter] public RvmDonutThickness Thickness { get; set; } = RvmDonutThickness.Thin;
+
+    /// <summary>Parte o anel em tracos, como o medidor "Total Profit" do kit.</summary>
+    [Parameter] public bool Dashed { get; set; }
+
+    /// <summary>
+    /// O numero grande no meio do anel ("75%", "1.240 ha"). O componente nao o calcula: quem chama decide o que o
+    /// meio responde, que nem sempre e a soma das fatias. Visual: a tabela de dados ja diz tudo ao leitor de tela.
+    /// </summary>
+    [Parameter] public string? CenterValue { get; set; }
+
+    /// <summary>O que vem abaixo do numero grande: um texto curto ("hectares", "da meta").</summary>
+    [Parameter] public RenderFragment? CenterDetail { get; set; }
+
+    private const double Lado = 248;
+    private const double C = Lado / 2;
+    private const double R = Lado / 2;
+
+    /// <summary>A folga entre duas fatias, em graus.</summary>
+    private const double Folga = 1.2;
+
+    private bool Meia => Shape == RvmDonutShape.Half;
+
+    private double Espessura => R * (Thickness == RvmDonutThickness.Thick ? 0.28 : 0.12);
+
+    private double RaioDoTraco => R - Espessura / 2;
+
+    private double Inicio => Meia ? -90 : 0;
+
+    private double Varredura => Meia ? 180 : 360;
+
+    internal override double Largura => Lado;
+
+    internal override double Altura => Meia ? C : Lado;
+
+    internal override string ClasseDoTipo => Meia ? "rvm-rosca rvm-rosca-meia" : "rvm-rosca";
+
+    // Tracejado, os vaos da grade ja separam as fatias.
+    private List<Pedaco> Pedacos() => PedacosNoArco(Inicio, Varredura, Dashed ? 0 : Folga);
+
+    /// <summary>
+    /// O trecho em tracos alinhados a uma grade unica a partir do inicio: se cada fatia comecasse o proprio tracejado,
+    /// duas vizinhas desencontrariam os tracos. Sem <see cref="Dashed"/>, o trecho inteiro.
+    /// </summary>
+    private IEnumerable<(double De, double Ate)> Trechos(double de, double ate)
+    {
+        if (!Dashed)
+        {
+            yield return (de, ate);
+            yield break;
+        }
+
+        var passo = 180d / 17;
+        var traco = passo * 0.62;
+        for (var k = (int)Math.Floor((de - Inicio) / passo); ; k++)
+        {
+            var s = Inicio + k * passo;
+            if (s >= ate - 1e-9)
+            {
+                yield break;
+            }
+
+            var a = Math.Max(s, de);
+            var b = Math.Min(s + traco, ate);
+            if (b - a > 0.05)
+            {
+                yield return (a, b);
+            }
+        }
+    }
+
+    private string Mascara => $"{IdBase}-relogio";
+
+    internal override RenderFragment Desenho => @<g>
+        <defs>@Relogio(Mascara, C, C, R, Inicio, Varredura)</defs>
+        @foreach (var t in Trechos(Inicio, Inicio + Varredura))
+        {
+            <path class="rvm-radial-trilha" d="@Arco(C, C, RaioDoTraco, t.De, t.Ate)" stroke-width="@N(Espessura)" />
+        }
+        <g mask="@($"url(#{Mascara})")">
+            @foreach (var pedaco in Pedacos())
+            {
+                @foreach (var t in Trechos(pedaco.De, pedaco.Ate))
+                {
+                    <path class="rvm-radial-fatia" style="@EstiloDaCor(pedaco.Indice)" d="@Arco(C, C, RaioDoTraco, t.De, t.Ate)"
+                          stroke-width="@N(Espessura)" />
+                }
+            }
+        </g>
+    </g>;
+
+    internal override IReadOnlyList<Alvo> Alvos
+        => [.. Pedacos().Select(p =>
+            {
+                var (x, y) = Ponto(C, C, RaioDoTraco, (p.De + p.Ate) / 2);
+                return AlvoEm(p.Indice, x, y);
+            })];
+
+    internal override RenderFragment? Centro => CenterValue is null && CenterDetail is null ? null : @<div class="rvm-rosca-centro">
+        @if (CenterValue is not null)
+        {
+            <span class="rvm-rosca-valor">@CenterValue</span>
+        }
+        @if (CenterDetail is not null)
+        {
+            <span class="rvm-rosca-detalhe">@CenterDetail</span>
+        }
+    </div>;
+
+    // A meia rosca tem o centro na borda de baixo: o texto senta na base, dentro do arco.
+    internal override string EstiloDoCentro => Meia ? "left: 0; right: 0; bottom: 0; top: 30%; justify-content: flex-end" : "inset: 0";
+}

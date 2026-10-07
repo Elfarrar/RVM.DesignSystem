@@ -1,0 +1,9 @@
+/* O numero do centro no texto primario, sobre o papel (AA nos dois temas). MEDIDO no referencia-neatlab/Chart Card.png:
+   o "89K" do cartao "Total Revenue" e o maior texto do cartao, em peso regular. */
+
+.rvm-camadas-valor {
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-h4-size);
+    line-height: var(--rvm-text-h4-line);
+    font-weight: var(--rvm-font-weight-regular);
+}
