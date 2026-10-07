@@ -421,6 +421,234 @@ Superficie que agrupa um assunto: midia no topo, cabecalho, conteudo e acoes —
 | `TitleElement` | `RvmTextElement` | `RvmTextElement.H3` | Elemento do titulo. Padrao: `h3`. Ajuste a ordem de cabecalhos da pagina — um card solto numa pagina cujo titulo e h1 costuma querer h2. |
 | `Variant` | `RvmCardVariant` | `RvmCardVariant.Elevated` | Aparencia da superficie. Padrao: com sombra. |
 
+### RvmCellAction
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `ChildContent` | `RenderFragment?` | — | As acoes: `RvmIconButton`, `RvmMenu`, `RvmLink` ou qualquer combinacao deles. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+
+### RvmCellBadge
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Badge` | `RenderFragment?` | — | A figura: um `RvmAvatar`, um `RvmIconBadge` ou uma imagem. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Highlight` | `bool` | `false` | Destaque: o texto mais pesado. |
+| `Supporting` | `string?` | — | Segunda linha, menor e mais clara. |
+| `Text` | `string?` | — | O texto ao lado da figura. |
+
+### RvmCellCircleImage
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Alt` | `string` | obrigatorio | Nome acessivel da imagem (o que ela mostra), independente do titulo. Vazio: a imagem e decorativa. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Highlight` | `bool` | `false` | Destaque: o titulo mais pesado. |
+| `Src` | `string?` | — | Endereco da foto. Sem ele, o icone no fundo suave. |
+| `Supporting` | `string?` | — | Segunda linha, menor e mais clara. |
+| `Text` | `string?` | — | Titulo da celula. |
+
+### RvmCellCode
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo livre no lugar do texto (um link para o documento, por exemplo). |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Text` | `string?` | — | O codigo. |
+
+### RvmCellFiles
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Highlight` | `bool` | `false` | Destaque: o nome mais pesado. |
+| `Name` | `string` | obrigatorio | Nome do arquivo. |
+| `Supporting` | `string?` | — | Segunda linha, geralmente o tamanho ("400 KB"). |
+| `Type` | `RvmFileIconName` | `RvmFileIconName.Ai` | Tipo do arquivo, que escolhe o icone. |
+
+### RvmCellFrame
+
+`@using RVM.DesignSystem.Components.Table`
+
+O `<td>` comum das celulas da tabela: alinhamento, espacamento e a fileira do conteudo. E a peca que as `RvmCell*` usam por baixo; para montar uma celula, prefira uma delas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign?` | — | Alinhamento do conteudo. Nulo na coluna de escolha, que tem so a largura da caixa. |
+| `ChildContent` | `RenderFragment?` | — | O conteudo da celula. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `FrameClass` | `string?` | — | Classe da celula que usa a moldura (`rvm-celula-numero`, `rvm-celula-escolha`...). |
+
+### RvmCellLabelBadge
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo livre, no lugar do texto. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Accent`. |
+| `Text` | `string?` | — | O texto da etiqueta. |
+
+### RvmCellLines
+
+`@using RVM.DesignSystem.Components.Table`
+
+Titulo e segunda linha de uma celula da tabela — a peca de texto que as `RvmCell*` usam por baixo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | — | Conteudo livre no lugar do titulo. |
+| `Highlight` | `bool` | `false` | Destaque: o titulo mais pesado. |
+| `Supporting` | `string?` | — | A segunda linha, menor e mais clara. |
+| `Text` | `string?` | — | O titulo. |
+
+### RvmCellNumber
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento. Valores costumam ir no fim (`RvmAlign.End`). Padrao: `RvmAlign.Start`. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Highlight` | `bool` | `false` | Destaque: o numero mais pesado. |
+| `Text` | `string?` | — | O numero ja formatado. Moeda em BRL vem do app, com `CultureInfo` explicito. |
+| `Trend` | `RvmTrend` | `RvmTrend.None` | Subiu, caiu ou nada. A cor vem daqui: subiu e sucesso, caiu e erro. Padrao: `RvmTrend.None`. |
+| `TrendLabel` | `string?` | — | O quanto variou ("+10%"). Com texto sai a etiqueta; sem texto, so a seta. |
+
+### RvmCellProgress
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da barra. Padrao: `RvmColor.Accent`. |
+| `Label` | `string` | obrigatorio | O rotulo da barra ("R$ 12.400"). |
+| `Value` | `double` | obrigatorio | Progresso de 0 a 100. |
+
+### RvmCellRating
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `AriaLabel` | `string?` | — | Nome acessivel proprio ("Nota do fornecedor: 4,5 de 5"). Sem ele, o RvmRating anuncia a nota por extenso. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Max` | `int` | `5` | Teto da nota. Padrao: 5. |
+| `Value` | `double` | obrigatorio | A nota, de 0 a `RvmCellRating.Max`. |
+
+### RvmCellSelect
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Disabled` | `bool` | `false` | Nao da para escolher esta linha. |
+| `Label` | `string` | obrigatorio | O que esta caixa escolhe, para o leitor de tela ("Selecionar o pedido da Ana Ribeiro"). |
+| `Selected` | `bool` | `false` | Linha escolhida. |
+| `SelectedChanged` | `EventCallback<bool>` | — | Avisa que escolheram ou desescolheram a linha. |
+
+### RvmCellSquareImage
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Alt` | `string` | `""` | Texto alternativo. Vazio quando a imagem e so decorativa (o titulo ja descreve a linha). |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Highlight` | `bool` | `false` | Destaque: o titulo mais pesado. |
+| `Src` | `string` | obrigatorio | Endereco da imagem. |
+| `Supporting` | `string?` | — | Segunda linha, menor e mais clara. |
+| `Text` | `string?` | — | Titulo da celula. |
+
+### RvmCellStatus
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Color` | `RvmColor` | `RvmColor.Secondary` | Papel de cor da bolinha. Padrao: `RvmColor.Neutral`. |
+| `Highlight` | `bool` | `false` | Destaque: o texto mais pesado. |
+| `Text` | `string?` | — | O estado por extenso ("Pago", "Em separacao"). |
+
+### RvmCellText
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo livre, no lugar do texto. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Highlight` | `bool` | `false` | Destaque: a coluna que identifica a linha, com o texto mais pesado. |
+| `Supporting` | `string?` | — | Segunda linha, menor e mais clara. |
+| `Text` | `string?` | — | O texto da celula. |
+
+### RvmCellUser
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Highlight` | `bool` | `false` | Destaque: o nome mais pesado. |
+| `Name` | `string` | obrigatorio | Nome da pessoa: o titulo da celula. |
+| `Src` | `string?` | — | Foto. Sem ela, o icone de pessoa. |
+| `Supporting` | `string?` | — | Segunda linha, geralmente o e-mail. |
+
+### RvmCellUserGroup
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras no `<td>`. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do conteudo. Padrao: `RvmAlign.Start`. |
+| `Class` | `string?` | — | Classe CSS extra no `<td>`. |
+| `Items` | `IReadOnlyList<RvmAvatarItem>` | obrigatorio | Pessoas do grupo. |
+| `Label` | `string?` | — | Nome do grupo para o leitor de tela ("Equipe do talhao 3"). Sem ele, o do RvmAvatarGroup. |
+| `Max` | `int` | `4` | Quantos avatares aparecem antes do "+N". Padrao: 4. |
+
 ### RvmChartSeries<TItem>
 
 `@using RVM.DesignSystem.Components.Chart`
@@ -621,6 +849,19 @@ Colunas lado a lado ou empilhadas.
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
+### RvmColumn<TItem>
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento da coluna, no cabecalho e na celula de texto. |
+| `ChildContent` | `RenderFragment<object>?` | — | A celula inteira da linha, com o item no `context`: um `RvmCell*` ou um `<td>`. Sem isto, sai uma celula de texto com o que `RvmColumn.Text` devolver. |
+| `Highlight` | `bool` | `false` | Destaque do kit no atalho `RvmColumn.Text`: a coluna que identifica a linha sai em negrito. |
+| `Sortable` | `bool` | `false` | O titulo vira botao que pede a ordenacao. Quem reordena e o app, no `OnSort` da tabela. |
+| `Text` | `Func<object, string>?` | — | Atalho para a coluna que so mostra texto: `Text="t => t.Nome"`. |
+| `Title` | `string` | obrigatorio | Titulo da coluna. E tambem a chave que identifica a coluna na ordenacao (`SortedBy` e `OnSort`). |
+
 ### RvmConfirmModal
 
 `@using RVM.DesignSystem.Components.Dialog` · exemplos: https://design.rvmit.com.br/componentes/confirm-modal
@@ -683,6 +924,38 @@ A `RvmTable` com paginacao, filtro por coluna e o cabecalho escuro com separador
 | `SelectedItems` | `IReadOnlyCollection<object>?` | — | As linhas marcadas. Aceita `@bind-SelectedItems`. |
 | `SelectedItemsChanged` | `EventCallback<IReadOnlyCollection<object>>` | — | Disparado quando a marcacao muda. |
 | `Toolbar` | `RenderFragment?` | — | Acoes no alto, a direita do `RvmTable.Header` (botao, exportar). |
+
+### RvmDataTable<TItem>
+
+`@using RVM.DesignSystem.Components.Table` · exemplos: https://design.rvmit.com.br/componentes/data-table
+
+Tabela de dados com colunas declaradas, ordenacao avisada ao app e selecao.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Caption` | `string` | obrigatorio | O que a tabela mostra, para quem usa leitor de tela (vai num `caption` escondido). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Columns` | `RenderFragment?` | — | As colunas: `RvmColumn`. |
+| `Direction` | `RvmSortDirection` | `RvmSortDirection.None` | Direcao da ordenacao atual. |
+| `Empty` | `RenderFragment?` | — | O vazio, ensinando o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmDataTable.EmptyText`. |
+| `EmptyText` | `string` | `"Nada para mostrar aqui ainda."` | Texto do vazio padrao. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmDataTable.Loading`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmDataTable.ErrorTitle` e `RvmDataTable.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao, no lugar do icone. Sem efeito com `RvmDataTable.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar"` | Titulo do erro padrao. |
+| `Footer` | `RenderFragment?` | — | Rodape abaixo da tabela: contagem e paginacao. |
+| `Header` | `RenderFragment?` | — | Titulo e descricao acima da tabela. |
+| `IsSelected` | `Func<object, bool>?` | — | Diz se a linha esta escolhida. Sem `RvmDataTable.Selectable`, nao tem efeito. |
+| `Items` | `IReadOnlyList<object>?` | — | As linhas. Nulo e lista vazia dao o mesmo resultado: o estado vazio. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o corpo da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando..."` | Texto do carregamento. |
+| `OnSort` | `EventCallback<ValueTuple<string, RvmSortDirection>>` | — | Pediram para ordenar: vem o titulo da coluna e a direcao nova. Quem ordena e o app — a tabela nao reordena a lista sozinha, porque em lista paginada ou vinda do servidor ordenar so a pagina atual mente para quem le. Atualize `RvmDataTable.SortedBy`, `RvmDataTable.Direction` e `RvmDataTable.Items`. |
+| `Selectable` | `bool` | `false` | As linhas participam de uma selecao: a escolhida ganha o fundo de selecao e `aria-selected`. Isto reflete a escolha, nao a captura: quem escolhe e uma coluna com caixa de marcar. O estado e do app. |
+| `SortedBy` | `string?` | — | Titulo da coluna pela qual a lista esta ordenada. |
+| `Toolbar` | `RenderFragment?` | — | Acoes no alto, a direita do `RvmDataTable.Header`. |
 
 ### RvmDatePicker
 
@@ -885,6 +1158,20 @@ Painel expansivel sozinho, que mantem o conteudo montado.
 | `Size` | `RvmSize` | `RvmSize.Medium` | Altura: 56 px (Medium, padrao), 40 px (Small) ou 64 px (Large). |
 | `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo da caixa. Padrao: contornada. |
 
+### RvmFileIcon
+
+`@using RVM.DesignSystem.Components.FileIcon` · exemplos: https://design.rvmit.com.br/componentes/file-icon
+
+Icone de tipo de arquivo: uma folha com a etiqueta da extensao na cor do tipo, ou a pasta. Colorido de proposito — a cor ajuda a achar o PDF numa lista, mas a extensao escrita e quem diz o tipo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz (o `<svg>`). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Label` | `string?` | — | Nome acessivel ("Arquivo PDF"). Sem ele o icone e decorativo. |
+| `Name` | `RvmFileIconName` | obrigatorio | Tipo de arquivo. |
+| `Size` | `int` | `48` | Lado em pixels. Padrao: 48. |
+
 ### RvmFileUpload
 
 `@using RVM.DesignSystem.Components.Upload` · exemplos: https://design.rvmit.com.br/componentes/file-upload
@@ -911,6 +1198,59 @@ Envio de arquivos por botao ou caixa de arrastar, com progresso.
 | `Name` | `string?` | — | Atributo `name` do input, para o envio de formulario em SSR estatico (multipart). |
 | `OnFilesSelected` | `EventCallback<IReadOnlyList<IBrowserFile>>` | — | Arquivos escolhidos (ate `RvmFileUpload.MaxFiles`). Ler o conteudo e enviar e com o app. |
 | `OnRemove` | `EventCallback<RvmUploadItem>` | — | Remover um arquivo da lista. Sem ele, os cartoes nao tem o X. |
+
+### RvmFilter
+
+`@using RVM.DesignSystem.Components.Filter` · exemplos: https://design.rvmit.com.br/componentes/filter
+
+Botao "Filtros" com o contador de filtros ativos, que abre um painel com os grupos (`RvmFilterGroup`) e os botoes Limpar e Aplicar (contrato com o RVM.UI, DSGN-017).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `ApplyText` | `string` | `"Aplicar"` | Texto do botao que aplica. Padrao: "Aplicar". |
+| `ChildContent` | `RenderFragment?` | — | Os grupos (`RvmFilterGroup`) e campos do painel. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `ClearText` | `string` | `"Limpar"` | Texto do botao que limpa. Padrao: "Limpar". |
+| `Count` | `int` | `0` | Quantos filtros estao ativos. Acima de zero, o contador aparece no botao e e anunciado no nome dele. |
+| `Disabled` | `bool` | `false` | Botao indisponivel. |
+| `Id` | `string?` | — | Id do botao. Sem ele, um id unico e gerado. |
+| `Label` | `string` | `"Filtros"` | Texto do botao. Padrao: "Filtros". |
+| `OnApply` | `EventCallback` | — | "Aplicar": avisa e depois fecha o painel, devolvendo o foco ao botao. |
+| `OnClear` | `EventCallback` | — | "Limpar": avisa e deixa o painel aberto, para a pessoa ver o que sobrou. |
+| `Open` | `bool` | `false` | Painel aberto. O estado interno so segue este valor quando ele muda. |
+| `OpenChanged` | `EventCallback<bool>` | — | Avisa a abertura e o fechamento do painel. |
+| `Placement` | `RvmMenuPlacement` | `RvmMenuPlacement.BottomEnd` | Onde o painel abre. Padrao: abaixo, alinhado pela direita (o filtro costuma ficar na direita da barra). |
+| `Title` | `string` | `"Filtros"` | Titulo do painel. Padrao: "Filtros". |
+
+### RvmFilterGroup
+
+`@using RVM.DesignSystem.Components.Filter` · exemplos: https://design.rvmit.com.br/componentes/filter
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | O conteudo do grupo: opcoes (checkbox, radio), campos, faixa de valores. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Id` | `string?` | — | Id do botao. Sem ele, um id unico e gerado. |
+| `Open` | `bool` | `false` | Aberto. O estado interno so segue este valor quando ele muda. |
+| `OpenChanged` | `EventCallback<bool>` | — | Avisa a abertura e o fechamento. |
+| `Scroll` | `bool` | `false` | Corpo com altura maxima e rolagem, para listas longas de opcoes. |
+| `Title` | `string` | `""` | Titulo do grupo, que e o texto do botao que abre e fecha. |
+
+### RvmHeaderCell
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Align` | `RvmAlign` | `RvmAlign.Start` | Alinhamento do titulo. Acompanhe o das celulas da coluna. |
+| `ChildContent` | `RenderFragment?` | — | O titulo da coluna. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Direction` | `RvmSortDirection` | `RvmSortDirection.None` | Ordem atual desta coluna. `RvmSortDirection.None` quando a tabela esta ordenada por outra. |
+| `DirectionChanged` | `EventCallback<RvmSortDirection>` | — | Pediram para ordenar por esta coluna. Vem com a direcao nova: sem ordem e decrescente viram crescente; crescente vira decrescente. Nao ha volta para "sem ordem" pelo clique — a mesma regra do RVM.UI. |
+| `Sortable` | `bool` | `false` | A coluna ordena ao clique (ou Enter e espaco, no botao do titulo). |
 
 ### RvmHistogram
 
@@ -1134,6 +1474,26 @@ Simples, com icone, com acao e aninhada.
 | `Loading` | `bool` | `false` | Os dados estao chegando: a lista da lugar ao aviso de carregamento. |
 | `LoadingText` | `string` | `"Carregando..."` | Texto do carregamento. |
 | `MaxHeight` | `string?` | — | Altura maxima em CSS (`"320px"`). Com ela a lista rola por dentro. |
+
+### RvmListGroup
+
+`@using RVM.DesignSystem.Components.Lists` · exemplos: https://design.rvmit.com.br/componentes/list-group
+
+Cartao de lista com cabecalho, menu e abas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Badge` | `RenderFragment?` | — | O selo, quando o padrao nao serve. Vence `RvmListGroup.BadgeText`. |
+| `BadgeColor` | `RvmColor` | `RvmColor.Primary` | Papel de cor do selo de `RvmListGroup.BadgeText`. Padrao: `RvmColor.Accent`. |
+| `BadgeText` | `string?` | — | Texto do selo ao lado do titulo. Para um selo proprio, use `RvmListGroup.Badge`. |
+| `ChildContent` | `RenderFragment?` | — | O corpo: normalmente um `RvmList` com `RvmListItem`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Menu` | `RenderFragment?` | — | Itens do menu de acoes no alto a direita (`RvmMenuItem`). Sem eles, nao ha menu. |
+| `MenuLabel` | `string` | `"Acoes da lista"` | Nome acessivel do botao do menu. Padrao: "Acoes da lista". |
+| `Subtitle` | `string?` | — | Linha de apoio abaixo do titulo. |
+| `Tabs` | `RenderFragment?` | — | Faixa de abas abaixo do cabecalho (um `RvmTabs`). |
+| `Title` | `string?` | — | Titulo do cartao. Tambem e o nome acessivel da secao. |
 
 ### RvmListItem
 
@@ -1748,6 +2108,18 @@ Nota em estrelas: para mostrar uma avaliacao ou para a pessoa dar a dela.
 | `Value` | `double` | `0` | A nota. Aceita `@bind-Value`. Zero e "sem nota". |
 | `ValueChanged` | `EventCallback<double>` | — | Disparado quando a pessoa escolhe outra nota. |
 
+### RvmRow
+
+`@using RVM.DesignSystem.Components.Table`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | As celulas (`td`, `RvmCell*`). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Selectable` | `bool` | `false` | A linha participa de uma selecao. So com isto o `aria-selected` aparece: numa tabela sem selecao, ele diria ao leitor de tela que ha algo para escolher onde nao ha. |
+| `Selected` | `bool` | `false` | Linha escolhida: ganha o fundo de selecao e, com `RvmRow.Selectable`, `aria-selected="true"`. |
+
 ### RvmScatterChart<TItem>
 
 `@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/scatter-chart
@@ -2015,6 +2387,34 @@ Uma coluna da `RvmTable` ou da `RvmDataGrid`. Nao desenha nada sozinha: so se ap
 | `Title` | `string` | obrigatorio | Titulo no cabecalho. |
 | `Value` | `Func<object, object>?` | — | O valor da celula. E o que aparece (quando nao ha `RvmTableColumn.ChildContent`), o que ordena e o que o filtro procura. |
 | `Width` | `string?` | — | Largura em CSS (`"120px"`, `"20%"`). Sem valor, a tabela distribui. |
+
+### RvmTableLayout
+
+`@using RVM.DesignSystem.Components.Table` · exemplos: https://design.rvmit.com.br/componentes/table-layout
+
+Moldura da tabela montada a mao, com linhas e cabecalhos.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Body` | `RenderFragment?` | — | As linhas: `RvmRow`. |
+| `Caption` | `string` | obrigatorio | O que a tabela mostra, para quem usa leitor de tela ("Talhoes da safra"). Vai num `caption` escondido e tambem nomeia a area de rolagem. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio, ensinando o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmTableLayout.EmptyText`. Ligue `Status` no seu `RvmEmptyState`: o vazio aparece depois de um carregamento ou filtro. |
+| `EmptyText` | `string` | `"Nada para mostrar aqui ainda."` | Texto do vazio padrao. Prefira `RvmTableLayout.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmTableLayout.Loading`, que vence `RvmTableLayout.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmTableLayout.ErrorTitle` e `RvmTableLayout.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao, no lugar do icone. Sem efeito com `RvmTableLayout.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar"` | Titulo do erro padrao. |
+| `Footer` | `RenderFragment?` | — | Rodape abaixo da tabela: contagem e paginacao. |
+| `Head` | `RenderFragment?` | — | A linha de cabecalho: os `RvmHeaderCell`. A casca poe o `thead` e o `tr`. |
+| `Header` | `RenderFragment?` | — | Titulo e descricao acima da tabela. |
+| `IsEmpty` | `bool` | `false` | Nao ha linhas. O corpo da lugar ao `RvmTableLayout.Empty` (ou ao `RvmTableLayout.EmptyText`). |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o corpo da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando..."` | Texto do carregamento. |
+| `Toolbar` | `RenderFragment?` | — | Acoes no alto, a direita do `RvmTableLayout.Header` (busca, filtro, botao). |
 
 ### RvmTable<TItem>
 
@@ -2380,6 +2780,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Primary`, `Secondary`
 - `RvmChartExportFormat` (`RVM.DesignSystem.Components.Chart`): Em que formato o grafico e exportado.
   Valores: `Png`, `Svg`, `Csv`, `Xlsx`, `Pdf`
+- `RvmChartPalette` (`RVM.DesignSystem.Components.Chart`): Rampa de cores das fatias e series (contrato com o RVM.UI, DSGN-017).
+  Valores: `Monochromatic`, `FullColor`
 - `RvmChartSelectionMode` (`RVM.DesignSystem.Components.Chart`): Como o arrasto no grafico se comporta.
   Valores: `None`, `Range`, `ZoomBox`
 - `RvmChartSize` (`RVM.DesignSystem.Components.Chart`): Largura maxima do grafico (contrato com o RVM.UI, DSGN-017).
@@ -2398,6 +2800,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `White`, `Grey`
 - `RvmFieldShape` (`RVM.DesignSystem`): Canto da caixa do campo (contrato com o RVM.UI, DSGN-017).
   Valores: `Rounded`, `Pill`
+- `RvmFileIconName` (`RVM.DesignSystem.Components.FileIcon`): Tipo de arquivo desenhado pelo `RvmFileIcon` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Ai`, `Avi`, `Doc`, `Eps`, `Fig`, `FolderYellow`, `Gif`, `Jpg`, `Mkv`, `Mov`, `Mp3`, `Mp4`, `Pdf`, `Png`, `Ppt`, `Psd`, `Rar`, `Svg`, `Txt`, `Wav`, `Xls`, `Zip`
 - `RvmFontWeight` (`RVM.DesignSystem.Components.Typography`): Peso da fonte. O valor numerico e o do CSS (`font-weight`).
   Valores: `Regular`, `Medium`, `SemiBold`, `Bold`
 - `RvmIconBadgeSize` (`RVM.DesignSystem.Components.IconBadge`): Lado do `RvmIconBadge`. O kit desenha o de 40 px nos cards de estatistica.
@@ -2525,6 +2929,12 @@ Classes e records usados nos parametros dos componentes.
 - `string Compact(double valor)`
 - `string Number(double valor)`
 
+### RvmChartLegendEntry
+
+`RVM.DesignSystem.Components.Chart` · Uma linha da legenda: o nome da serie ou da fatia e, opcionalmente, o valor (contrato com o RVM.UI, DSGN-017).
+- `Name`: `string` — O nome, na mesma ordem em que o grafico desenha.
+- `Value`: `string?` — O valor ja formatado ("R$ 26.500", "35%"), ou nulo quando so o nome importa. Ja formatado de proposito: a legenda nao sabe a cultura nem a moeda de quem chama.
+
 ### RvmChartPdf
 
 `RVM.DesignSystem.Components.Chart` · Um PDF de uma pagina com a imagem do grafico dentro, montado byte a byte — sem biblioteca de terceiros (decisao do projeto) e sem compressao propria: o JPEG que vem do `canvas` ja e comprimido e entra como imagem `DCTDecode`, o unico filtro que o PDF aceita sem reescrever os pixels.
@@ -2537,6 +2947,13 @@ Classes e records usados nos parametros dos componentes.
 - `End`: `int` — O ultimo item da faixa.
 - `Start`: `int` — O primeiro item da faixa.
 - `bool Contains(int indice)`
+
+### RvmChartSlice
+
+`RVM.DesignSystem.Components.Chart` · Uma fatia de grafico radial: o nome da legenda e da tabela, e o valor (contrato com o RVM.UI, DSGN-017).
+- `Color`: `string?` — Cor propria da fatia, em hexadecimal (`#RGB` ou `#RRGGBB`), para quando a cor e o dado do dominio. Sem ela, a fatia usa a `RvmChartPalette`. So hexadecimal, validado: a cor vai para um `style`, e texto livre ali abriria injecao de CSS. Quem usa cor propria diz o significado em texto tambem.
+- `Name`: `string` — Nome da fatia. Vai para o texto que o leitor de tela le.
+- `Value`: `double` — O valor. O grafico calcula a porcentagem sobre a soma; os valores nao precisam somar 100.
 
 ### RvmChartXlsx
 

@@ -95,6 +95,15 @@ public static class Catalogo
             new("componentes/media-upload", "RvmMediaUpload", "Envio de imagens com miniaturas, remover e tentar de novo."),
             new("componentes/profile-image-upload", "RvmProfileImageUpload", "Foto de perfil: avatar e o botao de enviar.")
         ]),
+        new("Tabelas e listas",
+        [
+            new("componentes/data-table", "RvmDataTable", "Tabela de dados com colunas declaradas, ordenacao avisada ao app e selecao."),
+            new("componentes/table-layout", "RvmTableLayout", "Moldura da tabela montada a mao, com linhas e cabecalhos."),
+            new("componentes/table-cells", "RvmCell*", "As celulas prontas: texto, numero, usuario, status, progresso e mais."),
+            new("componentes/file-icon", "RvmFileIcon", "Icone de arquivo pela extensao."),
+            new("componentes/filter", "RvmFilter", "Botao de filtros com painel, grupos, limpar e aplicar."),
+            new("componentes/list-group", "RvmListGroup", "Cartao de lista com cabecalho, menu e abas.")
+        ]),
         new("Feedback e texto",
         [
             new("componentes/modal", "RvmModal", "Janela modal com titulo, foco preso, Esc e clique no fundo."),

@@ -295,6 +295,162 @@ internal static class ParametrosGerados
             new("TitleElement", "RvmTextElement", "RvmTextElement.H3", "Elemento do titulo. Padrao: `h3`. Ajuste a ordem de cabecalhos da pagina — um card solto numa pagina cujo titulo e h1 costuma querer h2."),
             new("Variant", "RvmCardVariant", "RvmCardVariant.Elevated", "Aparencia da superficie. Padrao: com sombra."),
         ],
+        ["RvmCellAction"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("ChildContent", "RenderFragment?", "—", "As acoes: `RvmIconButton`, `RvmMenu`, `RvmLink` ou qualquer combinacao deles."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+        ],
+        ["RvmCellBadge"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Badge", "RenderFragment?", "—", "A figura: um `RvmAvatar`, um `RvmIconBadge` ou uma imagem."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Highlight", "bool", "false", "Destaque: o texto mais pesado."),
+            new("Supporting", "string?", "—", "Segunda linha, menor e mais clara."),
+            new("Text", "string?", "—", "O texto ao lado da figura."),
+        ],
+        ["RvmCellCircleImage"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Alt", "string", "obrigatorio", "Nome acessivel da imagem (o que ela mostra), independente do titulo. Vazio: a imagem e decorativa."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Highlight", "bool", "false", "Destaque: o titulo mais pesado."),
+            new("Src", "string?", "—", "Endereco da foto. Sem ele, o icone no fundo suave."),
+            new("Supporting", "string?", "—", "Segunda linha, menor e mais clara."),
+            new("Text", "string?", "—", "Titulo da celula."),
+        ],
+        ["RvmCellCode"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("ChildContent", "RenderFragment?", "—", "Conteudo livre no lugar do texto (um link para o documento, por exemplo)."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Text", "string?", "—", "O codigo."),
+        ],
+        ["RvmCellFiles"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Highlight", "bool", "false", "Destaque: o nome mais pesado."),
+            new("Name", "string", "obrigatorio", "Nome do arquivo."),
+            new("Supporting", "string?", "—", "Segunda linha, geralmente o tamanho (\"400 KB\")."),
+            new("Type", "RvmFileIconName", "RvmFileIconName.Ai", "Tipo do arquivo, que escolhe o icone."),
+        ],
+        ["RvmCellFrame"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign?", "—", "Alinhamento do conteudo. Nulo na coluna de escolha, que tem so a largura da caixa."),
+            new("ChildContent", "RenderFragment?", "—", "O conteudo da celula."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("FrameClass", "string?", "—", "Classe da celula que usa a moldura (`rvm-celula-numero`, `rvm-celula-escolha`...)."),
+        ],
+        ["RvmCellLabelBadge"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("ChildContent", "RenderFragment?", "—", "Conteudo livre, no lugar do texto."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor. Padrao: `RvmColor.Accent`."),
+            new("Text", "string?", "—", "O texto da etiqueta."),
+        ],
+        ["RvmCellLines"] =
+        [
+            new("ChildContent", "RenderFragment?", "—", "Conteudo livre no lugar do titulo."),
+            new("Highlight", "bool", "false", "Destaque: o titulo mais pesado."),
+            new("Supporting", "string?", "—", "A segunda linha, menor e mais clara."),
+            new("Text", "string?", "—", "O titulo."),
+        ],
+        ["RvmCellNumber"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento. Valores costumam ir no fim (`RvmAlign.End`). Padrao: `RvmAlign.Start`."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Highlight", "bool", "false", "Destaque: o numero mais pesado."),
+            new("Text", "string?", "—", "O numero ja formatado. Moeda em BRL vem do app, com `CultureInfo` explicito."),
+            new("Trend", "RvmTrend", "RvmTrend.None", "Subiu, caiu ou nada. A cor vem daqui: subiu e sucesso, caiu e erro. Padrao: `RvmTrend.None`."),
+            new("TrendLabel", "string?", "—", "O quanto variou (\"+10%\"). Com texto sai a etiqueta; sem texto, so a seta."),
+        ],
+        ["RvmCellProgress"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor da barra. Padrao: `RvmColor.Accent`."),
+            new("Label", "string", "obrigatorio", "O rotulo da barra (\"R$ 12.400\")."),
+            new("Value", "double", "obrigatorio", "Progresso de 0 a 100."),
+        ],
+        ["RvmCellRating"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("AriaLabel", "string?", "—", "Nome acessivel proprio (\"Nota do fornecedor: 4,5 de 5\"). Sem ele, o RvmRating anuncia a nota por extenso."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Max", "int", "5", "Teto da nota. Padrao: 5."),
+            new("Value", "double", "obrigatorio", "A nota, de 0 a `RvmCellRating.Max`."),
+        ],
+        ["RvmCellSelect"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Disabled", "bool", "false", "Nao da para escolher esta linha."),
+            new("Label", "string", "obrigatorio", "O que esta caixa escolhe, para o leitor de tela (\"Selecionar o pedido da Ana Ribeiro\")."),
+            new("Selected", "bool", "false", "Linha escolhida."),
+            new("SelectedChanged", "EventCallback<bool>", "—", "Avisa que escolheram ou desescolheram a linha."),
+        ],
+        ["RvmCellSquareImage"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Alt", "string", "\"\"", "Texto alternativo. Vazio quando a imagem e so decorativa (o titulo ja descreve a linha)."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Highlight", "bool", "false", "Destaque: o titulo mais pesado."),
+            new("Src", "string", "obrigatorio", "Endereco da imagem."),
+            new("Supporting", "string?", "—", "Segunda linha, menor e mais clara."),
+            new("Text", "string?", "—", "Titulo da celula."),
+        ],
+        ["RvmCellStatus"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Color", "RvmColor", "RvmColor.Secondary", "Papel de cor da bolinha. Padrao: `RvmColor.Neutral`."),
+            new("Highlight", "bool", "false", "Destaque: o texto mais pesado."),
+            new("Text", "string?", "—", "O estado por extenso (\"Pago\", \"Em separacao\")."),
+        ],
+        ["RvmCellText"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("ChildContent", "RenderFragment?", "—", "Conteudo livre, no lugar do texto."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Highlight", "bool", "false", "Destaque: a coluna que identifica a linha, com o texto mais pesado."),
+            new("Supporting", "string?", "—", "Segunda linha, menor e mais clara."),
+            new("Text", "string?", "—", "O texto da celula."),
+        ],
+        ["RvmCellUser"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Highlight", "bool", "false", "Destaque: o nome mais pesado."),
+            new("Name", "string", "obrigatorio", "Nome da pessoa: o titulo da celula."),
+            new("Src", "string?", "—", "Foto. Sem ela, o icone de pessoa."),
+            new("Supporting", "string?", "—", "Segunda linha, geralmente o e-mail."),
+        ],
+        ["RvmCellUserGroup"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras no `<td>`."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do conteudo. Padrao: `RvmAlign.Start`."),
+            new("Class", "string?", "—", "Classe CSS extra no `<td>`."),
+            new("Items", "IReadOnlyList<RvmAvatarItem>", "obrigatorio", "Pessoas do grupo."),
+            new("Label", "string?", "—", "Nome do grupo para o leitor de tela (\"Equipe do talhao 3\"). Sem ele, o do RvmAvatarGroup."),
+            new("Max", "int", "4", "Quantos avatares aparecem antes do \"+N\". Padrao: 4."),
+        ],
         ["RvmChartSeries"] =
         [
             new("Axis", "RvmChartAxis", "RvmChartAxis.Primary", "Em qual eixo de valores a serie e lida. Padrao: o da esquerda. Vale no grafico de colunas, de linha e de area; nos outros a serie e sempre lida no eixo unico."),
@@ -447,6 +603,15 @@ internal static class ParametrosGerados
             new("ValueFormat", "Func<double, string>?", "—", "Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`."),
             new("Zoomable", "bool", "false", "Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario."),
         ],
+        ["RvmColumn"] =
+        [
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento da coluna, no cabecalho e na celula de texto."),
+            new("ChildContent", "RenderFragment<object>?", "—", "A celula inteira da linha, com o item no `context`: um `RvmCell*` ou um `<td>`. Sem isto, sai uma celula de texto com o que `RvmColumn.Text` devolver."),
+            new("Highlight", "bool", "false", "Destaque do kit no atalho `RvmColumn.Text`: a coluna que identifica a linha sai em negrito."),
+            new("Sortable", "bool", "false", "O titulo vira botao que pede a ordenacao. Quem reordena e o app, no `OnSort` da tabela."),
+            new("Text", "Func<object, string>?", "—", "Atalho para a coluna que so mostra texto: `Text=\"t => t.Nome\"`."),
+            new("Title", "string", "obrigatorio", "Titulo da coluna. E tambem a chave que identifica a coluna na ordenacao (`SortedBy` e `OnSort`)."),
+        ],
         ["RvmConfirmModal"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
@@ -497,6 +662,32 @@ internal static class ParametrosGerados
             new("SelectedItems", "IReadOnlyCollection<object>?", "—", "As linhas marcadas. Aceita `@bind-SelectedItems`."),
             new("SelectedItemsChanged", "EventCallback<IReadOnlyCollection<object>>", "—", "Disparado quando a marcacao muda."),
             new("Toolbar", "RenderFragment?", "—", "Acoes no alto, a direita do `RvmTable.Header` (botao, exportar)."),
+        ],
+        ["RvmDataTable"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("Caption", "string", "obrigatorio", "O que a tabela mostra, para quem usa leitor de tela (vai num `caption` escondido)."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Columns", "RenderFragment?", "—", "As colunas: `RvmColumn`."),
+            new("Direction", "RvmSortDirection", "RvmSortDirection.None", "Direcao da ordenacao atual."),
+            new("Empty", "RenderFragment?", "—", "O vazio, ensinando o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmDataTable.EmptyText`."),
+            new("EmptyText", "string", "\"Nada para mostrar aqui ainda.\"", "Texto do vazio padrao."),
+            new("Error", "bool", "false", "A carga falhou. Vence `RvmDataTable.Loading`."),
+            new("ErrorContent", "RenderFragment?", "—", "O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmDataTable.ErrorTitle` e `RvmDataTable.ErrorText`."),
+            new("ErrorMascot", "RvmMascotName?", "—", "Mascote do erro padrao, no lugar do icone. Sem efeito com `RvmDataTable.ErrorContent`."),
+            new("ErrorText", "string", "\"Tivemos um problema tecnico, por favor tente de novo em alguns minutos.\"", "Texto do erro padrao."),
+            new("ErrorTitle", "string", "\"Nao deu para carregar\"", "Titulo do erro padrao."),
+            new("Footer", "RenderFragment?", "—", "Rodape abaixo da tabela: contagem e paginacao."),
+            new("Header", "RenderFragment?", "—", "Titulo e descricao acima da tabela."),
+            new("IsSelected", "Func<object, bool>?", "—", "Diz se a linha esta escolhida. Sem `RvmDataTable.Selectable`, nao tem efeito."),
+            new("Items", "IReadOnlyList<object>?", "—", "As linhas. Nulo e lista vazia dao o mesmo resultado: o estado vazio."),
+            new("Loading", "bool", "false", "Os dados estao chegando: o corpo da lugar ao aviso de carregamento."),
+            new("LoadingMascot", "RvmMascotName?", "—", "Mascote do carregamento, no lugar do indicador circular."),
+            new("LoadingText", "string", "\"Carregando...\"", "Texto do carregamento."),
+            new("OnSort", "EventCallback<ValueTuple<string, RvmSortDirection>>", "—", "Pediram para ordenar: vem o titulo da coluna e a direcao nova. Quem ordena e o app — a tabela nao reordena a lista sozinha, porque em lista paginada ou vinda do servidor ordenar so a pagina atual mente para quem le. Atualize `RvmDataTable.SortedBy`, `RvmDataTable.Direction` e `RvmDataTable.Items`."),
+            new("Selectable", "bool", "false", "As linhas participam de uma selecao: a escolhida ganha o fundo de selecao e `aria-selected`. Isto reflete a escolha, nao a captura: quem escolhe e uma coluna com caixa de marcar. O estado e do app."),
+            new("SortedBy", "string?", "—", "Titulo da coluna pela qual a lista esta ordenada."),
+            new("Toolbar", "RenderFragment?", "—", "Acoes no alto, a direita do `RvmDataTable.Header`."),
         ],
         ["RvmDatePicker"] =
         [
@@ -647,6 +838,14 @@ internal static class ParametrosGerados
             new("Size", "RvmSize", "RvmSize.Medium", "Altura: 56 px (Medium, padrao), 40 px (Small) ou 64 px (Large)."),
             new("Variant", "RvmTextFieldVariant", "RvmTextFieldVariant.Outlined", "Estilo da caixa. Padrao: contornada."),
         ],
+        ["RvmFileIcon"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz (o `<svg>`)."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Label", "string?", "—", "Nome acessivel (\"Arquivo PDF\"). Sem ele o icone e decorativo."),
+            new("Name", "RvmFileIconName", "obrigatorio", "Tipo de arquivo."),
+            new("Size", "int", "48", "Lado em pixels. Padrao: 48."),
+        ],
         ["RvmFileUpload"] =
         [
             new("Accept", "string?", "—", "Tipos aceitos, para o atributo `accept` (\"application/pdf,.docx\"). Sem ele, qualquer arquivo."),
@@ -667,6 +866,45 @@ internal static class ParametrosGerados
             new("Name", "string?", "—", "Atributo `name` do input, para o envio de formulario em SSR estatico (multipart)."),
             new("OnFilesSelected", "EventCallback<IReadOnlyList<IBrowserFile>>", "—", "Arquivos escolhidos (ate `RvmFileUpload.MaxFiles`). Ler o conteudo e enviar e com o app."),
             new("OnRemove", "EventCallback<RvmUploadItem>", "—", "Remover um arquivo da lista. Sem ele, os cartoes nao tem o X."),
+        ],
+        ["RvmFilter"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("ApplyText", "string", "\"Aplicar\"", "Texto do botao que aplica. Padrao: \"Aplicar\"."),
+            new("ChildContent", "RenderFragment?", "—", "Os grupos (`RvmFilterGroup`) e campos do painel."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("ClearText", "string", "\"Limpar\"", "Texto do botao que limpa. Padrao: \"Limpar\"."),
+            new("Count", "int", "0", "Quantos filtros estao ativos. Acima de zero, o contador aparece no botao e e anunciado no nome dele."),
+            new("Disabled", "bool", "false", "Botao indisponivel."),
+            new("Id", "string?", "—", "Id do botao. Sem ele, um id unico e gerado."),
+            new("Label", "string", "\"Filtros\"", "Texto do botao. Padrao: \"Filtros\"."),
+            new("OnApply", "EventCallback", "—", "\"Aplicar\": avisa e depois fecha o painel, devolvendo o foco ao botao."),
+            new("OnClear", "EventCallback", "—", "\"Limpar\": avisa e deixa o painel aberto, para a pessoa ver o que sobrou."),
+            new("Open", "bool", "false", "Painel aberto. O estado interno so segue este valor quando ele muda."),
+            new("OpenChanged", "EventCallback<bool>", "—", "Avisa a abertura e o fechamento do painel."),
+            new("Placement", "RvmMenuPlacement", "RvmMenuPlacement.BottomEnd", "Onde o painel abre. Padrao: abaixo, alinhado pela direita (o filtro costuma ficar na direita da barra)."),
+            new("Title", "string", "\"Filtros\"", "Titulo do painel. Padrao: \"Filtros\"."),
+        ],
+        ["RvmFilterGroup"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O conteudo do grupo: opcoes (checkbox, radio), campos, faixa de valores."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Id", "string?", "—", "Id do botao. Sem ele, um id unico e gerado."),
+            new("Open", "bool", "false", "Aberto. O estado interno so segue este valor quando ele muda."),
+            new("OpenChanged", "EventCallback<bool>", "—", "Avisa a abertura e o fechamento."),
+            new("Scroll", "bool", "false", "Corpo com altura maxima e rolagem, para listas longas de opcoes."),
+            new("Title", "string", "\"\"", "Titulo do grupo, que e o texto do botao que abre e fecha."),
+        ],
+        ["RvmHeaderCell"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("Align", "RvmAlign", "RvmAlign.Start", "Alinhamento do titulo. Acompanhe o das celulas da coluna."),
+            new("ChildContent", "RenderFragment?", "—", "O titulo da coluna."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Direction", "RvmSortDirection", "RvmSortDirection.None", "Ordem atual desta coluna. `RvmSortDirection.None` quando a tabela esta ordenada por outra."),
+            new("DirectionChanged", "EventCallback<RvmSortDirection>", "—", "Pediram para ordenar por esta coluna. Vem com a direcao nova: sem ordem e decrescente viram crescente; crescente vira decrescente. Nao ha volta para \"sem ordem\" pelo clique — a mesma regra do RVM.UI."),
+            new("Sortable", "bool", "false", "A coluna ordena ao clique (ou Enter e espaco, no botao do titulo)."),
         ],
         ["RvmHistogram"] =
         [
@@ -836,6 +1074,20 @@ internal static class ParametrosGerados
             new("Loading", "bool", "false", "Os dados estao chegando: a lista da lugar ao aviso de carregamento."),
             new("LoadingText", "string", "\"Carregando...\"", "Texto do carregamento."),
             new("MaxHeight", "string?", "—", "Altura maxima em CSS (`\"320px\"`). Com ela a lista rola por dentro."),
+        ],
+        ["RvmListGroup"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("Badge", "RenderFragment?", "—", "O selo, quando o padrao nao serve. Vence `RvmListGroup.BadgeText`."),
+            new("BadgeColor", "RvmColor", "RvmColor.Primary", "Papel de cor do selo de `RvmListGroup.BadgeText`. Padrao: `RvmColor.Accent`."),
+            new("BadgeText", "string?", "—", "Texto do selo ao lado do titulo. Para um selo proprio, use `RvmListGroup.Badge`."),
+            new("ChildContent", "RenderFragment?", "—", "O corpo: normalmente um `RvmList` com `RvmListItem`."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Menu", "RenderFragment?", "—", "Itens do menu de acoes no alto a direita (`RvmMenuItem`). Sem eles, nao ha menu."),
+            new("MenuLabel", "string", "\"Acoes da lista\"", "Nome acessivel do botao do menu. Padrao: \"Acoes da lista\"."),
+            new("Subtitle", "string?", "—", "Linha de apoio abaixo do titulo."),
+            new("Tabs", "RenderFragment?", "—", "Faixa de abas abaixo do cabecalho (um `RvmTabs`)."),
+            new("Title", "string?", "—", "Titulo do cartao. Tambem e o nome acessivel da secao."),
         ],
         ["RvmListItem"] =
         [
@@ -1296,6 +1548,14 @@ internal static class ParametrosGerados
             new("Value", "double", "0", "A nota. Aceita `@bind-Value`. Zero e \"sem nota\"."),
             new("ValueChanged", "EventCallback<double>", "—", "Disparado quando a pessoa escolhe outra nota."),
         ],
+        ["RvmRow"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "As celulas (`td`, `RvmCell*`)."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Selectable", "bool", "false", "A linha participa de uma selecao. So com isto o `aria-selected` aparece: numa tabela sem selecao, ele diria ao leitor de tela que ha algo para escolher onde nao ha."),
+            new("Selected", "bool", "false", "Linha escolhida: ganha o fundo de selecao e, com `RvmRow.Selectable`, `aria-selected=\"true\"`."),
+        ],
         ["RvmScatterChart"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a figura."),
@@ -1491,6 +1751,28 @@ internal static class ParametrosGerados
             new("Title", "string", "obrigatorio", "Titulo no cabecalho."),
             new("Value", "Func<object, object>?", "—", "O valor da celula. E o que aparece (quando nao ha `RvmTableColumn.ChildContent`), o que ordena e o que o filtro procura."),
             new("Width", "string?", "—", "Largura em CSS (`\"120px\"`, `\"20%\"`). Sem valor, a tabela distribui."),
+        ],
+        ["RvmTableLayout"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("Body", "RenderFragment?", "—", "As linhas: `RvmRow`."),
+            new("Caption", "string", "obrigatorio", "O que a tabela mostra, para quem usa leitor de tela (\"Talhoes da safra\"). Vai num `caption` escondido e tambem nomeia a area de rolagem."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Empty", "RenderFragment?", "—", "O vazio, ensinando o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmTableLayout.EmptyText`. Ligue `Status` no seu `RvmEmptyState`: o vazio aparece depois de um carregamento ou filtro."),
+            new("EmptyText", "string", "\"Nada para mostrar aqui ainda.\"", "Texto do vazio padrao. Prefira `RvmTableLayout.Empty`, que ensina o proximo passo."),
+            new("Error", "bool", "false", "A carga falhou. Vence `RvmTableLayout.Loading`, que vence `RvmTableLayout.IsEmpty`."),
+            new("ErrorContent", "RenderFragment?", "—", "O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmTableLayout.ErrorTitle` e `RvmTableLayout.ErrorText`."),
+            new("ErrorMascot", "RvmMascotName?", "—", "Mascote do erro padrao, no lugar do icone. Sem efeito com `RvmTableLayout.ErrorContent`."),
+            new("ErrorText", "string", "\"Tivemos um problema tecnico, por favor tente de novo em alguns minutos.\"", "Texto do erro padrao."),
+            new("ErrorTitle", "string", "\"Nao deu para carregar\"", "Titulo do erro padrao."),
+            new("Footer", "RenderFragment?", "—", "Rodape abaixo da tabela: contagem e paginacao."),
+            new("Head", "RenderFragment?", "—", "A linha de cabecalho: os `RvmHeaderCell`. A casca poe o `thead` e o `tr`."),
+            new("Header", "RenderFragment?", "—", "Titulo e descricao acima da tabela."),
+            new("IsEmpty", "bool", "false", "Nao ha linhas. O corpo da lugar ao `RvmTableLayout.Empty` (ou ao `RvmTableLayout.EmptyText`)."),
+            new("Loading", "bool", "false", "Os dados estao chegando: o corpo da lugar ao aviso de carregamento."),
+            new("LoadingMascot", "RvmMascotName?", "—", "Mascote do carregamento, no lugar do indicador circular."),
+            new("LoadingText", "string", "\"Carregando...\"", "Texto do carregamento."),
+            new("Toolbar", "RenderFragment?", "—", "Acoes no alto, a direita do `RvmTableLayout.Header` (busca, filtro, botao)."),
         ],
         ["RvmTable"] =
         [

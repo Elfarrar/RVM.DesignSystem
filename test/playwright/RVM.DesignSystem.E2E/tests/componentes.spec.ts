@@ -86,11 +86,17 @@ const PAGINAS = [
     { rota: '/componentes/label', titulo: 'RvmLabel' },
     { rota: '/componentes/text', titulo: 'RvmText' },
     { rota: '/componentes/icon-badge', titulo: 'RvmIconBadge' },
+    { rota: '/componentes/data-table', titulo: 'RvmDataTable' },
+    { rota: '/componentes/table-layout', titulo: 'RvmTableLayout' },
+    { rota: '/componentes/table-cells', titulo: 'RvmCell*' },
+    { rota: '/componentes/file-icon', titulo: 'RvmFileIcon' },
+    { rota: '/componentes/filter', titulo: 'RvmFilter' },
+    { rota: '/componentes/list-group', titulo: 'RvmListGroup' },
 ];
 
 // Graficos que o kit nao desenhou: seguem o visual das colunas (DSGN-010).
 // Contrato com o RVM.UI (DSGN-017): componentes que o NEATLAB nao desenha, no visual dele por extensao.
-const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout', 'RvmTextArea', 'RvmNumericField', 'RvmMultiTextField', 'RvmTextFieldSelect', 'RvmAutocomplete', 'RvmOptionList', 'RvmTagOption', 'RvmChoiceChip', 'RvmColorPicker', 'RvmColorField', 'RvmIconSelector', 'RvmFileUpload', 'RvmMediaUpload', 'RvmProfileImageUpload', 'RvmModal', 'RvmConfirmModal', 'RvmToastProvider', 'RvmSpinner', 'RvmProgressBar', 'RvmLabel', 'RvmText', 'RvmIconBadge']);
+const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout', 'RvmTextArea', 'RvmNumericField', 'RvmMultiTextField', 'RvmTextFieldSelect', 'RvmAutocomplete', 'RvmOptionList', 'RvmTagOption', 'RvmChoiceChip', 'RvmColorPicker', 'RvmColorField', 'RvmIconSelector', 'RvmFileUpload', 'RvmMediaUpload', 'RvmProfileImageUpload', 'RvmModal', 'RvmConfirmModal', 'RvmToastProvider', 'RvmSpinner', 'RvmProgressBar', 'RvmLabel', 'RvmText', 'RvmIconBadge', 'RvmDataTable', 'RvmTableLayout', 'RvmCell*', 'RvmFileIcon', 'RvmFilter', 'RvmListGroup']);
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
     await page.goto('/componentes');
