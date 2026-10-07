@@ -1,0 +1,206 @@
+@namespace RVM.DesignSystem.Components.Upload
+@using Microsoft.AspNetCore.Components.Forms
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.Progress
+@using RVM.DesignSystem.Icons
+
+@* O RvmFileUpload so de imagens: miniaturas de 100 px num grid e, no fim, o quadro de adicionar com o InputFile
+   transparente por cima (clique, teclado e soltar sao do navegador, sem JS proprio). A lista e role="list" explicito
+   porque o ul vira display: contents para o quadro de adicionar cair na mesma grade — e o Safari tira o papel de
+   lista de quem perde a caixa. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    @if (!string.IsNullOrWhiteSpace(Label) || TemLink)
+    {
+        <div class="rvm-cabecalho">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <label id="@IdDoRotulo" for="@IdDoInput" class="rvm-rotulo rvm-text-body2">@Label</label>
+            }
+            @if (TemLink)
+            {
+                <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
+            }
+        </div>
+    }
+
+    <div class="rvm-grade">
+        @if (Items is { Count: > 0 })
+        {
+            <ul class="rvm-miniaturas" role="list" aria-label="Imagens">
+                @foreach (var item in Items)
+                {
+                    <li @key="item" role="listitem" class="@ClassesDaMiniatura(item)">
+                        @if (!string.IsNullOrWhiteSpace(item.PreviewUrl))
+                        {
+                            <img class="rvm-imagem" src="@item.PreviewUrl" alt="@item.Name" title="@item.Name" />
+                        }
+                        else
+                        {
+                            <span class="rvm-sem-previa" role="img" aria-label="@item.Name" title="@item.Name">
+                                <RvmIcon Name="RvmIconName.Gallery" SizePx="32" />
+                            </span>
+                        }
+
+                        @if (item.Status == RvmUploadStatus.Uploading)
+                        {
+                            <div class="rvm-faixa">
+                                <RvmProgress Value="Math.Clamp(item.Progress, 0, 100)" Label="@($"Enviando {item.Name}")" />
+                            </div>
+                        }
+                        else if (item.Status == RvmUploadStatus.Uploaded)
+                        {
+                            <span class="rvm-selo-ok">
+                                <RvmIcon Name="RvmIconName.CircleCheck" Size="RvmSize.Small" />
+                                <span class="rvm-so-leitor">Enviada</span>
+                            </span>
+                        }
+                        else if (item.Status == RvmUploadStatus.Failed)
+                        {
+                            <div class="rvm-falhou-sobre">
+                                <span class="rvm-texto-da-falha rvm-text-caption">Falha no envio</span>
+                                @if (OnRetry.HasDelegate)
+                                {
+                                    <button type="button" class="rvm-tentar rvm-text-caption" aria-label="@($"Tentar de novo {item.Name}")"
+                                            disabled="@Disabled" @onclick="() => OnRetry.InvokeAsync(item)">Tentar de novo</button>
+                                }
+                            </div>
+                        }
+
+                        @if (OnRemove.HasDelegate)
+                        {
+                            <button type="button" class="rvm-remover" aria-label="@($"Remover {item.Name}")" title="@($"Remover {item.Name}")"
+                                    disabled="@Disabled" @onclick="() => Remover(item)">
+                                <RvmIcon Name="RvmIconName.Close" SizePx="16" />
+                            </button>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+
+        <div class="@ClassesDoAlvo" @ondragenter="() => _arrastando = true" @ondragleave="() => _arrastando = false"
+             @ondrop="() => _arrastando = false">
+            <RvmIcon Name="RvmIconName.Plus" />
+            <span id="@IdDaAcao" class="rvm-texto-do-alvo rvm-text-caption">@ButtonText</span>
+            <InputFile id="@IdDoInput" name="@Name" class="rvm-arquivo" accept="@Accept" multiple="@Multiple" disabled="@Disabled"
+                       aria-labelledby="@ArquivosDoUpload.Ids(string.IsNullOrWhiteSpace(Label) ? null : IdDoRotulo, IdDaAcao)"
+                       aria-describedby="@ArquivosDoUpload.Ids(string.IsNullOrWhiteSpace(Hint) ? null : IdDaDica, Erro is null ? null : IdDoErro)"
+                       aria-invalid="@(Erro is null ? null : "true")"
+                       OnChange="AoEscolher" />
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Hint))
+    {
+        <div id="@IdDaDica" class="rvm-apoio rvm-text-helper">@Hint</div>
+    }
+    @if (Erro is not null)
+    {
+        <div id="@IdDoErro" class="rvm-apoio rvm-mensagem-de-erro rvm-text-helper">@Erro</div>
+    }
+
+    <div class="rvm-so-leitor" aria-live="polite">@_aviso</div>
+</div>
+
+@code {
+    private readonly string _idGerado = GeradorDeIds.Novo("rvm-upload-midia");
+    private bool _arrastando;
+    private string? _erroDoLimite;
+    private string? _aviso;
+
+    /// <summary>Tipos aceitos, para o atributo <c>accept</c>. Padrao: "image/*".</summary>
+    [Parameter] public string? Accept { get; set; } = "image/*";
+
+    /// <summary>Texto do quadro de adicionar. Padrao: "Adicionar imagem".</summary>
+    [Parameter] public string ButtonText { get; set; } = "Adicionar imagem";
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Indisponivel: o input fica desabilitado e o componente esmaece.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Mensagem de erro, em vermelho e ligada ao input por <c>aria-describedby</c>.</summary>
+    [Parameter] public string? ErrorText { get; set; }
+
+    /// <summary>Texto de apoio abaixo da grade ("PNG ou JPG, ate 5 MB").</summary>
+    [Parameter] public string? Hint { get; set; }
+
+    /// <summary>Id do input. Sem ele, um id e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>As imagens ja escolhidas, como miniaturas (<c>PreviewUrl</c>). O app atualiza <c>Status</c> e <c>Progress</c>.</summary>
+    [Parameter] public IReadOnlyList<RvmUploadItem>? Items { get; set; }
+
+    /// <summary>Rotulo acima da grade.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Destino do link acima do campo, a direita do rotulo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Texto do link acima do campo.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Maximo de imagens por escolha. Acima dele, mostra um erro em vez de avisar. Padrao: 10.</summary>
+    [Parameter] public int MaxFiles { get; set; } = 10;
+
+    /// <summary>Permite escolher varias imagens de uma vez (atributo <c>multiple</c>).</summary>
+    [Parameter] public bool Multiple { get; set; }
+
+    /// <summary>Atributo <c>name</c> do input, para o envio de formulario em SSR estatico (multipart).</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Imagens escolhidas (ate <see cref="MaxFiles"/>). Gerar a miniatura e enviar e com o app.</summary>
+    [Parameter] public EventCallback<IReadOnlyList<IBrowserFile>> OnFilesSelected { get; set; }
+
+    /// <summary>Remover uma imagem. Sem ele, as miniaturas nao tem o X.</summary>
+    [Parameter] public EventCallback<RvmUploadItem> OnRemove { get; set; }
+
+    /// <summary>Tentar de novo o envio que falhou. Sem ele, a miniatura com falha nao tem o botao.</summary>
+    [Parameter] public EventCallback<RvmUploadItem> OnRetry { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string IdDoInput => string.IsNullOrWhiteSpace(Id) ? _idGerado : Id;
+    private string IdDoRotulo => $"{IdDoInput}-rotulo";
+    private string IdDaAcao => $"{IdDoInput}-acao";
+    private string IdDaDica => $"{IdDoInput}-dica";
+    private string IdDoErro => $"{IdDoInput}-erro";
+    private bool TemLink => !string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref);
+    private string? Erro => _erroDoLimite ?? (string.IsNullOrWhiteSpace(ErrorText) ? null : ErrorText);
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar("rvm-upload rvm-midia" + (Erro is null ? "" : " rvm-erro") + (Disabled ? " rvm-desabilitado" : ""), Class, AdditionalAttributes);
+
+    private string ClassesDoAlvo => "rvm-alvo rvm-adicionar" + (_arrastando && !Disabled ? " rvm-arrastando" : "");
+
+    private static string ClassesDaMiniatura(RvmUploadItem item) => item.Status switch
+    {
+        RvmUploadStatus.Uploading => "rvm-miniatura rvm-enviando",
+        RvmUploadStatus.Uploaded => "rvm-miniatura rvm-enviado",
+        RvmUploadStatus.Failed => "rvm-miniatura rvm-falhou",
+        _ => "rvm-miniatura"
+    };
+
+    private async Task AoEscolher(InputFileChangeEventArgs e)
+    {
+        _arrastando = false;
+        _erroDoLimite = ArquivosDoUpload.Ler(e, MaxFiles, out var arquivos);
+        if (_erroDoLimite is not null)
+        {
+            _aviso = _erroDoLimite;
+            return;
+        }
+        if (arquivos.Count == 0) return;
+        _aviso = arquivos.Count == 1 ? "1 imagem escolhida" : $"{arquivos.Count} imagens escolhidas";
+        await OnFilesSelected.InvokeAsync(arquivos);
+    }
+
+    private async Task Remover(RvmUploadItem item)
+    {
+        _aviso = $"{item.Name} removida";
+        await OnRemove.InvokeAsync(item);
+    }
+}

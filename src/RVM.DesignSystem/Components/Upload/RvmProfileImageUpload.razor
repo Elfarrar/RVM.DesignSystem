@@ -1,0 +1,119 @@
+@namespace RVM.DesignSystem.Components.Upload
+@using Microsoft.AspNetCore.Components.Forms
+@using RVM.DesignSystem.Components.Avatar
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Foto de perfil: avatar de 64 px (RvmAvatar: a foto, as iniciais do AvatarName ou a silhueta) e o "+ Enviar foto" com
+   o InputFile transparente por cima — clique, teclado e soltar sao do navegador, sem JS proprio. Uma foto por vez:
+   o OnFileSelected entrega o arquivo, e o app envia e devolve o Src novo. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label id="@IdDoRotulo" for="@IdDoInput" class="rvm-rotulo rvm-text-body2">@Label</label>
+    }
+
+    <div class="rvm-linha">
+        <RvmAvatar Src="@Src" Name="@AvatarName" Initials="@Iniciais" Icon="@IconeSemNome" Size="RvmSize.Large"
+                   Variant="RvmAvatarVariant.Soft" Class="rvm-avatar-do-perfil" />
+        <div class="rvm-alvo rvm-enviar-foto">
+            <RvmIcon Name="RvmIconName.Plus" Size="RvmSize.Small" />
+            <span id="@IdDaAcao">@ButtonText</span>
+            <InputFile id="@IdDoInput" name="@Name" class="rvm-arquivo" accept="@Accept" disabled="@Disabled"
+                       aria-labelledby="@ArquivosDoUpload.Ids(string.IsNullOrWhiteSpace(Label) ? null : IdDoRotulo, IdDaAcao)"
+                       aria-describedby="@(Erro is null ? null : IdDoErro)"
+                       aria-invalid="@(Erro is null ? null : "true")"
+                       OnChange="AoEscolher" />
+        </div>
+    </div>
+
+    @if (Erro is not null)
+    {
+        <div id="@IdDoErro" class="rvm-mensagem-de-erro rvm-text-helper">@Erro</div>
+    }
+
+    <div class="rvm-so-leitor" aria-live="polite">@_aviso</div>
+</div>
+
+@code {
+    private readonly string _idGerado = GeradorDeIds.Novo("rvm-upload-foto");
+    private string? _erroDoLimite;
+    private string? _aviso;
+
+    /// <summary>Tipos aceitos, para o atributo <c>accept</c>. Padrao: "image/*".</summary>
+    [Parameter] public string? Accept { get; set; } = "image/*";
+
+    /// <summary>Nome da pessoa: texto alternativo da foto e, sem foto, as iniciais. Sem nome nem foto, a silhueta.</summary>
+    [Parameter] public string? AvatarName { get; set; }
+
+    /// <summary>Texto da acao, ao lado do avatar. Padrao: "Enviar foto".</summary>
+    [Parameter] public string ButtonText { get; set; } = "Enviar foto";
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Indisponivel: o input fica desabilitado e o componente esmaece.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Mensagem de erro, em vermelho e ligada ao input por <c>aria-describedby</c>.</summary>
+    [Parameter] public string? ErrorText { get; set; }
+
+    /// <summary>Id do input. Sem ele, um id e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Rotulo acima do avatar.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Atributo <c>name</c> do input, para o envio de formulario em SSR estatico (multipart).</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>A foto escolhida. Enviar e devolver o <see cref="Src"/> novo e com o app.</summary>
+    [Parameter] public EventCallback<IBrowserFile> OnFileSelected { get; set; }
+
+    /// <summary>Endereco da foto atual. Sem ele, as iniciais do <see cref="AvatarName"/> ou a silhueta.</summary>
+    [Parameter] public string? Src { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string IdDoInput => string.IsNullOrWhiteSpace(Id) ? _idGerado : Id;
+    private string IdDoRotulo => $"{IdDoInput}-rotulo";
+    private string IdDaAcao => $"{IdDoInput}-acao";
+    private string IdDoErro => $"{IdDoInput}-erro";
+    private string? Erro => _erroDoLimite ?? (string.IsNullOrWhiteSpace(ErrorText) ? null : ErrorText);
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar("rvm-upload rvm-perfil" + (Erro is null ? "" : " rvm-erro") + (Disabled ? " rvm-desabilitado" : ""), Class, AdditionalAttributes);
+
+    // "Rafael Veneroso Morici" -> "RM": primeira letra do primeiro e do ultimo nome.
+    private string? Iniciais
+    {
+        get
+        {
+            var partes = (AvatarName ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            return partes.Length switch
+            {
+                0 => null,
+                1 => partes[0][..1],
+                _ => string.Concat(partes[0][..1], partes[^1][..1])
+            };
+        }
+    }
+
+    private RvmIconName? IconeSemNome => string.IsNullOrWhiteSpace(AvatarName) ? RvmIconName.User : null;
+
+    private async Task AoEscolher(InputFileChangeEventArgs e)
+    {
+        // Arrastar varias fotos num input sem multiple ainda chega aqui com mais de uma: vira erro, nao excecao.
+        _erroDoLimite = ArquivosDoUpload.Ler(e, 1, out var arquivos);
+        if (_erroDoLimite is not null)
+        {
+            _aviso = _erroDoLimite;
+            return;
+        }
+        if (arquivos.Count == 0) return;
+        _aviso = $"Foto escolhida: {arquivos[0].Name}";
+        await OnFileSelected.InvokeAsync(arquivos[0]);
+    }
+}

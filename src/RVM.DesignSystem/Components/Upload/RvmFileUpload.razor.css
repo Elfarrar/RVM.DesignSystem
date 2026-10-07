@@ -1,0 +1,241 @@
+/* CSS isolado do RvmFileUpload. So custom properties — hex literal aqui quebra o tema escuro.
+   O botao segue o RvmButton contornado primario (38 px, raio do kit, rotulo em caixa alta); a caixa de soltar e o
+   tracejado do kit; os cartoes, a superficie do papel com o divisor. O InputFile e componente filho: as regras que
+   miram nele (e nos RvmIcon/RvmProgress) levam ::deep. */
+
+.rvm-upload {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    font-family: var(--rvm-font-family);
+    min-width: 0;
+}
+
+.rvm-cabecalho {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-rotulo {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-link-do-campo {
+    margin-inline-start: auto;
+    color: var(--rvm-color-primary-text);
+}
+
+/* --- O alvo: o input transparente cobre tudo, entao clique, teclado e soltar sao dele --- */
+.rvm-alvo {
+    position: relative;
+    box-sizing: border-box;
+    color: var(--rvm-color-primary-text);
+    transition: background-color var(--rvm-transition-fast), border-color var(--rvm-transition-fast);
+}
+
+.rvm-alvo ::deep .rvm-arquivo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    font-size: 0;
+}
+
+.rvm-alvo:focus-within {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-botao-de-envio {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-2);
+    min-height: 38px;
+    padding: 0 22px;
+    border: 1px solid var(--rvm-color-primary-outlined-resting);
+    border-radius: var(--rvm-radius-sm);
+    font-size: var(--rvm-text-button-md-size);
+    line-height: var(--rvm-text-button-md-line);
+    font-weight: var(--rvm-text-button-md-weight);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.rvm-botao-de-envio:hover,
+.rvm-area-de-soltar:hover,
+.rvm-arrastando {
+    background-color: var(--rvm-color-primary-outlined-hover);
+}
+
+.rvm-area-de-soltar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-2);
+    min-height: 140px;
+    padding: var(--rvm-space-6) var(--rvm-space-4);
+    border: 1px dashed var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-md);
+    text-align: center;
+}
+
+.rvm-area-de-soltar:hover,
+.rvm-arrastando {
+    border-color: var(--rvm-color-primary-main);
+}
+
+.rvm-dica {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-apoio {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-mensagem-de-erro {
+    color: var(--rvm-color-error-text);
+}
+
+.rvm-erro .rvm-botao-de-envio,
+.rvm-erro .rvm-area-de-soltar {
+    border-color: var(--rvm-color-error-main);
+}
+
+/* --- Cartoes dos arquivos --- */
+.rvm-lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rvm-cartao {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+}
+
+.rvm-tipo {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-primary-soft);
+    color: var(--rvm-color-primary-text);
+}
+
+.rvm-falhou .rvm-tipo {
+    background-color: var(--rvm-color-error-soft);
+    color: var(--rvm-color-error-text);
+}
+
+.rvm-dados {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.rvm-nome {
+    overflow: hidden;
+    color: var(--rvm-color-text-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-detalhes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-estado::before {
+    content: "\00B7";
+    margin-inline-end: var(--rvm-space-1);
+}
+
+.rvm-falha {
+    color: var(--rvm-color-error-text);
+}
+
+.rvm-dados ::deep .rvm-progresso-do-arquivo {
+    margin-top: var(--rvm-space-1);
+}
+
+.rvm-sinal {
+    display: inline-flex;
+    flex: none;
+}
+
+.rvm-sinal-ok { color: var(--rvm-color-success-text); }
+.rvm-sinal-falha { color: var(--rvm-color-error-text); }
+
+.rvm-remover {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: var(--rvm-color-text-secondary);
+    cursor: pointer;
+}
+
+.rvm-remover:hover:not(:disabled) {
+    background-color: var(--rvm-color-action-hover);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-remover:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+/* --- Desabilitado: esmaece e o cursor avisa --- */
+.rvm-desabilitado .rvm-alvo,
+.rvm-desabilitado .rvm-lista {
+    opacity: 0.6;
+}
+
+.rvm-desabilitado .rvm-alvo:hover {
+    background-color: transparent;
+}
+
+.rvm-desabilitado .rvm-alvo ::deep .rvm-arquivo,
+.rvm-remover:disabled {
+    cursor: not-allowed;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
