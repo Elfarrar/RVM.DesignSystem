@@ -1,0 +1,231 @@
+@namespace RVM.DesignSystem.Components.TextField
+@typeparam TValue
+@inherits RvmInputBase<TValue>
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+
+@* Campo numerico do contrato com o RVM.UI (DSGN-017): a moldura do RvmTextField e a leitura do numero no
+   LeitorDeNumero. input type="text" com inputmode, NUNCA type="number": o type="number" le o numero na cultura do
+   NAVEGADOR, nao na do campo — o caminho mais curto para o erro de 1000x. Prefixo e sufixo entram no
+   aria-describedby (quem nao enxerga ouve a unidade), como no RvmTextField. Immediate troca o @onchange pelo
+   @oninput: um @oninput sempre ligado seria uma ida ao servidor por tecla. *@
+<RvmFieldFrame Label="@Label" InputId="@IdDoControle" LinkText="@LinkText" LinkHref="@LinkHref" Error="@ErroExibido"
+               ErrorId="@IdDoErro" HelperText="@HelperText" HelperId="@IdDoApoio" Disabled="Disabled" Shape="Shape"
+               Class="@ClassesDoConsumidor">
+    @if (!string.IsNullOrWhiteSpace(Prefix))
+    {
+        <span id="@IdDoPrefixo" class="rvm-afixo rvm-prefixo">@Prefix</span>
+    }
+    <input @attributes="AtributosDoControle"
+           id="@IdDoControle"
+           name="@NomeDoControle"
+           type="text"
+           inputmode="@(AceitaDecimais ? "decimal" : "numeric")"
+           autocomplete="off"
+           class="rvm-entrada"
+           placeholder="@PlaceholderEfetivo"
+           disabled="@Disabled"
+           aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+           aria-invalid="@(ErroExibido is null ? null : "true")"
+           aria-describedby="@DescricaoDoControle"
+           value="@CurrentValueAsString"
+           @onchange="AoSair"
+           @oninput="AoDigitar"
+           @onkeydown="AoTeclar" />
+    @if (!string.IsNullOrWhiteSpace(Suffix))
+    {
+        <span id="@IdDoSufixo" class="rvm-afixo rvm-sufixo">@Suffix</span>
+    }
+</RvmFieldFrame>
+
+@code {
+    /// <summary>Classe CSS extra na raiz do campo.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <inheritdoc />
+    protected override string? ClasseDoCampo => Class;
+
+    /// <summary>
+    /// Cultura em que o numero e lido e escrito. Sem ela, <b>pt-BR</b> — nunca a do servidor, que num container costuma
+    /// ser a invariante e leria <c>1.234,56</c> como outro numero.
+    /// </summary>
+    [Parameter] public CultureInfo? Culture { get; set; }
+
+    /// <summary>Menor valor aceito. Abaixo dele o campo mostra erro (nao corrige sozinho).</summary>
+    [Parameter] public decimal? Min { get; set; }
+
+    /// <summary>Maior valor aceito. Acima dele o campo mostra erro (nao corrige sozinho).</summary>
+    [Parameter] public decimal? Max { get; set; }
+
+    /// <summary>Quanto as setas do teclado (para cima e para baixo) somam ou tiram. Padrao: 1.</summary>
+    [Parameter] public decimal Step { get; set; } = 1;
+
+    /// <summary>
+    /// Casas decimais: o valor e arredondado nelas (meio para longe do zero) e exibido com elas. Sem ele, mostra as
+    /// casas que o numero tem.
+    /// </summary>
+    [Parameter] public int? Decimals { get; set; }
+
+    /// <summary>Formato .NET para exibir (ex.: <c>"N2"</c>, <c>"C"</c>). Tem precedencia sobre <see cref="Decimals"/> na exibicao.</summary>
+    [Parameter] public string? Format { get; set; }
+
+    /// <summary>Texto antes do numero, dentro do campo (ex.: "R$").</summary>
+    [Parameter] public string? Prefix { get; set; }
+
+    /// <summary>Unidade depois do numero, dentro do campo (ex.: "kg", "%").</summary>
+    [Parameter] public string? Suffix { get; set; }
+
+    /// <summary>
+    /// Le o numero a cada tecla (<c>oninput</c>), e nao so ao sair do campo. O valor lido e reformatado na hora: use em
+    /// numeros curtos, nao em dinheiro com milhar.
+    /// </summary>
+    [Parameter] public bool Immediate { get; set; }
+
+    private static readonly Type TipoBase = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+    private static readonly bool Anulavel = Nullable.GetUnderlyingType(typeof(TValue)) is not null;
+    private static bool AceitaDecimais => TipoBase == typeof(decimal) || TipoBase == typeof(double) || TipoBase == typeof(float);
+
+    private string? _erroDeLeitura;
+
+    private CultureInfo Cultura => Culture ?? LeitorDeNumero.PtBr;
+
+    private string IdDoPrefixo => $"{IdDoControle}-prefixo";
+
+    private string IdDoSufixo => $"{IdDoControle}-sufixo";
+
+    // O erro informado por fora ganha; depois o da leitura (que existe tambem fora de um EditForm); depois o da validacao.
+    private string? ErroExibido
+        => !string.IsNullOrWhiteSpace(ErrorText) ? ErrorText : _erroDeLeitura ?? MensagemDeErro;
+
+    private string? DescricaoDoControle
+    {
+        get
+        {
+            var ids = new List<string>(3);
+            if (!string.IsNullOrWhiteSpace(Prefix)) ids.Add(IdDoPrefixo);
+            if (!string.IsNullOrWhiteSpace(Suffix)) ids.Add(IdDoSufixo);
+            if (ErroExibido is not null) ids.Add(IdDoErro);
+            else if (!string.IsNullOrWhiteSpace(HelperText)) ids.Add(IdDoApoio);
+            return ids.Count == 0 ? null : string.Join(' ', ids);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (TipoBase != typeof(int) && TipoBase != typeof(long) && TipoBase != typeof(decimal)
+            && TipoBase != typeof(double) && TipoBase != typeof(float))
+        {
+            throw new InvalidOperationException(
+                $"RvmNumericField nao suporta {typeof(TValue).Name}: use int, long, decimal, double ou float (com ou sem ?).");
+        }
+
+        base.OnParametersSet();
+    }
+
+    /// <inheritdoc />
+    protected override string? FormatValueAsString(TValue? value)
+        => LeitorDeNumero.Escrever(ParaDecimal(value), Cultura, Decimals, Format);
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out TValue result,
+        [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        result = default;
+        validationErrorMessage = Ler(value, out var lido);
+        if (validationErrorMessage is null)
+        {
+            result = lido;
+            return true;
+        }
+
+        _erroDeLeitura = validationErrorMessage;
+        return false;
+    }
+
+    private string? Ler(string? texto, out TValue result)
+    {
+        result = default!;
+        if (!LeitorDeNumero.TryParse(texto, Cultura, AceitaDecimais, Decimals, Prefix, Suffix, out var lido, out var erro))
+            return erro!;
+
+        if (lido is not { } numero)
+            return Anulavel ? null : "Informe um numero neste campo.";
+
+        if (Min is { } min && numero < min)
+            return $"O menor valor aceito e {LeitorDeNumero.Escrever(min, Cultura, Decimals, Format)}.";
+
+        if (Max is { } max && numero > max)
+            return $"O maior valor aceito e {LeitorDeNumero.Escrever(max, Cultura, Decimals, Format)}.";
+
+        return TentarConverter(numero, out result) ? null : "Esse numero e grande demais para este campo.";
+    }
+
+    private void Atribuir(string? texto)
+    {
+        _erroDeLeitura = null;
+        CurrentValueAsString = texto;
+    }
+
+    private void AoSair(ChangeEventArgs e)
+    {
+        if (!Immediate) Atribuir(e.Value?.ToString());
+    }
+
+    private void AoDigitar(ChangeEventArgs e)
+    {
+        if (Immediate) Atribuir(e.Value?.ToString());
+    }
+
+    // Setas somam e tiram o Step, presas entre Min e Max. Passa pelo texto (sem Format, que pode nao voltar igual — o
+    // "P" multiplica por 100) para a base limpar o estado de leitura falha.
+    private void AoTeclar(KeyboardEventArgs e)
+    {
+        if (Disabled || (e.Key != "ArrowUp" && e.Key != "ArrowDown")) return;
+
+        var novo = (ParaDecimal(CurrentValue) ?? Min ?? 0m) + (e.Key == "ArrowUp" ? Step : -Step);
+        if (Min is { } min && novo < min) novo = min;
+        if (Max is { } max && novo > max) novo = max;
+
+        if (TentarConverter(novo, out _)) Atribuir(LeitorDeNumero.Escrever(novo, Cultura, null, null));
+    }
+
+    private static decimal? ParaDecimal(TValue? value)
+    {
+        try
+        {
+            return value switch
+            {
+                int i => i,
+                long l => l,
+                decimal d => d,
+                double db => (decimal)db,
+                float f => (decimal)f,
+                _ => null,
+            };
+        }
+        catch (OverflowException)
+        {
+            return null;
+        }
+    }
+
+    private static bool TentarConverter(decimal numero, out TValue result)
+    {
+        result = default!;
+        try
+        {
+            object convertido = TipoBase == typeof(int) ? decimal.ToInt32(numero)
+                : TipoBase == typeof(long) ? decimal.ToInt64(numero)
+                : TipoBase == typeof(double) ? decimal.ToDouble(numero)
+                : TipoBase == typeof(float) ? decimal.ToSingle(numero)
+                : numero;
+            result = (TValue)convertido;
+            return true;
+        }
+        catch (OverflowException)
+        {
+            return false;
+        }
+    }
+}
