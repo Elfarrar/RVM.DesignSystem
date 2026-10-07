@@ -113,6 +113,41 @@ os graficos radiais, que dividem a mesma API).
 
 **Onda 0 aprovada pelo Rafael em 07/10/2026** pelos screenshots do dev (PRs #74 a #77).
 
+## Onda 1 — feita em 07/10/2026 (PR #79)
+
+Pendentes do contrato: **241 → 224**. Os 15 componentes de menu lateral, pagina e navegacao: `RvmSidebar`,
+`RvmTopbar`, `RvmPageHeader`, `RvmPageToolbar`, `RvmNavSubItem`, `RvmBackButton`, `RvmLink`, `RvmIconButton`,
+`RvmMenuButton`, `RvmButtonGroup`, `RvmCollapse`, `RvmExpansionPanel`, `RvmSteps`, `RvmStepIndicator`,
+`RvmDetailProfileLayout`.
+
+- **Refactor:** o conteudo do menu lateral do `RvmAppShell` virou o `RvmSidebar`; a casca o usa na coluna e so cuida da
+  coluna e da gaveta. Os itens de navegacao leem o recolhido do Sidebar (e, se o Sidebar for do consumidor, o da
+  casca). O CSS dos itens mudou de casa — mexeu no visual do menu, e no `RvmSidebar.razor.css`.
+- O tema (`RvmThemeProvider`, `RvmThemePicker`, `RvmThemeSettings`, paletas) vai numa onda propria.
+- Site: secao "Navegacao e pagina" com 14 paginas, todas no E2E; o `RvmMascot` entrou no E2E tambem.
+- Review independente: 4 P2 (container da ficha, fundo da gaveta, Sidebar do consumidor, componentes que escreviam o
+  proprio parametro) e 1 P3 corrigidos, com teste.
+
+⚠️ **Teste instavel que ja existia:** `planner: criar tarefa com hora no relogio` (foco no mostrador do relogio) falhou
+em 4 noturnos do `master` antes desta task (29/09 a 06/10) e numa rodada do dev em 07/10. Nao e da DSGN-017; fica para
+um card proprio.
+
+## Onda 2a — feita em 07/10/2026
+
+Pendentes do contrato: **224 → 211**. Campos de formulario do contrato: bases `RvmInputBase<TValue>` e
+`RvmStringInputBase`, a moldura `RvmFieldFrame` (o visual do `RvmTextField`; o CSS dela e GERADO do CSS do campo de
+texto por `tools/moldura-do-campo.py` — mudou o campo, regere), `RvmTextArea`, `RvmNumericField<TValue>`,
+`RvmMultiTextField`, `RvmTextFieldSelect<TOption>`, `RvmAutocomplete<TValue>`, `RvmOptionList<TItem>`, `RvmTagOption`,
+`RvmChoiceChip<TValue>`. Quatro deles feitos por agentes em paralelo (worktrees), integrados e revisados.
+
+- ⚠️ O `RvmNumericField` traz a leitura de numero do `RvmNumberParser` do RVM.UI (codigo, nao visual): o milhar so vale
+  em grupos de 3, para nao virar 1000x.
+- Review independente: 1 P1 (cultura pt-BR criada no estatico derrubava o campo sem ICU — agora cai numa copia da
+  invariante com os separadores do Brasil), 2 P2 e 3 P3 corrigidos.
+- ⏳ **P3 que ficaram** (nao bloqueiam): seta do `RvmNumericField` sem Immediate parte do valor antigo, e nao do texto
+  digitado; o Enter no `RvmAutocomplete` nunca envia o formulario (barrado pelo JS mesmo com a lista fechada);
+  `Required` so existe no `RvmTextArea` (o contrato nao tem nos outros campos).
+
 ## Etapa 3 — RVM.DesignSystem
 
 1. Alinhar os componentes em comum ao contrato (a nomenclatura já é a do DS; entram os acréscimos do UI:

@@ -18,7 +18,7 @@ using RVM.DesignSystem.Icons;
 
 namespace RVM.DesignSystem.Tests.Components;
 
-/// <summary>Onda 1 do contrato com o RVM.UI (DSGN-017): menu lateral, pagina e navegacao.</summary>
+/// <summary>Onda 1 do contrato com o RVM.UI (DSGN-017): menu lateral, pagina e navegacao — os 15 componentes.</summary>
 public class RvmOnda1Tests : BunitContext
 {
     public RvmOnda1Tests() => JSInterop.Mode = JSRuntimeMode.Loose;

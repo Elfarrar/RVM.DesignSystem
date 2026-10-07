@@ -78,6 +78,17 @@ public static class Catalogo
             new("componentes/data-grid", "RvmDataGrid", "Paginacao, ordenacao, filtro por coluna."),
             new("componentes/app-shell", "RvmAppShell", "Topo, menu lateral e conteudo, responsivo.")
         ]),
+        new("Campos e escolhas",
+        [
+            new("componentes/text-area", "RvmTextArea", "Area de texto: a moldura do campo de texto com varias linhas."),
+            new("componentes/numeric-field", "RvmNumericField", "Numero lido na cultura do campo, com faixa, setas, casas e formato."),
+            new("componentes/multi-text-field", "RvmMultiTextField", "Varios textos como tags dentro do campo."),
+            new("componentes/text-field-select", "RvmTextFieldSelect", "Texto livre com a unidade escolhida no fim do campo."),
+            new("componentes/autocomplete", "RvmAutocomplete", "Campo que busca sugestoes enquanto se digita."),
+            new("componentes/option-list", "RvmOptionList", "Lista de opcoes no padrao listbox."),
+            new("componentes/tag-option", "RvmTagOption", "Tag em pilula, com remover."),
+            new("componentes/choice-chip", "RvmChoiceChip", "Escolha unica em forma de chip, dentro de um RvmRadioGroup.")
+        ]),
         new("Navegacao e pagina",
         [
             new("componentes/sidebar", "RvmSidebar", "O menu lateral: marca, navegacao, rodape; branco ou colorido, recolhivel."),

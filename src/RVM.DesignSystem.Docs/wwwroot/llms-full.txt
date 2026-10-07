@@ -152,6 +152,42 @@ Linha com o volume preenchido em degrade.
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
+### RvmAutocomplete<TValue>
+
+`@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/autocomplete
+
+Campo de texto que busca enquanto se digita e oferece as opcoes numa lista (contrato com o RVM.UI, DSGN-017). O valor e o item escolhido; o texto do campo vira o texto dele.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do campo. |
+| `ClearLabel` | `string` | `"Limpar"` | Nome acessivel do botao de limpar. |
+| `Clearable` | `bool` | `false` | Mostra o botao de limpar no fim do campo. |
+| `DebounceInterval` | `int` | `300` | Espera, em milissegundos, depois da ultima tecla antes de buscar. Padrao: 300. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorSearchText` | `string` | `"Nao deu para buscar agora. Tente de novo em alguns minutos."` | Aviso quando a busca falha. |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `ItemText` | `Func<object, string>?` | — | Texto de cada item, na lista e no campo depois de escolhido. Sem ele, `ToString()`. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `MaxItems` | `int` | `10` | Quantas opcoes a lista mostra, no maximo. Padrao: 10. |
+| `MinCharacters` | `int` | `0` | Letras minimas para buscar. Padrao: 0 (focar o campo ja busca). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `NoResultsText` | `string` | `"Nenhum resultado para essa busca."` | Aviso quando a busca nao acha nada. |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `ResetValueOnEmptyText` | `bool` | `true` | Apagar todo o texto limpa o valor. Padrao: ligado. |
+| `SearchFunc` | `Func<string, CancellationToken, Task<IEnumerable<object>>>?` | — | A busca: recebe o texto digitado e o cancelamento (uma busca nova cancela a anterior). |
+| `SearchingText` | `string` | `"Buscando..."` | Aviso enquanto a busca roda. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `object?` | — |  |
+| `ValueChanged` | `EventCallback<object>` | — |  |
+| `ValueExpression` | `Expression<Func<object>>?` | — |  |
+
 ### RvmAvatar
 
 `@using RVM.DesignSystem.Components.Avatar` · exemplos: https://design.rvmit.com.br/componentes/avatar
@@ -437,6 +473,29 @@ Rotulo compacto: um filtro aplicado, uma etiqueta, uma pessoa num campo de desti
 | `StartIcon` | `RvmIconName?` | — | Icone antes do rotulo. |
 | `Variant` | `RvmChipVariant` | `RvmChipVariant.Filled` | Estilo. Padrao: `RvmChipVariant.Filled`. |
 
+### RvmChoiceChip<TValue>
+
+`@using RVM.DesignSystem.Components.Radio` · exemplos: https://design.rvmit.com.br/componentes/choice-chip
+
+Opcao de escolha unica em forma de chip, dentro de um `RvmRadioGroup`. O grupo da a pergunta, o `name` e o `@bind-Value`; o chip e um radio nativo com cara de chip.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao input nativo (menos `class` e `style`, que ficam na raiz). |
+| `AvatarAlt` | `string?` | — | Texto alternativo da miniatura. Vazio quando o rotulo ja diz quem e. |
+| `AvatarSrc` | `string?` | — | Miniatura de foto antes do rotulo. Vence o icone. |
+| `ChildContent` | `RenderFragment?` | — | Conteudo livre da opcao. Vence o `RvmChoiceChip.Label`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor?` | — | Papel de cor quando marcado. Sem valor, `RvmColor.Primary`. |
+| `Disabled` | `bool` | `false` | So esta opcao indisponivel: desabilita o radio e o botao de remover. O `Disabled` do grupo desabilita todas. |
+| `Label` | `string?` | — | Texto da opcao, quando nao ha `RvmChoiceChip.ChildContent`. Tambem e o nome acessivel. |
+| `OnRemove` | `EventCallback` | — | Chamado ao remover. Com alguem escutando, aparece o botao de remover ao lado do chip. |
+| `RemoveLabel` | `string?` | — | Nome acessivel do botao de remover. Padrao: "Remover". |
+| `Size` | `RvmSize` | `RvmSize.Medium` | 24 px (`RvmSize.Small`) ou 32 px, como o RvmChip. `RvmSize.Large` sai igual ao medio. |
+| `StartIcon` | `RvmIconName?` | — | Icone antes do rotulo. |
+| `Value` | `object?` | obrigatorio | O valor que esta opcao representa. |
+| `Variant` | `RvmChipVariant` | `RvmChipVariant.Filled` | Estilo quando marcado. Padrao: `RvmChipVariant.Filled`. Desmarcado, o chip e sempre o contorno neutro. |
+
 ### RvmCollapse
 
 `@using RVM.DesignSystem.Components.Collapse` · exemplos: https://design.rvmit.com.br/componentes/collapse
@@ -705,6 +764,30 @@ Painel expansivel sozinho, que mantem o conteudo montado.
 | `Icon` | `RvmIconName?` | — | Icone antes do titulo. |
 | `Title` | `string?` | — | Texto do cabecalho. |
 | `TitleContent` | `RenderFragment?` | — | Cabecalho composto (icone, numero, selo). Vence `RvmExpansionPanel.Title`. So conteudo de frase: fica dentro de um botao. |
+
+### RvmFieldFrame
+
+`@using RVM.DesignSystem.Components.TextField`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AnnounceRequired` | `bool` | `false` | Escreve "(obrigatorio)" escondido no rotulo, para o leitor de tela. So para controle em que `aria-required` nao vale (um botao); campo de texto usa o `aria-required`. |
+| `ChildContent` | `RenderFragment?` | — | A caixa do campo: o controle com a classe `rvm-entrada` (e prefixo e sufixo, se houver). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `Error` | `string?` | — | Mensagem de erro; nula sem erro. |
+| `ErrorId` | `string` | `""` | Id da mensagem de erro (o `aria-describedby` do controle aponta para ca). |
+| `HelperId` | `string?` | — | Id do texto de apoio. |
+| `HelperText` | `string?` | — | Texto de apoio; aparece so sem erro. |
+| `InputId` | `string` | obrigatorio | Id do controle, para o `label for`. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita. |
+| `Multiline` | `bool` | `false` | Caixa com varias linhas (area de texto): conteudo no alto e rotulo sempre em cima. |
+| `Required` | `bool` | `false` | Obrigatorio: asterisco no rotulo. O `aria-required` fica com o controle. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto: o do kit ou pilula. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Altura: 56 px (Medium, padrao), 40 px (Small) ou 64 px (Large). |
+| `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo da caixa. Padrao: contornada. |
 
 ### RvmHistogram
 
@@ -1027,6 +1110,31 @@ Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enq
 | `ValuesExpression` | `Expression<Func<IReadOnlyList<object>>>?` | — | Expressao do valor ligado. O `@bind-Values` preenche sozinho. |
 | `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo — os mesmos tres do campo de texto. Padrao: `RvmTextFieldVariant.Outlined`. |
 
+### RvmMultiTextField
+
+`@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/multi-text-field
+
+Varios textos como tags dentro do campo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do campo. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `IReadOnlyList<string>?` | — |  |
+| `ValueChanged` | `EventCallback<IReadOnlyList<string>>` | — |  |
+| `ValueExpression` | `Expression<Func<IReadOnlyList<string>>>?` | — |  |
+
 ### RvmNavGroup
 
 `@using RVM.DesignSystem.Components.AppShell`
@@ -1086,6 +1194,61 @@ Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o dest
 | `Href` | `string` | obrigatorio | Endereco do link. |
 | `Match` | `NavLinkMatch` | `NavLinkMatch.Prefix` | Como decidir que e a pagina atual. Padrao: pelo prefixo. |
 | `Text` | `string` | obrigatorio | Texto do subitem. |
+
+### RvmNumericField<TValue>
+
+`@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/numeric-field
+
+Numero lido na cultura do campo, com faixa, setas, casas e formato.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do campo. |
+| `Culture` | `CultureInfo?` | — | Cultura em que o numero e lido e escrito. Sem ela, pt-BR — nunca a do servidor, que num container costuma ser a invariante e leria `1.234,56` como outro numero. |
+| `Decimals` | `int?` | — | Casas decimais: o valor e arredondado nelas (meio para longe do zero) e exibido com elas. Sem ele, mostra as casas que o numero tem. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `Format` | `string?` | — | Formato .NET para exibir (ex.: `"N2"`, `"C"`). Tem precedencia sobre `RvmNumericField.Decimals` na exibicao. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `Immediate` | `bool` | `false` | Le o numero a cada tecla (`oninput`), e nao so ao sair do campo. O valor lido e reformatado na hora: use em numeros curtos, nao em dinheiro com milhar. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Max` | `decimal?` | — | Maior valor aceito. Acima dele o campo mostra erro (nao corrige sozinho). |
+| `Min` | `decimal?` | — | Menor valor aceito. Abaixo dele o campo mostra erro (nao corrige sozinho). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Prefix` | `string?` | — | Texto antes do numero, dentro do campo (ex.: "R$"). |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Step` | `decimal` | `1` | Quanto as setas do teclado (para cima e para baixo) somam ou tiram. Padrao: 1. |
+| `Suffix` | `string?` | — | Unidade depois do numero, dentro do campo (ex.: "kg", "%"). |
+| `Value` | `object?` | — |  |
+| `ValueChanged` | `EventCallback<object>` | — |  |
+| `ValueExpression` | `Expression<Func<object>>?` | — |  |
+
+### RvmOptionList<TItem>
+
+`@using RVM.DesignSystem.Components.Select` · exemplos: https://design.rvmit.com.br/componentes/option-list
+
+Lista de opcoes no padrao listbox.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AutoFocus` | `bool` | `false` | Foca a lista ao aparecer, com a opcao escolhida (ou a primeira) ativa. |
+| `Class` | `string?` | — | Classe CSS extra na lista. |
+| `Id` | `string?` | — | Id da lista. Sem ele, um id unico e gerado. |
+| `IsSelected` | `Func<object, bool>?` | — | Diz se a opcao esta escolhida (`aria-selected`). |
+| `ItemDisabled` | `Func<object, bool>?` | — | Diz se a opcao esta indisponivel: nao e escolhida e o teclado pula ela. |
+| `ItemImage` | `Func<object, string>?` | — | Endereco da imagem redonda (24 px) antes do texto. Decorativa (`alt` vazio). |
+| `ItemText` | `Func<object, string>?` | — | Texto de cada opcao. Sem ele, `ToString()`. |
+| `Items` | `IEnumerable<object>?` | — | As opcoes. |
+| `LabelledBy` | `string?` | — | Id do elemento que da nome a lista (`aria-labelledby`). |
+| `Multiple` | `bool` | `false` | Varias opcoes escolhidas ao mesmo tempo (`aria-multiselectable`), com a caixinha de marcar. |
+| `OnClose` | `EventCallback` | — | Pede para fechar (Esc ou Tab). Quem abriu decide o que fazer. |
+| `OnPick` | `EventCallback<object>` | — | Avisa a opcao escolhida (clique, Enter ou Espaco). |
 
 ### RvmPageHeader
 
@@ -1622,6 +1785,49 @@ Abas: uma lista de titulos e o painel da aba escolhida. As abas sao `RvmTab` fil
 | `ValueChanged` | `EventCallback<string>` | — | Disparado com o valor da aba escolhida (junto com `RvmTabs.ActiveIndexChanged`). |
 | `Variant` | `RvmTabsVariant` | `RvmTabsVariant.Standard` | Sublinhada (padrao) ou preenchida. |
 
+### RvmTagOption
+
+`@using RVM.DesignSystem.Components.Chip` · exemplos: https://design.rvmit.com.br/componentes/tag-option
+
+Tag em pilula, com remover.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel: esmaecida e sem remover. |
+| `OnRemove` | `EventCallback` | — | Chamado ao remover. Com alguem escutando, aparece o botao de remover ("Remover {Text}"). |
+| `Text` | `string?` | — | O texto da tag. |
+| `Variant` | `RvmTagVariant` | `RvmTagVariant.Soft` | Estilo. Padrao: `RvmTagVariant.Soft`. |
+
+### RvmTextArea
+
+`@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/text-area
+
+Area de texto: a moldura do campo de texto com varias linhas.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do campo. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `Immediate` | `bool` | `false` | Atualiza o valor a cada tecla (`oninput`), e nao so ao sair do campo. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Required` | `bool` | `false` | Obrigatorio: asterisco no rotulo e `aria-required`. A validacao e do `EditForm`. |
+| `Rows` | `int` | `5` | Linhas visiveis. Padrao: 5. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `string?` | — |  |
+| `ValueChanged` | `EventCallback<string>` | — |  |
+| `ValueExpression` | `Expression<Func<string>>?` | — |  |
+
 ### RvmTextField
 
 `@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/text-field
@@ -1655,6 +1861,37 @@ Campo de texto com rotulo flutuante, apoio, erro, prefixo e sufixo. Herda de `In
 | `ValueChanged` | `EventCallback<string>` | — |  |
 | `ValueExpression` | `Expression<Func<string>>?` | — |  |
 | `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo. Padrao: `RvmTextFieldVariant.Outlined`. |
+
+### RvmTextFieldSelect<TOption>
+
+`@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/text-field-select
+
+Texto livre com a unidade escolhida no fim do campo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do campo. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Option` | `object?` | — | A unidade escolhida. Aceita `@bind-Option`. |
+| `OptionChanged` | `EventCallback<object>` | — | Disparado quando a pessoa troca a unidade. |
+| `OptionLabel` | `string` | `"Unidade"` | Nome acessivel da lista. Padrao: "Unidade". |
+| `OptionName` | `string?` | — | Nome da lista no formulario: no POST vai o texto da unidade escolhida. |
+| `OptionText` | `Func<object, string>?` | — | Texto de cada unidade na lista. Sem ele, o `ToString()`. |
+| `Options` | `IEnumerable<object>?` | — | As unidades da lista. |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `string?` | — |  |
+| `ValueChanged` | `EventCallback<string>` | — |  |
+| `ValueExpression` | `Expression<Func<string>>?` | — |  |
 
 ### RvmThemeProvider
 
@@ -1885,6 +2122,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Start`, `Center`, `End`
 - `RvmTabsVariant` (`RVM.DesignSystem.Components.Tabs`): Estilo das abas — as duas linhas da pagina Tabs do kit.
   Valores: `Standard`, `Regular`, `Contained`, `Button`, `Page`
+- `RvmTagVariant` (`RVM.DesignSystem.Components.Chip`): Os dois estilos do `RvmTagOption` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Soft`, `Solid`
 - `RvmTextColor` (`RVM.DesignSystem.Components.Typography`): Papel do texto na hierarquia de leitura. Sao os tokens de texto, nao as cores de marca: para escrever com a cor de um papel semantico, use a classe do token `-text`.
   Valores: `Inherit`, `Primary`, `Default`, `Secondary`, `Disabled`, `Accent`, `Success`, `Danger`, `Warning`, `Inverse`
 - `RvmTextElement` (`RVM.DesignSystem.Components.Typography`): Que elemento HTML o texto vira. Existe porque ESTILO e SEMANTICA sao coisas diferentes: um titulo de secao pode precisar do tamanho de `H5` e continuar sendo um `h2` na ordem do documento. Trocar um pelo outro quebra a navegacao por cabecalho no leitor de tela.

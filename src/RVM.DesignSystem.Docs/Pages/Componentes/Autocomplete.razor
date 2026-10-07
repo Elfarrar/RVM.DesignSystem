@@ -1,0 +1,79 @@
+@page "/componentes/autocomplete"
+
+<PageTitle>RvmAutocomplete — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmAutocomplete</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Campo que busca enquanto se digita e oferece as opcoes numa lista. O foco fica no campo: as setas andam pela lista,
+    Enter escolhe e Esc fecha. O valor e o item escolhido, e o texto do campo vira o texto dele. Buscando, sem resultado
+    e erro sao anunciados ao leitor de tela.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Busca com espera"
+              Descricao="A busca roda 300 ms depois da ultima tecla e cancela a anterior. Focar o campo ja busca (MinCharacters = 0)."
+              Codigo="@CodigoBusca">
+    <div class="grade-campos">
+        <RvmAutocomplete @bind-Value="_cidade" Label="Cidade" SearchFunc="BuscarCidades" Clearable="true"
+                         HelperText="Digite o comeco do nome." />
+        <RvmAutocomplete @bind-Value="_outra" Label="Cidade (2 letras)" SearchFunc="BuscarCidades" MinCharacters="2"
+                         MaxItems="3" Shape="RvmFieldShape.Pill" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary">Escolhida: @(_cidade ?? "nenhuma")</RvmTypography>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Sem resultado e erro"
+              Descricao="As mensagens ficam fora da lista, numa regiao que o leitor de tela anuncia sem interromper."
+              Codigo="@CodigoErro">
+    <div class="grade-campos">
+        <RvmAutocomplete @bind-Value="_falha" Label="Busca que falha" SearchFunc="BuscarComFalha" />
+        <RvmAutocomplete @bind-Value="_desabilitada" Label="Indisponivel" SearchFunc="BuscarCidades" Disabled="true" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmAutocomplete" />
+
+@code {
+    private static readonly string[] Cidades =
+    [
+        "Belo Horizonte", "Campinas", "Campo Grande", "Cascavel", "Chapeco", "Cuiaba", "Curitiba", "Dourados",
+        "Goiania", "Londrina", "Maringa", "Ribeirao Preto", "Rio Verde", "Sinop", "Sorriso", "Uberlandia",
+    ];
+
+    private string? _cidade;
+    private string? _outra;
+    private string? _falha;
+    private string? _desabilitada = "Londrina";
+
+    private static async Task<IEnumerable<string?>> BuscarCidades(string termo, CancellationToken cancelamento)
+    {
+        await Task.Delay(250, cancelamento);
+        return Cidades.Where(c => c.Contains(termo, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static async Task<IEnumerable<string?>> BuscarComFalha(string termo, CancellationToken cancelamento)
+    {
+        await Task.Delay(250, cancelamento);
+        throw new InvalidOperationException("Servico fora do ar.");
+    }
+
+    private const string CodigoBusca = """
+        <RvmAutocomplete @bind-Value="_cidade" Label="Cidade" SearchFunc="BuscarCidades" Clearable="true" />
+
+        @code {
+            private string? _cidade;
+
+            private async Task<IEnumerable<string?>> BuscarCidades(string termo, CancellationToken cancelamento)
+                => await _api.CidadesAsync(termo, cancelamento);
+        }
+        """;
+
+    private const string CodigoErro = """
+        <RvmAutocomplete @bind-Value="_cidade" Label="Cidade" SearchFunc="BuscarCidades"
+                         NoResultsText="Nenhuma cidade com esse nome." />
+        """;
+}

@@ -1,0 +1,135 @@
+@namespace RVM.DesignSystem.Components.TextField
+@using System.Diagnostics.CodeAnalysis
+@using RVM.DesignSystem.Components.Chip
+@inherits RvmInputBase<IReadOnlyList<string>>
+
+@* Campo de varios textos (contrato com o RVM.UI, DSGN-017): as tags dentro da caixa, antes do input de digitacao.
+   Enter ou virgula inclui; Backspace com o input vazio tira a ultima; o "x" tira aquela.
+   - O input de digitacao aponta para um form que nao existe (form="..."): sem dono, o Enter nao envia o formulario
+     do consumidor — o Blazor nao tem preventDefault condicional. Pelo mesmo motivo ele nao vai no POST.
+   - No POST vao as tags, um input hidden por tag, com o Name.
+   - O wrapper e display: contents: so existe para o CSS isolado alcancar a caixa da moldura (::deep). *@
+<div class="rvm-campo-de-tags">
+    <RvmFieldFrame Label="@Label" InputId="@IdDoControle" LinkText="@LinkText" LinkHref="@LinkHref" Error="@MensagemDeErro"
+                   ErrorId="@IdDoErro" HelperText="@HelperText" HelperId="@IdDoApoio" Disabled="Disabled" Shape="Shape"
+                   Class="@ClassesDaMoldura">
+        @if (Tags.Count > 0)
+        {
+            <ul class="rvm-tags" aria-label="@NomeDaLista">
+                @foreach (var tag in Tags)
+                {
+                    <li @key="tag" class="rvm-item-da-tag">
+                        <RvmTagOption Text="@tag" Disabled="Disabled" OnRemove="() => RemoverPeloBotao(tag)" />
+                    </li>
+                }
+            </ul>
+        }
+        <input @attributes="AtributosDoControle"
+               @ref="_entrada"
+               id="@IdDoControle"
+               type="text"
+               class="rvm-entrada rvm-entrada-de-tags"
+               form="@FormInexistente"
+               autocomplete="off"
+               placeholder="@PlaceholderEfetivo"
+               disabled="@Disabled"
+               aria-invalid="@(MensagemDeErro is null ? null : "true")"
+               aria-describedby="@DescritoPor"
+               @bind:get="_digitado"
+               @bind:set="AoDigitar"
+               @bind:event="oninput"
+               @onkeydown="AoTeclar" />
+        @if (NomeDoControle is not null)
+        {
+            @foreach (var tag in Tags)
+            {
+                <input type="hidden" name="@NomeDoControle" value="@tag" />
+            }
+        }
+        <span class="rvm-so-leitor" aria-live="polite">@_aviso</span>
+    </RvmFieldFrame>
+</div>
+
+@code {
+    private ElementReference _entrada;
+    private string _digitado = "";
+    private string _aviso = "";
+
+    /// <summary>Classe CSS extra na raiz do campo.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <inheritdoc />
+    protected override string? ClasseDoCampo => Class;
+
+    private IReadOnlyList<string> Tags => CurrentValue ?? [];
+
+    private string FormInexistente => $"{IdDoControle}-sem-formulario";
+
+    private string NomeDaLista => string.IsNullOrWhiteSpace(Label) ? "Itens incluidos" : $"Itens de {Label}";
+
+    // Com tags na caixa, o rotulo fica em cima: no meio, ele ficaria por cima delas.
+    private string? ClassesDaMoldura
+        => Tags.Count == 0 ? ClassesDoConsumidor : ClassesCss.Juntar("rvm-com-tags rvm-rotulo-fixo", ClassesDoConsumidor, null);
+
+    /// <summary>
+    /// Nao usado: o valor e a lista de tags, que nunca vem de um texto (o input de digitacao nao e o valor). Lanca
+    /// <see cref="NotSupportedException"/>.
+    /// </summary>
+    protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out IReadOnlyList<string> result, [NotNullWhen(false)] out string? validationErrorMessage)
+        => throw new NotSupportedException("O RvmMultiTextField nao converte texto em valor: as tags entram pelo input de digitacao.");
+
+    // Virgula digitada ou colada: inclui o que vem antes de cada uma e deixa no input o que sobra depois da ultima.
+    private void AoDigitar(string? texto)
+    {
+        texto ??= "";
+        if (Disabled || !texto.Contains(','))
+        {
+            _digitado = texto;
+            return;
+        }
+
+        var partes = texto.Split(',');
+        foreach (var parte in partes[..^1]) Incluir(parte);
+        _digitado = partes[^1];
+    }
+
+    private void AoTeclar(KeyboardEventArgs e)
+    {
+        if (Disabled) return;
+
+        if (e.Key == "Enter")
+        {
+            Incluir(_digitado);
+            _digitado = "";
+        }
+        else if (e.Key == "Backspace" && _digitado.Length == 0 && Tags.Count > 0)
+        {
+            Remover(Tags[^1]);
+        }
+    }
+
+    // Sem duplicar, sem diferenciar maiuscula ("Soja" e "soja" sao a mesma tag) e ignorando o vazio.
+    private void Incluir(string texto)
+    {
+        var tag = texto.Trim();
+        if (tag.Length == 0 || Tags.Contains(tag, StringComparer.OrdinalIgnoreCase)) return;
+
+        CurrentValue = [.. Tags, tag];
+        _aviso = $"Incluido: {tag}";
+    }
+
+    private void Remover(string tag)
+    {
+        CurrentValue = Tags.Where(t => t != tag).ToList();
+        _aviso = $"Removido: {tag}";
+    }
+
+    // O botao clicado some com a tag: o foco volta para o input, em vez de cair no inicio da pagina.
+    private async Task RemoverPeloBotao(string tag)
+    {
+        if (Disabled) return;
+
+        Remover(tag);
+        await _entrada.FocusAsync();
+    }
+}

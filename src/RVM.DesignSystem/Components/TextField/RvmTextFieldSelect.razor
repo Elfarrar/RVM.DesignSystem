@@ -1,0 +1,101 @@
+@namespace RVM.DesignSystem.Components.TextField
+@inherits RvmStringInputBase
+@typeparam TOption
+
+@* Texto livre com a unidade numa lista no fim da caixa (valor + moeda), do contrato com o RVM.UI (DSGN-017). A lista
+   e um <select> nativo: teclado, leitor de tela e celular de graca, e vai no POST pelo OptionName. O valor de cada
+   opcao e o proprio texto dela, que e o que chega ao servidor num formulario em SSR estatico. *@
+<RvmFieldFrame Label="@Label" InputId="@IdDoControle" LinkText="@LinkText" LinkHref="@LinkHref" Error="@MensagemDeErro"
+               ErrorId="@IdDoErro" HelperText="@HelperText" HelperId="@IdDoApoio" Disabled="Disabled" Shape="Shape"
+               Class="@ClassesDoConsumidor">
+    <input @attributes="AtributosDoControle"
+           id="@IdDoControle"
+           name="@NomeDoControle"
+           type="text"
+           class="rvm-entrada"
+           placeholder="@PlaceholderEfetivo"
+           disabled="@Disabled"
+           aria-invalid="@(MensagemDeErro is null ? null : "true")"
+           aria-describedby="@DescritoPor"
+           value="@CurrentValueAsString"
+           @onchange="AoMudarTexto" />
+    <select class="rvm-unidade" aria-label="@OptionLabel" name="@OptionName" disabled="@Disabled" @onchange="AoEscolher">
+        @foreach (var opcao in Options ?? [])
+        {
+            var texto = Texto(opcao);
+            <option value="@texto" selected="@Escolhida(opcao)">@texto</option>
+        }
+    </select>
+</RvmFieldFrame>
+
+@code {
+    private TOption? _opcao;
+    private TOption? _optionRecebido;
+    private bool _recebeuOption;
+
+    /// <summary>Classe CSS extra na raiz do campo.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <inheritdoc />
+    protected override string? ClasseDoCampo => Class;
+
+    /// <summary>As unidades da lista.</summary>
+    [Parameter] public IEnumerable<TOption>? Options { get; set; }
+
+    /// <summary>A unidade escolhida. Aceita <c>@bind-Option</c>.</summary>
+    [Parameter] public TOption? Option { get; set; }
+
+    /// <summary>Disparado quando a pessoa troca a unidade.</summary>
+    [Parameter] public EventCallback<TOption> OptionChanged { get; set; }
+
+    /// <summary>Texto de cada unidade na lista. Sem ele, o <c>ToString()</c>.</summary>
+    [Parameter] public Func<TOption, string>? OptionText { get; set; }
+
+    /// <summary>Nome acessivel da lista. Padrao: "Unidade".</summary>
+    [Parameter] public string OptionLabel { get; set; } = "Unidade";
+
+    /// <summary>Nome da lista no formulario: no POST vai o texto da unidade escolhida.</summary>
+    [Parameter] public string? OptionName { get; set; }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // So segue o parametro quando ELE mudou: um re-render do pai nao pode desfazer a unidade que a pessoa
+        // escolheu sem @bind-Option.
+        if (!_recebeuOption || !EqualityComparer<TOption>.Default.Equals(_optionRecebido, Option))
+        {
+            _opcao = Option;
+            _optionRecebido = Option;
+            _recebeuOption = true;
+        }
+
+        // Sem unidade escolhida, o <select> mostra a primeira; o valor tem que ser o mesmo que a tela (achado do review).
+        if (_opcao is null && Options is not null && Options.FirstOrDefault() is { } primeira)
+        {
+            _opcao = primeira;
+        }
+    }
+
+    private bool Escolhida(TOption opcao) => EqualityComparer<TOption>.Default.Equals(opcao, _opcao);
+
+    private string Texto(TOption opcao) => OptionText?.Invoke(opcao) ?? opcao?.ToString() ?? "";
+
+    private void AoMudarTexto(ChangeEventArgs e) => CurrentValueAsString = e.Value?.ToString();
+
+    private async Task AoEscolher(ChangeEventArgs e)
+    {
+        if (Disabled) return;
+
+        var texto = e.Value?.ToString();
+        foreach (var opcao in Options ?? [])
+        {
+            if (Texto(opcao) != texto) continue;
+
+            _opcao = opcao;
+            await OptionChanged.InvokeAsync(opcao);
+            return;
+        }
+    }
+}
