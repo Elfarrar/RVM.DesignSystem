@@ -52,7 +52,13 @@
               Codigo="@CodigoCheio">
     <div class="grade-cards largura-cheia">
         <RvmStatCard Title="Meta de vendas" Value="R$ 820 mil" Surface="RvmSurface.Dark" Visual="RvmStatCardVisual.Progress"
-                     VisualValue="68" VisualLabel="Meta de vendas atingida" Trend="RvmStatCardTrend.Up" TrendValue="8%" />
+                     VisualValue="68" VisualLabel="Meta de vendas atingida" Trend="RvmStatCardTrend.Up" TrendValue="8%"
+                     Action="RvmCardAction.Menu" ActionLabel="Opcoes da meta de vendas">
+            <ActionMenu>
+                <RvmMenuItem Icon="RvmIconName.Pencil">Editar meta</RvmMenuItem>
+                <RvmMenuItem Icon="RvmIconName.Trash" Danger="true">Excluir meta</RvmMenuItem>
+            </ActionMenu>
+        </RvmStatCard>
         <RvmStatCard Title="Silos ocupados" Value="9 de 12" Surface="RvmSurface.Dark" Color="RvmColor.Warning"
                      Adornment="RvmStatCardAdornment.Icon" AdornmentIcon="RvmIconName.Box" Visual="RvmStatCardVisual.Progress" VisualValue="75"
                      Action="RvmCardAction.Menu" ActionLabel="Opcoes dos silos">

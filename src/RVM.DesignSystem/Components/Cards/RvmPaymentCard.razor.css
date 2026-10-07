@@ -96,15 +96,11 @@
 }
 
 /* --- Cheio: o cartao na cor do papel, o texto no -contrast dele (branco so no primary; grafite nos outros, 4.84 a
-   9.03:1 — -main/-contrast nao mudam com o tema). O Inverse dentro da face e redefinido para a tinta, como no
-   RvmStatCard, para um botao Inverse na bandeira nao sumir. --- */
+   9.03:1 — -main/-contrast nao mudam com o tema). So cor e fundo: nenhum token do tema e redefinido aqui, para nada
+   que caia dentro da face (popup, menu) herdar a tinta no lugar do tema. --- */
 .rvm-cheio {
     background-color: var(--rvm-cartao-fundo);
     color: var(--rvm-cartao-tinta);
-    --rvm-color-inverse-main: var(--rvm-cartao-tinta);
-    --rvm-color-inverse-text: var(--rvm-cartao-tinta);
-    --rvm-color-inverse-contrast: var(--rvm-cartao-fundo);
-    --rvm-focus-ring-color: var(--rvm-cartao-tinta);
 }
 
 .rvm-cheio.rvm-primary { --rvm-cartao-fundo: var(--rvm-color-primary-main); --rvm-cartao-tinta: var(--rvm-color-primary-contrast); }
@@ -113,5 +109,4 @@
 .rvm-cheio.rvm-success { --rvm-cartao-fundo: var(--rvm-color-success-main); --rvm-cartao-tinta: var(--rvm-color-success-contrast); }
 .rvm-cheio.rvm-warning { --rvm-cartao-fundo: var(--rvm-color-warning-main); --rvm-cartao-tinta: var(--rvm-color-warning-contrast); }
 .rvm-cheio.rvm-error { --rvm-cartao-fundo: var(--rvm-color-error-main); --rvm-cartao-tinta: var(--rvm-color-error-contrast); }
-/* Lido do primary, e nao do proprio inverse, que e redefinido acima a partir destes (referencia circular). */
 .rvm-cheio.rvm-inverse { --rvm-cartao-fundo: var(--rvm-color-primary-contrast); --rvm-cartao-tinta: var(--rvm-color-primary-main); }

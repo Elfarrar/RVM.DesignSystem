@@ -203,6 +203,34 @@ public class RvmCartoesDePainelTests : BunitContext
         Assert.Equal(RvmStatCardVisual.None, card.Visual);
     }
 
+    [Fact]
+    public void Card_cheio_nao_redefine_token_do_tema_no_escopo_que_contem_o_menu()
+    {
+        // A lista do RvmMenu e descendente do card: token do tema redefinido na raiz (ou em qualquer ancestral dela)
+        // vaza para o menu aberto — texto branco no papel branco, grafite no papel escuro (review da DSGN-017).
+        // Redefinir token do tema so pode no elemento de uma peca do DS (::deep .peca), nunca na lista nem no menu.
+        var pasta = Path.Combine(RaizDoRepositorio.Caminho, "src", "RVM.DesignSystem", "Components", "Cards");
+        var violacoes = new List<string>();
+        foreach (var arquivo in Directory.GetFiles(pasta, "*.razor.css"))
+        {
+            var css = System.Text.RegularExpressions.Regex.Replace(File.ReadAllText(arquivo), @"/\*.*?\*/", "",
+                System.Text.RegularExpressions.RegexOptions.Singleline);
+            foreach (System.Text.RegularExpressions.Match regra in System.Text.RegularExpressions.Regex.Matches(css, @"([^{}]+)\{([^{}]*)\}"))
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(regra.Groups[2].Value, @"(^|;)\s*--rvm-(color|focus)-"))
+                {
+                    continue;
+                }
+                violacoes.AddRange(regra.Groups[1].Value.Split(',').Select(s => s.Trim())
+                    .Where(s => !s.Contains("::deep", StringComparison.Ordinal) || s.Contains("rvm-lista", StringComparison.Ordinal)
+                                || s.EndsWith(".rvm-menu", StringComparison.Ordinal))
+                    .Select(s => $"{Path.GetFileName(arquivo)}: {s}"));
+            }
+        }
+
+        Assert.Empty(violacoes);
+    }
+
     // --- RvmProgressCard ---
 
     [Fact]
