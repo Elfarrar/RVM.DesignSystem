@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using RVM.DesignSystem.Components.Activity;
 using RVM.DesignSystem.Components.MarkerButton;
 using RVM.DesignSystem.Components.Menu;
@@ -83,6 +84,8 @@ public class RvmAtividadeTests : BunitContext
     [InlineData("  ", "")]
     [InlineData("Ana", "A")]
     [InlineData("ana maria souza", "AS")]
+    [InlineData("🌱", "🌱")] // par substituto: cortar no primeiro char deixava meio emoji
+    [InlineData("🌱 Agro", "🌱")] // o RvmAvatar corta as iniciais em 2 chars: o emoji inteiro fica, a letra sai
     public void Iniciais_do_nome_no_avatar(string? nome, string esperado)
     {
         var cortado = Render<RvmActivity>(p => p
@@ -515,6 +518,58 @@ public class RvmAtividadeTests : BunitContext
         Assert.Equal("Agronoma", cortado.Find(".rvm-widget-subtitulo").TextContent);
         Assert.Equal("", cortado.Find("img").GetAttribute("alt"));
         Assert.Empty(cortado.FindAll(".rvm-widget-contador"));
+    }
+
+    [Theory]
+    [InlineData(1, "Avisos, 1 novo")]
+    [InlineData(2, "Avisos, 2 novos")]
+    public void Widget_contador_no_singular_e_no_plural(int badge, string nome)
+    {
+        var cortado = Render<RvmWidget>(p => p.Add(x => x.Label, "Avisos").Add(x => x.Badge, badge));
+        Assert.Equal(nome, cortado.Find("button").GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public void Widget_aberto_segura_o_Esc_e_fechado_deixa_subir()
+    {
+        var teclasNoPai = 0;
+        var cortado = Render(b =>
+        {
+            b.OpenElement(0, "div");
+            b.AddAttribute(1, "class", "pai");
+            b.AddAttribute(2, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, () => teclasNoPai++));
+            b.OpenComponent<RvmWidget>(3);
+            b.AddComponentParameter(4, nameof(RvmWidget.Label), "Avisos");
+            b.CloseComponent();
+            b.CloseElement();
+        });
+
+        // Fechado: o Esc no gatilho sobe (fecha o dialogo em volta, por exemplo).
+        cortado.Find(".rvm-widget-gatilho").KeyDown(new KeyboardEventArgs { Key = "Escape" });
+        Assert.Equal(1, teclasNoPai);
+
+        // Aberto: o Esc fecha so o painel.
+        cortado.Find(".rvm-widget-gatilho").Click();
+        cortado.Find("[role=dialog]").KeyDown(new KeyboardEventArgs { Key = "Escape" });
+        Assert.Empty(cortado.FindAll("[role=dialog]"));
+        Assert.Equal(1, teclasNoPai);
+    }
+
+    [Fact]
+    public void Widget_e_aviso_sobrevivem_ao_circuito_caido_ao_mover_o_foco()
+    {
+        JSInterop.Mode = JSRuntimeMode.Strict;
+        JSInterop.SetupVoid(_ => true).SetException(new JSDisconnectedException("circuito caiu"));
+
+        var widget = Render<RvmWidget>(p => p.Add(x => x.Label, "Avisos"));
+        widget.Find("button").Click();
+        Assert.Single(widget.FindAll("[role=dialog]"));
+        widget.Find(".rvm-widget").KeyDown(new KeyboardEventArgs { Key = "Escape" });
+        Assert.Empty(widget.FindAll("[role=dialog]"));
+
+        var aviso = Render<RvmNotificationItem>(p => p.Add(x => x.Title, "Boleto").Add(x => x.OnRead, () => { }));
+        aviso.Find("button").Click();
+        Assert.Contains("rvm-aviso", aviso.Find("li").ClassList);
     }
 
     [Fact]
