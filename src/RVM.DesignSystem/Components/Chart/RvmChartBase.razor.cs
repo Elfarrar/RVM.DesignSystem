@@ -988,13 +988,15 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
             return;
         }
 
+        // Marca ANTES do primeiro await: um render que chegue enquanto o JS carrega cairia aqui de novo e ligaria
+        // tudo duas vezes (dois ouvintes da roda = zoom em dobro).
+        _areaLigada = _area.Id;
         try
         {
             await PararOuvintesAsync();
             _referencia ??= DotNetObjectReference.Create(this);
             _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
             _observador = await _modulo.InvokeAsync<IJSObjectReference?>("observar", _area, _referencia);
-            _areaLigada = _area.Id;
             await AcertarARoda();
             _teclado ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
             await _teclado.InvokeVoidAsync("prenderTeclas", _camada, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" });
@@ -1028,11 +1030,13 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>Liga o ouvinte da roda quando ha zoom e o desliga quando deixa de haver.</summary>
     private async Task AcertarARoda()
     {
-        if (_modulo is null || ZoomLigado == (_roda is not null))
+        if (_modulo is null || _acertandoRoda || ZoomLigado == (_roda is not null))
         {
             return;
         }
 
+        // Um de cada vez: dois renders seguidos viam _roda nulo e ligavam dois ouvintes (zoom em dobro).
+        _acertandoRoda = true;
         try
         {
             if (ZoomLigado)
@@ -1050,7 +1054,13 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         {
             // Sem JS o zoom continua pelo teclado.
         }
+        finally
+        {
+            _acertandoRoda = false;
+        }
     }
+
+    private bool _acertandoRoda;
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
