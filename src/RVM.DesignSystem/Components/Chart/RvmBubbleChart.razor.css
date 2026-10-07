@@ -1,0 +1,18 @@
+/* A cor de cada bolha chega por --rvm-radial-cor, posta em style pelo componente. */
+
+.rvm-radial-bolha {
+    fill: var(--rvm-radial-cor);
+}
+
+/* O percentual sobre a bolha: o halo da cor do papel garante o contraste do texto em qualquer degrau e nos dois
+   temas. O <text> sai do construtor de render (tag reservada do Razor), sem o escopo do CSS: dai o ::deep. */
+.rvm-radial-crescer ::deep .rvm-radial-rotulo {
+    fill: var(--rvm-color-text-primary);
+    stroke: var(--rvm-color-background-paper);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-subtitle1-size);
+    font-weight: 600;
+}
