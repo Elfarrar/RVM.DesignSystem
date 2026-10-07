@@ -40,6 +40,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmDrawer](https://design.rvmit.com.br/componentes/drawer): Painel que sai de um lado da tela: menu de navegacao, filtros, detalhe de um item.
 - [RvmEmptyState](https://design.rvmit.com.br/componentes/empty-state): Tela ou bloco sem conteudo que diz o que aconteceu e o proximo passo. Serve para lista vazia, busca sem resultado, erro de carregamento e pagina nao encontrada.
 - [RvmExpansionPanel](https://design.rvmit.com.br/componentes/expansion-panel): Painel expansivel sozinho, que mantem o conteudo montado.
+- `RvmFieldFrame`
 - [RvmHistogram](https://design.rvmit.com.br/componentes/histogram): Distribuicao de valores em faixas.
 - [RvmIcon](https://design.rvmit.com.br/componentes/icon): Um icone do conjunto Tabler, desenhado inline. A cor vem por heranca (`currentColor`), ou do papel semantico quando `RvmIcon.Color` e informado.
 - [RvmIconButton](https://design.rvmit.com.br/componentes/icon-button): Botao so de icone, com nome acessivel obrigatorio.
@@ -79,6 +80,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmTableColumn<TItem>](https://design.rvmit.com.br/componentes/table): Uma coluna da `RvmTable` ou da `RvmDataGrid`. Nao desenha nada sozinha: so se apresenta a tabela em que foi declarada.
 - [RvmTable<TItem>](https://design.rvmit.com.br/componentes/table): Tabela de dados: colunas declaradas com `RvmTableColumn`, ordenacao pelo titulo, selecao por caixa de marcar e versao densa. Para paginar e filtrar, `RvmDataGrid`.
 - [RvmTabs](https://design.rvmit.com.br/componentes/tabs): Abas: uma lista de titulos e o painel da aba escolhida. As abas sao `RvmTab` filhas.
+- `RvmTextArea`
 - [RvmTextField](https://design.rvmit.com.br/componentes/text-field): Campo de texto com rotulo flutuante, apoio, erro, prefixo e sufixo. Herda de `InputBase`: dentro de um `EditForm` ele participa da validacao, e fora de um tambem funciona.
 - `RvmThemeProvider`: Envolve a arvore que usa o design system e define qual tema vale nela. Componente filho nenhum precisa saber do tema: os tokens chegam por CSS a partir do `data-theme` deste elemento.
 - `RvmTimeClock`: Relogio circular para escolher um horario: primeiro a hora, depois os minutos. Aparece solto na pagina ou dentro do `RvmTimePicker` no modo `RvmTimePickerMode.Clock`.

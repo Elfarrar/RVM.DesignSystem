@@ -706,6 +706,30 @@ Painel expansivel sozinho, que mantem o conteudo montado.
 | `Title` | `string?` | — | Texto do cabecalho. |
 | `TitleContent` | `RenderFragment?` | — | Cabecalho composto (icone, numero, selo). Vence `RvmExpansionPanel.Title`. So conteudo de frase: fica dentro de um botao. |
 
+### RvmFieldFrame
+
+`@using RVM.DesignSystem.Components.TextField`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AnnounceRequired` | `bool` | `false` | Escreve "(obrigatorio)" escondido no rotulo, para o leitor de tela. So para controle em que `aria-required` nao vale (um botao); campo de texto usa o `aria-required`. |
+| `ChildContent` | `RenderFragment?` | — | A caixa do campo: o controle com a classe `rvm-entrada` (e prefixo e sufixo, se houver). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `Error` | `string?` | — | Mensagem de erro; nula sem erro. |
+| `ErrorId` | `string` | `""` | Id da mensagem de erro (o `aria-describedby` do controle aponta para ca). |
+| `HelperId` | `string?` | — | Id do texto de apoio. |
+| `HelperText` | `string?` | — | Texto de apoio; aparece so sem erro. |
+| `InputId` | `string` | obrigatorio | Id do controle, para o `label for`. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita. |
+| `Multiline` | `bool` | `false` | Caixa com varias linhas (area de texto): conteudo no alto e rotulo sempre em cima. |
+| `Required` | `bool` | `false` | Obrigatorio: asterisco no rotulo. O `aria-required` fica com o controle. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto: o do kit ou pilula. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Altura: 56 px (Medium, padrao), 40 px (Small) ou 64 px (Large). |
+| `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo da caixa. Padrao: contornada. |
+
 ### RvmHistogram
 
 `@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/histogram
@@ -1621,6 +1645,32 @@ Abas: uma lista de titulos e o painel da aba escolhida. As abas sao `RvmTab` fil
 | `Value` | `string?` | — | Valor da aba escolhida (o `Value` da `RvmTab`). Aceita `@bind-Value`. Quando casa com uma aba, vence `RvmTabs.ActiveIndex`. Em lista montada com `@foreach`, use `@key` nas abas. |
 | `ValueChanged` | `EventCallback<string>` | — | Disparado com o valor da aba escolhida (junto com `RvmTabs.ActiveIndexChanged`). |
 | `Variant` | `RvmTabsVariant` | `RvmTabsVariant.Standard` | Sublinhada (padrao) ou preenchida. |
+
+### RvmTextArea
+
+`@using RVM.DesignSystem.Components.TextField`
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do campo. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `Immediate` | `bool` | `false` | Atualiza o valor a cada tecla (`oninput`), e nao so ao sair do campo. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Required` | `bool` | `false` | Obrigatorio: asterisco no rotulo e `aria-required`. A validacao e do `EditForm`. |
+| `Rows` | `int` | `5` | Linhas visiveis. Padrao: 5. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `string?` | — |  |
+| `ValueChanged` | `EventCallback<string>` | — |  |
+| `ValueExpression` | `Expression<Func<string>>?` | — |  |
 
 ### RvmTextField
 
