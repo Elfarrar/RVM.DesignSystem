@@ -1,0 +1,130 @@
+/* CSS isolado do RvmColorPicker. So custom properties: a cor de cada bolinha e dado do app e vem inline.
+   O anel e o check saem do :checked do radio nativo, sem depender de nova renderizacao. */
+
+.rvm-cores {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-legenda {
+    padding: 0;
+    margin-bottom: var(--rvm-space-2);
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-link-do-campo {
+    display: inline-block;
+    margin-bottom: var(--rvm-space-1);
+    color: var(--rvm-color-primary-text);
+}
+
+.rvm-paleta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-1);
+}
+
+.rvm-cor {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.rvm-nativo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+    z-index: 1;
+}
+
+/* O anel fica em volta da bolinha: 3 px de folga na cor do fundo e 2 px de contorno quando escolhida. */
+.rvm-anel {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: var(--rvm-radius-circle);
+    border: 2px solid transparent;
+    transition: border-color var(--rvm-transition-fast);
+}
+
+.rvm-bolinha {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--rvm-radius-circle);
+    /* Contorno fino por dentro: uma cor clara nao some contra o fundo do cartao. */
+    box-shadow: inset 0 0 0 1px var(--rvm-color-divider);
+    transition: transform var(--rvm-transition-fast);
+}
+
+/* O check num disco da cor do fundo: le bem sobre qualquer cor do app, nos dois temas. */
+.rvm-marca {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    transform: scale(0);
+    transition: transform var(--rvm-transition-fast);
+}
+
+.rvm-nativo:checked + .rvm-anel {
+    border-color: var(--rvm-color-text-primary);
+}
+
+.rvm-nativo:checked + .rvm-anel .rvm-marca {
+    transform: scale(1);
+}
+
+.rvm-cor:hover .rvm-nativo:not(:disabled) + .rvm-anel .rvm-bolinha {
+    transform: scale(1.08);
+}
+
+.rvm-nativo:focus-visible + .rvm-anel {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-nativo:disabled {
+    cursor: not-allowed;
+}
+
+.rvm-nativo:disabled + .rvm-anel {
+    opacity: 0.4;
+}
+
+.rvm-cores:disabled .rvm-legenda {
+    color: var(--rvm-color-text-disabled);
+}
+
+.rvm-apoio {
+    margin-top: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-apoio-erro {
+    color: var(--rvm-color-error-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-anel,
+    .rvm-bolinha,
+    .rvm-marca {
+        transition: none;
+    }
+}

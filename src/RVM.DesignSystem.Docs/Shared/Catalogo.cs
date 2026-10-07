@@ -87,7 +87,13 @@ public static class Catalogo
             new("componentes/autocomplete", "RvmAutocomplete", "Campo que busca sugestoes enquanto se digita."),
             new("componentes/option-list", "RvmOptionList", "Lista de opcoes no padrao listbox."),
             new("componentes/tag-option", "RvmTagOption", "Tag em pilula, com remover."),
-            new("componentes/choice-chip", "RvmChoiceChip", "Escolha unica em forma de chip, dentro de um RvmRadioGroup.")
+            new("componentes/choice-chip", "RvmChoiceChip", "Escolha unica em forma de chip, dentro de um RvmRadioGroup."),
+            new("componentes/color-picker", "RvmColorPicker", "Escolha de cor entre itens, como bolinhas de radio."),
+            new("componentes/color-field", "RvmColorField", "Cor em hex: paleta com nome e, se permitido, cor composta."),
+            new("componentes/icon-selector", "RvmIconSelector", "Escolha de icone numa janela com busca e grade."),
+            new("componentes/file-upload", "RvmFileUpload", "Envio de arquivos por botao ou caixa de arrastar, com progresso."),
+            new("componentes/media-upload", "RvmMediaUpload", "Envio de imagens com miniaturas, remover e tentar de novo."),
+            new("componentes/profile-image-upload", "RvmProfileImageUpload", "Foto de perfil: avatar e o botao de enviar.")
         ]),
         new("Navegacao e pagina",
         [

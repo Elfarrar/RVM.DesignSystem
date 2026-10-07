@@ -31,6 +31,12 @@ internal static class LeitorDeNumero
             numeros.NumberDecimalSeparator = numeros.CurrencyDecimalSeparator = numeros.PercentDecimalSeparator = ",";
             numeros.NumberGroupSeparator = numeros.CurrencyGroupSeparator = numeros.PercentGroupSeparator = ".";
             numeros.CurrencySymbol = "R$";
+            // "R$ 1.234,56" e "-R$ 1.234,56", como o pt-BR do ICU (a invariante cola o simbolo no numero). O caso comum
+            // e o WebAssembly, que so carrega o pacote de culturas EFIGS, sem portugues.
+            numeros.CurrencyPositivePattern = 2;
+            numeros.CurrencyNegativePattern = 9;
+            numeros.PercentPositivePattern = 1;
+            numeros.PercentNegativePattern = 1;
             return CultureInfo.ReadOnly(cultura);
         }
     }

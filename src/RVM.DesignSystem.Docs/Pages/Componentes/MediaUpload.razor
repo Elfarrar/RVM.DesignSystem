@@ -1,0 +1,122 @@
+@page "/componentes/media-upload"
+@using RVM.DesignSystem.Components.Upload
+@implements IDisposable
+
+<PageTitle>RvmMediaUpload — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMediaUpload</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O RvmFileUpload so de imagens: miniaturas de 100 px numa grade e, no fim, o quadro de adicionar (clique, teclado ou
+    arquivo solto). Cada miniatura tem o X de remover e, quando o envio falha, o botao "Tentar de novo".
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Accept comeca em "image/*". A miniatura vem do PreviewUrl de cada RvmUploadItem, que o app preenche (aqui, com
+    RequestImageFileAsync do proprio Blazor). Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Galeria com envio"
+              Descricao="As imagens escolhidas aqui simulam o envio; a cada tres, uma falha, para mostrar o Tentar de novo."
+              Codigo="@Codigo">
+    <RvmMediaUpload Label="Fotos da lavoura" Hint="PNG ou JPG, ate 6 imagens por vez." Multiple="true" MaxFiles="6"
+                    Items="_imagens" OnFilesSelected="Escolheu" OnRemove="Remover" OnRetry="TentarDeNovo" />
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Erro e desabilitado"
+              Descricao="ErrorText em vermelho, ligado ao input; Disabled desliga o quadro de adicionar e os botoes."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos alinhado-topo">
+        <RvmMediaUpload Label="Foto do talhao" ErrorText="Envie ao menos uma foto do talhao." />
+        <RvmMediaUpload Label="Fotos do laudo" Disabled="true" Items="_desabilitado" OnRemove="(RvmUploadItem _) => { }" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMediaUpload" />
+
+@code {
+    private readonly CancellationTokenSource _parar = new();
+    private int _enviados;
+
+    private readonly List<RvmUploadItem> _imagens =
+    [
+        new() { Name = "sem-miniatura.jpg", Size = 2_400_000, Status = RvmUploadStatus.Uploaded },
+        new() { Name = "falhou.jpg", Size = 3_100_000, Status = RvmUploadStatus.Failed }
+    ];
+
+    private readonly List<RvmUploadItem> _desabilitado = [new() { Name = "laudo.jpg", Size = 1_000_000, Status = RvmUploadStatus.Uploaded }];
+
+    private async Task Escolheu(IReadOnlyList<IBrowserFile> arquivos)
+    {
+        var novos = new List<RvmUploadItem>();
+        foreach (var arquivo in arquivos)
+        {
+            var item = new RvmUploadItem { Name = arquivo.Name, Size = arquivo.Size, Status = RvmUploadStatus.Uploading };
+            item.PreviewUrl = await Miniatura(arquivo);
+            novos.Add(item);
+        }
+        _imagens.AddRange(novos);
+        await Simular(novos, falhar: true);
+    }
+
+    private void Remover(RvmUploadItem item) => _imagens.Remove(item);
+
+    private Task TentarDeNovo(RvmUploadItem item)
+    {
+        item.Status = RvmUploadStatus.Uploading;
+        item.Progress = 0;
+        return Simular([item], falhar: false);
+    }
+
+    private static async Task<string?> Miniatura(IBrowserFile arquivo)
+    {
+        try
+        {
+            var pequena = await arquivo.RequestImageFileAsync("image/png", 200, 200);
+            using var leitura = pequena.OpenReadStream(5 * 1024 * 1024);
+            using var memoria = new MemoryStream();
+            await leitura.CopyToAsync(memoria);
+            return $"data:image/png;base64,{Convert.ToBase64String(memoria.ToArray())}";
+        }
+        catch (Exception)
+        {
+            return null; // sem miniatura, o componente mostra o icone de imagem
+        }
+    }
+
+    // So o exemplo finge o envio: o componente nunca espera nem envia nada.
+    private async Task Simular(List<RvmUploadItem> itens, bool falhar)
+    {
+        try
+        {
+            for (var passo = 1; passo <= 10; passo++)
+            {
+                await Task.Delay(200, _parar.Token);
+                foreach (var item in itens) item.Progress = passo * 10;
+                StateHasChanged();
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+        foreach (var item in itens)
+            item.Status = falhar && ++_enviados % 3 == 0 ? RvmUploadStatus.Failed : RvmUploadStatus.Uploaded;
+    }
+
+    public void Dispose()
+    {
+        _parar.Cancel();
+        _parar.Dispose();
+    }
+
+    private const string Codigo = """
+        <RvmMediaUpload Label="Fotos da lavoura" Hint="PNG ou JPG, ate 6 imagens por vez." Multiple="true" MaxFiles="6"
+                        Items="_imagens" OnFilesSelected="Enviar" OnRemove="Remover" OnRetry="TentarDeNovo" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmMediaUpload Label="Foto do talhao" ErrorText="Envie ao menos uma foto do talhao." />
+        <RvmMediaUpload Label="Fotos do laudo" Disabled="true" Items="_fotos" />
+        """;
+}

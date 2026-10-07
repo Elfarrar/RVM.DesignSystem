@@ -1,0 +1,48 @@
+@page "/componentes/color-field"
+@using RVM.DesignSystem.Components.ColorPicker
+
+<PageTitle>RvmColorField — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmColorField</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Campo de cor com valor em hex (<code>#4CAF50</code>). Mostra uma paleta de cores com nome nas mesmas bolinhas do
+    <code>RvmColorPicker</code>; sem <code>Colors</code>, usa os seis papeis de cor do tema claro do DS. Com
+    <code>AllowCustom</code>, a area "Compor cor" traz o seletor do navegador e um campo para digitar o hex. Uma cor fora
+    da paleta aparece como uma bolinha a mais, "Personalizada". O valor sai sempre em maiusculas.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017). Hex invalido digitado mostra o erro e nao muda o valor.
+    <code>Placeholder</code> vira a dica do campo do hex e <code>Shape</code> o canto dele.
+</p>
+
+<BlocoExemplo Titulo="Paleta padrao e cor composta"
+              Descricao="O primeiro usa a paleta do DS; o segundo, uma paleta propria e AllowCustom."
+              Codigo="@Codigo">
+    <div class="pilha-exemplos">
+        <RvmColorField Label="Cor do talhao" @bind-Value="_cor" HelperText="@($"Valor: {_cor ?? "nenhum"}")" />
+        <RvmColorField Label="Cor da cultura" @bind-Value="_cultura" Colors="Culturas" AllowCustom="true"
+                       HelperText="@($"Valor: {_cultura ?? "nenhum"}")" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmColorField" />
+
+@code {
+    private string? _cor = "#56CA00";
+    private string? _cultura = "#7B1FA2";
+
+    private static readonly IReadOnlyList<RvmNamedColor> Culturas =
+    [
+        new("Soja", "#56CA00"),
+        new("Milho", "#FFB400"),
+        new("Cafe", "#8A8D93"),
+    ];
+
+    private const string Codigo = """
+        <RvmColorField Label="Cor do talhao" @bind-Value="cor" />
+        <RvmColorField Label="Cor da cultura" @bind-Value="cultura" AllowCustom="true"
+                       Colors="@([new("Soja", "#56CA00"), new("Milho", "#FFB400")])" />
+        """;
+}
