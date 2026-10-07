@@ -94,7 +94,7 @@ public class RvmTemaDoContratoTests : BunitContext
     public void Paleta_passa_AA_no_tema_escuro(string id)
     {
         var claro = Bloco($"[data-rvm-accent=\"{id}\"]");
-        var escuro = Bloco($"[data-theme='dark'][data-rvm-accent=\"{id}\"]");
+        var escuro = Bloco($"[data-theme='dark']:where([data-rvm-accent=\"{id}\"])");
         var baseEscura = Bloco("[data-theme='dark']");
         string Valor(string token) => escuro.TryGetValue(token, out var v) && v.StartsWith('#') ? v : claro[token];
         var texto = escuro["rvm-color-primary-text"];
@@ -123,7 +123,7 @@ public class RvmTemaDoContratoTests : BunitContext
 
         Assert.Equal(baseClara["rvm-font-family"], azul["rvm-font-family"]);
         var baseEscura = Bloco("[data-theme='dark']");
-        foreach (var (token, valor) in Bloco("[data-theme='dark'][data-rvm-accent=\"blue\"]").Where(t => t.Key != "rvm-focus-ring-color"))
+        foreach (var (token, valor) in Bloco("[data-theme='dark']:where([data-rvm-accent=\"blue\"])").Where(t => t.Key != "rvm-focus-ring-color"))
         {
             Assert.Equal(baseEscura[token], valor);
         }
@@ -134,10 +134,10 @@ public class RvmTemaDoContratoTests : BunitContext
         var dados = new TheoryData<string, string> { { "[data-theme='dark']", "[data-theme='system']" } };
         foreach (var paleta in RvmPalettes.All)
         {
-            dados.Add($"[data-theme='dark'][data-rvm-accent=\"{paleta.Id}\"]", $"[data-theme='system'][data-rvm-accent=\"{paleta.Id}\"]");
+            dados.Add($"[data-theme='dark']:where([data-rvm-accent=\"{paleta.Id}\"])", $"[data-theme='system']:where([data-rvm-accent=\"{paleta.Id}\"])");
         }
 
-        dados.Add("[data-theme='dark'][data-rvm-contrast=\"original\"]", "[data-theme='system'][data-rvm-contrast=\"original\"]");
+        dados.Add("[data-theme='dark']:where([data-rvm-contrast=\"original\"])", "[data-theme='system']:where([data-rvm-contrast=\"original\"])");
         return dados;
     }
 
@@ -471,5 +471,122 @@ public class RvmTemaDoContratoTests : BunitContext
         await cortado.InvokeAsync(() => estado.SetAsync(new RvmThemeSettings("black")));
 
         cortado.WaitForAssertion(() => Assert.True(cortado.Find("input[type='radio'][value='black']").HasAttribute("checked")));
+    }
+
+    // ---------------------------------------------------------------- Achados do review (DSGN-017)
+
+    [Fact]
+    public void Wasm_com_pre_render_a_escolha_do_localStorage_vence_o_padrao_que_o_servidor_mandou()
+    {
+        // O servidor nao le localStorage: na pre-renderizacao so sabia o padrao. Se isso vencesse, a escolha
+        // salva nunca voltaria (achado P1).
+        Services.AddRvmDesignSystem();
+        AddBunitPersistentComponentState().Persist("rvm.tema", RvmThemeSettings.Default.Serialize());
+        JSInterop.Setup<string?>("rvmTheme.load", "rvm.tema").SetResult("v1|purple|dark|default|0|0");
+
+        var raiz = Render<RvmThemeProvider>(p => p.Add(x => x.UserTheme, true)).Find("div");
+
+        Assert.Equal("purple", raiz.GetAttribute("data-rvm-accent"));
+        Assert.Equal("dark", raiz.GetAttribute("data-theme"));
+    }
+
+    [Fact]
+    public void Valor_conhecido_da_pre_renderizacao_vale_quando_o_navegador_nao_tem_nada()
+    {
+        Services.AddRvmDesignSystem();
+        AddBunitPersistentComponentState().Persist("rvm.tema", "v1|acolhedor|light|default|0|0");
+
+        var raiz = Render<RvmThemeProvider>(p => p.Add(x => x.UserTheme, true)).Find("div");
+
+        Assert.Equal("acolhedor", raiz.GetAttribute("data-rvm-accent"));
+    }
+
+    [Fact]
+    public void Padrao_por_falta_de_informacao_nao_viaja_ao_cliente()
+    {
+        Services.AddRvmDesignSystem();
+        Services.AddRvmTheme<StoreVazio>();
+        var estado = AddBunitPersistentComponentState();
+        Render<RvmThemeProvider>(p => p.Add(x => x.UserTheme, true));
+
+        estado.TriggerOnPersisting();
+
+        Assert.False(estado.TryTake<string>("rvm.tema", out _));
+    }
+
+    [Fact]
+    public void Dois_providers_com_tema_do_usuario_nao_gravam_a_mesma_chave_duas_vezes()
+    {
+        Services.AddRvmDesignSystem();
+        var estado = AddBunitPersistentComponentState();
+        JSInterop.Setup<string?>("rvmTheme.load", "rvm.tema").SetResult("v1|black|light|default|0|0");
+        Render<RvmThemeProvider>(p => p.Add(x => x.UserTheme, true));
+        Render<RvmThemeProvider>(p => p.Add(x => x.UserTheme, true));
+
+        estado.TriggerOnPersisting();
+
+        Assert.True(estado.TryTake<string>("rvm.tema", out var valor));
+        Assert.Equal("v1|black|light|default|0|0", valor);
+    }
+
+    [Fact]
+    public void Servidor_sem_store_de_cookie_le_o_navegador_depois_do_primeiro_render()
+    {
+        // Blazor Server puro: o store nao alcanca o navegador. A escolha volta pelo rvmTheme.load, com um
+        // redesenho (achado P2).
+        Services.AddRvmDesignSystem();
+        Services.AddRvmTheme<StoreVazio>();
+        JSInterop.Setup<string?>("rvmTheme.load", "rvm.tema").SetResult("v1|utilitario|dark|default|0|0");
+
+        var cortado = Render<RvmThemeProvider>(p => p.Add(x => x.UserTheme, true));
+
+        cortado.WaitForAssertion(() =>
+        {
+            Assert.Equal("utilitario", cortado.Find("div").GetAttribute("data-rvm-accent"));
+            Assert.Equal("dark", cortado.Find("div").GetAttribute("data-theme"));
+        });
+    }
+
+    [Fact]
+    public void Previa_aninhada_com_fonte_grande_nao_redimensiona_a_pagina()
+    {
+        var cortado = Render<RvmThemeProvider>(p => p
+            .Add(x => x.Settings, new RvmThemeSettings(FontScale: RvmFontScale.Small))
+            .AddChildContent<RvmThemeProvider>(f => f
+                .Add(x => x.Settings, new RvmThemeSettings(FontScale: RvmFontScale.ExtraLarge))
+                .Add(x => x.Class, "previa")));
+
+        Assert.Equal("small", cortado.Find("div").GetAttribute("data-rvm-font-scale"));
+        Assert.Null(cortado.Find("div.previa").GetAttribute("data-rvm-font-scale"));
+    }
+
+    [Fact]
+    public void Blocos_novos_nao_passam_de_um_atributo_de_especificidade()
+    {
+        // Quem rebrandeia o escuro com [data-theme='dark'] { } (0,1,0) no proprio CSS continua vencendo (achado P2).
+        Assert.DoesNotMatch(@"\[data-theme='[a-z]+'\]\[data-rvm-(accent|contrast)", Css);
+        Assert.Contains("[data-theme='dark']:where([data-rvm-accent=\"blue\"])", Css, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Alternar_no_automatico_parte_do_tema_que_esta_na_tela()
+    {
+        Services.AddRvmDesignSystem();
+        JSInterop.Setup<string?>("rvmTheme.load", "rvm.tema").SetResult("v1|blue|system|default|0|0");
+        JSInterop.Setup<bool>("rvmTheme.prefersDark").SetResult(true);
+        var cortado = Render<RvmThemeProvider>(p => p.Add(x => x.UserTheme, true));
+
+        await cortado.InvokeAsync(cortado.Instance.ToggleAsync);
+
+        Assert.Equal(RvmThemeMode.Light, Services.GetRequiredService<RvmThemeState>().Current.Mode);
+    }
+
+    private sealed class StoreVazio : IRvmThemeStore
+    {
+        public ValueTask<RvmThemeSettings?> LoadAsync(CancellationToken cancellationToken = default) =>
+            ValueTask.FromResult<RvmThemeSettings?>(null);
+
+        public ValueTask SaveAsync(RvmThemeSettings settings, CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
     }
 }

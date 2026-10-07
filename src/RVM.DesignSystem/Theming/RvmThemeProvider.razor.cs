@@ -101,7 +101,35 @@ public partial class RvmThemeProvider : ComponentBase, IDisposable
     internal string CssClass => ClassesCss.Juntar("rvm-root", Class, AdditionalAttributes);
 
     /// <summary>Troca entre claro e escuro. E o que um botao de tema chama.</summary>
-    public Task ToggleAsync() => SetThemeAsync(ThemeAttribute == "dark" ? RvmTheme.Light : RvmTheme.Dark);
+    public async Task ToggleAsync()
+    {
+        // No automatico, alterna a partir do que esta NA TELA: com o sistema escuro, o primeiro clique vai ao claro.
+        var escuro = ThemeAttribute switch
+        {
+            "dark" => true,
+            "system" => await SistemaEscuroAsync(),
+            _ => false
+        };
+        await SetThemeAsync(escuro ? RvmTheme.Light : RvmTheme.Dark);
+    }
+
+    private async Task<bool> SistemaEscuroAsync()
+    {
+        try
+        {
+            return await JS.InvokeAsync<bool>("rvmTheme.prefersDark");
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Valor do <c>data-rvm-font-scale</c>. So o provider da RAIZ emite: a escala muda o tamanho base do documento
+    /// (o &lt;html&gt;), e uma previa aninhada com fonte grande nao pode redimensionar a pagina inteira.
+    /// </summary>
+    internal string? FontScaleAttribute => Pai is null ? _tema?.FontScaleAttribute : null;
 
     /// <summary>
     /// Define o tema. Ignora a chamada quando o tema pedido ja e o atual. Com <see cref="UserTheme"/>, grava o modo
@@ -146,20 +174,37 @@ public partial class RvmThemeProvider : ComponentBase, IDisposable
                 "UserTheme precisa do RvmThemeState: chame services.AddRvmDesignSystem() (ou AddRvmTheme()) no Program.cs.");
         _persistencia = Servicos.GetService(typeof(PersistentComponentState)) as PersistentComponentState;
 
-        // Na passagem da pre-renderizacao para o interativo, o valor vem pronto: nada de ir ao store de novo
-        // (e nada de o circuito comecar no padrao e piscar).
-        if (!_estado.IsLoaded && _persistencia is not null
-            && _persistencia.TryTakeFromJson<string>(ChaveDoEstado, out var texto) && texto is not null)
+        // Na passagem da pre-renderizacao para o interativo, o valor pode vir pronto. Mas o store vem PRIMEIRO: no
+        // WebAssembly ele le o localStorage de forma sincrona, e a pre-renderizacao no servidor (sem navegador) so
+        // sabia o padrao — se o valor dela vencesse, a escolha do usuario nunca voltaria.
+        string? daPreRenderizacao = null;
+        if (!_estado.IsLoaded && _persistencia is not null)
         {
-            _estado.Restore(RvmThemeSettings.Parse(texto));
+            _persistencia.TryTakeFromJson(ChaveDoEstado, out daPreRenderizacao);
         }
 
         await _estado.EnsureLoadedAsync();
-        _inscricao = _persistencia?.RegisterOnPersisting(() =>
+        if (!_estado.IsKnown && daPreRenderizacao is not null)
         {
-            _persistencia.PersistAsJson(ChaveDoEstado, _estado.Current.Serialize());
-            return Task.CompletedTask;
-        });
+            _estado.Restore(RvmThemeSettings.Parse(daPreRenderizacao));
+        }
+
+        // Um registro por estado (dois providers UserTheme gravariam a mesma chave e o Blazor lanca), e so com valor
+        // CONHECIDO: o padrao "por falta" nao viaja ao cliente.
+        if (_persistencia is not null && !_estado.PersistenceRegistered)
+        {
+            _estado.PersistenceRegistered = true;
+            var estado = _estado;
+            _inscricao = _persistencia.RegisterOnPersisting(() =>
+            {
+                if (estado.IsKnown)
+                {
+                    _persistencia.PersistAsJson(ChaveDoEstado, estado.Current.Serialize());
+                }
+
+                return Task.CompletedTask;
+            });
+        }
         _estado.Changed += AoMudar;
         _ultimoAvisado = Theme;
         await AvisarModoAsync(_estado.Current.Mode);
@@ -191,6 +236,13 @@ public partial class RvmThemeProvider : ComponentBase, IDisposable
 
         if (_tema is not null)
         {
+            // Blazor Server sem store que leia o cookie: o store do navegador nao alcanca o localStorage na
+            // pre-renderizacao. Le agora pelo JS; pisca uma vez no padrao, mas a escolha volta (e o AoMudar redesenha).
+            if (firstRender && _estado is not null && Settings is null)
+            {
+                await _estado.LoadFromBrowserAsync();
+            }
+
             // Tema completo: so o provider de fora pinta o <html> (area fora do provider, barra de rolagem). Sem
             // persistir na chave do Theme: a escolha inteira ja foi gravada pelo RvmThemeState.
             if (Pai is null && _ultimoSincronizado != ThemeAttribute)

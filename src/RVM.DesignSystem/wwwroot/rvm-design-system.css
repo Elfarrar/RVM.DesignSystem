@@ -396,6 +396,10 @@
    ⚠️ Os seletores de paleta sao COMPOSTOS com o data-theme no mesmo elemento (o provider escreve os dois).
    Seletor de descendente ([data-theme='dark'] [data-rvm-accent]) nao serve: um provider claro dentro de um
    escuro pegaria a tinta do escuro.
+   ⚠️ ESPECIFICIDADE (0,1,0) em todos os blocos de paleta e de esquema: o atributo extra vai num :where(). O
+   provider sempre escreve data-rvm-accent="blue", e um (0,2,0) aqui passaria por cima de quem rebrandeia o
+   escuro com [data-theme='dark'] { ... } no proprio CSS (carregado depois do nosso) — quebra para consumidor
+   da 1.x. Com (0,1,0), quem vence e a ORDEM: o escuro da paleta vem logo depois do claro dela.
    ⚠️ Cada bloco escuro tem um GEMEO para o "system" no @media do fim. O RvmTemaDoContratoTests compara os dois:
    mexeu num, mexa no outro.
    ============================================================================= */
@@ -492,7 +496,7 @@
     --rvm-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
-[data-theme='dark'][data-rvm-accent="blue"] {
+[data-theme='dark']:where([data-rvm-accent="blue"]) {
     --rvm-color-primary-text: #A0B3F4;
     --rvm-color-primary-outlined-hover: #797992;
     --rvm-color-primary-outlined-resting: #646D9F;
@@ -520,7 +524,7 @@
     --rvm-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
-[data-theme='dark'][data-rvm-accent="purple"] {
+[data-theme='dark']:where([data-rvm-accent="purple"]) {
     --rvm-color-primary-text: #D7A8E4;
     --rvm-color-primary-outlined-hover: #3E2F57;
     --rvm-color-primary-outlined-resting: #55326B;
@@ -548,7 +552,7 @@
     --rvm-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
-[data-theme='dark'][data-rvm-accent="black"] {
+[data-theme='dark']:where([data-rvm-accent="black"]) {
     --rvm-color-primary-main: #E7E3FC;
     --rvm-color-primary-alt-light: #F5F3FE;
     --rvm-color-primary-alt-dark: #CFCBE5;
@@ -581,7 +585,7 @@
     --rvm-font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
-[data-theme='dark'][data-rvm-accent="profissional"] {
+[data-theme='dark']:where([data-rvm-accent="profissional"]) {
     --rvm-color-primary-text: #BBA8F2;
     --rvm-color-primary-outlined-hover: #39315A;
     --rvm-color-primary-outlined-resting: #453872;
@@ -608,7 +612,7 @@
     --rvm-font-family: 'Lora', Georgia, 'Times New Roman', serif;
 }
 
-[data-theme='dark'][data-rvm-accent="acolhedor"] {
+[data-theme='dark']:where([data-rvm-accent="acolhedor"]) {
     --rvm-color-primary-text: #F2B590;
     --rvm-color-primary-outlined-hover: #443347;
     --rvm-color-primary-outlined-resting: #633D40;
@@ -635,7 +639,7 @@
     --rvm-font-family: 'Geist Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 }
 
-[data-theme='dark'][data-rvm-accent="utilitario"] {
+[data-theme='dark']:where([data-rvm-accent="utilitario"]) {
     --rvm-color-primary-text: #9FD69B;
     --rvm-color-primary-outlined-hover: #323949;
     --rvm-color-primary-outlined-resting: #354D45;
@@ -662,7 +666,7 @@
     --rvm-color-text-secondary: rgba(58, 53, 65, 0.68);
 }
 
-[data-theme='dark'][data-rvm-contrast="original"] {
+[data-theme='dark']:where([data-rvm-contrast="original"]) {
     --rvm-color-secondary-text: var(--rvm-color-secondary-main);
     --rvm-color-info-text: var(--rvm-color-info-main);
     --rvm-color-success-text: var(--rvm-color-success-main);
@@ -678,7 +682,8 @@
 }
 
 /* --- Tamanho da fonte (RvmFontScale): muda o tamanho base do documento, entao todo rem acompanha, como o ajuste
-       de fonte do navegador. Fica no <html> porque rem e relativo a ele, e por :has() para nao precisar de JS. --- */
+       de fonte do navegador. Fica no <html> porque rem e relativo a ele, e por :has() para nao precisar de JS.
+       So o provider da RAIZ escreve o atributo: uma previa aninhada nao redimensiona a pagina. --- */
 [data-rvm-font-scale="small"] { --rvm-font-scale: 0.875; }
 [data-rvm-font-scale="large"] { --rvm-font-scale: 1.125; }
 [data-rvm-font-scale="xlarge"] { --rvm-font-scale: 1.25; }
@@ -774,7 +779,7 @@
         --rvm-shadow-5: 0 14px 32px rgba(19, 17, 32, 0.47);
     }
 
-    [data-theme='system'][data-rvm-accent="blue"] {
+    [data-theme='system']:where([data-rvm-accent="blue"]) {
         --rvm-color-primary-text: #A0B3F4;
         --rvm-color-primary-outlined-hover: #797992;
         --rvm-color-primary-outlined-resting: #646D9F;
@@ -783,7 +788,7 @@
         --rvm-focus-ring-color: var(--rvm-color-primary-text);
     }
 
-    [data-theme='system'][data-rvm-accent="purple"] {
+    [data-theme='system']:where([data-rvm-accent="purple"]) {
         --rvm-color-primary-text: #D7A8E4;
         --rvm-color-primary-outlined-hover: #3E2F57;
         --rvm-color-primary-outlined-resting: #55326B;
@@ -792,7 +797,7 @@
         --rvm-focus-ring-color: var(--rvm-color-primary-text);
     }
 
-    [data-theme='system'][data-rvm-accent="black"] {
+    [data-theme='system']:where([data-rvm-accent="black"]) {
         --rvm-color-primary-main: #E7E3FC;
         --rvm-color-primary-alt-light: #F5F3FE;
         --rvm-color-primary-alt-dark: #CFCBE5;
@@ -806,7 +811,7 @@
         --rvm-focus-ring-color: var(--rvm-color-primary-text);
     }
 
-    [data-theme='system'][data-rvm-accent="profissional"] {
+    [data-theme='system']:where([data-rvm-accent="profissional"]) {
         --rvm-color-primary-text: #BBA8F2;
         --rvm-color-primary-outlined-hover: #39315A;
         --rvm-color-primary-outlined-resting: #453872;
@@ -815,7 +820,7 @@
         --rvm-focus-ring-color: var(--rvm-color-primary-text);
     }
 
-    [data-theme='system'][data-rvm-accent="acolhedor"] {
+    [data-theme='system']:where([data-rvm-accent="acolhedor"]) {
         --rvm-color-primary-text: #F2B590;
         --rvm-color-primary-outlined-hover: #443347;
         --rvm-color-primary-outlined-resting: #633D40;
@@ -824,7 +829,7 @@
         --rvm-focus-ring-color: var(--rvm-color-primary-text);
     }
 
-    [data-theme='system'][data-rvm-accent="utilitario"] {
+    [data-theme='system']:where([data-rvm-accent="utilitario"]) {
         --rvm-color-primary-text: #9FD69B;
         --rvm-color-primary-outlined-hover: #323949;
         --rvm-color-primary-outlined-resting: #354D45;
@@ -833,7 +838,7 @@
         --rvm-focus-ring-color: var(--rvm-color-primary-text);
     }
 
-    [data-theme='system'][data-rvm-contrast="original"] {
+    [data-theme='system']:where([data-rvm-contrast="original"]) {
         --rvm-color-secondary-text: var(--rvm-color-secondary-main);
         --rvm-color-info-text: var(--rvm-color-info-main);
         --rvm-color-success-text: var(--rvm-color-success-main);
