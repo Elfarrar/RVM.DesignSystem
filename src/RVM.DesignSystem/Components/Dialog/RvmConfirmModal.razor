@@ -1,0 +1,40 @@
+@namespace RVM.DesignSystem.Components.Dialog
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Components.Icon
+
+@* Confirmacao do contrato com o RVM.UI (DSGN-017): icone num circulo da cor do papel, pergunta,
+   explicacao e dois botoes, montada sobre o RvmModal. O kit so desenha o dialogo simples
+   (referencia-neatlab/Dailog.png): a caixa, o titulo e o recuo vem dele; o circulo e o fundo suave
+   do papel, o mesmo do RvmAvatar suave. alertdialog, nomeado pela pergunta e descrito pela explicacao.
+   O foco abre no Cancelar: Enter logo depois de abrir nao executa a acao destrutiva. *@
+<CascadingValue Value="_papel" IsFixed="true">
+    <RvmModal @attributes="AdditionalAttributes"
+              Open="_aberto"
+              OpenChanged="AoMudarAberturaAsync"
+              CloseOnBackdrop="@(CloseOnBackdrop && !_confirmando)"
+              CloseOnEscape="@(!_confirmando)"
+              ReturnFocusTo="ReturnFocusTo"
+              Class="@ClassesDaRaiz">
+        <div class="@ClassesDoCorpo">
+            <span class="rvm-circulo @PapelCss.Classe(Color)" aria-hidden="true">
+                <RvmIcon Name="Icon" SizePx="28" />
+            </span>
+            <div class="rvm-mensagem">
+                <h2 id="@IdTitulo" class="rvm-pergunta">@Title</h2>
+                @if (ChildContent is not null)
+                {
+                    <div id="@IdDescricao" class="rvm-descricao">@ChildContent</div>
+                }
+                else if (!string.IsNullOrWhiteSpace(Description))
+                {
+                    <p id="@IdDescricao" class="rvm-descricao">@Description</p>
+                }
+            </div>
+        </div>
+        <div class="rvm-acoes">
+            <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Secondary" Disabled="_confirmando"
+                       OnClick="CancelarAsync" data-rvm-foco-inicial="true">@CancelText</RvmButton>
+            <RvmButton Color="Color" Loading="_confirmando" OnClick="ConfirmarAsync">@ConfirmText</RvmButton>
+        </div>
+    </RvmModal>
+</CascadingValue>

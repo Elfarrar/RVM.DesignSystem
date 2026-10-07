@@ -1,0 +1,71 @@
+@page "/componentes/confirm-modal"
+@using RVM.DesignSystem.Components.Dialog
+
+<PageTitle>RvmConfirmModal — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmConfirmModal</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Pergunta antes de uma acao: icone num circulo, titulo, explicacao e os botoes Cancelar e Confirmar.
+    E um <code>alertdialog</code> — o leitor de tela le a pergunta e a explicacao juntas — e o foco abre no
+    Cancelar, a resposta segura. Color pinta o icone e o botao de confirmar: Error para acao destrutiva.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Desistir pelo botao,
+    pelo Esc ou pelo fundo dispara o mesmo OnCancel. Enquanto o OnConfirm roda, os botoes travam.
+</p>
+
+<BlocoExemplo Titulo="Centralizado e a esquerda"
+              Descricao="A exclusao usa Error; o fechamento do mes usa a forma alinhada a esquerda e o papel Success."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmButton Color="RvmColor.Error" StartIcon="RvmIconName.Trash" OnClick="@(() => _excluir = true)">Excluir talhao</RvmButton>
+        <RvmButton Color="RvmColor.Success" OnClick="@(() => _fechar = true)">Fechar o caixa de outubro</RvmButton>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">@_resultado</RvmTypography>
+
+    <RvmConfirmModal @bind-Open="_excluir"
+                     Title="Excluir o Talhao 12?"
+                     Description="O historico de plantio e de aplicacoes deste talhao tambem sera apagado. Nao da para desfazer."
+                     Color="RvmColor.Error"
+                     Icon="RvmIconName.Trash"
+                     ConfirmText="Excluir"
+                     OnConfirm="@(() => _resultado = "Talhao 12 excluido.")"
+                     OnCancel="@(() => _resultado = "Exclusao cancelada.")" />
+
+    <RvmConfirmModal @bind-Open="_fechar"
+                     Title="Fechar o caixa de outubro?"
+                     Align="RvmDialogAlign.Left"
+                     Color="RvmColor.Success"
+                     Icon="RvmIconName.Check"
+                     ConfirmText="Fechar o mes"
+                     OnConfirm="@(() => _resultado = "Caixa de outubro fechado.")"
+                     OnCancel="@(() => _resultado = "O caixa continua aberto.")">
+        Saldo final de <strong>R$ 84.210,55</strong>. Depois de fechado, lancamentos de outubro so entram por estorno.
+    </RvmConfirmModal>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmConfirmModal" />
+
+@code {
+    private bool _excluir;
+    private bool _fechar;
+    private string _resultado = string.Empty;
+
+    private const string Codigo = """
+        <RvmConfirmModal @bind-Open="_excluir"
+                         Title="Excluir o Talhao 12?"
+                         Description="O historico tambem sera apagado. Nao da para desfazer."
+                         Color="RvmColor.Error"
+                         Icon="RvmIconName.Trash"
+                         ConfirmText="Excluir"
+                         OnConfirm="Excluir" />
+
+        <RvmConfirmModal @bind-Open="_fechar" Title="Fechar o caixa de outubro?"
+                         Align="RvmDialogAlign.Left" Color="RvmColor.Success" Icon="RvmIconName.Check"
+                         ConfirmText="Fechar o mes" OnConfirm="FecharMes">
+            Saldo final de <strong>R$ 84.210,55</strong>.
+        </RvmConfirmModal>
+        """;
+}
