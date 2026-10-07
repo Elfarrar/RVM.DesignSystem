@@ -1,0 +1,61 @@
+/* CSS isolado do RvmHistory. So custom properties — hex literal aqui quebra o tema escuro.
+   O cartao "Activity Timeline" do kit (Notification Dropdown.png): superficie "paper", canto e sombra dos
+   cartoes, titulo no tamanho do H6, corpo com a lista que rola por dentro. */
+
+.rvm-historico {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-historico-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-5) var(--rvm-space-5) var(--rvm-space-4);
+}
+
+.rvm-historico-textos {
+    min-width: 0;
+}
+
+.rvm-historico-linha-titulo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-historico-titulo {
+    margin: 0;
+    font-size: var(--rvm-text-h6-size);
+    line-height: var(--rvm-text-h6-line);
+    font-weight: var(--rvm-text-h6-weight);
+}
+
+.rvm-historico-texto {
+    margin: var(--rvm-space-1) 0 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+/* A lista rola por dentro, para o cartao caber ao lado de outros no painel. */
+.rvm-historico-corpo {
+    max-height: 32rem;
+    overflow-y: auto;
+    padding: var(--rvm-space-1) var(--rvm-space-5) var(--rvm-space-5);
+    border-radius: 0 0 var(--rvm-radius-md) var(--rvm-radius-md);
+}
+
+.rvm-historico-corpo:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(-1 * var(--rvm-focus-ring-width));
+}

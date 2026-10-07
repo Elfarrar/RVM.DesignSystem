@@ -1,0 +1,79 @@
+/* CSS isolado do RvmReview. So custom properties — hex literal aqui quebra o tema escuro.
+   O mesmo ritmo do RvmComment: avatar de 40 px, texto secundario, divisor entre avaliacoes seguidas.
+   Miniaturas de 64 px no canto pequeno do kit. */
+
+.rvm-avaliacao {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--rvm-space-3);
+    padding-block: var(--rvm-space-4);
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-avaliacao:not(:last-child) {
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.rvm-avaliacao-avatar {
+    display: inline-flex;
+}
+
+.rvm-avaliacao-conteudo {
+    min-width: 0;
+}
+
+.rvm-avaliacao-cabecalho {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-1) var(--rvm-space-3);
+}
+
+.rvm-avaliacao-carimbo {
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+}
+
+.rvm-avaliacao-autor {
+    margin: var(--rvm-space-1) 0 0;
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-avaliacao-nome {
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-avaliacao-detalhe {
+    margin-inline-start: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-avaliacao-texto {
+    margin: var(--rvm-space-1) 0 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    overflow-wrap: anywhere;
+}
+
+.rvm-avaliacao-fotos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2);
+    margin: var(--rvm-space-3) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rvm-avaliacao-foto {
+    display: block;
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-action-hover);
+}

@@ -1,0 +1,69 @@
+/* CSS isolado do RvmComment. So custom properties — hex literal aqui quebra o tema escuro.
+   Na linha das listas de pessoas do kit (Notification Dropdown-3.png): avatar de 40 px, nome em peso medio,
+   quando em texto secundario pequeno. As respostas recuam sob o texto, com um fio a esquerda. */
+
+.rvm-comentario {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--rvm-space-3);
+    padding-block: var(--rvm-space-4);
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+/* Varios comentarios seguidos: um divisor entre eles, nunca depois do ultimo. */
+.rvm-comentario:not(:last-child) {
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.rvm-comentario-avatar {
+    display: inline-flex;
+}
+
+.rvm-comentario-conteudo {
+    min-width: 0;
+}
+
+.rvm-comentario-cabecalho {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--rvm-space-1) var(--rvm-space-2);
+    margin: 0;
+}
+
+.rvm-comentario-autor {
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-comentario-carimbo {
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+}
+
+.rvm-comentario-texto {
+    margin: var(--rvm-space-1) 0 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    overflow-wrap: anywhere;
+}
+
+/* O botao de texto encosta na margem do texto: o recuo dele e so area de clique. */
+.rvm-comentario-conteudo ::deep .rvm-comentario-responder {
+    margin-top: var(--rvm-space-1);
+    margin-inline-start: calc(-1 * var(--rvm-space-2));
+}
+
+.rvm-comentario-respostas {
+    margin-top: var(--rvm-space-2);
+    padding-inline-start: var(--rvm-space-4);
+    border-inline-start: 2px solid var(--rvm-color-divider);
+}
+
+.rvm-comentario-respostas > .rvm-comentario:last-child {
+    padding-bottom: 0;
+}

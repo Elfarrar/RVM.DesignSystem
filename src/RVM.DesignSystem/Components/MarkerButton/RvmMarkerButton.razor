@@ -1,0 +1,57 @@
+@namespace RVM.DesignSystem.Components.MarkerButton
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Botao de alternancia: favoritar ou guardar nos marcadores. E um botao de estado — aria-pressed, nao
+   aria-current. Marcado, o icone fica cheio e na cor de aviso (a estrela amarela do kit); o desenho cheio e o
+   aria-pressed dizem o estado, a cor so reforca. Mesma caixa do RvmBackButton (38 px, contorno secundario). *@
+<button @attributes="AdditionalAttributes" type="button" class="@ClassesDaRaiz"
+        aria-pressed="@(Marked ? "true" : "false")" aria-label="@RotuloAtual" title="@RotuloAtual"
+        disabled="@Disabled" @onclick="AlternarAsync">
+    <RvmIcon Name="@(Type == RvmMarkerType.Bookmark ? RvmIconName.Bookmark : RvmIconName.Star)"
+             Style="@(Marked ? RvmIconStyle.Bold : RvmIconStyle.Linear)" />
+</button>
+
+@code {
+    /// <summary>Favorito (estrela, o padrao) ou marcador de pagina.</summary>
+    [Parameter] public RvmMarkerType Type { get; set; }
+
+    /// <summary>Marcado. Aceita <c>@bind-Marked</c>.</summary>
+    [Parameter] public bool Marked { get; set; }
+
+    /// <summary>Disparado ao marcar ou desmarcar.</summary>
+    [Parameter] public EventCallback<bool> MarkedChanged { get; set; }
+
+    /// <summary>Nome acessivel e dica quando desmarcado. Sem ele, "Marcar como favorito" ou "Salvar nos marcadores".</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Nome acessivel e dica quando marcado. Sem ele, "Tirar dos favoritos" ou "Tirar dos marcadores".</summary>
+    [Parameter] public string? MarkedLabel { get; set; }
+
+    /// <summary>Canto: o do kit ou pilula (o padrao).</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Pill;
+
+    /// <summary>Indisponivel.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string RotuloAtual => Marked
+        ? MarkedLabel ?? (Type == RvmMarkerType.Bookmark ? "Tirar dos marcadores" : "Tirar dos favoritos")
+        : Label ?? (Type == RvmMarkerType.Bookmark ? "Salvar nos marcadores" : "Marcar como favorito");
+
+    private string ClassesDaRaiz => ClassesCss.Juntar(
+        "rvm-marcador" + (Shape == RvmFieldShape.Pill ? " rvm-marcador-pilula" : "") + (Marked ? " rvm-marcador-marcado" : ""),
+        Class, AdditionalAttributes);
+
+    private async Task AlternarAsync()
+    {
+        Marked = !Marked;
+        await MarkedChanged.InvokeAsync(Marked);
+    }
+}

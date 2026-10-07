@@ -1,0 +1,94 @@
+/* CSS isolado do RvmActivity. So custom properties — hex literal aqui quebra o tema escuro.
+   Do "Activity Timeline" dos dashboards do kit (Notification Dropdown.png): ponto com halo suave, linha fina
+   ate o proximo item, titulo em peso medio, carimbo pequeno e secundario a direita, descricao secundaria.
+   A coluna do marcador tem 40 px fixos para a linha ficar no mesmo eixo com ponto, icone ou avatar. */
+
+.rvm-atividade {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: var(--rvm-space-3);
+    margin: 0;
+    padding: 0;
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-atividade-trilha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rvm-atividade-ponto {
+    box-sizing: border-box;
+    flex: none;
+    width: 12px;
+    height: 12px;
+    margin-top: 6px;
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-primary-text);
+    box-shadow: 0 0 0 4px var(--rvm-color-primary-soft);
+}
+
+.rvm-atividade-linha {
+    flex: 1;
+    width: 2px;
+    min-height: var(--rvm-space-4);
+    margin-top: var(--rvm-space-2);
+    background-color: var(--rvm-color-divider);
+}
+
+.rvm-atividade:last-child .rvm-atividade-linha {
+    display: none;
+}
+
+.rvm-atividade-conteudo {
+    min-width: 0;
+    padding-bottom: var(--rvm-space-6);
+}
+
+.rvm-atividade:last-child .rvm-atividade-conteudo {
+    padding-bottom: 0;
+}
+
+.rvm-atividade-cabecalho {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-atividade-titulo {
+    margin: 0;
+    min-width: 0;
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    font-weight: var(--rvm-font-weight-medium);
+    overflow-wrap: anywhere;
+}
+
+.rvm-atividade-carimbo {
+    margin: var(--rvm-space-1) 0 0;
+    flex: none;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+    white-space: nowrap;
+}
+
+.rvm-atividade-cabecalho .rvm-atividade-carimbo {
+    margin-top: 0;
+}
+
+.rvm-atividade-descricao {
+    margin: var(--rvm-space-1) 0 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-atividade-corpo {
+    margin-top: var(--rvm-space-2);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}

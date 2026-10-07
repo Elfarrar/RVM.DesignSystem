@@ -1,0 +1,83 @@
+@namespace RVM.DesignSystem.Components.Activity
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Icons
+
+@* Um aviso da lista do painel de notificacoes (Notification Dropdown-3 do kit): linhas separadas por divisor.
+   E <li>: vai dentro de um <ul> de quem monta o painel. Nao lido ganha o ponto primario e o fundo cinza — e o
+   "Nao lida" escrito para o leitor de tela, porque cor e ponto nao chegam a quem nao ve. Marcar como lida tira o
+   proprio botao da tela: o foco passa para o aviso, em vez de cair no <body>. *@
+<li @attributes="AdditionalAttributes" class="@ClassesDaRaiz" tabindex="-1" @ref="_raiz">
+    @if (!Read)
+    {
+        <span class="rvm-aviso-ponto" aria-hidden="true"></span>
+    }
+    <div class="rvm-aviso-corpo">
+        @if (Tag is not null)
+        {
+            <div class="rvm-aviso-etiqueta">@Tag</div>
+        }
+        <p class="rvm-aviso-titulo">
+            @if (!Read)
+            {
+                <span class="rvm-so-leitor">Nao lida: </span>
+            }
+            @Title
+        </p>
+        @if (!string.IsNullOrWhiteSpace(Text))
+        {
+            <p class="rvm-aviso-texto">@Text</p>
+        }
+        @if (OnRead.HasDelegate && !Read)
+        {
+            <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small" StartIcon="RvmIconName.CircleCheck"
+                       Class="rvm-aviso-acao" OnClick="MarcarComoLidaAsync">@ReadText</RvmButton>
+        }
+    </div>
+</li>
+
+@code {
+    /// <summary>Titulo do aviso.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+
+    /// <summary>Texto do aviso.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Etiqueta acima do titulo (um <c>RvmLabel</c> com o tipo do aviso, por exemplo).</summary>
+    [Parameter] public RenderFragment? Tag { get; set; }
+
+    /// <summary>Ja lido: sem o destaque e sem a acao.</summary>
+    [Parameter] public bool Read { get; set; }
+
+    /// <summary>Marcar como lido. Sem ele, a acao nao aparece.</summary>
+    [Parameter] public EventCallback OnRead { get; set; }
+
+    /// <summary>Texto da acao. Padrao: "Marcar como lida".</summary>
+    [Parameter] public string ReadText { get; set; } = "Marcar como lida";
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private ElementReference _raiz;
+    private bool _focarDepois;
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar("rvm-aviso" + (Read ? " rvm-aviso-lido" : " rvm-aviso-novo"), Class, AdditionalAttributes);
+
+    private async Task MarcarComoLidaAsync()
+    {
+        _focarDepois = true;
+        await OnRead.InvokeAsync();
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_focarDepois) return;
+        _focarDepois = false;
+        await _raiz.FocusAsync();
+    }
+}
