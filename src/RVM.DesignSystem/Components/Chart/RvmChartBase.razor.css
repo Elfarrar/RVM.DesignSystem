@@ -14,6 +14,13 @@
     color: var(--rvm-color-text-primary);
 }
 
+/* Carregando, erro e vazio no lugar do desenho (contrato com o RVM.UI, DSGN-017), centrados na altura do grafico. */
+.rvm-grafico-estado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .rvm-grafico-area {
     position: relative;
     width: 100%;
@@ -364,3 +371,7 @@
         to { opacity: 1; }
     }
 }
+
+/* Size do contrato com o RVM.UI (DSGN-017): as larguras do kit do RVM.UI como teto; Large ocupa tudo. */
+.rvm-grafico-pequeno { max-width: 504px; }
+.rvm-grafico-medio { max-width: 696px; }

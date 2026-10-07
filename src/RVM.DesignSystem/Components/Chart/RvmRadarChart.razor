@@ -18,6 +18,9 @@
     /// </summary>
     [Parameter] public double? Max { get; set; }
 
+    /// <summary>Mostra o nome de cada eixo em volta da teia.</summary>
+    [Parameter] public bool ShowAxis { get; set; } = true;
+
     private int Eixos => Dados.Count;
 
     private double Maximo
@@ -100,7 +103,7 @@
             }
             @for (var e = 0; e < Eixos; e++)
             {
-                @RotuloDoEixo(e)
+                @if (ShowAxis) { @RotuloDoEixo(e) }
             }
         }
     </g>;

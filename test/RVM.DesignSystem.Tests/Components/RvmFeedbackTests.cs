@@ -209,7 +209,7 @@ public class RvmEmptyStateTests : BunitContext
         Assert.Equal("true", cortado.Find(".rvm-icone").GetAttribute("aria-hidden"));
         Assert.Equal("Limpar filtros", cortado.Find(".rvm-acoes button").TextContent);
         Assert.Equal("dica", cortado.Find(".rvm-detalhe small").TextContent);
-        Assert.Equal("rvm-vazio minha", cortado.Find("section").GetAttribute("class"));
+        Assert.Equal("rvm-vazio rvm-primary minha", cortado.Find("section").GetAttribute("class"));
     }
 
     [Fact]

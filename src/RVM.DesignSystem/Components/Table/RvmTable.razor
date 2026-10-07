@@ -20,12 +20,23 @@
     private RenderFragment Corpo => @<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
         @{
             var filtradas = Filtradas;
-            var visiveis = Visiveis(filtradas);
+            var estado = EstadosDosDados.Qual(Error, Loading, Items?.Any() != true);
+            IReadOnlyList<TItem> visiveis = estado == EstadoDosDados.Conteudo ? Visiveis(filtradas) : [];
             var marcadas = Selectable ? visiveis.Count(EstaSelecionado) : 0;
             var totalDeColunas = Colunas.Count + (Selectable ? 1 : 0);
         }
         @* A area rola na horizontal quando a tabela nao cabe. Focavel e com nome: sem isso quem usa
            teclado nao consegue rolar (regra scrollable-region-focusable do axe). *@
+        @if (Header is not null || Toolbar is not null)
+        {
+            <div class="rvm-cabecalho-tabela">
+                <div class="rvm-titulo-tabela">@Header</div>
+                @if (Toolbar is { } acoes)
+                {
+                    <div class="rvm-acoes-tabela">@acoes</div>
+                }
+            </div>
+        }
         <div class="rvm-rolagem" role="region" aria-label="@Caption" tabindex="0">
             <table class="rvm-tabela-nativa">
                 <caption class="rvm-so-leitor">@Caption</caption>
@@ -84,7 +95,20 @@
                     }
                 </thead>
                 <tbody>
-                    @if (visiveis.Count == 0)
+                    @if (estado is EstadoDosDados.Carregando or EstadoDosDados.Erro || estado is EstadoDosDados.Vazio && Empty is not null)
+                    {
+                        <tr class="rvm-linha-estado">
+                            <td colspan="@totalDeColunas">
+                                @(estado switch
+                                {
+                                    EstadoDosDados.Carregando => EstadosDosDados.Carregando(LoadingText, LoadingMascot),
+                                    EstadoDosDados.Erro => EstadosDosDados.Erro(ErrorContent, ErrorTitle, ErrorText, ErrorMascot),
+                                    _ => Empty
+                                })
+                            </td>
+                        </tr>
+                    }
+                    else if (visiveis.Count == 0)
                     {
                         <tr class="rvm-linha-vazia">
                             <td colspan="@totalDeColunas">@TextoSemLinhas</td>
@@ -121,7 +145,7 @@
             </table>
         </div>
 
-        @if (TamanhoDaPagina is { } tamanho)
+        @if (estado is EstadoDosDados.Conteudo && TamanhoDaPagina is { } tamanho)
         {
             var total = filtradas.Count;
             var pagina = PaginaPara(total);

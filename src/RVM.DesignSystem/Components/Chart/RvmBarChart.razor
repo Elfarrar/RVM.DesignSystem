@@ -14,6 +14,24 @@
     /// <summary>Espessura maxima de cada barra, em px. Padrao: 24.</summary>
     [Parameter] public int MaxBarThickness { get; set; } = 24;
 
+    /// <summary>Mostra os valores do eixo. A grade continua (ver <c>ShowGrid</c>).</summary>
+    [Parameter] public bool ShowAxis { get; set; } = true;
+
+    /// <summary>
+    /// Formato so dos valores do eixo, que tem pouco espaco ("30k"); o <c>ValueFormat</c> continua valendo na dica e na
+    /// tabela de dados. Sem ele, o eixo usa o <c>ValueFormat</c>.
+    /// </summary>
+    [Parameter] public Func<double, string>? FormatAxisValue { get; set; }
+
+    /// <summary>Largura maxima do grafico: Small (504 px), Medium (696 px) ou Large (toda a largura, o padrao).</summary>
+    [Parameter] public RvmChartSize Size { get; set; } = RvmChartSize.Large;
+
+    private protected override Func<double, string>? FormatoDoEixo => FormatAxisValue;
+
+    private protected override bool MostraEixo => ShowAxis;
+
+    private protected override RvmChartSize Tamanho => Size;
+
     private sealed record Barra(int Categoria, int Serie, double X, double Y, double Comprimento, double Espessura);
 
     private const int CaracteresPorPx = 7;
@@ -135,7 +153,7 @@
             {
                 <line class="rvm-grafico-grade" x1="@N(x)" y1="@N(MargemTopo)" x2="@N(x)" y2="@N(MargemTopo + AlturaDoPlot)" />
             }
-            @Texto(x, Height - 10, FormatarMarca(marca, escala.Passo))
+            @if (MostraEixo) { @Texto(x, Height - 10, FormatarMarca(marca, escala.Passo)) }
         }
         @if (TemEixoSecundario)
         {
@@ -143,7 +161,7 @@
             var secundaria = EscalaSecundaria;
             foreach (var marca in secundaria.Marcas)
             {
-                @Texto(X(secundaria, marca), MargemTopo - 8, FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary))
+                @if (MostraEixo) { @Texto(X(secundaria, marca), MargemTopo - 8, FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary)) }
             }
         }
         @if (Ativo is { } ativo && ativo < Dados.Count)

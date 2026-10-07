@@ -116,17 +116,32 @@ Linha com o volume preenchido em degrade.
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `FormatAxisValue` | `Func<double, string>?` | — | Formato so dos valores do eixo, que tem pouco espaco ("30k"); o `ValueFormat` continua valendo na dica e na tabela de dados. Sem ele, o eixo usa o `ValueFormat`. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
 | `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowAxis` | `bool` | `true` | Mostra os valores do eixo. A grade continua (ver `ShowGrid`). |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
 | `ShowPoints` | `bool` | `false` | Marca todos os pontos. Sem isso, so os da categoria ativa aparecem. Padrao: nao. |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
+| `Size` | `RvmChartSize` | `RvmChartSize.Large` | Largura maxima do grafico: Small (504 px), Medium (696 px) ou Large (toda a largura, o padrao). |
 | `Smooth` | `bool?` | — | Curva suave em vez de segmentos retos. Padrao: reta na linha, suave na area. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
@@ -197,17 +212,32 @@ Barras horizontais para nomes longos.
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `FormatAxisValue` | `Func<double, string>?` | — | Formato so dos valores do eixo, que tem pouco espaco ("30k"); o `ValueFormat` continua valendo na dica e na tabela de dados. Sem ele, o eixo usa o `ValueFormat`. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `MaxBarThickness` | `int` | `24` | Espessura maxima de cada barra, em px. Padrao: 24. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
 | `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowAxis` | `bool` | `true` | Mostra os valores do eixo. A grade continua (ver `ShowGrid`). |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
+| `Size` | `RvmChartSize` | `RvmChartSize.Large` | Largura maxima do grafico: Small (504 px), Medium (696 px) ou Large (toda a largura, o padrao). |
 | `Stacked` | `bool` | `false` | Barras empilhadas em vez de lado a lado. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
@@ -355,10 +385,21 @@ Colunas lado a lado ou empilhadas.
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `MaxBarWidth` | `int` | `28` | Largura maxima de cada coluna, em px. Padrao: 28. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
@@ -366,6 +407,7 @@ Colunas lado a lado ou empilhadas.
 | `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
 | `Stacked` | `bool` | `false` | Colunas empilhadas em vez de lado a lado. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
@@ -383,8 +425,18 @@ A `RvmTable` com paginacao, filtro por coluna e o cabecalho escuro com separador
 | `ChildContent` | `RenderFragment?` | — | As colunas: `RvmTableColumn`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Dense` | `bool` | `false` | Linhas de 36 px em vez de 52 — medidos no kit. |
+| `Empty` | `RenderFragment?` | — | O vazio quando nao ha linha nenhuma, ensinando o proximo passo. Sem ele, sai a linha com `RvmTable.NoRecordsText`. Ligue `Status` no seu `RvmEmptyState`. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmTable.Loading`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmTable.ErrorTitle` e `RvmTable.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmTable.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar"` | Titulo do erro padrao. |
+| `Header` | `RenderFragment?` | — | Titulo e descricao acima da tabela. |
 | `ItemKey` | `Func<object, object>?` | — | A identidade da linha para a selecao (`t => t.Id`). Sem ela vale o `Equals` do item: numa classe comum e a referencia, e recarregar `RvmTable.Items` com instancias novas das mesmas linhas apaga a marcacao sem aviso. Records ja comparam pelo valor. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | As linhas. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: as linhas dao lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando..."` | Texto do carregamento. |
 | `NoRecordsText` | `string` | `"Nenhum registro para mostrar."` | Texto quando nao ha linhas. |
 | `NoResultsText` | `string` | `"Nenhum registro encontrado para esse filtro."` | Texto quando o filtro nao casa com nenhuma linha. |
 | `Page` | `int` | `1` | A pagina mostrada, comecando em 1. Aceita `@bind-Page`. |
@@ -396,6 +448,7 @@ A `RvmTable` com paginacao, filtro por coluna e o cabecalho escuro com separador
 | `Selectable` | `bool` | `false` | Uma caixa de marcar por linha e outra no cabecalho para todas. |
 | `SelectedItems` | `IReadOnlyCollection<object>?` | — | As linhas marcadas. Aceita `@bind-SelectedItems`. |
 | `SelectedItemsChanged` | `EventCallback<IReadOnlyCollection<object>>` | — | Disparado quando a marcacao muda. |
+| `Toolbar` | `RenderFragment?` | — | Acoes no alto, a direita do `RvmTable.Header` (botao, exportar). |
 
 ### RvmDatePicker
 
@@ -515,10 +568,13 @@ Tela ou bloco sem conteudo que diz o que aconteceu e o proximo passo. Serve para
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `ChildContent` | `RenderFragment?` | — | Conteudo extra entre a descricao e as acoes. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do circulo do icone: Primary no vazio comum, Error no erro, Secondary no discreto. |
 | `Description` | `string?` | — | Por que, e o que fazer ("Cadastre o primeiro para acompanhar a safra."). |
 | `HeadingLevel` | `int` | `2` | Nivel do titulo (2 a 6). Padrao: 2. Escolha o que encaixa na hierarquia da pagina. |
 | `Icon` | `RvmIconName?` | — | Icone grande acima do titulo, quando nao ha ilustracao. |
-| `Illustration` | `RenderFragment?` | — | Ilustracao livre (imagem, SVG). Vence o icone. E tratada como decorativa. |
+| `Illustration` | `RenderFragment?` | — | Ilustracao livre (imagem, SVG). Vence o mascote e o icone. E tratada como decorativa. |
+| `Mascot` | `RvmMascotName?` | — | Mascote no lugar do icone (decorativo: o titulo ja diz o que aconteceu). Vence o icone. |
+| `Status` | `bool` | `false` | Anuncia ao leitor de tela quando aparece (`role="status"`). Ligue quando o vazio surge depois de uma busca, de um filtro ou de um carregamento; deixe desligado no vazio que ja estava na tela. |
 | `Title` | `string` | obrigatorio | O que aconteceu, em uma frase ("Nenhum talhao cadastrado ainda"). |
 
 ### RvmHistogram
@@ -538,10 +594,21 @@ Distribuicao de valores em faixas.
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor das colunas. Padrao: primary. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<double>?` | obrigatorio | Os dados. |
 | `Label` | `Func<double, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
@@ -549,6 +616,7 @@ Distribuicao de valores em faixas.
 | `SeriesName` | `string` | `"Frequencia"` | Nome da contagem na dica e na tabela. Padrao: "Frequencia". |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
@@ -582,17 +650,32 @@ Evolucao no tempo, reta ou suave.
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
+| `FormatAxisValue` | `Func<double, string>?` | — | Formato so dos valores do eixo, que tem pouco espaco ("30k"); o `ValueFormat` continua valendo na dica e na tabela de dados. Sem ele, o eixo usa o `ValueFormat`. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
 | `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowAxis` | `bool` | `true` | Mostra os valores do eixo. A grade continua (ver `ShowGrid`). |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
 | `ShowPoints` | `bool` | `false` | Marca todos os pontos. Sem isso, so os da categoria ativa aparecem. Padrao: nao. |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
+| `Size` | `RvmChartSize` | `RvmChartSize.Large` | Largura maxima do grafico: Small (504 px), Medium (696 px) ou Large (toda a largura, o padrao). |
 | `Smooth` | `bool?` | — | Curva suave em vez de segmentos retos. Padrao: reta na linha, suave na area. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
@@ -610,6 +693,16 @@ Simples, com icone, com acao e aninhada.
 | `ChildContent` | `RenderFragment?` | — | Os `RvmListItem`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Dense` | `bool` | `false` | Itens de 40 px em vez de 48 px (o "Small" do kit). |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmList.EmptyText`. |
+| `EmptyText` | `string` | `"Nada para mostrar aqui ainda."` | Texto do vazio padrao. Prefira `RvmList.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmList.Loading` e `RvmList.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmList.ErrorTitle` e `RvmList.ErrorText`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar"` | Titulo do erro padrao. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para mostrar. Use `RvmList.Empty` para ensinar o proximo passo. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: a lista da lugar ao aviso de carregamento. |
+| `LoadingText` | `string` | `"Carregando..."` | Texto do carregamento. |
+| `MaxHeight` | `string?` | — | Altura maxima em CSS (`"320px"`). Com ela a lista rola por dentro. |
 
 ### RvmListItem
 
@@ -633,6 +726,23 @@ Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao n
 | `SecondaryText` | `string?` | — | A linha de baixo, menor e no tom secundario. |
 | `Selected` | `bool` | `false` | Item escolhido: `aria-current` no link, `aria-pressed` no botao. |
 | `StartContent` | `RenderFragment?` | — | Conteudo livre no inicio (um avatar). Vence o icone. Num item clicavel ele fica DENTRO do link ou botao: nao ponha controle interativo aqui — para caixa de marcar, use o item sem clique. |
+
+### RvmMascot
+
+`@using RVM.DesignSystem.Components.Mascot`
+
+O mascote do contrato com o RVM.UI (DSGN-017): o icone da funcao (erro, carregando, vazio) num circulo de fundo suave. Usado sozinho ou pelos estados de `RvmEmptyState`, listas, tabelas e graficos.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Alt` | `string?` | — | Troca o texto alternativo padrao. Use quando a tela der um contexto que o padrao nao tem — "nenhum pedido neste mes" diz mais do que "nada por aqui ainda". |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Decorative` | `bool` | `false` | Enfeite ao lado de um texto que ja diz tudo: some do leitor de tela. |
+| `Eager` | `bool` | `false` | Do contrato com o RVM.UI, onde desliga o carregamento preguicoso da imagem. Aqui nao ha imagem: sem efeito. |
+| `Name` | `RvmMascotName` | obrigatorio | Qual mascote. O nome diz a funcao na interface, nao o personagem. |
+| `Sizes` | `string?` | — | Do contrato com o RVM.UI, onde escolhe o arquivo da ilustracao. Aqui nao ha arquivo: sem efeito. |
+| `Width` | `int` | `160` | Diametro do circulo em pixels. Padrao: 160. |
 
 ### RvmMenu
 
@@ -786,16 +896,28 @@ Pizza e rosca, com percentuais.
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Donut` | `bool` | `false` | Rosca (anel) em vez de pizza. |
 | `DonutThickness` | `double` | `0.35` | Espessura do anel da rosca, em fracao do raio (0,1 a 0,9). Padrao: 0,35. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
 | `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
 | `SliceColor` | `Func<object, RvmColor>?` | — | Cor de cada fatia. Sem valor, segue a paleta na ordem dos itens. |
 | `Value` | `Func<object, double>?` | obrigatorio | O valor de cada fatia. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
@@ -831,18 +953,31 @@ Varias variaveis a partir de um centro.
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `GridLevels` | `int` | `5` | Numero de niveis da grade. Padrao: 5. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `Max` | `double?` | — | Valor na ponta dos eixos. Sem valor, o maior valor arredondado para cima. O centro e o zero: valores negativos ficam no centro (o radar nao tem eixo negativo) e valores acima do Max ficam na ponta. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
 | `SelectionChanged` | `EventCallback<RvmChartRange>` | — | Avisa que a faixa mudou (inclusive quando foi limpa, com `null`). |
 | `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
+| `ShowAxis` | `bool` | `true` | Mostra o nome de cada eixo em volta da teia. |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
@@ -914,10 +1049,21 @@ Relacao entre duas variaveis numericas.
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Empty` | `RenderFragment?` | — | O vazio que ensina o proximo passo. Sem ele, sai um `RvmEmptyState` com `RvmChartBase.EmptyText`. |
+| `EmptyText` | `string` | `"Ainda nao ha dado para este grafico."` | Texto do vazio padrao. Prefira `RvmChartBase.Empty`, que ensina o proximo passo. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmChartBase.Loading` e `RvmChartBase.IsEmpty`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmChartBase.ErrorTitle` e `RvmChartBase.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmChartBase.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar o grafico"` | Titulo do erro padrao. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
+| `IsEmpty` | `bool` | `false` | Nao ha nada para desenhar. Use `RvmChartBase.Empty` para ensinar o proximo passo. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
 | `Label` | `Func<object, string>?` | — | O nome de cada item: a categoria no eixo, a fatia na legenda. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: o desenho da lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando o grafico..."` | Texto do carregamento. |
 | `PointRadius` | `int` | `5` | Raio de cada ponto, em px. Padrao: 5. |
 | `SecondaryValueFormat` | `Func<double, string>?` | — | Formato dos valores do eixo secundario. Sem valor, o compacto padrao — nao o `RvmChartBase.ValueFormat`, que descreve a unidade do eixo primario. |
 | `Selection` | `RvmChartRange?` | — | A faixa marcada, em indices dos itens. `null` quando nao ha nada marcado. |
@@ -925,6 +1071,7 @@ Relacao entre duas variaveis numericas.
 | `SelectionMode` | `RvmChartSelectionMode` | `RvmChartSelectionMode.None` | Deixa marcar uma faixa de categorias arrastando, para filtrar o resto da tela. Padrao: nao. |
 | `ShowGrid` | `bool` | `true` | Linhas de grade. Padrao: sim. |
 | `ShowLegend` | `bool` | `true` | Legenda abaixo do grafico. Padrao: sim (aparece quando ha mais de uma serie). |
+| `ShowTooltip` | `bool` | `true` | A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `XFormat` | `Func<double, string>?` | — | Formato dos valores do eixo X. Padrao: `RvmChartFormat.Compact`. |
 | `XLabel` | `string` | `"X"` | Nome do eixo X na dica e na tabela. Padrao: "X". |
@@ -1048,6 +1195,7 @@ Uma coluna da `RvmTable` ou da `RvmDataGrid`. Nao desenha nada sozinha: so se ap
 | `Align` | `RvmTableAlign` | `RvmTableAlign.Start` | Alinhamento. Padrao: `RvmTableAlign.Start`. |
 | `ChildContent` | `RenderFragment<object>?` | — | Conteudo livre da celula (avatar, chip, botao). O item chega como `context`. |
 | `Class` | `string?` | — | Classe CSS extra no cabecalho e nas celulas desta coluna. |
+| `Culture` | `CultureInfo?` | — | Cultura do `RvmTableColumn.Format` e do texto do valor. Sem ela, a cultura corrente. |
 | `Filterable` | `bool` | `true` | Ganha campo de filtro na `RvmDataGrid`. Padrao: sim, quando ha `RvmTableColumn.Value`. |
 | `Format` | `string?` | — | Formato do valor, quando ele e formatavel (`"dd/MM/yyyy"`, `"N2"`). |
 | `InitialSort` | `RvmSortDirection?` | — | Ordenacao aplicada ao abrir. Vale para uma coluna so. |
@@ -1069,13 +1217,24 @@ Tabela de dados: colunas declaradas com `RvmTableColumn`, ordenacao pelo titulo,
 | `ChildContent` | `RenderFragment?` | — | As colunas: `RvmTableColumn`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Dense` | `bool` | `false` | Linhas de 36 px em vez de 52 — medidos no kit. |
+| `Empty` | `RenderFragment?` | — | O vazio quando nao ha linha nenhuma, ensinando o proximo passo. Sem ele, sai a linha com `RvmTable.NoRecordsText`. Ligue `Status` no seu `RvmEmptyState`. |
+| `Error` | `bool` | `false` | A carga falhou. Vence `RvmTable.Loading`. |
+| `ErrorContent` | `RenderFragment?` | — | O erro. Sem ele, sai o `RvmEmptyState` de erro com `RvmTable.ErrorTitle` e `RvmTable.ErrorText`. |
+| `ErrorMascot` | `RvmMascotName?` | — | Mascote do erro padrao. Sem efeito com `RvmTable.ErrorContent`. |
+| `ErrorText` | `string` | `"Tivemos um problema tecnico, por favor tente de novo em alguns minutos."` | Texto do erro padrao. |
+| `ErrorTitle` | `string` | `"Nao deu para carregar"` | Titulo do erro padrao. |
+| `Header` | `RenderFragment?` | — | Titulo e descricao acima da tabela. |
 | `ItemKey` | `Func<object, object>?` | — | A identidade da linha para a selecao (`t => t.Id`). Sem ela vale o `Equals` do item: numa classe comum e a referencia, e recarregar `RvmTable.Items` com instancias novas das mesmas linhas apaga a marcacao sem aviso. Records ja comparam pelo valor. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | As linhas. |
+| `Loading` | `bool` | `false` | Os dados estao chegando: as linhas dao lugar ao aviso de carregamento. |
+| `LoadingMascot` | `RvmMascotName?` | — | Mascote do carregamento, no lugar do indicador circular. |
+| `LoadingText` | `string` | `"Carregando..."` | Texto do carregamento. |
 | `NoRecordsText` | `string` | `"Nenhum registro para mostrar."` | Texto quando nao ha linhas. |
 | `RowLabel` | `Func<object, string>?` | — | Nome da caixa de marcar de cada linha. Padrao: "Selecionar" + o texto da primeira coluna — o leitor de tela precisa saber QUAL linha marca, e "Selecionar linha 3" nao diz. |
 | `Selectable` | `bool` | `false` | Uma caixa de marcar por linha e outra no cabecalho para todas. |
 | `SelectedItems` | `IReadOnlyCollection<object>?` | — | As linhas marcadas. Aceita `@bind-SelectedItems`. |
 | `SelectedItemsChanged` | `EventCallback<IReadOnlyCollection<object>>` | — | Disparado quando a marcacao muda. |
+| `Toolbar` | `RenderFragment?` | — | Acoes no alto, a direita do `RvmTable.Header` (botao, exportar). |
 
 ### RvmTabs
 
@@ -1265,6 +1424,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Png`, `Svg`, `Csv`, `Xlsx`, `Pdf`
 - `RvmChartSelectionMode` (`RVM.DesignSystem.Components.Chart`): Como o arrasto no grafico se comporta.
   Valores: `None`, `Range`, `ZoomBox`
+- `RvmChartSize` (`RVM.DesignSystem.Components.Chart`): Largura maxima do grafico (contrato com o RVM.UI, DSGN-017).
+  Valores: `Small`, `Medium`, `Large`
 - `RvmChipVariant` (`RVM.DesignSystem.Components.Chip`): Os tres estilos da pagina Chip do kit.
   Valores: `Filled`, `Outlined`, `Soft`
 - `RvmColor` (`RVM.DesignSystem`): Papel semantico de cor. O componente escolhe o PAPEL; que cor sai dele e problema da camada de tokens, e muda com o tema. Componente nunca conhece cor (`05-api-dos-componentes.md`).
@@ -1279,6 +1440,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Bold`, `BoldDuotone`, `Broken`, `Linear`
 - `RvmInputType` (`RVM.DesignSystem.Components.TextField`): O `type` do campo. Importa no celular: `RvmInputType.Email` abre o teclado com arroba, `RvmInputType.Tel` abre o numerico, e `RvmInputType.Password` esconde o que se digita.
   Valores: `Text`, `Email`, `Password`, `Number`, `Tel`, `Url`, `Search`
+- `RvmMascotName` (`RVM.DesignSystem.Icons`): Os mascotes do contrato com o RVM.UI (DSGN-017). O nome diz a FUNCAO na interface (erro, carregando, vazio), nao o personagem. No Design System nao ha ilustracao: cada um vira um icone Tabler grande num circulo de fundo suave, no estilo NEATLAB — invencao declarada. Ver `RvmMascot`.
+  Valores: `AlienDocumentation`, `AlienIntegrations`, `AlienNotifications`, `AlienOnboardingSteps`, `AlienSecureLogin`, `AlienSessionExpired`, `DogEmptyState`, `DogFeedback`, `DogNoConnection`, `DogSearch`, `RafaelCodeReview`, `RobotAccessDenied`, `RobotDogSmallSuccess`, `RobotError`, `RobotLoading`, `RobotMaintenance`, `RobotPermissionRequested`, `RobotSettings`, `RobotUpdateAvailable`, `RobotUploadingFile`, `TeamAnalytics`, `TeamIdeaToProduct`, `TeamSecurity`
 - `RvmNavMatch` (`RVM.DesignSystem.Components.AppShell`): Como o item de menu decide que e a pagina atual.
   Valores: `Prefix`, `All`
 - `RvmOrientation` (`RVM.DesignSystem`): Orientacao de um elemento que separa ou empilha conteudo.

@@ -21,8 +21,20 @@ public partial class RvmEmptyState : ComponentBase
     /// <summary>Icone grande acima do titulo, quando nao ha ilustracao.</summary>
     [Parameter] public RvmIconName? Icon { get; set; }
 
-    /// <summary>Ilustracao livre (imagem, SVG). Vence o icone. E tratada como decorativa.</summary>
+    /// <summary>Ilustracao livre (imagem, SVG). Vence o mascote e o icone. E tratada como decorativa.</summary>
     [Parameter] public RenderFragment? Illustration { get; set; }
+
+    /// <summary>Mascote no lugar do icone (decorativo: o titulo ja diz o que aconteceu). Vence o icone.</summary>
+    [Parameter] public RvmMascotName? Mascot { get; set; }
+
+    /// <summary>Papel de cor do circulo do icone: Primary no vazio comum, Error no erro, Secondary no discreto.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Primary;
+
+    /// <summary>
+    /// Anuncia ao leitor de tela quando aparece (<c>role="status"</c>). Ligue quando o vazio surge depois de uma
+    /// busca, de um filtro ou de um carregamento; deixe desligado no vazio que ja estava na tela.
+    /// </summary>
+    [Parameter] public bool Status { get; set; }
 
     /// <summary>Nivel do titulo (2 a 6). Padrao: 2. Escolha o que encaixa na hierarquia da pagina.</summary>
     [Parameter] public int HeadingLevel { get; set; } = 2;
@@ -45,5 +57,14 @@ public partial class RvmEmptyState : ComponentBase
     internal int NivelDoTitulo => Math.Clamp(HeadingLevel, 2, 6);
 
     internal string ClassesDaRaiz
-        => ClassesCss.Juntar("rvm-vazio", Class, AdditionalAttributes);
+        => ClassesCss.Juntar("rvm-vazio " + Color switch
+        {
+            RvmColor.Secondary => "rvm-secondary",
+            RvmColor.Inverse => "rvm-inverse",
+            RvmColor.Info => "rvm-info",
+            RvmColor.Success => "rvm-success",
+            RvmColor.Warning => "rvm-warning",
+            RvmColor.Error => "rvm-error",
+            _ => "rvm-primary"
+        }, Class, AdditionalAttributes);
 }

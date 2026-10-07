@@ -1,0 +1,20 @@
+/* CSS isolado do RvmMascot. So custom properties — hex literal aqui quebra o tema escuro.
+   Invencao declarada (DSGN-017): o NEATLAB nao tem mascote. O circulo e o do icone do RvmEmptyState, no
+   tamanho que o consumidor pedir. */
+
+.rvm-mascote {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--rvm-mascote-lado);
+    height: var(--rvm-mascote-lado);
+    border-radius: var(--rvm-radius-circle);
+}
+
+.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }

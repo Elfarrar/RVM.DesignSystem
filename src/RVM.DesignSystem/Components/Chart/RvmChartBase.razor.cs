@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using RVM.DesignSystem.Components.Table;
+using RVM.DesignSystem.Icons;
 
 namespace RVM.DesignSystem.Components.Chart;
 
@@ -98,6 +99,47 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     /// <summary>Avisa que a faixa mudou (inclusive quando foi limpa, com <c>null</c>).</summary>
     [Parameter] public EventCallback<RvmChartRange?> SelectionChanged { get; set; }
+
+    /// <summary>
+    /// A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de
+    /// tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero.
+    /// </summary>
+    [Parameter] public bool ShowTooltip { get; set; } = true;
+
+    /// <summary>Os dados estao chegando: o desenho da lugar ao aviso de carregamento.</summary>
+    [Parameter] public bool Loading { get; set; }
+
+    /// <summary>Nao ha nada para desenhar. Use <see cref="Empty"/> para ensinar o proximo passo.</summary>
+    [Parameter] public bool IsEmpty { get; set; }
+
+    /// <summary>A carga falhou. Vence <see cref="Loading"/> e <see cref="IsEmpty"/>.</summary>
+    [Parameter] public bool Error { get; set; }
+
+    /// <summary>O vazio que ensina o proximo passo. Sem ele, sai um <c>RvmEmptyState</c> com <see cref="EmptyText"/>.</summary>
+    [Parameter] public RenderFragment? Empty { get; set; }
+
+    /// <summary>O erro. Sem ele, sai o <c>RvmEmptyState</c> de erro com <see cref="ErrorTitle"/> e <see cref="ErrorText"/>.</summary>
+    [Parameter] public RenderFragment? ErrorContent { get; set; }
+
+    /// <summary>Mascote do erro padrao. Sem efeito com <see cref="ErrorContent"/>.</summary>
+    [Parameter] public RvmMascotName? ErrorMascot { get; set; }
+
+    /// <summary>Mascote do carregamento, no lugar do indicador circular.</summary>
+    [Parameter] public RvmMascotName? LoadingMascot { get; set; }
+
+    /// <summary>Texto do carregamento.</summary>
+    [Parameter] public string LoadingText { get; set; } = "Carregando o grafico...";
+
+    /// <summary>Texto do vazio padrao. Prefira <see cref="Empty"/>, que ensina o proximo passo.</summary>
+    [Parameter] public string EmptyText { get; set; } = "Ainda nao ha dado para este grafico.";
+
+    /// <summary>Titulo do erro padrao.</summary>
+    [Parameter] public string ErrorTitle { get; set; } = "Nao deu para carregar o grafico";
+
+    /// <summary>Texto do erro padrao.</summary>
+    [Parameter] public string ErrorText { get; set; } = EstadosDosDados.TextoDeErro;
+
+    internal EstadoDosDados Estado => EstadosDosDados.Qual(Error, Loading, IsEmpty);
 
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
@@ -398,9 +440,23 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     internal string NomeNaTabela(RvmChartSeries<TItem> serie)
         => TemEixoSecundario && serie.Axis == RvmChartAxis.Secondary ? $"{serie.Name} ({NomeDoEixoSecundario})" : serie.Name;
 
-    /// <summary>Rotulo de uma marca de eixo: o formato do consumidor, ou o compacto na precisao do passo.</summary>
+    /// <summary>
+    /// Rotulo de uma marca de eixo: o formato do eixo (onde o grafico tem um), o formato do consumidor, ou o compacto
+    /// na precisao do passo.
+    /// </summary>
     internal string FormatarMarca(double marca, double passo)
-        => ValueFormat is { } formato ? formato(marca) : RvmChartFormat.CompactForAxis(marca, passo);
+        => FormatoDoEixo is { } doEixo ? doEixo(marca)
+            : ValueFormat is { } formato ? formato(marca)
+            : RvmChartFormat.CompactForAxis(marca, passo);
+
+    /// <summary>O <c>FormatAxisValue</c> dos graficos que tem esse parametro no contrato com o RVM.UI.</summary>
+    private protected virtual Func<double, string>? FormatoDoEixo => null;
+
+    /// <summary>O <c>ShowAxis</c> dos graficos que tem esse parametro no contrato com o RVM.UI.</summary>
+    private protected virtual bool MostraEixo => true;
+
+    /// <summary>O <c>Size</c> dos graficos que tem esse parametro no contrato com o RVM.UI.</summary>
+    private protected virtual RvmChartSize Tamanho => RvmChartSize.Large;
 
     /// <summary>Rotulo de uma marca, no formato do eixo a que ela pertence.</summary>
     internal string FormatarMarca(double marca, double passo, RvmChartAxis eixo)
@@ -834,7 +890,12 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     internal string ClassesDaRaiz
         => ClassesCss.Juntar(ClassesProprias, Class, AdditionalAttributes);
 
-    private string ClassesProprias => Animated ? "rvm-grafico rvm-animado" : "rvm-grafico";
+    private string ClassesProprias => (Animated ? "rvm-grafico rvm-animado" : "rvm-grafico") + Tamanho switch
+    {
+        RvmChartSize.Small => " rvm-grafico-pequeno",
+        RvmChartSize.Medium => " rvm-grafico-medio",
+        _ => ""
+    };
 
     // --- Layout cartesiano, comum a colunas, barras, linha, area, histograma e dispersao ---
 

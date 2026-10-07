@@ -40,6 +40,7 @@ Componentes com prefixo `Rvm`, API em ingles, texto ao usuario em portugues do B
 - [RvmLineChart<TItem>](https://design.rvmit.com.br/componentes/line-chart): Evolucao no tempo, reta ou suave.
 - [RvmList](https://design.rvmit.com.br/componentes/list): Simples, com icone, com acao e aninhada.
 - [RvmListItem](https://design.rvmit.com.br/componentes/list): Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao no fim. Com `RvmListItem.Href` vira link; com `RvmListItem.OnClick`, botao; com `RvmListItem.NestedContent`, abre uma sublista.
+- `RvmMascot`: O mascote do contrato com o RVM.UI (DSGN-017): o icone da funcao (erro, carregando, vazio) num circulo de fundo suave. Usado sozinho ou pelos estados de `RvmEmptyState`, listas, tabelas e graficos.
 - [RvmMenu](https://design.rvmit.com.br/componentes/menu): Botao que abre uma lista de acoes. Os itens sao `RvmMenuItem` e `RvmMenuDivider` filhos.
 - [RvmMenuDivider](https://design.rvmit.com.br/componentes/menu)
 - [RvmMenuItem](https://design.rvmit.com.br/componentes/menu): Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
