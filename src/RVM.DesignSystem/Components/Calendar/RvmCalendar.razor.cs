@@ -54,6 +54,20 @@ public partial class RvmCalendar : ComponentBase, IAsyncDisposable
     /// <summary>"Hoje" para marcar o dia atual. Padrao: a data do sistema. Existe para teste e fuso.</summary>
     [Parameter] public DateOnly? Today { get; set; }
 
+    /// <summary>Foca o dia escolhido (ou hoje) assim que o calendario aparece.</summary>
+    [Parameter] public bool AutoFocus { get; set; }
+
+    /// <summary>
+    /// Dentro de uma janela propria: o Tab circula dentro do calendario e o Esc chama <see cref="OnEscape"/>. Solto
+    /// na pagina (o padrao), o Tab segue o fluxo normal.
+    /// </summary>
+    [Parameter] public bool TrapFocus { get; set; }
+
+    /// <summary>Esc dentro do calendario (so com <see cref="TrapFocus"/>).</summary>
+    [Parameter] public EventCallback OnEscape { get; set; }
+
+    private ElementReference _raiz;
+
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
@@ -160,6 +174,14 @@ public partial class RvmCalendar : ComponentBase, IAsyncDisposable
         await Task.CompletedTask;
     }
 
+    private async Task AoTeclarNaRaizAsync(KeyboardEventArgs e)
+    {
+        if (TrapFocus && e.Key == "Escape")
+        {
+            await OnEscape.InvokeAsync();
+        }
+    }
+
     private async Task AoTeclarAsync(KeyboardEventArgs e)
     {
         DateOnly? destino = e.Key switch
@@ -214,7 +236,16 @@ public partial class RvmCalendar : ComponentBase, IAsyncDisposable
                 _modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
                 await _modulo.InvokeVoidAsync("prenderTeclas", _grade,
                     new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "PageUp", "PageDown" });
+                if (TrapFocus)
+                {
+                    await _modulo.InvokeVoidAsync("prenderTab", _raiz);
+                }
             });
+
+            if (AutoFocus)
+            {
+                await FocusAsync();
+            }
         }
 
         if (_focarAposRender)

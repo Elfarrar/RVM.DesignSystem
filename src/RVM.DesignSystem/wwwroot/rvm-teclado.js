@@ -36,3 +36,33 @@ export function rolarAtualParaVer(caixa) {
         caixa.scrollTop += item.top - area.top - (area.height - item.height) / 2;
     }
 }
+
+// Prende o Tab dentro da caixa, sem mais nada (o TrapFocus do RvmCalendar, DSGN-017): do ultimo focavel o Tab volta
+// ao primeiro, e o Shift+Tab do primeiro vai ao ultimo. So conta o que entra na tabulacao (tabindex >= 0).
+export function prenderTab(caixa) {
+    if (!caixa) {
+        return;
+    }
+
+    caixa.addEventListener('keydown', (evento) => {
+        if (evento.key !== 'Tab') {
+            return;
+        }
+
+        const lista = [...caixa.querySelectorAll('button:not([disabled]), [tabindex]')]
+            .filter(el => el.tabIndex >= 0 && el.getClientRects().length > 0);
+        if (lista.length === 0) {
+            return;
+        }
+
+        const primeiro = lista[0];
+        const ultimo = lista[lista.length - 1];
+        if (evento.shiftKey && document.activeElement === primeiro) {
+            evento.preventDefault();
+            ultimo.focus();
+        } else if (!evento.shiftKey && document.activeElement === ultimo) {
+            evento.preventDefault();
+            primeiro.focus();
+        }
+    });
+}

@@ -40,8 +40,38 @@ public partial class RvmMenu : ComponentBase, IAsyncDisposable
     /// <summary>Tamanho do botao.</summary>
     [Parameter] public RvmSize Size { get; set; } = RvmSize.Medium;
 
-    /// <summary>Alinha o menu pela direita do botao — para botoes encostados na borda direita.</summary>
+    /// <summary>Alinha o menu pela direita do botao — o mesmo que <see cref="Placement"/> = BottomEnd.</summary>
     [Parameter] public bool AlignEnd { get; set; }
+
+    /// <summary>Onde o menu abre. Padrao: abaixo, pela esquerda.</summary>
+    [Parameter] public RvmMenuPlacement Placement { get; set; } = RvmMenuPlacement.BottomStart;
+
+    /// <summary>Forma do gatilho. Padrao: botao com texto e seta.</summary>
+    [Parameter] public RvmMenuTrigger Trigger { get; set; } = RvmMenuTrigger.Text;
+
+    /// <summary>Texto do gatilho. Sem ele, o <see cref="Label"/>.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Icone antes do texto do gatilho. <see cref="Icon"/>, quando vem, vence.</summary>
+    [Parameter] public RvmIconName? StartIcon { get; set; }
+
+    /// <summary>Id do gatilho. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    internal bool SoIcone => Trigger == RvmMenuTrigger.Icon;
+
+    internal RvmIconName? IconeDoGatilho => Icon ?? StartIcon ?? (SoIcone ? RvmIconName.DotsVertical : null);
+
+    internal string TextoDoGatilho => string.IsNullOrWhiteSpace(Text) ? Label : Text;
+
+    internal string ClassesDaLista => "rvm-lista" + (AlignEnd ? RvmMenuPlacement.BottomEnd : Placement) switch
+    {
+        RvmMenuPlacement.BottomEnd => " rvm-fim",
+        RvmMenuPlacement.BottomCenter => " rvm-centro",
+        RvmMenuPlacement.TopEnd => " rvm-acima rvm-fim",
+        RvmMenuPlacement.TopStart => " rvm-acima",
+        _ => ""
+    };
 
     /// <summary>Botao indisponivel.</summary>
     [Parameter] public bool Disabled { get; set; }
@@ -58,7 +88,7 @@ public partial class RvmMenu : ComponentBase, IAsyncDisposable
 
     internal bool Aberto => _aberto;
 
-    internal string IdDoBotao => $"{_idBase}-botao";
+    internal string IdDoBotao => string.IsNullOrWhiteSpace(Id) ? $"{_idBase}-botao" : Id;
 
     internal string IdDoMenu => $"{_idBase}-lista";
 

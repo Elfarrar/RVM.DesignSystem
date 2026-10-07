@@ -13,7 +13,7 @@ public sealed class RvmTab : ComponentBase, IDisposable
     [CascadingParameter] private RvmTabs? Abas { get; set; }
 
     /// <summary>O texto do botao da aba.</summary>
-    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Title { get; set; } = string.Empty;
 
     /// <summary>Icone acima do titulo.</summary>
     [Parameter] public RvmIconName? Icon { get; set; }
@@ -23,6 +23,26 @@ public sealed class RvmTab : ComponentBase, IDisposable
 
     /// <summary>O painel da aba.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Texto da aba. Vence o <see cref="Title"/> quando os dois vem.</summary>
+    [Parameter] public string Text { get; set; } = "";
+
+    /// <summary>Contador a direita do texto ("Pendentes 3").</summary>
+    [Parameter] public int? Count { get; set; }
+
+    /// <summary>Valor que identifica a aba (o <c>Value</c> do <see cref="RvmTabs"/>). Sem ele, vale a posicao.</summary>
+    [Parameter] public string Value { get; set; } = "";
+
+    /// <summary>Id do botao da aba. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>
+    /// Id do painel que a aba controla, quando o conteudo fica FORA do <see cref="RvmTabs"/>. Com ele e sem
+    /// <see cref="ChildContent"/>, a aba nao desenha painel proprio.
+    /// </summary>
+    [Parameter] public string? PanelId { get; set; }
+
+    internal string TituloEfetivo => string.IsNullOrWhiteSpace(Text) ? Title : Text;
 
     /// <summary>Classe CSS extra no botao da aba.</summary>
     [Parameter] public string? Class { get; set; }
@@ -45,7 +65,7 @@ public sealed class RvmTab : ComponentBase, IDisposable
         Abas.Registrar(this);
     }
 
-    private (string Titulo, RvmIconName? Icone, bool Desabilitada, string? Classe)? _ultimoAviso;
+    private (string Titulo, RvmIconName? Icone, bool Desabilitada, string? Classe, int? Contador, string Valor)? _ultimoAviso;
 
     /// <inheritdoc />
     protected override void OnParametersSet()
@@ -53,7 +73,7 @@ public sealed class RvmTab : ComponentBase, IDisposable
         // So avisa o pai quando o que aparece NA LISTA mudou. Avisar sempre fecharia um laco: o pai
         // re-renderiza, repassa o ChildContent (que o Blazor sempre considera novo), a aba recebe
         // parametros de novo e avisa de novo.
-        var atual = (Title, Icon, Disabled, Class);
+        var atual = (TituloEfetivo, Icon, Disabled, Class, Count, Value);
         if (_ultimoAviso is { } anterior && anterior == atual)
         {
             return;
@@ -70,7 +90,7 @@ public sealed class RvmTab : ComponentBase, IDisposable
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Abas is null || !Abas.EstaAtiva(this))
+        if (Abas is null || !Abas.EstaAtiva(this) || (PanelId is not null && ChildContent is null))
         {
             return;
         }

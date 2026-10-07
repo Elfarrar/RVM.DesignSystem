@@ -14,6 +14,21 @@ public partial class RvmAvatarGroup : ComponentBase
     /// <summary>Quantos ficaram de fora. Acima de zero, aparece um avatar "+N" no fim.</summary>
     [Parameter] public int Surplus { get; set; }
 
+    /// <summary>As pessoas do grupo, como lista. Ignorado quando ha <see cref="ChildContent"/>.</summary>
+    [Parameter] public IReadOnlyList<RvmAvatarItem> Items { get; set; } = [];
+
+    /// <summary>Quantas pessoas de <see cref="Items"/> aparecem antes do "+N". Padrao: 4.</summary>
+    [Parameter] public int Max { get; set; } = 4;
+
+    internal bool PorLista => ChildContent is null && Items.Count > 0;
+
+    internal IEnumerable<RvmAvatarItem> Visiveis => Items.Take(Math.Max(1, Max));
+
+    internal int Sobra => PorLista ? Math.Max(0, Items.Count - Math.Max(1, Max)) + Surplus : Surplus;
+
+    internal static string IniciaisDe(string nome)
+        => string.Concat(nome.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpperInvariant(p[0])));
+
     /// <summary>Tamanho do avatar "+N". Padrao: <see cref="RvmSize.Medium"/>.</summary>
     [Parameter] public RvmSize Size { get; set; } = RvmSize.Medium;
 

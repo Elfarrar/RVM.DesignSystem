@@ -10,18 +10,23 @@
     <RvmButton @ref="_botao"
                @attributes="AtributosDoBotao"
                id="@IdDoBotao"
-               Variant="ButtonVariant"
+               Variant="@(SoIcone ? RvmButtonVariant.Text : ButtonVariant)"
                Color="ButtonColor"
                Size="Size"
-               StartIcon="Icon"
-               EndIcon="RvmIconName.ChevronDown"
+               StartIcon="IconeDoGatilho"
+               EndIcon="@(SoIcone ? null : RvmIconName.ChevronDown)"
+               Class="@(SoIcone ? "rvm-gatilho-icone" : null)"
+               aria-label="@(SoIcone ? Label : null)"
                Disabled="Disabled"
                aria-haspopup="menu"
                aria-expanded="@(_aberto ? "true" : "false")"
                aria-controls="@(_aberto ? IdDoMenu : null)"
                OnClick="AoClicarNoBotaoAsync"
                @onkeydown="AoTeclarNoBotaoAsync">
-        @Label
+        @if (!SoIcone)
+        {
+            @TextoDoGatilho
+        }
     </RvmButton>
 
     @if (_aberto)
@@ -33,7 +38,7 @@
             id="@IdDoMenu"
             role="menu"
             aria-labelledby="@IdDoBotao"
-            class="@(AlignEnd ? "rvm-lista rvm-fim" : "rvm-lista")"
+            class="@ClassesDaLista"
             @onkeydown="AoTeclarNoMenuAsync">
             <CascadingValue Value="this" IsFixed="true">
                 @ChildContent

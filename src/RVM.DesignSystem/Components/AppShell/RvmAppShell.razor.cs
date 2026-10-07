@@ -63,6 +63,18 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     /// <summary>Nome da navegacao para o leitor de tela. Padrao: "Menu principal".</summary>
     [Parameter] public string NavigationLabel { get; set; } = "Menu principal";
 
+    /// <summary>A lateral pronta, no lugar de <see cref="Brand"/> e <see cref="Navigation"/>.</summary>
+    [Parameter] public RenderFragment? Sidebar { get; set; }
+
+    /// <summary>Nome do botao que abre a gaveta no celular.</summary>
+    [Parameter] public string MenuLabel { get; set; } = "Abrir menu";
+
+    /// <summary>Nome do mesmo botao com a gaveta aberta.</summary>
+    [Parameter] public string CloseMenuLabel { get; set; } = "Fechar menu";
+
+    /// <summary>Id da lateral. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
@@ -70,7 +82,7 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    internal string IdLateral => $"{_idBase}-menu";
+    internal string IdLateral => string.IsNullOrWhiteSpace(Id) ? $"{_idBase}-menu" : Id;
 
     internal string IdConteudo => $"{_idBase}-conteudo";
 

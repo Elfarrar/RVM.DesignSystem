@@ -6,7 +6,7 @@
    chegar nela, que e o comportamento esperado quando trocar de painel e barato. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
     <div @ref="_lista" @attributes="AtributosDaLista" role="tablist" class="rvm-lista"
-         aria-label="@AriaLabel"
+         aria-label="@NomeDaLista"
          aria-orientation="@(Orientation == RvmOrientation.Vertical ? "vertical" : "horizontal")">
         @for (var i = 0; i < _abas.Count; i++)
         {
@@ -29,7 +29,11 @@
                 {
                     <RvmIcon Name="icone" />
                 }
-                <span>@aba.Title</span>
+                <span>@aba.TituloEfetivo</span>
+                @if (aba.Count is { } contador)
+                {
+                    <span class="rvm-contador">@contador</span>
+                }
             </button>
         }
     </div>

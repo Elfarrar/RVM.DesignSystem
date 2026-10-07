@@ -12,7 +12,11 @@
     {
         <div class="rvm-cabecalho">
             <div class="rvm-textos">
-                @if (!string.IsNullOrWhiteSpace(Title))
+                @if (Header is not null)
+                {
+                    @Header
+                }
+                else if (!string.IsNullOrWhiteSpace(Title))
                 {
                     <RvmTypography Variant="RvmTypographyVariant.H6" As="@TitleElement" class="rvm-titulo">@Title</RvmTypography>
                 }
@@ -33,5 +37,10 @@
     @if (Actions is not null)
     {
         <div class="rvm-acoes">@Actions</div>
+    }
+
+    @if (Footer is not null)
+    {
+        <div class="rvm-rodape">@Footer</div>
     }
 </div>

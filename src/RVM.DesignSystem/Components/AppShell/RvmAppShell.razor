@@ -12,26 +12,36 @@
 
     <CascadingValue Value="this">
         <aside @ref="_lateral" id="@IdLateral" class="rvm-lateral" tabindex="-1" @onkeydown="AoTeclarNaLateralAsync">
-            @if (Brand is not null)
+            @if (Sidebar is not null)
             {
-                <div class="rvm-area-marca">@Brand</div>
+                @* A lateral pronta do consumidor (contrato com o RVM.UI, DSGN-017): vence marca e navegacao. *@
+                @Sidebar
             }
-            <nav @ref="_navegacao" class="rvm-navegacao" aria-label="@NavigationLabel">
-                <ul class="rvm-nav-lista">
-                    @Navigation
-                </ul>
-            </nav>
+            else
+            {
+                @if (Brand is not null)
+                {
+                    <div class="rvm-area-marca">@Brand</div>
+                }
+                <nav @ref="_navegacao" class="rvm-navegacao" aria-label="@NavigationLabel">
+                    <ul class="rvm-nav-lista">
+                        @Navigation
+                    </ul>
+                </nav>
+            }
         </aside>
     </CascadingValue>
 
     @if (MenuOpen)
     {
-        <div class="rvm-fundo-menu" @onclick="() => DefinirMenuAbertoAsync(false)"></div>
+        @* A cortina e um botao de verdade (o CloseMenuLabel do contrato com o RVM.UI), fora da ordem de
+           tabulacao: quem usa teclado fecha com Esc. *@
+        <button type="button" class="rvm-fundo-menu" tabindex="-1" aria-label="@CloseMenuLabel" @onclick="() => DefinirMenuAbertoAsync(false)"></button>
     }
 
     <div class="rvm-principal">
         <header class="rvm-barra-topo">
-            <button type="button" class="rvm-alternar rvm-so-estreita" aria-label="Abrir menu" aria-controls="@IdLateral"
+            <button type="button" class="rvm-alternar rvm-so-estreita" aria-label="@MenuLabel" aria-controls="@IdLateral"
                     aria-expanded="@(MenuOpen ? "true" : "false")" @onclick="() => DefinirMenuAbertoAsync(!MenuOpen)"
                     @onkeydown="AoTeclarNaLateralAsync">
                 <RvmIcon Name="RvmIconName.Menu" />

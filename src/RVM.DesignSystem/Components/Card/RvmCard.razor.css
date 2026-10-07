@@ -12,6 +12,7 @@
     border-radius: var(--rvm-radius-sm);
     box-shadow: var(--rvm-shadow-1);
     font-family: var(--rvm-font-family);
+    --rvm-cartao-respiro: var(--rvm-space-5);
 }
 
 .rvm-midia {
@@ -24,7 +25,7 @@
     display: flex;
     align-items: flex-start;
     gap: var(--rvm-space-3);
-    padding: var(--rvm-space-5) var(--rvm-space-5) 0;
+    padding: var(--rvm-cartao-respiro) var(--rvm-cartao-respiro) 0;
 }
 
 .rvm-textos {
@@ -45,19 +46,33 @@
 }
 
 .rvm-conteudo {
-    padding: var(--rvm-space-3) var(--rvm-space-5) var(--rvm-space-5);
+    padding: var(--rvm-space-3) var(--rvm-cartao-respiro) var(--rvm-cartao-respiro);
     color: var(--rvm-color-text-secondary);
 }
 
 /* Sem cabecalho, o conteudo abre o card e precisa do recuo de cima inteiro. */
 .rvm-cartao > .rvm-conteudo:first-child,
 .rvm-midia + .rvm-conteudo {
-    padding-top: var(--rvm-space-5);
+    padding-top: var(--rvm-cartao-respiro);
 }
 
 .rvm-acoes {
     display: flex;
     align-items: center;
     gap: var(--rvm-space-2);
-    padding: 0 var(--rvm-space-5) var(--rvm-space-5);
+    padding: 0 var(--rvm-cartao-respiro) var(--rvm-cartao-respiro);
+}
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+.rvm-respiro-nenhum { --rvm-cartao-respiro: 0px; }
+.rvm-respiro-pequeno { --rvm-cartao-respiro: var(--rvm-space-4); }
+.rvm-respiro-grande { --rvm-cartao-respiro: var(--rvm-space-8); }
+
+.rvm-contornado { box-shadow: none; border: 1px solid var(--rvm-color-divider); }
+.rvm-plano { box-shadow: none; background-color: var(--rvm-color-action-hover); }
+
+.rvm-rodape {
+    padding: var(--rvm-space-3) var(--rvm-cartao-respiro);
+    border-top: 1px solid var(--rvm-color-divider);
 }

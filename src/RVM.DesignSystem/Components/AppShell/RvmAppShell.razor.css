@@ -377,3 +377,11 @@
 
 /* O item sem Href e um botao com a cara do link. */
 .rvm-navegacao ::deep button.rvm-nav-link { font: inherit; text-align: start; cursor: pointer; }
+
+/* A cortina virou botao (DSGN-017): sem a borda e o recuo do botao nativo. */
+.rvm-fundo-menu {
+    margin: 0;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+}

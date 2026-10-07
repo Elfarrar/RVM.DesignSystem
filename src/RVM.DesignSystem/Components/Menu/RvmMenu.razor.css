@@ -34,3 +34,18 @@
     left: auto;
     right: 0;
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+.rvm-centro { left: 50%; transform: translateX(-50%); }
+
+.rvm-acima {
+    top: auto;
+    bottom: calc(100% + var(--rvm-space-1));
+}
+
+/* Gatilho so de icone: quadrado, sem o recuo lateral do botao com texto. */
+.rvm-menu ::deep .rvm-gatilho-icone {
+    min-width: 0;
+    padding: 0 var(--rvm-space-2);
+}

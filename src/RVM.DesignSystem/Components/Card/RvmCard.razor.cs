@@ -41,19 +41,42 @@ public partial class RvmCard : ComponentBase
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
+    /// <summary>Cabecalho livre, no lugar do titulo e do subtitulo (a acao do cabecalho continua).</summary>
+    [Parameter] public RenderFragment? Header { get; set; }
+
+    /// <summary>Rodape (acoes finais, totais), abaixo das acoes e separado por um divisor.</summary>
+    [Parameter] public RenderFragment? Footer { get; set; }
+
+    /// <summary>Respiro interno. Padrao: 20 px.</summary>
+    [Parameter] public RvmCardPadding Padding { get; set; } = RvmCardPadding.Medium;
+
+    /// <summary>Aparencia da superficie. Padrao: com sombra.</summary>
+    [Parameter] public RvmCardVariant Variant { get; set; } = RvmCardVariant.Elevated;
+
     /// <inheritdoc cref="ComponentBase" />
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     internal bool TemCabecalho
-        => !string.IsNullOrWhiteSpace(Title) || !string.IsNullOrWhiteSpace(Subheader) || HeaderAction is not null;
+        => Header is not null || !string.IsNullOrWhiteSpace(Title) || !string.IsNullOrWhiteSpace(Subheader) || HeaderAction is not null;
 
     internal string CssClass
     {
         get
         {
-            const string propria = "rvm-cartao";
-            return ClassesCss.Juntar(propria, Class, AdditionalAttributes);
+            var proprias = "rvm-cartao" + Variant switch
+            {
+                RvmCardVariant.Outlined => " rvm-contornado",
+                RvmCardVariant.Flat => " rvm-plano",
+                _ => ""
+            } + Padding switch
+            {
+                RvmCardPadding.None => " rvm-respiro-nenhum",
+                RvmCardPadding.Small => " rvm-respiro-pequeno",
+                RvmCardPadding.Large => " rvm-respiro-grande",
+                _ => ""
+            };
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

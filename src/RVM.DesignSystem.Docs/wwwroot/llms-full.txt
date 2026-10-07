@@ -96,13 +96,17 @@ A moldura da aplicacao: menu lateral, barra do topo, conteudo e rodape. Em telas
 | `Brand` | `RenderFragment?` | — | Marca no alto do menu (logo e nome). Recolhido, aparece so o inicio dela: ponha o logo primeiro. |
 | `ChildContent` | `RenderFragment?` | — | O conteudo da pagina. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `CloseMenuLabel` | `string` | `"Fechar menu"` | Nome do mesmo botao com a gaveta aberta. |
 | `Collapsed` | `bool` | `false` | Menu recolhido aos icones (so em tela larga). Aceita `@bind-Collapsed`. |
 | `CollapsedChanged` | `EventCallback<bool>` | — | Disparado quando a pessoa recolhe ou expande o menu. |
 | `Footer` | `RenderFragment?` | — | Rodape abaixo do conteudo. |
+| `Id` | `string?` | — | Id da lateral. Sem ele, um id unico e gerado. |
+| `MenuLabel` | `string` | `"Abrir menu"` | Nome do botao que abre a gaveta no celular. |
 | `MenuOpen` | `bool` | `false` | Gaveta do menu aberta (so em tela estreita). Aceita `@bind-MenuOpen`. |
 | `MenuOpenChanged` | `EventCallback<bool>` | — | Disparado quando a gaveta abre ou fecha. |
 | `Navigation` | `RenderFragment?` | — | O menu: `RvmNavItem`, `RvmNavGroup` e `RvmNavSection`. |
 | `NavigationLabel` | `string` | `"Menu principal"` | Nome da navegacao para o leitor de tela. Padrao: "Menu principal". |
+| `Sidebar` | `RenderFragment?` | — | A lateral pronta, no lugar de `RvmAppShell.Brand` e `RvmAppShell.Navigation`. |
 | `TopBar` | `RenderFragment?` | — | Conteudo da barra do topo, depois do botao do menu (busca, tema, notificacoes, perfil). |
 
 ### RvmAreaChart<TItem>
@@ -181,7 +185,9 @@ Avatares sobrepostos, como na linha "Grouped Avatars" do kit. O "+N" do fim diz 
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | Os avatares visiveis. Use o mesmo `RvmAvatarGroup.Size` neles. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Items` | `IReadOnlyList<RvmAvatarItem>` | — | As pessoas do grupo, como lista. Ignorado quando ha `RvmAvatarGroup.ChildContent`. |
 | `Label` | `string?` | — | O que o grupo representa, para o leitor de tela ("Participantes da reuniao"). |
+| `Max` | `int` | `4` | Quantas pessoas de `RvmAvatarGroup.Items` aparecem antes do "+N". Padrao: 4. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | Tamanho do avatar "+N". Padrao: `RvmSize.Medium`. |
 | `Surplus` | `int` | `0` | Quantos ficaram de fora. Acima de zero, aparece um avatar "+N" no fim. |
 
@@ -290,14 +296,17 @@ Calendario de um mes para escolher uma data ou um intervalo. Aparece solto na pa
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `AutoFocus` | `bool` | `false` | Foca o dia escolhido (ou hoje) assim que o calendario aparece. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas (domingos, feriados). Continuam focaveis. |
 | `IsRange` | `bool` | `false` | Escolhe um intervalo (dois cliques: inicio e fim) em vez de uma data. |
 | `Max` | `DateOnly?` | — | Ultima data escolhivel. |
 | `Min` | `DateOnly?` | — | Primeira data escolhivel. |
+| `OnEscape` | `EventCallback` | — | Esc dentro do calendario (so com `RvmCalendar.TrapFocus`). |
 | `Range` | `RvmDateRange?` | — | O intervalo escolhido. Aceita `@bind-Range`. |
 | `RangeChanged` | `EventCallback<RvmDateRange?>` | — | Disparado a cada clique do intervalo (o primeiro deixa o fim vazio). |
 | `Today` | `DateOnly?` | — | "Hoje" para marcar o dia atual. Padrao: a data do sistema. Existe para teste e fuso. |
+| `TrapFocus` | `bool` | `false` | Dentro de uma janela propria: o Tab circula dentro do calendario e o Esc chama `RvmCalendar.OnEscape`. Solto na pagina (o padrao), o Tab segue o fluxo normal. |
 | `Value` | `DateOnly?` | — | A data escolhida. Aceita `@bind-Value`. Ignorada com `RvmCalendar.IsRange`. |
 | `ValueChanged` | `EventCallback<DateOnly?>` | — | Disparado quando a pessoa escolhe uma data. |
 
@@ -313,13 +322,17 @@ Superficie que agrupa um assunto: midia no topo, cabecalho, conteudo e acoes —
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | O conteudo. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Footer` | `RenderFragment?` | — | Rodape (acoes finais, totais), abaixo das acoes e separado por um divisor. |
+| `Header` | `RenderFragment?` | — | Cabecalho livre, no lugar do titulo e do subtitulo (a acao do cabecalho continua). |
 | `HeaderAction` | `RenderFragment?` | — | Algo no canto direito do cabecalho (menu, botao de icone). |
 | `MediaAlt` | `string?` | — | Texto alternativo da imagem. Vazio quando ela e so decorativa. |
 | `MediaHeight` | `int` | `200` | Altura da imagem em pixels. Padrao: 200. |
 | `MediaSrc` | `string?` | — | Imagem no topo do card. |
+| `Padding` | `RvmCardPadding` | `RvmCardPadding.Medium` | Respiro interno. Padrao: 20 px. |
 | `Subheader` | `string?` | — | Linha de apoio abaixo do titulo. |
 | `Title` | `string?` | — | Titulo do cabecalho. |
 | `TitleElement` | `RvmTextElement` | `RvmTextElement.H3` | Elemento do titulo. Padrao: `h3`. Ajuste a ordem de cabecalhos da pagina — um card solto numa pagina cujo titulo e h1 costuma querer h2. |
+| `Variant` | `RvmCardVariant` | `RvmCardVariant.Elevated` | Aparencia da superficie. Padrao: com sombra. |
 
 ### RvmChartSeries<TItem>
 
@@ -750,11 +763,18 @@ Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao n
 | `ExpandedChanged` | `EventCallback<bool>` | — | Disparado quando a sublista abre ou fecha. |
 | `Href` | `string?` | — | Faz do item um link. |
 | `Icon` | `RvmIconName?` | — | Icone no inicio. |
+| `Layout` | `RvmListItemLayout` | `RvmListItemLayout.TwoColumn` | Forma do item: duas colunas (padrao) ou uma, com o titulo como rotulo. |
 | `NestedContent` | `RenderFragment?` | — | Sublista que abre e fecha pelo item (a variante "Dropdown" do kit). |
 | `OnClick` | `EventCallback` | — | Faz do item um botao. Com `RvmListItem.Href` junto, o link vence e este e ignorado. |
 | `SecondaryText` | `string?` | — | A linha de baixo, menor e no tom secundario. |
 | `Selected` | `bool` | `false` | Item escolhido: `aria-current` no link, `aria-pressed` no botao. |
 | `StartContent` | `RenderFragment?` | — | Conteudo livre no inicio (um avatar). Vence o icone. Num item clicavel ele fica DENTRO do link ou botao: nao ponha controle interativo aqui — para caixa de marcar, use o item sem clique. |
+| `SubtitleContent` | `RenderFragment?` | — | A segunda linha como conteudo (um selo no lugar do texto). Vence `RvmListItem.SecondaryText`. |
+| `Title` | `string?` | — | A primeira linha em texto, quando nao ha `RvmListItem.ChildContent`. |
+| `Trend` | `RvmTrend` | `RvmTrend.None` | Subiu, caiu ou nada. A cor e a seta vem daqui; o texto vem de `RvmListItem.TrendLabel`. |
+| `TrendLabel` | `string?` | — | O quanto variou ("10%"). Sem ele, a variacao nao aparece. |
+| `Value` | `string?` | — | O valor a direita, ja formatado (moeda com `CultureInfo` explicito, no app). |
+| `ValueSubtitle` | `string?` | — | Texto de apoio abaixo do valor. |
 
 ### RvmMascot
 
@@ -782,15 +802,20 @@ Botao que abre uma lista de acoes. Os itens sao `RvmMenuItem` e `RvmMenuDivider`
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao. |
-| `AlignEnd` | `bool` | `false` | Alinha o menu pela direita do botao — para botoes encostados na borda direita. |
+| `AlignEnd` | `bool` | `false` | Alinha o menu pela direita do botao — o mesmo que `RvmMenu.Placement` = BottomEnd. |
 | `ButtonColor` | `RvmColor` | `RvmColor.Primary` | Cor do botao. Padrao: `RvmColor.Primary`. |
 | `ButtonVariant` | `RvmButtonVariant` | `RvmButtonVariant.Outlined` | Estilo do botao. Padrao: `RvmButtonVariant.Outlined`. |
 | `ChildContent` | `RenderFragment?` | — | Os itens. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Botao indisponivel. |
 | `Icon` | `RvmIconName?` | — | Icone antes do texto do botao. |
+| `Id` | `string?` | — | Id do gatilho. Sem ele, um id unico e gerado. |
 | `Label` | `string` | obrigatorio | O texto do botao. |
+| `Placement` | `RvmMenuPlacement` | `RvmMenuPlacement.BottomStart` | Onde o menu abre. Padrao: abaixo, pela esquerda. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | Tamanho do botao. |
+| `StartIcon` | `RvmIconName?` | — | Icone antes do texto do gatilho. `RvmMenu.Icon`, quando vem, vence. |
+| `Text` | `string?` | — | Texto do gatilho. Sem ele, o `RvmMenu.Label`. |
+| `Trigger` | `RvmMenuTrigger` | `RvmMenuTrigger.Text` | Forma do gatilho. Padrao: botao com texto e seta. |
 
 ### RvmMenuDivider
 
@@ -1265,9 +1290,14 @@ Uma aba de `RvmTabs`. O titulo vira o botao da lista; o conteudo so e renderizad
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao botao da aba. |
 | `ChildContent` | `RenderFragment?` | — | O painel da aba. |
 | `Class` | `string?` | — | Classe CSS extra no botao da aba. |
+| `Count` | `int?` | — | Contador a direita do texto ("Pendentes 3"). |
 | `Disabled` | `bool` | `false` | Visivel, mas nao selecionavel — o teclado tambem a pula. |
 | `Icon` | `RvmIconName?` | — | Icone acima do titulo. |
-| `Title` | `string` | obrigatorio | O texto do botao da aba. |
+| `Id` | `string?` | — | Id do botao da aba. Sem ele, um id unico e gerado. |
+| `PanelId` | `string?` | — | Id do painel que a aba controla, quando o conteudo fica FORA do `RvmTabs`. Com ele e sem `RvmTab.ChildContent`, a aba nao desenha painel proprio. |
+| `Text` | `string` | `""` | Texto da aba. Vence o `RvmTab.Title` quando os dois vem. |
+| `Title` | `string` | `""` | O texto do botao da aba. |
+| `Value` | `string` | `""` | Valor que identifica a aba (o `Value` do `RvmTabs`). Sem ele, vale a posicao. |
 
 ### RvmTableColumn<TItem>
 
@@ -1335,8 +1365,13 @@ Abas: uma lista de titulos e o painel da aba escolhida. As abas sao `RvmTab` fil
 | `AriaLabel` | `string?` | — | Nome da lista de abas para o leitor de tela ("Configuracoes da conta"). |
 | `ChildContent` | `RenderFragment?` | — | As `RvmTab`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Cor do destaque da aba escolhida. Padrao: o primario. |
 | `FullWidth` | `bool` | `false` | As abas dividem a largura toda ("Full Width" no kit). So na horizontal. |
+| `Label` | `string` | `""` | Nome da lista de abas para o leitor de tela. O mesmo que `RvmTabs.AriaLabel`, que vence. |
 | `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Abas em linha (padrao) ou empilhadas a esquerda do painel. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto das abas preenchidas (`RvmTabsVariant.Contained`): o do kit ou pilula. |
+| `Value` | `string?` | — | Valor da aba escolhida (o `Value` da `RvmTab`). Aceita `@bind-Value`. Quando casa com uma aba, vence `RvmTabs.ActiveIndex`. Em lista montada com `@foreach`, use `@key` nas abas. |
+| `ValueChanged` | `EventCallback<string>` | — | Disparado com o valor da aba escolhida (junto com `RvmTabs.ActiveIndexChanged`). |
 | `Variant` | `RvmTabsVariant` | `RvmTabsVariant.Standard` | Sublinhada (padrao) ou preenchida. |
 
 ### RvmTextField
@@ -1520,6 +1555,10 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Button`, `Submit`, `Reset`
 - `RvmButtonVariant` (`RVM.DesignSystem.Components.Button`): Peso visual do botao. Uma tela tem UM contained em destaque; o resto apoia.
   Valores: `Contained`, `Filled`, `Outlined`, `Text`, `Soft`
+- `RvmCardPadding` (`RVM.DesignSystem.Components.Card`): Respiro interno do `RvmCard` (contrato com o RVM.UI, DSGN-017).
+  Valores: `None`, `Small`, `Medium`, `Large`
+- `RvmCardVariant` (`RVM.DesignSystem.Components.Card`): Aparencia da superficie do `RvmCard` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Elevated`, `Outlined`, `Flat`
 - `RvmChartAxis` (`RVM.DesignSystem.Components.Chart`): Em qual eixo de valores a serie e lida.
   Valores: `Primary`, `Secondary`
 - `RvmChartExportFormat` (`RVM.DesignSystem.Components.Chart`): Em que formato o grafico e exportado.
@@ -1548,8 +1587,14 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Text`, `Email`, `Password`, `Number`, `Tel`, `Url`, `Search`
 - `RvmLabelPosition` (`RVM.DesignSystem`): De que lado do controle fica o rotulo (caixa de marcar, chave, opcao).
   Valores: `End`, `Start`
+- `RvmListItemLayout` (`RVM.DesignSystem.Components.Lists`): Forma do `RvmListItem` (contrato com o RVM.UI, DSGN-017). Muda a hierarquia de cor do texto.
+  Valores: `TwoColumn`, `OneColumn`
 - `RvmMascotName` (`RVM.DesignSystem.Icons`): Os mascotes do contrato com o RVM.UI (DSGN-017). O nome diz a FUNCAO na interface (erro, carregando, vazio), nao o personagem. No Design System nao ha ilustracao: cada um vira um icone Tabler grande num circulo de fundo suave, no estilo NEATLAB — invencao declarada. Ver `RvmMascot`.
   Valores: `AlienDocumentation`, `AlienIntegrations`, `AlienNotifications`, `AlienOnboardingSteps`, `AlienSecureLogin`, `AlienSessionExpired`, `DogEmptyState`, `DogFeedback`, `DogNoConnection`, `DogSearch`, `RafaelCodeReview`, `RobotAccessDenied`, `RobotDogSmallSuccess`, `RobotError`, `RobotLoading`, `RobotMaintenance`, `RobotPermissionRequested`, `RobotSettings`, `RobotUpdateAvailable`, `RobotUploadingFile`, `TeamAnalytics`, `TeamIdeaToProduct`, `TeamSecurity`
+- `RvmMenuPlacement` (`RVM.DesignSystem.Components.Menu`): Onde o menu abre em relacao ao gatilho (contrato com o RVM.UI, DSGN-017).
+  Valores: `BottomEnd`, `BottomStart`, `BottomCenter`, `TopEnd`, `TopStart`
+- `RvmMenuTrigger` (`RVM.DesignSystem.Components.Menu`): Forma do gatilho do `RvmMenu` (contrato com o RVM.UI, DSGN-017).
+  Valores: `Button`, `Icon`, `Text`
 - `RvmNavMatch` (`RVM.DesignSystem.Components.AppShell`): Como o item de menu decide que e a pagina atual.
   Valores: `Prefix`, `All`
 - `RvmOrientation` (`RVM.DesignSystem`): Orientacao de um elemento que separa ou empilha conteudo.
@@ -1594,12 +1639,20 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Top`, `Bottom`, `Left`, `Right`
 - `RvmTooltipTrigger` (`RVM.DesignSystem.Components.Tooltip`): Icone do gatilho padrao do `RvmTooltip`, usado quando nao ha `ChildContent`.
   Valores: `Info`, `Question`
+- `RvmTrend` (`RVM.DesignSystem`): Para onde um numero andou (contrato com o RVM.UI, DSGN-017). A cor vem daqui.
+  Valores: `None`, `Up`, `Down`
 - `RvmTypographyVariant` (`RVM.DesignSystem.Components.Typography`): Os 24 estilos da escala tipografica do kit (`06-tokens-e-tematizacao.md`). Cada um vira a classe `rvm-text-*` correspondente, que le tamanho, entrelinha e peso dos tokens.
   Valores: `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `Subtitle1`, `Subtitle2`, `Body1`, `Body2`, `Caption`, `Overline`, `ButtonLarge`, `ButtonMedium`, `ButtonSmall`, `InputLabel`, `Helper`, `Input`, `AvatarInitials`, `Chip`, `Tooltip`, `AlertTitle`, `TableHeader`, `BadgeLabel`
 
 ## Tipos de apoio
 
 Classes e records usados nos parametros dos componentes.
+
+### RvmAvatarItem
+
+`RVM.DesignSystem.Components.Avatar` · Pessoa de um `RvmAvatarGroup` montado por `Items` (contrato com o RVM.UI, DSGN-017).
+- `Name`: `string` — Nome: texto alternativo do avatar e, sem foto, a fonte das iniciais.
+- `Src`: `string?` — Foto. Sem ela, as iniciais do nome.
 
 ### RvmBreadcrumbItem
 
