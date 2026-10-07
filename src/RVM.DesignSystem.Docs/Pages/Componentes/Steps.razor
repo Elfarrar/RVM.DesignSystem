@@ -1,0 +1,34 @@
+@page "/componentes/steps"
+
+<PageTitle>RvmSteps — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmSteps</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Etapas de um fluxo de varias telas: numero de cada etapa, check nas concluidas, aria-current na atual, o conteudo embaixo e Voltar/Avancar opcionais. Em tela estreita so o titulo da atual aparece.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Importacao em tres etapas"
+              Descricao="AllowBackNavigation deixa voltar clicando numa etapa concluida."
+              Codigo="@Codigo">
+    <RvmSteps Steps="@Etapas" @bind-Current="_etapa" ShowNavigation="true" AllowBackNavigation="true" Label="Importacao de notas">
+        <RvmTypography>Conteudo da etapa @(_etapa + 1): @Etapas[_etapa].</RvmTypography>
+    </RvmSteps>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmSteps" />
+
+@code {
+    private static readonly string[] Etapas = ["Arquivo", "Conferencia", "Confirmacao"];
+    private int _etapa = 1;
+
+    private const string Codigo = """
+        <RvmSteps Steps="@etapas" @bind-Current="etapa" ShowNavigation="true" AllowBackNavigation="true">
+            ...conteudo da etapa...
+        </RvmSteps>
+        """;
+}

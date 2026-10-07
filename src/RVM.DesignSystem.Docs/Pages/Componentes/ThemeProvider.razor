@@ -1,0 +1,141 @@
+@page "/componentes/theme-provider"
+@using RVM.DesignSystem.Theming
+
+<PageTitle>RvmThemeProvider — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmThemeProvider</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A raiz da tematizacao. Escreve no proprio elemento o tema (claro, escuro ou automatico), a paleta, o esquema de cor,
+    o tamanho da fonte, o contraste alto e o menos movimento — tudo CSS, entao o tema certo sai ja na primeira
+    renderizacao, sem JavaScript, no Server e no WebAssembly. Pode ser aninhado: cada amostra abaixo e um provider.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Sem <code>Accent</code>, o
+    destaque e o <strong>Blue</strong>, o cobalto do kit — quem ja usa o DS nao ve diferenca nenhuma.
+</p>
+
+<div class="amostras-tema">
+    <BlocoExemplo Titulo="Cor de destaque"
+                  Descricao="Accent troca a familia primary inteira: botao cheio, link, foco, aba e menu ativos. Roxo e Preto sao rampas desenhadas no DS com contraste AA medido nos dois temas; o Preto inverte no escuro."
+                  Codigo="@CodigoDestaque">
+        <div class="grade-amostras">
+            @foreach (var destaque in Destaques)
+            {
+                @foreach (var tema in Temas)
+                {
+                    <RvmThemeProvider @key="(destaque, tema)" Accent="destaque" Theme="tema" Persist="false" Class="amostra-tema">
+                        @Amostra(($"{NomeDo(destaque)} · {NomeDo(tema)}", null))
+                    </RvmThemeProvider>
+                }
+            }
+        </div>
+    </BlocoExemplo>
+
+    <BlocoExemplo Titulo="Paletas de produto"
+                  Descricao="Profissional, Acolhedor e Utilitario trazem cor e fonte (Hanken Grotesk, Lora e Geist Mono, servidas pelo pacote sob SIL OFL). Settings aplica um tema completo e fixo, sem estado — o mesmo que o RvmThemePicker grava."
+                  Codigo="@CodigoProduto">
+        <div class="grade-amostras">
+            @foreach (var paleta in RvmPalettes.Produto)
+            {
+                @foreach (var modo in Modos)
+                {
+                    <RvmThemeProvider @key="(paleta.Id, modo)" Settings="new RvmThemeSettings(paleta.Id, modo)" Class="amostra-tema">
+                        @Amostra(($"{paleta.Name} · {(modo == RvmThemeMode.Dark ? "Escuro" : "Claro")}", paleta.Description))
+                    </RvmThemeProvider>
+                }
+            }
+        </div>
+    </BlocoExemplo>
+
+    <BlocoExemplo Titulo="Esquema de cor"
+                  Descricao="Accessible (padrao) usa os degraus que passam 4.5:1. Original usa os degraus EXATOS do kit: a cor semantica como texto cai para 1.55:1 a 3.3:1 e o branco sobre ela tambem. Use so onde a fidelidade ao kit vale mais que a leitura."
+                  Codigo="@CodigoEsquema">
+        <div class="grade-amostras">
+            @foreach (var esquema in Esquemas)
+            {
+                <RvmThemeProvider @key="esquema" ColorScheme="esquema" Persist="false" Class="amostra-tema">
+                    <RvmTypography Variant="RvmTypographyVariant.Subtitle2">@esquema</RvmTypography>
+                    <div class="linha-de-tema">
+                        <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Warning">Revisar</RvmButton>
+                        <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Success">Aprovar</RvmButton>
+                        <RvmButton Color="RvmColor.Error">Excluir</RvmButton>
+                    </div>
+                    <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">Ultima sincronizacao ha 3 minutos.</RvmTypography>
+                </RvmThemeProvider>
+            }
+        </div>
+    </BlocoExemplo>
+</div>
+
+<BlocoExemplo Titulo="Tema escolhido pelo usuario"
+              Descricao="Com UserTheme, o provider le o RvmThemeState (registrado pelo AddRvmDesignSystem) e redesenha quando o usuario troca no RvmThemePicker. A escolha fica no localStorage e num cookie: o WebAssembly le antes do primeiro render; em app com servidor, registre um store que leia o cookie ou o perfil (AddRvmTheme<TStore>) e a pre-renderizacao ja sai no tema certo."
+              Codigo="@CodigoUsuario">
+    <p class="rvm-text-body2 site-apoio">Veja funcionando na pagina do <a href="componentes/theme-picker">RvmThemePicker</a>.</p>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmThemeProvider" />
+
+@code {
+    private static readonly RvmAccent[] Destaques = [RvmAccent.Blue, RvmAccent.Purple, RvmAccent.Black];
+    private static readonly RvmTheme[] Temas = [RvmTheme.Light, RvmTheme.Dark];
+    private static readonly RvmThemeMode[] Modos = [RvmThemeMode.Light, RvmThemeMode.Dark];
+    private static readonly RvmColorScheme[] Esquemas = [RvmColorScheme.Accessible, RvmColorScheme.Original];
+
+    private static string NomeDo(RvmAccent destaque) => destaque switch
+    {
+        RvmAccent.Purple => "Roxo",
+        RvmAccent.Black => "Preto",
+        _ => "Azul"
+    };
+
+    private static string NomeDo(RvmTheme tema) => tema == RvmTheme.Dark ? "Escuro" : "Claro";
+
+    // A mesma amostra em todas as paletas: titulo, texto, link, botoes, chip e barra de progresso.
+    private static RenderFragment Amostra((string Titulo, string? Descricao) a) =>
+        @<text>
+            <RvmTypography Variant="RvmTypographyVariant.Subtitle2">@a.Titulo</RvmTypography>
+            <RvmTypography Variant="RvmTypographyVariant.H6">Talhao 12 · Safra 2026</RvmTypography>
+            <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">
+                @(a.Descricao ?? "Colheita prevista para 14/03, 62% da area ja colhida.")
+            </RvmTypography>
+            <RvmProgressBar Value="62" Label="Area colhida" />
+            <div class="linha-de-tema">
+                <RvmButton>Registrar</RvmButton>
+                <RvmButton Variant="RvmButtonVariant.Soft">Adiar</RvmButton>
+                <RvmChip Color="RvmColor.Primary" Variant="RvmChipVariant.Outlined">R$ 12.500,00</RvmChip>
+            </div>
+            <RvmLink Href="componentes/theme-provider">Ver o contrato de venda</RvmLink>
+        </text>;
+
+    private const string CodigoDestaque = """
+        <RvmThemeProvider Accent="RvmAccent.Purple">
+            ...o app
+        </RvmThemeProvider>
+        """;
+
+    private const string CodigoProduto = """
+        <RvmThemeProvider Settings="new RvmThemeSettings(RvmPalettes.Acolhedor.Id, RvmThemeMode.Dark)">
+            ...
+        </RvmThemeProvider>
+        """;
+
+    private const string CodigoEsquema = """
+        <RvmThemeProvider ColorScheme="RvmColorScheme.Original">
+            ...tela de referencia, fiel ao kit
+        </RvmThemeProvider>
+        """;
+
+    private const string CodigoUsuario = """
+        // Program.cs — o AddRvmDesignSystem ja registra o tema do usuario (localStorage + cookie)
+        builder.Services.AddRvmDesignSystem();
+        // App com servidor: um store que le o cookie "rvm.tema" ou o perfil na pre-renderizacao
+        builder.Services.AddRvmTheme<TemaDoPerfil>();
+
+        <!-- MainLayout.razor -->
+        <RvmThemeProvider UserTheme="true">
+            @Body
+        </RvmThemeProvider>
+        """;
+}

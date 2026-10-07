@@ -47,7 +47,11 @@
     </EditForm>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmDatePicker" />
+
+<TabelaParametros Componente="RvmDateRangePicker" />
+
+<TabelaParametros Componente="RvmCalendar" />
 
 <RecorteDoKit Origem="kit/date-picker.png"
               Arquivo="referencia-neatlab/Date & TIme Picker.png (recorte)"
@@ -68,22 +72,6 @@
     }
 
     private static bool FimDeSemana(DateOnly d) => d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Value", "DateOnly? / RvmDateRange?", "—", "@bind-Value no RvmDatePicker e no RvmDateRangePicker."),
-        new("Label", "string", "—", "Rotulo. Entra no nome acessivel junto com o valor."),
-        new("HelperText / ErrorText", "string?", "—", "Apoio abaixo; o erro vence o apoio."),
-        new("Placeholder", "string?", "\"dd/mm/aaaa\"", "Texto no campo vazio."),
-        new("Min / Max", "DateOnly?", "—", "Limites de navegacao e escolha."),
-        new("DateDisabled", "Func<DateOnly, bool>?", "—", "Datas que nao podem ser escolhidas."),
-        new("Size", "RvmSize", "Medium", "56 px ou 40 px (Small)."),
-        new("Required", "bool", "false", "Asterisco. A validacao e do EditForm."),
-        new("Disabled", "bool", "false", "Indisponivel."),
-        new("Name", "string?", "—", "input hidden em yyyy-MM-dd (intervalo: {Name}Inicio e {Name}Fim)."),
-        new("RvmCalendar", "—", "—", "Value, IsRange, Range, Min, Max, DateDisabled: o calendario solto."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no botao do campo.")
-    ];
 
     private const string CodigoCampos = """
         <RvmDatePicker @bind-Value="_entrega" Label="Data de entrega" DateDisabled="@FimDeSemana" />

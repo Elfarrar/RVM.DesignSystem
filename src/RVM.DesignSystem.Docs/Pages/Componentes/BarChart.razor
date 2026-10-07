@@ -46,7 +46,27 @@
     </RvmBarChart>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<BlocoExemplo Titulo="Em pe (Layout Vertical)"
+              Descricao="O Layout troca o arranjo sem trocar de componente: Vertical desenha colunas, como o RvmColumnChart. O padrao continua Horizontal."
+              Codigo="@CodigoVertical">
+    <RvmBarChart Items="Custos" Label="c => c.Cultura" AriaLabel="Custo de fertilizantes e defensivos por hectare" Height="260"
+                 Layout="RvmBarLayout.Vertical" ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)}")">
+        <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" />
+        <RvmChartSeries Name="Defensivos" Value="c => c.Defensivos" Color="RvmColor.Success" />
+    </RvmBarChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Divergente (Layout Diverging)"
+              Descricao="Entradas e saidas de caixa por mes, a partir de um zero no meio. Com duas series, a primeira vai para a direita e a segunda para a esquerda, em primary e erro; o eixo mostra o tamanho dos dois lados. Com uma serie so, o lado vem do sinal do valor."
+              Codigo="@CodigoDivergente">
+    <RvmBarChart Items="Fluxo" Label="f => f.Mes" AriaLabel="Entradas e saidas de caixa por mes" Height="280"
+                 Layout="RvmBarLayout.Diverging" ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)} mil")">
+        <RvmChartSeries Name="Entradas" Value="f => f.Entradas" />
+        <RvmChartSeries Name="Saidas" Value="f => f.Saidas" />
+    </RvmBarChart>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmBarChart" />
 
 @code {
     private static readonly (string Nome, double Produtividade, double Area)[] Talhoes =
@@ -60,22 +80,26 @@
         ("Soja", 620, 980, 740), ("Milho safrinha", 890, 1240, 520), ("Algodao", 710, 1650, 1980), ("Feijao", 540, 760, 610)
     ];
 
-    private static readonly TabelaParametros.Parametro[] Parametros =
+    private static readonly (string Mes, double Entradas, double Saidas)[] Fluxo =
     [
-        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
-        new("Stacked", "bool", "false", "Series empilhadas em vez de lado a lado."),
-        new("MaxBarThickness", "int", "24", "Espessura maxima de cada barra, em px."),
-        new("Height", "int", "300", "Altura, em px."),
-        new("ShowLegend / ShowGrid", "bool", "true / true", "Legenda (com mais de uma serie) e grade."),
-        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie."),
-        new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
-        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O CSV e para ler, o XLSX e para somar (numero entra como numero). O nome padrao vem do AriaLabel."),
-        new("PrintAsync()", "Task<bool>", "—", "Abre a caixa de impressao do navegador com o grafico sozinho na pagina."),
-        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo de cima (nao herda o ValueFormat, que descreve a unidade do de baixo)."),
-        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida. Aqui o eixo de valores e o horizontal: Secondary poe a escala no TOPO, nao a direita."),
-        new("Zoomable / SelectionMode", "bool / RvmChartSelectionMode", "false / None", "Aparecem por heranca, mas NAO valem aqui: zoom, arrasto e selecao de faixa pedem o eixo de categorias na horizontal — use RvmColumnChart, RvmLineChart, RvmAreaChart ou RvmScatterChart.")
+        ("Janeiro", 420, 310), ("Fevereiro", 380, 450), ("Marco", 910, 520), ("Abril", 1240, 610), ("Maio", 560, 880)
     ];
+
+    private const string CodigoVertical = """
+        <RvmBarChart Items="custos" Label="c => c.Cultura" AriaLabel="Custo por hectare"
+                     Layout="RvmBarLayout.Vertical">
+            <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" />
+            <RvmChartSeries Name="Defensivos" Value="c => c.Defensivos" Color="RvmColor.Success" />
+        </RvmBarChart>
+        """;
+
+    private const string CodigoDivergente = """
+        <RvmBarChart Items="fluxo" Label="f => f.Mes" AriaLabel="Entradas e saidas de caixa por mes"
+                     Layout="RvmBarLayout.Diverging">
+            <RvmChartSeries Name="Entradas" Value="f => f.Entradas" />
+            <RvmChartSeries Name="Saidas" Value="f => f.Saidas" />
+        </RvmBarChart>
+        """;
 
     private const string CodigoEixoDuplo = """
         <RvmBarChart Items="talhoes" Label="t => t.Nome" AriaLabel="Area plantada e produtividade de cada talhao"

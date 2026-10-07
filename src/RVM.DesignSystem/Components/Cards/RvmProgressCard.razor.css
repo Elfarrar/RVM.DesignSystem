@@ -1,0 +1,64 @@
+/* CSS isolado do RvmProgressCard. So custom properties — hex literal aqui quebra o tema escuro.
+   Papel, raio, sombra e respiro de 20 px sao os do RvmCard (Basic Card.png). */
+
+.rvm-progress-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-5);
+    box-sizing: border-box;
+    min-width: 0;
+    padding: var(--rvm-space-5);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-topo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-titulos {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-titulo,
+.rvm-descricao {
+    margin: 0;
+}
+
+.rvm-descricao,
+.rvm-porcentagem {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-acao {
+    flex: none;
+    align-self: flex-start;
+}
+
+.rvm-progresso {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-linha {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-quantia {
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-rodape {
+    padding-block-start: var(--rvm-space-4);
+    border-top: 1px solid var(--rvm-color-divider);
+}

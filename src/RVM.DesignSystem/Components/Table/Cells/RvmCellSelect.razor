@@ -1,0 +1,31 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Coluna de escolha (contrato com o RVM.UI, DSGN-017): a caixa de marcar no inicio de cada linha das listas do kit.
+   E o RvmCheckbox (input nativo — teclado e semantica de graca, funciona fora de EditForm), sem texto visivel: o Label
+   vira o aria-label, e precisa dizer QUAL linha ("Selecionar o lote 4910"), senao a tabela vira uma fila de
+   "Selecionar" iguais para quem ouve. Sem alinhamento: a coluna tem so a largura da caixa. *@
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(null, "rvm-celula-escolha", Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmCheckbox Value="Selected" ValueChanged="SelectedChanged" Disabled="Disabled" aria-label="@Label" />
+    </div>
+</td>
+
+@code {
+    /// <summary>Linha escolhida.</summary>
+    [Parameter] public bool Selected { get; set; }
+
+    /// <summary>Avisa que escolheram ou desescolheram a linha.</summary>
+    [Parameter] public EventCallback<bool> SelectedChanged { get; set; }
+
+    /// <summary>O que esta caixa escolhe, para o leitor de tela ("Selecionar o pedido da Ana Ribeiro").</summary>
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    /// <summary>Nao da para escolher esta linha.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

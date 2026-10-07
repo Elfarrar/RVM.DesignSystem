@@ -1,0 +1,10 @@
+.exemplo-avisos {
+    width: 100%;
+    max-width: 380px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-1);
+}

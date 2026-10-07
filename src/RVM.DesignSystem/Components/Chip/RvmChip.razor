@@ -12,7 +12,7 @@
         <RvmIcon Name="StartIcon.Value" Size="RvmSize.Small" />
     }
 
-    <span class="rvm-rotulo">@ChildContent</span>
+    <span class="rvm-rotulo">@(ChildContent ?? (b => b.AddContent(0, Label)))</span>
 
     @if (OnRemove.HasDelegate)
     {

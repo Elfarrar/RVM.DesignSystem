@@ -12,6 +12,25 @@ const FOCAVEIS = [
 let abertos = 0;
 let overflowOriginal = '';
 
+// As caixas abertas, a de cima por ultimo. Quando o foco cai no body (clique no fundo nao focavel, botao focado que
+// fica desabilitado durante a acao), o Tab e o Esc ouvidos na caixa param de valer: o foco volta para a caixa de cima,
+// e um Tab dado fora dela e puxado de volta (achado do review da onda 3, DSGN-017).
+const pilha = [];
+
+function noTopo(caixa) {
+    return pilha.length > 0 && pilha[pilha.length - 1] === caixa;
+}
+
+document.addEventListener('keydown', (evento) => {
+    const topo = pilha[pilha.length - 1];
+    if (evento.key !== 'Tab' || !topo || topo.contains(document.activeElement)) {
+        return;
+    }
+
+    evento.preventDefault();
+    (focaveis(topo)[0] ?? topo).focus();
+}, true);
+
 function focaveis(caixa) {
     // So o que entra na tabulacao: um botao com tabindex=-1 (dia nao focado da grade do calendario,
     // aba inativa) casa com o seletor, mas o Tab nao para nele. Sem este filtro o "ultimo focavel" era
@@ -52,6 +71,17 @@ export function abrir(caixa) {
 
     caixa.addEventListener('keydown', aoTeclar);
 
+    const aoPerderFoco = () => {
+        setTimeout(() => {
+            const atual = document.activeElement;
+            if (noTopo(caixa) && document.hasFocus() && (!atual || atual === document.body)) {
+                caixa.focus();
+            }
+        }, 0);
+    };
+    caixa.addEventListener('focusout', aoPerderFoco);
+    pilha.push(caixa);
+
     if (abertos === 0) {
         overflowOriginal = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
@@ -72,6 +102,11 @@ export function abrir(caixa) {
 
             fechado = true;
             caixa.removeEventListener('keydown', aoTeclar);
+            caixa.removeEventListener('focusout', aoPerderFoco);
+            const posicao = pilha.lastIndexOf(caixa);
+            if (posicao >= 0) {
+                pilha.splice(posicao, 1);
+            }
             abertos = Math.max(0, abertos - 1);
             if (abertos === 0) {
                 document.body.style.overflow = overflowOriginal;

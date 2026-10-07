@@ -42,3 +42,6 @@
     grid-row: 1;
     text-align: start;
 }
+
+/* Dense do contrato com o RVM.UI (DSGN-017): 44 px entre os itens em vez de 70. */
+.rvm-denso ::deep .rvm-item-tempo { min-height: 44px; }

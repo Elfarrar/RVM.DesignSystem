@@ -70,3 +70,6 @@
 .rvm-preenchido ::deep .rvm-conteudo {
     padding-top: var(--rvm-space-4);
 }
+
+/* Dense do contrato com o RVM.UI (DSGN-017): cabecalho de 40 px em vez de 52. */
+.rvm-denso ::deep .rvm-cabecalho { min-height: 40px; }

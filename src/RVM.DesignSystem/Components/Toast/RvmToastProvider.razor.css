@@ -1,0 +1,152 @@
+/* CSS isolado do RvmToastProvider. So custom properties — hex literal aqui quebra o tema escuro.
+   Do referencia-neatlab/Toast.png (variante Custom): cartao no fundo de papel, com sombra, icone do papel a
+   esquerda, titulo acima do texto e o x a direita. O kit tem 290 px com texto curto em ingles; aqui 360 px,
+   para a frase em PT-BR e a acao caberem sem quebrar demais. Canto superior direito, abaixo da barra do topo
+   (64 px) do RvmAppShell; o RvmSnackbarHost ocupa o inferior esquerdo. */
+
+.rvm-toasts {
+    position: fixed;
+    top: calc(64px + var(--rvm-space-4));
+    right: var(--rvm-space-6);
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    max-width: calc(100vw - 2 * var(--rvm-space-6));
+    pointer-events: none;
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-pilha {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}
+
+/* As duas regioes ficam sempre no DOM; o espaco entre elas so aparece quando as duas tem aviso. */
+.rvm-pilha:not(:empty) + .rvm-pilha:not(:empty) {
+    margin-top: var(--rvm-space-2);
+}
+
+.rvm-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--rvm-space-3) var(--rvm-space-2) var(--rvm-space-3) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    box-shadow: var(--rvm-shadow-3);
+    pointer-events: auto;
+    animation: rvm-toast-entra var(--rvm-transition-medium) both;
+}
+
+@keyframes rvm-toast-entra {
+    from { opacity: 0; transform: translateY(-8px); }
+}
+
+.rvm-icone {
+    display: inline-flex;
+    flex: none;
+    padding-top: 2px;
+}
+
+/* O icone diz a gravidade sem ler o texto: -text, 3:1 contra o papel nos dois temas. */
+.rvm-info .rvm-icone,
+.rvm-info .rvm-acao { color: var(--rvm-color-info-text); }
+.rvm-success .rvm-icone,
+.rvm-success .rvm-acao { color: var(--rvm-color-success-text); }
+.rvm-warning .rvm-icone,
+.rvm-warning .rvm-acao { color: var(--rvm-color-warning-text); }
+.rvm-error .rvm-icone,
+.rvm-error .rvm-acao { color: var(--rvm-color-error-text); }
+
+.rvm-corpo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--rvm-space-1);
+    padding-top: 2px;
+}
+
+.rvm-titulo,
+.rvm-texto {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.rvm-titulo {
+    font-size: var(--rvm-text-subtitle2-size);
+    line-height: var(--rvm-text-subtitle2-line);
+    font-weight: var(--rvm-text-subtitle2-weight);
+}
+
+.rvm-texto {
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+/* Com titulo, o texto vira apoio (Toast.png: o nome forte, a frase em cinza). */
+.rvm-titulo + .rvm-texto {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-acao,
+.rvm-fechar {
+    flex: none;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.rvm-acao {
+    margin-left: calc(-1 * var(--rvm-space-2));
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+    font-size: var(--rvm-text-button-sm-size);
+    font-weight: var(--rvm-text-button-sm-weight);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.rvm-fechar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: var(--rvm-radius-circle);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-acao:hover,
+.rvm-fechar:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-acao:focus-visible,
+.rvm-fechar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid currentColor;
+    outline-offset: 0;
+}
+
+@media (max-width: 600px) {
+    .rvm-toasts {
+        left: var(--rvm-space-4);
+        right: var(--rvm-space-4);
+        width: auto;
+        max-width: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-toast {
+        animation: none;
+    }
+}

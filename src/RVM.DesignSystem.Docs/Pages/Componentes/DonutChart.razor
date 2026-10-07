@@ -1,0 +1,156 @@
+@page "/componentes/donut-chart"
+@using RVM.DesignSystem.Components.Chart
+@using RVM.DesignSystem.Icons
+
+<PageTitle>RvmDonutChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDonutChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A rosca do kit, inteira ou pela metade, fina ou grossa, em traco cheio ou tracejado. As fatias dividem a soma; com
+    Total, o grafico responde "quanto de quanto" e a trilha mostra o que falta. O centro traz o numero que voce
+    escolher (CenterValue) e um detalhe curto (CenterDetail). Passe o mouse ou de Tab numa fatia para ver o valor.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Para leitor de tela, uma tabela
+    escondida traz cada fatia com o valor e o percentual.
+</p>
+
+<BlocoExemplo Titulo="Rosca grossa com o total no centro"
+              Descricao="O Total Visitors do kit: area plantada por cultura, em degraus do primary (o padrao)."
+              Codigo="@CodigoGrossa">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 220px">
+            <RvmDonutChart Label="Area plantada por cultura" Slices="Culturas" Thickness="RvmDonutThickness.Thick"
+                           FormatValue="@(v => $"{RvmChartFormat.Number(v)} ha")" CenterValue="1.240">
+                <CenterDetail>hectares</CenterDetail>
+            </RvmDonutChart>
+        </div>
+        <div style="width: 220px">
+            <RvmDonutChart Label="Area plantada por cultura, nas cores do tema" Slices="Culturas" Palette="RvmChartPalette.FullColor"
+                           FormatValue="@(v => $"{RvmChartFormat.Number(v)} ha")" CenterValue="4 culturas" />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Quanto de quanto: o Total"
+              Descricao="Colheita da safra contra a meta de 12 mil sacas: a fatia vai ate 75% e a trilha mostra o que falta."
+              Codigo="@CodigoTotal">
+    <div style="width: 200px">
+        <RvmDonutChart Label="Colheita da safra contra a meta" Slices="Colheita" Total="12000"
+                       FormatValue="@(v => $"{RvmChartFormat.Number(v)} sc")" CenterValue="75%">
+            <CenterDetail>da meta</CenterDetail>
+        </RvmDonutChart>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Meia rosca, cheia e tracejada"
+              Descricao="O Total Profit do kit: orcamento de custeio ja gasto, em reais."
+              Codigo="@CodigoMeia">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 240px">
+            <RvmDonutChart Label="Orcamento de custeio gasto" Slices="Custeio" Total="480000" Shape="RvmDonutShape.Half"
+                           Thickness="RvmDonutThickness.Thick" FormatValue="Reais" CenterValue="R$ 352 mil">
+                <CenterDetail>de R$ 480 mil</CenterDetail>
+            </RvmDonutChart>
+        </div>
+        <div style="width: 240px">
+            <RvmDonutChart Label="Orcamento de custeio gasto, tracejado" Slices="Custeio" Total="480000" Shape="RvmDonutShape.Half"
+                           Dashed="true" Thickness="RvmDonutThickness.Thick" FormatValue="Reais" CenterValue="73%">
+                <CenterDetail>do orcamento</CenterDetail>
+            </RvmDonutChart>
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Cor propria da fatia"
+              Descricao="Quando a cor e o dado do dominio. So hexadecimal (#RGB ou #RRGGBB); outro texto cai na paleta. Diga o significado em texto tambem."
+              Codigo="@CodigoCor">
+    <div style="width: 200px">
+        <RvmDonutChart Label="Contas a receber por situacao" Slices="Recebiveis" FormatValue="Reais" CenterValue="R$ 86 mil">
+            <CenterDetail>a receber</CenterDetail>
+        </RvmDonutChart>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="No lugar do desenho, na mesma figura. Erro vence carregando, que vence vazio; fatias sem valor contam como vazio."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 220px">
+            <RvmDonutChart Label="Area plantada por cultura" Slices="Culturas" Loading="true" />
+        </div>
+        <div style="width: 220px">
+            <RvmDonutChart Label="Area plantada por cultura" Slices="Culturas" Error="true" ErrorMascot="RvmMascotName.RobotError" />
+        </div>
+        <div style="width: 220px">
+            <RvmDonutChart Label="Area plantada por cultura" Slices="[]" EmptyText="Nenhuma cultura plantada nesta safra." />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmDonutChart" />
+
+<RecorteDoKit Origem="kit/pie-chart.png"
+              Arquivo="referencia-neatlab/Chart Card.png (recorte)"
+              Descricao="O cartao Total Visitors: rosca grossa em degraus do primary, com o total no centro."
+              Alt="Recorte do kit NEATLAB com um grafico de rosca" />
+
+@code {
+    private static readonly RvmChartSlice[] Culturas =
+        [new("Soja", 620), new("Milho", 340), new("Algodao", 180), new("Feijao", 100)];
+
+    private static readonly RvmChartSlice[] Colheita = [new("Colhido", 9000)];
+
+    private static readonly RvmChartSlice[] Custeio =
+        [new("Insumos", 214000), new("Mao de obra", 88000), new("Maquinas", 50000)];
+
+    private static readonly RvmChartSlice[] Recebiveis =
+        [new("Em dia", 61200, "#2E7D32"), new("Vence em 7 dias", 16400, "#B26A00"), new("Atrasadas", 8400, "#C62828")];
+
+    private static string Reais(double v) => $"R$ {RvmChartFormat.Number(v)}";
+
+    private const string CodigoGrossa = """
+        <RvmDonutChart Label="Area plantada por cultura" Slices="culturas"
+                       Thickness="RvmDonutThickness.Thick" CenterValue="1.240"
+                       FormatValue="@(v => $"{RvmChartFormat.Number(v)} ha")">
+            <CenterDetail>hectares</CenterDetail>
+        </RvmDonutChart>
+
+        <RvmDonutChart Label="Area plantada por cultura" Slices="culturas"
+                       Palette="RvmChartPalette.FullColor" CenterValue="4 culturas" />
+
+        @code {
+            private RvmChartSlice[] culturas =
+                [new("Soja", 620), new("Milho", 340), new("Algodao", 180), new("Feijao", 100)];
+        }
+        """;
+
+    private const string CodigoTotal = """
+        <RvmDonutChart Label="Colheita da safra contra a meta" Slices="[new("Colhido", 9000)]"
+                       Total="12000" CenterValue="75%">
+            <CenterDetail>da meta</CenterDetail>
+        </RvmDonutChart>
+        """;
+
+    private const string CodigoMeia = """
+        <RvmDonutChart Label="Orcamento de custeio gasto" Slices="custeio" Total="480000"
+                       Shape="RvmDonutShape.Half" Thickness="RvmDonutThickness.Thick"
+                       Dashed="true" FormatValue="Reais" CenterValue="73%">
+            <CenterDetail>do orcamento</CenterDetail>
+        </RvmDonutChart>
+        """;
+
+    private const string CodigoCor = """
+        <RvmDonutChart Label="Contas a receber por situacao" FormatValue="Reais" CenterValue="R$ 86 mil"
+                       Slices="[new("Em dia", 61200, "#2E7D32"), new("Vence em 7 dias", 16400, "#B26A00"),
+                                new("Atrasadas", 8400, "#C62828")]" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmDonutChart Label="Area plantada" Slices="culturas" Loading="carregando" />
+        <RvmDonutChart Label="Area plantada" Slices="culturas" Error="falhou" ErrorMascot="RvmMascotName.RobotError" />
+        <RvmDonutChart Label="Area plantada" Slices="[]" EmptyText="Nenhuma cultura plantada nesta safra." />
+        """;
+}

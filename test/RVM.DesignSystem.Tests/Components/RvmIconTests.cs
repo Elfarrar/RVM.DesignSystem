@@ -84,7 +84,7 @@ public class RvmIconTests : BunitContext
         // nome a mao e esquecer o desenho, o componente estoura em tempo de execucao — este teste
         // troca isso por uma falha na hora de compilar a suite.
         var semDesenho = Enum.GetValues<RvmIconName>()
-            .Where(nome => Render<RvmIcon>(p => p.Add(x => x.Name, nome)).FindAll("path").Count == 0)
+            .Where(nome => Render<RvmIcon>(p => p.Add(x => x.Name, nome)).Find("svg").ChildElementCount == 0)
             .ToArray();
 
         Assert.Empty(semDesenho);
@@ -101,5 +101,51 @@ public class RvmIconTests : BunitContext
         var svg = cortado.Find("svg");
         Assert.Equal("rvm-icone minha", svg.GetAttribute("class"));
         Assert.Equal("1", svg.GetAttribute("data-teste"));
+    }
+
+    [Fact]
+    public void Nome_do_contrato_desenha_o_Tabler_do_mapa()
+    {
+        // AltArrowDown (Solar, do RVM.UI) e desenhado com o chevron-down do Tabler — o mesmo traco do ChevronDown.
+        var solar = Render<RvmIcon>(p => p.Add(x => x.Name, RvmIconName.AltArrowDown)).Find("svg").InnerHtml;
+        var tabler = Render<RvmIcon>(p => p.Add(x => x.Name, RvmIconName.ChevronDown)).Find("svg").InnerHtml;
+
+        Assert.Equal(tabler, solar);
+    }
+
+    [Theory]
+    [InlineData(RvmIconStyle.Bold)]
+    [InlineData(RvmIconStyle.BoldDuotone)]
+    public void Estilo_cheio_usa_o_desenho_cheio_do_Tabler(RvmIconStyle estilo)
+    {
+        var cortado = Render<RvmIcon>(p => p.Add(x => x.Name, RvmIconName.Heart).Add(x => x.Style, estilo));
+
+        Assert.Equal("currentColor", cortado.Find("svg > g").GetAttribute("fill"));
+    }
+
+    [Fact]
+    public void Sem_versao_cheia_o_estilo_cheio_cai_no_traco()
+    {
+        // O x do Tabler tem versao cheia; o minus, nao.
+        var cheio = Render<RvmIcon>(p => p.Add(x => x.Name, RvmIconName.Minus).Add(x => x.Style, RvmIconStyle.Bold));
+        var traco = Render<RvmIcon>(p => p.Add(x => x.Name, RvmIconName.Minus));
+
+        Assert.Equal(traco.Find("svg").InnerHtml, cheio.Find("svg").InnerHtml);
+    }
+
+    [Fact]
+    public void SizePx_vence_o_tamanho()
+    {
+        var cortado = Render<RvmIcon>(p => p.Add(x => x.Name, RvmIconName.Bell).Add(x => x.Size, RvmSize.Small).Add(x => x.SizePx, 32));
+
+        Assert.Equal("32", cortado.Find("svg").GetAttribute("width"));
+    }
+
+    [Fact]
+    public void Class_do_contrato_chega_ao_svg()
+    {
+        var cortado = Render<RvmIcon>(p => p.Add(x => x.Name, RvmIconName.Check).Add(x => x.Class, "minha"));
+
+        Assert.Equal("rvm-icone minha", cortado.Find("svg").GetAttribute("class"));
     }
 }

@@ -1,0 +1,71 @@
+@page "/componentes/progress-bar"
+@using RVM.DesignSystem.Components.Progress
+
+<PageTitle>RvmProgressBar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmProgressBar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Barra de progresso com rotulo e porcentagem por cima: meta de venda, orcamento consumido, etapa da
+    safra. O Label (ou o AriaLabel, quando nao ha rotulo visivel) e o nome acessivel — um dos dois e
+    obrigatorio. Value fora de 0 a 100 e limitado. Para "carregando" sem rotulo, use o RvmProgress.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Rotulo, valor e cores"
+              Descricao="LabelVariant.Amount destaca o rotulo quando ele e um valor; ShowValue mostra a porcentagem."
+              Codigo="@CodigoBasico">
+    <div class="pilha-progresso">
+        <RvmProgressBar Label="Colheita da soja" Value="72" ShowValue="true" />
+        <RvmProgressBar Label="R$ 12.400 de R$ 20.000" LabelVariant="RvmProgressLabelVariant.Amount"
+                        Value="62" ShowValue="true" Color="RvmColor.Success" />
+        <RvmProgressBar Label="Orcamento de insumos" Value="94" ShowValue="true" Color="RvmColor.Warning" />
+        <RvmProgressBar AriaLabel="Limite do cartao usado" Value="108" Color="RvmColor.Danger" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos"
+              Descricao="Barra de 4 px (texto menor), 8 px e 12 px."
+              Codigo="@CodigoTamanhos">
+    <div class="pilha-progresso">
+        <RvmProgressBar Size="RvmSize.Small" Label="Plantio" Value="35" ShowValue="true" />
+        <RvmProgressBar Label="Plantio" Value="35" ShowValue="true" />
+        <RvmProgressBar Size="RvmSize.Large" Label="Plantio" Value="35" ShowValue="true" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Sem valor e sobre fundo colorido"
+              Descricao="NoValue nao preenche nada (uma barra vazia diria 0%). Surface.Dark deixa trilho, barra e texto claros."
+              Codigo="@CodigoSuperficie">
+    <div class="pilha-progresso">
+        <RvmProgressBar Label="Umidade do graneleiro" NoValue="true" ShowValue="true" />
+        <div class="cartao-colorido">
+            <RvmProgressBar Label="Meta do trimestre" Value="48" ShowValue="true" Surface="RvmSurface.Dark" />
+            <RvmProgressBar Label="Leitura do sensor" NoValue="true" ShowValue="true" Surface="RvmSurface.Dark" />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmProgressBar" />
+
+@code {
+    private const string CodigoBasico = """
+        <RvmProgressBar Label="Colheita da soja" Value="72" ShowValue="true" />
+        <RvmProgressBar Label="R$ 12.400 de R$ 20.000" LabelVariant="RvmProgressLabelVariant.Amount"
+                        Value="62" ShowValue="true" Color="RvmColor.Success" />
+        <RvmProgressBar AriaLabel="Limite do cartao usado" Value="108" Color="RvmColor.Danger" />
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmProgressBar Size="RvmSize.Small" Label="Plantio" Value="35" ShowValue="true" />
+        <RvmProgressBar Size="RvmSize.Large" Label="Plantio" Value="35" ShowValue="true" />
+        """;
+
+    private const string CodigoSuperficie = """
+        <RvmProgressBar Label="Umidade do graneleiro" NoValue="true" ShowValue="true" />
+        <RvmProgressBar Label="Meta do trimestre" Value="48" ShowValue="true" Surface="RvmSurface.Dark" />
+        """;
+}

@@ -49,10 +49,76 @@ const PAGINAS = [
     { rota: '/componentes/scatter-chart', titulo: 'RvmScatterChart' },
     { rota: '/componentes/pie-chart', titulo: 'RvmPieChart' },
     { rota: '/componentes/radar-chart', titulo: 'RvmRadarChart' },
+    { rota: '/componentes/donut-chart', titulo: 'RvmDonutChart' },
+    { rota: '/componentes/meter-chart', titulo: 'RvmMeterChart' },
+    { rota: '/componentes/bubble-chart', titulo: 'RvmBubbleChart' },
+    { rota: '/componentes/multilayer-donut-chart', titulo: 'RvmMultilayerDonutChart' },
+    { rota: '/componentes/chart-legend', titulo: 'RvmChartLegend' },
+    { rota: '/componentes/mascot', titulo: 'RvmMascot' },
+    { rota: '/componentes/sidebar', titulo: 'RvmSidebar' },
+    { rota: '/componentes/topbar', titulo: 'RvmTopbar' },
+    { rota: '/componentes/page-header', titulo: 'RvmPageHeader' },
+    { rota: '/componentes/page-toolbar', titulo: 'RvmPageToolbar' },
+    { rota: '/componentes/back-button', titulo: 'RvmBackButton' },
+    { rota: '/componentes/link', titulo: 'RvmLink' },
+    { rota: '/componentes/icon-button', titulo: 'RvmIconButton' },
+    { rota: '/componentes/menu-button', titulo: 'RvmMenuButton' },
+    { rota: '/componentes/button-group', titulo: 'RvmButtonGroup' },
+    { rota: '/componentes/collapse', titulo: 'RvmCollapse' },
+    { rota: '/componentes/expansion-panel', titulo: 'RvmExpansionPanel' },
+    { rota: '/componentes/steps', titulo: 'RvmSteps' },
+    { rota: '/componentes/step-indicator', titulo: 'RvmStepIndicator' },
+    { rota: '/componentes/detail-profile-layout', titulo: 'RvmDetailProfileLayout' },
+    { rota: '/componentes/text-area', titulo: 'RvmTextArea' },
+    { rota: '/componentes/numeric-field', titulo: 'RvmNumericField' },
+    { rota: '/componentes/multi-text-field', titulo: 'RvmMultiTextField' },
+    { rota: '/componentes/text-field-select', titulo: 'RvmTextFieldSelect' },
+    { rota: '/componentes/autocomplete', titulo: 'RvmAutocomplete' },
+    { rota: '/componentes/option-list', titulo: 'RvmOptionList' },
+    { rota: '/componentes/tag-option', titulo: 'RvmTagOption' },
+    { rota: '/componentes/choice-chip', titulo: 'RvmChoiceChip' },
+    { rota: '/componentes/color-picker', titulo: 'RvmColorPicker' },
+    { rota: '/componentes/color-field', titulo: 'RvmColorField' },
+    { rota: '/componentes/icon-selector', titulo: 'RvmIconSelector' },
+    { rota: '/componentes/file-upload', titulo: 'RvmFileUpload' },
+    { rota: '/componentes/media-upload', titulo: 'RvmMediaUpload' },
+    { rota: '/componentes/profile-image-upload', titulo: 'RvmProfileImageUpload' },
+    { rota: '/componentes/modal', titulo: 'RvmModal' },
+    { rota: '/componentes/confirm-modal', titulo: 'RvmConfirmModal' },
+    { rota: '/componentes/toast', titulo: 'RvmToastProvider' },
+    { rota: '/componentes/spinner', titulo: 'RvmSpinner' },
+    { rota: '/componentes/progress-bar', titulo: 'RvmProgressBar' },
+    { rota: '/componentes/label', titulo: 'RvmLabel' },
+    { rota: '/componentes/text', titulo: 'RvmText' },
+    { rota: '/componentes/icon-badge', titulo: 'RvmIconBadge' },
+    { rota: '/componentes/data-table', titulo: 'RvmDataTable' },
+    { rota: '/componentes/table-layout', titulo: 'RvmTableLayout' },
+    { rota: '/componentes/table-cells', titulo: 'RvmCell*' },
+    { rota: '/componentes/file-icon', titulo: 'RvmFileIcon' },
+    { rota: '/componentes/filter', titulo: 'RvmFilter' },
+    { rota: '/componentes/list-group', titulo: 'RvmListGroup' },
+    { rota: '/componentes/theme-provider', titulo: 'RvmThemeProvider' },
+    { rota: '/componentes/theme-picker', titulo: 'RvmThemePicker' },
+    { rota: '/componentes/stat-card', titulo: 'RvmStatCard' },
+    { rota: '/componentes/progress-card', titulo: 'RvmProgressCard' },
+    { rota: '/componentes/project-card', titulo: 'RvmProjectCard' },
+    { rota: '/componentes/payment-card', titulo: 'RvmPaymentCard' },
+    { rota: '/componentes/activity', titulo: 'RvmActivity' },
+    { rota: '/componentes/comment', titulo: 'RvmComment' },
+    { rota: '/componentes/notification-item', titulo: 'RvmNotificationItem' },
+    { rota: '/componentes/marker-button', titulo: 'RvmMarkerButton' },
+    { rota: '/componentes/widget', titulo: 'RvmWidget' },
+    { rota: '/componentes/chat', titulo: 'RvmChat' },
+    { rota: '/componentes/file-card', titulo: 'RvmFileCard' },
+    { rota: '/componentes/event-calendar', titulo: 'RvmEventCalendar' },
+    { rota: '/componentes/mini-calendar', titulo: 'RvmMiniCalendar' },
+    { rota: '/componentes/kanban-board', titulo: 'RvmKanbanBoard' },
+    { rota: '/componentes/map', titulo: 'RvmMap' },
 ];
 
 // Graficos que o kit nao desenhou: seguem o visual das colunas (DSGN-010).
-const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart']);
+// Contrato com o RVM.UI (DSGN-017): componentes que o NEATLAB nao desenha, no visual dele por extensao.
+const SEM_PAGINA_NO_KIT = new Set(['RvmIcon', 'RvmProgress', 'RvmSkeleton', 'RvmBarChart', 'RvmHistogram', 'RvmScatterChart', 'RvmMascot', 'RvmSidebar', 'RvmTopbar', 'RvmPageHeader', 'RvmPageToolbar', 'RvmBackButton', 'RvmLink', 'RvmIconButton', 'RvmMenuButton', 'RvmButtonGroup', 'RvmCollapse', 'RvmExpansionPanel', 'RvmSteps', 'RvmStepIndicator', 'RvmDetailProfileLayout', 'RvmTextArea', 'RvmNumericField', 'RvmMultiTextField', 'RvmTextFieldSelect', 'RvmAutocomplete', 'RvmOptionList', 'RvmTagOption', 'RvmChoiceChip', 'RvmColorPicker', 'RvmColorField', 'RvmIconSelector', 'RvmFileUpload', 'RvmMediaUpload', 'RvmProfileImageUpload', 'RvmModal', 'RvmConfirmModal', 'RvmToastProvider', 'RvmSpinner', 'RvmProgressBar', 'RvmLabel', 'RvmText', 'RvmIconBadge', 'RvmDataTable', 'RvmTableLayout', 'RvmCell*', 'RvmFileIcon', 'RvmFilter', 'RvmListGroup', 'RvmDonutChart', 'RvmMeterChart', 'RvmBubbleChart', 'RvmMultilayerDonutChart', 'RvmChartLegend', 'RvmThemeProvider', 'RvmThemePicker', 'RvmStatCard', 'RvmProgressCard', 'RvmProjectCard', 'RvmPaymentCard', 'RvmActivity', 'RvmComment', 'RvmNotificationItem', 'RvmMarkerButton', 'RvmWidget', 'RvmChat', 'RvmFileCard', 'RvmEventCalendar', 'RvmMiniCalendar', 'RvmKanbanBoard', 'RvmMap']);
 
 test('@smoke o indice de componentes lista o que ja existe', async ({ page }) => {
     await page.goto('/componentes');
@@ -72,7 +138,8 @@ for (const { rota, titulo } of PAGINAS) {
         await page.goto(rota);
 
         await expect(page.getByRole('heading', { name: titulo, level: 1 })).toBeVisible();
-        await expect(page.getByRole('heading', { name: 'Parametros' })).toBeVisible();
+        // Uma tabela por componente da pagina ("Parametros de RvmTabs", "Parametros de RvmTab"), gerada da biblioteca (DSGN-017).
+        await expect(page.getByRole('heading', { name: /^Parametros de Rvm/ }).first()).toBeVisible();
         await expect(page.getByRole('table').last()).toBeVisible();
 
         // O recorte do kit ao lado do exemplo e criterio do 07-site-de-documentacao: sem ele,

@@ -1,0 +1,126 @@
+@namespace RVM.DesignSystem.Components.EventCalendar
+
+@* A agenda de compromissos nas tres visoes do kit (Calendar - Month/Week/Day.png): cabecalho com as setas e o titulo
+   do periodo, e a grade. NAO confundir com o RvmCalendar, que escolhe UMA data num formulario.
+
+   Grade em <table> de proposito: mes e semana SAO tabelas de datas, e a semantica pronta do HTML anuncia "coluna
+   quinta-feira, 6 horas" sem grid ARIA. O que e clicavel ja e button. As linhas tem altura MINIMA e crescem: cortar
+   compromisso em silencio e pior do que a linha subir. *@
+<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@NomeAcessivel">
+    <header class="rvm-agenda-cabecalho">
+        <div class="rvm-agenda-periodo">
+            <RvmIconButton Icon="RvmIconName.ChevronLeft" Label="@Anterior" OnClick="() => AndarAsync(-1)" />
+            <RvmIconButton Icon="RvmIconName.ChevronRight" Label="@Proximo" OnClick="() => AndarAsync(1)" />
+            @* aria-live: as setas nao mexem o foco; sem isto, quem usa leitor de tela clica e nao ouve para onde foi. *@
+            <h2 class="rvm-agenda-titulo" aria-live="polite">@Titulo</h2>
+        </div>
+        <div class="rvm-agenda-acoes">
+            <RvmButton Variant="RvmButtonVariant.Outlined" Size="RvmSize.Small" OnClick="IrParaHojeAsync">@TodayText</RvmButton>
+            @Actions
+        </div>
+    </header>
+
+    <table class="@($"rvm-agenda-grade {ClasseDaVisao}")">
+        <caption class="rvm-so-leitor">@Titulo</caption>
+        @if (View == RvmCalendarView.Month)
+        {
+            <thead>
+                <tr>
+                    @foreach (var dia in DatasPorExtenso.Semana)
+                    {
+                        <th scope="col" abbr="@DatasPorExtenso.Dia(dia)">@DatasPorExtenso.DiaCurto(dia)</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var semana in Semanas())
+                {
+                    <tr>
+                        @foreach (var dia in semana)
+                        {
+                            <td class="@ClasseDoDia(dia)">
+                                <div class="rvm-agenda-celula">
+                                    @Numero(dia)
+                                    @Pilulas(NoDia(dia), dia)
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        }
+        else
+        {
+            <thead>
+                <tr>
+                    <th scope="col" class="rvm-agenda-canto"><span class="rvm-so-leitor">Hora</span></th>
+                    @foreach (var dia in DiasDaVisao())
+                    {
+                        <th scope="col" class="@ClasseDoDia(dia)" abbr="@DatasPorExtenso.Completa(dia)">
+                            <span class="rvm-agenda-nome-do-dia">@DatasPorExtenso.DiaCurto(dia.DayOfWeek)</span>
+                            @Numero(dia)
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hora in Horas())
+                {
+                    <tr>
+                        <th scope="row" class="rvm-agenda-hora">@($"{hora:00}:00")</th>
+                        @foreach (var dia in DiasDaVisao())
+                        {
+                            <td class="@ClasseDoDia(dia)">
+                                <div class="rvm-agenda-celula rvm-agenda-celula-hora">
+                                    @Pilulas(NaHora(dia, hora), dia)
+                                    @if (EhAgora(dia, hora))
+                                    {
+                                        @* A marca do agora: decorativa, a hora ja esta no cabecalho da linha. *@
+                                        <span class="rvm-agenda-agora" aria-hidden="true" style="@PosicaoDoAgora"></span>
+                                    }
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        }
+    </table>
+</section>
+
+@code {
+    private RenderFragment Numero(DateOnly dia) => @<span class="rvm-agenda-numero" aria-current="@(dia == Hoje ? "date" : null)">
+        @dia.Day.ToString("00")
+        @if (dia == Hoje)
+        {
+            <span class="rvm-so-leitor"> (hoje)</span>
+        }
+    </span>;
+
+    private RenderFragment Pilulas(List<RvmCalendarEvent> doDia, DateOnly dia) => @<text>
+        @foreach (var e in doDia.Take(Math.Max(0, MaxEventsPerDay)))
+        {
+            <RvmEventPill Title="@e.Title" Color="e.Color" ImageUrl="@e.ImageUrl" TimeLabel="@Horario(e)"
+                          OnClick="@CliqueNoEvento(e)" OnClickElement="@Registrar" />
+        }
+        @if (doDia.Count > MaxEventsPerDay)
+        {
+            var sobra = doDia.Count - Math.Max(0, MaxEventsPerDay);
+            if (OnOverflowClick.HasDelegate)
+            {
+                <button type="button" class="rvm-agenda-mais" @onclick="() => OnOverflowClick.InvokeAsync(dia)">
+                    @Mais(sobra)
+                </button>
+            }
+            else
+            {
+                <span class="rvm-agenda-mais">@Mais(sobra)</span>
+            }
+        }
+    </text>;
+
+    private static RenderFragment Mais(int sobra) => @<text>
+        <span aria-hidden="true">+@sobra</span>
+        <span class="rvm-so-leitor">@(sobra == 1 ? "mais 1 compromisso" : $"mais {sobra} compromissos")</span>
+    </text>;
+}

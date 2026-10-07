@@ -1,0 +1,96 @@
+@namespace RVM.DesignSystem.Components.Chart
+@inherits RvmChartBase
+
+@* A figura dos graficos de fatias. O SVG e so desenho (aria-hidden): quem le e a tabela de dados escondida e os
+   alvos focaveis por cima, um por fatia, com a dica que aparece por :hover e :focus-visible, sem JS. Carregando,
+   erro e vazio ficam no lugar do desenho, na mesma figura. *@
+@if (Estado is not EstadoDosDados.Conteudo)
+{
+    <figure @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@Label">
+        <div class="rvm-radial-estado">
+            @(Estado switch
+            {
+                EstadoDosDados.Carregando => EstadosDosDados.Carregando(LoadingText, LoadingMascot),
+                EstadoDosDados.Erro => EstadosDosDados.Erro(ErrorContent, ErrorTitle, ErrorText, ErrorMascot),
+                _ => EstadosDosDados.Vazio(Empty, EmptyText)
+            })
+        </div>
+    </figure>
+}
+else
+{
+    <figure @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@Label">
+        <div class="rvm-radial-area" style="@EstiloDaArea">
+            <svg class="rvm-radial-svg" viewBox="@($"0 0 {N(Largura)} {N(Altura)}")" width="100%"
+                 aria-hidden="true" focusable="false">
+                @Desenho
+            </svg>
+
+            @if (Centro is not null)
+            {
+                <div class="rvm-radial-centro" style="@EstiloDoCentro" aria-hidden="true">@Centro</div>
+            }
+
+            @if (ShowTooltip)
+            {
+                @foreach (var alvo in Alvos)
+                {
+                    var fatia = Fatias[alvo.Indice];
+                    <span class="rvm-radial-alvo" style="@EstiloDoAlvo(alvo, Largura, Altura)"
+                          tabindex="0" role="img" aria-label="@TextoDaFatia(fatia)">
+                        <span class="rvm-radial-dica" aria-hidden="true">
+                            <span class="rvm-radial-dica-titulo">@fatia.Name</span>
+                            <span class="rvm-radial-dica-linha">
+                                <span class="rvm-radial-marca" style="@EstiloDaCor(alvo.Indice)"></span>
+                                <strong>@Formatar(fatia.Value)</strong>
+                                <span>@Percentual(FracaoDe(fatia))</span>
+                            </span>
+                        </span>
+                    </span>
+                }
+            }
+        </div>
+
+        <table class="rvm-so-leitor">
+            <caption>Dados do grafico: @Label</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Fatia</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Percentual</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fatia in Fatias)
+                {
+                    <tr>
+                        <th scope="row">@fatia.Name</th>
+                        <td>@Formatar(fatia.Value)</td>
+                        <td>@Percentual(FracaoDe(fatia))</td>
+                    </tr>
+                }
+                @if (LinhaFinal is { } final)
+                {
+                    <tr>
+                        <th scope="row">@final.Nome</th>
+                        <td>@Formatar(final.Valor)</td>
+                        <td>100%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </figure>
+}
+
+@code {
+    /// <summary>
+    /// A mascara da entrada, que gira como ponteiro de relogio de <paramref name="inicio"/> ate fechar a
+    /// <paramref name="varredura"/> (graus). Parada (sem animacao ou com "reduzir movimento"), ela ja mostra a varredura
+    /// inteira. O circulo comeca as 3h, dai o giro de -90 graus.
+    /// </summary>
+    internal RenderFragment Relogio(string id, double cx, double cy, double raio, double inicio, double varredura) => @<mask id="@id" maskUnits="userSpaceOnUse">
+        <circle class="rvm-radial-varredura" cx="@N(cx)" cy="@N(cy)" r="@N(raio / 2 + 1)" fill="none" stroke="white"
+                stroke-width="@N(raio + 2)" pathLength="1" stroke-dasharray="@($"{N(varredura / 360)} 1")"
+                transform="@($"rotate({N(inicio - 90)} {N(cx)} {N(cy)})")" style="@($"--rvm-radial-volta: {N(varredura / 360)}")" />
+    </mask>;
+}

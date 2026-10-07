@@ -1,0 +1,43 @@
+@page "/componentes/marker-button"
+@using RVM.DesignSystem.Components.MarkerButton
+
+<PageTitle>RvmMarkerButton — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMarkerButton</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Botao de alternancia para favoritar ou guardar nos marcadores. E um botao de estado (<code>aria-pressed</code>):
+    marcado, o icone fica cheio e na cor de aviso. O nome acessivel muda com o estado ("Marcar como favorito" e
+    "Tirar dos favoritos"). Aceita <code>@@bind-Marked</code>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Favorito e marcador"
+              Descricao="Pilula (o padrao) ou o canto do kit, e desabilitado."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmMarkerButton @bind-Marked="_favorito" />
+        <RvmMarkerButton Type="RvmMarkerType.Bookmark" Shape="RvmFieldShape.Rounded" @bind-Marked="_salvo"
+                         Label="Salvar o relatorio da safra" MarkedLabel="Tirar o relatorio dos salvos" />
+        <RvmMarkerButton Marked="true" Disabled="true" />
+        <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">
+            Favorito: @(_favorito ? "sim" : "nao") · Salvo: @(_salvo ? "sim" : "nao")
+        </RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMarkerButton" />
+
+@code {
+    private bool _favorito;
+    private bool _salvo = true;
+
+    private const string Codigo = """
+        <RvmMarkerButton @bind-Marked="favorito" />
+        <RvmMarkerButton Type="RvmMarkerType.Bookmark" Shape="RvmFieldShape.Rounded" @bind-Marked="salvo"
+                         Label="Salvar o relatorio da safra" MarkedLabel="Tirar o relatorio dos salvos" />
+        """;
+}

@@ -48,6 +48,7 @@
 /* --- Preenchido: fundo na cor do papel, texto no token de contraste --- */
 .rvm-preenchido.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
 .rvm-preenchido.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-preenchido.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
 .rvm-preenchido.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
 .rvm-preenchido.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
 .rvm-preenchido.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
@@ -56,6 +57,7 @@
 .rvm-preenchido:hover:not(:disabled) { box-shadow: var(--rvm-shadow-2); }
 .rvm-preenchido.rvm-primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-hover); }
 .rvm-preenchido.rvm-secondary:hover:not(:disabled) { background-color: var(--rvm-color-secondary-hover); }
+.rvm-preenchido.rvm-inverse:hover:not(:disabled) { background-color: var(--rvm-color-inverse-hover); }
 .rvm-preenchido.rvm-info:hover:not(:disabled) { background-color: var(--rvm-color-info-hover); }
 .rvm-preenchido.rvm-success:hover:not(:disabled) { background-color: var(--rvm-color-success-hover); }
 .rvm-preenchido.rvm-warning:hover:not(:disabled) { background-color: var(--rvm-color-warning-hover); }
@@ -70,6 +72,7 @@
 
 .rvm-contorno.rvm-primary, .rvm-texto.rvm-primary { color: var(--rvm-color-primary-text); }
 .rvm-contorno.rvm-secondary, .rvm-texto.rvm-secondary { color: var(--rvm-color-secondary-text); }
+.rvm-contorno.rvm-inverse, .rvm-texto.rvm-inverse { color: var(--rvm-color-inverse-text); }
 .rvm-contorno.rvm-info, .rvm-texto.rvm-info { color: var(--rvm-color-info-text); }
 .rvm-contorno.rvm-success, .rvm-texto.rvm-success { color: var(--rvm-color-success-text); }
 .rvm-contorno.rvm-warning, .rvm-texto.rvm-warning { color: var(--rvm-color-warning-text); }
@@ -81,6 +84,7 @@
    rotulo, entao a borda nao precisa dos 3:1 da WCAG 1.4.11. */
 .rvm-contorno.rvm-primary { border-color: var(--rvm-color-primary-outlined-resting); }
 .rvm-contorno.rvm-secondary { border-color: var(--rvm-color-secondary-outlined-resting); }
+.rvm-contorno.rvm-inverse { border-color: var(--rvm-color-inverse-outlined-resting); }
 .rvm-contorno.rvm-info { border-color: var(--rvm-color-info-outlined-resting); }
 .rvm-contorno.rvm-success { border-color: var(--rvm-color-success-outlined-resting); }
 .rvm-contorno.rvm-warning { border-color: var(--rvm-color-warning-outlined-resting); }
@@ -88,10 +92,29 @@
 
 .rvm-contorno.rvm-primary:hover:not(:disabled), .rvm-texto.rvm-primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-outlined-hover); }
 .rvm-contorno.rvm-secondary:hover:not(:disabled), .rvm-texto.rvm-secondary:hover:not(:disabled) { background-color: var(--rvm-color-secondary-outlined-hover); }
+.rvm-contorno.rvm-inverse:hover:not(:disabled), .rvm-texto.rvm-inverse:hover:not(:disabled) { background-color: var(--rvm-color-inverse-outlined-hover); }
 .rvm-contorno.rvm-info:hover:not(:disabled), .rvm-texto.rvm-info:hover:not(:disabled) { background-color: var(--rvm-color-info-outlined-hover); }
 .rvm-contorno.rvm-success:hover:not(:disabled), .rvm-texto.rvm-success:hover:not(:disabled) { background-color: var(--rvm-color-success-outlined-hover); }
 .rvm-contorno.rvm-warning:hover:not(:disabled), .rvm-texto.rvm-warning:hover:not(:disabled) { background-color: var(--rvm-color-warning-outlined-hover); }
 .rvm-contorno.rvm-error:hover:not(:disabled), .rvm-texto.rvm-error:hover:not(:disabled) { background-color: var(--rvm-color-error-outlined-hover); }
+
+/* --- Suave (contrato com o RVM.UI, DSGN-017): o fundo suave do papel com o rotulo em `-text`, a mesma
+       dupla do RvmChip suave. No hover, o fundo sobe para o `-outlined-resting` do papel. --- */
+.rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-suave.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
+.rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-suave.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+.rvm-suave.rvm-primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-outlined-resting); }
+.rvm-suave.rvm-secondary:hover:not(:disabled) { background-color: var(--rvm-color-secondary-outlined-resting); }
+.rvm-suave.rvm-inverse:hover:not(:disabled) { background-color: var(--rvm-color-inverse-outlined-resting); }
+.rvm-suave.rvm-info:hover:not(:disabled) { background-color: var(--rvm-color-info-outlined-resting); }
+.rvm-suave.rvm-success:hover:not(:disabled) { background-color: var(--rvm-color-success-outlined-resting); }
+.rvm-suave.rvm-warning:hover:not(:disabled) { background-color: var(--rvm-color-warning-outlined-resting); }
+.rvm-suave.rvm-error:hover:not(:disabled) { background-color: var(--rvm-color-error-outlined-resting); }
 
 /* --- Foco: o anel e criterio de aceite, nao enfeite. `:focus-visible` e nao `:focus` para o anel
        nao aparecer no clique de mouse, que e quando ele vira ruido. --- */

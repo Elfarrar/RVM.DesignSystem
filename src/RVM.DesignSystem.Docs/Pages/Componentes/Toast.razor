@@ -1,0 +1,74 @@
+@page "/componentes/toast"
+@using RVM.DesignSystem.Components.Toast
+@inject IRvmToast Avisos
+
+<PageTitle>RvmToastProvider — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmToastProvider</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Avisos passageiros no canto superior direito, abaixo da barra do topo. Injete <code>IRvmToast</code> e chame
+    <code>Show</code> (ou os atalhos <code>Success</code>, <code>Info</code>, <code>Warning</code> e
+    <code>Error</code>); os avisos aparecem no <code>RvmToastProvider</code> do layout. Erro e atencao sao
+    anunciados com urgencia; informacao e sucesso, sem interromper. O tempo para enquanto o mouse ou o foco estao
+    no aviso. No maximo cinco na tela: o mais antigo sai.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Para mensagens curtas no
+    canto inferior, com fila de espera, use o <a href="componentes/snackbar">RvmSnackbar</a>.
+</p>
+
+<BlocoExemplo Titulo="Quatro gravidades"
+              Descricao="Informacao e sucesso ficam 5 segundos; atencao e erro, 8. Com titulo, o texto vira apoio."
+              Codigo="@CodigoGravidades">
+    <div class="linha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Info" OnClick="@(() => Avisos.Info("Nova cotacao da soja: R$ 128,40 a saca."))">Informacao</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Success" OnClick="@(() => Avisos.Success("O talhao 12 foi salvo com 48,5 ha.", "Talhao salvo"))">Sucesso</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Warning" OnClick="@(() => Avisos.Warning("Previsao de chuva forte amanha. Reveja a aplicacao marcada."))">Atencao</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Error" OnClick="MostrarErro">Erro</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Text" OnClick="Avisos.Clear">Fechar todos</RvmButton>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com acao"
+              Descricao="O botao roda a acao e fecha o aviso. Sem duracao informada, fica 10 segundos: ler e decidir leva mais tempo."
+              Codigo="@CodigoAcao">
+    <div class="linha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="MostrarComAcao">Excluir lancamento</RvmButton>
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary" aria-live="polite">@_resultado</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmToastProvider" />
+
+@code {
+    private string _resultado = string.Empty;
+
+    private void MostrarErro()
+        => Avisos.Show("Nao conseguimos enviar a nota fiscal. Tente de novo em alguns minutos.",
+            RvmToastSeverity.Error, "Falha no envio", TimeSpan.Zero);
+
+    private void MostrarComAcao()
+        => Avisos.Show("Lancamento de R$ 3.250,00 excluido.", new RvmToastAction("Desfazer", () =>
+        {
+            _resultado = "Exclusao desfeita.";
+            StateHasChanged();
+            return Task.CompletedTask;
+        }), RvmToastSeverity.Success);
+
+    private const string CodigoGravidades = """
+        // Program.cs: builder.Services.AddRvmDesignSystem();  (ou so AddRvmToast())
+        // MainLayout.razor: <RvmToastProvider />
+        @inject IRvmToast Toast
+
+        Toast.Success("O talhao 12 foi salvo com 48,5 ha.", "Talhao salvo");
+        Toast.Warning("Previsao de chuva forte amanha.");
+        // TimeSpan.Zero: fica ate a pessoa fechar.
+        Toast.Show("Nao conseguimos enviar a nota fiscal.", RvmToastSeverity.Error, "Falha no envio", TimeSpan.Zero);
+        """;
+
+    private const string CodigoAcao = """
+        Toast.Show("Lancamento excluido.", new RvmToastAction("Desfazer", DesfazerAsync), RvmToastSeverity.Success);
+        """;
+}

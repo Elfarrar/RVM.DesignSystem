@@ -61,6 +61,58 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
     /// <summary>Indisponivel.</summary>
     [Parameter] public bool Disabled { get; set; }
 
+    /// <summary>Id do input nativo. Sem ele, o Blazor nao gera um: o rotulo envolve o input e dispensa o <c>for</c>.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Nome enviado no formulario. Sem ele, vem do <c>@bind-Value</c> (necessario em SSR estatico).</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Nome do campo nas mensagens de validacao do <c>EditForm</c>.</summary>
+    [Parameter] public string? DisplayName { get; set; }
+
+    /// <summary>Texto de apoio abaixo do controle. Da lugar ao erro quando ha erro.</summary>
+    [Parameter] public string? HelperText { get; set; }
+
+    /// <summary>Erro informado por fora. Dentro de um <c>EditForm</c>, a mensagem da validacao ja aparece sozinha.</summary>
+    [Parameter] public string? ErrorText { get; set; }
+
+    /// <summary>Texto do link depois do rotulo ("Li e aceito os <u>termos</u>").</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link depois do rotulo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>De que lado do controle fica o rotulo. Padrao: depois.</summary>
+    [Parameter] public RvmLabelPosition LabelPosition { get; set; } = RvmLabelPosition.End;
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem texto de exemplo: sem efeito.</summary>
+    [Parameter] public string? Placeholder { get; set; }
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Controle de marcar nao tem caixa de texto: sem efeito.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; }
+
+    /// <summary>Obrigatorio: asterisco no rotulo e <c>aria-required</c> no input. A validacao e do <c>EditForm</c>.</summary>
+    [Parameter] public bool Required { get; set; }
+
+    [CascadingParameter] private EditContext? ContextoDoFormulario { get; set; }
+
+    private readonly string _idDoApoio = GeradorDeIds.Novo("rvm-controle-apoio");
+
+    internal string? MensagemDeErro
+        => !string.IsNullOrWhiteSpace(ErrorText) ? ErrorText
+            : ContextoDoFormulario is not null && ExpressaoEfetiva is not null
+                ? ContextoDoFormulario.GetValidationMessages(FieldIdentifier.Create(ExpressaoEfetiva)).FirstOrDefault()
+                : null;
+
+    internal string? MensagemDeApoio => MensagemDeErro ?? (string.IsNullOrWhiteSpace(HelperText) ? null : HelperText);
+
+    internal bool TemLink => !string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref);
+
+    internal string IdDoApoio => _idDoApoio;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>
     /// Atributos extras. <c>class</c> e <c>style</c> vao para a raiz (onde layout faz efeito); o
     /// resto vai para o input nativo (<c>aria-*</c>, <c>data-*</c>, <c>id</c>, <c>name</c>).
@@ -78,6 +130,7 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
                 Color switch
                 {
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",
@@ -87,13 +140,9 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
 
             if (Indeterminate) proprias += " rvm-indeterminado";
             if (Disabled) proprias += " rvm-desabilitado";
+            if (LabelPosition == RvmLabelPosition.Start) proprias += " rvm-rotulo-antes";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 
@@ -106,10 +155,22 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
             : null;
 
     internal IReadOnlyDictionary<string, object>? AtributosDoInput
-        => AdditionalAttributes?
-            .Where(a => !string.Equals(a.Key, "class", StringComparison.OrdinalIgnoreCase)
-                        && !string.Equals(a.Key, "style", StringComparison.OrdinalIgnoreCase))
-            .ToDictionary(a => a.Key, a => a.Value);
+    {
+        get
+        {
+            var atributos = AtributosDoControle.Montar(AdditionalAttributes, Id, Name, MensagemDeApoio is null ? null : IdDoApoio, MensagemDeErro is not null, Required);
+
+            // Fora de um EditForm (formulario SSR comum), o required nativo e quem barra o envio — era o que o
+            // atributo `required` fazia antes de virar parametro. Dentro dele, so aria-required: o balao do navegador
+            // sairia em ingles e antes da validacao em PT-BR (a mesma regra do RvmTextField).
+            if (Required && ContextoDoFormulario is null)
+            {
+                atributos = new Dictionary<string, object>(atributos ?? new Dictionary<string, object>()) { ["required"] = true };
+            }
+
+            return atributos;
+        }
+    }
 
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)

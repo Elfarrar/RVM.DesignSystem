@@ -37,7 +37,7 @@
     </RvmTypography>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmSwitch" />
 
 <RecorteDoKit Origem="kit/switch.png"
               Arquivo="referencia-neatlab/Switch.png (recorte)"
@@ -57,17 +57,6 @@
     private readonly List<ItemDeCor> _ligados = Cores.Select(c => new ItemDeCor { Cor = c }).ToList();
     private bool _notificar = true;
     private bool _compacto;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Value / @bind-Value", "bool", "false", "Ligado ou desligado."),
-        new("Label", "string?", "—", "Texto ao lado; tambem e o nome acessivel."),
-        new("ChildContent", "RenderFragment?", "—", "Rotulo livre, quando Label esta vazio."),
-        new("Color", "RvmColor", "Primary", "Papel de cor do ligado."),
-        new("Size", "RvmSize", "Medium", "Trilho 34x14 ou 26x10 (Small). Large sai igual ao medio."),
-        new("Disabled", "bool", "false", "Indisponivel."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no input nativo.")
-    ];
 
     private const string CodigoCores = """
         <RvmSwitch @bind-Value="_ligado" Color="RvmColor.Success" Label="Success" />

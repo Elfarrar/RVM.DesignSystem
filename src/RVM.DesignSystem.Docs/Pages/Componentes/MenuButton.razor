@@ -1,0 +1,38 @@
+@page "/componentes/menu-button"
+
+<PageTitle>RvmMenuButton — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMenuButton</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Botao com texto que abre um menu ("Exportar" + seta). E o <code>RvmMenu</code> com o gatilho de texto, com o mesmo teclado: setas andam, Esc fecha e devolve o foco.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Exportar"
+              Descricao="Os itens sao RvmMenuItem."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmMenuButton Text="Exportar" StartIcon="RvmIconName.Download">
+            <RvmMenuItem Text="Planilha (.xlsx)" OnClick="@(() => _exportado = "xlsx")" />
+            <RvmMenuItem Text="PDF" OnClick="@(() => _exportado = "pdf")" />
+        </RvmMenuButton>
+        <RvmTypography Color="RvmTextColor.Secondary">Ultimo: @(_exportado ?? "nenhum")</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMenuButton" />
+
+@code {
+    private string? _exportado;
+
+    private const string Codigo = """
+        <RvmMenuButton Text="Exportar" StartIcon="RvmIconName.Download">
+            <RvmMenuItem Text="Planilha (.xlsx)" OnClick="ExportarXlsx" />
+            <RvmMenuItem Text="PDF" OnClick="ExportarPdf" />
+        </RvmMenuButton>
+        """;
+}

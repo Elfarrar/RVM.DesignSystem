@@ -1,0 +1,16 @@
+.tarefa {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+}
+
+.tarefa ::deep p {
+    margin: 0;
+}
+
+.tarefa-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-2);
+}

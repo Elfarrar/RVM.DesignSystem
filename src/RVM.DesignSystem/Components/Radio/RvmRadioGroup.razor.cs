@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace RVM.DesignSystem.Components.Radio;
 
@@ -51,6 +52,49 @@ public partial class RvmRadioGroup<TValue> : ComponentBase
     /// <summary>As opcoes.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Id do fieldset do grupo.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Nome do grupo nas mensagens de validacao do <c>EditForm</c>.</summary>
+    [Parameter] public string? DisplayName { get; set; }
+
+    /// <summary>Texto de apoio abaixo das opcoes. Da lugar ao erro quando ha erro.</summary>
+    [Parameter] public string? HelperText { get; set; }
+
+    /// <summary>Erro informado por fora. Dentro de um <c>EditForm</c>, a mensagem da validacao ja aparece sozinha.</summary>
+    [Parameter] public string? ErrorText { get; set; }
+
+    /// <summary>Texto do link ao lado da pergunta.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link ao lado da pergunta.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Grupo de opcoes nao tem texto de exemplo: sem efeito.</summary>
+    [Parameter] public string? Placeholder { get; set; }
+
+    /// <summary>Do contrato com o RVM.UI, onde todo campo tem. Grupo de opcoes nao tem caixa: sem efeito.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; }
+
+    [CascadingParameter] private EditContext? ContextoDoFormulario { get; set; }
+
+    private readonly string _idDoApoio = GeradorDeIds.Novo("rvm-grupo-apoio");
+
+    internal string IdDoApoio => _idDoApoio;
+
+    // class ja entrou no ClassesDaRaiz; repassada por ultimo, ela apagaria as classes do proprio grupo.
+    internal IReadOnlyDictionary<string, object>? AtributosSemClasse
+        => AdditionalAttributes?.Where(a => !string.Equals(a.Key, "class", StringComparison.OrdinalIgnoreCase)).ToDictionary(a => a.Key, a => a.Value);
+
+    internal string? MensagemDeErro
+        => !string.IsNullOrWhiteSpace(ErrorText) ? ErrorText
+            : ContextoDoFormulario?.GetValidationMessages(FieldIdentifier.Create(ExpressaoEfetiva)).FirstOrDefault();
+
+    internal string? MensagemDeApoio => MensagemDeErro ?? (string.IsNullOrWhiteSpace(HelperText) ? null : HelperText);
+
     /// <summary>Atributos extras, repassados ao fieldset.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -60,12 +104,7 @@ public partial class RvmRadioGroup<TValue> : ComponentBase
         get
         {
             var proprias = Orientation == RvmOrientation.Horizontal ? "rvm-grupo rvm-horizontal" : "rvm-grupo rvm-vertical";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

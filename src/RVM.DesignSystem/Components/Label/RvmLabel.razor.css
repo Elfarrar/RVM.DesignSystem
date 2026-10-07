@@ -1,0 +1,55 @@
+/* CSS isolado do RvmLabel. So custom properties — hex literal aqui quebra o tema escuro.
+   Os pares de cor sao os ja medidos no RvmChip: suave = -soft com -text, cheia = -main com
+   -contrast; os dois passam 4.5:1 nos dois temas. Canto de 6 px, e nao pilula, para nao ser
+   confundida com o chip (que e clicavel). */
+
+.rvm-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    max-width: 100%;
+    border-radius: var(--rvm-radius-sm);
+    font-family: var(--rvm-font-family);
+    font-weight: var(--rvm-font-weight-medium);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.rvm-pequena {
+    height: 24px;
+    padding: 0 var(--rvm-space-2);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+}
+
+.rvm-media {
+    height: 28px;
+    padding: 0 var(--rvm-space-3);
+    font-size: var(--rvm-text-chip-size);
+    line-height: var(--rvm-text-chip-line);
+}
+
+.rvm-grande {
+    height: 32px;
+    padding: 0 var(--rvm-space-3);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+/* --- Suave --- */
+.rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-suave.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
+.rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-suave.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+/* --- Cheia --- */
+.rvm-cheia.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-cheia.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-cheia.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
+.rvm-cheia.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-cheia.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-cheia.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-cheia.rvm-error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }

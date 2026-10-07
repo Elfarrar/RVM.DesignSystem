@@ -1,0 +1,39 @@
+@page "/componentes/expansion-panel"
+
+<PageTitle>RvmExpansionPanel — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmExpansionPanel</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Painel expansivel sozinho: o botao fica dentro de um titulo e aponta a regiao. O corpo continua montado quando fecha, e o cabecalho aceita conteudo composto (TitleContent).
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Dois paineis"
+              Descricao="O visual e o do painel do RvmAccordion."
+              Codigo="@Codigo">
+    <div class="pilha-exemplos largura-cheia">
+        <RvmExpansionPanel Title="Dados do plantio" Icon="RvmIconName.Calendar" @bind-Expanded="_plantio">
+            <RvmTypography>Soja, 48 ha, plantada em 02/10.</RvmTypography>
+        </RvmExpansionPanel>
+        <RvmExpansionPanel>
+            <TitleContent>Aplicacoes <RvmBadge Content="3" Color="RvmColor.Info" /></TitleContent>
+            <ChildContent><RvmTypography>Tres aplicacoes registradas.</RvmTypography></ChildContent>
+        </RvmExpansionPanel>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmExpansionPanel" />
+
+@code {
+    private bool _plantio = true;
+
+    private const string Codigo = """
+        <RvmExpansionPanel Title="Dados do plantio" Icon="RvmIconName.Calendar" @bind-Expanded="aberto">
+            ...
+        </RvmExpansionPanel>
+        """;
+}

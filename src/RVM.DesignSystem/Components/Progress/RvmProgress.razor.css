@@ -101,6 +101,7 @@
 
 .rvm-primary .rvm-barra { background-color: var(--rvm-color-primary-text); }
 .rvm-secondary .rvm-barra { background-color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-barra { background-color: var(--rvm-color-inverse-text); }
 .rvm-info .rvm-barra { background-color: var(--rvm-color-info-text); }
 .rvm-success .rvm-barra { background-color: var(--rvm-color-success-text); }
 .rvm-warning .rvm-barra { background-color: var(--rvm-color-warning-text); }
@@ -108,6 +109,7 @@
 
 .rvm-primary .rvm-arco { stroke: var(--rvm-color-primary-text); }
 .rvm-secondary .rvm-arco { stroke: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-arco { stroke: var(--rvm-color-inverse-text); }
 .rvm-info .rvm-arco { stroke: var(--rvm-color-info-text); }
 .rvm-success .rvm-arco { stroke: var(--rvm-color-success-text); }
 .rvm-warning .rvm-arco { stroke: var(--rvm-color-warning-text); }

@@ -1,0 +1,61 @@
+@page "/componentes/modal"
+@using RVM.DesignSystem.Components.Dialog
+
+<PageTitle>RvmModal — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmModal</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Casca de dialogo: fundo escurecido, caixa com titulo opcional e conteudo livre, botoes inclusos.
+    <code>role="dialog"</code> com <code>aria-modal</code>, nomeado pelo Title (ou pelo Label, quando o topo e
+    desenhado no conteudo). O foco entra e fica preso la dentro; Esc e clique no fundo fecham, e o foco volta
+    ao ReturnFocusTo ou, sem ele, a quem o tinha ao abrir.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB (o mesmo do RvmDialog).
+    Deixe o modal sempre no render, com Open ligado ao estado — dentro de um <code>@@if</code> ele some antes
+    de devolver o foco.
+</p>
+
+<BlocoExemplo Titulo="Com titulo e com Label"
+              Descricao="O primeiro fecha por Esc e pelo fundo. O segundo desenha o proprio topo, e o Label da o nome ao dialogo; ali o fundo nao fecha."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="@(() => _resumo = true)">Ver resumo do talhao</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="@(() => _cotacao = true)">Ver cotacao do dia</RvmButton>
+    </div>
+
+    <RvmModal @bind-Open="_resumo" Title="Talhao 12 — Fazenda Boa Vista">
+        <p class="rvm-text-body1">Soja, 48 ha, plantio em 14/10. Ultima aplicacao: fungicida em 02/12.</p>
+        <div class="linha-exemplos" style="justify-content: flex-end;">
+            <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => _resumo = false)">Fechar</RvmButton>
+        </div>
+    </RvmModal>
+
+    <RvmModal @bind-Open="_cotacao" Label="Cotacao da soja" CloseOnBackdrop="false">
+        <RvmTypography Variant="RvmTypographyVariant.H6">Soja — R$ 132,40 a saca</RvmTypography>
+        <p class="rvm-text-body2">Alta de 1,8% no dia. Fonte: indicador de Paranagua.</p>
+        <div class="linha-exemplos" style="justify-content: flex-end;">
+            <RvmButton OnClick="@(() => _cotacao = false)">Entendi</RvmButton>
+        </div>
+    </RvmModal>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmModal" />
+
+@code {
+    private bool _resumo;
+    private bool _cotacao;
+
+    private const string Codigo = """
+        <RvmModal @bind-Open="_aberto" Title="Talhao 12 — Fazenda Boa Vista">
+            <p>Soja, 48 ha, plantio em 14/10.</p>
+            <RvmButton Variant="RvmButtonVariant.Text" OnClick="@(() => _aberto = false)">Fechar</RvmButton>
+        </RvmModal>
+
+        <RvmModal @bind-Open="_cotacao" Label="Cotacao da soja" CloseOnBackdrop="false">
+            ...
+        </RvmModal>
+        """;
+}

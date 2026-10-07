@@ -5,7 +5,9 @@
 @* O item e um <li> com duas areas lado a lado: a principal (link, botao ou texto parado) e a acao
    da direita. A acao fica FORA da principal de proposito — botao dentro de botao e HTML invalido e o
    leitor de tela so enxerga um dos dois. *@
-<li @attributes="AdditionalAttributes" class="@ClassesDoItem">
+@* `title="..."` no item caia nos atributos e virava dica do <li>; agora o Blazor casa com o parametro Title.
+   Com ChildContent (o Title nao e o texto), ele continua sendo a dica, como antes. *@
+<li @attributes="AdditionalAttributes" class="@ClassesDoItem" title="@(ChildContent is not null ? Title : null)">
     <div class="rvm-linha">
         @if (!string.IsNullOrWhiteSpace(Href))
         {
@@ -42,6 +44,35 @@
             <div class="rvm-principal">@Conteudo</div>
         }
 
+        @if (TemValor)
+        {
+            @* Valor e variacao a direita (contrato com o RVM.UI, DSGN-017). A seta e desenho: o texto da
+               variacao diz se subiu ou caiu para quem nao ve a cor. *@
+            <div class="rvm-valor-do-item">
+                <span class="rvm-valor-linha">
+                    @if (!string.IsNullOrWhiteSpace(Value))
+                    {
+                        <span class="rvm-valor">@Value</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(TrendLabel))
+                    {
+                        <span class="@(Trend switch { RvmTrend.Up => "rvm-variacao rvm-subiu", RvmTrend.Down => "rvm-variacao rvm-caiu", _ => "rvm-variacao" })">
+                            @if (Trend != RvmTrend.None)
+                            {
+                                <RvmIcon Name="@(Trend == RvmTrend.Up ? RvmIconName.ArrowUp : RvmIconName.ArrowDown)" Size="RvmSize.Small" />
+                                <span class="rvm-so-leitor">@(Trend == RvmTrend.Up ? "subiu" : "caiu")</span>
+                            }
+                            @TrendLabel
+                        </span>
+                    }
+                </span>
+                @if (!string.IsNullOrWhiteSpace(ValueSubtitle))
+                {
+                    <span class="rvm-secundario">@ValueSubtitle</span>
+                }
+            </div>
+        }
+
         @if (EndContent is not null)
         {
             <div class="rvm-fim">@EndContent</div>
@@ -65,8 +96,12 @@
             <span class="rvm-inicio rvm-icone" aria-hidden="true"><RvmIcon Name="icone" /></span>
         }
         <span class="rvm-textos">
-            <span class="rvm-primario">@ChildContent</span>
-            @if (!string.IsNullOrWhiteSpace(SecondaryText))
+            <span class="rvm-primario">@(ChildContent ?? (b => b.AddContent(0, Title)))</span>
+            @if (SubtitleContent is not null)
+            {
+                <span class="rvm-secundario">@SubtitleContent</span>
+            }
+            else if (!string.IsNullOrWhiteSpace(SecondaryText))
             {
                 <span class="rvm-secundario">@SecondaryText</span>
             }

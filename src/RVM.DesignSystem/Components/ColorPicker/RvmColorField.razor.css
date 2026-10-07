@@ -1,0 +1,93 @@
+/* CSS isolado do RvmColorField. A paleta e do RvmColorPicker; aqui so a area de compor cor. So custom properties. */
+
+.rvm-campo-de-cor {
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-compor {
+    margin-top: var(--rvm-space-2);
+}
+
+.rvm-compor-titulo {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: var(--rvm-radius-sm);
+    color: var(--rvm-color-primary-text);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    font-weight: 500;
+}
+
+.rvm-compor-titulo:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-compor-campos {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2);
+    margin-top: var(--rvm-space-2);
+}
+
+.rvm-seletor {
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+    box-sizing: border-box;
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    cursor: pointer;
+}
+
+.rvm-hex-rotulo {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-hex {
+    width: 8rem;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 0 var(--rvm-space-3);
+    border: 1px solid var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    font-family: inherit;
+    font-size: var(--rvm-text-input-size);
+    text-transform: uppercase;
+}
+
+.rvm-hex::placeholder {
+    color: var(--rvm-color-text-secondary);
+    opacity: 1;
+    text-transform: none;
+}
+
+.rvm-hex.rvm-pilula {
+    border-radius: var(--rvm-radius-pill);
+}
+
+.rvm-seletor:focus-visible,
+.rvm-hex:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-hex[aria-invalid="true"] {
+    border-color: var(--rvm-color-error-text);
+}
+
+.rvm-seletor:disabled,
+.rvm-hex:disabled {
+    cursor: not-allowed;
+    color: var(--rvm-color-text-disabled);
+    border-color: var(--rvm-color-action-disabled);
+}
+
+.rvm-apoio-erro {
+    margin-top: var(--rvm-space-1);
+    color: var(--rvm-color-error-text);
+}

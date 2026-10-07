@@ -17,15 +17,13 @@ public partial class RvmBreadcrumbs : ComponentBase
     /// <summary>Nome da regiao para o leitor de tela. Padrao: "Trilha de navegacao".</summary>
     [Parameter] public string AriaLabel { get; set; } = "Trilha de navegacao";
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao <c>nav</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-trilha {texto}"
-            : "rvm-trilha";
+        => ClassesCss.Juntar("rvm-trilha", Class, AdditionalAttributes);
 }

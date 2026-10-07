@@ -17,6 +17,17 @@
         <RvmButton>Salvar</RvmButton>
         <RvmButton Variant="RvmButtonVariant.Outlined">Salvar</RvmButton>
         <RvmButton Variant="RvmButtonVariant.Text">Salvar</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Soft">Salvar</RvmButton>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Sobre fundo colorido"
+              Descricao="Inverse e o papel branco do contrato com o RVM.UI, para usar SOBRE fundo colorido ou escuro (invencao declarada: o kit nao tem esse papel). Sobre a pagina comum ele some — e de proposito."
+              Codigo="@CodigoInverso">
+    <div class="linha-exemplos faixa-colorida">
+        <RvmButton Color="RvmColor.Inverse">Assinar</RvmButton>
+        <RvmButton Color="RvmColor.Inverse" Variant="RvmButtonVariant.Outlined">Saber mais</RvmButton>
+        <RvmButton Color="RvmColor.Inverse" Variant="RvmButtonVariant.Soft">Depois</RvmButton>
     </div>
 </BlocoExemplo>
 
@@ -79,7 +90,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmButton" />
 
 <RecorteDoKit Origem="kit/button.png"
               Arquivo="referencia-neatlab/Button.png (recorte)"
@@ -92,25 +103,16 @@
     private static readonly RvmColor[] Cores =
         [RvmColor.Primary, RvmColor.Secondary, RvmColor.Info, RvmColor.Success, RvmColor.Warning, RvmColor.Error];
 
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Variant", "RvmButtonVariant", "Contained", "Peso visual: Contained, Outlined ou Text."),
-        new("Color", "RvmColor", "Primary", "Papel semantico da cor."),
-        new("Size", "RvmSize", "Medium", "Small (30 px), Medium (38 px) ou Large (42 px)."),
-        new("Disabled", "bool", "false", "Indisponivel: sai da ordem de tabulacao e ignora clique."),
-        new("Loading", "bool", "false", "Acao em curso: icone girando, aria-busy e clique bloqueado."),
-        new("StartIcon", "RvmIconName?", "—", "Icone antes do rotulo."),
-        new("EndIcon", "RvmIconName?", "—", "Icone depois do rotulo. Some enquanto carrega."),
-        new("Type", "RvmButtonType", "Button", "O type do elemento. Quem envia formulario usa Submit."),
-        new("OnClick", "EventCallback", "—", "O que fazer no clique. Nao dispara quando desabilitado ou carregando."),
-        new("ChildContent", "RenderFragment", "—", "O rotulo."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao botao.")
-    ];
+    private const string CodigoInverso = """
+        <RvmButton Color="RvmColor.Inverse">Assinar</RvmButton>
+        <RvmButton Color="RvmColor.Inverse" Variant="RvmButtonVariant.Outlined">Saber mais</RvmButton>
+        """;
 
     private const string CodigoVariantes = """
         <RvmButton>Salvar</RvmButton>
         <RvmButton Variant="RvmButtonVariant.Outlined">Salvar</RvmButton>
         <RvmButton Variant="RvmButtonVariant.Text">Salvar</RvmButton>
+        <RvmButton Variant="RvmButtonVariant.Soft">Salvar</RvmButton>
         """;
 
     private const string CodigoCores = """

@@ -1,0 +1,137 @@
+@page "/componentes/mini-calendar"
+@using RVM.DesignSystem.Components.EventCalendar
+@using RVM.DesignSystem.Components.Tooltip
+
+<PageTitle>RvmMiniCalendar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMiniCalendar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O calendario compacto da agenda lateral: mostra o mes, marca cada dia com o que o app informa e deixa escolher um
+    dia para filtrar a lista ao lado. Os dias recebem ate tres pontos, um simbolo curto no canto e um balao, tudo
+    devolvido por <code>DayInfo</code> como um <code>RvmMiniCalendarDay</code>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O teclado e o do
+    <code>RvmCalendar</code>: um so dia no Tab, setas andam um dia ou uma semana e trocam de mes na borda, Home e End
+    vao ao inicio e ao fim da semana, Page Up e Page Down trocam o mes (com Shift, o ano). Com
+    <code>AllowDeselect</code>, clicar de novo no dia escolhido desfaz o filtro.
+</p>
+
+<BlocoExemplo Titulo="Agenda lateral com filtro por dia"
+              Descricao="Escolha um dia com pontos: a lista ao lado mostra os compromissos dele em RvmEventCard."
+              Codigo="@Codigo">
+    <div class="linha-exemplos alinhado-topo">
+        <RvmMiniCalendar @bind-Value="_dia" @bind-Month="_mes" Today="Hoje" DayInfo="InfoDoDia"
+                         AllowDeselect="true" TooltipPlacement="RvmPlacement.Bottom" />
+        <div class="pilha-exemplos">
+            <RvmTypography Variant="RvmTypographyVariant.Subtitle2">
+                @(_dia is { } d ? $"Compromissos de {d:dd/MM/yyyy}" : "Todos os compromissos de outubro")
+            </RvmTypography>
+            @foreach (var c in Filtrados)
+            {
+                <RvmEventCard Title="@c.Titulo" TimeLabel="@c.Horario" LineColor="c.Cor" Attendees="c.Pessoas"
+                              OnClick="() => _aberto = c.Titulo" />
+            }
+            @if (!Filtrados.Any())
+            {
+                <RvmTypography Color="RvmTextColor.Secondary">Nenhum compromisso neste dia.</RvmTypography>
+            }
+            <RvmTypography Color="RvmTextColor.Secondary">Cartao aberto: @(_aberto ?? "nenhum")</RvmTypography>
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="RvmEventPill"
+              Descricao="A pilula da agenda: so texto, com foto, clicavel e selecionada. Sem OnClick ela nao e botao."
+              Codigo="@CodigoPilulas">
+    <div class="pilha-exemplos">
+        <RvmEventPill Title="Plantio de soja" Color="RvmColor.Success" TimeLabel="07:00 as 12:00" />
+        <RvmEventPill Title="Visita tecnica" Color="RvmColor.Info" ImageUrl="@Foto" TimeLabel="09:00 as 11:00" />
+        <RvmEventPill Title="Colheita de milho" Color="RvmColor.Warning" Selected="_pilula"
+                      OnClick="() => _pilula = !_pilula" />
+        <RvmEventPill Title="Vencimento do CPR" Color="RvmColor.Error" Selected="true" OnClick="() => { }" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="RvmEventCard"
+              Descricao="Com faixa de categoria e participantes, e sem faixa nem participantes."
+              Codigo="@CodigoCartao">
+    <div class="pilha-exemplos">
+        <RvmEventCard Title="Reuniao com a cooperativa" TimeLabel="16:00 as 17:00" LineColor="RvmColor.Primary"
+                      Attendees="Equipe" MaxAttendees="2" />
+        <RvmEventCard Title="Revisar estoque de defensivos" TimeLabel="Dia inteiro" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMiniCalendar" />
+<TabelaParametros Componente="RvmEventPill" />
+<TabelaParametros Componente="RvmEventCard" />
+
+@code {
+    private static readonly DateOnly Hoje = new(2026, 10, 7);
+    // Miniatura desenhada inline para o exemplo nao depender de imagem externa nem de rede.
+    private const string Foto =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' fill='%2356CA00'/><text x='12' y='16' font-size='11' text-anchor='middle' fill='white' font-family='sans-serif'>BC</text></svg>";
+    private DateOnly? _dia;
+    private DateOnly _mes = Hoje;
+    private string? _aberto;
+    private bool _pilula;
+
+    private static readonly IReadOnlyList<RvmAvatarItem> Equipe =
+        [new("Ana Ribeiro"), new("Bruno Costa"), new("Carla Mendes"), new("Diego Alves")];
+
+    private sealed record Compromisso(DateOnly Dia, string Titulo, string Horario, RvmColor Cor, IReadOnlyList<RvmAvatarItem> Pessoas);
+
+    private static readonly IReadOnlyList<Compromisso> Compromissos =
+    [
+        new(new(2026, 10, 5), "Plantio de soja - talhao 3", "07:00 as 12:00", RvmColor.Success, [new("Ana Ribeiro")]),
+        new(new(2026, 10, 7), "Visita tecnica - agronomo", "09:00 as 11:00", RvmColor.Info, [new("Bruno Costa"), new("Carla Mendes")]),
+        new(new(2026, 10, 7), "Calibrar plantadeira", "14:00 as 15:00", RvmColor.Warning, []),
+        new(new(2026, 10, 14), "Colheita de milho safrinha", "06:00 as 18:00", RvmColor.Warning, [new("Diego Alves"), new("Ana Ribeiro"), new("Bruno Costa"), new("Carla Mendes")]),
+        new(new(2026, 10, 30), "Vencimento do CPR", "Dia inteiro", RvmColor.Error, []),
+    ];
+
+    private IEnumerable<Compromisso> Filtrados => _dia is { } d ? Compromissos.Where(c => c.Dia == d) : Compromissos;
+
+    // Barato de proposito: e chamado para os 42 dias a cada render.
+    private static RvmMiniCalendarDay? InfoDoDia(DateOnly dia)
+    {
+        var doDia = Compromissos.Where(c => c.Dia == dia).ToList();
+        if (doDia.Count == 0)
+        {
+            return null;
+        }
+
+        var texto = doDia.Count == 1 ? "1 compromisso" : $"{doDia.Count} compromissos";
+        return new RvmMiniCalendarDay(doDia.Count, doDia[0].Cor, Description: texto, Tooltip: string.Join(", ", doDia.Select(c => c.Titulo)));
+    }
+
+    private const string Codigo = """
+        <RvmMiniCalendar @bind-Value="_dia" @bind-Month="_mes" DayInfo="InfoDoDia"
+                         AllowDeselect="true" TooltipPlacement="RvmPlacement.Bottom" />
+
+        @foreach (var c in Filtrados)
+        {
+            <RvmEventCard Title="@c.Titulo" TimeLabel="@c.Horario" LineColor="c.Cor" Attendees="c.Pessoas" />
+        }
+
+        private RvmMiniCalendarDay? InfoDoDia(DateOnly dia) =>
+            _porDia.TryGetValue(dia, out var n)
+                ? new RvmMiniCalendarDay(n, RvmColor.Success, Description: $"{n} compromissos", Tooltip: "Plantio")
+                : null;
+        """;
+
+    private const string CodigoPilulas = """
+        <RvmEventPill Title="Plantio de soja" Color="RvmColor.Success" TimeLabel="07:00 as 12:00" />
+        <RvmEventPill Title="Visita tecnica" Color="RvmColor.Info" ImageUrl="foto.png" />
+        <RvmEventPill Title="Colheita de milho" Color="RvmColor.Warning" Selected="_selecionada" OnClick="Alternar" />
+        """;
+
+    private const string CodigoCartao = """
+        <RvmEventCard Title="Reuniao com a cooperativa" TimeLabel="16:00 as 17:00" LineColor="RvmColor.Primary"
+                      Attendees="Equipe" MaxAttendees="2" OnClick="Abrir" />
+        <RvmEventCard Title="Revisar estoque de defensivos" TimeLabel="Dia inteiro" />
+        """;
+}

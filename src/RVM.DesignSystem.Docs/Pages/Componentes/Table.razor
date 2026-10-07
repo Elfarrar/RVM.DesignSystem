@@ -60,7 +60,9 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmTable" />
+
+<TabelaParametros Componente="RvmTableColumn" />
 
 <RecorteDoKit Origem="kit/table.png"
               Arquivo="referencia-neatlab/Table.png (recorte)"
@@ -79,27 +81,6 @@
         "Colhido" => RvmColor.Info,
         _ => RvmColor.Error
     };
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items", "IEnumerable<TItem>", "—", "As linhas."),
-        new("Caption", "string", "—", "Nome da tabela para o leitor de tela. Obrigatorio."),
-        new("Dense", "bool", "false", "Linhas de 36 px."),
-        new("Selectable", "bool", "false", "Caixa de marcar por linha e no cabecalho."),
-        new("SelectedItems", "IReadOnlyCollection<TItem>?", "—", "Linhas marcadas. Aceita @bind-SelectedItems."),
-        new("ItemKey", "Func<TItem, object>?", "—", "Identidade da linha para a selecao (t => t.Id). Use com classe comum: sem ela, recarregar os itens apaga a marcacao."),
-        new("RowLabel", "Func<TItem, string>?", "\"Selecionar\" + 1ª coluna", "Nome da caixa de marcar de cada linha."),
-        new("NoRecordsText", "string", "\"Nenhum registro para mostrar.\"", "Texto sem linhas."),
-        new("RvmTableColumn.Title", "string", "—", "Titulo da coluna."),
-        new("RvmTableColumn.Value", "Func<TItem, object?>?", "—", "Valor exibido, ordenado e filtrado."),
-        new("RvmTableColumn.Format", "string?", "—", "Formato do valor (\"dd/MM/yyyy\", \"N2\")."),
-        new("RvmTableColumn.Sortable", "bool", "false", "Ordena ao clicar no titulo."),
-        new("RvmTableColumn.InitialSort", "RvmSortDirection?", "—", "Ordenacao ao abrir."),
-        new("RvmTableColumn.Align", "RvmTableAlign", "Start", "Start, Center ou End (numeros)."),
-        new("RvmTableColumn.Width", "string?", "—", "Largura em CSS."),
-        new("RvmTableColumn.ChildContent", "RenderFragment<TItem>?", "—", "Conteudo livre da celula."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoBasica = """
         <RvmTable Items="talhoes" Caption="Talhoes da fazenda">

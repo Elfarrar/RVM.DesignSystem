@@ -1,0 +1,13 @@
+.grade-arquivos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: var(--rvm-space-4);
+    width: 100%;
+}
+
+.item-arquivo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--rvm-space-1);
+}

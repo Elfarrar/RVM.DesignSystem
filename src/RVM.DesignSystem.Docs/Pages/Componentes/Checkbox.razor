@@ -49,7 +49,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmCheckbox" />
 
 <RecorteDoKit Origem="kit/checkbox.png"
               Arquivo="referencia-neatlab/Checkbox.png (recorte)"
@@ -93,18 +93,6 @@
             talhao.Marcado = valor;
         }
     }
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Value / @bind-Value", "bool", "false", "Marcado ou nao."),
-        new("Label", "string?", "—", "Texto ao lado; tambem e o nome acessivel."),
-        new("ChildContent", "RenderFragment?", "—", "Rotulo livre, quando Label esta vazio."),
-        new("Color", "RvmColor", "Primary", "Papel de cor da caixa marcada."),
-        new("Size", "RvmSize", "Medium", "16, 18 ou 22 px de caixa."),
-        new("Indeterminate", "bool", "false", "Estado 'alguns marcados'. Quem liga desliga."),
-        new("Disabled", "bool", "false", "Indisponivel."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style na raiz; o resto no input nativo.")
-    ];
 
     private const string CodigoCores = """
         <RvmCheckbox @bind-Value="_aceito" Color="RvmColor.Success" Label="Aceito os termos" />

@@ -1,0 +1,91 @@
+/* CSS isolado do RvmProfileImageUpload. So custom properties — hex literal aqui quebra o tema escuro.
+   O avatar sobe de 56 para 64 px (o tamanho da foto de perfil); a acao e um botao de texto primario, com o
+   InputFile transparente por cima. RvmAvatar, RvmIcon e InputFile sao filhos: as regras que miram neles levam ::deep. */
+
+.rvm-upload {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    font-family: var(--rvm-font-family);
+    min-width: 0;
+}
+
+.rvm-rotulo {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-linha {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-4);
+}
+
+.rvm-linha ::deep .rvm-avatar.rvm-avatar-do-perfil {
+    width: 64px;
+    height: 64px;
+}
+
+.rvm-enviar-foto {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    min-height: 38px;
+    padding: 0 var(--rvm-space-3);
+    border-radius: var(--rvm-radius-sm);
+    color: var(--rvm-color-primary-text);
+    font-size: var(--rvm-text-button-md-size);
+    line-height: var(--rvm-text-button-md-line);
+    font-weight: var(--rvm-text-button-md-weight);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.rvm-enviar-foto:hover {
+    background-color: var(--rvm-color-primary-outlined-hover);
+}
+
+.rvm-enviar-foto:focus-within {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-alvo ::deep .rvm-arquivo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    font-size: 0;
+}
+
+.rvm-mensagem-de-erro {
+    color: var(--rvm-color-error-text);
+}
+
+/* So a acao esmaece: o avatar e a foto do usuario, nao um controle, e esmaecido reprovaria o contraste (axe). */
+.rvm-desabilitado .rvm-enviar-foto {
+    opacity: 0.6;
+}
+
+.rvm-desabilitado .rvm-enviar-foto:hover {
+    background-color: transparent;
+}
+
+.rvm-desabilitado .rvm-alvo ::deep .rvm-arquivo {
+    cursor: not-allowed;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}

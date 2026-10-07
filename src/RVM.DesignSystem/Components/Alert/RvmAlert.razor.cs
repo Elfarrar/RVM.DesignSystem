@@ -40,6 +40,12 @@ public partial class RvmAlert : ComponentBase
     /// <summary>A mensagem.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Versao compacta, para avisos dentro de formulario e tabela.</summary>
+    [Parameter] public bool Dense { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <inheritdoc cref="ComponentBase" />
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -65,18 +71,16 @@ public partial class RvmAlert : ComponentBase
                 {
                     RvmColor.Primary => "rvm-primary",
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",
                     RvmColor.Error => "rvm-error",
                     _ => "rvm-info"
                 });
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            if (Dense) proprias += " rvm-denso";
+
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

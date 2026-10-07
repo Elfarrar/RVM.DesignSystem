@@ -2,4 +2,17 @@
 
 @* O esqueleto e desenho: aria-hidden sempre. Quem avisa "carregando" ao leitor de tela e a regiao que
    o contem (aria-busy) ou um RvmProgress — repetir o aviso em cada bloco cinza seria ruido. *@
-<span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" style="@Estilo" aria-hidden="true"></span>
+@if (Variant == RvmSkeletonVariant.Text && Lines > 1)
+{
+    @* Varias linhas: a raiz vira o bloco, e cada linha e um esqueleto de texto; a ultima com 60%. *@
+    <span @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-esqueleto-linhas", Class, AdditionalAttributes)" style="@Estilo" aria-hidden="true">
+        @for (var i = 0; i < Lines; i++)
+        {
+            <span class="@ClassesDaLinha" style="@(i == Lines - 1 ? "width: 60%" : null)"></span>
+        }
+    </span>
+}
+else
+{
+    <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" style="@Estilo" aria-hidden="true"></span>
+}

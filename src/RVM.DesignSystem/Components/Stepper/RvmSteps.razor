@@ -1,0 +1,111 @@
+@namespace RVM.DesignSystem.Components.Stepper
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Etapas de um fluxo de varias telas: lista ordenada com o numero de cada etapa, o titulo ao lado, check nas
+   concluidas e aria-current="step" na atual; o conteudo da etapa embaixo e, opcionalmente, Voltar/Avancar.
+   Quem controla a etapa e a tela, por @bind-Current. Em tela estreita so o titulo da atual aparece. *@
+<div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-etapas", Class, AdditionalAttributes)">
+    <ol class="rvm-lista-etapas" aria-label="@Label">
+        @for (var i = 0; i < Steps.Count; i++)
+        {
+            var indice = i;
+            var feita = i < Atual;
+            var atual = i == Atual;
+            <li class="@(atual ? "rvm-etapa rvm-atual" : feita ? "rvm-etapa rvm-feita" : "rvm-etapa")" aria-current="@(atual ? "step" : null)">
+                @if (feita && AllowBackNavigation)
+                {
+                    <button type="button" class="rvm-voltar-etapa" @onclick="() => IrParaAsync(indice)">@Marcador(indice, feita, atual)</button>
+                }
+                else
+                {
+                    <span class="rvm-marcador-etapa">@Marcador(indice, feita, atual)</span>
+                }
+            </li>
+        }
+    </ol>
+
+    @if (ChildContent is not null)
+    {
+        <div class="rvm-conteudo-etapa">@ChildContent</div>
+    }
+
+    @if (ShowNavigation)
+    {
+        <div class="rvm-navegacao-etapas">
+            <RvmButton Variant="RvmButtonVariant.Outlined" Disabled="@(Atual == 0)" OnClick="() => IrParaAsync(Atual - 1)">@BackText</RvmButton>
+            <RvmButton Disabled="@(!CanAdvance || Atual >= Steps.Count - 1)" OnClick="() => IrParaAsync(Atual + 1)">@NextText</RvmButton>
+        </div>
+    }
+</div>
+
+@code {
+    private RenderFragment Marcador(int indice, bool feita, bool atual) => @<text>
+        <span class="@(atual ? "rvm-numero rvm-numero-atual" : feita ? "rvm-numero rvm-numero-feito" : "rvm-numero")" aria-hidden="true">
+            @if (feita)
+            {
+                <RvmIcon Name="RvmIconName.Check" Size="RvmSize.Small" />
+            }
+            else
+            {
+                @(indice + 1)
+            }
+        </span>
+        <span class="rvm-titulo-etapa">@(NumberedTitles ? $"{indice + 1}. {Steps[indice]}" : Steps[indice])</span>
+        <span class="rvm-so-leitor">@(feita ? (AllowBackNavigation ? ", concluida — voltar para ela" : ", concluida") : atual ? ", etapa atual" : "")</span>
+    </text>;
+
+    /// <summary>Titulo de cada etapa, na ordem.</summary>
+    [Parameter, EditorRequired] public IReadOnlyList<string> Steps { get; set; } = [];
+
+    /// <summary>Etapa atual, contando de 0. Aceita <c>@bind-Current</c>.</summary>
+    [Parameter] public int Current { get; set; }
+
+    /// <summary>Avisa a troca de etapa pelo Voltar/Avancar ou por uma etapa concluida.</summary>
+    [Parameter] public EventCallback<int> CurrentChanged { get; set; }
+
+    /// <summary>Nome da lista de etapas para o leitor de tela.</summary>
+    [Parameter] public string Label { get; set; } = "Etapas";
+
+    /// <summary>Mostra Voltar e Avancar embaixo do conteudo.</summary>
+    [Parameter] public bool ShowNavigation { get; set; }
+
+    /// <summary>Texto do botao de voltar.</summary>
+    [Parameter] public string BackText { get; set; } = "Voltar";
+
+    /// <summary>Texto do botao de avancar.</summary>
+    [Parameter] public string NextText { get; set; } = "Avancar";
+
+    /// <summary>Libera o Avancar. Padrao: livre — valide a etapa e desligue enquanto ela nao estiver pronta.</summary>
+    [Parameter] public bool CanAdvance { get; set; } = true;
+
+    /// <summary>Etapas concluidas viram botao que volta para elas (nunca avanca por clique).</summary>
+    [Parameter] public bool AllowBackNavigation { get; set; }
+
+    /// <summary>Numero tambem no titulo visivel ("1. Processo e lotes"), alem do marcador.</summary>
+    [Parameter] public bool NumberedTitles { get; set; }
+
+    /// <summary>O conteudo da etapa atual.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private int Atual => Steps.Count == 0 ? 0 : Math.Clamp(Current, 0, Steps.Count - 1);
+
+    private async Task IrParaAsync(int etapa)
+    {
+        if (etapa < 0 || etapa >= Steps.Count || etapa == Atual)
+        {
+            return;
+        }
+
+        Current = etapa;
+        await CurrentChanged.InvokeAsync(etapa);
+    }
+}

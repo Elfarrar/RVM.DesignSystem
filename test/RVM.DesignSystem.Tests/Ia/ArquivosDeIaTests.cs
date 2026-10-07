@@ -65,6 +65,21 @@ public class ArquivosDeIaTests
     }
 
     [Fact]
+    public void Tabelas_de_parametros_do_site_estao_em_dia_com_a_biblioteca()
+    {
+        var caminho = Path.Combine(RaizDoRepositorio.Caminho, "src", "RVM.DesignSystem.Docs", "Shared", "ParametrosGerados.g.cs");
+        var esperado = Api().GerarTabelasDoSite();
+
+        if (Environment.GetEnvironmentVariable("RVM_ATUALIZAR_IA") == "1")
+        {
+            File.WriteAllText(caminho, esperado);
+        }
+
+        Assert.True(File.Exists(caminho) && File.ReadAllText(caminho).Replace("\r\n", "\n", StringComparison.Ordinal) == esperado,
+            "As tabelas de parametros do site estao desatualizadas. Regere com RVM_ATUALIZAR_IA=1 dotnet test --filter FullyQualifiedName~ArquivosDeIaTests e commite o resultado.");
+    }
+
+    [Fact]
     public void Todo_token_do_css_vai_para_o_json_com_a_variavel_e_o_escuro()
     {
         var tokens = Tokens();

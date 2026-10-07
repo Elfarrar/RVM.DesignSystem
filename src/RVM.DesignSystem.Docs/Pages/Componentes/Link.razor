@@ -1,0 +1,34 @@
+@page "/componentes/link"
+
+<PageTitle>RvmLink — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmLink</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Link de texto na cor do papel, com icone opcional. Desabilitado nao navega: vira texto com aria-disabled.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Papeis, icones e desabilitado"
+              Descricao="A cor e a variante -text do papel, que passa 4.5:1 nos dois temas."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmLink Href="componentes/link">Ver detalhes</RvmLink>
+        <RvmLink Href="componentes/link" Color="RvmColor.Success" EndIcon="RvmIconName.ArrowRight">Aprovar todos</RvmLink>
+        <RvmLink Href="componentes/link" Color="RvmColor.Error" StartIcon="RvmIconName.Trash">Excluir safra</RvmLink>
+        <RvmLink Href="componentes/link" Disabled="true">Indisponivel</RvmLink>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmLink" />
+
+@code {
+
+    private const string Codigo = """
+        <RvmLink Href="detalhes">Ver detalhes</RvmLink>
+        <RvmLink Href="aprovar" Color="RvmColor.Success" EndIcon="RvmIconName.ArrowRight">Aprovar todos</RvmLink>
+        """;
+}

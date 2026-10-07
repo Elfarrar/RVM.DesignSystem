@@ -19,7 +19,7 @@
     </RvmRadarChart>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmRadarChart" />
 
 <RecorteDoKit Origem="kit/radar-chart.png"
               Arquivo="referencia-neatlab/Chart Card.png (recorte)"
@@ -30,20 +30,6 @@
     private static readonly (string Nome, double Norte, double Varzea)[] Criterios =
     [
         ("Solo", 8, 6), ("Irrigacao", 9, 5), ("Produtividade", 7.5, 8), ("Custo", 6, 7), ("Logistica", 7, 9), ("Sanidade", 8.5, 6.5)
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Eixos (3 ou mais), nome de cada eixo e nome do grafico."),
-        new("Max", "double?", "maior valor arredondado", "Valor na ponta dos eixos."),
-        new("GridLevels", "int", "5", "Niveis da grade."),
-        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
-        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie (um poligono)."),
-        new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
-        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O CSV e para ler, o XLSX e para somar (numero entra como numero). O nome padrao vem do AriaLabel."),
-        new("PrintAsync()", "Task<bool>", "—", "Abre a caixa de impressao do navegador com o grafico sozinho na pagina."),
-        new("Zoomable / SelectionMode / RvmChartSeries.Axis", "bool / RvmChartSelectionMode / RvmChartAxis", "false / None / Primary", "Aparecem por heranca, mas NAO valem aqui: zoom, arrasto, selecao de faixa e eixo duplo pedem eixos cartesianos — use RvmColumnChart, RvmLineChart, RvmAreaChart ou RvmScatterChart.")
     ];
 
     private const string CodigoSeries = """

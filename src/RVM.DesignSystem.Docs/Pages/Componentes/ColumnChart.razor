@@ -45,7 +45,7 @@
     </RvmColumnChart>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmColumnChart" />
 
 <RecorteDoKit Origem="kit/column-chart.png"
               Arquivo="referencia-neatlab/Chart Card.png (recorte)"
@@ -93,26 +93,6 @@
     [
         ("Jan", 1200, 300, 100), ("Fev", 2400, 500, 150), ("Mar", 1800, 900, 200), ("Abr", 600, 1400, 350),
         ("Mai", 200, 1700, 420), ("Jun", 0, 1100, 380)
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items", "IEnumerable<TItem>", "—", "Os dados."),
-        new("Label", "Func<TItem, string>?", "—", "A categoria de cada item (eixo horizontal)."),
-        new("AriaLabel", "string", "—", "Nome do grafico para o leitor de tela. Obrigatorio."),
-        new("Stacked", "bool", "false", "Series empilhadas em vez de lado a lado."),
-        new("MaxBarWidth", "int", "28", "Largura maxima da coluna, em px."),
-        new("Height", "int", "300", "Altura, em px. A largura acompanha o container."),
-        new("ShowLegend / ShowGrid", "bool", "true / true", "Legenda (com mais de uma serie) e grade."),
-        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores no eixo e na dica (\"60 mil\")."),
-        new("Animated", "bool", "true", "Anima ao aparecer e ao mudar; desliga sozinha em \"reduzir movimento\"."),
-        new("ExportAsync(format)", "Task<bool>", "—", "Baixa PNG, SVG, CSV ou PDF do grafico."),
-        new("ExportFileName", "string?", "AriaLabel em minusculas", "Nome do arquivo exportado, sem extensao."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Nome, valor e cor de cada serie."),
-        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
-        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Range: arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela. ZoomBox: arrastar desenha a area a aproximar, nos dois eixos de uma vez."),
-        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita."),
-        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida; com duas escalas, o exemplo de eixo duplo esta no RvmLineChart.")
     ];
 
     private const string CodigoAgrupado = """

@@ -42,7 +42,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmBadge" />
 
 <RecorteDoKit Origem="kit/badge.png"
               Arquivo="referencia-neatlab/Badge.png (recorte)"
@@ -52,18 +52,6 @@
 @code {
     private static readonly RvmColor[] Cores =
         [RvmColor.Primary, RvmColor.Secondary, RvmColor.Error, RvmColor.Warning, RvmColor.Info, RvmColor.Success];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Content", "string?", "—", "Texto dentro da pilula. Ignorado com Dot."),
-        new("Count", "int?", "—", "Contador. Vence Content e respeita Max."),
-        new("Max", "int", "99", "Acima deste valor, mostra Max+."),
-        new("Dot", "bool", "false", "So o ponto, sem texto."),
-        new("Color", "RvmColor", "Primary", "Papel de cor."),
-        new("Label", "string?", "—", "O que o badge significa, para o leitor de tela. Use sempre com Dot."),
-        new("ChildContent", "RenderFragment?", "—", "Conteudo sob o badge (icone, avatar)."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoVariantes = """
         <RvmBadge Dot="true" Color="RvmColor.Error" Label="Aviso" />

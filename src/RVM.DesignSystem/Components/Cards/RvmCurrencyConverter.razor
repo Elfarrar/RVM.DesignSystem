@@ -1,0 +1,41 @@
+@namespace RVM.DesignSystem.Components.Cards
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Icons
+
+@* O conversor de moeda do kit. CASCA visual, como no RVM.UI: a biblioteca nao tem cotacao nem converte nada — os
+   campos sao encaixes (From/To) e quem calcula a taxa e trata o clique e o aplicativo. A secao tem o titulo como
+   nome; a taxa e role=status, para o leitor de tela ouvir a mudanca sem sair do campo. *@
+<section @attributes="AdditionalAttributes" class="@CssClass" aria-labelledby="@IdDoTitulo">
+    <div class="rvm-topo">
+        <div class="rvm-titulos">
+            <h3 id="@IdDoTitulo" class="rvm-titulo rvm-text-h6">@Title</h3>
+            @if (!string.IsNullOrWhiteSpace(Subtitle))
+            {
+                <p class="rvm-subtitulo rvm-text-body2">@Subtitle</p>
+            }
+        </div>
+        @if (Menu is not null)
+        {
+            <RvmMenu Label="@MenuLabel" Trigger="RvmMenuTrigger.Icon" ButtonColor="RvmColor.Secondary" AlignEnd="true"
+                     Class="rvm-acao">@Menu</RvmMenu>
+        }
+    </div>
+
+    <div class="rvm-campos">
+        @From
+        @To
+    </div>
+
+    <p class="@ClasseDaTaxa" role="status">
+        @if (!string.IsNullOrWhiteSpace(Rate))
+        {
+            <RvmIcon Name="RvmIconName.InfoCircle" Size="RvmSize.Small" />
+            <span>@Rate</span>
+        }
+    </p>
+
+    <RvmButton Color="Color" StartIcon="ActionIcon" Disabled="Disabled" Class="rvm-botao-converter"
+               OnClick="() => OnConvert.InvokeAsync()">@ActionText</RvmButton>
+</section>

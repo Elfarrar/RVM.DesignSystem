@@ -1,0 +1,47 @@
+@page "/componentes/multi-text-field"
+
+<PageTitle>RvmMultiTextField — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMultiTextField</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Um campo de varios textos: cada item vira uma tag dentro da caixa. Enter ou virgula inclui o que foi digitado (sem
+    repetir e ignorando o vazio), Backspace com o campo vazio tira o ultimo e o x de cada tag tira aquela. O leitor de
+    tela ouve cada inclusao e remocao.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O Enter nao envia o formulario, e
+    no POST vai um campo com o Name por tag.
+</p>
+
+<BlocoExemplo Titulo="Culturas da safra"
+              Descricao="O valor e uma lista de textos, ligada com @@bind-Value."
+              Codigo="@Codigo">
+    <div class="grade-campos">
+        <RvmMultiTextField @bind-Value="_culturas" Label="Culturas" Name="culturas"
+                           HelperText="Digite e tecle Enter ou virgula" />
+        <RvmMultiTextField @bind-Value="_vazio" Label="Talhoes" Shape="RvmFieldShape.Pill" Placeholder="Ex.: T1, T2" />
+        <RvmMultiTextField @bind-Value="_bloqueado" Label="Safras" Disabled="true" />
+        <RvmMultiTextField @bind-Value="_comErro" Label="Tags" ErrorText="Inclua pelo menos uma tag" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary">Valor: @string.Join(", ", _culturas)</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMultiTextField" />
+
+@code {
+    private IReadOnlyList<string> _culturas = ["Soja", "Milho"];
+    private IReadOnlyList<string> _vazio = [];
+    private IReadOnlyList<string> _bloqueado = ["2025/26"];
+    private IReadOnlyList<string> _comErro = [];
+
+    private const string Codigo = """
+        <RvmMultiTextField @bind-Value="Culturas" Label="Culturas" Name="culturas"
+                           HelperText="Digite e tecle Enter ou virgula" />
+
+        @code {
+            private IReadOnlyList<string> Culturas = ["Soja", "Milho"];
+        }
+        """;
+}

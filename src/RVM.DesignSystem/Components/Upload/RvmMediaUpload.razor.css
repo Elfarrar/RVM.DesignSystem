@@ -1,0 +1,237 @@
+/* CSS isolado do RvmMediaUpload. So custom properties — hex literal aqui quebra o tema escuro.
+   Miniaturas de 100 px com o raio do kit; o quadro de adicionar e o tracejado da caixa de soltar do RvmFileUpload.
+   O InputFile, o RvmIcon e o RvmProgress sao componentes filhos: as regras que miram neles levam ::deep. */
+
+.rvm-upload {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    font-family: var(--rvm-font-family);
+    min-width: 0;
+}
+
+.rvm-cabecalho {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-rotulo {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-link-do-campo {
+    margin-inline-start: auto;
+    color: var(--rvm-color-primary-text);
+}
+
+/* O ul some da caixa (display: contents) para o quadro de adicionar entrar na mesma grade das miniaturas. */
+.rvm-grade {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-miniaturas {
+    display: contents;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rvm-miniatura,
+.rvm-alvo {
+    position: relative;
+    box-sizing: border-box;
+    width: 100px;
+    height: 100px;
+    flex: none;
+    border-radius: var(--rvm-radius-md);
+    overflow: hidden;
+}
+
+.rvm-miniatura {
+    border: 1px solid var(--rvm-color-divider);
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-imagem {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.rvm-sem-previa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-faixa {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: var(--rvm-space-2);
+    background-color: color-mix(in srgb, var(--rvm-color-background-paper) 85%, transparent);
+}
+
+.rvm-selo-ok {
+    position: absolute;
+    left: var(--rvm-space-1);
+    bottom: var(--rvm-space-1);
+    display: inline-flex;
+    padding: 2px;
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-success-text);
+}
+
+.rvm-falhou {
+    border-color: var(--rvm-color-error-main);
+}
+
+.rvm-falhou-sobre {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-1);
+    /* Em cima, o espaco do X de remover, que fica por cima da faixa. */
+    padding: 28px var(--rvm-space-1) var(--rvm-space-1);
+    background-color: color-mix(in srgb, var(--rvm-color-background-paper) 92%, transparent);
+    text-align: center;
+}
+
+.rvm-texto-da-falha {
+    color: var(--rvm-color-error-text);
+    line-height: 1.2;
+}
+
+.rvm-tentar {
+    padding: 2px 6px;
+    white-space: nowrap;
+    border: 1px solid var(--rvm-color-primary-outlined-resting);
+    border-radius: var(--rvm-radius-sm);
+    background: transparent;
+    color: var(--rvm-color-primary-text);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.rvm-tentar:hover:not(:disabled) {
+    background-color: var(--rvm-color-primary-outlined-hover);
+}
+
+.rvm-remover {
+    position: absolute;
+    top: var(--rvm-space-1);
+    right: var(--rvm-space-1);
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-1);
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+}
+
+.rvm-remover:hover:not(:disabled) {
+    background-color: var(--rvm-color-action-selected);
+}
+
+.rvm-remover:focus-visible,
+.rvm-tentar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+/* --- O quadro de adicionar: o input transparente cobre tudo --- */
+.rvm-adicionar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rvm-space-1);
+    padding: var(--rvm-space-2);
+    border: 1px dashed var(--rvm-color-input-border);
+    color: var(--rvm-color-primary-text);
+    text-align: center;
+    overflow: visible;
+    transition: background-color var(--rvm-transition-fast), border-color var(--rvm-transition-fast);
+}
+
+.rvm-adicionar:hover,
+.rvm-arrastando {
+    border-color: var(--rvm-color-primary-main);
+    background-color: var(--rvm-color-primary-outlined-hover);
+}
+
+.rvm-adicionar:focus-within {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-texto-do-alvo {
+    line-height: 1.2;
+}
+
+.rvm-alvo ::deep .rvm-arquivo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    font-size: 0;
+}
+
+.rvm-apoio {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-mensagem-de-erro {
+    color: var(--rvm-color-error-text);
+}
+
+.rvm-erro .rvm-adicionar {
+    border-color: var(--rvm-color-error-main);
+}
+
+/* --- Desabilitado: esmaece e o cursor avisa --- */
+.rvm-desabilitado .rvm-grade {
+    opacity: 0.6;
+}
+
+.rvm-desabilitado .rvm-adicionar:hover {
+    border-color: var(--rvm-color-input-border);
+    background-color: transparent;
+}
+
+.rvm-desabilitado .rvm-alvo ::deep .rvm-arquivo,
+.rvm-remover:disabled,
+.rvm-tentar:disabled {
+    cursor: not-allowed;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}

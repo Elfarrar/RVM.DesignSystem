@@ -1,0 +1,49 @@
+/* CSS isolado do RvmFileIcon. So custom properties — hex literal aqui quebra o tema escuro.
+   A folha e o papel da superficie com o contorno dos campos (aparece sobre o papel nos dois temas); a faixa da
+   extensao e o -main do papel do tipo com o texto no -contrast (o par do RvmLabel cheio). A pasta e o papel de aviso:
+   o fundo no -main e a frente no -text, um pouco mais escura, para dar profundidade. */
+
+.rvm-icone-arquivo {
+    display: inline-block;
+    flex: none;
+    vertical-align: middle;
+}
+
+.rvm-folha {
+    fill: var(--rvm-color-background-paper);
+    stroke: var(--rvm-color-input-border);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+}
+
+.rvm-dobra {
+    fill: none;
+    stroke: var(--rvm-color-input-border);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+}
+
+.rvm-extensao {
+    font-family: var(--rvm-font-family);
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.rvm-primary .rvm-faixa { fill: var(--rvm-color-primary-main); }
+.rvm-primary .rvm-extensao { fill: var(--rvm-color-primary-contrast); }
+.rvm-secondary .rvm-faixa { fill: var(--rvm-color-secondary-main); }
+.rvm-secondary .rvm-extensao { fill: var(--rvm-color-secondary-contrast); }
+.rvm-inverse .rvm-faixa { fill: var(--rvm-color-inverse-main); }
+.rvm-inverse .rvm-extensao { fill: var(--rvm-color-inverse-contrast); }
+.rvm-info .rvm-faixa { fill: var(--rvm-color-info-main); }
+.rvm-info .rvm-extensao { fill: var(--rvm-color-info-contrast); }
+.rvm-success .rvm-faixa { fill: var(--rvm-color-success-main); }
+.rvm-success .rvm-extensao { fill: var(--rvm-color-success-contrast); }
+.rvm-warning .rvm-faixa { fill: var(--rvm-color-warning-main); }
+.rvm-warning .rvm-extensao { fill: var(--rvm-color-warning-contrast); }
+.rvm-error .rvm-faixa { fill: var(--rvm-color-error-main); }
+.rvm-error .rvm-extensao { fill: var(--rvm-color-error-contrast); }
+
+.rvm-pasta-fundo { fill: var(--rvm-color-warning-text); }
+.rvm-pasta-frente { fill: var(--rvm-color-warning-main); }

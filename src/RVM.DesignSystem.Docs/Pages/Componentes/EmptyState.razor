@@ -46,7 +46,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmEmptyState" />
 
 <RecorteDoKit Origem="kit/empty-state.png"
               Arquivo="referencia-neatlab/Error.png (recorte)"
@@ -54,18 +54,6 @@
               Alt="Recorte da tela de erro 404 do kit NEATLAB, com titulo, texto de apoio e botao de voltar" />
 
 @code {
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Title", "string", "—", "O que aconteceu, em uma frase."),
-        new("Description", "string?", "—", "Por que, e o que fazer."),
-        new("Icon", "RvmIconName?", "—", "Icone decorativo acima do titulo."),
-        new("Illustration", "RenderFragment?", "—", "Ilustracao livre. Vence o icone."),
-        new("HeadingLevel", "int", "2", "Nivel do titulo, de 2 a 6."),
-        new("ChildContent", "RenderFragment?", "—", "Conteudo extra entre a descricao e as acoes."),
-        new("Actions", "RenderFragment?", "—", "O botao que resolve o vazio."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
-
     private const string CodigoLista = """
         <RvmEmptyState Icon="RvmIconName.File" Title="Nenhum talhao cadastrado ainda"
                        Description="Cadastre o primeiro talhao para acompanhar a safra.">

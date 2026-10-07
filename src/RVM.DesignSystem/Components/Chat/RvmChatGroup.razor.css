@@ -1,0 +1,46 @@
+/* CSS isolado do RvmChatGroup. So custom properties. A coluna dos baloes nao passa de 75% da conversa: mensagem que
+   atravessa a largura inteira fica dificil de ler, e o vao do outro lado e o que mostra de quem e a fala. */
+
+.rvm-chat-grupo {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-direita {
+    flex-direction: row-reverse;
+}
+
+.rvm-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    max-width: 75%;
+    min-width: 0;
+}
+
+.rvm-direita .rvm-coluna {
+    align-items: flex-end;
+}
+
+.rvm-baloes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+}
+
+.rvm-direita .rvm-baloes {
+    align-items: flex-end;
+}
+
+.rvm-chat-grupo ::deep .rvm-autor {
+    flex: none;
+}
+
+.rvm-horario {
+    margin: 0;
+    color: var(--rvm-color-text-secondary);
+}

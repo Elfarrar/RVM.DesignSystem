@@ -49,7 +49,7 @@
                    data-rvm-demo="texto-desabilitado">Texto desabilitado</RvmTypography>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmTypography" />
 
 <RecorteDoKit Origem="kit/typography.png"
               Arquivo="referencia-neatlab/Typography/Light.png"
@@ -63,15 +63,6 @@
         RvmTypographyVariant.Subtitle1, RvmTypographyVariant.Subtitle2,
         RvmTypographyVariant.Body1, RvmTypographyVariant.Body2,
         RvmTypographyVariant.ButtonMedium, RvmTypographyVariant.Caption, RvmTypographyVariant.Overline
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Variant", "RvmTypographyVariant", "Body1", "O estilo da escala: H1..H6, Subtitle, Body, Caption, Overline, Button, Input, Chip, Tooltip, AlertTitle, TableHeader, BadgeLabel."),
-        new("As", "RvmTextElement", "Auto", "Elemento HTML gerado. Em Auto, H1..H6 viram cabecalho e Body/Subtitle viram paragrafo."),
-        new("Color", "RvmTextColor", "Inherit", "Papel do texto: Inherit, Primary, Secondary ou Disabled."),
-        new("ChildContent", "RenderFragment", "—", "O texto."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao elemento. class e style somam com os do componente.")
     ];
 
     private const string CodigoBasico = """

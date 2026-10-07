@@ -1,0 +1,44 @@
+/* CSS isolado do RvmChatVoice. So custom properties. O mesmo balao do RvmChatMessage, com o botao redondo, a barra do
+   quanto ja foi ouvido (RvmProgressBar, clara sobre o primario) e a duracao. */
+
+.rvm-balao {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    width: 240px;
+    max-width: 100%;
+    padding: var(--rvm-space-3) var(--rvm-space-4) var(--rvm-space-3) var(--rvm-space-3);
+    border-radius: var(--rvm-radius-md);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-esquerda {
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-direita {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-balao ::deep .rvm-tocar {
+    flex: none;
+    border-radius: var(--rvm-radius-circle);
+}
+
+.rvm-balao ::deep .rvm-ouvido {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-duracao {
+    flex: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.rvm-esquerda .rvm-duracao {
+    color: var(--rvm-color-text-secondary);
+}

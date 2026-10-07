@@ -28,7 +28,7 @@
                   SeriesName="Cargas" BinFormat="@(v => $"{RvmChartFormat.Number(v)}%")" />
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmHistogram" />
 
 @code {
     private static readonly double[] Pesos = Gerar(200, 420, 45, 7);
@@ -46,22 +46,6 @@
             return Math.Round(media + desvio * Math.Sqrt(-2 * Math.Log(u1)) * Math.Cos(2 * Math.PI * u2), 1);
         })];
     }
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items", "IEnumerable<double>", "—", "Os valores soltos."),
-        new("AriaLabel", "string", "—", "Nome do grafico para o leitor de tela. Obrigatorio."),
-        new("Bins", "int?", "Sturges", "Numero de faixas."),
-        new("BinWidth", "double?", "—", "Largura de cada faixa; vence Bins."),
-        new("BinFormat", "Func<double, string>?", "ValueFormat", "Formato dos limites das faixas."),
-        new("SeriesName", "string", "\"Frequencia\"", "Nome da contagem na dica e na tabela."),
-        new("Color", "RvmColor", "Primary", "Cor das colunas."),
-        new("Height / ShowGrid", "int / bool", "300 / true", "Altura e grade."),
-        new("Animated", "bool", "true", "Anima o desenho ao aparecer e ao mudar de valor; fica quieta sozinha para quem pediu \"reduzir movimento\" no sistema."),
-        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF (RvmChartExportFormat); devolve false quando o navegador nao deixou. O CSV e para ler, o XLSX e para somar (numero entra como numero). O nome padrao vem do AriaLabel."),
-        new("PrintAsync()", "Task<bool>", "—", "Abre a caixa de impressao do navegador com o grafico sozinho na pagina."),
-        new("Zoomable / SelectionMode / RvmChartSeries.Axis", "bool / RvmChartSelectionMode / RvmChartAxis", "false / None / Primary", "Aparecem por heranca, mas NAO valem aqui: zoom, arrasto, selecao de faixa e eixo duplo pedem eixos cartesianos — use RvmColumnChart, RvmLineChart, RvmAreaChart ou RvmScatterChart.")
-    ];
 
     private const string CodigoAutomatico = """
         <RvmHistogram Items="pesos" AriaLabel="Distribuicao do peso dos bovinos" SeriesName="Animais"

@@ -11,6 +11,26 @@
     overflow: hidden;
 }
 
+/* Header e Toolbar (contrato com o RVM.UI, DSGN-017): titulo a esquerda, acoes a direita, quebrando no celular. */
+.rvm-cabecalho-tabela {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-4) var(--rvm-space-5);
+}
+
+.rvm-titulo-tabela {
+    min-width: 0;
+}
+
+.rvm-acoes-tabela {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2);
+}
+
 .rvm-rolagem {
     overflow-x: auto;
 }

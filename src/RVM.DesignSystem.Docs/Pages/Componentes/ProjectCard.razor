@@ -1,0 +1,84 @@
+@page "/componentes/project-card"
+@using RVM.DesignSystem.Components.Cards
+
+<PageTitle>RvmProjectCard e RvmTaskCard — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmProjectCard e RvmTaskCard</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Os cards de projeto e de tarefa do painel: selo de status, menu, titulo, descricao, progresso com texto livre
+    ("Atrasada", "75%"), a equipe e o prazo. O de projeto e o de tarefa com uma capa no alto — sem ImageUrl, um icone
+    de pasta no lugar.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O leitor de tela ouve "Prazo:"
+    antes da data e a barra como "Progresso de" e o titulo.
+</p>
+
+<BlocoExemplo Titulo="Projeto"
+              Descricao="ImageUrl e a capa, decorativa. Members vira o grupo de avatares, com MembersMax antes do +N (padrao: 4)."
+              Codigo="@CodigoProjeto">
+    <div class="grade-cards largura-cheia">
+        <RvmProjectCard ImageUrl="@Capa" Label="Em dia" LabelColor="RvmColor.Success" Title="Plantio da safra 25/26"
+                        Description="Soja em 1.240 ha nas fazendas Santa Clara e Boa Vista, com janela ate 15 de novembro."
+                        ProgressText="72%" ProgressPercent="72" ProgressColor="RvmColor.Success" Members="Equipe" DueDate="15 nov 2026"
+                        MenuLabel="Opcoes do plantio">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Eye">Abrir projeto</RvmMenuItem>
+                <RvmMenuItem Icon="RvmIconName.Pencil">Editar</RvmMenuItem>
+            </MenuItems>
+        </RvmProjectCard>
+        <RvmProjectCard Label="Atrasado" Title="Auditoria fiscal 2025" ProgressText="Atrasado" ProgressPercent="35"
+                        ProgressColor="RvmColor.Error" Members="EquipePequena" DueDate="30 set 2026" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tarefa"
+              Descricao="O mesmo card sem capa. MembersMax padrao: 3. LabelColor padrao: Danger."
+              Codigo="@CodigoTarefa">
+    <div class="grade-cards largura-cheia">
+        <RvmTaskCard Label="Bloqueada" Title="Conciliar notas de entrada" Description="Aguardando o XML de 14 notas do fornecedor de fertilizantes."
+                     ProgressText="Bloqueada" ProgressPercent="40" ProgressColor="RvmColor.Error" Members="Equipe" DueDate="12 out 2026">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Pencil">Editar</RvmMenuItem>
+            </MenuItems>
+        </RvmTaskCard>
+        <RvmTaskCard Label="Em andamento" LabelColor="RvmColor.Info" Title="Calibrar plantadeiras" ProgressText="3 de 5"
+                     ProgressPercent="60" ProgressColor="RvmColor.Info" Members="EquipePequena" DueDate="20 out 2026" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmProjectCard" />
+
+<TabelaParametros Componente="RvmTaskCard" />
+
+@code {
+    private static readonly IReadOnlyList<RvmAvatarItem> Equipe =
+    [
+        new("Ana Souza"), new("Bruno Lima"), new("Carla Dias"), new("Diego Rocha"), new("Elisa Prado"), new("Fabio Melo")
+    ];
+
+    private static readonly IReadOnlyList<RvmAvatarItem> EquipePequena = [new("Gustavo Reis"), new("Helena Costa")];
+
+    private const string Capa =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' fill='%23E9F5EA'/><path d='M0 34 Q12 26 24 32 T48 30 V48 H0Z' fill='%2356CA00'/><circle cx='36' cy='12' r='6' fill='%23FFB400'/></svg>";
+
+    private const string CodigoProjeto = """
+        <RvmProjectCard ImageUrl="img/soja.png" Label="Em dia" LabelColor="RvmColor.Success"
+                        Title="Plantio da safra 25/26" Description="Soja em 1.240 ha..."
+                        ProgressText="72%" ProgressPercent="72" ProgressColor="RvmColor.Success"
+                        Members="Equipe" DueDate="15 nov 2026" MenuLabel="Opcoes do plantio">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Eye">Abrir projeto</RvmMenuItem>
+            </MenuItems>
+        </RvmProjectCard>
+        """;
+
+    private const string CodigoTarefa = """
+        <RvmTaskCard Label="Bloqueada" Title="Conciliar notas de entrada"
+                     Description="Aguardando o XML de 14 notas do fornecedor de fertilizantes."
+                     ProgressText="Bloqueada" ProgressPercent="40" ProgressColor="RvmColor.Error"
+                     Members="Equipe" DueDate="12 out 2026" />
+        """;
+}

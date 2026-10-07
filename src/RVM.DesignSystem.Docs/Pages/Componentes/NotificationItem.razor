@@ -1,0 +1,64 @@
+@page "/componentes/notification-item"
+@using RVM.DesignSystem.Components.Activity
+
+<PageTitle>RvmNotificationItem — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmNotificationItem</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Um aviso da lista do painel de notificacoes. E um item de lista (<code>li</code>): vai dentro de um
+    <code>ul</code> de quem monta o painel, normalmente o RvmWidget. Nao lido ganha o ponto primario, o fundo
+    cinza e o "Nao lida" escrito para o leitor de tela; com OnRead aparece a acao de marcar como lida, e o foco
+    passa para o aviso quando o botao some.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Lida, nao lida e com etiqueta"
+              Descricao="Marque como lida: o destaque e a acao somem."
+              Codigo="@Codigo">
+    <ul class="exemplo-avisos">
+        @foreach (var aviso in _avisos)
+        {
+            <RvmNotificationItem Title="@aviso.Titulo" Text="@aviso.Texto" Read="aviso.Lido"
+                                 OnRead="@(() => aviso.Lido = true)">
+                <Tag><RvmLabel Color="@aviso.Cor" Size="RvmSize.Small">@aviso.Etiqueta</RvmLabel></Tag>
+            </RvmNotificationItem>
+        }
+        <RvmNotificationItem Title="Backup do sistema concluido" Text="Sem acao: so informa." Read="true" />
+    </ul>
+    <RvmButton Variant="RvmButtonVariant.Text" OnClick="Reiniciar">Marcar todas como nao lidas</RvmButton>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmNotificationItem" />
+
+@code {
+    private sealed class Aviso(string titulo, string texto, string etiqueta, RvmColor cor)
+    {
+        public string Titulo { get; } = titulo;
+        public string Texto { get; } = texto;
+        public string Etiqueta { get; } = etiqueta;
+        public RvmColor Cor { get; } = cor;
+        public bool Lido { get; set; }
+    }
+
+    private readonly List<Aviso> _avisos =
+    [
+        new("Boleto do adubo vence amanha", "Fornecedor Agro Sul, R$ 48.200,00", "Financeiro", RvmColor.Warning),
+        new("Colheita do talhao 12 concluida", "58 sacas por hectare", "Safra", RvmColor.Success),
+        new("Nova mensagem da cooperativa", "Proposta de preco para a soja", "Comercial", RvmColor.Info)
+    ];
+
+    private void Reiniciar() => _avisos.ForEach(a => a.Lido = false);
+
+    private const string Codigo = """
+        <ul>
+            <RvmNotificationItem Title="Boleto do adubo vence amanha" Text="Fornecedor Agro Sul, R$ 48.200,00"
+                                 Read="aviso.Lido" OnRead="() => MarcarComoLida(aviso)">
+                <Tag><RvmLabel Color="RvmColor.Warning" Size="RvmSize.Small">Financeiro</RvmLabel></Tag>
+            </RvmNotificationItem>
+        </ul>
+        """;
+}

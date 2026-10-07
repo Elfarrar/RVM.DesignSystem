@@ -1,0 +1,109 @@
+@namespace RVM.DesignSystem.Components.TextField
+
+@* A moldura comum dos campos: link, caixa com o rotulo flutuante e a mensagem de apoio ou de erro — o visual do
+   RvmTextField. O controle (input, textarea, prefixo) vem no ChildContent, com a classe rvm-entrada, e o rotulo
+   aponta para ele pelo InputId. Publica porque componente Razor nao pode ser internal: e a peca que os campos do
+   contrato com o RVM.UI usam (DSGN-017). *@
+<div class="@ClassesDaRaiz">
+    @if (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref))
+    {
+        <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
+    }
+    <div class="rvm-caixa">
+        @ChildContent
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label for="@InputId" class="rvm-rotulo">
+                @Label
+                @if (Required)
+                {
+                    <span class="rvm-obrigatorio" aria-hidden="true">*</span>
+                    @if (AnnounceRequired)
+                    {
+                        <span class="rvm-so-leitor">(obrigatorio)</span>
+                    }
+                }
+            </label>
+        }
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Error))
+    {
+        <div id="@ErrorId" class="rvm-apoio rvm-text-helper">@Error</div>
+    }
+    else if (!string.IsNullOrWhiteSpace(HelperText))
+    {
+        <div id="@HelperId" class="rvm-apoio rvm-text-helper">@HelperText</div>
+    }
+</div>
+
+@code {
+    /// <summary>Rotulo do campo.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Id do controle, para o <c>label for</c>.</summary>
+    [Parameter, EditorRequired] public string InputId { get; set; } = "";
+
+    /// <summary>A caixa do campo: o controle com a classe <c>rvm-entrada</c> (e prefixo e sufixo, se houver).</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Texto do link acima do campo, a direita.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Mensagem de erro; nula sem erro.</summary>
+    [Parameter] public string? Error { get; set; }
+
+    /// <summary>Id da mensagem de erro (o <c>aria-describedby</c> do controle aponta para ca).</summary>
+    [Parameter] public string ErrorId { get; set; } = "";
+
+    /// <summary>Texto de apoio; aparece so sem erro.</summary>
+    [Parameter] public string? HelperText { get; set; }
+
+    /// <summary>Id do texto de apoio.</summary>
+    [Parameter] public string? HelperId { get; set; }
+
+    /// <summary>Obrigatorio: asterisco no rotulo. O <c>aria-required</c> fica com o controle.</summary>
+    [Parameter] public bool Required { get; set; }
+
+    /// <summary>
+    /// Escreve "(obrigatorio)" escondido no rotulo, para o leitor de tela. So para controle em que <c>aria-required</c>
+    /// nao vale (um botao); campo de texto usa o <c>aria-required</c>.
+    /// </summary>
+    [Parameter] public bool AnnounceRequired { get; set; }
+
+    /// <summary>Indisponivel.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Caixa com varias linhas (area de texto): conteudo no alto e rotulo sempre em cima.</summary>
+    [Parameter] public bool Multiline { get; set; }
+
+    /// <summary>Canto: o do kit ou pilula.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Rounded;
+
+    /// <summary>Altura: 56 px (Medium, padrao), 40 px (Small) ou 64 px (Large).</summary>
+    [Parameter] public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Estilo da caixa. Padrao: contornada.</summary>
+    [Parameter] public RvmTextFieldVariant Variant { get; set; } = RvmTextFieldVariant.Outlined;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    private string ClassesDaRaiz
+    {
+        get
+        {
+            var proprias = string.Join(' ',
+                "rvm-campo",
+                Variant switch { RvmTextFieldVariant.Filled => "rvm-preenchido", RvmTextFieldVariant.Standard => "rvm-padrao", _ => "rvm-contorno" },
+                Size switch { RvmSize.Small => "rvm-pequeno", RvmSize.Large => "rvm-medio rvm-grande", _ => "rvm-medio" });
+            if (Multiline) proprias += " rvm-multilinha";
+            if (Shape == RvmFieldShape.Pill) proprias += " rvm-pilula";
+            if (!string.IsNullOrWhiteSpace(Error)) proprias += " rvm-erro";
+            if (Disabled) proprias += " rvm-desabilitado";
+            return ClassesCss.Juntar(proprias, Class, null);
+        }
+    }
+}

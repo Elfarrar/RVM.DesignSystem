@@ -24,5 +24,31 @@ window.rvmTheme = {
         } catch {
             return null;
         }
+    },
+
+    // Tema do usuario (RvmThemeState, DSGN-017): a escolha inteira serializada (`v1|blue|dark|default|0|0`).
+    // Vai no localStorage, que o WebAssembly le de forma sincrona antes do primeiro render, e num cookie, que o
+    // store de um app com servidor le na pre-renderizacao — nos dois casos a pagina ja nasce no tema certo.
+    save(chave, valor) {
+        try {
+            localStorage.setItem(chave, valor);
+        } catch {
+            // localStorage bloqueado: o cookie ainda vale.
+        }
+        const seguro = location.protocol === 'https:' ? ';secure' : '';
+        document.cookie = `${chave}=${encodeURIComponent(valor)};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax${seguro}`;
+    },
+
+    // Para o "alternar" sair do tema que esta na tela quando a aparencia e automatica.
+    prefersDark() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    },
+
+    load(chave) {
+        try {
+            return localStorage.getItem(chave);
+        } catch {
+            return null;
+        }
     }
 };

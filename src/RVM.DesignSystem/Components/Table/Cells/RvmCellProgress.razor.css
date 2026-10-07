@@ -1,0 +1,42 @@
+/* CSS isolado do RvmCellProgress. So custom properties — hex literal aqui quebra o tema escuro. */
+
+/* --- O <td> (igual em todas as celulas; CSS isolado e por componente, entao cada uma traz o seu) ---
+   Medidas da RvmTable (linha de 52 px, 16 px dos lados), as mesmas do kit nas listas de usuario e de fatura: texto em
+   body2 na tinta principal, conteudo centrado na vertical, figura e texto separados por 12 px. */
+
+.rvm-celula {
+    box-sizing: border-box;
+    height: 52px;
+    padding: 0 var(--rvm-space-4);
+    vertical-align: middle;
+    white-space: nowrap;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-celula-conteudo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+}
+
+.rvm-inicio { text-align: start; }
+.rvm-inicio .rvm-celula-conteudo { justify-content: flex-start; }
+
+.rvm-centro { text-align: center; }
+.rvm-centro .rvm-celula-conteudo { justify-content: center; }
+
+.rvm-fim { text-align: end; }
+.rvm-fim .rvm-celula-conteudo { justify-content: flex-end; }
+
+/* --- Desta celula ---
+   A barra ocupa a coluna, com um minimo para continuar legivel quando a tabela aperta. */
+
+.rvm-barra-da-celula {
+    flex: 1 1 auto;
+    min-width: 140px;
+    max-width: 240px;
+}

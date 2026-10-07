@@ -56,7 +56,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmChip" />
 
 <RecorteDoKit Origem="kit/chip.png"
               Arquivo="referencia-neatlab/Chip.png (recorte)"
@@ -78,20 +78,6 @@
     private List<string> _filtros = [.. FiltrosIniciais];
 
     private void Restaurar() => _filtros = [.. FiltrosIniciais];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Variant", "RvmChipVariant", "Filled", "Filled, Outlined ou Soft."),
-        new("Color", "RvmColor?", "—", "Papel de cor. Sem valor, o chip e neutro."),
-        new("Size", "RvmSize", "Medium", "32 px ou 24 px (Small). Large sai igual ao medio."),
-        new("StartIcon", "RvmIconName?", "—", "Icone antes do rotulo."),
-        new("AvatarSrc", "string?", "—", "Miniatura antes do rotulo. Vence o icone."),
-        new("AvatarAlt", "string?", "—", "Alt da miniatura. Vazio quando o rotulo ja diz quem e."),
-        new("OnRemove", "EventCallback", "—", "Com alguem escutando, aparece o botao de remover."),
-        new("RemoveLabel", "string", "\"Remover\"", "Nome acessivel do botao de remover."),
-        new("Disabled", "bool", "false", "Esmaece e bloqueia a remocao."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoEstilos = """
         <RvmChip>Neutro</RvmChip>

@@ -1,0 +1,28 @@
+/* Cada amostra e um RvmThemeProvider: o fundo, a fonte e as cores vem dele (o .rvm-root pinta o corpo). */
+.grade-amostras {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: var(--rvm-space-4);
+    width: 100%;
+}
+
+.grade-amostras ::deep .amostra-tema {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-5);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-lg);
+}
+
+.grade-amostras ::deep .amostra-tema > * {
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.linha-de-tema {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}

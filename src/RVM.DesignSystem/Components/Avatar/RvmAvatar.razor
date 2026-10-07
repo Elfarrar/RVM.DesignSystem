@@ -6,7 +6,7 @@
 @if (TemImagem && !_imagemFalhou)
 {
     <span @attributes="AdditionalAttributes" class="@CssClass">
-        <img src="@Src" alt="@Alt" class="rvm-foto" @onerror="AoFalharImagem" />
+        <img src="@Src" alt="@(Alt ?? Name)" title="@Name" class="rvm-foto" @onerror="AoFalharImagem" />
     </span>
 }
 else

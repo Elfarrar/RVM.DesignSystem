@@ -6,7 +6,7 @@
    chegar nela, que e o comportamento esperado quando trocar de painel e barato. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
     <div @ref="_lista" @attributes="AtributosDaLista" role="tablist" class="rvm-lista"
-         aria-label="@AriaLabel"
+         aria-label="@NomeDaLista"
          aria-orientation="@(Orientation == RvmOrientation.Vertical ? "vertical" : "horizontal")">
         @for (var i = 0; i < _abas.Count; i++)
         {
@@ -14,10 +14,11 @@
             var indice = i;
             var ativa = indice == IndiceAtivo;
             <button @ref="aba.Botao"
+                    @attributes="aba.AdditionalAttributes"
                     type="button"
                     role="tab"
                     id="@IdDaAba(aba)"
-                    class="@(ativa ? "rvm-aba rvm-ativa" : "rvm-aba")"
+                    class="@ClassesCss.Juntar(ativa ? "rvm-aba rvm-ativa" : "rvm-aba", aba.Class, aba.AdditionalAttributes)"
                     aria-selected="@(ativa ? "true" : "false")"
                     aria-controls="@(ativa ? IdDoPainel(aba) : null)"
                     tabindex="@(ativa ? "0" : "-1")"
@@ -28,7 +29,15 @@
                 {
                     <RvmIcon Name="icone" />
                 }
-                <span>@aba.Title</span>
+                @if (aba.Count is { } contador)
+                {
+                    @* Contador ao lado do texto, e nao embaixo: a aba empilha so icone e texto. *@
+                    <span class="rvm-texto-com-contador"><span>@aba.TituloEfetivo</span><span class="rvm-contador">@contador</span></span>
+                }
+                else
+                {
+                    <span>@aba.TituloEfetivo</span>
+                }
             </button>
         }
     </div>

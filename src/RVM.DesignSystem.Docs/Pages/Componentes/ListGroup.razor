@@ -1,0 +1,143 @@
+@page "/componentes/list-group"
+
+<PageTitle>RvmListGroup — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmListGroup</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O cartao que envolve uma lista, como os do dashboard do kit: titulo, subtitulo, selo e menu de acoes no alto,
+    abas opcionais e a lista (normalmente um <code>RvmList</code> com <code>RvmListItem</code>) no corpo. O titulo e o
+    nome da secao para o leitor de tela; o menu e nomeado por <code>MenuLabel</code>.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Com selo, subtitulo e menu"
+              Descricao="O selo vem de BadgeText com BadgeColor; os itens do menu vao no fragmento Menu."
+              Codigo="@CodigoSimples">
+    <div class="grade-grupos">
+        <RvmListGroup Title="Visitas tecnicas" Subtitle="Agronomos em campo esta semana" BadgeText="4 hoje"
+                      BadgeColor="RvmColor.Success" MenuLabel="Acoes das visitas">
+            <Menu>
+                <RvmMenuItem Icon="RvmIconName.Download" OnClick="@(() => _acao = "Exportar")">Exportar</RvmMenuItem>
+                <RvmMenuItem Icon="RvmIconName.Calendar" OnClick="@(() => _acao = "Ver agenda")">Ver agenda</RvmMenuItem>
+            </Menu>
+            <ChildContent>
+                <RvmList AriaLabel="Visitas tecnicas">
+                    @foreach (var (agronomo, fazenda, iniciais) in Visitas)
+                    {
+                        <RvmListItem SecondaryText="@fazenda">
+                            <StartContent><span aria-hidden="true"><RvmAvatar Initials="@iniciais" Size="RvmSize.Medium" /></span></StartContent>
+                            <ChildContent>@agronomo</ChildContent>
+                        </RvmListItem>
+                    }
+                </RvmList>
+            </ChildContent>
+        </RvmListGroup>
+
+        <RvmListGroup Title="Contas a receber" Subtitle="Proximos 7 dias">
+            <Badge><RvmLabel Color="RvmColor.Warning" Size="RvmSize.Small">2 vencendo</RvmLabel></Badge>
+            <ChildContent>
+                <RvmList AriaLabel="Contas a receber">
+                    <RvmListItem Title="Cooperativa Cocamar" SecondaryText="vence sexta" Value="R$ 12.400,00" />
+                    <RvmListItem Title="Revenda Agro Sul" SecondaryText="vence segunda" Value="R$ 3.150,00" />
+                    <RvmListItem Title="Trading Graos BR" SecondaryText="vence quarta" Value="R$ 48.900,00" />
+                </RvmList>
+            </ChildContent>
+        </RvmListGroup>
+    </div>
+    @if (_acao is not null)
+    {
+        <RvmTypography Color="RvmTextColor.Secondary">Acao escolhida: @_acao</RvmTypography>
+    }
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com abas"
+              Descricao="As abas vao no fragmento Tabs. Com PanelId no RvmTab, o painel e a lista do corpo."
+              Codigo="@CodigoAbas">
+    <div class="grade-grupos">
+        <RvmListGroup Title="Pedidos de insumos">
+            <Tabs>
+                <RvmTabs @bind-ActiveIndex="_aba" AriaLabel="Situacao dos pedidos">
+                    <RvmTab Id="aba-abertos" Text="Abertos" Count="3" PanelId="painel-pedidos" />
+                    <RvmTab Id="aba-entregues" Text="Entregues" PanelId="painel-pedidos" />
+                </RvmTabs>
+            </Tabs>
+            <ChildContent>
+                <div id="painel-pedidos" role="tabpanel" aria-labelledby="@(_aba == 0 ? "aba-abertos" : "aba-entregues")">
+                    <RvmList AriaLabel="@(_aba == 0 ? "Pedidos abertos" : "Pedidos entregues")">
+                        @foreach (var (pedido, detalhe) in _aba == 0 ? Abertos : Entregues)
+                        {
+                            <RvmListItem SecondaryText="@detalhe">@pedido</RvmListItem>
+                        }
+                    </RvmList>
+                </div>
+            </ChildContent>
+        </RvmListGroup>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmListGroup" />
+
+@code {
+    private string? _acao;
+    private int _aba;
+
+    private static readonly (string, string, string)[] Visitas =
+    [
+        ("Ana Prado", "Fazenda Boa Vista - soja", "AP"),
+        ("Bruno Lima", "Sitio Agua Limpa - cafe", "BL"),
+        ("Carla Souza", "Fazenda Santa Rita - milho", "CS"),
+        ("Diego Alves", "Fazenda Tres Irmaos - algodao", "DA")
+    ];
+
+    private static readonly (string, string)[] Abertos =
+    [
+        ("Ureia 46% - 12 t", "Previsto para 10/10"),
+        ("Glifosato - 400 L", "Previsto para 14/10"),
+        ("Semente de soja - 80 sc", "Aguardando nota")
+    ];
+
+    private static readonly (string, string)[] Entregues =
+    [
+        ("KCl - 8 t", "Entregue em 02/10"),
+        ("Calcario - 30 t", "Entregue em 28/09")
+    ];
+
+    private const string CodigoSimples = """
+        <RvmListGroup Title="Visitas tecnicas" Subtitle="Agronomos em campo esta semana"
+                      BadgeText="4 hoje" BadgeColor="RvmColor.Success" MenuLabel="Acoes das visitas">
+            <Menu>
+                <RvmMenuItem Icon="RvmIconName.Download" OnClick="Exportar">Exportar</RvmMenuItem>
+            </Menu>
+            <ChildContent>
+                <RvmList AriaLabel="Visitas tecnicas">
+                    <RvmListItem SecondaryText="Fazenda Boa Vista - soja">Ana Prado</RvmListItem>
+                </RvmList>
+            </ChildContent>
+        </RvmListGroup>
+
+        <RvmListGroup Title="Contas a receber">
+            <Badge><RvmLabel Color="RvmColor.Warning" Size="RvmSize.Small">2 vencendo</RvmLabel></Badge>
+            <ChildContent>...</ChildContent>
+        </RvmListGroup>
+        """;
+
+    private const string CodigoAbas = """
+        <RvmListGroup Title="Pedidos de insumos">
+            <Tabs>
+                <RvmTabs @bind-ActiveIndex="aba" AriaLabel="Situacao dos pedidos">
+                    <RvmTab Id="aba-abertos" Text="Abertos" Count="3" PanelId="painel-pedidos" />
+                    <RvmTab Id="aba-entregues" Text="Entregues" PanelId="painel-pedidos" />
+                </RvmTabs>
+            </Tabs>
+            <ChildContent>
+                <div id="painel-pedidos" role="tabpanel" aria-labelledby="@IdDaAbaAtiva">
+                    <RvmList AriaLabel="Pedidos">...</RvmList>
+                </div>
+            </ChildContent>
+        </RvmListGroup>
+        """;
+}

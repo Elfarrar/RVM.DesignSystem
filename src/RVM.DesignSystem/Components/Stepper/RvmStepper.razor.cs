@@ -7,8 +7,22 @@ namespace RVM.DesignSystem.Components.Stepper;
 /// </summary>
 public partial class RvmStepper : ComponentBase
 {
-    /// <summary>As etapas, em ordem.</summary>
-    [Parameter, EditorRequired] public IReadOnlyList<RvmStep> Steps { get; set; } = [];
+    /// <summary>As etapas, em ordem. Sem elas, o stepper vira o indicador de bolinhas de <see cref="Count"/>.</summary>
+    [Parameter] public IReadOnlyList<RvmStep> Steps { get; set; } = [];
+
+    /// <summary>Quantos passos existem, no indicador de bolinhas (sem <see cref="Steps"/>).</summary>
+    [Parameter] public int Count { get; set; } = 1;
+
+    /// <summary>Passo atual, contando de 1, no indicador de bolinhas.</summary>
+    [Parameter] public int Current { get; set; } = 1;
+
+    /// <summary>Nome do indicador de bolinhas para o leitor de tela. Nas etapas, o nome e o <see cref="AriaLabel"/>.</summary>
+    [Parameter] public string Label { get; set; } = "Progresso";
+
+    // So com mais de um passo: Steps vazio (a lista ainda carregando) continua a lista de etapas vazia de antes.
+    internal bool SoBolinhas => Steps.Count == 0 && Count > 1;
+
+    internal int AtualNasBolinhas => Math.Clamp(Current, 1, Math.Max(1, Count));
 
     /// <summary>Indice da etapa atual, a partir de 0. As anteriores contam como concluidas.</summary>
     [Parameter] public int ActiveStep { get; set; }
@@ -21,6 +35,9 @@ public partial class RvmStepper : ComponentBase
 
     /// <summary>Nome da lista para o leitor de tela. Padrao: "Etapas".</summary>
     [Parameter] public string AriaLabel { get; set; } = "Etapas";
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
 
     /// <summary>Atributos extras, repassados ao <c>ol</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -46,12 +63,7 @@ public partial class RvmStepper : ComponentBase
                 Orientation == RvmOrientation.Vertical ? "rvm-vertical" : "rvm-horizontal",
                 Placement == RvmStepperLabelPlacement.Bottom ? "rvm-texto-embaixo" : "rvm-texto-ao-lado");
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

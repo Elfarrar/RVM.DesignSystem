@@ -1,0 +1,29 @@
+@namespace RVM.DesignSystem.Components.AppShell
+@using Microsoft.AspNetCore.Components.Routing
+
+@* O subitem do contrato com o RVM.UI (DSGN-017): um RvmNavItem sem icone (o circulo pequeno dos subitens do
+   kit), dentro de um RvmNavGroup. Existe para a tela que vem do RVM.UI compilar sem mudar uma linha. *@
+<RvmNavItem @attributes="AdditionalAttributes" Href="@Href" Text="@Text" Class="@Class"
+            Badge="@Badge?.ToString(System.Globalization.CultureInfo.CurrentCulture)"
+            Match="@(Match == NavLinkMatch.All ? RvmNavMatch.All : RvmNavMatch.Prefix)" />
+
+@code {
+    /// <summary>Texto do subitem.</summary>
+    [Parameter, EditorRequired] public string Text { get; set; } = "";
+
+    /// <summary>Endereco do link.</summary>
+    [Parameter, EditorRequired] public string Href { get; set; } = "";
+
+    /// <summary>Como decidir que e a pagina atual. Padrao: pelo prefixo.</summary>
+    [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+
+    /// <summary>Contador ao lado do texto.</summary>
+    [Parameter] public int? Badge { get; set; }
+
+    /// <summary>Classe CSS extra no link.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao link.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

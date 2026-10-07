@@ -1,0 +1,70 @@
+@namespace RVM.DesignSystem.Components.Activity
+@using RVM.DesignSystem.Components.Avatar
+@using RVM.DesignSystem.Components.Rating
+
+@* Uma avaliacao: avatar, a nota em estrelas (o RvmRating so de leitura, que o leitor de tela le por extenso),
+   quando, o autor com um detalhe opcional, o texto e as fotos anexadas. Varias avaliacoes seguidas ganham um
+   divisor entre elas pelo CSS (:last-child), sem um componente de lista proprio. *@
+<article @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <span class="rvm-avaliacao-avatar" aria-hidden="true">
+        <RvmAvatar Src="@AvatarSrc" Initials="@RvmActivity.Iniciais(AuthorName)" />
+    </span>
+    <div class="rvm-avaliacao-conteudo">
+        <div class="rvm-avaliacao-cabecalho">
+            <RvmRating Value="Rating" ReadOnly="true" Size="RvmSize.Small" Label="Nota" />
+            @if (!string.IsNullOrWhiteSpace(Timestamp))
+            {
+                <span class="rvm-avaliacao-carimbo">@Timestamp</span>
+            }
+        </div>
+        <p class="rvm-avaliacao-autor">
+            <span class="rvm-avaliacao-nome">@AuthorName</span>
+            @if (!string.IsNullOrWhiteSpace(AuthorDetail))
+            {
+                <span class="rvm-avaliacao-detalhe">- @AuthorDetail</span>
+            }
+        </p>
+        <p class="rvm-avaliacao-texto">@Text</p>
+        @if (Images is { Count: > 0 })
+        {
+            <ul class="rvm-avaliacao-fotos" aria-label="@($"Fotos de {AuthorName}")">
+                @for (var i = 0; i < Images.Count; i++)
+                {
+                    <li><img class="rvm-avaliacao-foto" src="@Images[i]" alt="@($"Foto {i + 1} de {Images.Count}")" loading="lazy" /></li>
+                }
+            </ul>
+        }
+    </div>
+</article>
+
+@code {
+    /// <summary>Nome de quem avaliou.</summary>
+    [Parameter, EditorRequired] public string AuthorName { get; set; } = "";
+
+    /// <summary>Foto de quem avaliou. Sem ela, as iniciais do nome.</summary>
+    [Parameter] public string? AvatarSrc { get; set; }
+
+    /// <summary>Detalhe depois do nome (a variante avaliada, a fazenda). Sem ele, so o nome.</summary>
+    [Parameter] public string? AuthorDetail { get; set; }
+
+    /// <summary>Data e hora, ja formatadas por quem chama.</summary>
+    [Parameter, EditorRequired] public string Timestamp { get; set; } = "";
+
+    /// <summary>Nota de 0 a 5.</summary>
+    [Parameter] public double Rating { get; set; }
+
+    /// <summary>A avaliacao.</summary>
+    [Parameter, EditorRequired] public string Text { get; set; } = "";
+
+    /// <summary>Enderecos das fotos anexadas. Sem elas, sem a linha de miniaturas.</summary>
+    [Parameter] public IReadOnlyList<string>? Images { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-avaliacao", Class, AdditionalAttributes);
+}

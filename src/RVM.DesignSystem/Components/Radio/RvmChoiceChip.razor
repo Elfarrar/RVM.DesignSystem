@@ -1,0 +1,39 @@
+@namespace RVM.DesignSystem.Components.Radio
+@typeparam TValue
+@using Microsoft.AspNetCore.Components.Forms
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Uma opcao do RvmRadioGroup em forma de chip. Por baixo e um radio nativo (o InputRadio do Blazor): as setas
+   movem a escolha e o formulario recebe o valor sem JS. O botao de remover fica FORA do label, como irmao:
+   botao dentro de label e interacao dentro de interacao (o clique no "x" tambem marcaria a opcao). *@
+<span class="@ClassesDaRaiz">
+    <label class="rvm-escolha">
+        <InputRadio TValue="TValue" Value="Value" class="rvm-nativo" @attributes="AtributosDoInput" disabled="@Disabled" />
+        @if (!string.IsNullOrWhiteSpace(AvatarSrc))
+        {
+            <img class="rvm-miniatura" src="@AvatarSrc" alt="@(AvatarAlt ?? string.Empty)" />
+        }
+        else if (StartIcon is not null)
+        {
+            <RvmIcon Name="StartIcon.Value" Size="RvmSize.Small" />
+        }
+        <span class="rvm-rotulo">
+            @if (ChildContent is not null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                @Label
+            }
+        </span>
+    </label>
+
+    @if (OnRemove.HasDelegate)
+    {
+        <button type="button" class="rvm-remover" aria-label="@NomeDoRemover" disabled="@Desabilitado" @onclick="Remover">
+            <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+        </button>
+    }
+</span>

@@ -31,7 +31,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmStepper" />
 
 <RecorteDoKit Origem="kit/stepper.png"
               Arquivo="referencia-neatlab/Stepper.png (recorte)"
@@ -53,16 +53,6 @@
         new("Dados da conta", "E-mail e senha"),
         new("Dados da fazenda", "CNPJ invalido", HasError: true),
         new("Talhoes", "Contorno de cada area")
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Steps", "IReadOnlyList<RvmStep>", "[]", "As etapas. Cada uma: Title, Description, HasError."),
-        new("ActiveStep", "int", "0", "Etapa atual, a partir de 0. As anteriores contam como concluidas."),
-        new("Orientation", "RvmOrientation", "Horizontal", "Horizontal ou Vertical."),
-        new("Placement", "RvmStepperLabelPlacement", "End", "End (texto ao lado, com numero) ou Bottom."),
-        new("AriaLabel", "string", "\"Etapas\"", "Nome da lista para o leitor de tela."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao ol.")
     ];
 
     private const string CodigoHorizontal = """

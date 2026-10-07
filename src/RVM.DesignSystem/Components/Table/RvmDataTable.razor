@@ -1,0 +1,118 @@
+@namespace RVM.DesignSystem.Components.Table
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+
+@* Camada tipada sobre a RvmTableLayout (contrato com o RVM.UI, DSGN-017): recebe a lista e as colunas e cuida
+   sozinha de carregando, vazio e erro. As colunas sao o MESMO fragmento renderizado uma vez no cabecalho e uma vez
+   por linha — ver RvmColumnContext. *@
+<RvmTableLayout @attributes="AdditionalAttributes" Caption="@Caption" Class="@Class"
+                Loading="Loading" Error="Error" IsEmpty="@(!Loading && !Error && Linhas.Count == 0)"
+                Header="Header" Toolbar="Toolbar" Footer="Footer" Empty="Empty" ErrorContent="ErrorContent"
+                LoadingText="@LoadingText" EmptyText="@EmptyText" ErrorTitle="@ErrorTitle" ErrorText="@ErrorText"
+                ErrorMascot="ErrorMascot" LoadingMascot="LoadingMascot">
+    <Head>
+        <CascadingValue Value="ContextoDoCabecalho">@Columns</CascadingValue>
+    </Head>
+    <Body>
+        @foreach (var item in Linhas)
+        {
+            var linha = item;
+            <RvmRow Selectable="Selectable" Selected="@(Selectable && IsSelected is { } escolhida && escolhida(linha))">
+                <CascadingValue Value="ContextoDaLinha(linha)">@Columns</CascadingValue>
+            </RvmRow>
+        }
+    </Body>
+</RvmTableLayout>
+
+@code {
+    /// <summary>As linhas. Nulo e lista vazia dao o mesmo resultado: o estado vazio.</summary>
+    [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
+
+    /// <summary>As colunas: <see cref="RvmColumn{TItem}"/>.</summary>
+    [Parameter] public RenderFragment? Columns { get; set; }
+
+    /// <summary>O que a tabela mostra, para quem usa leitor de tela (vai num <c>caption</c> escondido).</summary>
+    [Parameter, EditorRequired] public string Caption { get; set; } = string.Empty;
+
+    /// <summary>Titulo da coluna pela qual a lista esta ordenada.</summary>
+    [Parameter] public string? SortedBy { get; set; }
+
+    /// <summary>Direcao da ordenacao atual.</summary>
+    [Parameter] public RvmSortDirection Direction { get; set; } = RvmSortDirection.None;
+
+    /// <summary>
+    /// Pediram para ordenar: vem o titulo da coluna e a direcao nova. <b>Quem ordena e o app</b> — a tabela nao
+    /// reordena a lista sozinha, porque em lista paginada ou vinda do servidor ordenar so a pagina atual mente para
+    /// quem le. Atualize <see cref="SortedBy"/>, <see cref="Direction"/> e <see cref="Items"/>.
+    /// </summary>
+    [Parameter] public EventCallback<(string Column, RvmSortDirection Direction)> OnSort { get; set; }
+
+    /// <summary>
+    /// As linhas participam de uma selecao: a escolhida ganha o fundo de selecao e <c>aria-selected</c>. Isto
+    /// <b>reflete</b> a escolha, nao a captura: quem escolhe e uma coluna com caixa de marcar. O estado e do app.
+    /// </summary>
+    [Parameter] public bool Selectable { get; set; }
+
+    /// <summary>Diz se a linha esta escolhida. Sem <see cref="Selectable"/>, nao tem efeito.</summary>
+    [Parameter] public Func<TItem, bool>? IsSelected { get; set; }
+
+    /// <summary>Os dados estao chegando: o corpo da lugar ao aviso de carregamento.</summary>
+    [Parameter] public bool Loading { get; set; }
+
+    /// <summary>A carga falhou. Vence <see cref="Loading"/>.</summary>
+    [Parameter] public bool Error { get; set; }
+
+    /// <summary>Titulo e descricao acima da tabela.</summary>
+    [Parameter] public RenderFragment? Header { get; set; }
+
+    /// <summary>Acoes no alto, a direita do <see cref="Header"/>.</summary>
+    [Parameter] public RenderFragment? Toolbar { get; set; }
+
+    /// <summary>Rodape abaixo da tabela: contagem e paginacao.</summary>
+    [Parameter] public RenderFragment? Footer { get; set; }
+
+    /// <summary>O vazio, ensinando o proximo passo. Sem ele, sai um <c>RvmEmptyState</c> com <see cref="EmptyText"/>.</summary>
+    [Parameter] public RenderFragment? Empty { get; set; }
+
+    /// <summary>O erro. Sem ele, sai o <c>RvmEmptyState</c> de erro com <see cref="ErrorTitle"/> e <see cref="ErrorText"/>.</summary>
+    [Parameter] public RenderFragment? ErrorContent { get; set; }
+
+    /// <summary>Mascote do erro padrao, no lugar do icone. Sem efeito com <see cref="ErrorContent"/>.</summary>
+    [Parameter] public RvmMascotName? ErrorMascot { get; set; }
+
+    /// <summary>Mascote do carregamento, no lugar do indicador circular.</summary>
+    [Parameter] public RvmMascotName? LoadingMascot { get; set; }
+
+    /// <summary>Texto do carregamento.</summary>
+    [Parameter] public string LoadingText { get; set; } = "Carregando...";
+
+    /// <summary>Texto do vazio padrao.</summary>
+    [Parameter] public string EmptyText { get; set; } = "Nada para mostrar aqui ainda.";
+
+    /// <summary>Titulo do erro padrao.</summary>
+    [Parameter] public string ErrorTitle { get; set; } = "Nao deu para carregar";
+
+    /// <summary>Texto do erro padrao.</summary>
+    [Parameter] public string ErrorText { get; set; } = EstadosDosDados.TextoDeErro;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private IReadOnlyList<TItem> Linhas => Items ?? [];
+
+    // Sem IsFixed na cascata e com instancia nova a cada render: a ordenacao muda, e cascata fixa nao redesenha as
+    // colunas (armadilha que ja mordeu as abas na onda 3).
+    private RvmColumnContext<TItem> ContextoDoCabecalho => new()
+    {
+        Header = true,
+        SortedBy = SortedBy,
+        Direction = Direction,
+        OnSort = (coluna, direcao) => OnSort.InvokeAsync((coluna, direcao))
+    };
+
+    private static RvmColumnContext<TItem> ContextoDaLinha(TItem item) => new() { Item = item };
+}

@@ -1,0 +1,33 @@
+/* CSS isolado do RvmBackButton. So custom properties — hex literal aqui quebra o tema escuro.
+   Caixa de 38 px (a altura media do RvmButton) com a borda do contorno secundario do kit. */
+
+.rvm-voltar {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--rvm-color-secondary-outlined-resting);
+    border-radius: var(--rvm-radius-sm);
+    background-color: transparent;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.rvm-pilula { border-radius: var(--rvm-radius-pill); }
+
+.rvm-voltar:hover:not(.rvm-desabilitado) { background-color: var(--rvm-color-action-hover); }
+
+.rvm-voltar:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-desabilitado {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}

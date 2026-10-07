@@ -1,0 +1,58 @@
+/* CSS isolado do RvmTagOption — o visual do RvmChip primario de 32 px (referencia-neatlab/Chip.png): Soft e o
+   "suave", Solid o "preenchido". So custom properties — hex literal aqui quebra o tema escuro. */
+
+.rvm-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    box-sizing: border-box;
+    max-width: 100%;
+    height: 32px;
+    padding: 0 var(--rvm-space-3);
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-pill);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-chip-size);
+    line-height: var(--rvm-text-chip-line);
+    font-weight: var(--rvm-text-chip-weight);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.rvm-texto {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rvm-suave { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-solida { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+
+.rvm-remover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    padding: 0;
+    margin-inline-end: calc(var(--rvm-space-1) * -1);
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    /* Cor cheia: o "x" e um controle e precisa de 3:1 contra o fundo (WCAG 1.4.11), como no RvmChip. */
+    color: inherit;
+    cursor: pointer;
+}
+
+.rvm-remover:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 1px;
+}
+
+/* 0,2,0 empata com as regras de cor e vence por vir depois — o mesmo tratamento do RvmChip. */
+.rvm-tag.rvm-desabilitado {
+    color: var(--rvm-color-text-disabled);
+    background-color: var(--rvm-color-action-disabled);
+}
+
+.rvm-desabilitado .rvm-remover {
+    cursor: not-allowed;
+}

@@ -1,0 +1,29 @@
+@namespace RVM.DesignSystem.Components.Dialog
+
+@* Casca de dialogo do contrato com o RVM.UI (DSGN-017): fundo, caixa, Esc e foco preso, com o visual do
+   RvmDialog (kit, referencia-neatlab/Dailog.png). Mesma infraestrutura dele: o Sobreposicao prende o foco
+   e devolve ao fechar. Aberto no primeiro render, aparece aberto sem JS.
+   Esc pelo evento do Blazor, com stopPropagation: com um modal aberto sobre outro, so o de cima fecha. *@
+@if (_aberto)
+{
+    <div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+        <div class="rvm-fundo" aria-hidden="true" @onclick="AoClicarNoFundoAsync"></div>
+
+        <div @ref="_caixa"
+             class="rvm-caixa"
+             role="@(MeuPapel?.Alerta == true ? "alertdialog" : "dialog")"
+             aria-modal="true"
+             aria-labelledby="@NomeadoPor"
+             aria-label="@(NomeadoPor is null && !string.IsNullOrWhiteSpace(Label) ? Label : null)"
+             aria-describedby="@MeuPapel?.DescritoPor"
+             tabindex="-1"
+             @onkeydown="AoTeclarAsync"
+             @onkeydown:stopPropagation="true">
+            @if (!string.IsNullOrWhiteSpace(Title))
+            {
+                <h2 id="@IdTitulo" class="rvm-titulo">@Title</h2>
+            }
+            <div class="rvm-conteudo">@ChildContent</div>
+        </div>
+    </div>
+}

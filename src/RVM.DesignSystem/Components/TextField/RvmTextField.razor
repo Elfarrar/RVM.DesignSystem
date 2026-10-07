@@ -1,5 +1,7 @@
 @namespace RVM.DesignSystem.Components.TextField
 @inherits Microsoft.AspNetCore.Components.Forms.InputBase<string?>
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
 
 @* Tres coisas que o RvmTextField anterior errou e que aqui sao contrato (05-api-dos-componentes):
    1. `name` renderizado sempre que o formulario pode fazer POST — o SSR estatico precisa dele para o
@@ -19,7 +21,17 @@
    `maxlength`, `inputmode`, `aria-*`, `data-*`) vai para o <input>, que e onde atributo de campo
    precisa chegar para funcionar. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
+    @if (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref))
+    {
+        @* O "Link" do kit do RVM.UI (contrato, DSGN-017), acima da caixa: o rotulo flutua dentro dela e nao tem
+           onde guardar um link. *@
+        <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
+    }
     <div class="rvm-caixa">
+        @if (StartIcon is { } inicio)
+        {
+            <span class="rvm-afixo rvm-icone-do-campo" aria-hidden="true"><RvmIcon Name="inicio" /></span>
+        }
         @if (!string.IsNullOrWhiteSpace(Prefix))
         {
             <span id="@IdPrefixo" class="rvm-afixo rvm-prefixo">@Prefix</span>
@@ -36,7 +48,8 @@
                aria-required="@(Required ? "true" : null)"
                aria-invalid="@(TemErro ? "true" : null)"
                aria-describedby="@DescritoPor"
-               @onchange="AoMudar" />
+               @onchange="AoMudarAoSair"
+               @oninput="AoMudarAoDigitar" />
 
         @if (!string.IsNullOrWhiteSpace(Label))
         {
@@ -53,6 +66,10 @@
         @if (!string.IsNullOrWhiteSpace(Suffix))
         {
             <span id="@IdSufixo" class="rvm-afixo rvm-sufixo">@Suffix</span>
+        }
+        @if (EndIcon is { } fim)
+        {
+            <span class="rvm-afixo rvm-icone-do-campo" aria-hidden="true"><RvmIcon Name="fim" /></span>
         }
     </div>
 

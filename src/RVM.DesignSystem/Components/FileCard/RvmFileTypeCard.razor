@@ -1,0 +1,98 @@
+@namespace RVM.DesignSystem.Components.FileCard
+@using System.Globalization
+
+@* Cartao de um arquivo pelo tipo (contrato com o RVM.UI, DSGN-017): o RvmFileIcon (da extensao do nome, se Icon nao
+   vier), nome, tamanho em PT-BR e o estado do envio, com a barra enquanto envia. Com Actions, os botoes do app (baixar,
+   compartilhar); sem eles e com OnRemove, o X de remover. O mesmo desenho dos cartoes do RvmFileUpload. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <RvmFileIcon Name="@(Icon ?? TipoDoArquivo.PeloNome(Name))" Size="40" Class="rvm-tipo" />
+    <div class="rvm-dados">
+        <span class="rvm-nome rvm-text-subtitle2" title="@Name">@Name</span>
+        <span class="rvm-detalhes rvm-text-caption">
+            <span>@ArquivosDoUpload.Tamanho(Size)</span>
+            @if (Status != RvmUploadStatus.None)
+            {
+                @* So o estado e anunciado: a porcentagem muda a cada instante e viraria ruido no leitor de tela (a barra
+                   tem o valor para quem for ate ela). *@
+                <span class="rvm-estado" role="status">@TextoDoEstado</span>
+                @if (Status == RvmUploadStatus.Uploading && Progress is not null)
+                {
+                    <span aria-hidden="true">@Porcentagem</span>
+                }
+            }
+        </span>
+        @if (Status == RvmUploadStatus.Uploading && Progress is not null)
+        {
+            <RvmProgressBar Value="@ValorDoProgresso" Size="RvmSize.Small" AriaLabel="@($"Enviando {Name}")" Class="rvm-progresso" />
+        }
+    </div>
+    @if (Status == RvmUploadStatus.Uploaded)
+    {
+        <span class="rvm-sinal rvm-sinal-ok" aria-hidden="true"><RvmIcon Name="RvmIconName.CircleCheck" /></span>
+    }
+    else if (Status == RvmUploadStatus.Failed)
+    {
+        <span class="rvm-sinal rvm-sinal-falha" aria-hidden="true"><RvmIcon Name="RvmIconName.AlertCircle" /></span>
+    }
+    @if (Actions is not null)
+    {
+        <div class="rvm-acoes">@Actions</div>
+    }
+    else if (OnRemove.HasDelegate)
+    {
+        <RvmIconButton Icon="RvmIconName.Close" Label="@($"Remover {Name}")" Size="RvmSize.Small"
+                       OnClick="() => OnRemove.InvokeAsync()" Class="rvm-remover" />
+    }
+</div>
+
+@code {
+    /// <summary>Botoes no lugar do X (baixar, compartilhar, excluir), montados pelo app.</summary>
+    [Parameter] public RenderFragment? Actions { get; set; }
+
+    /// <summary>Icone do tipo. Sem ele, sai da extensao do <see cref="Name"/> (desconhecida vira texto).</summary>
+    [Parameter] public RvmFileIconName? Icon { get; set; }
+
+    /// <summary>Nome do arquivo, com extensao.</summary>
+    [Parameter, EditorRequired] public string Name { get; set; } = "";
+
+    /// <summary>Remover o arquivo: mostra o X, nomeado "Remover {Name}". Ignorado quando ha <see cref="Actions"/>.</summary>
+    [Parameter] public EventCallback OnRemove { get; set; }
+
+    /// <summary>Progresso do envio, de 0 a 100 (fora disso e limitado), mostrado em <see cref="RvmUploadStatus.Uploading"/>.</summary>
+    [Parameter] public int? Progress { get; set; }
+
+    /// <summary>Tamanho em bytes, escrito em PT-BR ("1,2 MB").</summary>
+    [Parameter] public long Size { get; set; }
+
+    /// <summary>Estado do envio. Padrao: <see cref="RvmUploadStatus.None"/> (so nome e tamanho).</summary>
+    [Parameter] public RvmUploadStatus Status { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal int ValorDoProgresso => Math.Clamp(Progress ?? 0, 0, 100);
+
+    private string Porcentagem => $"{ValorDoProgresso.ToString(CultureInfo.InvariantCulture)}%";
+
+    internal string TextoDoEstado => Status switch
+    {
+        RvmUploadStatus.Uploading => "Enviando",
+        RvmUploadStatus.Uploaded => "Enviado",
+        RvmUploadStatus.Failed => "Falha no envio",
+        _ => string.Empty
+    };
+
+    private string ClassesDaRaiz => ClassesCss.Juntar(
+        Status switch
+        {
+            RvmUploadStatus.Uploading => "rvm-file-type-card rvm-enviando",
+            RvmUploadStatus.Uploaded => "rvm-file-type-card rvm-enviado",
+            RvmUploadStatus.Failed => "rvm-file-type-card rvm-falhou",
+            _ => "rvm-file-type-card"
+        },
+        Class, AdditionalAttributes);
+}

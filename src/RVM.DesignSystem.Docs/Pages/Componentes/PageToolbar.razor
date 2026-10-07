@@ -1,0 +1,38 @@
+@page "/componentes/page-toolbar"
+
+<PageTitle>RvmPageToolbar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmPageToolbar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A faixa abaixo do cabecalho, com o que a pagina oferece — busca, abas, filtros — de um lado e do outro.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Busca e filtros"
+              Descricao="Quebra em duas linhas quando nao cabe."
+              Codigo="@Codigo">
+    <RvmPageToolbar class="largura-cheia">
+        <Start><RvmTextField Label="Buscar talhao" Size="RvmSize.Small" StartIcon="RvmIconName.Search" @bind-Value="_busca" /></Start>
+        <End>
+            <RvmButton Variant="RvmButtonVariant.Outlined" StartIcon="RvmIconName.Filter">Filtros</RvmButton>
+            <RvmButton StartIcon="RvmIconName.Plus">Novo</RvmButton>
+        </End>
+    </RvmPageToolbar>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmPageToolbar" />
+
+@code {
+    private string? _busca;
+
+    private const string Codigo = """
+        <RvmPageToolbar>
+            <Start><RvmTextField Label="Buscar talhao" StartIcon="RvmIconName.Search" @bind-Value="busca" /></Start>
+            <End><RvmButton StartIcon="RvmIconName.Plus">Novo</RvmButton></End>
+        </RvmPageToolbar>
+        """;
+}

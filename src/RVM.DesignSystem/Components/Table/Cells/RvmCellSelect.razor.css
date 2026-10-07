@@ -1,0 +1,30 @@
+/* CSS isolado do RvmCellSelect. So custom properties — hex literal aqui quebra o tema escuro. */
+
+/* --- O <td> (igual em todas as celulas; CSS isolado e por componente, entao cada uma traz o seu) ---
+   Medidas da RvmTable (linha de 52 px, 16 px dos lados), as mesmas do kit nas listas de usuario e de fatura: texto em
+   body2 na tinta principal, conteudo centrado na vertical, figura e texto separados por 12 px. */
+
+.rvm-celula {
+    box-sizing: border-box;
+    height: 52px;
+    padding: 0 var(--rvm-space-4);
+    vertical-align: middle;
+    white-space: nowrap;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-celula-conteudo {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+}
+
+/* Coluna de escolha: so a largura da caixa, colada na coluna seguinte (como a da RvmTable). */
+.rvm-celula-escolha {
+    width: 1px;
+    padding-inline-end: 0;
+}

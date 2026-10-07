@@ -1,0 +1,149 @@
+/* CSS isolado do RvmIconSelector. So custom properties — hex literal aqui quebra o tema escuro.
+   Circulo de 64 px (o "+" neutro ou o icone na cor primaria) e a grade de botoes de 40 px, 6 por linha. */
+
+.rvm-seletor-de-icone {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-topo-do-seletor {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-rotulo-do-seletor {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-link-do-seletor {
+    color: var(--rvm-color-primary-text);
+    text-decoration: none;
+}
+
+.rvm-link-do-seletor:hover {
+    text-decoration: underline;
+}
+
+.rvm-link-do-seletor:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-linha-do-seletor {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-4);
+}
+
+.rvm-circulo {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 64px;
+    height: 64px;
+    border: 1px dashed var(--rvm-color-input-border);
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-background-body);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-circulo.rvm-com-icone {
+    border-style: solid;
+    border-color: var(--rvm-color-primary-outlined-resting);
+    background-color: var(--rvm-color-primary-soft);
+    color: var(--rvm-color-primary-text);
+}
+
+.rvm-acoes-do-seletor {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-pilula .rvm-acoes-do-seletor ::deep button {
+    border-radius: var(--rvm-radius-pill);
+}
+
+.rvm-apoio-do-seletor {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-erro .rvm-circulo {
+    border-color: var(--rvm-color-error-main);
+}
+
+.rvm-erro .rvm-apoio-do-seletor {
+    color: var(--rvm-color-error-text);
+}
+
+.rvm-desabilitado .rvm-rotulo-do-seletor,
+.rvm-desabilitado .rvm-apoio-do-seletor,
+.rvm-desabilitado .rvm-circulo {
+    color: var(--rvm-color-text-disabled);
+}
+
+.rvm-desabilitado .rvm-circulo {
+    border-color: var(--rvm-color-action-disabled);
+    background-color: transparent;
+}
+
+/* Dentro da janela. */
+
+.rvm-aviso-da-grade {
+    margin: var(--rvm-space-3) 0 var(--rvm-space-2);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-grade-de-icones {
+    display: grid;
+    grid-template-columns: repeat(6, 40px);
+    gap: var(--rvm-space-2);
+    justify-content: center;
+    padding: var(--rvm-space-1);
+}
+
+.rvm-opcao-de-icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-md);
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    cursor: pointer;
+}
+
+.rvm-opcao-de-icone:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-opcao-de-icone:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-opcao-de-icone.rvm-escolhido,
+.rvm-opcao-de-icone.rvm-escolhido:hover {
+    border-color: var(--rvm-color-primary-main);
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+@media (forced-colors: active) {
+    .rvm-opcao-de-icone.rvm-escolhido {
+        border-width: 2px;
+        border-color: Highlight;
+    }
+}
