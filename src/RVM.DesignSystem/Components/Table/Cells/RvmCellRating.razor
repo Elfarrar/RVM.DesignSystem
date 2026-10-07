@@ -2,9 +2,11 @@
 
 @* Celula de nota (contrato com o RVM.UI, DSGN-017): o RvmRating so de leitura, na forma compacta (uma estrela e a nota
    escrita). Para o leitor de tela e uma imagem com a nota por extenso, ou o AriaLabel do consumidor. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmRating Value="Value" Max="Max" ReadOnly="true" Display="RvmRatingDisplay.Compact" AriaLabel="@AriaLabel" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmRating Value="Value" Max="Max" ReadOnly="true" Display="RvmRatingDisplay.Compact" AriaLabel="@AriaLabel" />
+    </div>
+</td>
 
 @code {
     /// <summary>A nota, de 0 a <see cref="Max"/>.</summary>

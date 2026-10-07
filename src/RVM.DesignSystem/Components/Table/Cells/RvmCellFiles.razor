@@ -3,10 +3,12 @@
 
 @* Celula de arquivo (contrato com o RVM.UI, DSGN-017): o RvmFileIcon e o nome, com o tamanho embaixo. O icone e
    decorativo — o nome do arquivo ao lado ja diz o tipo pela extensao. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmFileIcon Name="Type" Size="40" />
-    <RvmCellLines Text="@Name" Supporting="@Supporting" Highlight="Highlight" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmFileIcon Name="Type" Size="40" />
+        @CelulaCss.Linhas(Name, Supporting, Highlight)
+    </div>
+</td>
 
 @code {
     /// <summary>Nome do arquivo.</summary>

@@ -1,9 +1,11 @@
 @namespace RVM.DesignSystem.Components.Table
 
 @* Celula de texto (contrato com o RVM.UI, DSGN-017): o texto e, embaixo, a segunda linha opcional. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmCellLines Text="@Text" Supporting="@Supporting" Highlight="Highlight" ChildContent="ChildContent" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        @CelulaCss.Linhas(Text, Supporting, Highlight, ChildContent)
+    </div>
+</td>
 
 @code {
     /// <summary>O texto da celula.</summary>

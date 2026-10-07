@@ -3,13 +3,15 @@
 @* Celula com selo (contrato com o RVM.UI, DSGN-017): uma figura redonda (RvmAvatar, RvmIconBadge, logo) e o texto ao
    lado — no kit, a coluna de estado da lista de faturas e o selo do cliente. A figura e do consumidor, entao o nome
    acessivel dela tambem: se o texto ja diz tudo, ela deve vir decorativa. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    @if (Badge is not null)
-    {
-        <span class="rvm-selo">@Badge</span>
-    }
-    <RvmCellLines Text="@Text" Supporting="@Supporting" Highlight="Highlight" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        @if (Badge is not null)
+        {
+            <span class="rvm-selo">@Badge</span>
+        }
+        @CelulaCss.Linhas(Text, Supporting, Highlight)
+    </div>
+</td>
 
 @code {
     /// <summary>A figura: um <c>RvmAvatar</c>, um <c>RvmIconBadge</c> ou uma imagem.</summary>

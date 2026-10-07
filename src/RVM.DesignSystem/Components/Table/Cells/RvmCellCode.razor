@@ -2,9 +2,11 @@
 
 @* Celula de codigo (contrato com o RVM.UI, DSGN-017): o identificador da linha (nota, pedido, lote). No kit e o "#4910"
    da lista de faturas, na cor primaria e sempre no peso de destaque — por isso nao ha Highlight aqui. *@
-<RvmCellFrame Align="Align" FrameClass="rvm-celula-numero" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <span class="rvm-codigo">@(ChildContent is null ? Text : null)@ChildContent</span>
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, "rvm-celula-numero", Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <span class="rvm-codigo">@(ChildContent is null ? Text : null)@ChildContent</span>
+    </div>
+</td>
 
 @code {
     /// <summary>O codigo.</summary>

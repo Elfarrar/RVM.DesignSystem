@@ -3,10 +3,12 @@
 @* Celula com imagem quadrada (contrato com o RVM.UI, DSGN-017): miniatura de produto ou de documento e o titulo. Uma
    <img> simples de 40 px com o canto do kit — nao o RvmAvatar, que cai para iniciais e icone: uma miniatura sem
    imagem nao tem o que mostrar. Alt vazio deixa a imagem decorativa (o titulo ja descreve a linha). *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <img class="rvm-miniatura" src="@Src" alt="@Alt" width="40" height="40" loading="lazy" />
-    <RvmCellLines Text="@Text" Supporting="@Supporting" Highlight="Highlight" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <img class="rvm-miniatura" src="@Src" alt="@Alt" width="40" height="40" loading="lazy" />
+        @CelulaCss.Linhas(Text, Supporting, Highlight)
+    </div>
+</td>
 
 @code {
     /// <summary>Endereco da imagem.</summary>

@@ -2,9 +2,11 @@
 
 @* Celula de grupo de pessoas (contrato com o RVM.UI, DSGN-017): o RvmAvatarGroup — avatares sobrepostos e o "+N" — num
    <td>. O grupo ja e um role="group" com nome ("N pessoas", ou o Label). *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmAvatarGroup Items="Items" Max="Max" Label="@Label" />
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmAvatarGroup Items="Items" Max="Max" Label="@Label" />
+    </div>
+</td>
 
 @code {
     /// <summary>Pessoas do grupo.</summary>

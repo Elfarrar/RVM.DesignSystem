@@ -2,11 +2,13 @@
 
 @* Celula de progresso (contrato com o RVM.UI, DSGN-017): o RvmProgressBar com o rotulo de valor e a porcentagem.
    Nada redesenhado — so a largura minima, que numa fileira flex a barra encolheria ate sumir. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <div class="rvm-barra-da-celula">
-        <RvmProgressBar Value="Value" Label="@Label" LabelVariant="RvmProgressLabelVariant.Amount" ShowValue="true" Color="Color" />
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <div class="rvm-barra-da-celula">
+            <RvmProgressBar Value="Value" Label="@Label" LabelVariant="RvmProgressLabelVariant.Amount" ShowValue="true" Color="Color" />
+        </div>
     </div>
-</RvmCellFrame>
+</td>
 
 @code {
     /// <summary>Progresso de 0 a 100.</summary>

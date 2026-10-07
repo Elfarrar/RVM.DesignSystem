@@ -2,9 +2,11 @@
 
 @* Celula de etiqueta (contrato com o RVM.UI, DSGN-017): a pilula de estado das listas do kit ("Paid", "Active",
    "Pending") — fundo suave e texto na cor do papel, no tamanho pequeno. E o RvmLabel, nada redesenhado. *@
-<RvmCellFrame Align="Align" Class="@Class" AdditionalAttributes="AdditionalAttributes">
-    <RvmLabel Color="Color" Variant="RvmLabelVariant.Soft" Size="RvmSize.Small">@(ChildContent is null ? Text : null)@ChildContent</RvmLabel>
-</RvmCellFrame>
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <RvmLabel Color="Color" Variant="RvmLabelVariant.Soft" Size="RvmSize.Small">@(ChildContent is null ? Text : null)@ChildContent</RvmLabel>
+    </div>
+</td>
 
 @code {
     /// <summary>O texto da etiqueta.</summary>
