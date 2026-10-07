@@ -1,0 +1,68 @@
+@page "/componentes/theme-picker"
+@using RVM.DesignSystem.Theming
+
+<PageTitle>RvmThemePicker — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmThemePicker</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    As preferencias de aparencia do usuario: claro, escuro ou automatico, a paleta e, na parte de acessibilidade,
+    o tamanho da fonte, o contraste alto e o menos movimento. Tudo radio e switch nativos — setas trocam a opcao,
+    Tab passa de grupo. A troca vale na hora no <code>RvmThemeProvider</code> com <code>UserTheme</code> e fica
+    guardada no navegador (e no store do app, se houver).
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Cada cartao de paleta mostra as
+    cores e a fonte dela.
+</p>
+
+<BlocoExemplo Titulo="Preferencias com previa"
+              Descricao="A previa ao lado e um RvmThemeProvider com UserTheme: acompanha cada troca. O tamanho da fonte muda a base do documento, entao vale para a pagina inteira."
+              Codigo="@CodigoCompleto">
+    <div class="picker-e-previa">
+        <RvmThemePicker OnChange="s => _ultima = s" />
+        <RvmThemeProvider UserTheme="true" Class="previa-tema">
+            <RvmTypography Variant="RvmTypographyVariant.Subtitle2">Previa</RvmTypography>
+            <RvmTypography Variant="RvmTypographyVariant.H6">Contas a receber</RvmTypography>
+            <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary">
+                3 titulos vencem esta semana, somando R$ 48.320,00.
+            </RvmTypography>
+            <RvmProgressBar Value="40" Label="Recebido no mes" />
+            <div class="linha-previa">
+                <RvmButton>Cobrar agora</RvmButton>
+                <RvmButton Variant="RvmButtonVariant.Outlined">Ver titulos</RvmButton>
+            </div>
+            <RvmSwitch @bind-Value="_lembrete" Label="Lembrar o cliente por e-mail" />
+        </RvmThemeProvider>
+    </div>
+    <p class="rvm-text-caption site-apoio" aria-live="polite">
+        @(_ultima is null ? "Nenhuma troca ainda." : $"Escolha salva: {_ultima.Serialize()}")
+    </p>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="So as paletas de produto, sem acessibilidade"
+              Descricao="Palettes limita as opcoes; ShowAccessibility=false esconde fonte, contraste e movimento (quando o app ja tem essa tela em outro lugar)."
+              Codigo="@CodigoEnxuto">
+    <RvmThemePicker Palettes="RvmPalettes.Produto" ShowAccessibility="false" />
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmThemePicker" />
+
+@code {
+    private RvmThemeSettings? _ultima;
+    private bool _lembrete = true;
+
+    private const string CodigoCompleto = """
+        <RvmThemePicker OnChange="SalvarNoPerfil" />
+
+        <!-- na raiz do app -->
+        <RvmThemeProvider UserTheme="true">
+            @Body
+        </RvmThemeProvider>
+        """;
+
+    private const string CodigoEnxuto = """
+        <RvmThemePicker Palettes="RvmPalettes.Produto" ShowAccessibility="false" />
+        """;
+}
