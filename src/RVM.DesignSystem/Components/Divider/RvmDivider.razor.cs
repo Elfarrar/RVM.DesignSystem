@@ -14,6 +14,9 @@ public partial class RvmDivider : ComponentBase
     /// <summary>Rotulo no meio da linha. Sem ele, sai um <c>&lt;hr&gt;</c> simples.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <inheritdoc cref="ComponentBase" />
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -31,12 +34,7 @@ public partial class RvmDivider : ComponentBase
                     ? "rvm-divisor rvm-vertical"
                     : "rvm-divisor rvm-horizontal";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

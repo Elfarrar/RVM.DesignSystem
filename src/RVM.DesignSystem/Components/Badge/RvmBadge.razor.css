@@ -52,6 +52,7 @@
    dois temas). O kit poe texto branco em todas; branco no warning e no info reprovava. */
 .rvm-pilula.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
 .rvm-pilula.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-pilula.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
 .rvm-pilula.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
 .rvm-pilula.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
 .rvm-pilula.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
@@ -61,6 +62,7 @@
    O -main do warning da 1.7:1 no branco; o -text passa nos dois temas. */
 .rvm-ponto.rvm-primary { background-color: var(--rvm-color-primary-text); }
 .rvm-ponto.rvm-secondary { background-color: var(--rvm-color-secondary-text); }
+.rvm-ponto.rvm-inverse { background-color: var(--rvm-color-inverse-text); }
 .rvm-ponto.rvm-info { background-color: var(--rvm-color-info-text); }
 .rvm-ponto.rvm-success { background-color: var(--rvm-color-success-text); }
 .rvm-ponto.rvm-warning { background-color: var(--rvm-color-warning-text); }

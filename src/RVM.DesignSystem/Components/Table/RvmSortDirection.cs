@@ -7,5 +7,8 @@ public enum RvmSortDirection
     Ascending,
 
     /// <summary>Do maior para o menor.</summary>
-    Descending
+    Descending,
+
+    /// <summary>Sem ordenacao por esta coluna.</summary>
+    None
 }

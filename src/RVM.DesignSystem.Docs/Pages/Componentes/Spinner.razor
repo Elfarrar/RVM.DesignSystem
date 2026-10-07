@@ -1,0 +1,48 @@
+@page "/componentes/spinner"
+@using RVM.DesignSystem.Components.Progress
+
+<PageTitle>RvmSpinner — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmSpinner</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    "Esta carregando", sem previsao de quanto falta. O anel e o do RvmProgress circular; quem informa e o
+    role="status" com o Label, lido pelo leitor de tela mesmo quando o texto nao aparece. Com "reduzir
+    movimento" ligado no sistema, o anel gira devagar em vez de parar — parado, pareceria travado.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Tamanhos e texto visivel"
+              Descricao="Sem ShowLabel, o texto vai so para o leitor de tela. Diga o que esta carregando, nao so 'Carregando'."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos">
+        <RvmSpinner Size="RvmSize.Small" Label="Carregando talhoes" />
+        <RvmSpinner Label="Carregando talhoes" />
+        <RvmSpinner Size="RvmSize.Large" Label="Carregando talhoes" />
+        <RvmSpinner ShowLabel="true" Label="Buscando cotacao da soja" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Carregamento de pagina"
+              Descricao="Centered ocupa a linha, centraliza e da respiro em cima e embaixo."
+              Codigo="@CodigoCentralizado">
+    <RvmSpinner Centered="true" ShowLabel="true" Label="Carregando o extrato de outubro" />
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmSpinner" />
+
+@code {
+    private const string CodigoTamanhos = """
+        <RvmSpinner Size="RvmSize.Small" Label="Carregando talhoes" />
+        <RvmSpinner Label="Carregando talhoes" />
+        <RvmSpinner Size="RvmSize.Large" Label="Carregando talhoes" />
+        <RvmSpinner ShowLabel="true" Label="Buscando cotacao da soja" />
+        """;
+
+    private const string CodigoCentralizado = """
+        <RvmSpinner Centered="true" ShowLabel="true" Label="Carregando o extrato de outubro" />
+        """;
+}

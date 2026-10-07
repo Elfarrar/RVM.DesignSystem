@@ -1,0 +1,50 @@
+/* CSS isolado do RvmChatFile. So custom properties. O mesmo balao do RvmChatMessage, com o icone do tipo ao lado do
+   nome. A folha do RvmFileIcon e da cor do papel: no balao primario ela continua legivel, porque a etiqueta da extensao
+   tem o proprio par de cores. */
+
+.rvm-balao {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    max-width: 100%;
+    padding: var(--rvm-space-3) var(--rvm-space-4) var(--rvm-space-3) var(--rvm-space-3);
+    border-radius: var(--rvm-radius-md);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-esquerda {
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-direita {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-balao ::deep .rvm-tipo {
+    flex: none;
+}
+
+.rvm-texto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.rvm-nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-esquerda .rvm-tamanho {
+    color: var(--rvm-color-text-secondary);
+}
+
+/* No primario, o cinza secundario nao tem contraste: o tamanho fica no proprio texto de contraste. */
+.rvm-direita .rvm-tamanho {
+    color: var(--rvm-color-primary-contrast);
+}

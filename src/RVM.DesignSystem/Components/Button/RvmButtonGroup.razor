@@ -1,0 +1,87 @@
+@namespace RVM.DesignSystem.Components.Button
+@typeparam TValue
+
+@* Grupo de botoes de ESCOLHA UNICA (tamanho da fonte; nivel de permissao Nenhum/Ler/Editar): o escolhido sai
+   preenchido e os outros em contorno, colados numa faixa so. Cada botao anuncia aria-pressed e o grupo tem
+   nome — quem usa leitor de tela ouve "Tamanho da fonte, grupo — Medio, botao, pressionado". *@
+<div @attributes="AdditionalAttributes" role="group" aria-label="@Label" class="@ClassesDaRaiz">
+    @foreach (var item in Items)
+    {
+        var opcao = item;
+        var escolhido = EqualityComparer<TValue>.Default.Equals(opcao, _valor!);
+        <button type="button"
+                class="@(escolhido ? $"rvm-opcao rvm-escolhida {PapelCss.Classe(SelectedColor?.Invoke(opcao) ?? RvmColor.Primary)}" : "rvm-opcao")"
+                aria-pressed="@(escolhido ? "true" : "false")"
+                disabled="@(Disabled || ItemDisabled?.Invoke(opcao) == true)"
+                @onclick="() => EscolherAsync(opcao)">
+            @TextoDe(opcao)
+        </button>
+    }
+</div>
+
+@code {
+    /// <summary>O que o grupo escolhe ("Tamanho da fonte"). Obrigatorio: grupo sem nome nao diz o que se escolhe.</summary>
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+
+    /// <summary>As opcoes, na ordem em que aparecem.</summary>
+    [Parameter, EditorRequired] public IEnumerable<TValue> Items { get; set; } = [];
+
+    /// <summary>Texto de cada opcao. Sem ele, <c>ToString()</c>.</summary>
+    [Parameter] public Func<TValue, string>? ItemText { get; set; }
+
+    /// <summary>A opcao escolhida. Aceita <c>@bind-Value</c>.</summary>
+    [Parameter] public TValue? Value { get; set; }
+
+    /// <summary>Avisa a troca de escolha.</summary>
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+
+    /// <summary>Cor do botao escolhido, por opcao (Ler = Primary, Editar = Success). Sem ela, primario.</summary>
+    [Parameter] public Func<TValue, RvmColor>? SelectedColor { get; set; }
+
+    /// <summary>Opcao que nao pode ser escolhida.</summary>
+    [Parameter] public Func<TValue, bool>? ItemDisabled { get; set; }
+
+    /// <summary>Desabilita o grupo inteiro.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Altura: Medium (38 px, a do <c>RvmButton</c>) ou Small (30 px, para linhas de tabela).</summary>
+    [Parameter] public RvmSize Size { get; set; } = RvmSize.Medium;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string TextoDe(TValue item) => ItemText?.Invoke(item) ?? item?.ToString() ?? "";
+
+    private string ClassesDaRaiz => ClassesCss.Juntar(Size == RvmSize.Small ? "rvm-grupo-botoes rvm-pequeno" : "rvm-grupo-botoes", Class, AdditionalAttributes);
+
+    private TValue? _valor;
+    private TValue? _valorRecebido;
+    private bool _recebeuAlgum;
+
+    // So segue o parametro quando ELE mudou: um re-render do pai nao pode desfazer o que a pessoa fez sem @bind
+    // (achado do review da onda 1, DSGN-017 — o mesmo do RvmAccordionPanel).
+    protected override void OnParametersSet()
+    {
+        if (!_recebeuAlgum || !EqualityComparer<TValue>.Default.Equals(_valorRecebido!, Value!))
+        {
+            _valor = Value;
+            _valorRecebido = Value;
+            _recebeuAlgum = true;
+        }
+    }
+
+    private async Task EscolherAsync(TValue item)
+    {
+        if (EqualityComparer<TValue>.Default.Equals(item, _valor!))
+        {
+            return;
+        }
+
+        _valor = item;
+        await ValueChanged.InvokeAsync(item);
+    }
+}

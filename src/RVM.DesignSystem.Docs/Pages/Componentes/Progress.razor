@@ -40,23 +40,12 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmProgress" />
 
 @code {
     private double _valor = 40;
 
     private void Mudar(double quanto) => _valor = Math.Clamp(_valor + quanto, 0, 100);
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Variant", "RvmProgressVariant", "Linear", "Linear (barra) ou Circular (anel)."),
-        new("Value", "double?", "—", "De 0 a 100. Sem valor, indeterminado."),
-        new("Color", "RvmColor", "Primary", "Papel de cor da parte preenchida."),
-        new("Size", "RvmSize", "Medium", "Anel de 24, 40 ou 56 px. A barra tem sempre 4 px."),
-        new("Label", "string", "\"Carregando\"", "Nome para o leitor de tela: o que esta progredindo."),
-        new("ShowValue", "bool", "false", "Mostra a porcentagem. So no determinado."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoBarra = """
         <RvmProgress Value="40" ShowValue="true" Label="Importando notas fiscais" />

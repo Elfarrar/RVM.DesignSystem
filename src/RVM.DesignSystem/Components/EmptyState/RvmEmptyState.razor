@@ -1,13 +1,18 @@
 @namespace RVM.DesignSystem.Components.EmptyState
 @using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.Mascot
 
 @* O vazio que ensina o proximo passo (11-catalogo, "Estados obrigatorios"): o que aconteceu, por que,
    e o que fazer. A ilustracao e decorativa; o titulo e um cabecalho de verdade, no nivel que o
    consumidor escolher, para entrar no esqueleto da pagina. *@
-<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-labelledby="@IdTitulo">
+<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-labelledby="@IdTitulo" role="@(Status ? "status" : null)">
     @if (Illustration is not null)
     {
         <div class="rvm-ilustracao" aria-hidden="true">@Illustration</div>
+    }
+    else if (Mascot is { } mascote)
+    {
+        <RvmMascot Name="mascote" Decorative="true" Width="128" class="rvm-mascote-do-vazio" />
     }
     else if (Icon is { } icone)
     {

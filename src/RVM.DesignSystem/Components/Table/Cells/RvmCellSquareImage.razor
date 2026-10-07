@@ -1,0 +1,37 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula com imagem quadrada (contrato com o RVM.UI, DSGN-017): miniatura de produto ou de documento e o titulo. Uma
+   <img> simples de 40 px com o canto do kit — nao o RvmAvatar, que cai para iniciais e icone: uma miniatura sem
+   imagem nao tem o que mostrar. Alt vazio deixa a imagem decorativa (o titulo ja descreve a linha). *@
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, null, Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <img class="rvm-miniatura" src="@Src" alt="@Alt" width="40" height="40" loading="lazy" />
+        @CelulaCss.Linhas(Text, Supporting, Highlight)
+    </div>
+</td>
+
+@code {
+    /// <summary>Endereco da imagem.</summary>
+    [Parameter, EditorRequired] public string Src { get; set; } = string.Empty;
+
+    /// <summary>Texto alternativo. Vazio quando a imagem e so decorativa (o titulo ja descreve a linha).</summary>
+    [Parameter] public string Alt { get; set; } = string.Empty;
+
+    /// <summary>Titulo da celula.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Segunda linha, menor e mais clara.</summary>
+    [Parameter] public string? Supporting { get; set; }
+
+    /// <summary>Destaque: o titulo mais pesado.</summary>
+    [Parameter] public bool Highlight { get; set; }
+
+    /// <summary>Alinhamento do conteudo. Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

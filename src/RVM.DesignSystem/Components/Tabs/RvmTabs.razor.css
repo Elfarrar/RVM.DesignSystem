@@ -22,6 +22,14 @@
 
 .rvm-sublinhadas.rvm-horizontal .rvm-lista { gap: 20px; }
 
+/* Page (contrato com o RVM.UI, DSGN-017): as sublinhadas numa faixa de superficie com divisor embaixo,
+   no topo da pagina. Invencao declarada — o kit nao desenha esse formato. */
+.rvm-pagina.rvm-horizontal .rvm-lista {
+    padding: 0 var(--rvm-space-5);
+    background-color: var(--rvm-color-background-paper);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
 .rvm-vertical .rvm-lista {
     flex-direction: column;
     flex: none;
@@ -86,11 +94,11 @@
 .rvm-sublinhadas.rvm-vertical .rvm-aba { border-left-width: 2px; border-right-width: 2px; }
 
 .rvm-sublinhadas .rvm-aba.rvm-ativa {
-    color: var(--rvm-color-primary-text);
+    color: var(--rvm-abas-destaque);
 }
 
-.rvm-sublinhadas.rvm-horizontal .rvm-aba.rvm-ativa { border-bottom-color: var(--rvm-color-primary-text); }
-.rvm-sublinhadas.rvm-vertical .rvm-aba.rvm-ativa { border-right-color: var(--rvm-color-primary-text); }
+.rvm-sublinhadas.rvm-horizontal .rvm-aba.rvm-ativa { border-bottom-color: var(--rvm-abas-destaque); }
+.rvm-sublinhadas.rvm-vertical .rvm-aba.rvm-ativa { border-right-color: var(--rvm-abas-destaque); }
 
 /* --- Preenchida: o par do botao contained --- */
 .rvm-preenchidas .rvm-aba {
@@ -99,8 +107,8 @@
 }
 
 .rvm-preenchidas .rvm-aba.rvm-ativa {
-    background-color: var(--rvm-color-primary-main);
-    color: var(--rvm-color-primary-contrast);
+    background-color: var(--rvm-abas-destaque-cheio);
+    color: var(--rvm-abas-destaque-contraste);
 }
 
 .rvm-vertical .rvm-paineis { padding-inline-start: var(--rvm-space-6); }
@@ -109,4 +117,34 @@
 .rvm-paineis ::deep .rvm-painel-aba:focus-visible {
     outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
     outline-offset: var(--rvm-focus-ring-offset);
+}
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+/* Color: o destaque da aba escolhida vem do papel. Primary e o padrao (o desenho do kit). */
+.rvm-primary { --rvm-abas-destaque: var(--rvm-color-primary-text); --rvm-abas-destaque-cheio: var(--rvm-color-primary-main); --rvm-abas-destaque-contraste: var(--rvm-color-primary-contrast); }
+.rvm-secondary { --rvm-abas-destaque: var(--rvm-color-secondary-text); --rvm-abas-destaque-cheio: var(--rvm-color-secondary-main); --rvm-abas-destaque-contraste: var(--rvm-color-secondary-contrast); }
+.rvm-inverse { --rvm-abas-destaque: var(--rvm-color-inverse-text); --rvm-abas-destaque-cheio: var(--rvm-color-inverse-main); --rvm-abas-destaque-contraste: var(--rvm-color-inverse-contrast); }
+.rvm-info { --rvm-abas-destaque: var(--rvm-color-info-text); --rvm-abas-destaque-cheio: var(--rvm-color-info-main); --rvm-abas-destaque-contraste: var(--rvm-color-info-contrast); }
+.rvm-success { --rvm-abas-destaque: var(--rvm-color-success-text); --rvm-abas-destaque-cheio: var(--rvm-color-success-main); --rvm-abas-destaque-contraste: var(--rvm-color-success-contrast); }
+.rvm-warning { --rvm-abas-destaque: var(--rvm-color-warning-text); --rvm-abas-destaque-cheio: var(--rvm-color-warning-main); --rvm-abas-destaque-contraste: var(--rvm-color-warning-contrast); }
+.rvm-error { --rvm-abas-destaque: var(--rvm-color-error-text); --rvm-abas-destaque-cheio: var(--rvm-color-error-main); --rvm-abas-destaque-contraste: var(--rvm-color-error-contrast); }
+
+.rvm-pilula.rvm-preenchidas .rvm-aba { border-radius: var(--rvm-radius-pill); }
+
+.rvm-contador {
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: var(--rvm-radius-pill);
+    background-color: var(--rvm-color-action-hover);
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: 20px;
+    text-align: center;
+}
+
+.rvm-texto-com-contador {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
 }

@@ -1,8 +1,10 @@
 @* Tabela de parametros do componente. Cabecalho de verdade (<th scope="col">) porque leitor de
-   tela anuncia a coluna a cada celula — sem isso a tabela vira uma lista de palavras soltas. *@
+   tela anuncia a coluna a cada celula — sem isso a tabela vira uma lista de palavras soltas.
+   Com Componente, as linhas vem do ParametrosGerados.g.cs (gerado da biblioteca, como o llms-full.txt):
+   a tabela escrita a mao ficava para tras a cada parametro novo (DSGN-017). *@
 
-<section aria-labelledby="parametros">
-    <h3 id="parametros" class="rvm-text-subtitle1">Parametros</h3>
+<section aria-labelledby="@IdDoTitulo">
+    <h3 id="@IdDoTitulo" class="rvm-text-subtitle1">@(Componente is null ? "Parametros" : $"Parametros de {Componente}")</h3>
 
     <table class="tabela">
         <thead>
@@ -14,13 +16,27 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in Parametros)
+            @foreach (var p in Linhas)
             {
                 <tr>
                     <td class="rvm-text-body2"><code>@p.Nome</code></td>
                     <td class="rvm-text-body2"><code>@p.Tipo</code></td>
                     <td class="rvm-text-body2"><code>@p.Padrao</code></td>
-                    <td class="rvm-text-body2">@p.Descricao</td>
+                    <td class="rvm-text-body2">
+                        @* O texto gerado marca codigo entre crases, como no llms-full.txt. *@
+                        @for (var i = 0; i < Trechos(p.Descricao).Length; i++)
+                        {
+                            var trecho = Trechos(p.Descricao)[i];
+                            if (i % 2 == 1)
+                            {
+                                <code>@trecho</code>
+                            }
+                            else
+                            {
+                                @trecho
+                            }
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
@@ -28,8 +44,18 @@
 </section>
 
 @code {
-    /// <summary>Um item por parametro publico do componente.</summary>
-    [Parameter, EditorRequired] public IReadOnlyList<Parametro> Parametros { get; set; } = [];
+    /// <summary>Linhas escritas a mao. Prefira <see cref="Componente"/>.</summary>
+    [Parameter] public IReadOnlyList<Parametro> Parametros { get; set; } = [];
+
+    /// <summary>Nome do componente ("RvmButton"): as linhas vem da propria biblioteca.</summary>
+    [Parameter] public string? Componente { get; set; }
+
+    private IReadOnlyList<Parametro> Linhas
+        => Componente is null ? Parametros : ParametrosGerados.PorComponente.GetValueOrDefault(Componente) ?? [];
+
+    private string IdDoTitulo => Componente is null ? "parametros" : $"parametros-{Componente}";
+
+    private static string[] Trechos(string texto) => texto.Split('`');
 
     /// <summary>Linha da tabela de parametros.</summary>
     public sealed record Parametro(string Nome, string Tipo, string Padrao, string Descricao);

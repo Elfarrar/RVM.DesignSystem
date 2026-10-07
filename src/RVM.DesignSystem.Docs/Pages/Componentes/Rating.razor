@@ -38,7 +38,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmRating" />
 
 <RecorteDoKit Origem="kit/rating.png"
               Arquivo="referencia-neatlab/Rating.png (recorte)"
@@ -48,19 +48,6 @@
 @code {
     private double _nota = 4;
     private double _notaMeia = 2.5;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Value", "double", "0", "A nota. Aceita @bind-Value. Zero e sem nota."),
-        new("Max", "int", "5", "Quantas estrelas."),
-        new("AllowHalf", "bool", "false", "Permite meia estrela."),
-        new("Size", "RvmSize", "Medium", "Estrelas de 18, 24 ou 30 px."),
-        new("ReadOnly", "bool", "false", "So mostra, como imagem com a nota por extenso."),
-        new("Disabled", "bool", "false", "Indisponivel."),
-        new("Label", "string", "\"Avaliacao\"", "O que esta sendo avaliado. Nome do grupo."),
-        new("Name", "string?", "gerado", "name dos radios, para envio de formulario."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoEditavel = """
         <RvmRating @bind-Value="_nota" Label="Nota do atendimento" />

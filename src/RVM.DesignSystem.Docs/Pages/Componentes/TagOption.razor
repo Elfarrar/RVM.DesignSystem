@@ -1,0 +1,42 @@
+@page "/componentes/tag-option"
+
+<PageTitle>RvmTagOption — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTagOption</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Uma tag em pilula com um texto: o visual do RvmChip primario, suave (Soft) ou preenchido (Solid). Com OnRemove,
+    ganha um botao de remover nomeado com o proprio texto ("Remover Soja"), alcancavel por teclado.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. E a peca que o RvmMultiTextField
+    usa dentro da caixa.
+</p>
+
+<BlocoExemplo Titulo="Suave, preenchida, removivel e desabilitada"
+              Descricao="Disabled esmaece a tag e desliga o botao de remover."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmTagOption Text="Soja" />
+        <RvmTagOption Text="Milho" Variant="RvmTagVariant.Solid" />
+        @foreach (var cultura in _culturas)
+        {
+            <RvmTagOption Text="@cultura" OnRemove="@(() => _culturas.Remove(cultura))" />
+        }
+        <RvmTagOption Text="Trigo" Disabled="true" OnRemove="@(() => { })" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmTagOption" />
+
+@code {
+    private readonly List<string> _culturas = ["Cafe", "Algodao"];
+
+    private const string Codigo = """
+        <RvmTagOption Text="Soja" />
+        <RvmTagOption Text="Milho" Variant="RvmTagVariant.Solid" />
+        <RvmTagOption Text="Cafe" OnRemove="() => Remover(cultura)" />
+        <RvmTagOption Text="Trigo" Disabled="true" OnRemove="() => Remover(cultura)" />
+        """;
+}

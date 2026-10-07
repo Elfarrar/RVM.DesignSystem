@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using RVM.DesignSystem.Components.Table;
+using RVM.DesignSystem.Icons;
 
 namespace RVM.DesignSystem.Components.Chart;
 
@@ -98,6 +99,50 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     /// <summary>Avisa que a faixa mudou (inclusive quando foi limpa, com <c>null</c>).</summary>
     [Parameter] public EventCallback<RvmChartRange?> SelectionChanged { get; set; }
+
+    /// <summary>
+    /// A dica ao passar o mouse ou dar foco num ponto. Desligada, o teclado continua lendo os valores pelo leitor de
+    /// tela; some so o balao. Desligue num grafico decorativo, dentro de um cartao que ja diz o numero.
+    /// </summary>
+    [Parameter] public bool ShowTooltip { get; set; } = true;
+
+    /// <summary>Os dados estao chegando: o desenho da lugar ao aviso de carregamento.</summary>
+    [Parameter] public bool Loading { get; set; }
+
+    /// <summary>Nao ha nada para desenhar. Use <see cref="Empty"/> para ensinar o proximo passo.</summary>
+    [Parameter] public bool IsEmpty { get; set; }
+
+    /// <summary>A carga falhou. Vence <see cref="Loading"/> e <see cref="IsEmpty"/>.</summary>
+    [Parameter] public bool Error { get; set; }
+
+    /// <summary>O vazio que ensina o proximo passo. Sem ele, sai um <c>RvmEmptyState</c> com <see cref="EmptyText"/>.</summary>
+    [Parameter] public RenderFragment? Empty { get; set; }
+
+    /// <summary>O erro. Sem ele, sai o <c>RvmEmptyState</c> de erro com <see cref="ErrorTitle"/> e <see cref="ErrorText"/>.</summary>
+    [Parameter] public RenderFragment? ErrorContent { get; set; }
+
+    /// <summary>Mascote do erro padrao. Sem efeito com <see cref="ErrorContent"/>.</summary>
+    [Parameter] public RvmMascotName? ErrorMascot { get; set; }
+
+    /// <summary>Mascote do carregamento, no lugar do indicador circular.</summary>
+    [Parameter] public RvmMascotName? LoadingMascot { get; set; }
+
+    /// <summary>Texto do carregamento.</summary>
+    [Parameter] public string LoadingText { get; set; } = "Carregando o grafico...";
+
+    /// <summary>Texto do vazio padrao. Prefira <see cref="Empty"/>, que ensina o proximo passo.</summary>
+    [Parameter] public string EmptyText { get; set; } = "Ainda nao ha dado para este grafico.";
+
+    /// <summary>Titulo do erro padrao.</summary>
+    [Parameter] public string ErrorTitle { get; set; } = "Nao deu para carregar o grafico";
+
+    /// <summary>Texto do erro padrao.</summary>
+    [Parameter] public string ErrorText { get; set; } = EstadosDosDados.TextoDeErro;
+
+    internal EstadoDosDados Estado => EstadosDosDados.Qual(Error, Loading, IsEmpty);
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
 
     /// <summary>Atributos extras, repassados a figura.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -378,7 +423,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// esquerda. Se TODAS pedirem o secundario, o grafico segue com um eixo so — dois eixos iguais
     /// ocupariam as duas bordas para dizer a mesma coisa.
     /// </summary>
-    internal bool TemEixoSecundario
+    internal virtual bool TemEixoSecundario
         => _series.Any(s => s.Axis == RvmChartAxis.Secondary) && _series.Any(s => s.Axis == RvmChartAxis.Primary);
 
     /// <summary>As series lidas naquele eixo (todas, quando o grafico tem um eixo so).</summary>
@@ -395,9 +440,23 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     internal string NomeNaTabela(RvmChartSeries<TItem> serie)
         => TemEixoSecundario && serie.Axis == RvmChartAxis.Secondary ? $"{serie.Name} ({NomeDoEixoSecundario})" : serie.Name;
 
-    /// <summary>Rotulo de uma marca de eixo: o formato do consumidor, ou o compacto na precisao do passo.</summary>
+    /// <summary>
+    /// Rotulo de uma marca de eixo: o formato do eixo (onde o grafico tem um), o formato do consumidor, ou o compacto
+    /// na precisao do passo.
+    /// </summary>
     internal string FormatarMarca(double marca, double passo)
-        => ValueFormat is { } formato ? formato(marca) : RvmChartFormat.CompactForAxis(marca, passo);
+        => FormatoDoEixo is { } doEixo ? doEixo(marca)
+            : ValueFormat is { } formato ? formato(marca)
+            : RvmChartFormat.CompactForAxis(marca, passo);
+
+    /// <summary>O <c>FormatAxisValue</c> dos graficos que tem esse parametro no contrato com o RVM.UI.</summary>
+    private protected virtual Func<double, string>? FormatoDoEixo => null;
+
+    /// <summary>O <c>ShowAxis</c> dos graficos que tem esse parametro no contrato com o RVM.UI.</summary>
+    private protected virtual bool MostraEixo => true;
+
+    /// <summary>O <c>Size</c> dos graficos que tem esse parametro no contrato com o RVM.UI.</summary>
+    private protected virtual RvmChartSize Tamanho => RvmChartSize.Large;
 
     /// <summary>Rotulo de uma marca, no formato do eixo a que ela pertence.</summary>
     internal string FormatarMarca(double marca, double passo, RvmChartAxis eixo)
@@ -411,7 +470,18 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     internal static RvmColor CorDaPaleta(int indice) => Paleta[indice % Paleta.Length];
 
-    internal static string ClasseDaCor(RvmColor cor) => "rvm-cor-" + cor.ToString().ToLowerInvariant();
+    // Switch, e nao ToString(): com os aliases do contrato (Accent = Primary) o ToString() pode devolver qualquer
+    // um dos dois nomes.
+    internal static string ClasseDaCor(RvmColor cor) => cor switch
+    {
+        RvmColor.Secondary => "rvm-cor-secondary",
+        RvmColor.Info => "rvm-cor-info",
+        RvmColor.Success => "rvm-cor-success",
+        RvmColor.Warning => "rvm-cor-warning",
+        RvmColor.Error => "rvm-cor-error",
+        RvmColor.Inverse => "rvm-cor-inverse",
+        _ => "rvm-cor-primary"
+    };
 
     internal static string N(double valor) => Escala.N(valor);
 
@@ -462,9 +532,17 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>Conteudo sobre o centro do desenho (o total da rosca).</summary>
     internal virtual RenderFragment? Centro => null;
 
-    internal sealed record LinhaDaDica(string Nome, string Valor, RvmColor Cor);
+    /// <summary>Uma linha da dica. <c>Classe</c> substitui a classe da <c>Cor</c> quando a cor nao e um papel (os degraus do monocromatico).</summary>
+    internal sealed record LinhaDaDica(string Nome, string Valor, RvmColor Cor, string? Classe = null)
+    {
+        internal string ClasseCss => Classe ?? ClasseDaCor(Cor);
+    }
 
-    internal sealed record ItemDaLegenda(string Nome, RvmColor Cor, string? Detalhe);
+    /// <summary>Um item da legenda embutida. <c>Classe</c> como na <see cref="LinhaDaDica"/>.</summary>
+    internal sealed record ItemDaLegenda(string Nome, RvmColor Cor, string? Detalhe, string? Classe = null)
+    {
+        internal string ClasseCss => Classe ?? ClasseDaCor(Cor);
+    }
 
     internal sealed record TabelaDeDados(IReadOnlyList<string> Cabecalho, IReadOnlyList<IReadOnlyList<string>> Linhas);
 
@@ -818,14 +896,14 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     }
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"{ClassesProprias} {texto}"
-            : ClassesProprias;
+        => ClassesCss.Juntar(ClassesProprias, Class, AdditionalAttributes);
 
-    private string ClassesProprias => Animated ? "rvm-grafico rvm-animado" : "rvm-grafico";
+    private string ClassesProprias => (Animated ? "rvm-grafico rvm-animado" : "rvm-grafico") + Tamanho switch
+    {
+        RvmChartSize.Small => " rvm-grafico-pequeno",
+        RvmChartSize.Medium => " rvm-grafico-medio",
+        _ => ""
+    };
 
     // --- Layout cartesiano, comum a colunas, barras, linha, area, histograma e dispersao ---
 
@@ -903,20 +981,34 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender)
+        // Liga o JS quando o DESENHO aparece, e nao so no primeiro render: o grafico que nasce em Loading, Error ou
+        // IsEmpty nao tem area nem camada ainda, e a que volta depois de um estado e outro elemento (achado do review
+        // da onda 0, DSGN-017).
+        // Sem desenho (estado) ou com ele ainda por vir (a figura sai depois das series, num segundo render), nao ha o
+        // que ligar: ligar a referencia vazia deixava a roda presa a nada (zoom morto, pego no E2E da onda 0).
+        if (Estado != EstadoDosDados.Conteudo || _area.Id is null || _camada.Id is null)
+        {
+            return;
+        }
+
+        if (_area.Id is not null && _area.Id == _areaLigada)
         {
             // Zoomable pode ser ligado depois (um interruptor na tela): a roda acompanha.
             await AcertarARoda();
             return;
         }
 
+        // Marca ANTES do primeiro await: um render que chegue enquanto o JS carrega cairia aqui de novo e ligaria
+        // tudo duas vezes (dois ouvintes da roda = zoom em dobro).
+        _areaLigada = _area.Id;
         try
         {
-            _referencia = DotNetObjectReference.Create(this);
-            _modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
+            await PararOuvintesAsync();
+            _referencia ??= DotNetObjectReference.Create(this);
+            _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-grafico.js");
             _observador = await _modulo.InvokeAsync<IJSObjectReference?>("observar", _area, _referencia);
             await AcertarARoda();
-            _teclado = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
+            _teclado ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
             await _teclado.InvokeVoidAsync("prenderTeclas", _camada, new[] { "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End" });
         }
         catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
@@ -925,14 +1017,36 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         }
     }
 
+    private string? _areaLigada;
+
+    /// <summary>Solta o observador e a roda presos a um desenho que saiu da tela.</summary>
+    private async Task PararOuvintesAsync()
+    {
+        if (_observador is { } observador)
+        {
+            _observador = null;
+            await observador.InvokeVoidAsync("parar");
+            await observador.DisposeAsync();
+        }
+
+        if (_roda is { } roda)
+        {
+            _roda = null;
+            await roda.InvokeVoidAsync("parar");
+            await roda.DisposeAsync();
+        }
+    }
+
     /// <summary>Liga o ouvinte da roda quando ha zoom e o desliga quando deixa de haver.</summary>
     private async Task AcertarARoda()
     {
-        if (_modulo is null || ZoomLigado == (_roda is not null))
+        if (_modulo is null || _acertandoRoda || _camada.Id is null || ZoomLigado == (_roda is not null))
         {
             return;
         }
 
+        // Um de cada vez: dois renders seguidos viam _roda nulo e ligavam dois ouvintes (zoom em dobro).
+        _acertandoRoda = true;
         try
         {
             if (ZoomLigado)
@@ -950,7 +1064,13 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         {
             // Sem JS o zoom continua pelo teclado.
         }
+        finally
+        {
+            _acertandoRoda = false;
+        }
     }
+
+    private bool _acertandoRoda;
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()

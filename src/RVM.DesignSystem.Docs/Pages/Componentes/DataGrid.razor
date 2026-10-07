@@ -58,7 +58,9 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmDataGrid" />
+
+<TabelaParametros Componente="RvmTableColumn" />
 
 <RecorteDoKit Origem="kit/data-grid.png"
               Arquivo="referencia-neatlab/Data Grid.png (recorte)"
@@ -79,16 +81,6 @@
         "Colhido" => RvmColor.Info,
         _ => RvmColor.Error
     };
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("(tudo da RvmTable)", "—", "—", "Items, Caption, Dense, Selectable, SelectedItems, RowLabel, NoRecordsText e as colunas."),
-        new("Page", "int", "1", "Pagina mostrada. Aceita @bind-Page."),
-        new("PageSize", "int", "10", "Linhas por pagina. Aceita @bind-PageSize."),
-        new("PageSizeOptions", "IReadOnlyList<int>", "5, 10, 25", "Escolhas de \"Linhas por pagina\"."),
-        new("NoResultsText", "string", "\"Nenhum registro encontrado para esse filtro.\"", "Texto quando o filtro nao acha nada."),
-        new("RvmTableColumn.Filterable", "bool", "true", "Campo de filtro na coluna (precisa de Value).")
-    ];
 
     private const string CodigoPaginada = """
         <RvmDataGrid Items="talhoes" Caption="Talhoes da fazenda" PageSize="5">

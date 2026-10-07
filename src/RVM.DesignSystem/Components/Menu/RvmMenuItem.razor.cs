@@ -22,6 +22,24 @@ public partial class RvmMenuItem : ComponentBase, IDisposable
     /// <summary>O texto do item.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Texto da acao, quando nao ha <see cref="ChildContent"/>.</summary>
+    [Parameter] public string Text { get; set; } = "";
+
+    /// <summary>Destino. Com ele o item e um link; sem ele, um botao.</summary>
+    [Parameter] public string? Href { get; set; }
+
+    /// <summary>Acao destrutiva ("Excluir"): o item sai na cor de erro.</summary>
+    [Parameter] public bool Danger { get; set; }
+
+    /// <summary>
+    /// O item LEVA o foco consigo (abre um painel, uma aba ou um dialogo e poe o foco la): ao fechar, o menu NAO
+    /// devolve o foco ao botao que o abriu. Padrao: devolve, como manda o padrao de menu do WAI-ARIA.
+    /// </summary>
+    [Parameter] public bool MovesFocus { get; set; }
+
     /// <summary>Atributos extras, repassados ao botao do item.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -29,12 +47,7 @@ public partial class RvmMenuItem : ComponentBase, IDisposable
     internal bool TemFoco { get; private set; }
 
     internal string ClassesDoItem
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-item {texto}"
-            : "rvm-item";
+        => ClassesCss.Juntar(Danger ? "rvm-item rvm-perigo" : "rvm-item", Class, AdditionalAttributes);
 
     internal ValueTask FocusAsync() => _elemento.FocusAsync();
 
@@ -59,7 +72,7 @@ public partial class RvmMenuItem : ComponentBase, IDisposable
         await OnClick.InvokeAsync();
         if (Menu is not null)
         {
-            await Menu.FecharAsync(devolverFoco: true);
+            await Menu.FecharAsync(devolverFoco: !MovesFocus);
         }
     }
 

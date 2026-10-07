@@ -1,0 +1,73 @@
+/* CSS isolado do RvmConfirmModal. So custom properties — hex literal aqui quebra o tema escuro.
+   A caixa (400 px, recuo de 20 px) e a do RvmModal; aqui so o corpo: circulo do icone no fundo suave
+   do papel (o mesmo do RvmAvatar suave), pergunta em h6 e explicacao em body2 secundario. */
+
+.rvm-corpo {
+    display: flex;
+    gap: var(--rvm-space-4);
+    padding-bottom: var(--rvm-space-5);
+}
+
+.rvm-centro {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.rvm-esquerda {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.rvm-circulo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--rvm-radius-circle);
+}
+
+.rvm-circulo.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-circulo.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-circulo.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
+.rvm-circulo.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-circulo.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-circulo.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-circulo.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+.rvm-mensagem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    min-width: 0;
+}
+
+.rvm-pergunta {
+    margin: 0;
+    font-size: var(--rvm-text-h6-size);
+    line-height: var(--rvm-text-h6-line);
+    font-weight: var(--rvm-text-h6-weight);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-descricao {
+    margin: 0;
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2);
+    justify-content: flex-end;
+}
+
+/* Centralizado: os dois botoes dividem a largura, um em cada ponta. */
+.rvm-centro + .rvm-acoes ::deep .rvm-botao {
+    flex: 1;
+}

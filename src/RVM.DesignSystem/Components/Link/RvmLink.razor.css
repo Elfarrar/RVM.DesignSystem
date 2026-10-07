@@ -1,0 +1,32 @@
+/* CSS isolado do RvmLink. So custom properties — hex literal aqui quebra o tema escuro.
+   O texto usa a variante -text do papel (4.5:1 nos dois temas); o sublinhado aparece no hover e no foco. */
+
+.rvm-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    font-family: var(--rvm-font-family);
+    font-weight: var(--rvm-font-weight-medium);
+    text-decoration: none;
+    border-radius: var(--rvm-radius-sm);
+}
+
+a.rvm-link:hover { text-decoration: underline; }
+
+a.rvm-link:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-primary { color: var(--rvm-color-primary-text); }
+.rvm-secondary { color: var(--rvm-color-secondary-text); }
+.rvm-inverse { color: var(--rvm-color-inverse-text); }
+.rvm-info { color: var(--rvm-color-info-text); }
+.rvm-success { color: var(--rvm-color-success-text); }
+.rvm-warning { color: var(--rvm-color-warning-text); }
+.rvm-error { color: var(--rvm-color-error-text); }
+
+.rvm-desabilitado {
+    color: var(--rvm-color-text-disabled);
+    cursor: not-allowed;
+}

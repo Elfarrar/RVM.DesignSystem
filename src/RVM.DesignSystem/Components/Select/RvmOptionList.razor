@@ -1,0 +1,260 @@
+@namespace RVM.DesignSystem.Components.Select
+@typeparam TItem
+@using Microsoft.JSInterop
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+@implements IAsyncDisposable
+
+@* Lista de opcoes no padrao listbox do APG (contrato com o RVM.UI, DSGN-017): a propria lista recebe o foco e a opcao
+   ativa vai por aria-activedescendant — as opcoes nunca recebem foco. O visual e o da lista do RvmSelectBase. *@
+<ul @ref="_lista"
+    id="@IdDaLista"
+    role="listbox"
+    tabindex="0"
+    class="@Classes"
+    aria-labelledby="@(string.IsNullOrWhiteSpace(LabelledBy) ? null : LabelledBy)"
+    aria-label="@(string.IsNullOrWhiteSpace(LabelledBy) ? "Opcoes" : null)"
+    aria-multiselectable="@(Multiple ? "true" : null)"
+    aria-activedescendant="@(_ativo >= 0 ? IdDaOpcao(_ativo) : null)"
+    @onfocus="AoFocar"
+    @onkeydown="AoTeclarAsync">
+    @for (var i = 0; i < _itens.Count; i++)
+    {
+        var indice = i;
+        var item = _itens[i];
+        var selecionada = Selecionado(item);
+        var desabilitada = Desabilitado(item);
+        <li id="@IdDaOpcao(indice)"
+            role="option"
+            class="@ClassesDaOpcao(indice, selecionada, desabilitada)"
+            aria-selected="@(selecionada ? "true" : "false")"
+            aria-disabled="@(desabilitada ? "true" : null)"
+            @onclick="() => AoClicarAsync(indice)">
+            @if (Multiple)
+            {
+                <span class="rvm-marca" aria-hidden="true">
+                    @if (selecionada)
+                    {
+                        <RvmIcon Name="RvmIconName.Check" Size="RvmSize.Small" />
+                    }
+                </span>
+            }
+            @if (ItemImage?.Invoke(item) is { Length: > 0 } imagem)
+            {
+                <img class="rvm-imagem-opcao" src="@imagem" alt="" />
+            }
+            <span class="rvm-texto-opcao">@TextoDe(item)</span>
+        </li>
+    }
+</ul>
+
+@code {
+    private readonly string _idGerado = GeradorDeIds.Novo("rvm-opcoes");
+    private List<TItem> _itens = [];
+    private int _ativo = -1;
+    private bool _rolarAteAtiva;
+    private ElementReference _lista;
+    private IJSObjectReference? _modulo;
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    /// <summary>As opcoes.</summary>
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+
+    /// <summary>Texto de cada opcao. Sem ele, <c>ToString()</c>.</summary>
+    [Parameter] public Func<TItem, string>? ItemText { get; set; }
+
+    /// <summary>Endereco da imagem redonda (24 px) antes do texto. Decorativa (<c>alt</c> vazio).</summary>
+    [Parameter] public Func<TItem, string>? ItemImage { get; set; }
+
+    /// <summary>Diz se a opcao esta escolhida (<c>aria-selected</c>).</summary>
+    [Parameter] public Func<TItem, bool>? IsSelected { get; set; }
+
+    /// <summary>Diz se a opcao esta indisponivel: nao e escolhida e o teclado pula ela.</summary>
+    [Parameter] public Func<TItem, bool>? ItemDisabled { get; set; }
+
+    /// <summary>Varias opcoes escolhidas ao mesmo tempo (<c>aria-multiselectable</c>), com a caixinha de marcar.</summary>
+    [Parameter] public bool Multiple { get; set; }
+
+    /// <summary>Id do elemento que da nome a lista (<c>aria-labelledby</c>).</summary>
+    [Parameter] public string? LabelledBy { get; set; }
+
+    /// <summary>Foca a lista ao aparecer, com a opcao escolhida (ou a primeira) ativa.</summary>
+    [Parameter] public bool AutoFocus { get; set; }
+
+    /// <summary>Avisa a opcao escolhida (clique, Enter ou Espaco).</summary>
+    [Parameter] public EventCallback<TItem> OnPick { get; set; }
+
+    /// <summary>Pede para fechar (Esc ou Tab). Quem abriu decide o que fazer.</summary>
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    /// <summary>Id da lista. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Classe CSS extra na lista.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    private string IdDaLista => string.IsNullOrWhiteSpace(Id) ? _idGerado : Id;
+
+    private string Classes => ClassesCss.Juntar("rvm-opcoes", Class, null);
+
+    private string IdDaOpcao(int indice) => $"{IdDaLista}-opcao-{indice}";
+
+    private string TextoDe(TItem item) => ItemText?.Invoke(item) ?? item?.ToString() ?? "";
+
+    private bool Selecionado(TItem item) => IsSelected?.Invoke(item) ?? false;
+
+    private bool Desabilitado(TItem item) => ItemDisabled?.Invoke(item) ?? false;
+
+    private string ClassesDaOpcao(int indice, bool selecionada, bool desabilitada)
+    {
+        var classes = "rvm-opcao";
+        if (selecionada) classes += " rvm-selecionada";
+        if (desabilitada) classes += " rvm-desabilitada";
+        if (indice == _ativo) classes += " rvm-ativa";
+        return classes;
+    }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        _itens = Items?.ToList() ?? [];
+        if (_ativo >= _itens.Count)
+        {
+            _ativo = -1;
+        }
+
+        if (AutoFocus && _ativo < 0)
+        {
+            _ativo = Inicial();
+        }
+    }
+
+    // A escolhida (a primeira escolhida disponivel) ou, sem escolhida, a primeira disponivel.
+    private int Inicial()
+    {
+        var escolhida = _itens.FindIndex(i => Selecionado(i) && !Desabilitado(i));
+        return escolhida >= 0 ? escolhida : Proxima(-1, 1);
+    }
+
+    // A proxima opcao disponivel a partir de "de", no sentido "passo"; sem nenhuma, fica onde esta.
+    private int Proxima(int de, int passo)
+    {
+        for (var i = de + passo; i >= 0 && i < _itens.Count; i += passo)
+        {
+            if (!Desabilitado(_itens[i])) return i;
+        }
+
+        return de;
+    }
+
+    private void AoFocar()
+    {
+        if (_ativo < 0)
+        {
+            _ativo = Inicial();
+        }
+    }
+
+    private async Task AoTeclarAsync(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowDown":
+                Ativar(Proxima(_ativo, 1));
+                break;
+            case "ArrowUp":
+                Ativar(_ativo < 0 ? Proxima(_itens.Count, -1) : Proxima(_ativo, -1));
+                break;
+            case "Home":
+                Ativar(Proxima(-1, 1));
+                break;
+            case "End":
+                Ativar(Proxima(_itens.Count, -1));
+                break;
+            case "Enter":
+            case " ":
+                await EscolherAsync(_ativo);
+                break;
+            case "Escape":
+            case "Tab":
+                await OnClose.InvokeAsync();
+                break;
+        }
+    }
+
+    private void Ativar(int indice)
+    {
+        if (indice < 0 || indice >= _itens.Count) return;
+        _ativo = indice;
+        _rolarAteAtiva = true;
+    }
+
+    private async Task AoClicarAsync(int indice)
+    {
+        if (Desabilitado(_itens[indice])) return;
+        _ativo = indice;
+        await EscolherAsync(indice);
+    }
+
+    private async Task EscolherAsync(int indice)
+    {
+        if (indice < 0 || indice >= _itens.Count || Desabilitado(_itens[indice])) return;
+        await OnPick.InvokeAsync(_itens[indice]);
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Tentar(async () =>
+            {
+                _modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
+                await _modulo.InvokeVoidAsync("prenderTeclas", _lista, new[] { "ArrowUp", "ArrowDown", "Home", "End", " " });
+            });
+
+            if (AutoFocus)
+            {
+                await Tentar(() => _lista.FocusAsync());
+                _rolarAteAtiva = _ativo >= 0;
+            }
+        }
+
+        if (_rolarAteAtiva && _modulo is not null && _ativo >= 0)
+        {
+            _rolarAteAtiva = false;
+            await Tentar(() => _modulo.InvokeVoidAsync("rolarParaVer", IdDaOpcao(_ativo)));
+        }
+    }
+
+    private static async Task Tentar(Func<ValueTask> acao)
+    {
+        try
+        {
+            await acao();
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            // Sem JS (pre-renderizacao, circuito caindo, bUnit): a lista funciona; so foco e rolagem nao andam.
+        }
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        if (_modulo is not null)
+        {
+            try
+            {
+                await _modulo.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // Circuito ja caiu no Blazor Server: nao ha o que liberar do lado do navegador.
+            }
+        }
+
+        GC.SuppressFinalize(this);
+    }
+}

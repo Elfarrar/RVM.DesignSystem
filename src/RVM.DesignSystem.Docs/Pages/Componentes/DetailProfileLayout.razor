@@ -1,0 +1,48 @@
+@page "/componentes/detail-profile-layout"
+
+<PageTitle>RvmDetailProfileLayout — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmDetailProfileLayout</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A ficha de detalhe (cliente, vendedor, projeto): o miolo a esquerda e o perfil numa coluna fixa a direita, que nao muda quando a aba troca. No celular o perfil vem primeiro.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Cliente"
+              Descricao="Details sao pares dt/dd; Activity sao itens li."
+              Codigo="@Codigo">
+    <RvmDetailProfileLayout Name="Agro Sul Graos" class="largura-cheia">
+        <Header><RvmChip Color="RvmColor.Success" Variant="RvmChipVariant.Soft">Cliente ativo</RvmChip></Header>
+        <Actions>
+            <RvmButton Size="RvmSize.Small" StartIcon="RvmIconName.Phone">Ligar</RvmButton>
+            <RvmButton Size="RvmSize.Small" Variant="RvmButtonVariant.Outlined" StartIcon="RvmIconName.Mail">E-mail</RvmButton>
+        </Actions>
+        <Details>
+            <dt>Cidade</dt><dd>Rio Verde, GO</dd>
+            <dt>E-mail</dt><dd>compras@agrosul.com.br</dd>
+        </Details>
+        <Activity>
+            <li>Pedido #1047 faturado</li>
+            <li>Contrato assinado</li>
+        </Activity>
+        <ChildContent><RvmTypography>Numeros, abas e o conteudo de cada aba.</RvmTypography></ChildContent>
+    </RvmDetailProfileLayout>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmDetailProfileLayout" />
+
+@code {
+
+    private const string Codigo = """
+        <RvmDetailProfileLayout Name="Agro Sul Graos">
+            <Actions>...</Actions>
+            <Details><dt>Cidade</dt><dd>Rio Verde, GO</dd></Details>
+            <Activity><li>Pedido #1047 faturado</li></Activity>
+            <ChildContent>...abas...</ChildContent>
+        </RvmDetailProfileLayout>
+        """;
+}

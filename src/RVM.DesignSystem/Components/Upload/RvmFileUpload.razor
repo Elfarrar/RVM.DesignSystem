@@ -1,0 +1,220 @@
+@namespace RVM.DesignSystem.Components.Upload
+@using Microsoft.AspNetCore.Components.Forms
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.Progress
+@using RVM.DesignSystem.Icons
+
+@* Escolher arquivos SEM JS proprio: o InputFile do Blazor (input file nativo) fica transparente POR CIMA do botao ou da
+   caixa de soltar, entao clicar, teclar Enter/Espaco e soltar arquivo sao do proprio navegador. O input e o elemento
+   focavel e nomeado (aria-labelledby: rotulo + texto da acao, para o nome conter o que se ve); o foco e desenhado no
+   botao/caixa por :focus-within. A biblioteca nao envia nada: avisa os arquivos e mostra o Items que o app atualiza. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    @if (!string.IsNullOrWhiteSpace(Label) || TemLink)
+    {
+        <div class="rvm-cabecalho">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <label id="@IdDoRotulo" for="@IdDoInput" class="rvm-rotulo rvm-text-body2">@Label</label>
+            }
+            @if (TemLink)
+            {
+                <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
+            }
+        </div>
+    }
+
+    <div class="@ClassesDoAlvo" @ondragenter="() => _arrastando = true" @ondragleave="() => _arrastando = false"
+         @ondrop="() => _arrastando = false">
+        @if (Container)
+        {
+            <RvmIcon Name="RvmIconName.CloudUpload" SizePx="32" Class="rvm-icone-do-alvo" />
+            <span id="@IdDaAcao" class="rvm-dica rvm-text-body2">@(Hint ?? DicaPadrao)</span>
+        }
+        else
+        {
+            <RvmIcon Name="RvmIconName.Upload" Size="RvmSize.Small" />
+            <span id="@IdDaAcao" class="rvm-texto-do-botao">@ButtonText</span>
+        }
+        <InputFile id="@IdDoInput" name="@Name" class="rvm-arquivo" accept="@Accept" multiple="@Multiple" disabled="@Disabled"
+                   aria-labelledby="@ArquivosDoUpload.Ids(string.IsNullOrWhiteSpace(Label) ? null : IdDoRotulo, IdDaAcao)"
+                   aria-describedby="@ArquivosDoUpload.Ids(DicaDoBotao is null ? null : IdDaDica, Erro is null ? null : IdDoErro)"
+                   aria-invalid="@(Erro is null ? null : "true")"
+                   OnChange="AoEscolher" />
+    </div>
+
+    @if (DicaDoBotao is not null)
+    {
+        <div id="@IdDaDica" class="rvm-apoio rvm-text-helper">@DicaDoBotao</div>
+    }
+    @if (Erro is not null)
+    {
+        <div id="@IdDoErro" class="rvm-apoio rvm-mensagem-de-erro rvm-text-helper">@Erro</div>
+    }
+
+    @if (Items is { Count: > 0 })
+    {
+        <ul class="rvm-lista" aria-label="Arquivos">
+            @foreach (var item in Items)
+            {
+                <li @key="item" class="@ClassesDoCartao(item)">
+                    <span class="rvm-tipo"><RvmIcon Name="ArquivosDoUpload.Icone(item.Name)" /></span>
+                    <div class="rvm-dados">
+                        <span class="rvm-nome rvm-text-body2" title="@item.Name">@item.Name</span>
+                        <span class="rvm-detalhes rvm-text-caption">
+                            <span class="rvm-tamanho">@ArquivosDoUpload.Tamanho(item.Size)</span>
+                            @switch (item.Status)
+                            {
+                                case RvmUploadStatus.Uploading:
+                                    <span class="rvm-estado">Enviando</span>
+                                    break;
+                                case RvmUploadStatus.Uploaded:
+                                    <span class="rvm-estado">Enviado</span>
+                                    break;
+                                case RvmUploadStatus.Failed:
+                                    <span class="rvm-estado rvm-falha">Falha no envio</span>
+                                    break;
+                            }
+                        </span>
+                        @if (item.Status == RvmUploadStatus.Uploading)
+                        {
+                            <RvmProgress Value="Math.Clamp(item.Progress, 0, 100)" ShowValue="true" Label="@($"Enviando {item.Name}")"
+                                         Class="rvm-progresso-do-arquivo" />
+                        }
+                    </div>
+                    @if (item.Status == RvmUploadStatus.Uploaded)
+                    {
+                        <span class="rvm-sinal rvm-sinal-ok"><RvmIcon Name="RvmIconName.CircleCheck" /></span>
+                    }
+                    else if (item.Status == RvmUploadStatus.Failed)
+                    {
+                        <span class="rvm-sinal rvm-sinal-falha"><RvmIcon Name="RvmIconName.AlertCircle" /></span>
+                    }
+                    @if (OnRemove.HasDelegate)
+                    {
+                        <button type="button" class="rvm-remover" aria-label="@($"Remover {item.Name}")" title="@($"Remover {item.Name}")"
+                                disabled="@Disabled" @onclick="() => Remover(item)">
+                            <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+                        </button>
+                    }
+                </li>
+            }
+        </ul>
+    }
+
+    <div class="rvm-so-leitor" aria-live="polite">@_aviso</div>
+</div>
+
+@code {
+    private const string DicaPadrao = "Arraste os arquivos aqui ou clique para escolher";
+
+    private readonly string _idGerado = GeradorDeIds.Novo("rvm-upload");
+    private bool _arrastando;
+    private string? _erroDoLimite;
+    private string? _aviso;
+
+    /// <summary>Tipos aceitos, para o atributo <c>accept</c> ("application/pdf,.docx"). Sem ele, qualquer arquivo.</summary>
+    [Parameter] public string? Accept { get; set; }
+
+    /// <summary>Texto do botao. Padrao: "Adicionar arquivo".</summary>
+    [Parameter] public string ButtonText { get; set; } = "Adicionar arquivo";
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>
+    /// Caixa de arrastar e soltar no lugar do botao, com a <see cref="Hint"/> dentro. O input fica por cima da caixa
+    /// inteira: clicar ou soltar o arquivo em qualquer ponto dela funciona.
+    /// </summary>
+    [Parameter] public bool Container { get; set; }
+
+    /// <summary>Indisponivel: o input fica desabilitado e o componente esmaece.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Mensagem de erro, em vermelho e ligada ao input por <c>aria-describedby</c>.</summary>
+    [Parameter] public string? ErrorText { get; set; }
+
+    /// <summary>
+    /// Dica. Com <see cref="Container"/>, o texto da caixa (padrao: "Arraste os arquivos aqui ou clique para escolher");
+    /// sem ele, texto de apoio abaixo do botao.
+    /// </summary>
+    [Parameter] public string? Hint { get; set; }
+
+    /// <summary>Id do input. Sem ele, um id e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Os arquivos ja escolhidos, como cartoes. O app atualiza <c>Status</c> e <c>Progress</c> durante o envio.</summary>
+    [Parameter] public IReadOnlyList<RvmUploadItem>? Items { get; set; }
+
+    /// <summary>Rotulo acima do botao.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Destino do link acima do campo, a direita do rotulo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Texto do link acima do campo.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Maximo de arquivos por escolha. Acima dele, mostra um erro em vez de avisar. Padrao: 10.</summary>
+    [Parameter] public int MaxFiles { get; set; } = 10;
+
+    /// <summary>Permite escolher varios arquivos de uma vez (atributo <c>multiple</c>).</summary>
+    [Parameter] public bool Multiple { get; set; }
+
+    /// <summary>Atributo <c>name</c> do input, para o envio de formulario em SSR estatico (multipart).</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Arquivos escolhidos (ate <see cref="MaxFiles"/>). Ler o conteudo e enviar e com o app.</summary>
+    [Parameter] public EventCallback<IReadOnlyList<IBrowserFile>> OnFilesSelected { get; set; }
+
+    /// <summary>Remover um arquivo da lista. Sem ele, os cartoes nao tem o X.</summary>
+    [Parameter] public EventCallback<RvmUploadItem> OnRemove { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string IdDoInput => string.IsNullOrWhiteSpace(Id) ? _idGerado : Id;
+    private string IdDoRotulo => $"{IdDoInput}-rotulo";
+    private string IdDaAcao => $"{IdDoInput}-acao";
+    private string IdDaDica => $"{IdDoInput}-dica";
+    private string IdDoErro => $"{IdDoInput}-erro";
+    private bool TemLink => !string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref);
+    private string? DicaDoBotao => Container || string.IsNullOrWhiteSpace(Hint) ? null : Hint;
+
+    // O erro do limite vence o ErrorText: e a resposta a acao que a pessoa acabou de fazer.
+    private string? Erro => _erroDoLimite ?? (string.IsNullOrWhiteSpace(ErrorText) ? null : ErrorText);
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar("rvm-upload" + (Erro is null ? "" : " rvm-erro") + (Disabled ? " rvm-desabilitado" : ""), Class, AdditionalAttributes);
+
+    private string ClassesDoAlvo
+        => (Container ? "rvm-alvo rvm-area-de-soltar" : "rvm-alvo rvm-botao-de-envio") + (_arrastando && !Disabled ? " rvm-arrastando" : "");
+
+    private static string ClassesDoCartao(RvmUploadItem item) => item.Status switch
+    {
+        RvmUploadStatus.Uploading => "rvm-cartao rvm-enviando",
+        RvmUploadStatus.Uploaded => "rvm-cartao rvm-enviado",
+        RvmUploadStatus.Failed => "rvm-cartao rvm-falhou",
+        _ => "rvm-cartao"
+    };
+
+    private async Task AoEscolher(InputFileChangeEventArgs e)
+    {
+        _arrastando = false;
+        _erroDoLimite = ArquivosDoUpload.Ler(e, MaxFiles, out var arquivos);
+        if (_erroDoLimite is not null)
+        {
+            _aviso = _erroDoLimite;
+            return;
+        }
+        if (arquivos.Count == 0) return;
+        _aviso = ArquivosDoUpload.Escolhidos(arquivos.Count);
+        await OnFilesSelected.InvokeAsync(arquivos);
+    }
+
+    private async Task Remover(RvmUploadItem item)
+    {
+        _aviso = $"{item.Name} removido";
+        await OnRemove.InvokeAsync(item);
+    }
+}

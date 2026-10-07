@@ -65,7 +65,9 @@
     </RvmAvatarGroup>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmAvatar" />
+
+<TabelaParametros Componente="RvmAvatarGroup" />
 
 <RecorteDoKit Origem="kit/avatar.png"
               Arquivo="referencia-neatlab/Avatar.png (recorte)"
@@ -77,19 +79,6 @@
     [
         (RvmColor.Primary, "PR"), (RvmColor.Secondary, "SE"), (RvmColor.Error, "ER"),
         (RvmColor.Warning, "WA"), (RvmColor.Info, "IN"), (RvmColor.Success, "SU")
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Src", "string?", "—", "Endereco da foto. Tem prioridade sobre icone e iniciais."),
-        new("Alt", "string?", "—", "Quem o avatar representa. Vira o alt da foto ou o nome acessivel."),
-        new("Initials", "string?", "—", "Iniciais, cortadas em duas letras."),
-        new("Icon", "RvmIconName?", "—", "Icone, com prioridade sobre as iniciais."),
-        new("Size", "RvmSize", "Medium", "24, 40 ou 56 px."),
-        new("Shape", "RvmAvatarShape", "Circle", "Circle, Rounded ou Square."),
-        new("Color", "RvmColor", "Primary", "Papel de cor do fundo."),
-        new("Variant", "RvmAvatarVariant", "Filled", "Filled ou Soft."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
     ];
 
     private const string CodigoIniciais = """

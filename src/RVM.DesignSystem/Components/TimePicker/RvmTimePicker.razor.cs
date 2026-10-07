@@ -64,6 +64,24 @@ public partial class RvmTimePicker : ComponentBase
     /// <summary><c>name</c> para envio de formulario (valor em <c>HH:mm</c>).</summary>
     [Parameter] public string? Name { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Id do campo. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Nome do campo nas mensagens de validacao (o campo nao gera mensagem propria).</summary>
+    [Parameter] public string? DisplayName { get; set; }
+
+    /// <summary>Texto do link acima do campo, a direita.</summary>
+    [Parameter] public string? LinkText { get; set; }
+
+    /// <summary>Destino do link acima do campo.</summary>
+    [Parameter] public string? LinkHref { get; set; }
+
+    /// <summary>Canto da caixa: o do kit ou pilula.</summary>
+    [Parameter] public RvmFieldShape Shape { get; set; } = RvmFieldShape.Rounded;
+
     /// <summary>Atributos extras, repassados ao campo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -120,6 +138,12 @@ public partial class RvmTimePicker : ComponentBase
         builder.AddComponentParameter(14, nameof(RvmCampoDeRelogio.Required), Required);
         builder.AddComponentParameter(15, nameof(RvmCampoDeRelogio.Disabled), Disabled);
         builder.AddComponentParameter(16, nameof(RvmCampoDeRelogio.Name), Name);
+        builder.AddComponentParameter(17, nameof(RvmCampoDeRelogio.Class), Class);
+        builder.AddComponentParameter(18, nameof(RvmCampoDeRelogio.Id), Id);
+        builder.AddComponentParameter(19, nameof(RvmCampoDeRelogio.DisplayName), DisplayName);
+        builder.AddComponentParameter(20, nameof(RvmCampoDeRelogio.LinkText), LinkText);
+        builder.AddComponentParameter(21, nameof(RvmCampoDeRelogio.LinkHref), LinkHref);
+        builder.AddComponentParameter(22, nameof(RvmCampoDeRelogio.Shape), Shape);
         builder.CloseComponent();
     };
 }

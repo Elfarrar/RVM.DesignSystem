@@ -41,7 +41,7 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmPagination" />
 
 <RecorteDoKit Origem="kit/pagination.png"
               Arquivo="referencia-neatlab/Pagination.png (recorte)"
@@ -50,21 +50,6 @@
 
 @code {
     private int _pagina = 1;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Page", "int", "1", "Pagina atual, a partir de 1. Aceita @bind-Page."),
-        new("Count", "int", "—", "Total de paginas."),
-        new("SiblingCount", "int", "1", "Vizinhas da atual sempre visiveis, de cada lado."),
-        new("BoundaryCount", "int", "1", "Paginas sempre visiveis em cada ponta."),
-        new("Variant", "RvmPaginationVariant", "Text", "Text ou Outlined."),
-        new("Shape", "RvmPaginationShape", "Circular", "Circular ou Rounded."),
-        new("Color", "RvmColor?", "Primary", "Cor da atual. Sem valor, fundo neutro."),
-        new("Size", "RvmSize", "Medium", "26, 32 ou 40 px."),
-        new("Disabled", "bool", "false", "Desabilita tudo."),
-        new("AriaLabel", "string", "\"Paginacao\"", "Nome da regiao. Troque quando houver mais de uma na pagina."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao nav.")
-    ];
 
     private const string CodigoEstilos = """
         <RvmPagination @bind-Page="_pagina" Count="13"

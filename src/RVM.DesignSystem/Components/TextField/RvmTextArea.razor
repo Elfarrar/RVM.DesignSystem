@@ -1,0 +1,50 @@
+@namespace RVM.DesignSystem.Components.TextField
+@inherits RvmStringInputBase
+
+@* Area de texto: a moldura do RvmTextField com varias linhas. Obrigatorio e so aria-required (o required nativo
+   barraria o envio com o balao do navegador, em ingles, antes da validacao em PT-BR — a regra do RvmTextField).
+   Immediate troca o @onchange pelo @oninput: os dois eventos ficam ligados e o handler confere a flag, como no RvmTextField (no Blazor Server, uma ida ao servidor por tecla mesmo sem Immediate). *@
+<RvmFieldFrame Label="@Label" InputId="@IdDoControle" LinkText="@LinkText" LinkHref="@LinkHref" Error="@MensagemDeErro"
+               ErrorId="@IdDoErro" HelperText="@HelperText" HelperId="@IdDoApoio" Required="Required" Disabled="Disabled"
+               Multiline="true" Shape="Shape" Class="@ClassesDoConsumidor">
+    <textarea @attributes="AtributosDoControle"
+              id="@IdDoControle"
+              name="@NomeDoControle"
+              class="rvm-entrada"
+              rows="@Rows"
+              placeholder="@PlaceholderEfetivo"
+              disabled="@Disabled"
+              aria-required="@(Required ? "true" : null)"
+              aria-invalid="@(MensagemDeErro is null ? null : "true")"
+              aria-describedby="@DescritoPor"
+              value="@CurrentValueAsString"
+              @onchange="AoSair"
+              @oninput="AoDigitar"></textarea>
+</RvmFieldFrame>
+
+@code {
+    /// <summary>Classe CSS extra na raiz do campo.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <inheritdoc />
+    protected override string? ClasseDoCampo => Class;
+
+    /// <summary>Obrigatorio: asterisco no rotulo e <c>aria-required</c>. A validacao e do <c>EditForm</c>.</summary>
+    [Parameter] public bool Required { get; set; }
+
+    /// <summary>Linhas visiveis. Padrao: 5.</summary>
+    [Parameter] public int Rows { get; set; } = 5;
+
+    /// <summary>Atualiza o valor a cada tecla (<c>oninput</c>), e nao so ao sair do campo.</summary>
+    [Parameter] public bool Immediate { get; set; }
+
+    private void AoSair(ChangeEventArgs e)
+    {
+        if (!Immediate) CurrentValueAsString = e.Value?.ToString();
+    }
+
+    private void AoDigitar(ChangeEventArgs e)
+    {
+        if (Immediate) CurrentValueAsString = e.Value?.ToString();
+    }
+}

@@ -1,0 +1,73 @@
+@namespace RVM.DesignSystem.Components.Chart
+@inherits RvmRadialChartBase
+
+@* Rosca de varias camadas (contrato com o RVM.UI, DSGN-017; visual do cartao "Total Revenue" do kit): um anel
+   concentrico por fatia, de fora para dentro, cada um com a propria trilha e preenchido ate Value/Maximum a partir do
+   alto. E o unico radial em que as fatias NAO dividem um total: sao independentes, entao o Total herdado nao vale aqui.
+   A entrada e o proprio traco de cada anel crescendo (pathLength="1"). *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>
+    /// O teto de cada anel: o valor que fecha a volta. Sem ele, o teto e o maior valor entre as fatias, e o anel dele
+    /// fecha a volta inteira. O <c>Total</c> herdado nao vale aqui: as fatias nao dividem um total.
+    /// </summary>
+    [Parameter] public double? Maximum { get; set; }
+
+    /// <summary>O numero grande no meio ("89 mil"), quando fizer sentido para o conjunto. O componente nao o calcula.</summary>
+    [Parameter] public string? CenterValue { get; set; }
+
+    private const double Lado = 248;
+    private const double C = Lado / 2;
+    private const double R = Lado / 2;
+
+    /// <summary>A parte do raio que os aneis ocupam; o resto e o buraco do numero do centro.</summary>
+    private const double Faixa = R * 0.55;
+
+    /// <summary>O teto de fato usado: o <see cref="Maximum"/> (quando positivo) ou o maior valor.</summary>
+    private double Teto => Maximum is > 0 ? Maximum.Value : Fatias.Count == 0 ? 0 : Fatias.Max(f => Math.Max(0, f.Value));
+
+    // O traco do kit fica em ~12 do desenho; com muitas camadas ele afina para todas caberem na faixa.
+    private double Espessura => Math.Min(12, Faixa / (Math.Max(1, Fatias.Count) * 1.6));
+
+    private double RaioDoAnel(int indice) => R - Espessura / 2 - indice * Espessura * 1.6;
+
+    internal override double FracaoDe(RvmChartSlice fatia) => Teto <= 0 ? 0 : Math.Clamp(Math.Max(0, fatia.Value) / Teto, 0, 1);
+
+    internal override (string Nome, double Valor)? LinhaFinal => Maximum is > 0 ? ("Maximo", Teto) : null;
+
+    internal override double Largura => Lado;
+
+    internal override double Altura => Lado;
+
+    internal override string ClasseDoTipo => "rvm-camadas";
+
+    private string EstiloDoAnel(int indice, double fracao) => $"{EstiloDaCor(indice)}; --rvm-radial-volta: {N(fracao)}";
+
+    internal override RenderFragment Desenho => @<g>
+        @for (var i = 0; i < Fatias.Count; i++)
+        {
+            var indice = i;
+            var fracao = FracaoDe(Fatias[indice]);
+            <circle class="rvm-radial-trilha" cx="@N(C)" cy="@N(C)" r="@N(RaioDoAnel(indice))" stroke-width="@N(Espessura)" />
+            @if (fracao > 0)
+            {
+                <circle class="rvm-radial-fatia rvm-radial-varredura" cx="@N(C)" cy="@N(C)" r="@N(RaioDoAnel(indice))"
+                        stroke-width="@N(Espessura)" stroke-linecap="round" pathLength="1"
+                        stroke-dasharray="@($"{N(fracao)} 1")" transform="@($"rotate(-90 {N(C)} {N(C)})")"
+                        style="@EstiloDoAnel(indice, fracao)" />
+            }
+        }
+    </g>;
+
+    internal override IReadOnlyList<Alvo> Alvos
+        => [.. Enumerable.Range(0, Fatias.Count)
+            .Where(i => FracaoDe(Fatias[i]) > 0)
+            .Select(i =>
+            {
+                var (x, y) = Ponto(C, C, RaioDoAnel(i), FracaoDe(Fatias[i]) * 180);
+                return AlvoEm(i, x, y);
+            })];
+
+    internal override RenderFragment? Centro => CenterValue is null ? null : @<span class="rvm-camadas-valor">@CenterValue</span>;
+}

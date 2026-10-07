@@ -1,0 +1,31 @@
+/* CSS isolado do RvmSpinner. So custom properties — hex literal aqui quebra o tema escuro.
+   O anel e o do RvmProgress (cor, tamanhos e movimento reduzido moram la). */
+
+.rvm-spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    vertical-align: middle;
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-centralizado {
+    display: flex;
+    justify-content: center;
+    padding: var(--rvm-space-8) 0;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

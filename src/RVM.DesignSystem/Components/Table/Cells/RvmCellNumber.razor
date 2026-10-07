@@ -1,0 +1,58 @@
+@namespace RVM.DesignSystem.Components.Table
+
+@* Celula de numero (contrato com o RVM.UI, DSGN-017): o valor e, ao lado, para onde ele andou. Com TrendLabel sai a
+   etiqueta suave com a seta e a variacao ("+10%"); so com Trend, a seta solta. Subiu e sucesso, caiu e erro.
+   A direcao chega ao leitor de tela por TEXTO ("Subiu"/"Caiu"), e a seta fica escondida: sem isso "+10%" e "-10%"
+   soam iguais, e cor nao conta para quem nao enxerga. *@
+<td @attributes="AdditionalAttributes" class="@CelulaCss.Td(Align, "rvm-celula-numero", Class, AdditionalAttributes)">
+    <div class="rvm-celula-conteudo">
+        <span class="@(Highlight ? "rvm-numero rvm-destaque" : "rvm-numero")">@Text</span>
+        @if (Trend is not RvmTrend.None)
+        {
+            @if (string.IsNullOrWhiteSpace(TrendLabel))
+            {
+                <span class="@($"rvm-variacao {CorDaVariacao}")">
+                    <span class="rvm-so-leitor">@Direcao</span>
+                    <RvmIcon Name="@Seta" Size="RvmSize.Small" />
+                </span>
+            }
+            else
+            {
+                <RvmLabel Color="@(Trend is RvmTrend.Up ? RvmColor.Success : RvmColor.Error)" Size="RvmSize.Small">
+                    <span class="rvm-so-leitor">@Direcao</span>
+                    <RvmIcon Name="@Seta" Size="RvmSize.Small" />
+                    @TrendLabel
+                </RvmLabel>
+            }
+        }
+    </div>
+</td>
+
+@code {
+    /// <summary>O numero ja formatado. Moeda em BRL vem do app, com <c>CultureInfo</c> explicito.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Subiu, caiu ou nada. A cor vem daqui: subiu e sucesso, caiu e erro. Padrao: <see cref="RvmTrend.None"/>.</summary>
+    [Parameter] public RvmTrend Trend { get; set; } = RvmTrend.None;
+
+    /// <summary>O quanto variou ("+10%"). Com texto sai a etiqueta; sem texto, so a seta.</summary>
+    [Parameter] public string? TrendLabel { get; set; }
+
+    /// <summary>Destaque: o numero mais pesado.</summary>
+    [Parameter] public bool Highlight { get; set; }
+
+    /// <summary>Alinhamento. Valores costumam ir no fim (<see cref="RvmAlign.End"/>). Padrao: <see cref="RvmAlign.Start"/>.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>Classe CSS extra no <c>&lt;td&gt;</c>.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras no <c>&lt;td&gt;</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string Direcao => Trend is RvmTrend.Up ? "Subiu" : "Caiu";
+
+    private RvmIconName Seta => Trend is RvmTrend.Up ? RvmIconName.ArrowUp : RvmIconName.ArrowDown;
+
+    private string CorDaVariacao => Trend is RvmTrend.Up ? "rvm-subiu" : "rvm-caiu";
+}

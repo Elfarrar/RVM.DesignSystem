@@ -1,0 +1,106 @@
+@namespace RVM.DesignSystem.Components.FileCard
+
+@* Cartao de arquivo ou pasta de um gerenciador de arquivos (contrato com o RVM.UI, DSGN-017). Em linha (lista) ou em
+   coluna (grade), com a caixa de selecao e o menu de tres pontos. O icone e decorativo: o nome esta escrito.
+   Pasta usa a pasta do RvmFileIcon; arquivo, o tipo pela extensao do nome; imagem, a galeria. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    @if (Layout == RvmFileCardLayout.Horizontal)
+    {
+        @if (Selectable)
+        {
+            @Selecao
+        }
+        @Marca(40)
+        @Textos
+        @if (MenuItems is not null)
+        {
+            @Menu
+        }
+    }
+    else
+    {
+        @if (Selectable || MenuItems is not null)
+        {
+            <div class="rvm-topo">
+                @if (Selectable)
+                {
+                    @Selecao
+                }
+                @if (MenuItems is not null)
+                {
+                    @Menu
+                }
+            </div>
+        }
+        @Marca(64)
+        @Textos
+    }
+</div>
+
+@code {
+    /// <summary>O que o cartao representa: decide o icone. Padrao: <see cref="RvmFileCardCategory.File"/>.</summary>
+    [Parameter] public RvmFileCardCategory Category { get; set; } = RvmFileCardCategory.File;
+
+    /// <summary>Linha ou coluna. Padrao: <see cref="RvmFileCardLayout.Horizontal"/>.</summary>
+    [Parameter] public RvmFileCardLayout Layout { get; set; } = RvmFileCardLayout.Horizontal;
+
+    /// <summary>Itens do menu de tres pontos (<c>RvmMenuItem</c>). Sem eles, sem menu.</summary>
+    [Parameter] public RenderFragment? MenuItems { get; set; }
+
+    /// <summary>Nome acessivel do menu. Sem ele: "Mais acoes de {Name}".</summary>
+    [Parameter] public string? MenuLabel { get; set; }
+
+    /// <summary>Detalhe abaixo do nome ("300 KB", "12 itens"). Sem ele, sem a linha.</summary>
+    [Parameter] public string? Meta { get; set; }
+
+    /// <summary>Nome do arquivo (com extensao, que escolhe o icone) ou da pasta.</summary>
+    [Parameter, EditorRequired] public string Name { get; set; } = "";
+
+    /// <summary>Mostra a caixa de selecao, nomeada "Selecionar {Name}".</summary>
+    [Parameter] public bool Selectable { get; set; }
+
+    /// <summary>Selecionado: a caixa marcada e a borda no primario. Aceita <c>@bind-Selected</c>.</summary>
+    [Parameter] public bool Selected { get; set; }
+
+    /// <summary>A pessoa marcou ou desmarcou a caixa.</summary>
+    [Parameter] public EventCallback<bool> SelectedChanged { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string NomeDoMenu => !string.IsNullOrWhiteSpace(MenuLabel) ? MenuLabel : $"Mais acoes de {Name}";
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar(
+            "rvm-file-card"
+            + (Layout == RvmFileCardLayout.Vertical ? " rvm-vertical" : " rvm-horizontal")
+            + (Layout == RvmFileCardLayout.Vertical && (Selectable || MenuItems is not null) ? " rvm-com-topo" : "")
+            + (Selected ? " rvm-selecionado" : ""),
+            Class, AdditionalAttributes);
+
+    private RenderFragment<int> Marca => tamanho => Category switch
+    {
+        RvmFileCardCategory.Folder => @<RvmFileIcon Name="RvmFileIconName.FolderYellow" Size="tamanho" Class="rvm-marca" />,
+        RvmFileCardCategory.Image => @<span class="rvm-marca rvm-imagem" style="@($"--rvm-lado: {tamanho}px")" aria-hidden="true">
+                                         <RvmIcon Name="RvmIconName.Gallery" SizePx="@(tamanho / 2)" />
+                                     </span>,
+        _ => @<RvmFileIcon Name="TipoDoArquivo.PeloNome(Name)" Size="tamanho" Class="rvm-marca" />
+    };
+
+    private RenderFragment Textos => @<div class="rvm-textos">
+        <p class="rvm-nome rvm-text-subtitle1" title="@Name">@Name</p>
+        @if (!string.IsNullOrWhiteSpace(Meta))
+        {
+            <p class="rvm-meta rvm-text-body2">@Meta</p>
+        }
+    </div>;
+
+    private RenderFragment Selecao => @<RvmCheckbox Value="Selected" ValueChanged="SelectedChanged" Class="rvm-marcar"
+                                                   aria-label="@($"Selecionar {Name}")" />;
+
+    private RenderFragment Menu => @<RvmMenu Label="@NomeDoMenu" Trigger="RvmMenuTrigger.Icon" AlignEnd="true" Class="rvm-menu">@MenuItems</RvmMenu>;
+}

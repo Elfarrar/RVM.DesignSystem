@@ -1,0 +1,58 @@
+@namespace RVM.DesignSystem.Components.Table
+@typeparam TItem
+
+@* Uma coluna do RvmDataTable (contrato com o RVM.UI, DSGN-017). O MESMO fragmento e renderizado no cabecalho e em
+   cada linha; quem decide o que sai e o RvmColumnContext cascateado pela tabela. Sem registro de coluna e sem
+   segunda passada de render — por isso funciona igual em SSR estatico. *@
+@if (Contexto is null)
+{
+    @* Fora de um RvmDataTable a coluna nao tem o que desenhar; falhar em silencio daria uma tabela sem colunas e
+       nenhuma pista do motivo. *@
+    throw new InvalidOperationException($"<RvmColumn> so funciona dentro de <RvmDataTable>. Coluna: \"{Title}\".");
+}
+else if (Contexto.Header)
+{
+    <RvmHeaderCell Align="Align" Sortable="Sortable" Direction="DirecaoDaColuna" DirectionChanged="OrdenarAsync">@Title</RvmHeaderCell>
+}
+else if (ChildContent is { } celula)
+{
+    @celula(Contexto.Item!)
+}
+else
+{
+    <td class="@ClassesDaCelula">@Text?.Invoke(Contexto.Item!)</td>
+}
+
+@code {
+    /// <summary>Titulo da coluna. E tambem a chave que identifica a coluna na ordenacao (<c>SortedBy</c> e <c>OnSort</c>).</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// A celula inteira da linha, com o item no <c>context</c>: um <c>RvmCell*</c> ou um <c>&lt;td&gt;</c>. Sem isto,
+    /// sai uma celula de texto com o que <see cref="Text"/> devolver.
+    /// </summary>
+    [Parameter] public RenderFragment<TItem>? ChildContent { get; set; }
+
+    /// <summary>Atalho para a coluna que so mostra texto: <c>Text="t =&gt; t.Nome"</c>.</summary>
+    [Parameter] public Func<TItem, string>? Text { get; set; }
+
+    /// <summary>Destaque do kit no atalho <see cref="Text"/>: a coluna que identifica a linha sai em negrito.</summary>
+    [Parameter] public bool Highlight { get; set; }
+
+    /// <summary>Alinhamento da coluna, no cabecalho e na celula de texto.</summary>
+    [Parameter] public RvmAlign Align { get; set; } = RvmAlign.Start;
+
+    /// <summary>O titulo vira botao que pede a ordenacao. Quem reordena e o app, no <c>OnSort</c> da tabela.</summary>
+    [Parameter] public bool Sortable { get; set; }
+
+    [CascadingParameter] private RvmColumnContext<TItem>? Contexto { get; set; }
+
+    private RvmSortDirection DirecaoDaColuna
+        => Contexto?.SortedBy == Title ? Contexto.Direction : RvmSortDirection.None;
+
+    private string ClassesDaCelula
+        => Highlight ? $"rvm-celula-texto rvm-destaque {RvmHeaderCell.ClasseDoAlinhamento(Align)}" : $"rvm-celula-texto {RvmHeaderCell.ClasseDoAlinhamento(Align)}";
+
+    private Task OrdenarAsync(RvmSortDirection direcao)
+        => Contexto?.OnSort is { } avisar ? avisar(Title, direcao) : Task.CompletedTask;
+}

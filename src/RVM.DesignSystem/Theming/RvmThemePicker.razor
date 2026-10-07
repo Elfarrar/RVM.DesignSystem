@@ -1,0 +1,56 @@
+@namespace RVM.DesignSystem.Theming
+@using RVM.DesignSystem.Components
+@using RVM.DesignSystem.Components.Radio
+@using RVM.DesignSystem.Components.Switch
+
+@* Preferencias de aparencia do usuario (contrato com o RVM.UI, DSGN-017): modo, paleta e, com ShowAccessibility,
+   tamanho da fonte, contraste alto e menos movimento. Tudo radio e switch nativos do proprio DS (RvmRadioGroup,
+   RvmSwitch): teclado, foco e leitor de tela vem do navegador. A troca vale na hora no RvmThemeProvider com
+   UserTheme e fica guardada pelo RvmThemeState. *@
+<div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-seletor-tema", Class, AdditionalAttributes)">
+    <RvmRadioGroup TValue="RvmThemeMode" Label="Aparencia" Name="@($"{_prefixo}-modo")" Orientation="RvmOrientation.Horizontal"
+                   Value="_atual.Mode" ValueChanged="(RvmThemeMode m) => TrocarAsync(_atual with { Mode = m })">
+        <RvmRadio TValue="RvmThemeMode" Value="RvmThemeMode.Light" Label="Claro" />
+        <RvmRadio TValue="RvmThemeMode" Value="RvmThemeMode.Dark" Label="Escuro" />
+        <RvmRadio TValue="RvmThemeMode" Value="RvmThemeMode.System" Label="Automatico (segue o sistema)" />
+    </RvmRadioGroup>
+
+    @* Cada cartao leva o data-theme e o data-rvm-accent da propria paleta: as amostras e o nome saem nas cores e
+       na fonte dela, com os mesmos tokens que o provider usaria. O circulo do radio fica na paleta em vigor. *@
+    <RvmRadioGroup TValue="string" Label="Paleta" Name="@($"{_prefixo}-paleta")" Orientation="RvmOrientation.Horizontal" Class="rvm-grupo-paletas"
+                   Value="_atual.PaletteAttribute" ValueChanged="(string? p) => TrocarAsync(_atual with { Palette = p ?? RvmThemeSettings.Default.Palette })">
+        @foreach (var paleta in Palettes)
+        {
+            <RvmRadio @key="paleta.Id" TValue="string" Value="paleta.Id" Class="rvm-paleta">
+                <span class="rvm-cartao" data-theme="@ModoDasAmostras" data-rvm-accent="@paleta.Id">
+                    <span class="rvm-amostras" aria-hidden="true">
+                        <span class="rvm-amostra rvm-amostra-cheia"></span>
+                        <span class="rvm-amostra rvm-amostra-suave"></span>
+                        <span class="rvm-amostra-texto">Aa</span>
+                    </span>
+                    <span class="rvm-nome">@paleta.Name</span>
+                    <span class="rvm-descricao">@paleta.Description</span>
+                </span>
+            </RvmRadio>
+        }
+    </RvmRadioGroup>
+
+    @if (ShowAccessibility)
+    {
+        <RvmRadioGroup TValue="RvmFontScale" Label="Tamanho da fonte" Name="@($"{_prefixo}-fonte")" Orientation="RvmOrientation.Horizontal"
+                       Value="_atual.FontScale" ValueChanged="(RvmFontScale e) => TrocarAsync(_atual with { FontScale = e })">
+            <RvmRadio TValue="RvmFontScale" Value="RvmFontScale.Small" Label="Pequena (87,5%)" />
+            <RvmRadio TValue="RvmFontScale" Value="RvmFontScale.Default" Label="Padrao (100%)" />
+            <RvmRadio TValue="RvmFontScale" Value="RvmFontScale.Large" Label="Grande (112,5%)" />
+            <RvmRadio TValue="RvmFontScale" Value="RvmFontScale.ExtraLarge" Label="Extra grande (125%)" />
+        </RvmRadioGroup>
+
+        <fieldset class="rvm-acessibilidade">
+            <legend class="rvm-legenda">Acessibilidade</legend>
+            <RvmSwitch Value="_atual.HighContrast" ValueChanged="(bool v) => TrocarAsync(_atual with { HighContrast = v })"
+                       Label="Alto contraste" HelperText="Texto de apoio e linhas mais fortes, para sol direto ou baixa visao." />
+            <RvmSwitch Value="_atual.ReducedMotion" ValueChanged="(bool v) => TrocarAsync(_atual with { ReducedMotion = v })"
+                       Label="Reduzir movimento" HelperText="Desliga animacoes e transicoes." />
+        </fieldset>
+    }
+</div>

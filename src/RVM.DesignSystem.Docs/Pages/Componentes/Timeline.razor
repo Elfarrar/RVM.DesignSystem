@@ -62,7 +62,9 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmTimeline" />
+
+<TabelaParametros Componente="RvmTimelineItem" />
 
 <RecorteDoKit Origem="kit/timeline.png"
               Arquivo="referencia-neatlab/Timeline.png (recorte)"
@@ -78,17 +80,6 @@
         ("12/10", "Plantio concluido", RvmColor.Primary),
         ("03/11", "Primeira aplicacao", RvmColor.Success),
         ("20/02", "Colheita prevista", RvmColor.Warning)
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("RvmTimeline.Position", "RvmTimelinePosition", "Right", "Right, Left ou Alternate."),
-        new("RvmTimeline.AriaLabel", "string?", "—", "Nome da lista, quando nao ha titulo visivel."),
-        new("Color", "RvmColor?", "—", "Papel de cor do ponto. Sem valor, neutro."),
-        new("Outlined", "bool", "false", "Ponto so com o contorno."),
-        new("ChildContent", "RenderFragment?", "—", "O acontecimento."),
-        new("OppositeContent", "RenderFragment?", "—", "O outro lado da linha (data, hora)."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado ao li.")
     ];
 
     private const string CodigoCores = """

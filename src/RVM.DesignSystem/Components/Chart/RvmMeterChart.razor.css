@@ -1,0 +1,21 @@
+/* A leitura do medidor: numero no texto primario e o detalhe no secundario, sobre o papel (AA nos dois temas). */
+
+.rvm-medidor-centro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--rvm-space-1);
+}
+
+.rvm-medidor-valor {
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-h5-size);
+    line-height: var(--rvm-text-h5-line);
+    font-weight: var(--rvm-font-weight-regular);
+}
+
+.rvm-medidor-detalhe {
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+}

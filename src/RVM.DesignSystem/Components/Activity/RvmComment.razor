@@ -1,0 +1,72 @@
+@namespace RVM.DesignSystem.Components.Activity
+@using RVM.DesignSystem.Components.Avatar
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Icons
+
+@* Um comentario de um fio: avatar, autor, quando, o texto e o botao de responder. As respostas sao o
+   ChildContent — outros RvmComment, recuados sob o texto, sem teto de profundidade. <article> porque cada
+   comentario e uma unidade independente (o exemplo do proprio HTML). O avatar e desenho: o nome ja esta escrito
+   ao lado. *@
+<article @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <span class="rvm-comentario-avatar" aria-hidden="true">
+        <RvmAvatar Src="@AvatarSrc" Initials="@RvmActivity.Iniciais(AuthorName)" />
+    </span>
+    <div class="rvm-comentario-conteudo">
+        <p class="rvm-comentario-cabecalho">
+            <span class="rvm-comentario-autor">@AuthorName</span>
+            @if (!string.IsNullOrWhiteSpace(Timestamp))
+            {
+                <span class="rvm-comentario-carimbo">@Timestamp</span>
+            }
+        </p>
+        <p class="rvm-comentario-texto">@Text</p>
+        @if (ShowReply)
+        {
+            <RvmButton Variant="RvmButtonVariant.Text" Size="RvmSize.Small" StartIcon="RvmIconName.Reply"
+                       Class="rvm-comentario-responder" aria-label="@RotuloDeResposta"
+                       OnClick="() => OnReply.InvokeAsync()">@ReplyLabel</RvmButton>
+        }
+        @if (ChildContent is not null)
+        {
+            <div class="rvm-comentario-respostas">@ChildContent</div>
+        }
+    </div>
+</article>
+
+@code {
+    /// <summary>Nome de quem comentou.</summary>
+    [Parameter, EditorRequired] public string AuthorName { get; set; } = "";
+
+    /// <summary>Foto de quem comentou. Sem ela, as iniciais do nome.</summary>
+    [Parameter] public string? AvatarSrc { get; set; }
+
+    /// <summary>Data e hora, ja formatadas por quem chama.</summary>
+    [Parameter, EditorRequired] public string Timestamp { get; set; } = "";
+
+    /// <summary>O comentario.</summary>
+    [Parameter, EditorRequired] public string Text { get; set; } = "";
+
+    /// <summary>Mostra o botao de responder. Padrao: ligado; desligue onde nao cabe resposta (fio arquivado).</summary>
+    [Parameter] public bool ShowReply { get; set; } = true;
+
+    /// <summary>Texto do botao de responder. Padrao: "Responder".</summary>
+    [Parameter] public string ReplyLabel { get; set; } = "Responder";
+
+    /// <summary>Pediram para responder. Quem abre o campo de resposta e o app.</summary>
+    [Parameter] public EventCallback OnReply { get; set; }
+
+    /// <summary>As respostas: outros <see cref="RvmComment"/>, recuados sob este.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // Varios "Responder" na mesma pagina so se distinguem pelo autor. Comeca pelo texto visivel (WCAG 2.5.3).
+    private string RotuloDeResposta => string.IsNullOrWhiteSpace(AuthorName) ? ReplyLabel : $"{ReplyLabel} a {AuthorName}";
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-comentario", Class, AdditionalAttributes);
+}

@@ -9,6 +9,10 @@
    O visual e o do RvmTextField (mesmas medidas do kit: 56 e 40 px). Fechado, a lista nao existe no
    DOM: o estado inicial sai pronto sem JS. *@
 <div class="@ClassesDaRaiz" style="@EstiloDoConsumidor">
+    @if (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref))
+    {
+        <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
+    }
     <div class="rvm-caixa">
         <div @ref="_gatilho"
              @attributes="AtributosDoGatilho"
@@ -24,6 +28,7 @@
              aria-required="@(Required ? "true" : null)"
              aria-invalid="@(TemErro ? "true" : null)"
              aria-disabled="@(Disabled ? "true" : null)"
+             aria-readonly="@(SoLeitura ? "true" : null)"
              aria-describedby="@(MensagemDeApoio is null ? null : IdApoio)"
              @onclick="AoClicarNoGatilhoAsync"
              @onkeydown="AoTeclarNoGatilhoAsync">
@@ -110,6 +115,10 @@
                                     <RvmIcon Name="RvmIconName.Check" Size="RvmSize.Small" />
                                 }
                             </span>
+                        }
+                        @if (ItemImage?.Invoke(item) is { Length: > 0 } imagem)
+                        {
+                            <img class="rvm-imagem-opcao" src="@imagem" alt="" />
                         }
                         <span class="rvm-texto-opcao">@TextoDe(item)</span>
                     </li>

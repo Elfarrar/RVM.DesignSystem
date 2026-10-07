@@ -1,0 +1,76 @@
+/* CSS isolado do RvmIconButton. So custom properties — hex literal aqui quebra o tema escuro.
+   Quadrado nas tres alturas do RvmButton (30/38/42 px, medidas no Button.png do kit) e redondo, como os botoes
+   de icone das barras do kit. O icone usa a variante -text do papel fora do preenchido (4.5:1 nos dois temas). */
+
+.rvm-botao-icone {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-circle);
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color var(--rvm-transition-fast), border-color var(--rvm-transition-fast);
+}
+
+.rvm-pequeno { width: 30px; height: 30px; }
+.rvm-medio { width: 38px; height: 38px; }
+.rvm-grande { width: 42px; height: 42px; }
+
+.rvm-botao-icone:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-botao-icone:disabled {
+    color: var(--rvm-color-text-disabled);
+    background-color: transparent;
+    border-color: transparent;
+    cursor: not-allowed;
+}
+
+.rvm-preenchido.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-preenchido.rvm-primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-hover); }
+.rvm-preenchido.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-preenchido.rvm-secondary:hover:not(:disabled) { background-color: var(--rvm-color-secondary-hover); }
+.rvm-preenchido.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
+.rvm-preenchido.rvm-inverse:hover:not(:disabled) { background-color: var(--rvm-color-inverse-hover); }
+.rvm-preenchido.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-preenchido.rvm-info:hover:not(:disabled) { background-color: var(--rvm-color-info-hover); }
+.rvm-preenchido.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-preenchido.rvm-success:hover:not(:disabled) { background-color: var(--rvm-color-success-hover); }
+.rvm-preenchido.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-preenchido.rvm-warning:hover:not(:disabled) { background-color: var(--rvm-color-warning-hover); }
+.rvm-preenchido.rvm-error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }
+.rvm-preenchido.rvm-error:hover:not(:disabled) { background-color: var(--rvm-color-error-hover); }
+.rvm-contorno.rvm-primary, .rvm-texto.rvm-primary, .rvm-suave.rvm-primary { color: var(--rvm-color-primary-text); }
+.rvm-contorno.rvm-primary { border-color: var(--rvm-color-primary-outlined-resting); }
+.rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); }
+.rvm-contorno.rvm-primary:hover:not(:disabled), .rvm-texto.rvm-primary:hover:not(:disabled), .rvm-suave.rvm-primary:hover:not(:disabled) { background-color: var(--rvm-color-primary-outlined-hover); }
+.rvm-contorno.rvm-secondary, .rvm-texto.rvm-secondary, .rvm-suave.rvm-secondary { color: var(--rvm-color-secondary-text); }
+.rvm-contorno.rvm-secondary { border-color: var(--rvm-color-secondary-outlined-resting); }
+.rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); }
+.rvm-contorno.rvm-secondary:hover:not(:disabled), .rvm-texto.rvm-secondary:hover:not(:disabled), .rvm-suave.rvm-secondary:hover:not(:disabled) { background-color: var(--rvm-color-secondary-outlined-hover); }
+.rvm-contorno.rvm-inverse, .rvm-texto.rvm-inverse, .rvm-suave.rvm-inverse { color: var(--rvm-color-inverse-text); }
+.rvm-contorno.rvm-inverse { border-color: var(--rvm-color-inverse-outlined-resting); }
+.rvm-suave.rvm-inverse { background-color: var(--rvm-color-inverse-soft); }
+.rvm-contorno.rvm-inverse:hover:not(:disabled), .rvm-texto.rvm-inverse:hover:not(:disabled), .rvm-suave.rvm-inverse:hover:not(:disabled) { background-color: var(--rvm-color-inverse-outlined-hover); }
+.rvm-contorno.rvm-info, .rvm-texto.rvm-info, .rvm-suave.rvm-info { color: var(--rvm-color-info-text); }
+.rvm-contorno.rvm-info { border-color: var(--rvm-color-info-outlined-resting); }
+.rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); }
+.rvm-contorno.rvm-info:hover:not(:disabled), .rvm-texto.rvm-info:hover:not(:disabled), .rvm-suave.rvm-info:hover:not(:disabled) { background-color: var(--rvm-color-info-outlined-hover); }
+.rvm-contorno.rvm-success, .rvm-texto.rvm-success, .rvm-suave.rvm-success { color: var(--rvm-color-success-text); }
+.rvm-contorno.rvm-success { border-color: var(--rvm-color-success-outlined-resting); }
+.rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); }
+.rvm-contorno.rvm-success:hover:not(:disabled), .rvm-texto.rvm-success:hover:not(:disabled), .rvm-suave.rvm-success:hover:not(:disabled) { background-color: var(--rvm-color-success-outlined-hover); }
+.rvm-contorno.rvm-warning, .rvm-texto.rvm-warning, .rvm-suave.rvm-warning { color: var(--rvm-color-warning-text); }
+.rvm-contorno.rvm-warning { border-color: var(--rvm-color-warning-outlined-resting); }
+.rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); }
+.rvm-contorno.rvm-warning:hover:not(:disabled), .rvm-texto.rvm-warning:hover:not(:disabled), .rvm-suave.rvm-warning:hover:not(:disabled) { background-color: var(--rvm-color-warning-outlined-hover); }
+.rvm-contorno.rvm-error, .rvm-texto.rvm-error, .rvm-suave.rvm-error { color: var(--rvm-color-error-text); }
+.rvm-contorno.rvm-error { border-color: var(--rvm-color-error-outlined-resting); }
+.rvm-suave.rvm-error { background-color: var(--rvm-color-error-soft); }
+.rvm-contorno.rvm-error:hover:not(:disabled), .rvm-texto.rvm-error:hover:not(:disabled), .rvm-suave.rvm-error:hover:not(:disabled) { background-color: var(--rvm-color-error-outlined-hover); }

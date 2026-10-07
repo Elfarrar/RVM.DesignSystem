@@ -116,3 +116,60 @@
 .rvm-desabilitado .rvm-interativo:hover {
     background-color: transparent;
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+/* Uma coluna: o titulo vira rotulo (apoio) e a segunda linha e o dado (tinta principal). */
+.rvm-uma-coluna .rvm-primario {
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-uma-coluna .rvm-secundario {
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+}
+
+.rvm-valor-do-item {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 var(--rvm-space-4);
+    text-align: end;
+}
+
+.rvm-valor-linha {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-valor {
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body1-size);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-variacao {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+}
+
+.rvm-subiu { color: var(--rvm-color-success-text); }
+.rvm-caiu { color: var(--rvm-color-error-text); }
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}

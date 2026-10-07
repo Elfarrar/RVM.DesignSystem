@@ -18,8 +18,9 @@ env:
   # A cada estavel publicado, este prefixo sobe uma minor: alpha com o MESMO numero do estavel ordena ANTES
   # dele, e quem pede a mais nova pegaria o estavel. 1.0.0 -> 1.1.0 (DSGN-007); 1.1.0 -> 1.2.0 (DSGN-010);
   # 1.2.0 -> 1.3.0 (DSGN-011); 1.3.0 -> 1.4.0 (DSGN-013); 1.4.0 -> 1.5.0 (DSGN-014);
-  # 1.5.0 -> 1.6.0 (DSGN-015); 1.6.0 -> 1.7.0 (DSGN-016).
-  VERSION_PREFIX: '1.7.0'
+  # 1.5.0 -> 1.6.0 (DSGN-015); 1.6.0 -> 1.7.0 (DSGN-016); 1.7.0 -> 2.0.0 (DSGN-017, contrato com o RVM.UI: major);
+  # 2.0.0 -> 2.1.0 (DSGN-017 publicada).
+  VERSION_PREFIX: '2.1.0'
 
 jobs:
   publicar:

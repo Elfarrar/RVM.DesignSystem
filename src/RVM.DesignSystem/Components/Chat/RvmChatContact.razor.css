@@ -1,0 +1,101 @@
+/* CSS isolado do RvmChatContact. So custom properties. A linha da lista de chats do kit: transparente, com o hover da
+   acao; selecionada, o primario cheio com o texto de contraste. */
+
+.rvm-chat-contato {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    width: 100%;
+    margin: 0;
+    padding: var(--rvm-space-3);
+    border: none;
+    border-radius: var(--rvm-radius-md);
+    background: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.rvm-chat-contato:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-chat-contato:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-selecionado,
+.rvm-selecionado:hover {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+    box-shadow: var(--rvm-shadow-2);
+}
+
+.rvm-retrato {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+}
+
+/* A borda na cor do fundo separa a bolinha do retrato; na linha selecionada, o fundo e o primario. */
+.rvm-online {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+    box-sizing: border-box;
+    border: 2px solid var(--rvm-color-background-paper);
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-color-success-main);
+}
+
+.rvm-selecionado .rvm-online {
+    border-color: var(--rvm-color-primary-main);
+}
+
+.rvm-texto {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.rvm-nome,
+.rvm-previa {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-previa,
+.rvm-horario {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-selecionado .rvm-previa,
+.rvm-selecionado .rvm-horario {
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-horario {
+    flex: none;
+    align-self: flex-start;
+}
+
+.rvm-chat-contato ::deep .rvm-nao-lidas {
+    flex: none;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}

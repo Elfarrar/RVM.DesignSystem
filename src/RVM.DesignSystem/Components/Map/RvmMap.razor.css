@@ -1,0 +1,148 @@
+/* CSS isolado do RvmMap. So custom properties — hex literal aqui quebra o tema escuro.
+   A superficie e a do RvmCard (papel, sombra 1, raio pequeno, respiro de 20 px); o desenho e uma grade
+   pontilhada sobre o tom de hover, e o rotulo do marcador usa as cores do tooltip do tema. */
+
+.rvm-mapa {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-4);
+    box-sizing: border-box;
+    padding: var(--rvm-space-5);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    border-radius: var(--rvm-radius-sm);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-textos {
+    flex: 1;
+    min-width: 0;
+}
+
+.rvm-textos ::deep p {
+    margin: 0;
+}
+
+.rvm-acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+}
+
+.rvm-desenho {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-grade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.rvm-grade line {
+    stroke: var(--rvm-color-divider);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+}
+
+.rvm-marcadores {
+    position: absolute;
+    inset: 0;
+}
+
+.rvm-marcador {
+    --rvm-mapa-cor: var(--rvm-color-primary-main);
+    position: absolute;
+    width: var(--rvm-space-6);
+    height: var(--rvm-space-6);
+    transform: translate(-50%, -50%);
+    border-radius: var(--rvm-radius-circle);
+    outline: none;
+}
+
+.rvm-marcador.rvm-primary { --rvm-mapa-cor: var(--rvm-color-primary-main); }
+.rvm-marcador.rvm-secondary { --rvm-mapa-cor: var(--rvm-color-secondary-main); }
+.rvm-marcador.rvm-inverse { --rvm-mapa-cor: var(--rvm-color-inverse-main); }
+.rvm-marcador.rvm-info { --rvm-mapa-cor: var(--rvm-color-info-main); }
+.rvm-marcador.rvm-success { --rvm-mapa-cor: var(--rvm-color-success-main); }
+.rvm-marcador.rvm-warning { --rvm-mapa-cor: var(--rvm-color-warning-main); }
+.rvm-marcador.rvm-error { --rvm-mapa-cor: var(--rvm-color-error-main); }
+
+/* O ponto: anel do papel em volta, para destacar do fundo nos dois temas. */
+.rvm-ponto {
+    position: absolute;
+    inset: var(--rvm-space-1);
+    border-radius: var(--rvm-radius-circle);
+    background-color: var(--rvm-mapa-cor);
+    box-shadow: 0 0 0 2px var(--rvm-color-background-paper), var(--rvm-shadow-1);
+}
+
+.rvm-marcador:focus-visible {
+    box-shadow: 0 0 0 var(--rvm-focus-ring-width) var(--rvm-focus-ring-color);
+}
+
+.rvm-rotulo {
+    position: absolute;
+    bottom: calc(100% + var(--rvm-space-1));
+    left: 50%;
+    z-index: 1;
+    display: none;
+    flex-direction: column;
+    padding: var(--rvm-space-1) var(--rvm-space-2);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-tooltip-background);
+    color: var(--rvm-color-tooltip-text);
+    font-size: var(--rvm-text-tooltip-size);
+    line-height: var(--rvm-text-tooltip-line);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.rvm-rotulo-a-esquerda .rvm-rotulo {
+    left: auto;
+    right: 50%;
+}
+
+.rvm-marcador:hover .rvm-rotulo,
+.rvm-marcador:focus-visible .rvm-rotulo {
+    display: flex;
+}
+
+.rvm-marcador:hover,
+.rvm-marcador:focus-visible {
+    z-index: 2;
+}
+
+.rvm-nome {
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-aviso {
+    margin: 0;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

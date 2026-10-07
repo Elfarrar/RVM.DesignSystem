@@ -1,0 +1,96 @@
+/* CSS isolado do RvmDetailProfileLayout. So custom properties — hex literal aqui quebra o tema escuro.
+   O perfil e um cartao (papel e sombra do RvmCard) de 320 px; o miolo ocupa o resto. */
+
+.rvm-ficha-detalhe {
+    container-type: inline-size;
+}
+
+.rvm-ficha-grade {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--rvm-space-6);
+    align-items: start;
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-miolo-detalhe {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+}
+
+.rvm-perfil-detalhe {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-6) var(--rvm-space-5);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-1);
+    text-align: center;
+}
+
+.rvm-nome {
+    margin: 0;
+    font-size: var(--rvm-text-h6-size);
+    line-height: var(--rvm-text-h6-line);
+    font-weight: var(--rvm-text-h6-weight);
+}
+
+.rvm-cabecalho-perfil,
+.rvm-acoes-perfil {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-dados {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--rvm-space-2) var(--rvm-space-3);
+    width: 100%;
+    margin: var(--rvm-space-2) 0 0;
+    padding-top: var(--rvm-space-4);
+    border-top: 1px solid var(--rvm-color-divider);
+    font-size: var(--rvm-text-body2-size);
+    text-align: start;
+}
+
+.rvm-dados ::deep dt { color: var(--rvm-color-text-secondary); }
+.rvm-dados ::deep dd { margin: 0; overflow-wrap: anywhere; }
+
+.rvm-atividade {
+    width: 100%;
+    padding-top: var(--rvm-space-4);
+    border-top: 1px solid var(--rvm-color-divider);
+    text-align: start;
+}
+
+.rvm-titulo-atividade {
+    margin: 0 0 var(--rvm-space-2);
+    font-size: var(--rvm-text-subtitle1-size);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-lista-atividade {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--rvm-text-body2-size);
+}
+
+/* Estreito: uma coluna so, com o perfil antes do miolo. */
+@container (max-width: 760px) {
+    .rvm-ficha-grade { grid-template-columns: minmax(0, 1fr); }
+    .rvm-perfil-detalhe { grid-column: 1; grid-row: 1; }
+    .rvm-miolo-detalhe { grid-row: 2; }
+}

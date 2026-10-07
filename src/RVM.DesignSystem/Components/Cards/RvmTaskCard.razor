@@ -1,0 +1,70 @@
+@namespace RVM.DesignSystem.Components.Cards
+@using RVM.DesignSystem.Components.Avatar
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.IconBadge
+@using RVM.DesignSystem.Components.Label
+@using RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Progress
+@using RVM.DesignSystem.Icons
+
+@* Task Card do kit, e tambem o desenho do RvmProjectCard (que herda daqui e so liga a capa): selo de status, menu,
+   titulo, descricao, progresso com texto livre ("Atrasada", "75%") e o rodape com a equipe e o prazo. *@
+<div @attributes="AdditionalAttributes" class="@CssClass">
+    <div class="rvm-topo">
+        @if (TemCapa)
+        {
+            @if (!string.IsNullOrWhiteSpace(Capa))
+            {
+                <img class="rvm-capa" src="@Capa" alt="" width="48" height="48" />
+            }
+            else
+            {
+                <RvmIconBadge Icon="RvmIconName.Folder2" Variant="RvmIconBadgeVariant.Neutral" Color="RvmColor.Secondary" />
+            }
+        }
+        <div class="rvm-selo-e-menu">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <RvmLabel Color="LabelColor" Size="RvmSize.Small">@Label</RvmLabel>
+            }
+            @if (MenuItems is not null)
+            {
+                <RvmMenu Label="@MenuLabel" Trigger="RvmMenuTrigger.Icon" ButtonColor="RvmColor.Secondary" AlignEnd="true"
+                         Class="rvm-acao">@MenuItems</RvmMenu>
+            }
+        </div>
+    </div>
+
+    <div class="rvm-textos">
+        <h3 class="rvm-titulo rvm-text-subtitle1">@Title</h3>
+        @if (!string.IsNullOrWhiteSpace(Description))
+        {
+            <p class="rvm-descricao rvm-text-body2">@Description</p>
+        }
+    </div>
+
+    <div class="rvm-progresso">
+        <p class="rvm-linha rvm-text-body2">
+            <span class="rvm-rotulo">Progresso</span>
+            <span class="@ClasseDoTextoDoProgresso">@ProgressText</span>
+        </p>
+        <RvmProgressBar Value="ProgressPercent" Color="ProgressColor" AriaLabel="@($"Progresso de {Title}")" Size="RvmSize.Small" />
+    </div>
+
+    @if (Members.Count > 0 || !string.IsNullOrWhiteSpace(DueDate))
+    {
+        <div class="rvm-rodape">
+            @if (Members.Count > 0)
+            {
+                <RvmAvatarGroup Items="Members" Max="MembersMax" Label="@NomeDaEquipe" />
+            }
+            @if (!string.IsNullOrWhiteSpace(DueDate))
+            {
+                <span class="rvm-prazo rvm-text-body2">
+                    <RvmIcon Name="RvmIconName.Calendar" Size="RvmSize.Small" />
+                    <span class="rvm-so-leitor">Prazo: </span>@DueDate
+                </span>
+            }
+        </div>
+    }
+</div>

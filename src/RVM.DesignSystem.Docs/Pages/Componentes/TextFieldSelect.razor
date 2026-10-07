@@ -1,0 +1,51 @@
+@page "/componentes/text-field-select"
+
+<PageTitle>RvmTextFieldSelect — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTextFieldSelect</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Texto livre com a unidade escolhida numa lista no fim do campo: valor e moeda, quantidade e medida. O texto e o
+    Value (@@bind-Value); a unidade e o Option (@@bind-Option), escolhida numa lista nativa com nome acessivel
+    (OptionLabel, padrao "Unidade").
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Num formulario, o texto vai com o
+    Name e a unidade com o OptionName.
+</p>
+
+<BlocoExemplo Titulo="Preco e peso"
+              Descricao="OptionText da o texto de cada unidade; sem ele, vale o ToString()."
+              Codigo="@Codigo">
+    <div class="grade-campos">
+        <RvmTextFieldSelect TOption="string" @bind-Value="_preco" @bind-Option="_moeda" Options="Moedas"
+                            Label="Preco" OptionLabel="Moeda" OptionName="moeda" Name="preco" />
+        <RvmTextFieldSelect TOption="int" @bind-Value="_peso" @bind-Option="_fator" Options="Fatores"
+                            OptionText="@(f => f == 1 ? "kg" : "t")" Label="Peso" Shape="RvmFieldShape.Pill" />
+        <RvmTextFieldSelect TOption="string" @bind-Value="_bloqueado" Options="Moedas" Option="Moedas[0]"
+                            Label="Preco travado" Disabled="true" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary">Valor: @_preco @_moeda · @_peso (fator @_fator)</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmTextFieldSelect" />
+
+@code {
+    private static readonly string[] Moedas = ["BRL", "USD", "EUR"];
+    private static readonly int[] Fatores = [1, 1000];
+
+    private string? _preco = "120,00";
+    private string _moeda = "BRL";
+    private string? _peso;
+    private int _fator = 1;
+    private string? _bloqueado = "99,90";
+
+    private const string Codigo = """
+        <RvmTextFieldSelect TOption="string" @bind-Value="Preco" @bind-Option="Moeda"
+                            Options="Moedas" Label="Preco" OptionLabel="Moeda" />
+
+        <RvmTextFieldSelect TOption="int" @bind-Value="Peso" @bind-Option="Fator" Options="Fatores"
+                            OptionText="@(f => f == 1 ? "kg" : "t")" Label="Peso" />
+        """;
+}

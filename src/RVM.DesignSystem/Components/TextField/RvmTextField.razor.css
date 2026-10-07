@@ -232,3 +232,21 @@
     color: var(--rvm-color-text-disabled);
     cursor: not-allowed;
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+/* Pilula: o "Full Rounded" do kit do RVM.UI, na caixa contornada. */
+.rvm-contorno.rvm-pilula .rvm-caixa { border-radius: var(--rvm-radius-pill); padding: 0 19px; }
+.rvm-contorno.rvm-pilula .rvm-caixa:focus-within { padding: 0 18px; }
+.rvm-contorno.rvm-pilula .rvm-rotulo { left: 19px; }
+
+.rvm-icone-do-campo {
+    display: inline-flex;
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-link-do-campo {
+    align-self: flex-end;
+    margin-bottom: var(--rvm-space-1);
+    color: var(--rvm-color-primary-text);
+}

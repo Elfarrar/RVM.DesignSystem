@@ -44,7 +44,13 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmAppShell" />
+
+<TabelaParametros Componente="RvmNavItem" />
+
+<TabelaParametros Componente="RvmNavGroup" />
+
+<TabelaParametros Componente="RvmNavSection" />
 
 <RecorteDoKit Origem="kit/app-shell.png"
               Arquivo="referencia-neatlab/Menu Drawer.png e Collapsed Menu.png (recortes)"
@@ -93,24 +99,6 @@
         <span>© 2026, RVM Agro</span>
         <span class="site-links-rodape"><a href="componentes">Componentes</a><a href="fundamentos">Fundamentos</a></span>
     </text>;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Brand", "RenderFragment?", "—", "Marca no alto do menu. Recolhido, aparece o inicio dela."),
-        new("Navigation", "RenderFragment?", "—", "Os itens: RvmNavItem, RvmNavGroup e RvmNavSection."),
-        new("TopBar", "RenderFragment?", "—", "Barra do topo, depois do botao do menu."),
-        new("ChildContent", "RenderFragment?", "—", "O conteudo da pagina (no <main>)."),
-        new("Footer", "RenderFragment?", "—", "Rodape."),
-        new("Collapsed", "bool", "false", "Menu nos icones (tela larga). Aceita @bind-Collapsed."),
-        new("MenuOpen", "bool", "false", "Gaveta aberta (tela estreita). Aceita @bind-MenuOpen."),
-        new("NavigationLabel", "string", "\"Menu principal\"", "Nome do <nav>."),
-        new("RvmNavItem.Href / Text / Icon", "string / string / RvmIconName?", "—", "Link, texto e icone. Sem icone, e subitem."),
-        new("RvmNavItem.Match", "RvmNavMatch", "Prefix", "Prefix ou All (pagina inicial)."),
-        new("RvmNavItem.Badge", "string?", "—", "Selo ao lado do texto."),
-        new("RvmNavGroup.Expanded", "bool", "false", "Subitens a mostra. Aceita @bind-Expanded."),
-        new("RvmNavSection.Title", "string", "—", "Titulo da secao."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Qualquer outro atributo, repassado a raiz.")
-    ];
 
     private const string CodigoMoldura = """
         <RvmAppShell @bind-Collapsed="recolhida">

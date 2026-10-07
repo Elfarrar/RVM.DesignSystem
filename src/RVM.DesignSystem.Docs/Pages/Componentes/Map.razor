@@ -1,0 +1,113 @@
+@page "/componentes/map"
+@using RVM.DesignSystem.Components.Map
+
+<PageTitle>RvmMap — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMap</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Cartao de mapa: titulo, apoio, acoes, os lugares marcados por latitude e longitude e a lista deles em texto.
+    O desenho e uma grade de latitude e longitude enquadrada nos proprios marcadores, com a mesma escala nos dois
+    eixos — as distancias entre fazendas ou entre talhoes saem proporcionais, sem biblioteca de mapa nem imagem
+    externa. Cada marcador e focavel com Tab e diz o nome e o valor; passe o mouse ou foque para ver o rotulo.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O <code>ChildContent</code> e a
+    lista de lugares ao pe do mapa; sem ele, uma lista oculta, so para leitor de tela, e gerada dos
+    <code>Markers</code>. Coordenada fora do intervalo valido nao some em silencio: vira um aviso.
+</p>
+
+<BlocoExemplo Titulo="Fazendas do grupo"
+              Descricao="Quatro fazendas no medio-norte de Mato Grosso, com a area de cada uma na lista ao pe do mapa."
+              Codigo="@CodigoFazendas">
+    <div class="exemplo-mapa">
+        <RvmMap Title="Fazendas do grupo" Subtitle="Safra 2026/27 · 4.320 ha plantados" Markers="_fazendas">
+            <Actions>
+                <RvmMenu Label="Acoes do mapa" Trigger="RvmMenuTrigger.Icon" AlignEnd="true">
+                    <RvmMenuItem Icon="RvmIconName.Download">Exportar coordenadas</RvmMenuItem>
+                </RvmMenu>
+            </Actions>
+            <ChildContent>
+                <ul class="lugares">
+                    @foreach (var f in _fazendas)
+                    {
+                        <li>
+                            <span class="rvm-text-body2">@f.Label</span>
+                            <span class="rvm-text-body2 valor">@f.Value</span>
+                        </li>
+                    }
+                </ul>
+            </ChildContent>
+        </RvmMap>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Talhoes de uma fazenda"
+              Descricao="Os mesmos componentes numa escala de centenas de metros: a cor de cada talhao diz o estagio do plantio. Sem ChildContent, a lista em texto fica oculta, para o leitor de tela."
+              Codigo="@CodigoTalhoes">
+    <div class="exemplo-mapa">
+        <RvmMap Title="Fazenda Boa Vista" Subtitle="Talhoes por estagio do plantio" Markers="_talhoes" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMap" />
+
+@code {
+    private static readonly RvmMapMarker[] _fazendas =
+    [
+        new("Fazenda Boa Vista", -12.760, -55.980, "1.240 ha"),
+        new("Fazenda Santa Rita", -13.051, -55.906, "860 ha"),
+        new("Fazenda Tres Irmaos", -12.302, -55.298, "1.580 ha"),
+        new("Armazem Sorriso", -12.583, -55.705, "40 mil t", RvmColor.Secondary)
+    ];
+
+    private static readonly RvmMapMarker[] _talhoes =
+    [
+        new("Talhao 1", -12.5410, -55.7150, "Soja plantada · 120 ha", RvmColor.Success),
+        new("Talhao 2", -12.5435, -55.7092, "Soja plantada · 95 ha", RvmColor.Success),
+        new("Talhao 3", -12.5478, -55.7161, "Plantio em andamento · 140 ha", RvmColor.Warning),
+        new("Talhao 4", -12.5502, -55.7088, "Aguardando chuva · 110 ha", RvmColor.Error),
+        new("Talhao 5", -12.5461, -55.7032, "Preparo de solo · 80 ha", RvmColor.Info)
+    ];
+
+    private const string CodigoFazendas = """
+        <RvmMap Title="Fazendas do grupo" Subtitle="Safra 2026/27" Markers="_fazendas">
+            <Actions>
+                <RvmMenu Label="Acoes do mapa" Trigger="RvmMenuTrigger.Icon" AlignEnd="true">
+                    <RvmMenuItem Icon="RvmIconName.Download">Exportar coordenadas</RvmMenuItem>
+                </RvmMenu>
+            </Actions>
+            <ChildContent>
+                <ul>
+                    @foreach (var f in _fazendas)
+                    {
+                        <li>@f.Label <span>@f.Value</span></li>
+                    }
+                </ul>
+            </ChildContent>
+        </RvmMap>
+
+        @code {
+            private static readonly RvmMapMarker[] _fazendas =
+            [
+                new("Fazenda Boa Vista", -12.760, -55.980, "1.240 ha"),
+                new("Fazenda Santa Rita", -13.051, -55.906, "860 ha"),
+                new("Armazem Sorriso", -12.583, -55.705, "40 mil t", RvmColor.Secondary)
+            ];
+        }
+        """;
+
+    private const string CodigoTalhoes = """
+        <RvmMap Title="Fazenda Boa Vista" Subtitle="Talhoes por estagio do plantio" Markers="_talhoes" />
+
+        @code {
+            private static readonly RvmMapMarker[] _talhoes =
+            [
+                new("Talhao 1", -12.5410, -55.7150, "Soja plantada · 120 ha", RvmColor.Success),
+                new("Talhao 3", -12.5478, -55.7161, "Plantio em andamento · 140 ha", RvmColor.Warning),
+                new("Talhao 4", -12.5502, -55.7088, "Aguardando chuva · 110 ha", RvmColor.Error)
+            ];
+        }
+        """;
+}

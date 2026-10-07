@@ -48,7 +48,9 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmRadioGroup" />
+
+<TabelaParametros Componente="RvmRadio" />
 
 <RecorteDoKit Origem="kit/radio.png"
               Arquivo="referencia-neatlab/Radio.png (recorte)"
@@ -62,17 +64,6 @@
     private Pagamento _pagamento = Pagamento.Pix;
     private Pagamento _tamanho = Pagamento.Boleto;
     private Entrega _entrega = Entrega.Frete;
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("RvmRadioGroup: Value / @bind-Value", "TValue", "—", "O valor escolhido. Um enum costuma ser o mais claro."),
-        new("RvmRadioGroup: Label", "string?", "—", "A pergunta do grupo; vira a legenda do fieldset."),
-        new("RvmRadioGroup: Orientation", "RvmOrientation", "Vertical", "Empilhado ou em linha."),
-        new("RvmRadioGroup: Color / Size / Disabled", "—", "Primary / Medium / false", "Descem para as opcoes."),
-        new("RvmRadioGroup: Name", "string?", "—", "name dos radios; sem ele, sai do @bind-Value."),
-        new("RvmRadio: Value", "TValue", "—", "O valor que a opcao representa. MESMO tipo do grupo."),
-        new("RvmRadio: Label", "string?", "—", "Texto da opcao; tambem e o nome acessivel.")
-    ];
 
     private const string CodigoGrupos = """
         <RvmRadioGroup @bind-Value="_pagamento" Label="Forma de pagamento">

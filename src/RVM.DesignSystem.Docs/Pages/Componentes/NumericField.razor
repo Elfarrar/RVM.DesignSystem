@@ -1,0 +1,44 @@
+@page "/componentes/numeric-field"
+@using RVM.DesignSystem.Components.TextField
+
+<PageTitle>RvmNumericField — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmNumericField</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Campo numerico com a moldura do campo de texto. Le e escreve o numero na Culture do campo (pt-BR por padrao, nunca a do
+    servidor): 1.234,56 e mil duzentos e trinta e quatro. Funciona com int, long, decimal, double e float, com ou sem ?.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Fora de Min e Max, ou com texto que nao e numero, o campo mostra o erro e o valor nao muda. As setas do teclado somam e
+    tiram o Step. Decimals arredonda e fixa as casas; Format (".NET", como "N2" ou "C") manda na exibicao.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Dinheiro, unidade e faixa"
+              Descricao="Prefixo e sufixo ficam dentro da caixa e sao lidos pelo leitor de tela."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmNumericField @bind-Value="_preco" Label="Preco" Prefix="R$" Decimals="2" />
+        <RvmNumericField @bind-Value="_peso" Label="Peso" Suffix="kg" Step="0.5m" HelperText="Setas somam 0,5" />
+        <RvmNumericField @bind-Value="_sacas" Label="Sacas" Min="1" Max="1000" HelperText="De 1 a 1.000" />
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmNumericField" />
+
+@code {
+    private decimal _preco = 1234.5m;
+    private decimal? _peso;
+    private int _sacas = 10;
+
+    private const string Codigo = """
+        <RvmNumericField @bind-Value="preco" Label="Preco" Prefix="R$" Decimals="2" />
+        <RvmNumericField @bind-Value="peso" Label="Peso" Suffix="kg" Step="0.5m" />
+        <RvmNumericField @bind-Value="sacas" Label="Sacas" Min="1" Max="1000" />
+        """;
+}

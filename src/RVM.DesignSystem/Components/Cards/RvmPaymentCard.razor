@@ -1,0 +1,29 @@
+@namespace RVM.DesignSystem.Components.Cards
+
+@* Debit Card do kit: o cartao na cor do papel, com saldo, numero mascarado e validade; com Actions, ganha uma faixa
+   de botoes embaixo. O numero mascarado e desenho (aria-hidden): "asterisco asterisco..." nao informa nada, entao o
+   leitor de tela ouve "Cartao final 9090". A bandeira e decorativa, por encaixe — nao e da paleta do DS. *@
+<div @attributes="AdditionalAttributes" class="@CssClass">
+    <div class="@ClasseDaFace">
+        <span class="rvm-enfeite" aria-hidden="true"></span>
+        <div class="rvm-topo">
+            <p class="rvm-saldo">
+                <span class="rvm-rotulo rvm-text-body2">@BalanceLabel</span>
+                <span class="rvm-valor rvm-text-h5">@Balance</span>
+            </p>
+            @if (NetworkMark is not null)
+            {
+                <span class="rvm-bandeira" aria-hidden="true">@NetworkMark</span>
+            }
+        </div>
+        <div class="rvm-base rvm-text-subtitle2">
+            <span class="rvm-numero" aria-hidden="true">@CardNumber</span>
+            <span class="rvm-so-leitor">@NumeroParaOLeitor</span>
+            <span class="rvm-validade"><span class="rvm-so-leitor">Validade </span>@ExpiresAt</span>
+        </div>
+    </div>
+    @if (Actions is not null)
+    {
+        <div class="rvm-acoes">@Actions</div>
+    }
+</div>

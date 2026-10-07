@@ -1,0 +1,25 @@
+/* CSS isolado do RvmStepIndicator. So custom properties — hex literal aqui quebra o tema escuro.
+   O marcador das etapas do RvmStepper (24 px no kit) em tamanho de formulario: 32 px. */
+
+.rvm-indicador {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 var(--rvm-space-2);
+    border: 1px solid var(--rvm-color-secondary-outlined-resting);
+    border-radius: var(--rvm-radius-pill);
+    color: var(--rvm-color-text-secondary);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-body2-size);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-ativo {
+    border-color: var(--rvm-color-primary-main);
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}

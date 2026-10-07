@@ -3,25 +3,92 @@
 @inherits RvmChartBase<TItem>
 @attribute [CascadingTypeParameter(nameof(TItem))]
 
-@* Barras horizontais: as categorias ficam a esquerda, com espaco para nomes longos (cortados com "…" se
-   passarem de 35% da largura — o nome inteiro segue na dica e na tabela de dados). *@
+@* Tres arranjos (Layout, contrato com o RVM.UI): deitadas (o padrao, o desenho de sempre deste grafico), em pe
+   (o mesmo desenho do RvmColumnChart) e divergentes (deitadas, a partir de um zero no meio).
+   Deitadas, as categorias ficam a esquerda, com espaco para nomes longos (cortados com "…" se passarem de 35%
+   da largura — o nome inteiro segue na dica e na tabela de dados). *@
 @{ base.BuildRenderTree(__builder); }
 
 @code {
-    /// <summary>Barras empilhadas em vez de lado a lado.</summary>
+    /// <summary>
+    /// Como as barras se arrumam. Padrao: <see cref="RvmBarLayout.Horizontal"/>, as barras deitadas de sempre (no
+    /// RVM.UI o padrao e o vertical). <see cref="RvmBarLayout.Vertical"/> desenha colunas, como o
+    /// <c>RvmColumnChart</c>, e so nele valem o zoom e a selecao de faixa. <see cref="RvmBarLayout.Diverging"/>
+    /// poe o zero no meio, com o eixo simetrico: com duas series, a primeira vai para a direita e a segunda para a
+    /// esquerda, nas cores primary e erro (sem <c>Color</c> na serie), e o eixo mostra o tamanho dos dois lados;
+    /// com outra quantidade, o negativo vai para a esquerda. No divergente o eixo secundario e o
+    /// <see cref="Stacked"/> nao tem efeito.
+    /// </summary>
+    [Parameter] public RvmBarLayout Layout { get; set; } = RvmBarLayout.Horizontal;
+
+    /// <summary>Barras empilhadas em vez de lado a lado. No divergente nao tem efeito.</summary>
     [Parameter] public bool Stacked { get; set; }
 
-    /// <summary>Espessura maxima de cada barra, em px. Padrao: 24.</summary>
+    /// <summary>Espessura maxima de cada barra, em px (a largura da coluna no vertical). Padrao: 24.</summary>
     [Parameter] public int MaxBarThickness { get; set; } = 24;
 
-    private sealed record Barra(int Categoria, int Serie, double X, double Y, double Comprimento, double Espessura);
+    /// <summary>Mostra os valores do eixo. A grade continua (ver <c>ShowGrid</c>).</summary>
+    [Parameter] public bool ShowAxis { get; set; } = true;
+
+    /// <summary>
+    /// Formato so dos valores do eixo, que tem pouco espaco ("30k"); o <c>ValueFormat</c> continua valendo na dica e na
+    /// tabela de dados. Sem ele, o eixo usa o <c>ValueFormat</c>.
+    /// </summary>
+    [Parameter] public Func<double, string>? FormatAxisValue { get; set; }
+
+    /// <summary>Largura maxima do grafico: Small (504 px), Medium (696 px) ou Large (toda a largura, o padrao).</summary>
+    [Parameter] public RvmChartSize Size { get; set; } = RvmChartSize.Large;
+
+    private protected override Func<double, string>? FormatoDoEixo => FormatAxisValue;
+
+    private protected override bool MostraEixo => ShowAxis;
+
+    private protected override RvmChartSize Tamanho => Size;
+
+    private sealed record Barra(int Categoria, int Serie, double X, double Y, double Comprimento, double Espessura, bool Negativa);
 
     private const int CaracteresPorPx = 7;
 
-    // Uma escala por eixo. Aqui o eixo de valores e o HORIZONTAL: o segundo eixo vai no topo, nao a
+    private bool Vertical => Layout is RvmBarLayout.Vertical;
+
+    private bool Divergente => Layout is RvmBarLayout.Diverging;
+
+    /// <summary>Divergente com duas series: o lado vem da serie (a primeira a direita), nao do sinal do valor.</summary>
+    private bool LadoDaSerie => Divergente && Series.Count == 2;
+
+    /// <summary>Com o zero no meio, um segundo eixo nao teria onde ficar.</summary>
+    internal override bool TemEixoSecundario => !Divergente && base.TemEixoSecundario;
+
+    /// <summary>O valor como o desenho o usa: no divergente de duas series, o lado vem da serie.</summary>
+    private double ValorDesenhado(int serie, TItem item)
+    {
+        var valor = Series[serie].ValorDe(item);
+        return !LadoDaSerie ? valor : serie == 0 ? Math.Abs(valor) : -Math.Abs(valor);
+    }
+
+    private RvmColor CorDaSerie(int serie)
+        => LadoDaSerie && Series[serie].Color is null ? RampaDoGrafico.Divergente(serie) : CorDa(Series[serie]);
+
+    // Uma escala por eixo. Deitadas, o eixo de valores e o HORIZONTAL: o segundo eixo vai no topo, nao a
     // direita, e por isso e a margem de cima que cresce.
     private Escala EscalaDe(RvmChartAxis eixo) => Memo($"Escala{eixo}", () =>
         {
+            if (Divergente)
+            {
+                // Simetrica: o zero fica no meio, e os dois lados se comparam na mesma medida.
+                var maior = 0d;
+                foreach (var item in Dados)
+                {
+                    for (var s = 0; s < Series.Count; s++)
+                    {
+                        maior = Math.Max(maior, Math.Abs(Series[s].ValorDe(item)));
+                    }
+                }
+
+                var lado = maior > 0 ? maior : 1;
+                return Escala.Arredondada(-lado, lado);
+            }
+
             var series = SeriesDo(eixo);
             double min = 0, max = 0;
             foreach (var item in Dados)
@@ -48,15 +115,26 @@
 
     private Escala EscalaSecundaria => EscalaDe(RvmChartAxis.Secondary);
 
-    internal override double MargemTopo => TemEixoSecundario ? MargemTopoPadrao + 18 : MargemTopoPadrao;
+    internal override double MargemTopo => !Vertical && TemEixoSecundario ? MargemTopoPadrao + 18 : MargemTopoPadrao;
 
-    internal override string NomeDoEixoPrimario => "eixo de baixo";
+    internal override string NomeDoEixoPrimario => Vertical ? base.NomeDoEixoPrimario : "eixo de baixo";
 
-    internal override string NomeDoEixoSecundario => "eixo de cima";
+    internal override string NomeDoEixoSecundario => Vertical ? base.NomeDoEixoSecundario : "eixo de cima";
+
+    internal override IEnumerable<string>? RotulosDoEixoSecundario
+        => Vertical && TemEixoSecundario
+            ? EscalaSecundaria.Marcas.Select(m => FormatarMarca(m, EscalaSecundaria.Passo, RvmChartAxis.Secondary))
+            : null;
+
+    /// <summary>O rotulo de uma marca do eixo de valores. No divergente de duas series, o tamanho: os dois lados crescem.</summary>
+    private string RotuloDaMarca(double marca, double passo) => FormatarMarca(LadoDaSerie ? Math.Abs(marca) : marca, passo);
 
     private double LimiteDosRotulos => Largura * 0.35;
 
-    private double Esquerda => Memo("Esquerda", () => Math.Min(LimiteDosRotulos, LarguraDosRotulos(Dados.Select((item, i) => NomeDe(item, i)), 48)));
+    // Deitadas, a esquerda e dos nomes das categorias; em pe, dos valores do eixo.
+    private double Esquerda => Memo("Esquerda", () => Vertical
+        ? LarguraDosRotulos(EscalaDosValores.Marcas.Select(m => FormatarMarca(m, EscalaDosValores.Passo)))
+        : Math.Min(LimiteDosRotulos, LarguraDosRotulos(Dados.Select((item, i) => NomeDe(item, i)), 48)));
 
     private string Rotulo(int indice)
     {
@@ -65,68 +143,149 @@
         return nome.Length <= cabem || cabem < 2 ? nome : nome[..(cabem - 1)] + "…";
     }
 
-    private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita - 8);
+    private double LarguraDoPlot => Math.Max(10, Largura - Esquerda - MargemDireita - (Vertical ? 0 : 8));
 
     private double AlturaDoPlot => Math.Max(10, Height - MargemTopo - MargemBaixo);
 
-    private double Faixa => Dados.Count == 0 ? AlturaDoPlot : AlturaDoPlot / Dados.Count;
+    // Em pe, aproximado, cabem menos categorias na mesma largura: a faixa de cada uma cresce na mesma proporcao.
+    private double Faixa => Vertical
+        ? Dados.Count == 0 ? LarguraDoPlot : LarguraDoPlot / Dados.Count / (JanelaX.Fim - JanelaX.Inicio)
+        : Dados.Count == 0 ? AlturaDoPlot : AlturaDoPlot / Dados.Count;
 
     private double X(Escala escala, double valor) => escala.Posicao(valor, Esquerda, Esquerda + LarguraDoPlot);
 
-    private List<Barra> Barras => Memo("Barras", () =>
-        {
-            var lista = new List<Barra>();
-            var grupo = Faixa * 0.6;
-            var quantas = Math.Max(1, Series.Count);
-            var espessura = Math.Max(2, Math.Min(MaxBarThickness, Stacked ? grupo : (grupo - (quantas - 1) * 4) / quantas));
+    private double Y(Escala escala, double valor) => escala.Posicao(valor, MargemTopo + AlturaDoPlot, MargemTopo);
 
-            for (var c = 0; c < Dados.Count; c++)
+    private double CentroDe(int categoria) => XDaFracao((categoria + 0.5) / Math.Max(1, Dados.Count), Esquerda, LarguraDoPlot);
+
+    // Zoom e selecao de faixa so em pe, como no RvmColumnChart.
+    internal override (double X, double Y, double Largura, double Altura)? AreaDoPlot
+        => Vertical ? (Esquerda, MargemTopo, LarguraDoPlot, AlturaDoPlot) : null;
+
+    internal override (double Inicio, double Fim)? LadosDaFaixa(int inicio, int fim)
+    {
+        if (!Vertical)
+        {
+            return null;
+        }
+
+        // A faixa pode ter sido marcada antes de Items encolher: os indices sao presos ao que existe agora.
+        var ultimo = Math.Max(0, Dados.Count - 1);
+        return (CentroDe(Math.Clamp(inicio, 0, ultimo)) - Faixa / 2, CentroDe(Math.Clamp(fim, 0, ultimo)) + Faixa / 2);
+    }
+
+    private List<Barra> Barras => Memo("Barras", () => Vertical ? Colunas() : Deitadas());
+
+    private List<Barra> Deitadas()
+    {
+        var lista = new List<Barra>();
+        var empilhadas = Stacked && !Divergente;
+        var grupo = Faixa * 0.6;
+        var quantas = Math.Max(1, Series.Count);
+        var espessura = Math.Max(2, Math.Min(MaxBarThickness, empilhadas ? grupo : (grupo - (quantas - 1) * 4) / quantas));
+
+        for (var c = 0; c < Dados.Count; c++)
+        {
+            var item = Dados[c];
+            var centro = MargemTopo + Faixa * (c + 0.5);
+            var positivos = new Dictionary<RvmChartAxis, double>();
+            var negativos = new Dictionary<RvmChartAxis, double>();
+            for (var s = 0; s < Series.Count; s++)
             {
-                var item = Dados[c];
-                var centro = MargemTopo + Faixa * (c + 0.5);
-                var positivos = new Dictionary<RvmChartAxis, double>();
-                var negativos = new Dictionary<RvmChartAxis, double>();
-                for (var s = 0; s < Series.Count; s++)
+                var eixo = EixoDa(Series[s]);
+                var escala = EscalaDe(eixo);
+                var zero = X(escala, 0);
+                var valor = ValorDesenhado(s, item);
+                double x0, x1, y;
+                if (empilhadas)
                 {
-                    var eixo = EixoDa(Series[s]);
-                    var escala = EscalaDe(eixo);
-                    var zero = X(escala, 0);
-                    var valor = Series[s].ValorDe(item);
-                    double x0, x1, y;
-                    if (Stacked)
+                    y = centro - espessura / 2;
+                    if (valor >= 0)
                     {
-                        y = centro - espessura / 2;
-                        if (valor >= 0)
-                        {
-                            positivos.TryGetValue(eixo, out var acumulado);
-                            x0 = X(escala, acumulado);
-                            positivos[eixo] = acumulado + valor;
-                            x1 = X(escala, positivos[eixo]);
-                        }
-                        else
-                        {
-                            negativos.TryGetValue(eixo, out var acumulado);
-                            x0 = X(escala, acumulado);
-                            negativos[eixo] = acumulado + valor;
-                            x1 = X(escala, negativos[eixo]);
-                        }
+                        positivos.TryGetValue(eixo, out var acumulado);
+                        x0 = X(escala, acumulado);
+                        positivos[eixo] = acumulado + valor;
+                        x1 = X(escala, positivos[eixo]);
                     }
                     else
                     {
-                        var total = quantas * espessura + (quantas - 1) * 4;
-                        y = centro - total / 2 + s * (espessura + 4);
-                        x0 = zero;
-                        x1 = X(escala, valor);
+                        negativos.TryGetValue(eixo, out var acumulado);
+                        x0 = X(escala, acumulado);
+                        negativos[eixo] = acumulado + valor;
+                        x1 = X(escala, negativos[eixo]);
                     }
-
-                    lista.Add(new Barra(c, s, Math.Min(x0, x1), y, Math.Abs(x1 - x0), espessura));
                 }
+                else
+                {
+                    var total = quantas * espessura + (quantas - 1) * 4;
+                    y = centro - total / 2 + s * (espessura + 4);
+                    x0 = zero;
+                    x1 = X(escala, valor);
+                }
+
+                lista.Add(new Barra(c, s, Math.Min(x0, x1), y, Math.Abs(x1 - x0), espessura, valor < 0));
             }
+        }
 
-            return lista;
-        });
+        return lista;
+    }
 
-    internal override RenderFragment Desenho => @<g>
+    // Em pe: a mesma geometria do RvmColumnChart (Comprimento e a altura da coluna, Espessura a largura).
+    private List<Barra> Colunas()
+    {
+        var lista = new List<Barra>();
+        var grupo = Faixa * 0.6;
+        var quantas = Math.Max(1, Series.Count);
+        var largura = Math.Max(2, Math.Min(MaxBarThickness, Stacked ? grupo : (grupo - (quantas - 1) * 4) / quantas));
+
+        for (var c = 0; c < Dados.Count; c++)
+        {
+            var item = Dados[c];
+            var centro = CentroDe(c);
+            var positivo = new Dictionary<RvmChartAxis, double>();
+            var negativo = new Dictionary<RvmChartAxis, double>();
+            for (var s = 0; s < Series.Count; s++)
+            {
+                var eixo = EixoDa(Series[s]);
+                var escala = NaJanela(EscalaDe(eixo));
+                var valor = Series[s].ValorDe(item);
+                double y0, y1, x;
+                if (Stacked)
+                {
+                    x = centro - largura / 2;
+                    if (valor >= 0)
+                    {
+                        positivo.TryGetValue(eixo, out var acumulado);
+                        y0 = Y(escala, acumulado);
+                        positivo[eixo] = acumulado + valor;
+                        y1 = Y(escala, positivo[eixo]);
+                    }
+                    else
+                    {
+                        negativo.TryGetValue(eixo, out var acumulado);
+                        y0 = Y(escala, acumulado);
+                        negativo[eixo] = acumulado + valor;
+                        y1 = Y(escala, negativo[eixo]);
+                    }
+                }
+                else
+                {
+                    var total = quantas * largura + (quantas - 1) * 4;
+                    x = centro - total / 2 + s * (largura + 4);
+                    y0 = Y(escala, 0);
+                    y1 = Y(escala, valor);
+                }
+
+                lista.Add(new Barra(c, s, x, Math.Min(y0, y1), Math.Abs(y1 - y0), largura, valor < 0));
+            }
+        }
+
+        return lista;
+    }
+
+    internal override RenderFragment Desenho => Vertical ? DesenhoEmPe : DesenhoDeitado;
+
+    private RenderFragment DesenhoDeitado => @<g>
         @{ var escala = EscalaDosValores; }
         @foreach (var marca in escala.Marcas)
         {
@@ -135,7 +294,13 @@
             {
                 <line class="rvm-grafico-grade" x1="@N(x)" y1="@N(MargemTopo)" x2="@N(x)" y2="@N(MargemTopo + AlturaDoPlot)" />
             }
-            @Texto(x, Height - 10, FormatarMarca(marca, escala.Passo))
+            @if (MostraEixo) { @Texto(x, Height - 10, RotuloDaMarca(marca, escala.Passo)) }
+        }
+        @if (Divergente)
+        {
+            // O zero do meio, cheio: e dele que os dois lados partem.
+            var zero = X(escala, 0);
+            <line class="rvm-grafico-eixo" x1="@N(zero)" y1="@N(MargemTopo)" x2="@N(zero)" y2="@N(MargemTopo + AlturaDoPlot)" />
         }
         @if (TemEixoSecundario)
         {
@@ -143,7 +308,7 @@
             var secundaria = EscalaSecundaria;
             foreach (var marca in secundaria.Marcas)
             {
-                @Texto(X(secundaria, marca), MargemTopo - 8, FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary))
+                @if (MostraEixo) { @Texto(X(secundaria, marca), MargemTopo - 8, FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary)) }
             }
         }
         @if (Ativo is { } ativo && ativo < Dados.Count)
@@ -152,7 +317,8 @@
         }
         @foreach (var barra in Barras)
         {
-            <rect class="@($"rvm-grafico-barra rvm-grafico-da-esquerda {ClasseDaCor(CorDa(Series[barra.Serie]))}")"
+            var sentido = Divergente && barra.Negativa ? "rvm-grafico-da-direita" : "rvm-grafico-da-esquerda";
+            <rect class="@($"rvm-grafico-barra {sentido} {ClasseDaCor(CorDaSerie(barra.Serie))}")"
                   x="@N(barra.X)" y="@N(barra.Y)" width="@N(barra.Comprimento)" height="@N(barra.Espessura)"
                   rx="@N(Math.Min(4, barra.Espessura / 2))" />
         }
@@ -162,21 +328,91 @@
         }
     </g>;
 
+    private RenderFragment DesenhoEmPe => @<g>
+        @{
+            var escala = NaJanela(EscalaDosValores);
+            var esquerda = Esquerda;
+            var direita = Largura - MargemDireita;
+            var salto = SaltoDeRotulos(Dados.Count, LarguraDoPlot / (JanelaX.Fim - JanelaX.Inicio));
+        }
+        @foreach (var marca in escala.Marcas)
+        {
+            var y = Y(escala, marca);
+            @if (ShowGrid)
+            {
+                <line class="rvm-grafico-grade" x1="@N(esquerda)" y1="@N(y)" x2="@N(direita)" y2="@N(y)" />
+            }
+            @if (MostraEixo) { @Texto(esquerda - 8, y, FormatarMarca(marca, escala.Passo), "end", "middle") }
+        }
+        @if (TemEixoSecundario)
+        {
+            // A grade e so do eixo esquerdo: duas grades no mesmo desenho viram teia.
+            var secundaria = NaJanela(EscalaSecundaria);
+            foreach (var marca in secundaria.Marcas)
+            {
+                @if (MostraEixo) { @Texto(direita + 8, Y(secundaria, marca), FormatarMarca(marca, secundaria.Passo, RvmChartAxis.Secondary), "start", "middle") }
+            }
+        }
+        @* Aproximado, o que sai da area do desenho e cortado — senao as colunas invadem os rotulos. *@
+        <clipPath id="@($"{IdBase}-recorte")">
+            <rect x="@N(esquerda)" y="@N(MargemTopo)" width="@N(LarguraDoPlot)" height="@N(AlturaDoPlot)" />
+        </clipPath>
+        <g clip-path="@($"url(#{IdBase}-recorte)")">
+            @if (Ativo is { } ativo && ativo < Dados.Count)
+            {
+                <rect class="rvm-grafico-faixa-ativa" x="@N(CentroDe(ativo) - Faixa / 2)" y="@N(MargemTopo)" width="@N(Faixa)" height="@N(AlturaDoPlot)" rx="4" />
+            }
+            @foreach (var coluna in Barras)
+            {
+                <rect class="@($"rvm-grafico-barra rvm-grafico-de-baixo {ClasseDaCor(CorDaSerie(coluna.Serie))}")"
+                      x="@N(coluna.X)" y="@N(coluna.Y)" width="@N(coluna.Espessura)" height="@N(coluna.Comprimento)"
+                      rx="@N(Math.Min(4, coluna.Espessura / 2))" />
+            }
+        </g>
+        @for (var c = 0; c < Dados.Count; c += salto)
+        {
+            var centro = CentroDe(c);
+            @if (centro >= esquerda && centro <= direita)
+            {
+                @Texto(centro, Height - 10, NomeDe(Dados[c], c))
+            }
+        }
+    </g>;
+
     internal override int QuantidadeDePontos => Dados.Count;
 
     internal override string TituloDoPonto(int indice) => NomeDe(Dados[indice], indice);
 
     internal override IReadOnlyList<LinhaDaDica> LinhasDoPonto(int indice)
-        => [.. Series.Select(s => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice]), EixoDa(s)), CorDa(s)))];
+        => [.. Series.Select((s, i) => new LinhaDaDica(s.Name, Formatar(s.ValorDe(Dados[indice]), EixoDa(s)), CorDaSerie(i)))];
+
+    internal override IReadOnlyList<ItemDaLegenda> Legenda
+        => LadoDaSerie ? [.. Series.Select((s, i) => new ItemDaLegenda(s.Name, CorDaSerie(i), null))] : base.Legenda;
 
     internal override (double X, double Y) AncoraDoPonto(int indice)
     {
+        if (Vertical)
+        {
+            var topo = Barras.Where(b => b.Categoria == indice).Select(b => b.Y).DefaultIfEmpty(MargemTopo).Min();
+            return (CentroDe(indice), topo);
+        }
+
         var fim = Barras.Where(b => b.Categoria == indice).Select(b => b.X + b.Comprimento).DefaultIfEmpty(Esquerda).Max();
         return (Math.Min(fim, Largura - MargemDireita), MargemTopo + Faixa * indice);
     }
 
     internal override int? PontoEm(double x, double y)
     {
+        if (Vertical)
+        {
+            if (Dados.Count == 0 || x < Esquerda || x > Largura - MargemDireita)
+            {
+                return null;
+            }
+
+            return Math.Clamp((int)(FracaoDoX(x, Esquerda, LarguraDoPlot) * Dados.Count), 0, Dados.Count - 1);
+        }
+
         if (Dados.Count == 0 || y < MargemTopo || y > MargemTopo + AlturaDoPlot)
         {
             return null;

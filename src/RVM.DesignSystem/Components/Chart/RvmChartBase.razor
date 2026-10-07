@@ -8,9 +8,21 @@
     @ChildContent
 </CascadingValue>
 
-@DepoisDasSeries(Figura)
+@DepoisDasSeries(Estado is EstadoDosDados.Conteudo ? Figura : FiguraDoEstado)
 
 @code {
+    // Carregando, erro e vazio no lugar do desenho, na mesma figura e com a mesma altura: o layout nao pula.
+    private RenderFragment FiguraDoEstado => @<figure @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@AriaLabel">
+        <div class="rvm-grafico-estado" style="@($"min-height: {Height}px")">
+            @(Estado switch
+            {
+                EstadoDosDados.Carregando => EstadosDosDados.Carregando(LoadingText, LoadingMascot),
+                EstadoDosDados.Erro => EstadosDosDados.Erro(ErrorContent, ErrorTitle, ErrorText, ErrorMascot),
+                _ => EstadosDosDados.Vazio(Empty, EmptyText)
+            })
+        </div>
+    </figure>;
+
     private RenderFragment Figura => @<figure @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
         <div @ref="_area" class="rvm-grafico-area" style="@($"height: {Height}px")">
             <svg @ref="_svg" class="rvm-grafico-svg" width="100%" height="@Height" viewBox="@($"0 0 {N(Largura)} {Height}")"
@@ -50,13 +62,13 @@
                  @onkeydown="AoTeclar"
                  @onblur="AoSairPonteiro"></div>
 
-            @if (Ativo is { } ativo && ativo < QuantidadeDePontos)
+            @if (ShowTooltip && Ativo is { } ativo && ativo < QuantidadeDePontos)
             {
                 <div class="@ClassesDaDica" style="@EstiloDaDica" aria-hidden="true">
                     <div class="rvm-grafico-dica-titulo">@TituloDoPonto(ativo)</div>
                     @foreach (var linha in LinhasDoPonto(ativo))
                     {
-                        <div class="rvm-grafico-dica-linha @ClasseDaCor(linha.Cor)">
+                        <div class="rvm-grafico-dica-linha @linha.ClasseCss">
                             <span class="rvm-grafico-marca"></span>
                             @if (!string.IsNullOrEmpty(linha.Nome))
                             {
@@ -99,7 +111,7 @@
             <ul class="rvm-grafico-legenda" aria-hidden="true">
                 @foreach (var item in Legenda)
                 {
-                    <li class="@ClasseDaCor(item.Cor)">
+                    <li class="@item.ClasseCss">
                         <span class="rvm-grafico-marca"></span>
                         <span>@item.Nome</span>
                         @if (item.Detalhe is not null)

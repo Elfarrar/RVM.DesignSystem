@@ -1,0 +1,74 @@
+/* CSS isolado do RvmEventCard. So custom properties — hex literal aqui quebra o tema escuro.
+   Sem tela de referencia no kit: segue o papel dos cartoes da biblioteca e a faixa de categoria usa o -main. */
+
+.rvm-cartao-evento {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+    text-align: left;
+}
+
+button.rvm-cartao-evento {
+    cursor: pointer;
+}
+
+button.rvm-cartao-evento:hover {
+    background-image: linear-gradient(var(--rvm-color-action-hover), var(--rvm-color-action-hover));
+}
+
+button.rvm-cartao-evento:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-cartao-evento-corpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-4);
+}
+
+.rvm-cartao-evento-titulo {
+    font-size: var(--rvm-text-subtitle2-size);
+    line-height: var(--rvm-text-subtitle2-line);
+    font-weight: var(--rvm-text-subtitle2-weight);
+}
+
+.rvm-cartao-evento-detalhes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-2);
+}
+
+.rvm-cartao-evento-horario {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}
+
+.rvm-cartao-evento-faixa {
+    display: block;
+    height: 6px;
+}
+
+.rvm-primary .rvm-cartao-evento-faixa { background-color: var(--rvm-color-primary-main); }
+.rvm-secondary .rvm-cartao-evento-faixa { background-color: var(--rvm-color-secondary-main); }
+.rvm-inverse .rvm-cartao-evento-faixa { background-color: var(--rvm-color-inverse-main); }
+.rvm-info .rvm-cartao-evento-faixa { background-color: var(--rvm-color-info-main); }
+.rvm-success .rvm-cartao-evento-faixa { background-color: var(--rvm-color-success-main); }
+.rvm-warning .rvm-cartao-evento-faixa { background-color: var(--rvm-color-warning-main); }
+.rvm-error .rvm-cartao-evento-faixa { background-color: var(--rvm-color-error-main); }

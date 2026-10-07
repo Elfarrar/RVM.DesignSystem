@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using RVM.DesignSystem.Components.Sidebar;
 using Microsoft.AspNetCore.Components.Routing;
 using RVM.DesignSystem.Icons;
 
@@ -11,12 +12,21 @@ public partial class RvmNavItem : ComponentBase, IDisposable
 {
     [Inject] private NavigationManager Navegacao { get; set; } = default!;
 
-    [CascadingParameter] private RvmAppShell? Casca { get; set; }
+    [CascadingParameter] private RvmSidebar? Casca { get; set; }
 
     [CascadingParameter(Name = RvmNavGroup.NomeDaCascata)] private RvmNavGroup? Grupo { get; set; }
 
-    /// <summary>Endereco do link.</summary>
-    [Parameter, EditorRequired] public string Href { get; set; } = "";
+    /// <summary>Endereco do link (<c>""</c> e a raiz do app). Sem ele (<c>null</c>), o item e um botao que avisa por <see cref="OnClick"/>.</summary>
+    [Parameter] public string? Href { get; set; }
+
+    /// <summary>Clique do item sem <see cref="Href"/>.</summary>
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    /// <summary>Ativo, no item sem <see cref="Href"/> (o link descobre sozinho pela rota).</summary>
+    [Parameter] public bool Active { get; set; }
+
+    /// <summary>Imagem redonda de 20 px no lugar do icone (decorativa: o texto ja nomeia o item).</summary>
+    [Parameter] public string? ImageUrl { get; set; }
 
     /// <summary>Texto do item. Com o menu recolhido, continua sendo o nome do link para o leitor de tela.</summary>
     [Parameter, EditorRequired] public string Text { get; set; } = "";
@@ -30,16 +40,25 @@ public partial class RvmNavItem : ComponentBase, IDisposable
     /// <summary>Como decidir que e a pagina atual. Padrao: <see cref="RvmNavMatch.Prefix"/>.</summary>
     [Parameter] public RvmNavMatch Match { get; set; } = RvmNavMatch.Prefix;
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao link.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    internal bool Recolhido => Casca?.Collapsed == true && Grupo is null;
+    internal bool Recolhido => Casca?.Recolhido == true && Grupo is null;
 
     internal bool Ativo
     {
         get
         {
+            // Href vazio e link de verdade (a raiz do app); so sem Href o item e botao.
+            if (Href is null)
+            {
+                return Active;
+            }
+
             var destino = Sem(Navegacao.ToAbsoluteUri(Href).AbsoluteUri);
             var atual = Sem(Navegacao.Uri);
             if (Match == RvmNavMatch.All)
@@ -70,12 +89,7 @@ public partial class RvmNavItem : ComponentBase, IDisposable
             if (Recolhido) proprias += " rvm-recolhido";
             if (Icon is null) proprias += " rvm-subitem";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

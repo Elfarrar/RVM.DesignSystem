@@ -1,0 +1,88 @@
+@page "/componentes/meter-chart"
+@using RVM.DesignSystem.Components.Chart
+@using RVM.DesignSystem.Icons
+
+<PageTitle>RvmMeterChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMeterChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O medidor: um arco de 240 graus repartido entre as fatias, com a trilha mostrando o que falta para o Total. No
+    centro, a leitura: com Total, o percentual atingido e "x de y"; sem ele, a soma. Bom para meta, capacidade e
+    orcamento.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. Nao tem parametros proprios: tudo
+    vem do RvmRadialChartBase.
+</p>
+
+<BlocoExemplo Titulo="Capacidade do armazem"
+              Descricao="Soja e milho armazenados contra a capacidade de 50 mil toneladas. FormatValue escreve a unidade na leitura, na dica e na tabela."
+              Codigo="@CodigoArmazem">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 240px">
+            <RvmMeterChart Label="Ocupacao do armazem" Slices="Armazem" Total="50000" FormatValue="Toneladas" />
+        </div>
+        <div style="width: 240px">
+            <RvmMeterChart Label="Ocupacao do armazem, nas cores do tema" Slices="Armazem" Total="50000" FormatValue="Toneladas"
+                           Palette="RvmChartPalette.FullColor" />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Sem Total: a soma"
+              Descricao="Faturamento do trimestre por mes. Sem Total o arco fecha e o centro mostra a soma."
+              Codigo="@CodigoSoma">
+    <div style="width: 240px">
+        <RvmMeterChart Label="Faturamento do trimestre por mes" Slices="Faturamento" FormatValue="Reais" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="No lugar do desenho, na mesma figura."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 220px">
+            <RvmMeterChart Label="Ocupacao do armazem" Slices="Armazem" Loading="true" LoadingText="Lendo os silos..." />
+        </div>
+        <div style="width: 220px">
+            <RvmMeterChart Label="Ocupacao do armazem" Slices="Armazem" Error="true" />
+        </div>
+        <div style="width: 220px">
+            <RvmMeterChart Label="Ocupacao do armazem" Slices="[]" Total="50000" EmptyText="O armazem ainda nao recebeu carga." />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMeterChart" />
+
+@code {
+    private static readonly RvmChartSlice[] Armazem = [new("Soja", 24500), new("Milho", 11800)];
+
+    private static readonly RvmChartSlice[] Faturamento =
+        [new("Julho", 182000), new("Agosto", 214500), new("Setembro", 196300)];
+
+    private static string Toneladas(double v) => $"{RvmChartFormat.Number(v)} t";
+
+    private static string Reais(double v) => $"R$ {RvmChartFormat.Number(v)}";
+
+    private const string CodigoArmazem = """
+        <RvmMeterChart Label="Ocupacao do armazem" Total="50000" FormatValue="Toneladas"
+                       Slices="[new("Soja", 24500), new("Milho", 11800)]" />
+
+        <RvmMeterChart Label="Ocupacao do armazem" Total="50000" FormatValue="Toneladas"
+                       Slices="armazem" Palette="RvmChartPalette.FullColor" />
+        """;
+
+    private const string CodigoSoma = """
+        <RvmMeterChart Label="Faturamento do trimestre por mes" FormatValue="Reais"
+                       Slices="[new("Julho", 182000), new("Agosto", 214500), new("Setembro", 196300)]" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmMeterChart Label="Ocupacao do armazem" Slices="armazem" Loading="carregando" LoadingText="Lendo os silos..." />
+        <RvmMeterChart Label="Ocupacao do armazem" Slices="armazem" Error="falhou" />
+        <RvmMeterChart Label="Ocupacao do armazem" Slices="[]" EmptyText="O armazem ainda nao recebeu carga." />
+        """;
+}

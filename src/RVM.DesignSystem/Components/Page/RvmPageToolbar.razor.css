@@ -1,0 +1,20 @@
+/* CSS isolado do RvmPageToolbar. So custom properties — hex literal aqui quebra o tema escuro. */
+
+.rvm-barra-pagina {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    padding-block: var(--rvm-space-3);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-inicio,
+.rvm-fim {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    min-width: 0;
+}

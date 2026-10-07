@@ -1,0 +1,104 @@
+@page "/componentes/filter"
+@using RVM.DesignSystem.Components.Filter
+
+<PageTitle>RvmFilter — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmFilter</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O botao "Filtros" com o contador de filtros ativos, que abre um painel com os grupos (<code>RvmFilterGroup</code>)
+    e os botoes Limpar e Aplicar. O contador e anunciado no nome do botao ("Filtros, 2 ativos"); Esc fecha e devolve
+    o foco ao botao, clicar fora fecha. Limpar deixa o painel aberto, para a pessoa ver o que sobrou; Aplicar fecha.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Filtro de talhoes"
+              Descricao="Tres grupos: cultura (varias), safra (uma so, com rolagem) e status. O contador mostra o que esta aplicado; o rascunho do painel so vale depois de Aplicar."
+              Codigo="@Codigo">
+    <div class="linha-exemplos">
+        <RvmFilter Count="ContarAplicados()" @bind-Open="_aberto" OnApply="Aplicar" OnClear="Limpar" Title="Filtrar talhoes">
+            <RvmFilterGroup Title="Cultura" @bind-Open="_culturaAberta">
+                @foreach (var cultura in _culturas)
+                {
+                    <RvmCheckbox @bind-Value="cultura.Marcada" Label="@cultura.Nome" />
+                }
+            </RvmFilterGroup>
+            <RvmFilterGroup Title="Safra" Scroll="true">
+                <RvmRadioGroup TValue="string" @bind-Value="_safra" Label="Safra">
+                    @foreach (var safra in Safras)
+                    {
+                        <RvmRadio TValue="string" Value="safra" Label="@safra" />
+                    }
+                </RvmRadioGroup>
+            </RvmFilterGroup>
+            <RvmFilterGroup Title="Status">
+                <RvmCheckbox @bind-Value="_soComPendencia" Label="So com aplicacao pendente" />
+                <RvmCheckbox @bind-Value="_soIrrigados" Label="So talhoes irrigados" />
+            </RvmFilterGroup>
+        </RvmFilter>
+        <RvmTypography Color="RvmTextColor.Secondary">@_resumo</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmFilter" />
+
+<TabelaParametros Componente="RvmFilterGroup" />
+
+@code {
+    private sealed class Cultura(string nome)
+    {
+        public string Nome { get; } = nome;
+        public bool Marcada { get; set; }
+    }
+
+    private static readonly string[] Safras = ["2026/27", "2025/26", "2024/25", "2023/24", "2022/23", "2021/22"];
+
+    private readonly List<Cultura> _culturas = [new("Soja"), new("Milho"), new("Cafe"), new("Algodao")];
+    private bool _aberto;
+    private bool _culturaAberta = true;
+    private string? _safra;
+    private bool _soComPendencia;
+    private bool _soIrrigados;
+
+    private (int Culturas, bool Safra, bool Pendencia, bool Irrigados) _aplicado;
+    private string _resumo = "Mostrando todos os 48 talhoes.";
+
+    private int ContarAplicados()
+        => _aplicado.Culturas + (_aplicado.Safra ? 1 : 0) + (_aplicado.Pendencia ? 1 : 0) + (_aplicado.Irrigados ? 1 : 0);
+
+    private void Aplicar()
+    {
+        _aplicado = (_culturas.Count(c => c.Marcada), _safra is not null, _soComPendencia, _soIrrigados);
+        var total = ContarAplicados();
+        _resumo = total == 0 ? "Mostrando todos os 48 talhoes." : $"{total} filtro(s) aplicado(s): 12 talhoes encontrados.";
+    }
+
+    private void Limpar()
+    {
+        _culturas.ForEach(c => c.Marcada = false);
+        _safra = null;
+        _soComPendencia = false;
+        _soIrrigados = false;
+    }
+
+    private const string Codigo = """
+        <RvmFilter Count="ativos" @bind-Open="aberto" OnApply="Aplicar" OnClear="Limpar" Title="Filtrar talhoes">
+            <RvmFilterGroup Title="Cultura" Open="true">
+                <RvmCheckbox @bind-Value="soja" Label="Soja" />
+                <RvmCheckbox @bind-Value="milho" Label="Milho" />
+            </RvmFilterGroup>
+            <RvmFilterGroup Title="Safra" Scroll="true">
+                <RvmRadioGroup TValue="string" @bind-Value="safra" Label="Safra">
+                    <RvmRadio TValue="string" Value="@("2026/27")" Label="2026/27" />
+                    <RvmRadio TValue="string" Value="@("2025/26")" Label="2025/26" />
+                </RvmRadioGroup>
+            </RvmFilterGroup>
+            <RvmFilterGroup Title="Status">
+                <RvmCheckbox @bind-Value="soComPendencia" Label="So com aplicacao pendente" />
+            </RvmFilterGroup>
+        </RvmFilter>
+        """;
+}

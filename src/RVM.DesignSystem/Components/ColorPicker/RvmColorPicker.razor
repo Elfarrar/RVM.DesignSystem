@@ -1,0 +1,122 @@
+@namespace RVM.DesignSystem.Components.ColorPicker
+@typeparam TValue
+@inherits RvmInputBase<TValue>
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.TextField
+@using RVM.DesignSystem.Icons
+
+@* Bolinhas de cor como radios NATIVOS num fieldset: a legenda e a pergunta, as setas trocam a cor (comportamento do
+   proprio navegador) e o formulario posta o valor, mesmo em SSR estatico. O anel e o check saem do :checked no CSS,
+   e nao do estado do servidor: assim acompanham o clique tambem sem interatividade.
+   Os atributos do consumidor por ultimo: aria-describedby e aria-invalid nulos nao apagam os dele. *@
+<fieldset id="@IdDoControle" class="@ClassesDaRaiz" disabled="@Disabled"
+          aria-describedby="@DescritoPor"
+          aria-invalid="@(MensagemDeErro is null ? null : "true")"
+          @attributes="AtributosDoControle">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <legend class="rvm-legenda">@Label</legend>
+    }
+    @if (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref))
+    {
+        <a class="rvm-link-do-campo rvm-text-caption" href="@LinkHref">@LinkText</a>
+    }
+    <div class="rvm-paleta">
+        @foreach (var item in Items ?? [])
+        {
+            var texto = TextoDe(item);
+            <label class="rvm-cor" title="@texto">
+                <input type="radio"
+                       class="rvm-nativo"
+                       name="@NomeDoGrupo"
+                       value="@Formatar(item)"
+                       aria-label="@texto"
+                       checked="@Escolhido(item)"
+                       disabled="@Disabled"
+                       @onchange="() => Escolher(item)" />
+                <span class="rvm-anel" aria-hidden="true">
+                    <span class="rvm-bolinha" style="@EstiloDaCor(item)">
+                        <span class="rvm-marca"><RvmIcon Name="RvmIconName.Check" SizePx="14" /></span>
+                    </span>
+                </span>
+            </label>
+        }
+    </div>
+    @if (MensagemDeErro is not null)
+    {
+        <div id="@IdDoErro" class="rvm-apoio rvm-apoio-erro rvm-text-helper">@MensagemDeErro</div>
+    }
+    else if (!string.IsNullOrWhiteSpace(HelperText))
+    {
+        <div id="@IdDoApoio" class="rvm-apoio rvm-text-helper">@HelperText</div>
+    }
+</fieldset>
+
+@code {
+    /// <summary>
+    /// As cores que podem ser escolhidas, na ordem em que aparecem. <c>Placeholder</c> e <c>Shape</c>, herdados do
+    /// contrato de campo, nao tem efeito aqui: a paleta nao tem caixa nem texto de exemplo.
+    /// </summary>
+    [Parameter] public IEnumerable<TValue>? Items { get; set; }
+
+    /// <summary>A cor CSS de cada item (<c>#RRGGBB</c>), aplicada inline no fundo da bolinha.</summary>
+    [Parameter] public Func<TValue, string>? ItemColor { get; set; }
+
+    // A cor pode vir de dado do usuario: so passa o que cabe numa cor CSS (#hex, rgb(...), hsl(...), nome, var(--x)).
+    // Um ";" ou "}" abriria outra declaracao no style (achado do review da onda 2b).
+    private string? EstiloDaCor(TValue item)
+    {
+        var cor = ItemColor?.Invoke(item)?.Trim();
+        if (string.IsNullOrEmpty(cor) || !cor.All(c => char.IsAsciiLetterOrDigit(c) || c is '#' or '(' or ')' or ',' or '.' or '%' or ' ' or '-'))
+        {
+            return null;
+        }
+        return $"background-color: {cor}";
+    }
+
+    /// <summary>O nome de cada item: vira o nome acessivel do radio e a dica ao passar o mouse. Sem ele, <c>ToString()</c>.</summary>
+    [Parameter] public Func<TValue, string>? ItemText { get; set; }
+
+    /// <summary>Classe CSS extra no fieldset.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <inheritdoc />
+    protected override string? ClasseDoCampo => Class;
+
+    // Radio sem name nao forma grupo (as setas param de trocar a escolha): sem nome do formulario, vale o id.
+    private string NomeDoGrupo => NomeDoControle ?? IdDoControle;
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-cores", ClassesDoConsumidor, null);
+
+    private string TextoDe(TValue item) => ItemText?.Invoke(item) ?? item?.ToString() ?? "";
+
+    private void Escolher(TValue item) => CurrentValue = item;
+
+    private bool Escolhido(TValue item) => EqualityComparer<TValue>.Default.Equals(item, CurrentValue);
+
+    private static string? Formatar(TValue? item)
+        => item is IFormattable f ? f.ToString(null, CultureInfo.InvariantCulture) : item?.ToString();
+
+    /// <inheritdoc />
+    protected override string? FormatValueAsString(TValue? value) => Formatar(value);
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        foreach (var item in Items ?? [])
+        {
+            if (string.Equals(Formatar(item), value, StringComparison.Ordinal))
+            {
+                result = item;
+                validationErrorMessage = null;
+                return true;
+            }
+        }
+
+        result = default;
+        validationErrorMessage = "Escolha uma das cores da lista.";
+        return false;
+    }
+}

@@ -8,7 +8,7 @@
 <nav @attributes="AdditionalAttributes" aria-label="@AriaLabel" class="@ClassesDaRaiz">
     <ul class="rvm-itens">
         <li>
-            <button type="button" class="rvm-item rvm-seta" aria-label="Pagina anterior"
+            <button type="button" class="rvm-item rvm-seta" aria-label="@PreviousLabel"
                     disabled="@(Disabled || PaginaAtual <= 1)" @onclick="() => Ir(PaginaAtual - 1)">
                 <RvmIcon Name="RvmIconName.ChevronLeft" Size="RvmSize.Small" />
             </button>
@@ -35,7 +35,7 @@
         }
 
         <li>
-            <button type="button" class="rvm-item rvm-seta" aria-label="Proxima pagina"
+            <button type="button" class="rvm-item rvm-seta" aria-label="@NextLabel"
                     disabled="@(Disabled || PaginaAtual >= Count)" @onclick="() => Ir(PaginaAtual + 1)">
                 <RvmIcon Name="RvmIconName.ChevronRight" Size="RvmSize.Small" />
             </button>

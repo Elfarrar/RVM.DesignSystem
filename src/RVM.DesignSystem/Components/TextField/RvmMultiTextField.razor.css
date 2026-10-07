@@ -1,0 +1,52 @@
+/* CSS isolado do RvmMultiTextField — so o que e dele: as tags dentro da caixa. A moldura (borda, rotulo, erro,
+   pilula) e a do RvmFieldFrame. So custom properties. */
+
+/* So existe para dar um ancestral com o atributo de escopo deste componente; nao entra no layout. */
+.rvm-campo-de-tags {
+    display: contents;
+}
+
+/* Com tags, a caixa quebra linha: as tags numa faixa e o input ao lado, ou embaixo quando nao cabe.
+   .rvm-campo.rvm-com-tags (0,5,0 com o escopo) vence o padding e a altura que a moldura da a caixa e ao input. */
+.rvm-campo-de-tags ::deep .rvm-campo.rvm-com-tags .rvm-caixa {
+    flex-wrap: wrap;
+    gap: var(--rvm-space-1);
+    padding-top: var(--rvm-space-3);
+    padding-bottom: var(--rvm-space-2);
+}
+
+.rvm-campo-de-tags ::deep .rvm-campo.rvm-com-tags .rvm-entrada {
+    flex: 1 1 6em;
+    min-height: 32px;
+    align-self: center;
+    padding-bottom: 0;
+}
+
+.rvm-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-1);
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rvm-item-da-tag {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}

@@ -2,6 +2,11 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 async function semViolacaoSeria(page: Page) {
+    // Espera as animacoes de entrada acabarem (sinal, nao relogio): no meio do fade a mensagem esta semitransparente e
+    // o axe mede contraste errado. As infinitas (spinner) ficam de fora, senao a espera nunca termina.
+    await page.evaluate(() => Promise.all(document.getAnimations()
+        .filter(a => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map(a => a.finished.catch(() => undefined))));
     const resultado = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
     const serias = resultado.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
     expect(serias.map(v => `${v.id}: ${v.nodes.map(n => n.target.join(' ')).join(', ')}`)).toEqual([]);
@@ -84,9 +89,10 @@ test('snackbar: a mensagem entra na regiao viva e a acao roda', async ({ page })
     await expect(page.getByText('Aplicacao excluida.')).toBeHidden();
 
     await page.getByRole('button', { name: 'Erro', exact: true }).click();
-    await expect(page.getByRole('alert')).toContainText('Nao conseguimos salvar o talhao');
+    // O layout tambem tem a regiao urgente do RvmToastProvider (vazia): filtra pela mensagem, nao pelo papel sozinho.
+    await expect(page.getByRole('alert').filter({ hasText: 'Nao conseguimos salvar o talhao' })).toBeVisible();
     await page.getByRole('button', { name: 'Fechar mensagem' }).click();
-    await expect(page.getByRole('alert')).not.toContainText('Nao conseguimos');
+    await expect(page.getByText('Nao conseguimos salvar o talhao')).toBeHidden();
 });
 
 // O axe de pagina roda com tudo fechado: dialogo, gaveta e mensagens tem cores proprias abertos.

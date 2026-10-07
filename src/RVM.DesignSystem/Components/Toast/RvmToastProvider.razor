@@ -1,0 +1,47 @@
+@namespace RVM.DesignSystem.Components.Toast
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* As duas regioes vivas existem SEMPRE, vazias no primeiro render: leitor de tela so anuncia o que entra numa
+   regiao que ja estava la. Erro e atencao vao para a urgente (role="alert"); informacao e sucesso, para a
+   educada (role="status"). aria-atomic="false" e aria-relevant="additions": alert e status sao atomicos por padrao, e
+   com dois avisos na pilha o leitor relia todos a cada aviso que entra ou sai. *@
+<section class="@ClassesDaRaiz" aria-label="@RegionLabel">
+    <div class="rvm-pilha" role="alert" aria-atomic="false" aria-relevant="additions">
+        @foreach (var aviso in Avisos.Where(a => EhUrgente(a.Severity)))
+        {
+            @Aviso(aviso)
+        }
+    </div>
+    <div class="rvm-pilha" role="status" aria-atomic="false" aria-relevant="additions">
+        @foreach (var aviso in Avisos.Where(a => !EhUrgente(a.Severity)))
+        {
+            @Aviso(aviso)
+        }
+    </div>
+</section>
+
+@code {
+    private RenderFragment Aviso(RvmToastMessage aviso) => @<div @key="aviso.Id"
+                                                                class="@ClassesDoAviso(aviso.Severity)"
+                                                                @onmouseenter="() => Entrou(_comMouse, aviso.Id)"
+                                                                @onmouseleave="() => Saiu(_comMouse, aviso.Id)"
+                                                                @onfocusin="() => Entrou(_comFoco, aviso.Id)"
+                                                                @onfocusout="() => Saiu(_comFoco, aviso.Id)">
+        <span class="rvm-icone" aria-hidden="true"><RvmIcon Name="IconeDe(aviso.Severity)" /></span>
+        <div class="rvm-corpo">
+            @if (!string.IsNullOrWhiteSpace(aviso.Title))
+            {
+                <p class="rvm-titulo">@aviso.Title</p>
+            }
+            <p class="rvm-texto">@aviso.Text</p>
+            @if (aviso.Action is { } acao)
+            {
+                <button type="button" class="rvm-acao" @onclick="() => ExecutarAsync(aviso.Id, acao)">@acao.Label</button>
+            }
+        </div>
+        <button type="button" class="rvm-fechar" aria-label="@CloseLabel" @onclick="() => Fechar(aviso.Id)">
+            <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+        </button>
+    </div>;
+}

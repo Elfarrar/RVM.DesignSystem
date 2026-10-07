@@ -1,0 +1,70 @@
+@namespace RVM.DesignSystem.Components.Page
+@using RVM.DesignSystem.Components.BackButton
+@using RVM.DesignSystem.Components.Typography
+
+@* O cabecalho da pagina: voltar, foto, trilha, titulo (h1 por padrao — e o titulo da pagina), apoio e as
+   acoes da direita. A foto e decorativa: o titulo ja diz de quem e a pagina. *@
+<div @attributes="AdditionalAttributes" class="@ClassesCss.Juntar("rvm-cabecalho-pagina", Class, AdditionalAttributes)">
+    @if (ShowBack)
+    {
+        <RvmBackButton Href="@BackHref" Label="@BackLabel" OnClick="OnBack" />
+    }
+    @if (!string.IsNullOrWhiteSpace(ImageUrl))
+    {
+        <img class="rvm-foto" src="@ImageUrl" alt="" />
+    }
+    <div class="rvm-textos">
+        @if (Breadcrumbs is not null)
+        {
+            <div class="rvm-trilha">@Breadcrumbs</div>
+        }
+        <RvmTypography Variant="RvmTypographyVariant.H5" As="@Element" Class="rvm-titulo">@Title</RvmTypography>
+        @if (!string.IsNullOrWhiteSpace(Description))
+        {
+            <RvmTypography Variant="RvmTypographyVariant.Body2" Color="RvmTextColor.Secondary" Class="rvm-descricao">@Description</RvmTypography>
+        }
+    </div>
+    @if (Actions is not null)
+    {
+        <div class="rvm-acoes">@Actions</div>
+    }
+</div>
+
+@code {
+    /// <summary>Titulo da pagina.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+
+    /// <summary>Linha de apoio abaixo do titulo.</summary>
+    [Parameter] public string? Description { get; set; }
+
+    /// <summary>Elemento do titulo. Padrao: h1, porque e o titulo da pagina.</summary>
+    [Parameter] public RvmTextElement Element { get; set; } = RvmTextElement.H1;
+
+    /// <summary>A trilha acima do titulo (um <c>RvmBreadcrumbs</c>).</summary>
+    [Parameter] public RenderFragment? Breadcrumbs { get; set; }
+
+    /// <summary>Foto redonda de 48 px antes do titulo (decorativa).</summary>
+    [Parameter] public string? ImageUrl { get; set; }
+
+    /// <summary>Mostra o botao de voltar.</summary>
+    [Parameter] public bool ShowBack { get; set; }
+
+    /// <summary>Destino do voltar. Sem ele, o voltar avisa por <see cref="OnBack"/>.</summary>
+    [Parameter] public string? BackHref { get; set; }
+
+    /// <summary>Nome acessivel do voltar.</summary>
+    [Parameter] public string BackLabel { get; set; } = "Voltar";
+
+    /// <summary>Clique do voltar sem <see cref="BackHref"/>.</summary>
+    [Parameter] public EventCallback OnBack { get; set; }
+
+    /// <summary>Acoes da direita.</summary>
+    [Parameter] public RenderFragment? Actions { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

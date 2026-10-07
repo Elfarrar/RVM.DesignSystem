@@ -1,0 +1,81 @@
+@namespace RVM.DesignSystem.Components.Lists
+@using RVM.DesignSystem.Components.Label
+@using RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Typography
+
+@* Cartao que envolve uma lista ("Meeting Schedule" do dashboard CRM do kit): titulo, selo, subtitulo e menu de
+   acoes no alto, abas opcionais, a lista no corpo. O titulo vira o nome da secao (aria-label) e sai como
+   paragrafo, nao como heading: o nivel certo depende da pagina que usa o cartao. *@
+<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@Title">
+    <div class="rvm-grupo-lista-cabecalho">
+        <div class="rvm-grupo-lista-textos">
+            <div class="rvm-grupo-lista-linha">
+                <RvmTypography Variant="RvmTypographyVariant.H6" As="RvmTextElement.P">@Title</RvmTypography>
+                @if (Badge is not null)
+                {
+                    @Badge
+                }
+                else if (!string.IsNullOrWhiteSpace(BadgeText))
+                {
+                    <RvmLabel Color="BadgeColor" Size="RvmSize.Small">@BadgeText</RvmLabel>
+                }
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Subtitle))
+            {
+                <RvmTypography Variant="RvmTypographyVariant.Body2" As="RvmTextElement.P" Color="RvmTextColor.Secondary">@Subtitle</RvmTypography>
+            }
+        </div>
+        @if (Menu is not null)
+        {
+            <RvmMenu Label="@MenuLabel" Trigger="RvmMenuTrigger.Icon" Placement="RvmMenuPlacement.BottomEnd"
+                     ButtonColor="RvmColor.Secondary">
+                @Menu
+            </RvmMenu>
+        }
+    </div>
+
+    @if (Tabs is not null)
+    {
+        <div class="rvm-grupo-lista-abas">@Tabs</div>
+    }
+
+    <div class="rvm-grupo-lista-corpo">@ChildContent</div>
+</section>
+
+@code {
+    /// <summary>Titulo do cartao. Tambem e o nome acessivel da secao.</summary>
+    [Parameter] public string? Title { get; set; }
+
+    /// <summary>Linha de apoio abaixo do titulo.</summary>
+    [Parameter] public string? Subtitle { get; set; }
+
+    /// <summary>Texto do selo ao lado do titulo. Para um selo proprio, use <see cref="Badge"/>.</summary>
+    [Parameter] public string? BadgeText { get; set; }
+
+    /// <summary>Papel de cor do selo de <see cref="BadgeText"/>. Padrao: <see cref="RvmColor.Accent"/>.</summary>
+    [Parameter] public RvmColor BadgeColor { get; set; } = RvmColor.Accent;
+
+    /// <summary>O selo, quando o padrao nao serve. Vence <see cref="BadgeText"/>.</summary>
+    [Parameter] public RenderFragment? Badge { get; set; }
+
+    /// <summary>Itens do menu de acoes no alto a direita (<c>RvmMenuItem</c>). Sem eles, nao ha menu.</summary>
+    [Parameter] public RenderFragment? Menu { get; set; }
+
+    /// <summary>Nome acessivel do botao do menu. Padrao: "Acoes da lista".</summary>
+    [Parameter] public string MenuLabel { get; set; } = "Acoes da lista";
+
+    /// <summary>Faixa de abas abaixo do cabecalho (um <c>RvmTabs</c>).</summary>
+    [Parameter] public RenderFragment? Tabs { get; set; }
+
+    /// <summary>O corpo: normalmente um <see cref="RvmList"/> com <see cref="RvmListItem"/>.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string ClassesDaRaiz => ClassesCss.Juntar("rvm-grupo-lista", Class, AdditionalAttributes);
+}

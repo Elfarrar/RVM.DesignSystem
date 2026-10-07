@@ -63,6 +63,9 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
     /// <summary>Enter nos minutos: quem esta num dialogo confirma a escolha aqui.</summary>
     [Parameter] public EventCallback OnConfirm { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -218,12 +221,7 @@ public partial class RvmTimeClock : ComponentBase, IAsyncDisposable
         get
         {
             var proprias = "rvm-relogio";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

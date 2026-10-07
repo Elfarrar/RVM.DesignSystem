@@ -1,0 +1,99 @@
+@page "/componentes/multilayer-donut-chart"
+@using RVM.DesignSystem.Components.Chart
+@using RVM.DesignSystem.Icons
+
+<PageTitle>RvmMultilayerDonutChart — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmMultilayerDonutChart</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Aneis concentricos, um por fatia, de fora para dentro, cada um com a propria trilha e preenchido ate Value sobre
+    Maximum. As fatias NAO dividem um total: sao independentes, entao o Total herdado nao vale aqui. Sem Maximum, o
+    teto e o maior valor e o anel dele fecha a volta.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB (o cartao Total Revenue).
+</p>
+
+<BlocoExemplo Titulo="Andamento da colheita por talhao"
+              Descricao="Percentual colhido de cada talhao, com Maximum = 100. Nas cores do tema, como o Total Revenue do kit, e em degraus do primary."
+              Codigo="@CodigoColheita">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 220px">
+            <RvmMultilayerDonutChart Label="Andamento da colheita por talhao" Slices="Talhoes" Maximum="100"
+                                     Palette="RvmChartPalette.FullColor" FormatValue="Porcento" CenterValue="68%" />
+        </div>
+        <div style="width: 220px">
+            <RvmMultilayerDonutChart Label="Andamento da colheita por talhao, em degraus" Slices="Talhoes" Maximum="100"
+                                     FormatValue="Porcento" CenterValue="68%" />
+        </div>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Sem Maximum: o maior valor fecha a volta"
+              Descricao="Clientes novos, recorrentes e indicados no mes: o maior grupo e o anel cheio."
+              Codigo="@CodigoSemMaximo">
+    <div style="width: 220px">
+        <RvmMultilayerDonutChart Label="Clientes do mes por origem" Slices="Clientes" Palette="RvmChartPalette.FullColor"
+                                 CenterValue="1.459" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="No lugar do desenho, na mesma figura."
+              Codigo="@CodigoEstados">
+    <div class="linha-exemplos alinhado-topo">
+        <div style="width: 220px">
+            <RvmMultilayerDonutChart Label="Andamento da colheita" Slices="Talhoes" Loading="true" />
+        </div>
+        <div style="width: 220px">
+            <RvmMultilayerDonutChart Label="Andamento da colheita" Slices="Talhoes" Error="true" ErrorTitle="Sem conexao com a colhedora" />
+        </div>
+        <div style="width: 220px">
+            <RvmMultilayerDonutChart Label="Andamento da colheita" Slices="[]">
+                <Empty>
+                    <RvmEmptyState Title="Colheita nao iniciada" Description="Os talhoes aparecem aqui quando a primeira carga for registrada." Status="true" />
+                </Empty>
+            </RvmMultilayerDonutChart>
+        </div>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmMultilayerDonutChart" />
+
+@code {
+    private static readonly RvmChartSlice[] Talhoes =
+        [new("Talhao 1 - Soja", 92), new("Talhao 2 - Soja", 74), new("Talhao 3 - Milho", 51), new("Talhao 4 - Milho", 23)];
+
+    private static readonly RvmChartSlice[] Clientes =
+        [new("Novos", 856), new("Recorrentes", 345), new("Indicados", 258)];
+
+    private static string Porcento(double v) => $"{RvmChartFormat.Number(v)}%";
+
+    private const string CodigoColheita = """
+        <RvmMultilayerDonutChart Label="Andamento da colheita por talhao" Maximum="100"
+                                 Palette="RvmChartPalette.FullColor" CenterValue="68%"
+                                 FormatValue="@(v => $"{RvmChartFormat.Number(v)}%")"
+                                 Slices="[new("Talhao 1 - Soja", 92), new("Talhao 2 - Soja", 74),
+                                          new("Talhao 3 - Milho", 51), new("Talhao 4 - Milho", 23)]" />
+        """;
+
+    private const string CodigoSemMaximo = """
+        <RvmMultilayerDonutChart Label="Clientes do mes por origem" Palette="RvmChartPalette.FullColor"
+                                 CenterValue="1.459"
+                                 Slices="[new("Novos", 856), new("Recorrentes", 345), new("Indicados", 258)]" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmMultilayerDonutChart Label="Andamento da colheita" Slices="talhoes" Loading="carregando" />
+        <RvmMultilayerDonutChart Label="Andamento da colheita" Slices="talhoes" Error="falhou"
+                                 ErrorTitle="Sem conexao com a colhedora" />
+        <RvmMultilayerDonutChart Label="Andamento da colheita" Slices="[]">
+            <Empty>
+                <RvmEmptyState Title="Colheita nao iniciada" Status="true"
+                               Description="Os talhoes aparecem aqui quando a primeira carga for registrada." />
+            </Empty>
+        </RvmMultilayerDonutChart>
+        """;
+}

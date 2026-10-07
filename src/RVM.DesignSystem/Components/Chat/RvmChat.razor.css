@@ -1,0 +1,87 @@
+/* CSS isolado do RvmChat. So custom properties. O quadro e a superficie do papel; a area das mensagens fica no fundo do
+   corpo, como na tela de chat do kit, para os baloes brancos da esquerda se destacarem. */
+
+.rvm-chat {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-lg);
+    background-color: var(--rvm-color-background-paper);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-cabecalho {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-3) var(--rvm-space-5);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.rvm-titulos {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.rvm-titulo,
+.rvm-subtitulo {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-titulo {
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-subtitulo {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-acoes {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    color: var(--rvm-color-text-secondary);
+}
+
+/* A conversa cresce de baixo para cima, sem JS: com a coluna invertida, o fio (filho unico) nasce colado no rodape,
+   perto de onde se escreve, e a rolagem comeca no FIM — na mensagem mais nova. O comeco da conversa continua
+   alcancavel rolando para cima (justify-content: flex-end, ao contrario, o cortaria). */
+.rvm-mensagens {
+    display: flex;
+    flex: 1;
+    flex-direction: column-reverse;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--rvm-space-5);
+    background-color: var(--rvm-color-background-body);
+}
+
+.rvm-fio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-6);
+}
+
+.rvm-mensagens:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: calc(-1 * var(--rvm-focus-ring-width));
+}
+
+.rvm-rodape {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: var(--rvm-space-3) var(--rvm-space-5);
+    border-top: 1px solid var(--rvm-color-divider);
+}

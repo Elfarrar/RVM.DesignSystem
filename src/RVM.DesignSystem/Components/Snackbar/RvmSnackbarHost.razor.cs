@@ -20,6 +20,9 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
     /// <summary>Nome acessivel do botao de fechar de cada mensagem. Padrao: "Fechar mensagem".</summary>
     [Parameter] public string CloseLabel { get; set; } = "Fechar mensagem";
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -27,18 +30,14 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
     internal IReadOnlyList<RvmSnackbarMessage> Visiveis => Servico.Visiveis;
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-avisos {texto}"
-            : "rvm-avisos";
+        => ClassesCss.Juntar("rvm-avisos", Class, AdditionalAttributes);
 
     internal static string ClassesDaMensagem(RvmSnackbarMessage mensagem)
         => mensagem.Options.Color switch
         {
             null => "rvm-mensagem rvm-neutra",
             RvmColor.Secondary => "rvm-mensagem rvm-colorida rvm-secondary",
+            RvmColor.Inverse => "rvm-mensagem rvm-colorida rvm-inverse",
             RvmColor.Info => "rvm-mensagem rvm-colorida rvm-info",
             RvmColor.Success => "rvm-mensagem rvm-colorida rvm-success",
             RvmColor.Warning => "rvm-mensagem rvm-colorida rvm-warning",
@@ -51,7 +50,7 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
         RvmColor.Success => RvmIconName.CircleCheck,
         RvmColor.Error => RvmIconName.AlertCircle,
         RvmColor.Warning => RvmIconName.AlertTriangle,
-        RvmColor.Info or RvmColor.Primary or RvmColor.Secondary => RvmIconName.InfoCircle,
+        RvmColor.Info or RvmColor.Primary or RvmColor.Secondary or RvmColor.Inverse => RvmIconName.InfoCircle,
         _ => null
     };
 

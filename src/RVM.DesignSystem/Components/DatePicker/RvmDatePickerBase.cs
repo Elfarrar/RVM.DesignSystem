@@ -23,6 +23,11 @@ public abstract class RvmDatePickerBase : RvmPickerFieldBase
     /// <summary>"Hoje" para marcar o dia atual no calendario. Padrao: a data do sistema.</summary>
     [Parameter] public DateOnly? Today { get; set; }
 
+    /// <summary>Onde o calendario abre: alinhado ao inicio do campo (padrao), ao fim, ou com a largura dele.</summary>
+    [Parameter] public RvmPopupAlignment Alignment { get; set; }
+
+    internal override RvmPopupAlignment AlinhamentoDaJanela => Alignment;
+
     internal RvmCalendar? CalendarioAberto { get; set; }
 
     internal override string PlaceholderPadrao => "dd/mm/aaaa";

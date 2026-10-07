@@ -19,6 +19,22 @@
     </RvmLineChart>
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="Carregando, erro e vazio"
+              Descricao="O grafico decide o que mostrar no lugar do desenho, na mesma altura: Error vence Loading, que vence IsEmpty. Os dados chegam depois e o desenho aparece ja medido. FormatAxisValue abrevia so o eixo; ShowAxis esconde os valores dele."
+              Codigo="@CodigoEstados">
+    <div class="pilha-exemplos largura-cheia">
+        <div class="linha-exemplos">
+            <RvmButton Variant="RvmButtonVariant.Outlined" OnClick="() => _estado = _estado == 0 ? 1 : 0">@(_estado == 0 ? "Carregar os dados" : "Voltar a carregar")</RvmButton>
+            <RvmButton Variant="RvmButtonVariant.Text" OnClick="() => _estado = 2">Simular erro</RvmButton>
+        </div>
+        <RvmLineChart Items="Vendas" Label="v => v.Mes" AriaLabel="Vendas por mes, com estados" Height="240"
+                      Loading="@(_estado == 0)" Error="@(_estado == 2)" LoadingMascot="RvmMascotName.RobotLoading"
+                      FormatAxisValue="@(v => RvmChartFormat.Compact(v))" ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)}")">
+            <RvmChartSeries Name="Vendas" Value="v => v.Valor" />
+        </RvmLineChart>
+    </div>
+</BlocoExemplo>
+
 <BlocoExemplo Titulo="Varias series com pontos, aproximavel"
               Descricao="Chuva mensal em tres fazendas, em mm. Com Zoomable, a roda do mouse aproxima o eixo dos meses (Shift para o dos milimetros), o arrasto desloca e o duplo clique volta; pelo teclado, + - 0 e Ctrl com as setas."
               Codigo="@CodigoSeries">
@@ -40,7 +56,7 @@
     </RvmLineChart>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmLineChart" />
 
 <RecorteDoKit Origem="kit/line-chart.png"
               Arquivo="referencia-neatlab/Chart Card.png (recorte)"
@@ -48,6 +64,17 @@
               Alt="Recorte do kit NEATLAB com um grafico de linha suave" />
 
 @code {
+    // 0 = carregando, 1 = com dados, 2 = erro.
+    private int _estado;
+
+    private const string CodigoEstados = """
+        <RvmLineChart Items="vendas" Label="v => v.Mes" AriaLabel="Vendas por mes"
+                      Loading="@carregando" Error="@falhou" LoadingMascot="RvmMascotName.RobotLoading"
+                      FormatAxisValue="@(v => RvmChartFormat.Compact(v))">
+            <RvmChartSeries Name="Vendas" Value="v => v.Valor" />
+        </RvmLineChart>
+        """;
+
     private static readonly (string Mes, double Valor)[] Vendas =
         [("Jan", 12_400), ("Fev", 31_800), ("Mar", 14_200), ("Abr", 28_900), ("Mai", 17_500), ("Jun", 38_200)];
 
@@ -61,22 +88,6 @@
     [
         ("Jan", 128_000, 11.5), ("Fev", 164_000, 14.2), ("Mar", 142_000, 9.8),
         ("Abr", 186_000, 16.4), ("Mai", 172_000, 15.1), ("Jun", 204_000, 18.7)
-    ];
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Items / Label / AriaLabel", "IEnumerable<TItem> / Func<TItem, string>? / string", "—", "Dados, categoria e nome do grafico (obrigatorio)."),
-        new("Smooth", "bool?", "false", "Curva suave (monotona) em vez de segmentos retos."),
-        new("ShowPoints", "bool", "false", "Marca todos os pontos; sem isso, so os da categoria ativa."),
-        new("Height / ShowLegend / ShowGrid", "int / bool / bool", "300 / true / true", "Altura, legenda e grade."),
-        new("ValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato dos valores."),
-        new("Zoomable", "bool", "false", "Roda do mouse aproxima o eixo X (com Shift, o Y), arrasto desloca, duplo clique volta; no teclado, + - 0 e Ctrl com as setas."),
-        new("SelectionMode / Selection / SelectionChanged", "RvmChartSelectionMode / RvmChartRange? / EventCallback", "None / null / —", "Range: arrastar marca uma faixa de itens (Shift+setas e Enter no teclado, Esc limpa) para filtrar o resto da tela. ZoomBox: arrastar desenha a area a aproximar, nos dois eixos de uma vez."),
-        new("SecondaryValueFormat", "Func<double, string>?", "RvmChartFormat.Compact", "Formato do eixo da direita (nao herda o ValueFormat, que descreve a unidade da esquerda)."),
-        new("Animated", "bool", "true", "Anima o desenho; silenciada sozinha em \"reduzir movimento\"."),
-        new("ExportAsync(format) / ExportFileName", "Task<bool> / string?", "— / AriaLabel", "Baixa o grafico em PNG, SVG, CSV, XLSX ou PDF; PrintAsync() abre a caixa de impressao."),
-        new("RvmChartSeries.Name / Value / Color", "string / Func<TItem, double> / RvmColor?", "— / — / paleta", "Cada serie."),
-        new("RvmChartSeries.Axis", "RvmChartAxis", "Primary", "Em qual eixo a serie e lida: o da esquerda ou o da direita, com escala propria.")
     ];
 
     private const string CodigoSuave = """

@@ -1,0 +1,62 @@
+@page "/componentes/sidebar"
+
+<PageTitle>RvmSidebar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmSidebar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O conteudo do menu lateral: marca, area de topo, navegacao rolavel e rodape. O <code>RvmAppShell</code> monta um destes na coluna dele; use sozinho quando a casca for outra. Os itens (<code>RvmNavSection</code>, <code>RvmNavItem</code>, <code>RvmNavGroup</code>, <code>RvmNavSubItem</code>) leem daqui o estado recolhido.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Branco e colorido, com recolher"
+              Descricao="Collapsible poe o botao de recolher no pe; ActiveLine marca o ativo com a barra na borda. O colorido e invencao declarada: o NEATLAB so desenha o menu no fundo do corpo."
+              Codigo="@Codigo">
+    <div class="linha-exemplos exemplo-alto">
+        <RvmSidebar Label="Menu do exemplo" Collapsible="true" @bind-Collapsed="_recolhido" ActiveLine="true">
+            <Logo><strong class="rvm-text-subtitle1">Fazenda</strong></Logo>
+            <ChildContent>
+                <RvmNavSection Title="Gestao">
+                    <RvmNavItem Href="componentes/sidebar" Text="Painel" Icon="RvmIconName.Home" Match="RvmNavMatch.All" />
+                    <RvmNavGroup Text="Financeiro" Icon="RvmIconName.File" @bind-Expanded="_financeiro">
+                        <RvmNavSubItem Href="financeiro/receber" Text="A receber" Badge="3" />
+                        <RvmNavSubItem Href="financeiro/pagar" Text="A pagar" />
+                    </RvmNavGroup>
+                </RvmNavSection>
+            </ChildContent>
+        </RvmSidebar>
+        <RvmSidebar Label="Menu colorido" Variant="RvmSidebarVariant.Colored">
+            <Logo><strong class="rvm-text-subtitle1">Fazenda</strong></Logo>
+            <ChildContent>
+                <RvmNavItem Href="componentes/sidebar" Text="Painel" Icon="RvmIconName.Home" Match="RvmNavMatch.All" />
+                <RvmNavItem Href="safras" Text="Safras" Icon="RvmIconName.Calendar" />
+            </ChildContent>
+        </RvmSidebar>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmSidebar" />
+
+<TabelaParametros Componente="RvmNavSubItem" />
+
+@code {
+    private bool _recolhido;
+    private bool _financeiro = true;
+
+    private const string Codigo = """
+        <RvmSidebar Label="Menu principal" Collapsible="true" @bind-Collapsed="recolhido" ActiveLine="true">
+            <Logo>...</Logo>
+            <ChildContent>
+                <RvmNavSection Title="Gestao">
+                    <RvmNavItem Href="painel" Text="Painel" Icon="RvmIconName.Home" />
+                    <RvmNavGroup Text="Financeiro" Icon="RvmIconName.File">
+                        <RvmNavSubItem Href="receber" Text="A receber" Badge="3" />
+                    </RvmNavGroup>
+                </RvmNavSection>
+            </ChildContent>
+        </RvmSidebar>
+        """;
+}

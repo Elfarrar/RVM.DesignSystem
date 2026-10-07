@@ -18,9 +18,22 @@ public partial class RvmRadio<TValue> : ComponentBase
     /// <summary>Rotulo livre, quando <see cref="Label"/> esta vazio.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>So esta opcao indisponivel. O <c>Disabled</c> do grupo desabilita todas.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>De que lado da bolinha fica o rotulo. Padrao: depois.</summary>
+    [Parameter] public RvmLabelPosition LabelPosition { get; set; } = RvmLabelPosition.End;
+
     /// <summary>Atributos extras, repassados ao input nativo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // class fica na raiz (ClassesDaRaiz); o resto vai para o input nativo.
+    internal IReadOnlyDictionary<string, object>? AtributosDoInput
+        => AtributosDoControle.Montar(AdditionalAttributes, null, null, null, false, false);
 
     internal string ClassesDaRaiz
     {
@@ -34,6 +47,7 @@ public partial class RvmRadio<TValue> : ComponentBase
                 cor switch
                 {
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",
@@ -41,7 +55,9 @@ public partial class RvmRadio<TValue> : ComponentBase
                     _ => "rvm-primary"
                 });
 
-            return Grupo?.Disabled == true ? classes + " rvm-desabilitado" : classes;
+            if (Grupo?.Disabled == true || Disabled) classes += " rvm-desabilitado";
+            if (LabelPosition == RvmLabelPosition.Start) classes += " rvm-rotulo-antes";
+            return ClassesCss.Juntar(classes, Class, AdditionalAttributes);
         }
     }
 

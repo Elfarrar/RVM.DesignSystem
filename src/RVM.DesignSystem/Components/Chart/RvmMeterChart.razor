@@ -1,0 +1,67 @@
+@namespace RVM.DesignSystem.Components.Chart
+@inherits RvmRadialChartBase
+
+@* Medidor (contrato com o RVM.UI, DSGN-017): um arco de 240 graus, das 8h as 4h passando pelo alto, repartido entre
+   as fatias, com a trilha mostrando o que falta para o Total. No centro, a leitura: com Total, o percentual atingido e
+   "x de y"; sem ele, a soma. Visual do medidor "Total Profit" do kit, em traco cheio. *@
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    private const double Lado = 248;
+    private const double C = Lado / 2;
+    private const double R = Lado / 2;
+    private const double Inicio = -120;
+    private const double Varredura = 240;
+    private const double Folga = 1.2;
+
+    private static double Espessura => R * 0.16;
+
+    private static double RaioDoTraco => R - Espessura / 2;
+
+    internal override double Largura => Lado;
+
+    // As pontas do arco caem a 120 graus do alto: o canto de fora fica meio raio abaixo do centro.
+    internal override double Altura => Math.Ceiling(C + R / 2) + 2;
+
+    internal override string ClasseDoTipo => "rvm-medidor";
+
+    internal override bool UsaRampaDoMedidor => true;
+
+    private string Mascara => $"{IdBase}-relogio";
+
+    private List<Pedaco> Pedacos() => PedacosNoArco(Inicio, Varredura, Folga);
+
+    internal override RenderFragment Desenho => @<g>
+        <defs>@Relogio(Mascara, C, C, R, Inicio, Varredura)</defs>
+        <path class="rvm-radial-trilha" d="@Arco(C, C, RaioDoTraco, Inicio, Inicio + Varredura)" stroke-width="@N(Espessura)" />
+        <g mask="@($"url(#{Mascara})")">
+            @foreach (var pedaco in Pedacos())
+            {
+                <path class="rvm-radial-fatia" style="@EstiloDaCor(pedaco.Indice)" d="@Arco(C, C, RaioDoTraco, pedaco.De, pedaco.Ate)"
+                      stroke-width="@N(Espessura)" />
+            }
+        </g>
+    </g>;
+
+    internal override IReadOnlyList<Alvo> Alvos
+        => [.. Pedacos().Select(p =>
+            {
+                var (x, y) = Ponto(C, C, RaioDoTraco, (p.De + p.Ate) / 2);
+                return AlvoEm(p.Indice, x, y);
+            })];
+
+    /// <summary>A leitura do medidor: o percentual atingido do Total, ou a soma quando nao ha Total.</summary>
+    internal string Leitura => Total is null ? Formatar(Soma) : Percentual(TotalEfetivo <= 0 ? 0 : Soma / TotalEfetivo);
+
+    /// <summary>O que explica a leitura.</summary>
+    internal string DetalheDaLeitura => Total is null ? "no total" : $"{Formatar(Soma)} de {Formatar(TotalEfetivo)}";
+
+    internal override RenderFragment? Centro => @<div class="rvm-medidor-centro">
+        <span class="rvm-medidor-valor">@Leitura</span>
+        <span class="rvm-medidor-detalhe">@DetalheDaLeitura</span>
+    </div>;
+
+    // A caixa do centro e o quadrado do circulo, que passa da borda de baixo do desenho: o texto fica no centro do arco.
+    internal override string EstiloDoCentro
+        => string.Create(System.Globalization.CultureInfo.InvariantCulture, $"left: 0; right: 0; top: 0; height: {Lado / Altura * 100:0.##}%");
+}

@@ -41,18 +41,9 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmSkeleton" />
 
 @code {
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Variant", "RvmSkeletonVariant", "Text", "Text (linha), Rectangular ou Circular."),
-        new("Width", "string?", "100% / 40px", "Largura em CSS. Circulo: 40 px."),
-        new("Height", "string?", "linha / 120px", "Altura em CSS. Circulo: igual a largura."),
-        new("Animated", "bool", "true", "Brilho passando."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "class e style somados aos proprios.")
-    ];
-
     private const string CodigoCard = """
         <div aria-busy="true" aria-label="Carregando o card do produtor" role="group">
             <RvmSkeleton Variant="RvmSkeletonVariant.Circular" />

@@ -53,7 +53,9 @@
     </div>
 </BlocoExemplo>
 
-<TabelaParametros Parametros="@Parametros" />
+<TabelaParametros Componente="RvmTimePicker" />
+
+<TabelaParametros Componente="RvmTimeClock" />
 
 <RecorteDoKit Origem="kit/time-picker.png"
               Arquivo="referencia-neatlab/Date & TIme Picker-1.png e Date/Time pickers.png (recortes)"
@@ -66,25 +68,6 @@
     private TimeOnly? _colheita;
     private TimeOnly? _visita;
     private TimeOnly? _solto = new(15, 1);
-
-    private static readonly TabelaParametros.Parametro[] Parametros =
-    [
-        new("Value", "TimeOnly?", "—", "O horario. Aceita @bind-Value."),
-        new("Mode", "RvmTimePickerMode", "List", "List (lista com busca) ou Clock (relogio num dialogo)."),
-        new("Step", "int?", "30 na lista, 1 no relogio", "Minutos entre um horario e o proximo (no relogio, ate 30)."),
-        new("Min / Max", "TimeOnly", "00:00 / 23:59", "Janela de horarios escolhiveis. Min maior que Max cruza a meia-noite (22:00 a 06:00)."),
-        new("Use24Hours", "bool", "true", "18:30 ou 6:30 PM."),
-        new("Label / HelperText / ErrorText / Placeholder", "string?", "—", "Como no campo de texto."),
-        new("Variant / Size", "RvmTextFieldVariant / RvmSize", "Outlined / Medium", "Estilo (so na lista) e tamanho do campo."),
-        new("Searchable", "bool", "true", "Busca no topo da lista."),
-        new("Required / Disabled", "bool", "false", "Obrigatorio e indisponivel."),
-        new("Name", "string?", "—", "input hidden com o horario em HH:mm."),
-        new("AdditionalAttributes", "IReadOnlyDictionary", "—", "Repassados ao campo."),
-        new("RvmTimeClock.View", "RvmTimeClockView", "Hours", "Hours ou Minutes no mostrador. Aceita @bind-View."),
-        new("RvmTimeClock.Title", "string", "\"Selecione o horario\"", "Titulo pequeno no topo."),
-        new("RvmTimeClock.Actions", "RenderFragment?", "—", "Botoes abaixo do mostrador."),
-        new("RvmTimeClock.OnConfirm", "EventCallback", "—", "Enter nos minutos.")
-    ];
 
     private const string CodigoHorarios = """
         <RvmTimePicker @bind-Value="_inicio" Label="Inicio da aplicacao" Step="15"

@@ -144,9 +144,9 @@ public class RvmTabsTests : BunitContext
     }
 
     [Theory]
-    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Horizontal, false, "rvm-abas rvm-sublinhadas rvm-horizontal")]
-    [InlineData(RvmTabsVariant.Contained, RvmOrientation.Horizontal, true, "rvm-abas rvm-preenchidas rvm-horizontal rvm-largura-total")]
-    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Vertical, true, "rvm-abas rvm-sublinhadas rvm-vertical")]
+    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Horizontal, false, "rvm-abas rvm-sublinhadas rvm-horizontal rvm-primary")]
+    [InlineData(RvmTabsVariant.Contained, RvmOrientation.Horizontal, true, "rvm-abas rvm-preenchidas rvm-horizontal rvm-primary rvm-largura-total")]
+    [InlineData(RvmTabsVariant.Standard, RvmOrientation.Vertical, true, "rvm-abas rvm-sublinhadas rvm-vertical rvm-primary")]
     public void Estilo_orientacao_e_largura_viram_classes(RvmTabsVariant variante, RvmOrientation orientacao, bool larguraTotal, string esperado)
     {
         var cortado = Abas(extra: p => p.Add(x => x.Variant, variante).Add(x => x.Orientation, orientacao).Add(x => x.FullWidth, larguraTotal));

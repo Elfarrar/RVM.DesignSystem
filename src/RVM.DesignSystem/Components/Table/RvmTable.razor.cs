@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using RVM.DesignSystem.Icons;
 
 namespace RVM.DesignSystem.Components.Table;
 
@@ -57,6 +58,45 @@ public partial class RvmTable<TItem> : ComponentBase
     /// <summary>Texto quando nao ha linhas.</summary>
     [Parameter] public string NoRecordsText { get; set; } = "Nenhum registro para mostrar.";
 
+    /// <summary>Titulo e descricao acima da tabela.</summary>
+    [Parameter] public RenderFragment? Header { get; set; }
+
+    /// <summary>Acoes no alto, a direita do <see cref="Header"/> (botao, exportar).</summary>
+    [Parameter] public RenderFragment? Toolbar { get; set; }
+
+    /// <summary>Os dados estao chegando: as linhas dao lugar ao aviso de carregamento.</summary>
+    [Parameter] public bool Loading { get; set; }
+
+    /// <summary>A carga falhou. Vence <see cref="Loading"/>.</summary>
+    [Parameter] public bool Error { get; set; }
+
+    /// <summary>
+    /// O vazio quando nao ha linha nenhuma, ensinando o proximo passo. Sem ele, sai a linha com
+    /// <see cref="NoRecordsText"/>. Ligue <c>Status</c> no seu <c>RvmEmptyState</c>.
+    /// </summary>
+    [Parameter] public RenderFragment? Empty { get; set; }
+
+    /// <summary>O erro. Sem ele, sai o <c>RvmEmptyState</c> de erro com <see cref="ErrorTitle"/> e <see cref="ErrorText"/>.</summary>
+    [Parameter] public RenderFragment? ErrorContent { get; set; }
+
+    /// <summary>Mascote do erro padrao. Sem efeito com <see cref="ErrorContent"/>.</summary>
+    [Parameter] public RvmMascotName? ErrorMascot { get; set; }
+
+    /// <summary>Mascote do carregamento, no lugar do indicador circular.</summary>
+    [Parameter] public RvmMascotName? LoadingMascot { get; set; }
+
+    /// <summary>Texto do carregamento.</summary>
+    [Parameter] public string LoadingText { get; set; } = "Carregando...";
+
+    /// <summary>Titulo do erro padrao.</summary>
+    [Parameter] public string ErrorTitle { get; set; } = "Nao deu para carregar";
+
+    /// <summary>Texto do erro padrao.</summary>
+    [Parameter] public string ErrorText { get; set; } = EstadosDosDados.TextoDeErro;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -82,7 +122,7 @@ public partial class RvmTable<TItem> : ComponentBase
     internal void AdicionarColuna(RvmTableColumn<TItem> coluna)
     {
         _colunas.Add(coluna);
-        if (ColunaOrdenada is null && coluna.InitialSort is { } sentido && coluna.Ordenavel)
+        if (ColunaOrdenada is null && coluna.InitialSort is { } sentido and not RvmSortDirection.None && coluna.Ordenavel)
         {
             ColunaOrdenada = coluna;
             Sentido = sentido;
@@ -250,12 +290,7 @@ public partial class RvmTable<TItem> : ComponentBase
             if (EhGrade) proprias += " rvm-grade-dados";
             if (Dense) proprias += " rvm-densa";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

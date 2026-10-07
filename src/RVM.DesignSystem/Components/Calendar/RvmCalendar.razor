@@ -6,7 +6,7 @@
    de tabulacao (tabindex movel), setas andam um dia ou uma semana, Home e End vao ao inicio e ao fim
    da semana, Page Up e Page Down trocam de mes (com Shift, de ano). Cada dia e um <button>: Enter e
    Espaco escolhem sem codigo. O mes exibido e anunciado (aria-live) quando muda. *@
-<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+<div @ref="_raiz" @attributes="AdditionalAttributes" class="@ClassesDaRaiz" @onkeydown="AoTeclarNaRaizAsync">
     <div class="rvm-cabecalho-mes">
         <h2 id="@IdTitulo" class="rvm-mes" aria-live="polite">@TituloDoMes</h2>
         <button type="button" class="rvm-navegar" aria-label="Mes anterior" disabled="@(!PodeIrPara(-1))" @onclick="() => MudarMesAsync(-1, focar: false)">

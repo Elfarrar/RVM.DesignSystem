@@ -1,0 +1,20 @@
+/* Altura para o painel aberto caber dentro do exemplo; os gatilhos ficam a direita, como no topo do kit. */
+.exemplo-widgets {
+    min-height: 24rem;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.exemplo-cartao {
+    width: 16rem;
+}
+
+.exemplo-lista-avisos {
+    margin: 0;
+    padding: 0;
+}
+
+.exemplo-widgets ::deep .exemplo-opcao {
+    width: 100%;
+    justify-content: flex-start;
+}

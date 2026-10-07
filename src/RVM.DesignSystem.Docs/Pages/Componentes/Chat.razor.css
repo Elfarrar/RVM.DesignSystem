@@ -1,0 +1,60 @@
+.tela-de-chat {
+    display: grid;
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+    gap: var(--rvm-space-4);
+    width: 100%;
+    height: 620px;
+}
+
+.lista-de-conversas {
+    overflow-y: auto;
+    padding: var(--rvm-space-2);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-lg);
+    background-color: var(--rvm-color-background-paper);
+}
+
+.lista-de-conversas ul,
+.contatos-soltos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.contatos-soltos {
+    width: 100%;
+    max-width: 320px;
+}
+
+/* O RvmChat e uma <section>, e o site da 40 px de margem a toda section da documentacao. */
+.tela-de-chat ::deep .conversa {
+    min-height: 0;
+    margin: 0;
+}
+
+.compositor {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--rvm-space-2);
+}
+
+.compositor ::deep .campo-da-mensagem {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 720px) {
+    .tela-de-chat {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 560px;
+        height: auto;
+    }
+
+    .lista-de-conversas {
+        max-height: 220px;
+    }
+}

@@ -1,0 +1,49 @@
+@namespace RVM.DesignSystem.Components.Chip
+
+@* Tag em pilula (contrato com o RVM.UI, DSGN-017): o visual do RvmChip primario de 32 px, Soft ou Solid. O "x" e um
+   botao de verdade, nomeado com o texto ("Remover Soja"): com varias tags lado a lado, "Remover" sozinho nao diz qual. *@
+<span @attributes="AdditionalAttributes" class="@Classes" aria-disabled="@(Disabled ? "true" : null)">
+    <span class="rvm-texto">@Text</span>
+    @if (OnRemove.HasDelegate)
+    {
+        <button type="button" class="rvm-remover" aria-label="@($"Remover {Text}")" disabled="@Disabled" @onclick="Remover">
+            <RvmIcon Name="RvmIconName.Close" Size="RvmSize.Small" />
+        </button>
+    }
+</span>
+
+@code {
+    /// <summary>O texto da tag.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Estilo. Padrao: <see cref="RvmTagVariant.Soft"/>.</summary>
+    [Parameter] public RvmTagVariant Variant { get; set; } = RvmTagVariant.Soft;
+
+    /// <summary>Chamado ao remover. Com alguem escutando, aparece o botao de remover ("Remover {Text}").</summary>
+    [Parameter] public EventCallback OnRemove { get; set; }
+
+    /// <summary>Indisponivel: esmaecida e sem remover.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string Classes
+    {
+        get
+        {
+            var proprias = Variant == RvmTagVariant.Solid ? "rvm-tag rvm-solida" : "rvm-tag rvm-suave";
+            if (Disabled) proprias += " rvm-desabilitado";
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
+        }
+    }
+
+    private async Task Remover()
+    {
+        if (!Disabled) await OnRemove.InvokeAsync();
+    }
+}

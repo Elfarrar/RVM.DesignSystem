@@ -1,0 +1,113 @@
+@namespace RVM.DesignSystem.Components.Activity
+@using RVM.DesignSystem.Components.Label
+@using RVM.DesignSystem.Components.Menu
+@using RVM.DesignSystem.Components.Timeline
+
+@* O cartao "Activity Timeline" do kit: cabecalho (titulo, etiqueta, subtitulo e menu de tres pontos) e a lista
+   de RvmActivity, que rola por dentro. A lista e um RvmTimeline (lista ordenada: a ordem e a informacao); cada
+   RvmActivity aqui dentro vira <li> pelo valor em cascata. Carregando, erro e vazio pela mesma casca das listas
+   e tabelas (EstadosDosDados): erro vence carregando, que vence vazio. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <div class="rvm-historico-cabecalho">
+        <div class="rvm-historico-textos">
+            <div class="rvm-historico-linha-titulo">
+                <h3 id="@_idTitulo" class="rvm-historico-titulo">@Title</h3>
+                @if (!string.IsNullOrWhiteSpace(Label))
+                {
+                    <RvmLabel Color="LabelColor">@Label</RvmLabel>
+                }
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Text))
+            {
+                <p class="rvm-historico-texto">@Text</p>
+            }
+        </div>
+        @if (MenuItems is not null)
+        {
+            <RvmMenu Label="@RotuloDoMenu" Trigger="RvmMenuTrigger.Icon" Placement="RvmMenuPlacement.BottomEnd">@MenuItems</RvmMenu>
+        }
+    </div>
+
+    @if (Estado is EstadoDosDados.Conteudo)
+    {
+        @* Rola por dentro: tabindex para o teclado alcancar a rolagem (axe, scrollable-region-focusable). *@
+        <div class="rvm-historico-corpo" tabindex="0" role="group" aria-labelledby="@_idTitulo">
+            <CascadingValue Value="this" IsFixed="true">
+                <RvmTimeline>@ChildContent</RvmTimeline>
+            </CascadingValue>
+        </div>
+    }
+    else
+    {
+        <div class="rvm-historico-corpo">
+            @switch (Estado)
+            {
+                case EstadoDosDados.Carregando: @EstadosDosDados.Carregando(LoadingText, null) break;
+                case EstadoDosDados.Erro: @EstadosDosDados.Erro(null, ErrorTitle, ErrorText, null) break;
+                default: @EstadosDosDados.Vazio(Empty, EmptyText) break;
+            }
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>Titulo do cartao.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+
+    /// <summary>Subtitulo abaixo do titulo.</summary>
+    [Parameter] public string? Text { get; set; }
+
+    /// <summary>Texto da etiqueta ao lado do titulo. Sem ele, sem etiqueta.</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Papel de cor da etiqueta. Padrao: <see cref="RvmColor.Accent"/>.</summary>
+    [Parameter] public RvmColor LabelColor { get; set; } = RvmColor.Accent;
+
+    /// <summary>As atividades (<see cref="RvmActivity"/>).</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Itens do menu de tres pontos (<c>RvmMenuItem</c>). Sem eles, sem menu.</summary>
+    [Parameter] public RenderFragment? MenuItems { get; set; }
+
+    /// <summary>Nome acessivel do menu. Sem ele, "Mais acoes".</summary>
+    [Parameter] public string? MenuLabel { get; set; }
+
+    /// <summary>Os dados estao chegando: a lista da lugar ao aviso de carregamento.</summary>
+    [Parameter] public bool Loading { get; set; }
+
+    /// <summary>Nao ha nenhuma atividade. Use <see cref="Empty"/> para ensinar o proximo passo.</summary>
+    [Parameter] public bool IsEmpty { get; set; }
+
+    /// <summary>A carga falhou. Vence <see cref="Loading"/> e <see cref="IsEmpty"/>.</summary>
+    [Parameter] public bool Error { get; set; }
+
+    /// <summary>O vazio que ensina o proximo passo. Sem ele, sai um <c>RvmEmptyState</c> com <see cref="EmptyText"/>.</summary>
+    [Parameter] public RenderFragment? Empty { get; set; }
+
+    /// <summary>Texto do carregamento.</summary>
+    [Parameter] public string LoadingText { get; set; } = "Carregando...";
+
+    /// <summary>Texto do vazio padrao.</summary>
+    [Parameter] public string EmptyText { get; set; } = "Nenhuma atividade por aqui ainda.";
+
+    /// <summary>Titulo do erro.</summary>
+    [Parameter] public string ErrorTitle { get; set; } = "Nao deu para carregar";
+
+    /// <summary>Texto do erro.</summary>
+    [Parameter] public string ErrorText { get; set; } = EstadosDosDados.TextoDeErro;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private readonly string _idTitulo = GeradorDeIds.Novo("rvm-historico-titulo");
+
+    internal EstadoDosDados Estado => EstadosDosDados.Qual(Error, Loading, IsEmpty);
+
+    private string RotuloDoMenu => string.IsNullOrWhiteSpace(MenuLabel) ? "Mais acoes" : MenuLabel;
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-historico", Class, AdditionalAttributes);
+}

@@ -1,0 +1,118 @@
+@page "/componentes/kanban-board"
+@using RVM.DesignSystem.Components.Kanban
+
+<PageTitle>RvmKanbanBoard — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmKanbanBoard</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Quadro de tarefas em colunas. Cada coluna e uma secao nomeada pelo titulo com a contagem; os cartoes sao uma
+    lista. Arraste um cartao com o mouse para outra coluna, ou use o menu do cartao: os itens "Mover para..." chegam
+    prontos no <code>ItemTemplate</code> e sao a alternativa de teclado e de toque ao arrastar. Cada movimento e
+    anunciado ao leitor de tela.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. ⚠️ O quadro <strong>nao move
+    sozinho</strong>: avisa <code>OnMove</code> com o cartao, a coluna de origem, a de destino e a posicao, e o app
+    devolve <code>Columns</code> com o cartao no lugar novo. O kit nao tem tela de kanban: colunas e cartoes usam as
+    superficies dele.
+</p>
+
+<BlocoExemplo Titulo="Tarefas da safra"
+              Descricao="Arraste um cartao ou abra o menu de tres pontos dele e escolha Mover para. O + de cada coluna cria uma tarefa nela."
+              Codigo="@Codigo">
+    <div class="largura-cheia">
+        <RvmKanbanBoard TItem="Tarefa" Columns="_colunas" OnMove="Mover" ItemTitleSelector="t => t.Titulo"
+                        Label="Tarefas da safra 2026/27">
+            <ColumnActions>
+                <RvmIconButton Icon="RvmIconName.Plus" Label="@($"Nova tarefa em {context.Title}")" Size="RvmSize.Small"
+                               OnClick="() => Criar(context.Id)" />
+            </ColumnActions>
+            <ItemTemplate>
+                <div class="tarefa">
+                    <div class="tarefa-topo">
+                        <RvmChip Size="RvmSize.Small" Color="context.Item.Cor" Label="@context.Item.Talhao" />
+                        <RvmMenu Label="@($"Acoes de {context.Item.Titulo}")" Trigger="RvmMenuTrigger.Icon" AlignEnd="true">
+                            @context.MoveItems
+                        </RvmMenu>
+                    </div>
+                    <RvmTypography Variant="RvmTypographyVariant.Subtitle2" As="RvmTextElement.P">@context.Item.Titulo</RvmTypography>
+                    <RvmTypography Variant="RvmTypographyVariant.Caption" As="RvmTextElement.P" Color="RvmTextColor.Secondary">
+                        @context.Item.Responsavel · ate @context.Item.Prazo
+                    </RvmTypography>
+                </div>
+            </ItemTemplate>
+        </RvmKanbanBoard>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmKanbanBoard" />
+
+@code {
+    private sealed record Tarefa(int Id, string Titulo, string Talhao, string Responsavel, string Prazo, RvmColor Cor);
+
+    private int _proximo = 7;
+
+    private IReadOnlyList<RvmKanbanColumn<Tarefa>> _colunas =
+    [
+        new("fazer", "A fazer",
+        [
+            new(1, "Calibrar plantadeira", "Talhao 3", "Joao", "12/10", RvmColor.Info),
+            new(2, "Analise de solo", "Talhao 7", "Marina", "15/10", RvmColor.Warning),
+            new(3, "Comprar semente de soja", "Sede", "Carlos", "18/10", RvmColor.Secondary)
+        ]),
+        new("andamento", "Em andamento",
+        [
+            new(4, "Plantio da soja", "Talhao 1", "Joao", "20/10", RvmColor.Success),
+            new(5, "Revisar pulverizador", "Oficina", "Pedro", "10/10", RvmColor.Secondary)
+        ]),
+        new("feito", "Feito",
+        [
+            new(6, "Dessecacao pre-plantio", "Talhao 1", "Marina", "02/10", RvmColor.Success)
+        ])
+    ];
+
+    // O quadro so avisa: quem tira o cartao de uma lista e poe na outra e o app.
+    private void Mover(RvmKanbanMove<Tarefa> m) => _colunas =
+    [
+        .. _colunas.Select(c =>
+            c.Id == m.FromColumnId ? c with { Items = [.. c.Items.Where(t => t != m.Item)] }
+            : c.Id == m.ToColumnId ? c with { Items = [.. c.Items.Take(m.ToIndex), m.Item, .. c.Items.Skip(m.ToIndex)] }
+            : c)
+    ];
+
+    private void Criar(string colunaId) => _colunas =
+    [
+        .. _colunas.Select(c => c.Id == colunaId
+            ? c with { Items = [.. c.Items, new Tarefa(_proximo, $"Nova tarefa {_proximo++}", "Sem talhao", "A definir", "--", RvmColor.Secondary)] }
+            : c)
+    ];
+
+    private const string Codigo = """
+        <RvmKanbanBoard TItem="Tarefa" Columns="_colunas" OnMove="Mover" ItemTitleSelector="t => t.Titulo">
+            <ColumnActions>
+                <RvmIconButton Icon="RvmIconName.Plus" Label="@($"Nova tarefa em {context.Title}")"
+                               OnClick="() => Criar(context.Id)" />
+            </ColumnActions>
+            <ItemTemplate>
+                <RvmChip Size="RvmSize.Small" Label="@context.Item.Talhao" />
+                <RvmMenu Label="@($"Acoes de {context.Item.Titulo}")" Trigger="RvmMenuTrigger.Icon">
+                    @context.MoveItems
+                </RvmMenu>
+                <RvmTypography Variant="RvmTypographyVariant.Subtitle2">@context.Item.Titulo</RvmTypography>
+            </ItemTemplate>
+        </RvmKanbanBoard>
+
+        @code {
+            // O quadro so avisa; o app move o cartao de lista.
+            private void Mover(RvmKanbanMove<Tarefa> m) => _colunas =
+            [
+                .. _colunas.Select(c =>
+                    c.Id == m.FromColumnId ? c with { Items = [.. c.Items.Where(t => t != m.Item)] }
+                    : c.Id == m.ToColumnId ? c with { Items = [.. c.Items.Take(m.ToIndex), m.Item, .. c.Items.Skip(m.ToIndex)] }
+                    : c)
+            ];
+        }
+        """;
+}

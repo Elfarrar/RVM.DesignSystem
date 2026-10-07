@@ -1,0 +1,39 @@
+@page "/componentes/topbar"
+
+<PageTitle>RvmTopbar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmTopbar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A barra do topo da pagina: a esquerda o que o app quiser (titulo, busca); a direita os widgets e o perfil.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Titulo, acoes e perfil"
+              Descricao="Os botoes de icone levam o nome no Label; o avatar e o perfil."
+              Codigo="@Codigo">
+    <RvmTopbar class="largura-cheia">
+        <Start><RvmTypography Variant="RvmTypographyVariant.H6" As="RvmTextElement.H2">Safra 2026/27</RvmTypography></Start>
+        <Actions>
+            <RvmIconButton Icon="RvmIconName.Search" Label="Buscar" />
+            <RvmIconButton Icon="RvmIconName.Bell" Label="Avisos" />
+        </Actions>
+        <Profile><RvmAvatar Initials="RV" Alt="Rafael" Size="RvmSize.Small" /></Profile>
+    </RvmTopbar>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmTopbar" />
+
+@code {
+
+    private const string Codigo = """
+        <RvmTopbar>
+            <Start>...titulo ou busca...</Start>
+            <Actions><RvmIconButton Icon="RvmIconName.Bell" Label="Avisos" /></Actions>
+            <Profile><RvmAvatar Initials="RV" Alt="Rafael" /></Profile>
+        </RvmTopbar>
+        """;
+}

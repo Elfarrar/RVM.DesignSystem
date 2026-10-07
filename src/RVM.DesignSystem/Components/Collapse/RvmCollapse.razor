@@ -1,0 +1,26 @@
+@namespace RVM.DesignSystem.Components.Collapse
+
+@* Mostra ou esconde um bloco. O conteudo continua MONTADO quando fecha (atributo hidden): o que foi digitado
+   num formulario nao se perde ao recolher. Quem abre deve ter aria-expanded e aria-controls apontando para
+   o Id deste bloco. Ao abrir, entra com um deslize curto (nenhum, com "reduzir movimento"). *@
+<div @attributes="AdditionalAttributes" id="@Id" class="@ClassesCss.Juntar("rvm-recolhivel", Class, AdditionalAttributes)" hidden="@(!Expanded)">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>Aberto.</summary>
+    [Parameter] public bool Expanded { get; set; }
+
+    /// <summary>Id do bloco: o alvo do <c>aria-controls</c> do botao que abre.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>O conteudo.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

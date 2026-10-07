@@ -10,5 +10,13 @@ public enum RvmButtonVariant
     Outlined,
 
     /// <summary>So texto. Acao terciaria, dentro de um card ou de uma linha de lista.</summary>
-    Text
+    Text,
+
+    /// <summary>Fundo suave da cor do papel, texto na cor. Acao de apoio com mais presenca que o contorno.</summary>
+    Soft,
+
+    // Aliases do contrato com o RVM.UI (DSGN-017): o mesmo valor, o nome que o RVM.UI usa.
+
+    /// <summary>O mesmo que <see cref="Contained"/>.</summary>
+    Filled = Contained
 }

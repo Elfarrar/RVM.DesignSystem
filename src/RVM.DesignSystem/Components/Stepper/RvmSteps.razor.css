@@ -1,0 +1,97 @@
+/* CSS isolado do RvmSteps. So custom properties — hex literal aqui quebra o tema escuro.
+   Os marcadores sao os do RvmStepper (24 px, MEDIDOS no Stepper.png do kit): o atual e o concluido cheios na cor
+   primaria, os que faltam so com borda. */
+
+.rvm-etapas {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-5);
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-lista-etapas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rvm-space-2) var(--rvm-space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rvm-marcador-etapa,
+.rvm-voltar-etapa {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: var(--rvm-text-body2-size);
+}
+
+.rvm-voltar-etapa {
+    border-radius: var(--rvm-radius-sm);
+    cursor: pointer;
+}
+
+.rvm-voltar-etapa:hover .rvm-titulo-etapa { text-decoration: underline; }
+
+.rvm-voltar-etapa:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-numero {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--rvm-color-secondary-outlined-resting);
+    border-radius: var(--rvm-radius-circle);
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+}
+
+.rvm-numero-atual,
+.rvm-numero-feito {
+    border-color: var(--rvm-color-primary-main);
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+.rvm-etapa:not(.rvm-atual):not(.rvm-feita) .rvm-titulo-etapa { color: var(--rvm-color-text-secondary); }
+.rvm-atual .rvm-titulo-etapa { font-weight: var(--rvm-font-weight-medium); }
+
+.rvm-navegacao-etapas {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* Estreito: so o titulo da etapa atual; as outras ficam no numero. */
+@container (max-width: 560px) {
+    .rvm-etapa:not(.rvm-atual) .rvm-titulo-etapa {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+}

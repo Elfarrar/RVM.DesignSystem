@@ -1,0 +1,142 @@
+@page "/componentes/stat-card"
+@using RVM.DesignSystem.Components.Cards
+
+<PageTitle>RvmStatCard — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmStatCard</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    O card de estatistica do painel: titulo, numero e variacao, com enfeite, acao no canto e, abaixo do numero, uma
+    barra de progresso, uma imagem ou um grafico pequeno. A variacao nunca fala so por seta e cor: o leitor de tela
+    ouve "Alta de 12%" ou "Queda de 3%".
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. O numero chega formatado — o
+    card nao formata moeda.
+</p>
+
+<BlocoExemplo Titulo="Pequeno, com icone e variacao"
+              Descricao="Adornment Icon poe o icone num quadrado suave ao lado do titulo. Trend escolhe a seta e a cor; TrendValue e o texto."
+              Codigo="@CodigoPequeno">
+    <div class="grade-cards largura-cheia">
+        <RvmStatCard Title="Sacas colhidas" Value="48.320" Adornment="RvmStatCardAdornment.Icon" AdornmentIcon="RvmIconName.Leaf"
+                     Color="RvmColor.Success" Trend="RvmStatCardTrend.Up" TrendValue="12%" TrendDetail="sobre a safra passada" />
+        <RvmStatCard Title="Receita do mes" Value="R$ 1,2 mi" Adornment="RvmStatCardAdornment.Icon" AdornmentIcon="RvmIconName.DollarMinimalistic"
+                     Trend="RvmStatCardTrend.Down" TrendValue="3,4%" />
+        <RvmStatCard Title="Contratos abertos" Value="27" Adornment="RvmStatCardAdornment.Icon" AdornmentIcon="RvmIconName.Document"
+                     Color="RvmColor.Warning" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Selo, menu e botao"
+              Descricao="Adornment Badge poe o selo circular ao lado do numero. Action Menu usa ActionMenu e ActionLabel (o nome do menu); Action Button avisa por OnActionClick."
+              Codigo="@CodigoAcoes">
+    <div class="grade-cards largura-cheia">
+        <RvmStatCard Title="Custo por hectare" Subtitle="Safra 25/26" Value="R$ 4.870" Adornment="RvmStatCardAdornment.Badge"
+                     AdornmentIcon="RvmIconName.Wallet" Color="RvmColor.Info" Trend="RvmStatCardTrend.Up" TrendValue="5%"
+                     Action="RvmCardAction.Menu" ActionLabel="Opcoes do custo por hectare">
+            <ActionMenu>
+                <RvmMenuItem OnClick="@(() => _ultimaAcao = "Ver detalhes")">Ver detalhes</RvmMenuItem>
+                <RvmMenuItem OnClick="@(() => _ultimaAcao = "Exportar")">Exportar</RvmMenuItem>
+            </ActionMenu>
+        </RvmStatCard>
+        <RvmStatCard Title="Notas a emitir" Value="14" Action="RvmCardAction.Button" ActionLabel="Emitir nota"
+                     OnActionClick="@(() => _ultimaAcao = "Emitir nota")" />
+    </div>
+    <p class="rvm-text-body2 site-apoio">Ultima acao: @(_ultimaAcao ?? "nenhuma")</p>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Cheio na cor do papel"
+              Descricao="Surface Dark preenche o card com a cor; o texto vai no token de contraste do papel (branco no primary, grafite nos outros), que passa AA nos dois temas."
+              Codigo="@CodigoCheio">
+    <div class="grade-cards largura-cheia">
+        <RvmStatCard Title="Meta de vendas" Value="R$ 820 mil" Surface="RvmSurface.Dark" Visual="RvmStatCardVisual.Progress"
+                     VisualValue="68" VisualLabel="Meta de vendas atingida" Trend="RvmStatCardTrend.Up" TrendValue="8%"
+                     Action="RvmCardAction.Menu" ActionLabel="Opcoes da meta de vendas">
+            <ActionMenu>
+                <RvmMenuItem Icon="RvmIconName.Pencil">Editar meta</RvmMenuItem>
+                <RvmMenuItem Icon="RvmIconName.Trash" Danger="true">Excluir meta</RvmMenuItem>
+            </ActionMenu>
+        </RvmStatCard>
+        <RvmStatCard Title="Silos ocupados" Value="9 de 12" Surface="RvmSurface.Dark" Color="RvmColor.Warning"
+                     Adornment="RvmStatCardAdornment.Icon" AdornmentIcon="RvmIconName.Box" Visual="RvmStatCardVisual.Progress" VisualValue="75"
+                     Action="RvmCardAction.Menu" ActionLabel="Opcoes dos silos">
+            <ActionMenu>
+                <RvmMenuItem>Ver silos</RvmMenuItem>
+            </ActionMenu>
+        </RvmStatCard>
+        <RvmStatCard Title="Inadimplencia" Value="2,1%" Surface="RvmSurface.Dark" Color="RvmColor.Error"
+                     Trend="RvmStatCardTrend.Down" TrendValue="0,4 p.p." TrendDetail="no trimestre" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Grande, com imagem ou grafico"
+              Descricao="Visual Image mostra a imagem de ImageUrl, decorativa. O encaixe Chart recebe um grafico pequeno do consumidor e vence o Visual."
+              Codigo="@CodigoGrande">
+    <div class="grade-cards largura-cheia">
+        <RvmStatCard Size="RvmStatCardSize.Large" Title="Area plantada" Subtitle="Fazenda Santa Clara" Value="1.240 ha"
+                     Trend="RvmStatCardTrend.Up" TrendValue="4%" Visual="RvmStatCardVisual.Image" ImageUrl="@ImagemDaLavoura" />
+        <RvmStatCard Size="RvmStatCardSize.XtraLarge" Title="Receita por mes" Value="R$ 412 mil" Trend="RvmStatCardTrend.Up" TrendValue="15%">
+            <Chart>
+                <RvmLineChart Items="Receita" Label="r => r.Mes" AriaLabel="Receita por mes" Smooth="true" Height="140"
+                              ShowAxis="false" ShowGrid="false" ShowLegend="false">
+                    <RvmChartSeries Name="Receita" Value="r => r.Valor" Color="RvmColor.Primary" />
+                </RvmLineChart>
+            </Chart>
+        </RvmStatCard>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmStatCard" />
+
+@code {
+    private string? _ultimaAcao;
+
+    private sealed record Ponto(string Mes, double Valor);
+
+    private static readonly Ponto[] Receita =
+    [
+        new("Mai", 280_000), new("Jun", 310_000), new("Jul", 295_000), new("Ago", 350_000), new("Set", 358_000), new("Out", 412_000)
+    ];
+
+    private const string ImagemDaLavoura =
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'><circle cx='120' cy='30' r='16' fill='%23FFB400'/><path d='M0 90 Q40 60 80 85 T160 80 V120 H0Z' fill='%2356CA00'/><path d='M0 105 Q50 85 100 100 T160 98 V120 H0Z' fill='%23378100'/></svg>";
+
+    private const string CodigoPequeno = """
+        <RvmStatCard Title="Sacas colhidas" Value="48.320"
+                     Adornment="RvmStatCardAdornment.Icon" AdornmentIcon="RvmIconName.Leaf" Color="RvmColor.Success"
+                     Trend="RvmStatCardTrend.Up" TrendValue="12%" TrendDetail="sobre a safra passada" />
+        """;
+
+    private const string CodigoAcoes = """
+        <RvmStatCard Title="Custo por hectare" Subtitle="Safra 25/26" Value="R$ 4.870"
+                     Adornment="RvmStatCardAdornment.Badge" AdornmentIcon="RvmIconName.Wallet" Color="RvmColor.Info"
+                     Action="RvmCardAction.Menu" ActionLabel="Opcoes do custo por hectare">
+            <ActionMenu>
+                <RvmMenuItem OnClick="VerDetalhes">Ver detalhes</RvmMenuItem>
+            </ActionMenu>
+        </RvmStatCard>
+        <RvmStatCard Title="Notas a emitir" Value="14"
+                     Action="RvmCardAction.Button" ActionLabel="Emitir nota" OnActionClick="EmitirNota" />
+        """;
+
+    private const string CodigoCheio = """
+        <RvmStatCard Title="Meta de vendas" Value="R$ 820 mil" Surface="RvmSurface.Dark"
+                     Visual="RvmStatCardVisual.Progress" VisualValue="68" VisualLabel="Meta de vendas atingida"
+                     Trend="RvmStatCardTrend.Up" TrendValue="8%" />
+        """;
+
+    private const string CodigoGrande = """
+        <RvmStatCard Size="RvmStatCardSize.Large" Title="Area plantada" Value="1.240 ha"
+                     Visual="RvmStatCardVisual.Image" ImageUrl="img/lavoura.svg" />
+        <RvmStatCard Size="RvmStatCardSize.XtraLarge" Title="Receita por mes" Value="R$ 412 mil">
+            <Chart>
+                <RvmLineChart Items="Receita" Label="r => r.Mes" AriaLabel="Receita por mes" Height="140"
+                              ShowAxis="false" ShowGrid="false" ShowLegend="false">
+                    <RvmChartSeries Name="Receita" Value="r => r.Valor" />
+                </RvmLineChart>
+            </Chart>
+        </RvmStatCard>
+        """;
+}
