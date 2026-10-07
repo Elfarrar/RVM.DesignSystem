@@ -1,0 +1,81 @@
+@namespace RVM.DesignSystem.Components.Map
+@using RVM.DesignSystem.Components.Typography
+
+@* Cartao de mapa: cabecalho (titulo, apoio, acoes), o desenho com os marcadores e a lista de lugares.
+
+   Sem biblioteca de mapa e sem tiles externos (decisao do ecossistema), e o kit NEATLAB nao desenha mapa nenhum.
+   O desenho e uma GRADE de latitude e longitude, enquadrada nos proprios marcadores: a escala e a mesma nos dois
+   eixos (longitude corrigida pelo cosseno da latitude), entao as distancias entre fazendas e talhoes saem certas,
+   sejam elas de 300 m ou de 3.000 km.
+
+   Os marcadores sao focaveis e tem nome ("Fazenda Boa Vista: 320 ha"); a lista em texto (a do aplicativo, ou uma
+   oculta gerada aqui) e a versao do dado para quem nao ve o desenho. *@
+<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-labelledby="@IdDoTitulo">
+    <header class="rvm-cabecalho">
+        <div class="rvm-textos">
+            <RvmTypography Variant="RvmTypographyVariant.H6" As="RvmTextElement.P" id="@IdDoTitulo">@Title</RvmTypography>
+            @if (!string.IsNullOrWhiteSpace(Subtitle))
+            {
+                <RvmTypography Variant="RvmTypographyVariant.Body2" As="RvmTextElement.P" Color="RvmTextColor.Secondary">@Subtitle</RvmTypography>
+            }
+        </div>
+        @if (Actions is not null)
+        {
+            <div class="rvm-acoes">@Actions</div>
+        }
+    </header>
+
+    <div class="rvm-desenho">
+        <svg class="rvm-grade" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            @foreach (var x in _quadro.Meridianos)
+            {
+                <line x1="@Num(x)" y1="0" x2="@Num(x)" y2="100" vector-effect="non-scaling-stroke" />
+            }
+            @foreach (var y in _quadro.Paralelos)
+            {
+                <line x1="0" y1="@Num(y)" x2="100" y2="@Num(y)" vector-effect="non-scaling-stroke" />
+            }
+        </svg>
+
+        @if (Visiveis.Count > 0)
+        {
+            <div class="rvm-marcadores" role="group" aria-label="@RotuloDosMarcadores">
+                @foreach (var m in Visiveis)
+                {
+                    var x = _quadro.X(m.Longitude);
+                    <span class="@ClassesDoMarcador(m, x)" style="@($"left: {Num(x)}%; top: {Num(_quadro.Y(m.Latitude))}%;")"
+                          tabindex="0" role="img" aria-label="@Descricao(m)">
+                        <span class="rvm-ponto"></span>
+                        <span class="rvm-rotulo" aria-hidden="true">
+                            <span class="rvm-nome">@m.Label</span>
+                            @if (!string.IsNullOrWhiteSpace(m.Value))
+                            {
+                                <span class="rvm-valor">@m.Value</span>
+                            }
+                        </span>
+                    </span>
+                }
+            </div>
+        }
+    </div>
+
+    @if (ChildContent is not null)
+    {
+        <div class="rvm-lista">@ChildContent</div>
+    }
+    else if (Markers.Count > 0)
+    {
+        <ul class="rvm-so-leitor">
+            @foreach (var m in Markers)
+            {
+                <li>@Descricao(m)</li>
+            }
+        </ul>
+    }
+
+    @if (ForaDoMapa.Count > 0)
+    {
+        @* Sumir com o marcador em silencio faria o aplicativo achar que mostrou um dado que nunca apareceu. *@
+        <p class="rvm-aviso rvm-text-caption">@Aviso</p>
+    }
+</section>

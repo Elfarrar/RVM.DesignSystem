@@ -1,0 +1,115 @@
+/* CSS isolado do RvmKanbanBoard. So custom properties — hex literal aqui quebra o tema escuro.
+   O kit nao tem kanban: as colunas sao faixas sobre o corpo e os cartoes, o papel do RvmCard (sombra 1, raio
+   pequeno). Grade com quebra, e nao rolagem lateral: overflow no quadro cortaria o menu dos cartoes. */
+
+.rvm-kanban {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--rvm-space-4);
+    align-items: start;
+    font-family: var(--rvm-font-family);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+    padding: var(--rvm-space-3);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-action-hover);
+    transition: background-color var(--rvm-transition-fast);
+}
+
+.rvm-alvo {
+    background-color: var(--rvm-color-primary-soft);
+}
+
+.rvm-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-2);
+    min-height: 2.5rem;
+}
+
+.rvm-titulo {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: var(--rvm-text-subtitle1-size);
+    line-height: var(--rvm-text-subtitle1-line);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-contagem {
+    color: var(--rvm-color-text-secondary);
+    font-weight: var(--rvm-font-weight-regular);
+}
+
+.rvm-acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+}
+
+.rvm-cartoes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* Coluna vazia continua sendo alvo de soltar. */
+    min-height: var(--rvm-space-8);
+}
+
+.rvm-cartao {
+    box-sizing: border-box;
+    padding: var(--rvm-space-4);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    box-shadow: var(--rvm-shadow-1);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+    cursor: grab;
+}
+
+.rvm-cartao:hover {
+    box-shadow: var(--rvm-shadow-2);
+}
+
+.rvm-arrastando {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.rvm-area-de-soltar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 5rem;
+    border: 1px dashed var(--rvm-color-primary-main);
+    border-radius: var(--rvm-radius-md);
+    color: var(--rvm-color-primary-text);
+    font-size: var(--rvm-text-body2-size);
+    pointer-events: none;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-coluna {
+        transition: none;
+    }
+}

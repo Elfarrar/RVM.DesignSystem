@@ -1,0 +1,51 @@
+@namespace RVM.DesignSystem.Components.Kanban
+@typeparam TItem
+
+@* Quadro de tarefas. O kit NEATLAB nao tem tela de kanban: o visual sai das superficies dele (papel, sombra 1,
+   raio pequeno, area de soltar no primario suave) e a semantica, do RVM.UI.
+
+   Arrastar e pelo drag-and-drop do HTML5, que o Blazor expoe como eventos — sem JS proprio. Mas ele nao dispara
+   no toque nem no teclado (WCAG 2.1.1 e 2.5.7), entao o ItemTemplate recebe, junto do cartao, os itens de menu
+   "Mover para X" ja prontos: postos no RvmMenu do cartao, sao a alternativa de teclado. O anuncio em role=status
+   diz para onde o cartao foi, pelos dois caminhos. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz" role="group" aria-label="@Label">
+    @for (var c = 0; c < Columns.Count; c++)
+    {
+        var coluna = Columns[c];
+        var titulo = $"{_id}-{c}";
+        <section class="@ClassesDaColuna(coluna)" aria-labelledby="@titulo"
+                 @ondragover:preventDefault="true"
+                 @ondragenter="() => Entrou(coluna.Id)"
+                 @ondragleave="() => Saiu(coluna.Id)"
+                 @ondrop="() => SoltarAsync(coluna)">
+            <header class="rvm-cabecalho">
+                <h3 id="@titulo" class="rvm-titulo">
+                    @coluna.Title <span class="rvm-contagem">(@coluna.Items.Count)</span>
+                </h3>
+                @if (ColumnActions is not null)
+                {
+                    <div class="rvm-acoes">@ColumnActions(coluna)</div>
+                }
+            </header>
+
+            <ul class="rvm-cartoes">
+                @foreach (var item in coluna.Items)
+                {
+                    var atual = item;
+                    <li class="@ClassesDoCartao(atual)" draggable="true"
+                        @ondragstart="() => Pegou(atual, coluna.Id)" @ondragend="Terminou">
+                        @ItemTemplate((atual, MoverPara(atual, coluna)))
+                    </li>
+                }
+            </ul>
+
+            @* So na coluna sob o cursor, nunca na de origem: soltar onde ja estava nao e movimento. *@
+            @if (EAlvo(coluna))
+            {
+                <div class="rvm-area-de-soltar" aria-hidden="true">Solte aqui</div>
+            }
+        </section>
+    }
+
+    <p class="rvm-so-leitor" role="status">@_anuncio</p>
+</div>

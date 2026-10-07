@@ -1,0 +1,30 @@
+.exemplo-mapa {
+    width: 100%;
+    max-width: 36rem;
+}
+
+.lugares {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lugares li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    padding-bottom: var(--rvm-space-2);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.lugares li:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.valor {
+    color: var(--rvm-color-text-secondary);
+}
