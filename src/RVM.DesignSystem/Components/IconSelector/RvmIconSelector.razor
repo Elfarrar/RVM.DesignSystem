@@ -1,0 +1,104 @@
+@namespace RVM.DesignSystem.Components.IconSelector
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Components.Dialog
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Components.TextField
+@using RVM.DesignSystem.Icons
+@inherits RvmInputBase<RvmIconName?>
+
+@* Seletor de icone: o circulo com o escolhido, o botao que abre a janela e, com valor, o "Remover icone".
+   Padrao WAI-ARIA da grade: BOTOES DE ALTERNANCIA (aria-pressed) num grupo nomeado (role="group"), com foco
+   itinerante — e nao listbox/option: a grade e de acoes (escolher ja fecha a janela), e cada opcao tem que ser
+   um botao de verdade para o Enter/Espaco e o clique funcionarem sem script. Um so Tab entra na grade; setas
+   andam (6 por linha), Home/End vao as pontas. *@
+<div class="@ClassesDaRaiz" role="group" aria-labelledby="@(string.IsNullOrWhiteSpace(Label) ? null : IdDoRotulo)">
+    @if (!string.IsNullOrWhiteSpace(Label) || (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref)))
+    {
+        <div class="rvm-topo-do-seletor">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <span id="@IdDoRotulo" class="rvm-rotulo-do-seletor rvm-text-body2">@Label</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(LinkText) && !string.IsNullOrWhiteSpace(LinkHref))
+            {
+                <a class="rvm-link-do-seletor rvm-text-caption" href="@LinkHref">@LinkText</a>
+            }
+        </div>
+    }
+
+    <div class="rvm-linha-do-seletor">
+        <span class="@(CurrentValue is null ? "rvm-circulo" : "rvm-circulo rvm-com-icone")" role="img" aria-label="@DescricaoDoCirculo">
+            @if (CurrentValue is { } escolhido)
+            {
+                <RvmIcon Name="escolhido" SizePx="28" />
+            }
+            else
+            {
+                <RvmIcon Name="RvmIconName.Plus" SizePx="24" />
+            }
+        </span>
+
+        <div class="rvm-acoes-do-seletor">
+            <RvmButton @ref="_gatilho" @attributes="AtributosDoControle" Variant="RvmButtonVariant.Outlined" Disabled="Disabled"
+                       OnClick="Abrir" id="@IdDoControle" aria-haspopup="dialog" aria-describedby="@DescritoPor">
+                @(CurrentValue is null ? "Escolher icone" : "Trocar icone")
+            </RvmButton>
+            @if (CurrentValue is not null)
+            {
+                <RvmButton Variant="RvmButtonVariant.Text" Color="RvmColor.Error" Disabled="Disabled" OnClick="Remover"
+                           StartIcon="RvmIconName.Trash">
+                    Remover icone
+                </RvmButton>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(NomeDoControle))
+    {
+        <input type="hidden" name="@NomeDoControle" value="@CurrentValueAsString" />
+    }
+
+    @if (MensagemDeErro is { } erro)
+    {
+        <div id="@IdDoErro" class="rvm-apoio-do-seletor rvm-text-helper">@erro</div>
+    }
+    else if (!string.IsNullOrWhiteSpace(HelperText))
+    {
+        <div id="@IdDoApoio" class="rvm-apoio-do-seletor rvm-text-helper">@HelperText</div>
+    }
+
+    <RvmDialog Open="_aberto" OpenChanged="AoMudarAbertura" Title="Escolher icone" Size="RvmSize.Small"
+               ShowCloseButton="true">
+        <RvmTextField @bind-Value="_busca" @bind-Value:after="AoBuscar" Immediate="true" Label="Buscar icone"
+                      StartIcon="RvmIconName.Search" data-rvm-foco-inicial="true" />
+
+        <p class="rvm-aviso-da-grade rvm-text-caption" role="status">@Aviso</p>
+
+        @if (_visiveis.Count > 0)
+        {
+            <div @ref="_grade" class="rvm-grade-de-icones" role="group" aria-label="Icones" @onkeydown="AoTeclar">
+                @* @key pelo icone: a busca recria os botoes, e o @ref de um botao reaproveitado pela posicao NAO e
+                   capturado de novo (a licao do RvmCalendar). Com a chave, todo botao novo registra o seu. *@
+                @for (var i = 0; i < _visiveis.Count; i++)
+                {
+                    var indice = i;
+                    var icone = _visiveis[i];
+                    var nome = TextoDe(icone);
+                    var escolhido = icone == CurrentValue;
+                    <button @key="icone"
+                            @ref="_botoes[icone]"
+                            type="button"
+                            class="@(escolhido ? "rvm-opcao-de-icone rvm-escolhido" : "rvm-opcao-de-icone")"
+                            tabindex="@(indice == _ativo ? "0" : "-1")"
+                            title="@nome"
+                            aria-label="@nome"
+                            aria-pressed="@(escolhido ? "true" : "false")"
+                            @onclick="() => Escolher(icone)"
+                            @onfocus="() => _ativo = indice">
+                        <RvmIcon Name="icone" />
+                    </button>
+                }
+            </div>
+        }
+    </RvmDialog>
+</div>
