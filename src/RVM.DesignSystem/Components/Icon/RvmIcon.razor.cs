@@ -15,6 +15,15 @@ public partial class RvmIcon : ComponentBase
     /// <summary>Tamanho do lado do icone. Padrao: <see cref="RvmSize.Medium"/> (20 px).</summary>
     [Parameter] public RvmSize Size { get; set; } = RvmSize.Medium;
 
+    /// <summary>Lado em pixels, fora dos tres tamanhos. Quando vem, vence <see cref="Size"/>.</summary>
+    [Parameter] public int? SizePx { get; set; }
+
+    /// <summary>Traco (padrao) ou cheio. Ver <see cref="RvmIconStyle"/>.</summary>
+    [Parameter] public RvmIconStyle Style { get; set; } = RvmIconStyle.Linear;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>
     /// Papel semantico da cor. Sem valor, o icone herda a cor do texto em volta — que e o que se
     /// quer dentro de botao, chip e alerta, onde o contraste ja foi resolvido pelo container.
@@ -33,28 +42,16 @@ public partial class RvmIcon : ComponentBase
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <summary>Lado do icone em pixels, para o <c>width</c> e o <c>height</c> do SVG.</summary>
-    internal int Lado => Size switch
+    internal int Lado => SizePx ?? Size switch
     {
         RvmSize.Small => 16,
         RvmSize.Large => 24,
         _ => 20
     };
 
-    internal MarkupString Desenho => new(RvmIconCatalogo.Desenhos[Name]);
+    internal MarkupString Desenho => new(RvmIconCatalogo.Desenho(Name, Style));
 
-    internal string CssClass
-    {
-        get
-        {
-            const string propria = "rvm-icone";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{propria} {texto}"
-                : propria;
-        }
-    }
+    internal string CssClass => ClassesDaRaiz.Juntar("rvm-icone", Class, AdditionalAttributes);
 
     internal string? Estilo
     {
