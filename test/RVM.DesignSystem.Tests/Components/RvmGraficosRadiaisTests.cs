@@ -76,8 +76,10 @@ public class RvmGraficosRadiaisTests : BunitContext
     public void Monocromatica_desce_em_degraus_do_primary_e_a_colorida_usa_os_papeis()
     {
         var mono = Rosca().FindAll("path.rvm-radial-fatia").Select(f => f.GetAttribute("style")).ToList();
-        Assert.Contains("var(--rvm-color-primary-text) 100%", mono[0]);
-        Assert.Contains("var(--rvm-color-primary-text) 30%", mono[2]);
+        // A tabela de degraus da RvmChartLegend e da RvmPieChart (4 fatias: 500, 300, 200, 100), para a legenda solta
+        // dar a mesma cor; a terceira desenhada e a quarta fatia (o Sorgo, zerado, nao desenha).
+        Assert.Equal("--rvm-radial-cor: var(--rvm-color-primary-text)", mono[0]);
+        Assert.Contains("var(--rvm-color-primary-text) 26%", mono[2]);
 
         var cores = Rosca(p => p.Add(x => x.Palette, RvmChartPalette.FullColor))
             .FindAll("path.rvm-radial-fatia").Select(f => f.GetAttribute("style")).ToList();

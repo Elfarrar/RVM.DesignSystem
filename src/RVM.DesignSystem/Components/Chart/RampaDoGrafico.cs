@@ -64,6 +64,27 @@ internal static class RampaDoGrafico
         _ => Radial(paleta, indice, total),
     };
 
+    /// <summary>
+    /// A mesma cor do <see cref="Radial"/>/<see cref="Medidor"/>, mas como valor CSS e nao classe: os graficos radiais
+    /// pintam por variavel inline. Os percentuais casam com as classes <c>rvm-cor-primary-NNN</c> do
+    /// <c>RvmChartBase.razor.css</c> — mudou la, mude aqui (a legenda e o grafico tem que dar a mesma cor).
+    /// </summary>
+    internal static string CorCss(RvmChartPalette paleta, int indice, int total, bool medidor)
+    {
+        var classe = Rampa(medidor ? MedidorMono : RadialMono, paleta, indice, total);
+        return classe switch
+        {
+            "rvm-cor-primary-400" => Mistura(80),
+            "rvm-cor-primary-300" => Mistura(60),
+            "rvm-cor-primary-200" => Mistura(42),
+            "rvm-cor-primary-100" => Mistura(26),
+            _ => $"var(--rvm-color-{classe["rvm-cor-".Length..]}-text)"
+        };
+
+        static string Mistura(int percentual)
+            => $"color-mix(in srgb, var(--rvm-color-primary-text) {percentual}%, var(--rvm-color-background-paper))";
+    }
+
     private static string Rampa(int[][] rampa, RvmChartPalette paleta, int indice, int total)
     {
         // Mais fatias do que degraus: a rampa nao tem como separar, e as cores dos papeis voltam.

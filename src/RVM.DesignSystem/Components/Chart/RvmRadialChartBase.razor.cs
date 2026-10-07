@@ -17,9 +17,6 @@ public abstract partial class RvmRadialChartBase
 {
     private static readonly Regex Hexadecimal = new("^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$", RegexOptions.Compiled);
 
-    private static readonly RvmColor[] Papeis =
-        [RvmColor.Primary, RvmColor.Success, RvmColor.Warning, RvmColor.Info, RvmColor.Error, RvmColor.Secondary];
-
     /// <summary>As fatias, na ordem em que o desenho as percorre.</summary>
     [Parameter, EditorRequired] public IReadOnlyList<RvmChartSlice> Slices { get; set; } = [];
 
@@ -111,28 +108,14 @@ public abstract partial class RvmRadialChartBase
             return propria;
         }
 
-        if (Palette == RvmChartPalette.FullColor)
-        {
-            return $"var(--rvm-color-{NomeDoPapel(Papeis[indice % Papeis.Length])}-text)";
-        }
-
-        var quantas = Math.Max(1, Fatias.Count);
-        var degrau = quantas == 1 ? 100 : 100 - indice * 70d / (quantas - 1);
-        return $"color-mix(in srgb, var(--rvm-color-primary-text) {N(degrau)}%, var(--rvm-color-background-paper))";
+        // A mesma rampa da RvmChartLegend e da RvmPieChart: a legenda solta ao lado tem que dar a mesma cor.
+        return RampaDoGrafico.CorCss(Palette, indice, Fatias.Count, UsaRampaDoMedidor);
     }
 
-    internal string EstiloDaCor(int indice) => $"--rvm-radial-cor: {CorDa(indice)}";
+    /// <summary>O medidor tem a rampa propria do kit (<c>500, 100, 300</c>); os demais, a dos radiais.</summary>
+    internal virtual bool UsaRampaDoMedidor => false;
 
-    // Switch, e nao ToString(): com os aliases do contrato o nome do enum e ambiguo.
-    private static string NomeDoPapel(RvmColor cor) => cor switch
-    {
-        RvmColor.Success => "success",
-        RvmColor.Warning => "warning",
-        RvmColor.Info => "info",
-        RvmColor.Error => "error",
-        RvmColor.Secondary => "secondary",
-        _ => "primary"
-    };
+    internal string EstiloDaCor(int indice) => $"--rvm-radial-cor: {CorDa(indice)}";
 
     // --- Geometria comum ---
 

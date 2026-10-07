@@ -25,6 +25,8 @@
 
     internal override string ClasseDoTipo => "rvm-medidor";
 
+    internal override bool UsaRampaDoMedidor => true;
+
     private string Mascara => $"{IdBase}-relogio";
 
     private List<Pedaco> Pedacos() => PedacosNoArco(Inicio, Varredura, Folga);
