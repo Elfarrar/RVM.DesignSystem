@@ -39,6 +39,7 @@ Grupo de paineis que abrem e fecham. Os paineis sao `RvmAccordionPanel` filhos.
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `ChildContent` | `RenderFragment?` | — | Os paineis. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Exclusive` | `bool` | `false` | So um painel aberto por vez: abrir um fecha os outros. |
 | `HeadingLevel` | `int` | `3` | Nivel dos cabecalhos dos paineis (2 a 6). Padrao: 3. |
 | `Variant` | `RvmAccordionVariant` | `RvmAccordionVariant.Standard` | Estilo. Padrao: `RvmAccordionVariant.Standard`. |
@@ -53,6 +54,7 @@ Um painel de `RvmAccordion`: um titulo que abre e fecha o conteudo.
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz do painel. |
 | `ChildContent` | `RenderFragment?` | — | O conteudo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel: nao abre nem fecha. |
 | `Expanded` | `bool` | `false` | Aberto. Aceita `@bind-Expanded`. |
 | `ExpandedChanged` | `EventCallback<bool>` | — | Disparado quando abre ou fecha. |
@@ -71,6 +73,7 @@ Mensagem de destaque dentro da pagina: o que aconteceu e, quando der, o que faze
 | `Action` | `RenderFragment?` | — | Acao ao lado da mensagem ("DESFAZER", "VER DETALHES") — a variacao "With Action". |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | A mensagem. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `CloseLabel` | `string` | `"Fechar aviso"` | Nome acessivel do botao de fechar. Padrao: "Fechar aviso". |
 | `Icon` | `RvmIconName?` | — | Troca o icone da gravidade por outro. |
 | `OnClose` | `EventCallback` | — | Chamado ao fechar. Com alguem escutando, aparece o botao de fechar. |
@@ -90,6 +93,7 @@ A moldura da aplicacao: menu lateral, barra do topo, conteudo e rodape. Em telas
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `Brand` | `RenderFragment?` | — | Marca no alto do menu (logo e nome). Recolhido, aparece so o inicio dela: ponha o logo primeiro. |
 | `ChildContent` | `RenderFragment?` | — | O conteudo da pagina. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Collapsed` | `bool` | `false` | Menu recolhido aos icones (so em tela larga). Aceita `@bind-Collapsed`. |
 | `CollapsedChanged` | `EventCallback<bool>` | — | Disparado quando a pessoa recolhe ou expande o menu. |
 | `Footer` | `RenderFragment?` | — | Rodape abaixo do conteudo. |
@@ -111,6 +115,7 @@ Linha com o volume preenchido em degrade.
 | `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
@@ -137,6 +142,7 @@ Representa uma pessoa ou uma entidade: foto, iniciais ou icone. Se a foto nao ca
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `Alt` | `string?` | — | Quem ou o que o avatar representa ("Rafael Veneroso"). Vira o `alt` da foto, ou o nome acessivel quando nao ha foto. Sem ele, o leitor de tela so tem as iniciais para anunciar. |
 | `ChildContent` | `RenderFragment?` | — | Conteudo livre, quando nao ha foto, icone nem iniciais. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do fundo, para iniciais e icone. Padrao: `RvmColor.Primary`. |
 | `Icon` | `RvmIconName?` | — | Icone, usado quando nao ha foto. Tem prioridade sobre as iniciais. |
 | `Initials` | `string?` | — | Iniciais, usadas quando nao ha foto nem icone. Passam de 2 letras sao cortadas. |
@@ -155,6 +161,7 @@ Avatares sobrepostos, como na linha "Grouped Avatars" do kit. O "+N" do fim diz 
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | Os avatares visiveis. Use o mesmo `RvmAvatarGroup.Size` neles. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Label` | `string?` | — | O que o grupo representa, para o leitor de tela ("Participantes da reuniao"). |
 | `Size` | `RvmSize` | `RvmSize.Medium` | Tamanho do avatar "+N". Padrao: `RvmSize.Medium`. |
 | `Surplus` | `int` | `0` | Quantos ficaram de fora. Acima de zero, aparece um avatar "+N" no fim. |
@@ -169,6 +176,7 @@ Contador ou ponto de aviso. Sozinho, ou por cima de um icone ou avatar passado c
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `ChildContent` | `RenderFragment?` | — | O conteudo sobre o qual o badge fica (um icone, um avatar). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Primary`. |
 | `Content` | `string?` | — | O que aparece dentro da pilula ("3", "Novo"). Ignorado quando `RvmBadge.Dot`. |
 | `Count` | `int?` | — | Contador numerico. Vence `RvmBadge.Content` e respeita `RvmBadge.Max`. |
@@ -188,6 +196,7 @@ Barras horizontais para nomes longos.
 | `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
@@ -213,6 +222,7 @@ Trilha de navegacao: onde a pessoa esta dentro da hierarquia, com atalho para ca
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `nav`. |
 | `AriaLabel` | `string` | `"Trilha de navegacao"` | Nome da regiao para o leitor de tela. Padrao: "Trilha de navegacao". |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Items` | `IReadOnlyList<RvmBreadcrumbItem>` | obrigatorio | Os passos, do mais alto ao atual. |
 | `Separator` | `RvmBreadcrumbSeparator` | `RvmBreadcrumbSeparator.Slash` | Barra ou seta entre os passos. Padrao: `RvmBreadcrumbSeparator.Slash`. |
 
@@ -226,6 +236,7 @@ O botao do design system. Tres pesos visuais, tres tamanhos, icone dos dois lado
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | O rotulo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel semantico da cor. Padrao: `RvmColor.Primary`. |
 | `Disabled` | `bool` | `false` | Indisponivel: sai da ordem de tabulacao e ignora clique. |
 | `EndIcon` | `RvmIconName?` | — | Icone depois do rotulo. Fica escondido enquanto `RvmButton.Loading`. |
@@ -245,6 +256,7 @@ Calendario de um mes para escolher uma data ou um intervalo. Aparece solto na pa
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas (domingos, feriados). Continuam focaveis. |
 | `IsRange` | `bool` | `false` | Escolhe um intervalo (dois cliques: inicio e fim) em vez de uma data. |
 | `Max` | `DateOnly?` | — | Ultima data escolhivel. |
@@ -266,6 +278,7 @@ Superficie que agrupa um assunto: midia no topo, cabecalho, conteudo e acoes —
 | `Actions` | `RenderFragment?` | — | Acoes no rodape do card. |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | O conteudo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `HeaderAction` | `RenderFragment?` | — | Algo no canto direito do cabecalho (menu, botao de icone). |
 | `MediaAlt` | `string?` | — | Texto alternativo da imagem. Vazio quando ela e so decorativa. |
 | `MediaHeight` | `int` | `200` | Altura da imagem em pixels. Padrao: 200. |
@@ -298,6 +311,7 @@ Caixa de marcar. Sozinha, com rotulo ou indeterminada. Dentro de um `EditForm` p
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras. `class` e `style` vao para a raiz (onde layout faz efeito); o resto vai para o input nativo (`aria-*`, `data-*`, `id`, `name`). |
 | `ChildContent` | `RenderFragment?` | — | Rotulo livre, quando o texto precisa de marcacao (um link para os termos, por exemplo). Vale quando `RvmCheckbox.Label` esta vazio. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da caixa marcada. Padrao: `RvmColor.Primary`. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `Indeterminate` | `bool` | `false` | Estado "alguns marcados" — a caixa-mae de uma lista. O visual sai por CSS ja no primeiro render; a semantica "misto" para o leitor de tela e completada por JS quando disponivel. Quem liga isto e responsavel por desligar quando os filhos ficarem todos iguais. |
@@ -319,6 +333,7 @@ Rotulo compacto: um filtro aplicado, uma etiqueta, uma pessoa num campo de desti
 | `AvatarAlt` | `string?` | — | Texto alternativo da miniatura. Vazio quando o rotulo ja diz quem e. |
 | `AvatarSrc` | `string?` | — | Miniatura de foto antes do rotulo (a variacao "Thumbnail" do kit). Vence o icone. |
 | `ChildContent` | `RenderFragment?` | — | O rotulo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor?` | — | Papel de cor. Sem valor, o chip e neutro — a coluna "Default" do kit. |
 | `Disabled` | `bool` | `false` | Indisponivel: esmaecido e sem remover. |
 | `OnRemove` | `EventCallback` | — | Chamado ao remover. Com alguem escutando, aparece o botao de remover. |
@@ -339,6 +354,7 @@ Colunas lado a lado ou empilhadas.
 | `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
@@ -365,6 +381,7 @@ A `RvmTable` com paginacao, filtro por coluna e o cabecalho escuro com separador
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
 | `Caption` | `string` | obrigatorio | Nome da tabela para o leitor de tela (vai num `caption` escondido). Tambem nomeia a area de rolagem quando a tabela nao cabe na largura. |
 | `ChildContent` | `RenderFragment?` | — | As colunas: `RvmTableColumn`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Dense` | `bool` | `false` | Linhas de 36 px em vez de 52 — medidos no kit. |
 | `ItemKey` | `Func<object, object>?` | — | A identidade da linha para a selecao (`t => t.Id`). Sem ela vale o `Equals` do item: numa classe comum e a referencia, e recarregar `RvmTable.Items` com instancias novas das mesmas linhas apaga a marcacao sem aviso. Records ja comparam pelo valor. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | As linhas. |
@@ -389,6 +406,7 @@ Campo de data com calendario. Dentro de um EditForm, participa da validacao.
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao do campo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
@@ -414,6 +432,7 @@ Campo de intervalo de datas: o primeiro clique no calendario marca o inicio, o s
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no botao do campo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `DateDisabled` | `Func<DateOnly, bool>?` | — | Datas que nao podem ser escolhidas. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
@@ -442,6 +461,7 @@ Janela modal por cima da pagina: aviso, confirmacao, formulario curto ou tela ch
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a caixa do dialogo. |
 | `Alert` | `bool` | `false` | Confirmacao que exige resposta: vira `alertdialog`, o corpo e lido junto com o titulo e clicar no fundo nao fecha. |
 | `ChildContent` | `RenderFragment?` | — | O corpo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `CloseLabel` | `string` | `"Fechar"` | Nome acessivel do botao de fechar. Padrao: "Fechar". |
 | `CloseOnBackdropClick` | `bool` | `true` | Clicar fora fecha. Padrao: sim (menos no `RvmDialog.Alert`). |
 | `CloseOnEscape` | `bool` | `true` | Esc fecha. Padrao: sim. |
@@ -462,6 +482,7 @@ Linha que separa blocos de conteudo. Com `RvmDivider.ChildContent`, a linha abre
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | Rotulo no meio da linha. Sem ele, sai um `<hr>` simples. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Deitado (padrao) ou em pe. O rotulo so vale no deitado. |
 
 ### RvmDrawer
@@ -476,6 +497,7 @@ Painel que sai de um lado da tela: menu de navegacao, filtros, detalhe de um ite
 | `Anchor` | `RvmDrawerAnchor` | `RvmDrawerAnchor.Left` | Lado da tela. Padrao: `RvmDrawerAnchor.Left`. |
 | `AriaLabel` | `string` | obrigatorio | Nome da gaveta para o leitor de tela ("Filtros", "Menu principal"). |
 | `ChildContent` | `RenderFragment?` | — | O conteudo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Open` | `bool` | `false` | Aberta (so na temporaria). Aceita `@bind-Open`. |
 | `OpenChanged` | `EventCallback<bool>` | — | Disparado quando a gaveta se fecha sozinha (Esc, fundo). |
 | `Size` | `string` | `"320px"` | Largura (esquerda e direita) ou altura (topo e base), em CSS. Padrao: 320px, a do kit. |
@@ -492,6 +514,7 @@ Tela ou bloco sem conteudo que diz o que aconteceu e o proximo passo. Serve para
 | `Actions` | `RenderFragment?` | — | As acoes — normalmente um botao que resolve o vazio. |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `ChildContent` | `RenderFragment?` | — | Conteudo extra entre a descricao e as acoes. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Description` | `string?` | — | Por que, e o que fazer ("Cadastre o primeiro para acompanhar a safra."). |
 | `HeadingLevel` | `int` | `2` | Nivel do titulo (2 a 6). Padrao: 2. Escolha o que encaixa na hierarquia da pagina. |
 | `Icon` | `RvmIconName?` | — | Icone grande acima do titulo, quando nao ha ilustracao. |
@@ -513,6 +536,7 @@ Distribuicao de valores em faixas.
 | `BinWidth` | `double?` | — | Largura de cada faixa. Vence `RvmHistogram.Bins` quando informada. |
 | `Bins` | `int?` | — | Numero de faixas. Padrao: regra de Sturges (1 + log2 de n). |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor das colunas. Padrao: primary. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
@@ -557,6 +581,7 @@ Evolucao no tempo, reta ou suave.
 | `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
@@ -583,6 +608,7 @@ Simples, com icone, com acao e aninhada.
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `ul`. |
 | `AriaLabel` | `string?` | — | Nome da lista para o leitor de tela, quando nao ha um titulo visivel antes dela. |
 | `ChildContent` | `RenderFragment?` | — | Os `RvmListItem`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Dense` | `bool` | `false` | Itens de 40 px em vez de 48 px (o "Small" do kit). |
 
 ### RvmListItem
@@ -595,6 +621,7 @@ Um item de `RvmList`: texto, texto secundario, icone ou avatar no inicio, acao n
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `li`. |
 | `ChildContent` | `RenderFragment?` | — | O texto principal. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `EndContent` | `RenderFragment?` | — | Acao na direita (um botao de favoritar). Fica fora da area clicavel do item. |
 | `Expanded` | `bool` | `false` | Sublista aberta. Aceita `@bind-Expanded`. |
@@ -620,6 +647,7 @@ Botao que abre uma lista de acoes. Os itens sao `RvmMenuItem` e `RvmMenuDivider`
 | `ButtonColor` | `RvmColor` | `RvmColor.Primary` | Cor do botao. Padrao: `RvmColor.Primary`. |
 | `ButtonVariant` | `RvmButtonVariant` | `RvmButtonVariant.Outlined` | Estilo do botao. Padrao: `RvmButtonVariant.Outlined`. |
 | `ChildContent` | `RenderFragment?` | — | Os itens. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Botao indisponivel. |
 | `Icon` | `RvmIconName?` | — | Icone antes do texto do botao. |
 | `Label` | `string` | obrigatorio | O texto do botao. |
@@ -629,7 +657,10 @@ Botao que abre uma lista de acoes. Os itens sao `RvmMenuItem` e `RvmMenuDivider`
 
 `@using RVM.DesignSystem.Components.Menu` · exemplos: https://design.rvmit.com.br/componentes/menu
 
-Sem parametros.
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 
 ### RvmMenuItem
 
@@ -641,6 +672,7 @@ Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao botao do item. |
 | `ChildContent` | `RenderFragment?` | — | O texto do item. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Visivel, mas nao escolhivel — o teclado tambem o pula. |
 | `Icon` | `RvmIconName?` | — | Icone antes do texto. |
 | `OnClick` | `EventCallback` | — | O que fazer ao escolher o item. |
@@ -654,6 +686,7 @@ Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enq
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no combobox. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
@@ -679,8 +712,10 @@ Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enq
 
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
 | `Badge` | `string?` | — | Selo ao lado do texto ("Novo"). |
 | `ChildContent` | `RenderFragment?` | — | Os subitens: `RvmNavItem` sem icone. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Expanded` | `bool` | `false` | Subitens a mostra. Aceita `@bind-Expanded`. |
 | `ExpandedChanged` | `EventCallback<bool>` | — | Disparado quando o grupo abre ou fecha. |
 | `Icon` | `RvmIconName` | obrigatorio | Icone do grupo. |
@@ -696,6 +731,7 @@ Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o dest
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao link. |
 | `Badge` | `string?` | — | Selo ao lado do texto ("Novo", "3"). |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Href` | `string` | obrigatorio | Endereco do link. |
 | `Icon` | `RvmIconName?` | — | Icone. Sem icone, o item leva o circulo pequeno dos subitens do kit. |
 | `Match` | `RvmNavMatch` | `RvmNavMatch.Prefix` | Como decidir que e a pagina atual. Padrao: `RvmNavMatch.Prefix`. |
@@ -707,7 +743,9 @@ Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o dest
 
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
 | `ChildContent` | `RenderFragment?` | — | Os itens da secao. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Title` | `string` | obrigatorio | Titulo da secao. |
 
 ### RvmPagination
@@ -721,6 +759,7 @@ Paginacao numerica, com setas e reticencias quando as paginas nao cabem.
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `nav`. |
 | `AriaLabel` | `string` | `"Paginacao"` | Nome da regiao para o leitor de tela. Padrao: "Paginacao". |
 | `BoundaryCount` | `int` | `1` | Paginas sempre visiveis em cada ponta. Padrao: 1. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor?` | `RvmColor.Primary` | Cor da pagina atual. Sem valor, a atual ganha so um fundo neutro — a coluna "State: Active" do kit. Padrao: `RvmColor.Primary`. |
 | `Count` | `int` | obrigatorio | Total de paginas. |
 | `Disabled` | `bool` | `false` | Desabilita a paginacao inteira. |
@@ -744,6 +783,7 @@ Pizza e rosca, com percentuais.
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `CenterContent` | `RenderFragment?` | — | Conteudo no centro da rosca (o total, um rotulo). |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Donut` | `bool` | `false` | Rosca (anel) em vez de pizza. |
 | `DonutThickness` | `double` | `0.35` | Espessura do anel da rosca, em fracao do raio (0,1 a 0,9). Padrao: 0,35. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
@@ -770,6 +810,7 @@ Progresso de uma tarefa: com valor (determinado) ou so "esta andando" (indetermi
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Primary`. |
 | `Label` | `string` | `"Carregando"` | Nome para o leitor de tela: o que esta progredindo ("Enviando planilha"). Padrao: "Carregando". |
 | `ShowValue` | `bool` | `false` | Mostra a porcentagem ao lado da barra ou dentro do anel. So no determinado. |
@@ -789,6 +830,7 @@ Varias variaveis a partir de um centro.
 | `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `GridLevels` | `int` | `5` | Numero de niveis da grade. Padrao: 5. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
@@ -814,6 +856,7 @@ Grupo de opcoes em que so uma vale. Os filhos sao `RvmRadio`, que herdam a cor, 
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao fieldset. |
 | `ChildContent` | `RenderFragment?` | — | As opcoes. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da opcao escolhida. Padrao: `RvmColor.Primary`. |
 | `Disabled` | `bool` | `false` | Desabilita o grupo inteiro. |
 | `Label` | `string?` | — | A pergunta do grupo ("Forma de pagamento"). Vira a legenda do fieldset. |
@@ -834,6 +877,7 @@ Uma opcao de um `RvmRadioGroup`.
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao input nativo. |
 | `ChildContent` | `RenderFragment?` | — | Rotulo livre, quando `RvmRadio.Label` esta vazio. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Label` | `string?` | — | Texto da opcao. Tambem e o nome acessivel. |
 | `Value` | `object?` | obrigatorio | O valor que esta opcao representa. |
 
@@ -847,6 +891,7 @@ Nota em estrelas: para mostrar uma avaliacao ou para a pessoa dar a dela.
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `AllowHalf` | `bool` | `false` | Permite meia estrela. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `Label` | `string` | `"Avaliacao"` | O que esta sendo avaliado ("Nota do atendimento"). Nome do grupo para o leitor de tela. Padrao: "Avaliacao". |
 | `Max` | `int` | `5` | Quantas estrelas. Padrao: 5. |
@@ -868,6 +913,7 @@ Relacao entre duas variaveis numericas.
 | `Animated` | `bool` | `true` | Anima o desenho ao aparecer e ao mudar de valor. Padrao: sim — e desligada sozinha para quem pediu "reduzir movimento" no sistema. |
 | `AriaLabel` | `string` | obrigatorio | Nome do grafico para o leitor de tela ("Vendas por mes"). Obrigatorio. |
 | `ChildContent` | `RenderFragment?` | — | As series: `RvmChartSeries`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `ExportFileName` | `string?` | — | Nome do arquivo exportado, sem extensao. Padrao: o `RvmChartBase.AriaLabel` em minusculas com hifens. |
 | `Height` | `int` | `300` | Altura em px. Padrao: 300. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | Os dados. |
@@ -894,6 +940,7 @@ Escolha de UMA opcao numa lista, com busca opcional. Dentro de um `EditForm` par
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no combobox. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um EditForm, a validacao do campo ja aparece sozinha. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. Da lugar ao erro quando ha erro. |
@@ -923,6 +970,7 @@ Espaco reservado com a forma do conteudo que ainda vai chegar. Evita que a tela 
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` somados aos proprios; o resto na raiz. |
 | `Animated` | `bool` | `true` | Com o brilho passando (padrao) ou parado. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Height` | `string?` | — | Altura em CSS. Padrao: a da linha de texto; retangulo, 120 px; circulo, igual a largura. |
 | `Variant` | `RvmSkeletonVariant` | `RvmSkeletonVariant.Text` | Linha de texto (padrao), retangulo ou circulo. |
 | `Width` | `string?` | — | Largura em CSS ("100%", "12rem", "40px"). Padrao: toda a largura; circulo, 40 px. |
@@ -936,6 +984,7 @@ Onde as mensagens do `RvmSnackbarService` aparecem. Um por layout, fora de qualq
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `CloseLabel` | `string` | `"Fechar mensagem"` | Nome acessivel do botao de fechar de cada mensagem. Padrao: "Fechar mensagem". |
 
 ### RvmStepper
@@ -949,6 +998,7 @@ As etapas de um processo e em qual a pessoa esta: cadastro em partes, assistente
 | `ActiveStep` | `int` | `0` | Indice da etapa atual, a partir de 0. As anteriores contam como concluidas. |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `ol`. |
 | `AriaLabel` | `string` | `"Etapas"` | Nome da lista para o leitor de tela. Padrao: "Etapas". |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Etapas em linha (padrao) ou empilhadas. |
 | `Placement` | `RvmStepperLabelPlacement` | `RvmStepperLabelPlacement.End` | Texto ao lado com o numero grande (padrao) ou embaixo, centralizado. |
 | `Steps` | `IReadOnlyList<RvmStep>` | obrigatorio | As etapas, em ordem. |
@@ -963,6 +1013,7 @@ Liga e desliga algo que vale na hora (notificacoes, modo compacto). Para uma esc
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto no input nativo. |
 | `ChildContent` | `RenderFragment?` | — | Rotulo livre, quando `RvmSwitch.Label` esta vazio. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do ligado. Padrao: `RvmColor.Primary`. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `Label` | `string?` | — | Texto ao lado. Tambem e o nome acessivel. |
@@ -979,7 +1030,9 @@ Uma aba de `RvmTabs`. O titulo vira o botao da lista; o conteudo so e renderizad
 
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao botao da aba. |
 | `ChildContent` | `RenderFragment?` | — | O painel da aba. |
+| `Class` | `string?` | — | Classe CSS extra no botao da aba. |
 | `Disabled` | `bool` | `false` | Visivel, mas nao selecionavel — o teclado tambem a pula. |
 | `Icon` | `RvmIconName?` | — | Icone acima do titulo. |
 | `Title` | `string` | obrigatorio | O texto do botao da aba. |
@@ -994,6 +1047,7 @@ Uma coluna da `RvmTable` ou da `RvmDataGrid`. Nao desenha nada sozinha: so se ap
 |---|---|---|---|
 | `Align` | `RvmTableAlign` | `RvmTableAlign.Start` | Alinhamento. Padrao: `RvmTableAlign.Start`. |
 | `ChildContent` | `RenderFragment<object>?` | — | Conteudo livre da celula (avatar, chip, botao). O item chega como `context`. |
+| `Class` | `string?` | — | Classe CSS extra no cabecalho e nas celulas desta coluna. |
 | `Filterable` | `bool` | `true` | Ganha campo de filtro na `RvmDataGrid`. Padrao: sim, quando ha `RvmTableColumn.Value`. |
 | `Format` | `string?` | — | Formato do valor, quando ele e formatavel (`"dd/MM/yyyy"`, `"N2"`). |
 | `InitialSort` | `RvmSortDirection?` | — | Ordenacao aplicada ao abrir. Vale para uma coluna so. |
@@ -1013,6 +1067,7 @@ Tabela de dados: colunas declaradas com `RvmTableColumn`, ordenacao pelo titulo,
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
 | `Caption` | `string` | obrigatorio | Nome da tabela para o leitor de tela (vai num `caption` escondido). Tambem nomeia a area de rolagem quando a tabela nao cabe na largura. |
 | `ChildContent` | `RenderFragment?` | — | As colunas: `RvmTableColumn`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Dense` | `bool` | `false` | Linhas de 36 px em vez de 52 — medidos no kit. |
 | `ItemKey` | `Func<object, object>?` | — | A identidade da linha para a selecao (`t => t.Id`). Sem ela vale o `Equals` do item: numa classe comum e a referencia, e recarregar `RvmTable.Items` com instancias novas das mesmas linhas apaga a marcacao sem aviso. Records ja comparam pelo valor. |
 | `Items` | `IEnumerable<object>?` | obrigatorio | As linhas. |
@@ -1035,6 +1090,7 @@ Abas: uma lista de titulos e o painel da aba escolhida. As abas sao `RvmTab` fil
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras: `class` e `style` na raiz; o resto na lista de abas. |
 | `AriaLabel` | `string?` | — | Nome da lista de abas para o leitor de tela ("Configuracoes da conta"). |
 | `ChildContent` | `RenderFragment?` | — | As `RvmTab`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `FullWidth` | `bool` | `false` | As abas dividem a largura toda ("Full Width" no kit). So na horizontal. |
 | `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Abas em linha (padrao) ou empilhadas a esquerda do painel. |
 | `Variant` | `RvmTabsVariant` | `RvmTabsVariant.Standard` | Sublinhada (padrao) ou preenchida. |
@@ -1088,6 +1144,7 @@ Relogio circular para escolher um horario: primeiro a hora, depois os minutos. A
 |---|---|---|---|
 | `Actions` | `RenderFragment?` | — | Botoes abaixo do mostrador (o CANCELAR e OK do dialogo). |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Max` | `TimeOnly` | — | Ultimo horario escolhivel (inclusive). Padrao: 23:59. |
 | `Min` | `TimeOnly` | — | Primeiro horario escolhivel. Padrao: 00:00. Maior que `RvmTimeClock.Max`, a janela cruza a meia-noite (22:00 a 06:00, um plantao noturno). |
 | `OnConfirm` | `EventCallback` | — | Enter nos minutos: quem esta num dialogo confirma a escolha aqui. |
@@ -1108,6 +1165,7 @@ Campo de horario em 24 h (padrao) ou 12 h: uma lista de horarios em intervalos f
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao campo. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
 | `ErrorText` | `string?` | — | Erro informado por fora. |
 | `HelperText` | `string?` | — | Texto de apoio abaixo. |
@@ -1138,6 +1196,7 @@ Alternada, alinhada, com data.
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `ol`. |
 | `AriaLabel` | `string?` | — | Nome da lista para o leitor de tela, quando nao ha titulo visivel antes dela. |
 | `ChildContent` | `RenderFragment?` | — | Os `RvmTimelineItem`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Position` | `RvmTimelinePosition` | `RvmTimelinePosition.Right` | Lado do conteudo principal. Padrao: `RvmTimelinePosition.Right`. |
 
 ### RvmTimelineItem
@@ -1148,6 +1207,7 @@ Alternada, alinhada, com data.
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `li`. |
 | `ChildContent` | `RenderFragment?` | — | O acontecimento. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor?` | — | Papel de cor do ponto. Sem valor, o ponto e neutro ("Standard" no kit). |
 | `OppositeContent` | `RenderFragment?` | — | O outro lado da linha — normalmente a data ou a hora ("Opposing" no kit). |
 | `Outlined` | `bool` | `false` | Ponto cheio (padrao) ou so o contorno. |
@@ -1163,6 +1223,7 @@ Dica curta que aparece ao passar o mouse ou focar o conteudo. Para texto que a p
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `Arrow` | `bool` | `true` | Com a seta apontando para o conteudo (padrao) ou sem ("None" no kit). |
 | `ChildContent` | `RenderFragment<string>?` | — | O conteudo que recebe a dica. O contexto e o id da dica: repasse-o como `aria-describedby="@context"` ao elemento focavel, para o leitor de tela ler a dica. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Id` | `string?` | — | Id da dica. Sem valor, e gerado. |
 | `Placement` | `RvmTooltipPlacement` | `RvmTooltipPlacement.Top` | Lado em que a dica aparece. Padrao: `RvmTooltipPlacement.Top`. |
 | `Text` | `string` | obrigatorio | O texto da dica. |
@@ -1178,6 +1239,7 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
 | `As` | `RvmTextElement` | `RvmTextElement.Auto` | Elemento HTML gerado. Padrao: deduzido do `RvmTypography.Variant`. |
 | `ChildContent` | `RenderFragment?` | — | O texto. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmTextColor` | `RvmTextColor.Inherit` | Papel do texto na hierarquia de leitura. Padrao: herda de quem esta em volta. |
 | `Variant` | `RvmTypographyVariant` | `RvmTypographyVariant.Body1` | Estilo da escala. Padrao: `RvmTypographyVariant.Body1`. |
 

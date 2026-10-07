@@ -1,7 +1,13 @@
 @namespace RVM.DesignSystem.Components.Menu
 
 @* Separa grupos de acoes. role="separator" e o que o padrao de menu espera entre grupos. *@
-<li role="separator" class="rvm-divisor"></li>
+<li @attributes="AdditionalAttributes" role="separator" class="@ClassesCss.Juntar("rvm-divisor", Class, AdditionalAttributes)"></li>
 
 @code {
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 }

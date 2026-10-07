@@ -38,6 +38,9 @@ public partial class RvmCard : ComponentBase
     /// <summary>Acoes no rodape do card.</summary>
     [Parameter] public RenderFragment? Actions { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <inheritdoc cref="ComponentBase" />
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -50,12 +53,7 @@ public partial class RvmCard : ComponentBase
         get
         {
             const string propria = "rvm-cartao";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{propria} {texto}"
-                : propria;
+            return ClassesCss.Juntar(propria, Class, AdditionalAttributes);
         }
     }
 }

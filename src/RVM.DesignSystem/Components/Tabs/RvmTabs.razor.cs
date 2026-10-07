@@ -38,6 +38,9 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
     /// <summary>As <see cref="RvmTab"/>.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto na lista de abas.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -79,12 +82,7 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
                 proprias += " rvm-largura-total";
             }
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

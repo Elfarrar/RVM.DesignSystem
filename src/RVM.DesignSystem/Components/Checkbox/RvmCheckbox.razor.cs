@@ -61,6 +61,9 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
     /// <summary>Indisponivel.</summary>
     [Parameter] public bool Disabled { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>
     /// Atributos extras. <c>class</c> e <c>style</c> vao para a raiz (onde layout faz efeito); o
     /// resto vai para o input nativo (<c>aria-*</c>, <c>data-*</c>, <c>id</c>, <c>name</c>).
@@ -89,12 +92,7 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
             if (Indeterminate) proprias += " rvm-indeterminado";
             if (Disabled) proprias += " rvm-desabilitado";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

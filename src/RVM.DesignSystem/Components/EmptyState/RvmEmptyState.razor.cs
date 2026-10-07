@@ -33,6 +33,9 @@ public partial class RvmEmptyState : ComponentBase
     /// <summary>As acoes — normalmente um botao que resolve o vazio.</summary>
     [Parameter] public RenderFragment? Actions { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -42,10 +45,5 @@ public partial class RvmEmptyState : ComponentBase
     internal int NivelDoTitulo => Math.Clamp(HeadingLevel, 2, 6);
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-vazio {texto}"
-            : "rvm-vazio";
+        => ClassesCss.Juntar("rvm-vazio", Class, AdditionalAttributes);
 }

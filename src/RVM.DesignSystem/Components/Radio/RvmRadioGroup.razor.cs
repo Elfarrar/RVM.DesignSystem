@@ -51,6 +51,9 @@ public partial class RvmRadioGroup<TValue> : ComponentBase
     /// <summary>As opcoes.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao fieldset.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -60,12 +63,7 @@ public partial class RvmRadioGroup<TValue> : ComponentBase
         get
         {
             var proprias = Orientation == RvmOrientation.Horizontal ? "rvm-grupo rvm-horizontal" : "rvm-grupo rvm-vertical";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

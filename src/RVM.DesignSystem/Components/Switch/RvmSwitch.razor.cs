@@ -46,6 +46,9 @@ public partial class RvmSwitch : ComponentBase
     /// <summary>Indisponivel.</summary>
     [Parameter] public bool Disabled { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto no input nativo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -70,12 +73,7 @@ public partial class RvmSwitch : ComponentBase
 
             if (Disabled) proprias += " rvm-desabilitado";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

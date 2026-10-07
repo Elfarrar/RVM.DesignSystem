@@ -56,6 +56,9 @@ public partial class RvmListItem : ComponentBase
     /// <summary>Disparado quando a sublista abre ou fecha.</summary>
     [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao <c>li</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -74,12 +77,7 @@ public partial class RvmListItem : ComponentBase
             if (Selected) proprias += " rvm-selecionado";
             if (Disabled) proprias += " rvm-desabilitado";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

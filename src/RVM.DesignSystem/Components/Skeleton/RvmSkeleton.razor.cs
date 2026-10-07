@@ -20,6 +20,9 @@ public partial class RvmSkeleton : ComponentBase
     /// <summary>Com o brilho passando (padrao) ou parado.</summary>
     [Parameter] public bool Animated { get; set; } = true;
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> somados aos proprios; o resto na raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -37,7 +40,7 @@ public partial class RvmSkeleton : ComponentBase
                 proprias += " rvm-animado";
             }
 
-            return Valor("class") is { } texto ? $"{proprias} {texto}" : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

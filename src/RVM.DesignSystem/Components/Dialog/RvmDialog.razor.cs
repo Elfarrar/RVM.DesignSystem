@@ -63,6 +63,9 @@ public partial class RvmDialog : ComponentBase, IAsyncDisposable
     /// <summary>Nome acessivel do botao de fechar. Padrao: "Fechar".</summary>
     [Parameter] public string CloseLabel { get; set; } = "Fechar";
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a caixa do dialogo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -82,12 +85,7 @@ public partial class RvmDialog : ComponentBase, IAsyncDisposable
                 _ => "rvm-medio"
             });
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

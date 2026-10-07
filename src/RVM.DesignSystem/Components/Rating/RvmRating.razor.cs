@@ -46,6 +46,9 @@ public partial class RvmRating : ComponentBase
     /// <summary><c>name</c> dos radios, para envio de formulario. Sem valor, e gerado.</summary>
     [Parameter] public string? Name { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -90,12 +93,7 @@ public partial class RvmRating : ComponentBase
             if (ReadOnly) proprias += " rvm-leitura";
             if (Disabled) proprias += " rvm-desabilitado";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

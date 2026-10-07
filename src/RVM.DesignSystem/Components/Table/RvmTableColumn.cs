@@ -41,6 +41,9 @@ public sealed class RvmTableColumn<TItem> : ComponentBase, IDisposable
     /// <summary>Largura em CSS (<c>"120px"</c>, <c>"20%"</c>). Sem valor, a tabela distribui.</summary>
     [Parameter] public string? Width { get; set; }
 
+    /// <summary>Classe CSS extra no cabecalho e nas celulas desta coluna.</summary>
+    [Parameter] public string? Class { get; set; }
+
     internal bool Ordenavel => Sortable && Value is not null;
 
     internal bool Filtravel => Filterable && Value is not null;

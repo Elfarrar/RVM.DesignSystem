@@ -44,7 +44,7 @@
                         @foreach (var coluna in Colunas)
                         {
                             var ordenada = ColunaOrdenada == coluna;
-                            <th scope="col" class="rvm-titulo @ClasseDoAlinhamento(coluna.Align)" style="@(coluna.Width is null ? null : $"width: {coluna.Width}")" aria-sort="@AriaSort(ordenada, Sentido)">
+                            <th scope="col" class="@ClassesCss.Juntar($"rvm-titulo {ClasseDoAlinhamento(coluna.Align)}", coluna.Class, null)" style="@(coluna.Width is null ? null : $"width: {coluna.Width}")" aria-sort="@AriaSort(ordenada, Sentido)">
                                 @if (coluna.Ordenavel)
                                 {
                                     <button type="button" class="@(ordenada ? "rvm-ordenar rvm-ordenada" : "rvm-ordenar")" @onclick="() => OrdenarAsync(coluna)">
@@ -104,7 +104,7 @@
                             }
                             @foreach (var coluna in Colunas)
                             {
-                                <td class="@ClasseDoAlinhamento(coluna.Align)">
+                                <td class="@ClassesCss.Juntar(ClasseDoAlinhamento(coluna.Align), coluna.Class, null)">
                                     @if (coluna.ChildContent is not null)
                                     {
                                         @coluna.ChildContent(item)

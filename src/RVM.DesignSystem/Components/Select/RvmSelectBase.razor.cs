@@ -82,6 +82,9 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
     /// </summary>
     [Parameter] public string? Name { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto no combobox.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -164,12 +167,7 @@ public abstract partial class RvmSelectBase<TValue> : ComponentBase, IAsyncDispo
             if (Disabled) proprias += " rvm-desabilitado";
             if (Campo is { } campo && EditContext!.IsModified(campo)) proprias += " modified";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

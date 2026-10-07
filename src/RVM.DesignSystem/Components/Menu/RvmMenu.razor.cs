@@ -49,6 +49,9 @@ public partial class RvmMenu : ComponentBase, IAsyncDisposable
     /// <summary>Os itens.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras: <c>class</c> e <c>style</c> na raiz; o resto no botao.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -60,12 +63,7 @@ public partial class RvmMenu : ComponentBase, IAsyncDisposable
     internal string IdDoMenu => $"{_idBase}-lista";
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-menu {texto}"
-            : "rvm-menu";
+        => ClassesCss.Juntar("rvm-menu", Class, AdditionalAttributes);
 
     internal string? EstiloDoConsumidor
         => AdditionalAttributes is not null

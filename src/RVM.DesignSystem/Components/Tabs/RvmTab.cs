@@ -24,6 +24,13 @@ public sealed class RvmTab : ComponentBase, IDisposable
     /// <summary>O painel da aba.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no botao da aba.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao botao da aba.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
     /// <summary>O botao da aba, para o foco andar pelo teclado.</summary>
     internal ElementReference Botao { get; set; }
 
@@ -38,7 +45,7 @@ public sealed class RvmTab : ComponentBase, IDisposable
         Abas.Registrar(this);
     }
 
-    private (string Titulo, RvmIconName? Icone, bool Desabilitada)? _ultimoAviso;
+    private (string Titulo, RvmIconName? Icone, bool Desabilitada, string? Classe)? _ultimoAviso;
 
     /// <inheritdoc />
     protected override void OnParametersSet()
@@ -46,7 +53,7 @@ public sealed class RvmTab : ComponentBase, IDisposable
         // So avisa o pai quando o que aparece NA LISTA mudou. Avisar sempre fecharia um laco: o pai
         // re-renderiza, repassa o ChildContent (que o Blazor sempre considera novo), a aba recebe
         // parametros de novo e avisa de novo.
-        var atual = (Title, Icon, Disabled);
+        var atual = (Title, Icon, Disabled, Class);
         if (_ultimoAviso is { } anterior && anterior == atual)
         {
             return;

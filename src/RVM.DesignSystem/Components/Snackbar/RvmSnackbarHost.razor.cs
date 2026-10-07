@@ -20,6 +20,9 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
     /// <summary>Nome acessivel do botao de fechar de cada mensagem. Padrao: "Fechar mensagem".</summary>
     [Parameter] public string CloseLabel { get; set; } = "Fechar mensagem";
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -27,12 +30,7 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
     internal IReadOnlyList<RvmSnackbarMessage> Visiveis => Servico.Visiveis;
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-avisos {texto}"
-            : "rvm-avisos";
+        => ClassesCss.Juntar("rvm-avisos", Class, AdditionalAttributes);
 
     internal static string ClassesDaMensagem(RvmSnackbarMessage mensagem)
         => mensagem.Options.Color switch

@@ -22,6 +22,9 @@ public partial class RvmStepper : ComponentBase
     /// <summary>Nome da lista para o leitor de tela. Padrao: "Etapas".</summary>
     [Parameter] public string AriaLabel { get; set; } = "Etapas";
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao <c>ol</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -46,12 +49,7 @@ public partial class RvmStepper : ComponentBase
                 Orientation == RvmOrientation.Vertical ? "rvm-vertical" : "rvm-horizontal",
                 Placement == RvmStepperLabelPlacement.Bottom ? "rvm-texto-embaixo" : "rvm-texto-ao-lado");
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

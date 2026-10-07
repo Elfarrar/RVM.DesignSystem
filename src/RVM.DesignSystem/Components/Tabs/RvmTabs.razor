@@ -14,10 +14,11 @@
             var indice = i;
             var ativa = indice == IndiceAtivo;
             <button @ref="aba.Botao"
+                    @attributes="aba.AdditionalAttributes"
                     type="button"
                     role="tab"
                     id="@IdDaAba(aba)"
-                    class="@(ativa ? "rvm-aba rvm-ativa" : "rvm-aba")"
+                    class="@ClassesCss.Juntar(ativa ? "rvm-aba rvm-ativa" : "rvm-aba", aba.Class, aba.AdditionalAttributes)"
                     aria-selected="@(ativa ? "true" : "false")"
                     aria-controls="@(ativa ? IdDoPainel(aba) : null)"
                     tabindex="@(ativa ? "0" : "-1")"

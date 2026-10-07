@@ -20,6 +20,9 @@ public partial class RvmAvatarGroup : ComponentBase
     /// <summary>O que o grupo representa, para o leitor de tela ("Participantes da reuniao").</summary>
     [Parameter] public string? Label { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <inheritdoc cref="ComponentBase" />
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -31,12 +34,7 @@ public partial class RvmAvatarGroup : ComponentBase
         get
         {
             const string propria = "rvm-grupo";
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{propria} {texto}"
-                : propria;
+            return ClassesCss.Juntar(propria, Class, AdditionalAttributes);
         }
     }
 }

@@ -99,6 +99,9 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>Avisa que a faixa mudou (inclusive quando foi limpa, com <c>null</c>).</summary>
     [Parameter] public EventCallback<RvmChartRange?> SelectionChanged { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a figura.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -829,12 +832,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     }
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"{ClassesProprias} {texto}"
-            : ClassesProprias;
+        => ClassesCss.Juntar(ClassesProprias, Class, AdditionalAttributes);
 
     private string ClassesProprias => Animated ? "rvm-grafico rvm-animado" : "rvm-grafico";
 

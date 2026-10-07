@@ -37,6 +37,9 @@ public partial class RvmProgress : ComponentBase
     /// <summary>Mostra a porcentagem ao lado da barra ou dentro do anel. So no determinado.</summary>
     [Parameter] public bool ShowValue { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -86,12 +89,7 @@ public partial class RvmProgress : ComponentBase
                     _ => "rvm-primary"
                 });
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

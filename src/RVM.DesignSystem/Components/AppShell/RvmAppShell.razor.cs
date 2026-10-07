@@ -63,6 +63,9 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
     /// <summary>Nome da navegacao para o leitor de tela. Padrao: "Menu principal".</summary>
     [Parameter] public string NavigationLabel { get; set; } = "Menu principal";
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -79,12 +82,7 @@ public partial class RvmAppShell : ComponentBase, IAsyncDisposable
             if (Collapsed) proprias += " rvm-recolhida";
             if (MenuOpen) proprias += " rvm-menu-aberto";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

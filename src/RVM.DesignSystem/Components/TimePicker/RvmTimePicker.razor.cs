@@ -64,6 +64,9 @@ public partial class RvmTimePicker : ComponentBase
     /// <summary><c>name</c> para envio de formulario (valor em <c>HH:mm</c>).</summary>
     [Parameter] public string? Name { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao campo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -120,6 +123,7 @@ public partial class RvmTimePicker : ComponentBase
         builder.AddComponentParameter(14, nameof(RvmCampoDeRelogio.Required), Required);
         builder.AddComponentParameter(15, nameof(RvmCampoDeRelogio.Disabled), Disabled);
         builder.AddComponentParameter(16, nameof(RvmCampoDeRelogio.Name), Name);
+        builder.AddComponentParameter(17, nameof(RvmCampoDeRelogio.Class), Class);
         builder.CloseComponent();
     };
 }

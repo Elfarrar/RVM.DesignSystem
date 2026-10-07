@@ -51,7 +51,7 @@ public partial class RvmIcon : ComponentBase
 
     internal MarkupString Desenho => new(RvmIconCatalogo.Desenho(Name, Style));
 
-    internal string CssClass => ClassesDaRaiz.Juntar("rvm-icone", Class, AdditionalAttributes);
+    internal string CssClass => ClassesCss.Juntar("rvm-icone", Class, AdditionalAttributes);
 
     internal string? Estilo
     {

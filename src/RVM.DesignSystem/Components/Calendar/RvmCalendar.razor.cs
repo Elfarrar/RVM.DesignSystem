@@ -54,6 +54,9 @@ public partial class RvmCalendar : ComponentBase, IAsyncDisposable
     /// <summary>"Hoje" para marcar o dia atual. Padrao: a data do sistema. Existe para teste e fuso.</summary>
     [Parameter] public DateOnly? Today { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -72,12 +75,7 @@ public partial class RvmCalendar : ComponentBase, IAsyncDisposable
         => $"{Semana[(int)d.DayOfWeek].Completo}, {d.Day} de {Meses[d.Month - 1]} de {d.Year}";
 
     internal string ClassesDaRaiz
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"rvm-calendario {texto}"
-            : "rvm-calendario";
+        => ClassesCss.Juntar("rvm-calendario", Class, AdditionalAttributes);
 
     /// <summary>As semanas do mes em foco, com <c>null</c> nos dias de outros meses.</summary>
     internal IEnumerable<DateOnly?[]> Semanas

@@ -31,6 +31,9 @@ public partial class RvmBadge : ComponentBase
     /// <summary>O conteudo sobre o qual o badge fica (um icone, um avatar).</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -61,10 +64,5 @@ public partial class RvmBadge : ComponentBase
     internal string ClassesDaAncora => ComClasseDoConsumidor("rvm-badge-ancora");
 
     private string ComClasseDoConsumidor(string proprias)
-        => AdditionalAttributes is not null
-           && AdditionalAttributes.TryGetValue("class", out var informada)
-           && informada is string texto
-           && !string.IsNullOrWhiteSpace(texto)
-            ? $"{proprias} {texto}"
-            : proprias;
+        => ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
 }

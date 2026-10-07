@@ -30,6 +30,9 @@ public partial class RvmNavItem : ComponentBase, IDisposable
     /// <summary>Como decidir que e a pagina atual. Padrao: <see cref="RvmNavMatch.Prefix"/>.</summary>
     [Parameter] public RvmNavMatch Match { get; set; } = RvmNavMatch.Prefix;
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao link.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -70,12 +73,7 @@ public partial class RvmNavItem : ComponentBase, IDisposable
             if (Recolhido) proprias += " rvm-recolhido";
             if (Icon is null) proprias += " rvm-subitem";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 

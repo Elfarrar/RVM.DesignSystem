@@ -57,6 +57,9 @@ public partial class RvmTable<TItem> : ComponentBase
     /// <summary>Texto quando nao ha linhas.</summary>
     [Parameter] public string NoRecordsText { get; set; } = "Nenhum registro para mostrar.";
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -250,12 +253,7 @@ public partial class RvmTable<TItem> : ComponentBase
             if (EhGrade) proprias += " rvm-grade-dados";
             if (Dense) proprias += " rvm-densa";
 
-            return AdditionalAttributes is not null
-                   && AdditionalAttributes.TryGetValue("class", out var informada)
-                   && informada is string texto
-                   && !string.IsNullOrWhiteSpace(texto)
-                ? $"{proprias} {texto}"
-                : proprias;
+            return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
 }

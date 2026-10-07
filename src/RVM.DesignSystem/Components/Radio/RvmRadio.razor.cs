@@ -18,6 +18,9 @@ public partial class RvmRadio<TValue> : ComponentBase
     /// <summary>Rotulo livre, quando <see cref="Label"/> esta vazio.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
     /// <summary>Atributos extras, repassados ao input nativo.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
