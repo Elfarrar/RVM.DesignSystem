@@ -40,6 +40,9 @@ public partial class RvmAlert : ComponentBase
     /// <summary>A mensagem.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Versao compacta, para avisos dentro de formulario e tabela.</summary>
+    [Parameter] public bool Dense { get; set; }
+
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
@@ -74,6 +77,8 @@ public partial class RvmAlert : ComponentBase
                     RvmColor.Error => "rvm-error",
                     _ => "rvm-info"
                 });
+
+            if (Dense) proprias += " rvm-denso";
 
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }

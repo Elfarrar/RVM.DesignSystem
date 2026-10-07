@@ -7,8 +7,21 @@ namespace RVM.DesignSystem.Components.Stepper;
 /// </summary>
 public partial class RvmStepper : ComponentBase
 {
-    /// <summary>As etapas, em ordem.</summary>
-    [Parameter, EditorRequired] public IReadOnlyList<RvmStep> Steps { get; set; } = [];
+    /// <summary>As etapas, em ordem. Sem elas, o stepper vira o indicador de bolinhas de <see cref="Count"/>.</summary>
+    [Parameter] public IReadOnlyList<RvmStep> Steps { get; set; } = [];
+
+    /// <summary>Quantos passos existem, no indicador de bolinhas (sem <see cref="Steps"/>).</summary>
+    [Parameter] public int Count { get; set; } = 1;
+
+    /// <summary>Passo atual, contando de 1, no indicador de bolinhas.</summary>
+    [Parameter] public int Current { get; set; } = 1;
+
+    /// <summary>Nome do indicador de bolinhas para o leitor de tela. Nas etapas, o nome e o <see cref="AriaLabel"/>.</summary>
+    [Parameter] public string Label { get; set; } = "Progresso";
+
+    internal bool SoBolinhas => Steps.Count == 0;
+
+    internal int AtualNasBolinhas => Math.Clamp(Current, 1, Math.Max(1, Count));
 
     /// <summary>Indice da etapa atual, a partir de 0. As anteriores contam como concluidas.</summary>
     [Parameter] public int ActiveStep { get; set; }

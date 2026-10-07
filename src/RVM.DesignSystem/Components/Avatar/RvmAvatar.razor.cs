@@ -45,6 +45,12 @@ public partial class RvmAvatar : ComponentBase
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
+    /// <summary>Nome da pessoa: texto alternativo e dica (<c>title</c>) da foto e, sem foto, nome acessivel. <see cref="Alt"/> vence.</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Anel de 2 px na cor da superficie, como nos avatares sobrepostos do grupo.</summary>
+    [Parameter] public bool Ring { get; set; }
+
     /// <inheritdoc cref="ComponentBase" />
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -58,6 +64,7 @@ public partial class RvmAvatar : ComponentBase
 
     internal string? NomeAcessivel
         => !string.IsNullOrWhiteSpace(Alt) ? Alt
+         : !string.IsNullOrWhiteSpace(Name) ? Name
          : !string.IsNullOrWhiteSpace(Initials) ? Initials
          : null;
 
@@ -87,6 +94,8 @@ public partial class RvmAvatar : ComponentBase
                     RvmColor.Error => "rvm-error",
                     _ => "rvm-primary"
                 });
+
+            if (Ring) proprias += " rvm-anel";
 
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }

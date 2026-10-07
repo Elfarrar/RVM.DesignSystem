@@ -363,3 +363,17 @@
         padding: var(--rvm-space-4) var(--rvm-space-4) 0;
     }
 }
+
+/* ImageUrl do contrato com o RVM.UI (DSGN-017): imagem redonda de 20 px no lugar do icone, centrada no
+   espaco de 24 px dos icones. */
+.rvm-navegacao ::deep .rvm-nav-imagem {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-inline: 2px;
+    border-radius: var(--rvm-radius-circle);
+    object-fit: cover;
+}
+
+/* O item sem Href e um botao com a cara do link. */
+.rvm-navegacao ::deep button.rvm-nav-link { font: inherit; text-align: start; cursor: pointer; }

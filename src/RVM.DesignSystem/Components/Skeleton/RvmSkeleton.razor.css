@@ -43,3 +43,10 @@
         display: none;
     }
 }
+
+/* Lines do contrato com o RVM.UI (DSGN-017): um paragrafo de linhas, a ultima mais curta. */
+.rvm-esqueleto-linhas {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-2);
+}

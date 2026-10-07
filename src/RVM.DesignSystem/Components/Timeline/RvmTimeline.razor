@@ -15,6 +15,9 @@
     /// <summary>Os <see cref="RvmTimelineItem"/>.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Menos espaco entre os itens (linhas curtas dentro de painel).</summary>
+    [Parameter] public bool Dense { get; set; }
+
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
@@ -33,6 +36,7 @@
                 _ => "rvm-conteudo-a-direita"
             };
 
+            if (Dense) proprias += " rvm-denso";
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }

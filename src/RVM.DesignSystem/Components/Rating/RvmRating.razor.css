@@ -94,3 +94,16 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+.rvm-lado-livre .rvm-estrela { width: var(--rvm-estrela-lado); height: var(--rvm-estrela-lado); }
+.rvm-lado-livre .rvm-cheia svg { width: var(--rvm-estrela-lado); }
+
+.rvm-compacta { align-items: center; gap: var(--rvm-space-1); }
+
+.rvm-nota-escrita {
+    color: var(--rvm-color-text-primary);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}

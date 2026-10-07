@@ -21,6 +21,9 @@ public partial class RvmAccordion : ComponentBase
     /// <summary>Os paineis.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>Cabecalhos mais baixos (listas longas, filtros).</summary>
+    [Parameter] public bool Dense { get; set; }
+
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
@@ -33,6 +36,7 @@ public partial class RvmAccordion : ComponentBase
         get
         {
             var proprias = Variant == RvmAccordionVariant.Filled ? "rvm-acordeao rvm-preenchido" : "rvm-acordeao rvm-padrao";
+            if (Dense) proprias += " rvm-denso";
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }

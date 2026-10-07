@@ -20,6 +20,9 @@ public partial class RvmSkeleton : ComponentBase
     /// <summary>Com o brilho passando (padrao) ou parado.</summary>
     [Parameter] public bool Animated { get; set; } = true;
 
+    /// <summary>Numero de linhas (so no texto). A ultima fica mais curta, como um paragrafo de verdade.</summary>
+    [Parameter] public int Lines { get; set; } = 1;
+
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
@@ -43,6 +46,8 @@ public partial class RvmSkeleton : ComponentBase
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);
         }
     }
+
+    internal string ClassesDaLinha => Animated ? "rvm-esqueleto rvm-texto rvm-animado" : "rvm-esqueleto rvm-texto";
 
     internal string Estilo
     {

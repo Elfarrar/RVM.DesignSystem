@@ -1,4 +1,6 @@
 @namespace RVM.DesignSystem.Components.Tooltip
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
 
 @* So CSS mostra e esconde: a dica aparece no :hover e no :focus-within, sem JS e sem esperar o
    Blazor ficar interativo. O Esc (WCAG 1.4.13, "dispensavel") e o unico pedaco que precisa de
@@ -8,6 +10,16 @@
    descricao pelo aria-describedby. O id chega ao conteudo pelo contexto do ChildContent. *@
 <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz"
       @onkeydown="AoTeclar" @onmouseleave="Rearmar" @onfocusout="Rearmar">
-    @ChildContent?.Invoke(IdDaDica)
+    @if (ChildContent is not null)
+    {
+        @ChildContent(IdDaDica)
+    }
+    else
+    {
+        @* Sem conteudo, um gatilho pronto: botao so de icone, com nome e a dica como descricao. *@
+        <button type="button" class="rvm-gatilho-padrao" aria-label="@TriggerLabel" aria-describedby="@IdDaDica">
+            <RvmIcon Name="@(Trigger == RvmTooltipTrigger.Question ? RvmIconName.QuestionCircle : RvmIconName.InfoCircle)" Size="RvmSize.Small" />
+        </button>
+    }
     <span id="@IdDaDica" role="tooltip" class="@ClassesDaDica">@Text</span>
 </span>

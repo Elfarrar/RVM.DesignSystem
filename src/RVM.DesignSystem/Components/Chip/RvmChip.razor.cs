@@ -45,6 +45,9 @@ public partial class RvmChip : ComponentBase
     /// <summary>O rotulo.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>O rotulo em texto, quando nao ha <see cref="ChildContent"/>.</summary>
+    [Parameter] public string? Label { get; set; }
+
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 

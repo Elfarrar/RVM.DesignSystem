@@ -6,14 +6,27 @@
    Somente leitura: uma imagem com a nota por extenso ("Nota 3,5 de 5"). *@
 @if (ReadOnly)
 {
-    <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" role="img" aria-label="@RotuloDeLeitura">
-        @Estrelas(Value)
+    <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" style="@EstiloDaRaiz" role="img" aria-label="@RotuloDeLeitura">
+        @if (Compacta)
+        {
+            @* Compacta: uma estrela cheia e a nota escrita, para a celula da tabela. *@
+            <span class="rvm-estrelas" aria-hidden="true">
+                <span class="rvm-estrela">
+                    <span class="rvm-cheia" style="width: 100%"><svg viewBox="0 0 24 24" focusable="false"><path d="@CaminhoDaEstrela" /></svg></span>
+                </span>
+            </span>
+            <span class="rvm-nota-escrita" aria-hidden="true">@Numero(Value)</span>
+        }
+        else
+        {
+            @Estrelas(Value)
+        }
     </span>
 }
 else
 {
-    <fieldset @attributes="AdditionalAttributes" class="@ClassesDaRaiz" disabled="@Disabled" @onmouseleave="() => _sobre = null">
-        <legend class="rvm-so-leitor">@Label</legend>
+    <fieldset @attributes="AdditionalAttributes" class="@ClassesDaRaiz" style="@EstiloDaRaiz" disabled="@Disabled" @onmouseleave="() => _sobre = null">
+        <legend class="rvm-so-leitor">@NomeDoGrupoParaLeitor</legend>
         @Estrelas(_sobre ?? Value)
         <span class="rvm-alvos">
             @foreach (var nota in Notas)

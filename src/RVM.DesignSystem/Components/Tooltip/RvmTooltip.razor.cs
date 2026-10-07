@@ -33,6 +33,12 @@ public partial class RvmTooltip : ComponentBase
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
+    /// <summary>Icone do gatilho padrao, quando nao ha <see cref="ChildContent"/>.</summary>
+    [Parameter] public RvmTooltipTrigger Trigger { get; set; } = RvmTooltipTrigger.Info;
+
+    /// <summary>Nome acessivel do gatilho padrao.</summary>
+    [Parameter] public string TriggerLabel { get; set; } = "Mais informacoes";
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }

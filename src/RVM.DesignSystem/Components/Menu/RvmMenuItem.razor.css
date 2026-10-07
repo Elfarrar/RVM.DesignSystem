@@ -48,3 +48,12 @@
 .rvm-item:disabled > svg {
     color: var(--rvm-color-text-disabled);
 }
+
+/* --- Contrato com o RVM.UI (DSGN-017) --- */
+
+/* Item-link: o mesmo visual do botao. */
+a.rvm-item { text-decoration: none; }
+a.rvm-item[aria-disabled="true"] { opacity: 0.38; pointer-events: none; }
+
+/* Acao destrutiva: texto e icone no -text de erro (4.5:1 nos dois temas). */
+.rvm-perigo, .rvm-perigo > svg { color: var(--rvm-color-error-text); }

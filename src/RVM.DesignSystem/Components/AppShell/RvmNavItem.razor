@@ -4,12 +4,37 @@
 <li class="rvm-nav-item">
     @* Recolhido, o texto sai da tela mas fica no link: e o nome dele para o leitor de tela. O title
        mostra o nome a quem usa mouse. *@
-    <a @attributes="AdditionalAttributes"
-       href="@Href"
-       class="@ClassesDoLink"
-       aria-current="@(Ativo ? "page" : null)"
-       title="@(Recolhido ? Text : null)">
-        @if (Icon is { } icone)
+    @if (Href is null)
+    {
+        @* Sem Href (contrato com o RVM.UI, DSGN-017): um botao que avisa o clique, ativo por Active. *@
+        <button @attributes="AdditionalAttributes"
+                type="button"
+                class="@ClassesDoLink"
+                aria-current="@(Ativo ? "page" : null)"
+                title="@(Recolhido ? Text : null)"
+                @onclick="OnClick">
+            @Miolo
+        </button>
+    }
+    else
+    {
+        <a @attributes="AdditionalAttributes"
+           href="@Href"
+           class="@ClassesDoLink"
+           aria-current="@(Ativo ? "page" : null)"
+           title="@(Recolhido ? Text : null)">
+            @Miolo
+        </a>
+    }
+</li>
+
+@code {
+    private RenderFragment Miolo => @<text>
+        @if (!string.IsNullOrWhiteSpace(ImageUrl))
+        {
+            <img class="rvm-nav-imagem" src="@ImageUrl" alt="" />
+        }
+        else if (Icon is { } icone)
         {
             <RvmIcon Name="icone" Size="RvmSize.Large" class="rvm-nav-icone" />
         }
@@ -22,5 +47,5 @@
         {
             <span class="rvm-nav-selo">@Badge</span>
         }
-    </a>
-</li>
+    </text>;
+}

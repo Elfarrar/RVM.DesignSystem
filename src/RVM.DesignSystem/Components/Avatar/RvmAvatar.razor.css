@@ -52,3 +52,6 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
 }
+
+/* Ring do contrato com o RVM.UI (DSGN-017): o anel que separa avatares sobrepostos. */
+.rvm-anel { box-shadow: 0 0 0 2px var(--rvm-color-background-paper); }

@@ -49,6 +49,15 @@ public partial class RvmRating : ComponentBase
     /// <summary>Classe CSS extra no elemento raiz.</summary>
     [Parameter] public string? Class { get; set; }
 
+    /// <summary>Nome acessivel proprio, que vence o montado a partir de <see cref="Label"/>.</summary>
+    [Parameter] public string? AriaLabel { get; set; }
+
+    /// <summary>Forma da nota so mostrada (<see cref="ReadOnly"/>): estrelas (padrao) ou compacta.</summary>
+    [Parameter] public RvmRatingDisplay Display { get; set; } = RvmRatingDisplay.Stars;
+
+    /// <summary>Lado da estrela em pixels, fora dos tres tamanhos. Quando vem, vence <see cref="Size"/>.</summary>
+    [Parameter] public int? SizePx { get; set; }
+
     /// <summary>Atributos extras, repassados a raiz.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -60,7 +69,21 @@ public partial class RvmRating : ComponentBase
     internal IEnumerable<double> Notas
         => Enumerable.Range(1, Math.Max(Max, 1) * (AllowHalf ? 2 : 1)).Select(i => i * Passo);
 
-    internal string RotuloDeLeitura => $"{Label}: {Numero(Value)} de {Max}";
+    internal string RotuloDeLeitura => AriaLabel ?? $"{Label}: {Numero(Value)} de {Max}";
+
+    internal string NomeDoGrupoParaLeitor => AriaLabel ?? Label;
+
+    internal bool Compacta => ReadOnly && Display == RvmRatingDisplay.Compact;
+
+    internal string? EstiloDaRaiz
+    {
+        get
+        {
+            var doConsumidor = AdditionalAttributes is not null && AdditionalAttributes.TryGetValue("style", out var valor) && valor is string texto ? texto : null;
+            var lado = SizePx is { } px ? $"--rvm-estrela-lado: {px}px" : null;
+            return lado is null ? doConsumidor : doConsumidor is null ? lado : $"{lado}; {doConsumidor}";
+        }
+    }
 
     internal string TextoDaNota(double nota)
         => nota == 1 ? $"1 estrela de {Max}" : $"{Numero(nota)} estrelas de {Max}";
@@ -91,6 +114,8 @@ public partial class RvmRating : ComponentBase
                 Size switch { RvmSize.Small => "rvm-pequeno", RvmSize.Large => "rvm-grande", _ => "rvm-medio" });
 
             if (ReadOnly) proprias += " rvm-leitura";
+            if (Compacta) proprias += " rvm-compacta";
+            if (SizePx is not null) proprias += " rvm-lado-livre";
             if (Disabled) proprias += " rvm-desabilitado";
 
             return ClassesCss.Juntar(proprias, Class, AdditionalAttributes);

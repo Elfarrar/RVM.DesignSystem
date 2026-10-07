@@ -90,3 +90,10 @@
     outline: var(--rvm-focus-ring-width) solid currentColor;
     outline-offset: 1px;
 }
+
+/* Dense do contrato com o RVM.UI (DSGN-017): menos respiro e texto do corpo menor. */
+.rvm-denso {
+    padding: var(--rvm-space-2) var(--rvm-space-3);
+    font-size: var(--rvm-text-body2-size);
+    line-height: var(--rvm-text-body2-line);
+}

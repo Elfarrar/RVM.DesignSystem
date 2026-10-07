@@ -40,6 +40,7 @@ Grupo de paineis que abrem e fecham. Os paineis sao `RvmAccordionPanel` filhos.
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `ChildContent` | `RenderFragment?` | — | Os paineis. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Dense` | `bool` | `false` | Cabecalhos mais baixos (listas longas, filtros). |
 | `Exclusive` | `bool` | `false` | So um painel aberto por vez: abrir um fecha os outros. |
 | `HeadingLevel` | `int` | `3` | Nivel dos cabecalhos dos paineis (2 a 6). Padrao: 3. |
 | `Variant` | `RvmAccordionVariant` | `RvmAccordionVariant.Standard` | Estilo. Padrao: `RvmAccordionVariant.Standard`. |
@@ -75,6 +76,7 @@ Mensagem de destaque dentro da pagina: o que aconteceu e, quando der, o que faze
 | `ChildContent` | `RenderFragment?` | — | A mensagem. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `CloseLabel` | `string` | `"Fechar aviso"` | Nome acessivel do botao de fechar. Padrao: "Fechar aviso". |
+| `Dense` | `bool` | `false` | Versao compacta, para avisos dentro de formulario e tabela. |
 | `Icon` | `RvmIconName?` | — | Troca o icone da gravidade por outro. |
 | `OnClose` | `EventCallback` | — | Chamado ao fechar. Com alguem escutando, aparece o botao de fechar. |
 | `Severity` | `RvmColor` | `RvmColor.Info` | Gravidade, pelo papel de cor. Padrao: `RvmColor.Info`. O kit desenha quatro (Error, Warning, Info, Success); Primary e Secondary tambem funcionam, pelo contrato do `RvmColor`. |
@@ -161,6 +163,8 @@ Representa uma pessoa ou uma entidade: foto, iniciais ou icone. Se a foto nao ca
 | `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do fundo, para iniciais e icone. Padrao: `RvmColor.Primary`. |
 | `Icon` | `RvmIconName?` | — | Icone, usado quando nao ha foto. Tem prioridade sobre as iniciais. |
 | `Initials` | `string?` | — | Iniciais, usadas quando nao ha foto nem icone. Passam de 2 letras sao cortadas. |
+| `Name` | `string?` | — | Nome da pessoa: texto alternativo e dica (`title`) da foto e, sem foto, nome acessivel. `RvmAvatar.Alt` vence. |
+| `Ring` | `bool` | `false` | Anel de 2 px na cor da superficie, como nos avatares sobrepostos do grupo. |
 | `Shape` | `RvmAvatarShape` | `RvmAvatarShape.Circle` | Forma. Padrao: `RvmAvatarShape.Circle`. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 24, 40 (padrao) ou 56 px — os tres tamanhos medidos no kit. |
 | `Src` | `string?` | — | Endereco da foto. Tem prioridade sobre icone e iniciais. |
@@ -377,6 +381,7 @@ Rotulo compacto: um filtro aplicado, uma etiqueta, uma pessoa num campo de desti
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Color` | `RvmColor?` | — | Papel de cor. Sem valor, o chip e neutro — a coluna "Default" do kit. |
 | `Disabled` | `bool` | `false` | Indisponivel: esmaecido e sem remover. |
+| `Label` | `string?` | — | O rotulo em texto, quando nao ha `RvmChip.ChildContent`. |
 | `OnRemove` | `EventCallback` | — | Chamado ao remover. Com alguem escutando, aparece o botao de remover. |
 | `RemoveLabel` | `string` | `"Remover"` | Nome acessivel do botao de remover. Padrao: "Remover". Vale personalizar com o rotulo ("Remover filtro de status") quando houver varios chips lado a lado. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | 24 px (`RvmSize.Small`) ou 32 px — medidos no kit. O kit nao define um chip grande, entao `RvmSize.Large` sai igual ao medio. |
@@ -807,9 +812,13 @@ Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao botao do item. |
 | `ChildContent` | `RenderFragment?` | — | O texto do item. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Danger` | `bool` | `false` | Acao destrutiva ("Excluir"): o item sai na cor de erro. |
 | `Disabled` | `bool` | `false` | Visivel, mas nao escolhivel — o teclado tambem o pula. |
+| `Href` | `string?` | — | Destino. Com ele o item e um link; sem ele, um botao. |
 | `Icon` | `RvmIconName?` | — | Icone antes do texto. |
+| `MovesFocus` | `bool` | `false` | O item LEVA o foco consigo (abre um painel, uma aba ou um dialogo e poe o foco la): ao fechar, o menu NAO devolve o foco ao botao que o abriu. Padrao: devolve, como manda o padrao de menu do WAI-ARIA. |
 | `OnClick` | `EventCallback` | — | O que fazer ao escolher o item. |
+| `Text` | `string` | `""` | Texto da acao, quando nao ha `RvmMenuItem.ChildContent`. |
 
 ### RvmMultiSelect<TValue>
 
@@ -856,6 +865,7 @@ Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enq
 
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
+| `ActivePrefix` | `string?` | — | Caminho relativo do grupo (`"financeiro"`): a rota igual a ele ou abaixo dele marca o grupo como atual e o abre na primeira vez. |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
 | `Badge` | `string?` | — | Selo ao lado do texto ("Novo"). |
 | `ChildContent` | `RenderFragment?` | — | Os subitens: `RvmNavItem` sem icone. |
@@ -863,6 +873,7 @@ Escolha de VARIAS opcoes numa lista, com busca opcional. A lista fica aberta enq
 | `Expanded` | `bool` | `false` | Subitens a mostra. Aceita `@bind-Expanded`. |
 | `ExpandedChanged` | `EventCallback<bool>` | — | Disparado quando o grupo abre ou fecha. |
 | `Icon` | `RvmIconName` | obrigatorio | Icone do grupo. |
+| `ImageUrl` | `string?` | — | Imagem redonda no lugar do icone (decorativa). |
 | `Text` | `string` | obrigatorio | Texto do grupo. |
 
 ### RvmNavItem
@@ -873,12 +884,15 @@ Um link do menu lateral. Marca a pagina atual com `aria-current="page"` e o dest
 
 | Parametro | Tipo | Padrao | Descricao |
 |---|---|---|---|
+| `Active` | `bool` | `false` | Ativo, no item sem `RvmNavItem.Href` (o link descobre sozinho pela rota). |
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao link. |
 | `Badge` | `string?` | — | Selo ao lado do texto ("Novo", "3"). |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
-| `Href` | `string` | obrigatorio | Endereco do link. |
+| `Href` | `string?` | — | Endereco do link (`""` e a raiz do app). Sem ele (`null`), o item e um botao que avisa por `RvmNavItem.OnClick`. |
 | `Icon` | `RvmIconName?` | — | Icone. Sem icone, o item leva o circulo pequeno dos subitens do kit. |
+| `ImageUrl` | `string?` | — | Imagem redonda de 20 px no lugar do icone (decorativa: o texto ja nomeia o item). |
 | `Match` | `RvmNavMatch` | `RvmNavMatch.Prefix` | Como decidir que e a pagina atual. Padrao: `RvmNavMatch.Prefix`. |
+| `OnClick` | `EventCallback` | — | Clique do item sem `RvmNavItem.Href`. |
 | `Text` | `string` | obrigatorio | Texto do item. Com o menu recolhido, continua sendo o nome do link para o leitor de tela. |
 
 ### RvmNavSection
@@ -907,8 +921,10 @@ Paginacao numerica, com setas e reticencias quando as paginas nao cabem.
 | `Color` | `RvmColor?` | `RvmColor.Primary` | Cor da pagina atual. Sem valor, a atual ganha so um fundo neutro — a coluna "State: Active" do kit. Padrao: `RvmColor.Primary`. |
 | `Count` | `int` | obrigatorio | Total de paginas. |
 | `Disabled` | `bool` | `false` | Desabilita a paginacao inteira. |
+| `NextLabel` | `string` | `"Proxima pagina"` | Nome acessivel da seta que avanca. |
 | `Page` | `int` | `1` | A pagina atual, comecando em 1. Aceita `@bind-Page`. |
 | `PageChanged` | `EventCallback<int>` | — | Disparado quando a pessoa escolhe outra pagina. |
+| `PreviousLabel` | `string` | `"Pagina anterior"` | Nome acessivel da seta que volta. |
 | `Shape` | `RvmPaginationShape` | `RvmPaginationShape.Circular` | Forma. Padrao: `RvmPaginationShape.Circular`. |
 | `SiblingCount` | `int` | `1` | Paginas vizinhas da atual sempre visiveis, de cada lado. Padrao: 1. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | Itens de 26, 32 (padrao) ou 40 px — medidos no kit. |
@@ -1070,13 +1086,16 @@ Nota em estrelas: para mostrar uma avaliacao ou para a pessoa dar a dela.
 |---|---|---|---|
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
 | `AllowHalf` | `bool` | `false` | Permite meia estrela. |
+| `AriaLabel` | `string?` | — | Nome acessivel proprio, que vence o montado a partir de `RvmRating.Label`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Disabled` | `bool` | `false` | Indisponivel. |
+| `Display` | `RvmRatingDisplay` | `RvmRatingDisplay.Stars` | Forma da nota so mostrada (`RvmRating.ReadOnly`): estrelas (padrao) ou compacta. |
 | `Label` | `string` | `"Avaliacao"` | O que esta sendo avaliado ("Nota do atendimento"). Nome do grupo para o leitor de tela. Padrao: "Avaliacao". |
 | `Max` | `int` | `5` | Quantas estrelas. Padrao: 5. |
 | `Name` | `string?` | — | `name` dos radios, para envio de formulario. Sem valor, e gerado. |
 | `ReadOnly` | `bool` | `false` | So mostra a nota, sem deixar mudar. |
 | `Size` | `RvmSize` | `RvmSize.Medium` | Estrelas de 18, 24 (padrao) ou 30 px — medidas no kit. |
+| `SizePx` | `int?` | — | Lado da estrela em pixels, fora dos tres tamanhos. Quando vem, vence `RvmRating.Size`. |
 | `Value` | `double` | `0` | A nota. Aceita `@bind-Value`. Zero e "sem nota". |
 | `ValueChanged` | `EventCallback<double>` | — | Disparado quando a pessoa escolhe outra nota. |
 
@@ -1171,6 +1190,7 @@ Espaco reservado com a forma do conteudo que ainda vai chegar. Evita que a tela 
 | `Animated` | `bool` | `true` | Com o brilho passando (padrao) ou parado. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `Height` | `string?` | — | Altura em CSS. Padrao: a da linha de texto; retangulo, 120 px; circulo, igual a largura. |
+| `Lines` | `int` | `1` | Numero de linhas (so no texto). A ultima fica mais curta, como um paragrafo de verdade. |
 | `Variant` | `RvmSkeletonVariant` | `RvmSkeletonVariant.Text` | Linha de texto (padrao), retangulo ou circulo. |
 | `Width` | `string?` | — | Largura em CSS ("100%", "12rem", "40px"). Padrao: toda a largura; circulo, 40 px. |
 
@@ -1198,9 +1218,12 @@ As etapas de um processo e em qual a pessoa esta: cadastro em partes, assistente
 | `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao `ol`. |
 | `AriaLabel` | `string` | `"Etapas"` | Nome da lista para o leitor de tela. Padrao: "Etapas". |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Count` | `int` | `1` | Quantos passos existem, no indicador de bolinhas (sem `RvmStepper.Steps`). |
+| `Current` | `int` | `1` | Passo atual, contando de 1, no indicador de bolinhas. |
+| `Label` | `string` | `"Progresso"` | Nome do indicador de bolinhas para o leitor de tela. Nas etapas, o nome e o `RvmStepper.AriaLabel`. |
 | `Orientation` | `RvmOrientation` | `RvmOrientation.Horizontal` | Etapas em linha (padrao) ou empilhadas. |
 | `Placement` | `RvmStepperLabelPlacement` | `RvmStepperLabelPlacement.End` | Texto ao lado com o numero grande (padrao) ou embaixo, centralizado. |
-| `Steps` | `IReadOnlyList<RvmStep>` | obrigatorio | As etapas, em ordem. |
+| `Steps` | `IReadOnlyList<RvmStep>` | — | As etapas, em ordem. Sem elas, o stepper vira o indicador de bolinhas de `RvmStepper.Count`. |
 
 ### RvmSwitch
 
@@ -1432,6 +1455,7 @@ Alternada, alinhada, com data.
 | `AriaLabel` | `string?` | — | Nome da lista para o leitor de tela, quando nao ha titulo visivel antes dela. |
 | `ChildContent` | `RenderFragment?` | — | Os `RvmTimelineItem`. |
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Dense` | `bool` | `false` | Menos espaco entre os itens (linhas curtas dentro de painel). |
 | `Position` | `RvmTimelinePosition` | `RvmTimelinePosition.Right` | Lado do conteudo principal. Padrao: `RvmTimelinePosition.Right`. |
 
 ### RvmTimelineItem
@@ -1462,6 +1486,8 @@ Dica curta que aparece ao passar o mouse ou focar o conteudo. Para texto que a p
 | `Id` | `string?` | — | Id da dica. Sem valor, e gerado. |
 | `Placement` | `RvmTooltipPlacement` | `RvmTooltipPlacement.Top` | Lado em que a dica aparece. Padrao: `RvmTooltipPlacement.Top`. |
 | `Text` | `string` | obrigatorio | O texto da dica. |
+| `Trigger` | `RvmTooltipTrigger` | `RvmTooltipTrigger.Info` | Icone do gatilho padrao, quando nao ha `RvmTooltip.ChildContent`. |
+| `TriggerLabel` | `string` | `"Mais informacoes"` | Nome acessivel do gatilho padrao. |
 
 ### RvmTypography
 
@@ -1536,6 +1562,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Start`, `End`, `Stretch`
 - `RvmProgressVariant` (`RVM.DesignSystem.Components.Progress`): Forma do indicador de progresso.
   Valores: `Linear`, `Circular`
+- `RvmRatingDisplay` (`RVM.DesignSystem.Components.Rating`): Forma da nota so mostrada (contrato com o RVM.UI, DSGN-017). Editavel, e sempre a de estrelas.
+  Valores: `Compact`, `Stars`
 - `RvmSize` (`RVM.DesignSystem`): Tamanho de componente interativo. Botao, campo, chip e avatar usam os tres.
   Valores: `Small`, `Medium`, `Large`
 - `RvmSkeletonVariant` (`RVM.DesignSystem.Components.Skeleton`): Forma do espaco reservado.
@@ -1564,6 +1592,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Right`, `Left`, `Alternate`
 - `RvmTooltipPlacement` (`RVM.DesignSystem.Components.Tooltip`): De que lado do conteudo a dica aparece.
   Valores: `Top`, `Bottom`, `Left`, `Right`
+- `RvmTooltipTrigger` (`RVM.DesignSystem.Components.Tooltip`): Icone do gatilho padrao do `RvmTooltip`, usado quando nao ha `ChildContent`.
+  Valores: `Info`, `Question`
 - `RvmTypographyVariant` (`RVM.DesignSystem.Components.Typography`): Os 24 estilos da escala tipografica do kit (`06-tokens-e-tematizacao.md`). Cada um vira a classe `rvm-text-*` correspondente, que le tamanho, entrelinha e peso dos tokens.
   Valores: `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `Subtitle1`, `Subtitle2`, `Body1`, `Body2`, `Caption`, `Overline`, `ButtonLarge`, `ButtonMedium`, `ButtonSmall`, `InputLabel`, `Helper`, `Input`, `AvatarInitials`, `Chip`, `Tooltip`, `AlertTitle`, `TableHeader`, `BadgeLabel`
 
