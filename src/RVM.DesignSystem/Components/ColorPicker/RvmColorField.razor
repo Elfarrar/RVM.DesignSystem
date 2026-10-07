@@ -27,7 +27,7 @@
 
     @if (AllowCustom)
     {
-        <details class="rvm-compor" open="@Personalizada">
+        <details class="rvm-compor" open="@_comporAberto">
             <summary class="rvm-compor-titulo">@ComposeText</summary>
             <div class="rvm-compor-campos">
                 <input type="color"
@@ -91,6 +91,10 @@
     private string? _erroDoHex;
     private string? _ultimoValor;
 
+    // O servidor so ABRE a area de compor (quando a cor e personalizada), nunca fecha: com open ligado ao valor, digitar
+    // um hex da paleta fechava o painel no meio da edicao (achado do review da onda 2b). Fechar e do <details> nativo.
+    private bool _comporAberto;
+
     private string IdDoHex => $"{IdDoControle}-hex";
 
     private string IdDoErroDoHex => $"{IdDoControle}-hex-erro";
@@ -127,6 +131,7 @@
             _textoDoHex = ValorNormalizado ?? CurrentValue;
             _erroDoHex = null;
         }
+        _comporAberto |= Personalizada;
     }
 
     private void Definir(string? hex)
@@ -135,6 +140,7 @@
         _textoDoHex = hex;
         _ultimoValor = hex;
         CurrentValue = hex;
+        _comporAberto |= Personalizada;
     }
 
     private void AoEscolherNoSeletor(ChangeEventArgs e)
@@ -145,7 +151,12 @@
     private void AoDigitarHex(ChangeEventArgs e)
     {
         var texto = e.Value?.ToString();
-        if (Normalizar(texto) is { } hex)
+        // Campo do hex esvaziado: nenhuma cor, e nao erro (sem isso nao havia como zerar o valor).
+        if (string.IsNullOrWhiteSpace(texto))
+        {
+            Definir(null);
+        }
+        else if (Normalizar(texto) is { } hex)
         {
             Definir(hex);
         }

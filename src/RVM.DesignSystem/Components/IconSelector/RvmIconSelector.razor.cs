@@ -31,6 +31,8 @@ public partial class RvmIconSelector : IAsyncDisposable
     private bool _focarNoGatilho;
     private ElementReference _grade;
     private string? _gradePresa;
+    private ElementReference _caixaDaBusca;
+    private string? _buscaPresa;
     private RvmButton? _gatilho;
     private IJSObjectReference? _modulo;
 
@@ -221,6 +223,16 @@ public partial class RvmIconSelector : IAsyncDisposable
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (_aberto && _caixaDaBusca.Id is { } idDaBusca && idDaBusca != _buscaPresa)
+        {
+            _buscaPresa = idDaBusca;
+            await Tentar(async () =>
+            {
+                _modulo ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/RVM.DesignSystem/rvm-teclado.js");
+                await _modulo.InvokeVoidAsync("prenderTeclas", _caixaDaBusca, new[] { "Enter" });
+            });
+        }
+
         if (_aberto && _visiveis.Count > 0 && _grade.Id is { } id && id != _gradePresa)
         {
             _gradePresa = id;

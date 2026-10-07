@@ -323,4 +323,23 @@ public class RvmUploadTests : BunitContext
         Assert.Equal("A foto passa de 5 MB.", cortado.Find("#foto-erro").TextContent);
         Assert.Contains("rvm-desabilitado", cortado.Find(".rvm-upload").ClassList);
     }
+
+    [Fact]
+    public void Tamanho_que_arredonda_para_1024_sobe_de_unidade()
+    {
+        var cortado = Render<RvmFileUpload>(p => p.Add(x => x.Items, new List<RvmUploadItem>
+        {
+            new() { Name = "quase-mega.pdf", Size = 1_048_550 }
+        }));
+
+        Assert.Equal("1 MB", cortado.Find(".rvm-tamanho").TextContent);
+    }
+
+    [Fact]
+    public void Perfil_iniciais_nao_partem_emoji_ao_meio()
+    {
+        var cortado = Render<RvmProfileImageUpload>(p => p.Add(x => x.AvatarName, "🌾"));
+
+        Assert.Equal("🌾", cortado.Find(".rvm-iniciais").TextContent);
+    }
 }

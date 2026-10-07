@@ -285,4 +285,17 @@ public class RvmIconSelectorTests : BunitContext
         public bool Ler(string texto, out RvmIconName? valor, out string? erro)
             => TryParseValueFromString(texto, out valor, out erro);
     }
+
+    [Fact]
+    public void Busca_barra_o_Enter_para_nao_enviar_o_formulario_do_consumidor()
+    {
+        var modulo = JSInterop.SetupModule("./_content/RVM.DesignSystem/rvm-teclado.js");
+        modulo.Mode = JSRuntimeMode.Loose;
+        var cortado = Montar(p => p.Add(x => x.Icons, Agro));
+
+        Abrir(cortado);
+
+        Assert.Contains(modulo.Invocations["prenderTeclas"],
+            i => i.Arguments[1] is string[] teclas && teclas.SequenceEqual(["Enter"]));
+    }
 }

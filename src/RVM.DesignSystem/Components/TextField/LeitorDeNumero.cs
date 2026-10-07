@@ -35,6 +35,8 @@ internal static class LeitorDeNumero
             // e o WebAssembly, que so carrega o pacote de culturas EFIGS, sem portugues.
             numeros.CurrencyPositivePattern = 2;
             numeros.CurrencyNegativePattern = 9;
+            numeros.PercentPositivePattern = 1;
+            numeros.PercentNegativePattern = 1;
             return CultureInfo.ReadOnly(cultura);
         }
     }

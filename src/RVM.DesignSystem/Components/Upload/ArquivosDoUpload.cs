@@ -23,6 +23,12 @@ internal static class ArquivosDoUpload
             valor /= 1024;
             unidade++;
         }
+        // 1.048.500 bytes dariam 1023,9 KB, arredondado para "1024 KB": sobe para a proxima unidade.
+        if (Math.Round(valor, 1) >= 1024 && unidade < Unidades.Length - 1)
+        {
+            valor /= 1024;
+            unidade++;
+        }
         return $"{valor.ToString("0.#", CultureInfo.InvariantCulture).Replace('.', ',')} {Unidades[unidade]}";
     }
 

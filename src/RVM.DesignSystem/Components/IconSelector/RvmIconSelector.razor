@@ -69,8 +69,12 @@
 
     <RvmDialog Open="_aberto" OpenChanged="AoMudarAbertura" Title="Escolher icone" Size="RvmSize.Small"
                ShowCloseButton="true">
-        <RvmTextField @bind-Value="_busca" @bind-Value:after="AoBuscar" Immediate="true" Label="Buscar icone"
-                      StartIcon="RvmIconName.Search" data-rvm-foco-inicial="true" />
+        @* A janela nao sai do <form> do consumidor (o RvmDialog nao usa portal): o Enter da busca enviaria o formulario
+           pelo envio implicito do navegador. O JS barra o Enter aqui (achado do review da onda 2b). *@
+        <div @ref="_caixaDaBusca">
+            <RvmTextField @bind-Value="_busca" @bind-Value:after="AoBuscar" Immediate="true" Label="Buscar icone"
+                          StartIcon="RvmIconName.Search" data-rvm-foco-inicial="true" />
+        </div>
 
         <p class="rvm-aviso-da-grade rvm-text-caption" role="status">@Aviso</p>
 

@@ -95,11 +95,14 @@
             return partes.Length switch
             {
                 0 => null,
-                1 => partes[0][..1],
-                _ => string.Concat(partes[0][..1], partes[^1][..1])
+                1 => Primeira(partes[0]),
+                _ => string.Concat(Primeira(partes[0]), Primeira(partes[^1]))
             };
         }
     }
+
+    // Primeira letra como o leitor ve: um emoji ou letra fora do plano basico ocupa dois char, e [..1] partiria ao meio.
+    private static string Primeira(string parte) => System.Globalization.StringInfo.GetNextTextElement(parte);
 
     private RvmIconName? IconeSemNome => string.IsNullOrWhiteSpace(AvatarName) ? RvmIconName.User : null;
 

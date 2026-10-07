@@ -37,7 +37,7 @@
                        disabled="@Disabled"
                        @onchange="() => Escolher(item)" />
                 <span class="rvm-anel" aria-hidden="true">
-                    <span class="rvm-bolinha" style="@($"background-color: {ItemColor?.Invoke(item)}")">
+                    <span class="rvm-bolinha" style="@EstiloDaCor(item)">
                         <span class="rvm-marca"><RvmIcon Name="RvmIconName.Check" SizePx="14" /></span>
                     </span>
                 </span>
@@ -63,6 +63,18 @@
 
     /// <summary>A cor CSS de cada item (<c>#RRGGBB</c>), aplicada inline no fundo da bolinha.</summary>
     [Parameter] public Func<TValue, string>? ItemColor { get; set; }
+
+    // A cor pode vir de dado do usuario: so passa o que cabe numa cor CSS (#hex, rgb(...), hsl(...), nome, var(--x)).
+    // Um ";" ou "}" abriria outra declaracao no style (achado do review da onda 2b).
+    private string? EstiloDaCor(TValue item)
+    {
+        var cor = ItemColor?.Invoke(item)?.Trim();
+        if (string.IsNullOrEmpty(cor) || !cor.All(c => char.IsAsciiLetterOrDigit(c) || c is '#' or '(' or ')' or ',' or '.' or '%' or ' ' or '-'))
+        {
+            return null;
+        }
+        return $"background-color: {cor}";
+    }
 
     /// <summary>O nome de cada item: vira o nome acessivel do radio e a dica ao passar o mouse. Sem ele, <c>ToString()</c>.</summary>
     [Parameter] public Func<TValue, string>? ItemText { get; set; }

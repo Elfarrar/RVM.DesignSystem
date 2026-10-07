@@ -9,6 +9,8 @@ public class RvmCoresTests : BunitContext
 {
     public RvmCoresTests() => JSInterop.Mode = JSRuntimeMode.Loose;
 
+    private string _cor = "a";
+
     private enum Etiqueta { Urgente, Normal, Baixa }
 
     private static string CorDa(Etiqueta e) => e switch { Etiqueta.Urgente => "#FF4C51", Etiqueta.Normal => "#264CC8", _ => "#56CA00" };
@@ -230,5 +232,56 @@ public class RvmCoresTests : BunitContext
         cortado.Find("#cor-hex").Change("#FFB400");
         Assert.Empty(cortado.FindAll("#cor-hex-erro"));
         Assert.True(mudou);
+    }
+
+    [Fact]
+    public void ColorField_compor_nao_fecha_quando_a_cor_volta_para_a_paleta()
+    {
+        var cortado = Campo("#4CAF50", permitir: true);
+        Assert.True(cortado.Find("details").HasAttribute("open"));
+
+        // #264CC8 e o Azul da paleta: antes o open seguia o valor e o painel fechava no meio da edicao (review da 2b).
+        cortado.Find("#cor-hex").Change("#264cc8");
+
+        Assert.True(cortado.Find("details").HasAttribute("open"));
+    }
+
+    [Fact]
+    public void ColorField_hex_esvaziado_zera_o_valor_sem_erro()
+    {
+        string? valor = "#264CC8";
+        var cortado = Campo("#264CC8", v => valor = v, permitir: true);
+
+        cortado.Find("#cor-hex").Change("  ");
+
+        Assert.Null(valor);
+        Assert.Empty(cortado.FindAll("#cor-hex-erro"));
+    }
+
+    [Theory]
+    [InlineData("red; background-image: url(https://x)")]
+    [InlineData("#FFF}")]
+    public void Picker_descarta_cor_que_abriria_outra_declaracao_no_style(string cor)
+    {
+        var cortado = Render<RvmColorPicker<string>>(p => p
+            .Add(x => x.Items, ["a"])
+            .Add(x => x.ItemColor, _ => cor)
+            .Add(x => x.Value, "a")
+            .Add(x => x.ValueExpression, () => _cor));
+
+        Assert.Null(cortado.Find(".rvm-bolinha").GetAttribute("style"));
+    }
+
+    [Fact]
+    public void Picker_aceita_hex_rgb_e_var()
+    {
+        var cores = new Dictionary<string, string> { ["a"] = "#264CC8", ["b"] = "rgb(1, 2, 3)", ["c"] = "var(--rvm-color-primary-main)" };
+        var cortado = Render<RvmColorPicker<string>>(p => p
+            .Add(x => x.Items, cores.Keys)
+            .Add(x => x.ItemColor, k => cores[k])
+            .Add(x => x.Value, "a")
+            .Add(x => x.ValueExpression, () => _cor));
+
+        Assert.Equal(cores.Values.Select(c => $"background-color: {c}"), cortado.FindAll(".rvm-bolinha").Select(b => b.GetAttribute("style")));
     }
 }
