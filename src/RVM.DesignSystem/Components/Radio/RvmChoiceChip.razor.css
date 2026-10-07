@@ -1,0 +1,148 @@
+/* CSS isolado do RvmChoiceChip. So custom properties — hex literal aqui quebra o tema escuro.
+   O visual e o do RvmChip (pilula de 32 / 24 px do referencia-neatlab/Chip.png). Desmarcado: contorno neutro.
+   Marcado (:has no radio): o estilo da Variant na cor do papel. O input vem do InputRadio, outro componente:
+   por isso ::deep nas regras de .rvm-nativo. */
+
+.rvm-chip-escolha {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    box-sizing: border-box;
+    max-width: 100%;
+    border: 1px solid var(--rvm-color-outline);
+    border-radius: var(--rvm-radius-pill);
+    background-color: transparent;
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-chip-size);
+    line-height: var(--rvm-text-chip-line);
+    font-weight: var(--rvm-text-chip-weight);
+    white-space: nowrap;
+    vertical-align: middle;
+    transition: background-color var(--rvm-transition-fast), border-color var(--rvm-transition-fast);
+}
+
+.rvm-medio { height: 32px; padding: 0 var(--rvm-space-3); }
+.rvm-pequeno { height: 24px; padding: 0 var(--rvm-space-2); }
+
+/* Com miniatura ou icone, o circulo encosta na borda da pilula, como no RvmChip. */
+.rvm-medio:has(.rvm-miniatura, .rvm-escolha > svg) { padding-inline-start: var(--rvm-space-1); }
+.rvm-pequeno:has(.rvm-miniatura, .rvm-escolha > svg) { padding-inline-start: 2px; }
+
+.rvm-escolha {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    min-width: 0;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* O radio fica escondido, mas continua focavel e lido pelo leitor de tela. */
+.rvm-escolha ::deep .rvm-nativo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+.rvm-rotulo {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rvm-miniatura {
+    border-radius: var(--rvm-radius-circle);
+    object-fit: cover;
+    flex: none;
+}
+
+.rvm-medio .rvm-miniatura { width: 24px; height: 24px; }
+.rvm-pequeno .rvm-miniatura { width: 18px; height: 18px; }
+
+/* --- Papel: as cores do estado marcado --- */
+.rvm-primary { --rvm-escolha-main: var(--rvm-color-primary-main); --rvm-escolha-contraste: var(--rvm-color-primary-contrast); --rvm-escolha-texto: var(--rvm-color-primary-text); --rvm-escolha-suave: var(--rvm-color-primary-soft); --rvm-escolha-borda: var(--rvm-color-primary-outlined-resting); }
+.rvm-secondary { --rvm-escolha-main: var(--rvm-color-secondary-main); --rvm-escolha-contraste: var(--rvm-color-secondary-contrast); --rvm-escolha-texto: var(--rvm-color-secondary-text); --rvm-escolha-suave: var(--rvm-color-secondary-soft); --rvm-escolha-borda: var(--rvm-color-secondary-outlined-resting); }
+.rvm-inverse { --rvm-escolha-main: var(--rvm-color-inverse-main); --rvm-escolha-contraste: var(--rvm-color-inverse-contrast); --rvm-escolha-texto: var(--rvm-color-inverse-text); --rvm-escolha-suave: var(--rvm-color-inverse-soft); --rvm-escolha-borda: var(--rvm-color-inverse-outlined-resting); }
+.rvm-info { --rvm-escolha-main: var(--rvm-color-info-main); --rvm-escolha-contraste: var(--rvm-color-info-contrast); --rvm-escolha-texto: var(--rvm-color-info-text); --rvm-escolha-suave: var(--rvm-color-info-soft); --rvm-escolha-borda: var(--rvm-color-info-outlined-resting); }
+.rvm-success { --rvm-escolha-main: var(--rvm-color-success-main); --rvm-escolha-contraste: var(--rvm-color-success-contrast); --rvm-escolha-texto: var(--rvm-color-success-text); --rvm-escolha-suave: var(--rvm-color-success-soft); --rvm-escolha-borda: var(--rvm-color-success-outlined-resting); }
+.rvm-warning { --rvm-escolha-main: var(--rvm-color-warning-main); --rvm-escolha-contraste: var(--rvm-color-warning-contrast); --rvm-escolha-texto: var(--rvm-color-warning-text); --rvm-escolha-suave: var(--rvm-color-warning-soft); --rvm-escolha-borda: var(--rvm-color-warning-outlined-resting); }
+.rvm-error { --rvm-escolha-main: var(--rvm-color-error-main); --rvm-escolha-contraste: var(--rvm-color-error-contrast); --rvm-escolha-texto: var(--rvm-color-error-text); --rvm-escolha-suave: var(--rvm-color-error-soft); --rvm-escolha-borda: var(--rvm-color-error-outlined-resting); }
+
+/* --- Desmarcado: hover neutro --- */
+.rvm-chip-escolha:not(.rvm-desabilitado):not(:has(.rvm-nativo:checked)):hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+/* --- Marcado, na Variant --- */
+.rvm-preenchido:has(.rvm-nativo:checked) {
+    background-color: var(--rvm-escolha-main);
+    border-color: var(--rvm-escolha-main);
+    color: var(--rvm-escolha-contraste);
+}
+
+.rvm-contorno:has(.rvm-nativo:checked) {
+    border-color: var(--rvm-escolha-borda);
+    color: var(--rvm-escolha-texto);
+}
+
+.rvm-suave:has(.rvm-nativo:checked) {
+    background-color: var(--rvm-escolha-suave);
+    border-color: var(--rvm-escolha-suave);
+    color: var(--rvm-escolha-texto);
+}
+
+/* Foco do teclado no radio escondido: o anel aparece no chip inteiro. */
+.rvm-chip-escolha:has(.rvm-nativo:focus-visible) {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 2px;
+}
+
+/* --- Botao de remover, irmao do label --- */
+.rvm-removivel { padding-inline-end: var(--rvm-space-1); }
+
+.rvm-remover {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    padding: 0;
+    border: none;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    /* Cor cheia: o "x" e um controle e precisa de 3:1 contra o fundo (WCAG 1.4.11). */
+    color: inherit;
+    cursor: pointer;
+}
+
+.rvm-remover:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 1px;
+}
+
+/* --- Desabilitado: um so tratamento, marcado ou nao. Especificidade acima das regras de marcado. --- */
+.rvm-chip-escolha.rvm-desabilitado,
+.rvm-chip-escolha.rvm-desabilitado:has(.rvm-nativo:checked) {
+    color: var(--rvm-color-text-disabled);
+    border-color: var(--rvm-color-action-disabled);
+    background-color: transparent;
+}
+
+.rvm-chip-escolha.rvm-desabilitado:has(.rvm-nativo:checked) {
+    background-color: var(--rvm-color-action-disabled);
+}
+
+.rvm-desabilitado .rvm-escolha,
+.rvm-desabilitado .rvm-remover {
+    cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rvm-chip-escolha {
+        transition: none;
+    }
+}

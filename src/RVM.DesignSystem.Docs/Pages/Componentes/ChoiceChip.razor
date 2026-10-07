@@ -1,0 +1,40 @@
+@page "/componentes/choice-chip"
+
+<PageTitle>RvmChoiceChip — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmChoiceChip</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Opcao de escolha unica em forma de chip, dentro de um RvmRadioGroup. O grupo da a pergunta, o name e o @@bind-Value;
+    cada chip e um radio nativo, entao as setas do teclado movem a escolha e o formulario recebe o valor sem JS.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Desmarcado, o chip e o contorno neutro; marcado, sai na Variant e na Color (sem Color, o primario).
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Prioridade"
+              Descricao="Tres chips no mesmo grupo. Escolha um e o valor aparece embaixo."
+              Codigo="@Codigo">
+    <RvmRadioGroup TValue="string" @bind-Value="_prioridade" Label="Prioridade" Orientation="RvmOrientation.Horizontal">
+        <RvmChoiceChip TValue="string" Value="@("Baixa")" Label="Baixa" Color="RvmColor.Success" />
+        <RvmChoiceChip TValue="string" Value="@("Media")" Label="Media" Color="RvmColor.Warning" Variant="RvmChipVariant.Soft" />
+        <RvmChoiceChip TValue="string" Value="@("Alta")" Label="Alta" Color="RvmColor.Error" StartIcon="RvmIconName.Flag" />
+    </RvmRadioGroup>
+    <RvmTypography Color="RvmTextColor.Secondary">Prioridade escolhida: @(_prioridade ?? "nenhuma")</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmChoiceChip" />
+
+@code {
+    private string? _prioridade = "Media";
+
+    private const string Codigo = """
+        <RvmRadioGroup TValue="string" @bind-Value="prioridade" Label="Prioridade" Orientation="RvmOrientation.Horizontal">
+            <RvmChoiceChip TValue="string" Value="@("Baixa")" Label="Baixa" Color="RvmColor.Success" />
+            <RvmChoiceChip TValue="string" Value="@("Media")" Label="Media" Color="RvmColor.Warning" Variant="RvmChipVariant.Soft" />
+            <RvmChoiceChip TValue="string" Value="@("Alta")" Label="Alta" Color="RvmColor.Error" StartIcon="RvmIconName.Flag" />
+        </RvmRadioGroup>
+        """;
+}
