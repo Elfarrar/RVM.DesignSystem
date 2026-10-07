@@ -20,7 +20,7 @@
     <div class="pilha-exemplos largura-cheia">
         <RvmTextArea Label="Observacao" @bind-Value="_texto" Immediate="true" Rows="4" Required="true"
                      HelperText="@($"{_texto?.Length ?? 0} de 280 caracteres")" />
-        <RvmTextArea Label="Motivo da recusa" Rows="3" ErrorText="Conte o motivo para o produtor entender a recusa." />
+        <RvmTextArea Label="Motivo da recusa" Rows="3" @bind-Value="_motivo" ErrorText="Conte o motivo para o produtor entender a recusa." />
     </div>
 </BlocoExemplo>
 
@@ -30,6 +30,7 @@
 
 @code {
     private string? _texto;
+    private string? _motivo;
 
     private const string Codigo = """
         <RvmTextArea Label="Observacao" @bind-Value="texto" Immediate="true" Rows="4" Required="true"
