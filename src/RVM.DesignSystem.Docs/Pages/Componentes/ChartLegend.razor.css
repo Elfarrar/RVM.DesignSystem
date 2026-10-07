@@ -1,0 +1,17 @@
+.legenda-ao-lado {
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) auto;
+    align-items: center;
+    gap: var(--rvm-space-6);
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .legenda-ao-lado {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.pilha-exemplos ::deep .legenda-largura-toda {
+    align-self: stretch;
+}

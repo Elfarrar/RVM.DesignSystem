@@ -46,6 +46,26 @@
     </RvmBarChart>
 </BlocoExemplo>
 
+<BlocoExemplo Titulo="Em pe (Layout Vertical)"
+              Descricao="O Layout troca o arranjo sem trocar de componente: Vertical desenha colunas, como o RvmColumnChart. O padrao continua Horizontal."
+              Codigo="@CodigoVertical">
+    <RvmBarChart Items="Custos" Label="c => c.Cultura" AriaLabel="Custo de fertilizantes e defensivos por hectare" Height="260"
+                 Layout="RvmBarLayout.Vertical" ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)}")">
+        <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" />
+        <RvmChartSeries Name="Defensivos" Value="c => c.Defensivos" Color="RvmColor.Success" />
+    </RvmBarChart>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Divergente (Layout Diverging)"
+              Descricao="Entradas e saidas de caixa por mes, a partir de um zero no meio. Com duas series, a primeira vai para a direita e a segunda para a esquerda, em primary e erro; o eixo mostra o tamanho dos dois lados. Com uma serie so, o lado vem do sinal do valor."
+              Codigo="@CodigoDivergente">
+    <RvmBarChart Items="Fluxo" Label="f => f.Mes" AriaLabel="Entradas e saidas de caixa por mes" Height="280"
+                 Layout="RvmBarLayout.Diverging" ValueFormat="@(v => $"R$ {RvmChartFormat.Number(v)} mil")">
+        <RvmChartSeries Name="Entradas" Value="f => f.Entradas" />
+        <RvmChartSeries Name="Saidas" Value="f => f.Saidas" />
+    </RvmBarChart>
+</BlocoExemplo>
+
 <TabelaParametros Componente="RvmBarChart" />
 
 @code {
@@ -59,6 +79,27 @@
     [
         ("Soja", 620, 980, 740), ("Milho safrinha", 890, 1240, 520), ("Algodao", 710, 1650, 1980), ("Feijao", 540, 760, 610)
     ];
+
+    private static readonly (string Mes, double Entradas, double Saidas)[] Fluxo =
+    [
+        ("Janeiro", 420, 310), ("Fevereiro", 380, 450), ("Marco", 910, 520), ("Abril", 1240, 610), ("Maio", 560, 880)
+    ];
+
+    private const string CodigoVertical = """
+        <RvmBarChart Items="custos" Label="c => c.Cultura" AriaLabel="Custo por hectare"
+                     Layout="RvmBarLayout.Vertical">
+            <RvmChartSeries Name="Fertilizantes" Value="c => c.Fertilizantes" />
+            <RvmChartSeries Name="Defensivos" Value="c => c.Defensivos" Color="RvmColor.Success" />
+        </RvmBarChart>
+        """;
+
+    private const string CodigoDivergente = """
+        <RvmBarChart Items="fluxo" Label="f => f.Mes" AriaLabel="Entradas e saidas de caixa por mes"
+                     Layout="RvmBarLayout.Diverging">
+            <RvmChartSeries Name="Entradas" Value="f => f.Entradas" />
+            <RvmChartSeries Name="Saidas" Value="f => f.Saidas" />
+        </RvmBarChart>
+        """;
 
     private const string CodigoEixoDuplo = """
         <RvmBarChart Items="talhoes" Label="t => t.Nome" AriaLabel="Area plantada e produtividade de cada talhao"
