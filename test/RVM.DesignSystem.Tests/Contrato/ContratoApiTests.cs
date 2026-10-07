@@ -30,7 +30,7 @@ public class ContratoApiTests
         {
             // Primeira geracao grava tudo; depois, so remove o que ja foi cumprido.
             var nova = pendentes is null ? naoCumpre : new SortedSet<string>(pendentes.Where(naoCumpre.Contains), StringComparer.Ordinal);
-            File.WriteAllText(CaminhoPendentes, JsonSerializer.Serialize(nova, new JsonSerializerOptions { WriteIndented = true }) + "\n");
+            File.WriteAllText(CaminhoPendentes, JsonSerializer.Serialize(nova, new JsonSerializerOptions { WriteIndented = true, NewLine = "\n" }) + "\n");
             pendentes = nova;
         }
 
