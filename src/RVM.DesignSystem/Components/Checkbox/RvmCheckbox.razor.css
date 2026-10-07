@@ -78,6 +78,7 @@
 .rvm-primary.rvm-indeterminado .rvm-caixa { background-color: var(--rvm-color-primary-text); border-color: var(--rvm-color-primary-text); }
 .rvm-secondary .rvm-alvo ::deep .rvm-nativo:checked + .rvm-caixa,
 .rvm-secondary.rvm-indeterminado .rvm-caixa { background-color: var(--rvm-color-secondary-text); border-color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-alvo ::deep .rvm-nativo:checked + .rvm-caixa, .rvm-inverse.rvm-indeterminado .rvm-caixa { background-color: var(--rvm-color-inverse-text); border-color: var(--rvm-color-inverse-text); }
 .rvm-info .rvm-alvo ::deep .rvm-nativo:checked + .rvm-caixa,
 .rvm-info.rvm-indeterminado .rvm-caixa { background-color: var(--rvm-color-info-text); border-color: var(--rvm-color-info-text); }
 .rvm-success .rvm-alvo ::deep .rvm-nativo:checked + .rvm-caixa,

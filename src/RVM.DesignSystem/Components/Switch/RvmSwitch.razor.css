@@ -72,7 +72,9 @@
 .rvm-primary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-primary-text); }
 .rvm-primary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-primary-outlined-resting); }
 .rvm-secondary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-inverse-text); }
 .rvm-secondary .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-secondary-outlined-resting); }
+.rvm-inverse .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-inverse-outlined-resting); }
 .rvm-info .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-info-text); }
 .rvm-info .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-trilho { background-color: var(--rvm-color-info-outlined-resting); }
 .rvm-success .rvm-alvo ::deep .rvm-nativo:checked ~ .rvm-polegar { background-color: var(--rvm-color-success-text); }

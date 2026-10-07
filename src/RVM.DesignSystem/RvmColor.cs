@@ -22,5 +22,19 @@ public enum RvmColor
     Warning,
 
     /// <summary>Erro: alguma coisa falhou ou impede seguir.</summary>
-    Error
+    Error,
+
+    /// <summary>Para uso sobre fundo colorido ou escuro: branco, com o texto na cor do fundo.</summary>
+    Inverse,
+
+    // Aliases do contrato com o RVM.UI (DSGN-017): o mesmo valor, o nome que o RVM.UI usa.
+
+    /// <summary>O mesmo que <see cref="Primary"/>.</summary>
+    Accent = Primary,
+
+    /// <summary>O mesmo que <see cref="Secondary"/>.</summary>
+    Neutral = Secondary,
+
+    /// <summary>O mesmo que <see cref="Error"/>.</summary>
+    Danger = Error
 }

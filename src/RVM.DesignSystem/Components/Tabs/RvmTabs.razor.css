@@ -22,6 +22,14 @@
 
 .rvm-sublinhadas.rvm-horizontal .rvm-lista { gap: 20px; }
 
+/* Page (contrato com o RVM.UI, DSGN-017): as sublinhadas numa faixa de superficie com divisor embaixo,
+   no topo da pagina. Invencao declarada — o kit nao desenha esse formato. */
+.rvm-pagina.rvm-horizontal .rvm-lista {
+    padding: 0 var(--rvm-space-5);
+    background-color: var(--rvm-color-background-paper);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
 .rvm-vertical .rvm-lista {
     flex-direction: column;
     flex: none;

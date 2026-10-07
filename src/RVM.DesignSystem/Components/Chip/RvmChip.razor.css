@@ -47,6 +47,7 @@
 /* --- Preenchido: fundo na cor do papel, texto no token de contraste --- */
 .rvm-preenchido.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
 .rvm-preenchido.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-preenchido.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
 .rvm-preenchido.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
 .rvm-preenchido.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
 .rvm-preenchido.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
@@ -55,6 +56,7 @@
 /* --- Contorno: borda no -outlined-resting (medido no botao do kit), texto no -text --- */
 .rvm-contorno.rvm-primary { border-color: var(--rvm-color-primary-outlined-resting); color: var(--rvm-color-primary-text); }
 .rvm-contorno.rvm-secondary { border-color: var(--rvm-color-secondary-outlined-resting); color: var(--rvm-color-secondary-text); }
+.rvm-contorno.rvm-inverse { border-color: var(--rvm-color-inverse-outlined-resting); color: var(--rvm-color-inverse-text); }
 .rvm-contorno.rvm-info { border-color: var(--rvm-color-info-outlined-resting); color: var(--rvm-color-info-text); }
 .rvm-contorno.rvm-success { border-color: var(--rvm-color-success-outlined-resting); color: var(--rvm-color-success-text); }
 .rvm-contorno.rvm-warning { border-color: var(--rvm-color-warning-outlined-resting); color: var(--rvm-color-warning-text); }
@@ -63,6 +65,7 @@
 /* --- Suave: -soft com -text; os seis pares medidos passam 4.5:1 nos dois temas --- */
 .rvm-suave.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
 .rvm-suave.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-suave.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
 .rvm-suave.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
 .rvm-suave.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
 .rvm-suave.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }

@@ -61,6 +61,7 @@ public partial class RvmChip : ComponentBase
                 {
                     RvmColor.Primary => "rvm-primary",
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",

@@ -82,7 +82,7 @@ public partial class RvmTable<TItem> : ComponentBase
     internal void AdicionarColuna(RvmTableColumn<TItem> coluna)
     {
         _colunas.Add(coluna);
-        if (ColunaOrdenada is null && coluna.InitialSort is { } sentido && coluna.Ordenavel)
+        if (ColunaOrdenada is null && coluna.InitialSort is { } sentido and not RvmSortDirection.None && coluna.Ordenavel)
         {
             ColunaOrdenada = coluna;
             Sentido = sentido;

@@ -45,6 +45,7 @@ public partial class RvmBadge : ComponentBase
     private string ClasseDaCor => Color switch
     {
         RvmColor.Secondary => "rvm-secondary",
+        RvmColor.Inverse => "rvm-inverse",
         RvmColor.Info => "rvm-info",
         RvmColor.Success => "rvm-success",
         RvmColor.Warning => "rvm-warning",

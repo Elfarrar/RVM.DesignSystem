@@ -104,6 +104,7 @@ public partial class RvmPagination : ComponentBase
                 {
                     null => "rvm-neutro",
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",

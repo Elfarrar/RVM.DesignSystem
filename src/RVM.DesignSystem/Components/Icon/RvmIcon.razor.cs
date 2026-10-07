@@ -64,6 +64,7 @@ public partial class RvmIcon : ComponentBase
             {
                 RvmColor.Primary => "var(--rvm-color-primary-text)",
                 RvmColor.Secondary => "var(--rvm-color-secondary-text)",
+                RvmColor.Inverse => "var(--rvm-color-inverse-text)",
                 RvmColor.Info => "var(--rvm-color-info-text)",
                 RvmColor.Success => "var(--rvm-color-success-text)",
                 RvmColor.Warning => "var(--rvm-color-warning-text)",

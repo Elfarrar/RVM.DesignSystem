@@ -124,6 +124,11 @@ public class RvmTypography : ComponentBase
         RvmTextColor.Primary => "var(--rvm-color-text-primary)",
         RvmTextColor.Secondary => "var(--rvm-color-text-secondary)",
         RvmTextColor.Disabled => "var(--rvm-color-text-disabled)",
+        RvmTextColor.Accent => "var(--rvm-color-primary-text)",
+        RvmTextColor.Success => "var(--rvm-color-success-text)",
+        RvmTextColor.Danger => "var(--rvm-color-error-text)",
+        RvmTextColor.Warning => "var(--rvm-color-warning-text)",
+        RvmTextColor.Inverse => "var(--rvm-color-inverse-text)",
         _ => null
     };
 

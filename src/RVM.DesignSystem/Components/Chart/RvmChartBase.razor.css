@@ -85,6 +85,7 @@
 .rvm-grafico ::deep .rvm-cor-success { --rvm-grafico-cor: var(--rvm-color-success-text); }
 .rvm-grafico ::deep .rvm-cor-warning { --rvm-grafico-cor: var(--rvm-color-warning-text); }
 .rvm-grafico ::deep .rvm-cor-error { --rvm-grafico-cor: var(--rvm-color-error-text); }
+.rvm-grafico ::deep .rvm-cor-inverse { --rvm-grafico-cor: var(--rvm-color-inverse-text); }
 
 /* --- Eixos e grade --- */
 .rvm-grafico ::deep .rvm-grafico-grade {

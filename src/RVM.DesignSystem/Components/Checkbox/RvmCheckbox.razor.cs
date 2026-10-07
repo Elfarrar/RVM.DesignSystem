@@ -78,6 +78,7 @@ public partial class RvmCheckbox : ComponentBase, IAsyncDisposable
                 Color switch
                 {
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",

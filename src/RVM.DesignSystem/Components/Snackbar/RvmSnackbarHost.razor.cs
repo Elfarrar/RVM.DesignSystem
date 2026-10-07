@@ -39,6 +39,7 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
         {
             null => "rvm-mensagem rvm-neutra",
             RvmColor.Secondary => "rvm-mensagem rvm-colorida rvm-secondary",
+            RvmColor.Inverse => "rvm-mensagem rvm-colorida rvm-inverse",
             RvmColor.Info => "rvm-mensagem rvm-colorida rvm-info",
             RvmColor.Success => "rvm-mensagem rvm-colorida rvm-success",
             RvmColor.Warning => "rvm-mensagem rvm-colorida rvm-warning",
@@ -51,7 +52,7 @@ public partial class RvmSnackbarHost : ComponentBase, IDisposable
         RvmColor.Success => RvmIconName.CircleCheck,
         RvmColor.Error => RvmIconName.AlertCircle,
         RvmColor.Warning => RvmIconName.AlertTriangle,
-        RvmColor.Info or RvmColor.Primary or RvmColor.Secondary => RvmIconName.InfoCircle,
+        RvmColor.Info or RvmColor.Primary or RvmColor.Secondary or RvmColor.Inverse => RvmIconName.InfoCircle,
         _ => null
     };
 

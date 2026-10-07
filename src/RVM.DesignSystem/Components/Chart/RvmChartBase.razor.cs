@@ -411,7 +411,18 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
 
     internal static RvmColor CorDaPaleta(int indice) => Paleta[indice % Paleta.Length];
 
-    internal static string ClasseDaCor(RvmColor cor) => "rvm-cor-" + cor.ToString().ToLowerInvariant();
+    // Switch, e nao ToString(): com os aliases do contrato (Accent = Primary) o ToString() pode devolver qualquer
+    // um dos dois nomes.
+    internal static string ClasseDaCor(RvmColor cor) => cor switch
+    {
+        RvmColor.Secondary => "rvm-cor-secondary",
+        RvmColor.Info => "rvm-cor-info",
+        RvmColor.Success => "rvm-cor-success",
+        RvmColor.Warning => "rvm-cor-warning",
+        RvmColor.Error => "rvm-cor-error",
+        RvmColor.Inverse => "rvm-cor-inverse",
+        _ => "rvm-cor-primary"
+    };
 
     internal static string N(double valor) => Escala.N(valor);
 

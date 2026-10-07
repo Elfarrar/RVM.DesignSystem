@@ -1193,7 +1193,7 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
 - `RvmButtonType` (`RVM.DesignSystem.Components.Button`): O `type` do elemento. Importa dentro de formulario: o padrao do HTML e `submit`, e um botao de "cancelar" que esqueca isso envia o formulario sem querer. Aqui o padrao e `RvmButtonType.Button`, e quem envia declara.
   Valores: `Button`, `Submit`, `Reset`
 - `RvmButtonVariant` (`RVM.DesignSystem.Components.Button`): Peso visual do botao. Uma tela tem UM contained em destaque; o resto apoia.
-  Valores: `Contained`, `Outlined`, `Text`
+  Valores: `Contained`, `Filled`, `Outlined`, `Text`, `Soft`
 - `RvmChartAxis` (`RVM.DesignSystem.Components.Chart`): Em qual eixo de valores a serie e lida.
   Valores: `Primary`, `Secondary`
 - `RvmChartExportFormat` (`RVM.DesignSystem.Components.Chart`): Em que formato o grafico e exportado.
@@ -1203,7 +1203,7 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
 - `RvmChipVariant` (`RVM.DesignSystem.Components.Chip`): Os tres estilos da pagina Chip do kit.
   Valores: `Filled`, `Outlined`, `Soft`
 - `RvmColor` (`RVM.DesignSystem`): Papel semantico de cor. O componente escolhe o PAPEL; que cor sai dele e problema da camada de tokens, e muda com o tema. Componente nunca conhece cor (`05-api-dos-componentes.md`).
-  Valores: `Primary`, `Secondary`, `Info`, `Success`, `Warning`, `Error`
+  Valores: `Primary`, `Accent`, `Secondary`, `Neutral`, `Info`, `Success`, `Warning`, `Error`, `Danger`, `Inverse`
 - `RvmDrawerAnchor` (`RVM.DesignSystem.Components.Drawer`): De que lado da tela a gaveta sai.
   Valores: `Left`, `Right`, `Top`, `Bottom`
 - `RvmDrawerVariant` (`RVM.DesignSystem.Components.Drawer`): Como a gaveta convive com a pagina.
@@ -1227,15 +1227,15 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
 - `RvmSkeletonVariant` (`RVM.DesignSystem.Components.Skeleton`): Forma do espaco reservado.
   Valores: `Text`, `Rectangular`, `Circular`
 - `RvmSortDirection` (`RVM.DesignSystem.Components.Table`): Sentido da ordenacao de uma coluna.
-  Valores: `Ascending`, `Descending`
+  Valores: `Ascending`, `Descending`, `None`
 - `RvmStepperLabelPlacement` (`RVM.DesignSystem.Components.Stepper`): Onde o texto de cada etapa fica em relacao ao marcador.
   Valores: `End`, `Bottom`
 - `RvmTableAlign` (`RVM.DesignSystem.Components.Table`): Alinhamento do conteudo de uma coluna.
   Valores: `Start`, `Center`, `End`
 - `RvmTabsVariant` (`RVM.DesignSystem.Components.Tabs`): Estilo das abas — as duas linhas da pagina Tabs do kit.
-  Valores: `Standard`, `Contained`
+  Valores: `Standard`, `Regular`, `Contained`, `Button`, `Page`
 - `RvmTextColor` (`RVM.DesignSystem.Components.Typography`): Papel do texto na hierarquia de leitura. Sao os tokens de texto, nao as cores de marca: para escrever com a cor de um papel semantico, use a classe do token `-text`.
-  Valores: `Inherit`, `Primary`, `Secondary`, `Disabled`
+  Valores: `Inherit`, `Primary`, `Default`, `Secondary`, `Disabled`, `Accent`, `Success`, `Danger`, `Warning`, `Inverse`
 - `RvmTextElement` (`RVM.DesignSystem.Components.Typography`): Que elemento HTML o texto vira. Existe porque ESTILO e SEMANTICA sao coisas diferentes: um titulo de secao pode precisar do tamanho de `H5` e continuar sendo um `h2` na ordem do documento. Trocar um pelo outro quebra a navegacao por cabecalho no leitor de tela.
   Valores: `Auto`, `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `P`, `Span`, `Div`, `Label`
 - `RvmTextFieldVariant` (`RVM.DesignSystem.Components.TextField`): Os tres estilos da pagina Text Field do kit.
@@ -1392,6 +1392,13 @@ Use sempre `var(--rvm-...)`. Coluna escuro vazia = o valor nao muda no tema escu
 | `--rvm-color-success-soft` | `#E9F5EA` | `#343D4C` |
 | `--rvm-color-warning-soft` | `#FDEDE0` | `#4A3E42` |
 | `--rvm-color-error-soft` | `#FEE8E7` | `#493049` |
+| `--rvm-color-inverse-main` | `#FFFFFF` |  |
+| `--rvm-color-inverse-hover` | `#EDEFF7` |  |
+| `--rvm-color-inverse-text` | `#FFFFFF` |  |
+| `--rvm-color-inverse-contrast` | `#264CC8` |  |
+| `--rvm-color-inverse-outlined-hover` | `rgba(255, 255, 255, 0.12)` |  |
+| `--rvm-color-inverse-outlined-resting` | `rgba(255, 255, 255, 0.56)` |  |
+| `--rvm-color-inverse-soft` | `rgba(255, 255, 255, 0.16)` |  |
 | `--rvm-color-menu-active` | `#2C78E1` | `var(--rvm-color-primary-main)` |
 | `--rvm-color-menu-active-gradient` | `linear-gradient(90deg, #31A1F9 0%, #274FCA 100%)` |  |
 | `--rvm-color-background-body` | `#F4F5FA` | `#28243D` |

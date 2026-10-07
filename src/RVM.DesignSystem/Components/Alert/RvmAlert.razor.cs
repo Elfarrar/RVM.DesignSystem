@@ -65,6 +65,7 @@ public partial class RvmAlert : ComponentBase
                 {
                     RvmColor.Primary => "rvm-primary",
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",
                     RvmColor.Error => "rvm-error",

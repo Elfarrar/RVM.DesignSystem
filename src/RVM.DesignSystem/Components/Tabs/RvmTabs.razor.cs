@@ -66,7 +66,12 @@ public partial class RvmTabs : ComponentBase, IAsyncDisposable
         {
             var proprias = string.Join(' ',
                 "rvm-abas",
-                Variant == RvmTabsVariant.Contained ? "rvm-preenchidas" : "rvm-sublinhadas",
+                Variant switch
+                {
+                    RvmTabsVariant.Contained => "rvm-preenchidas",
+                    RvmTabsVariant.Page => "rvm-sublinhadas rvm-pagina",
+                    _ => "rvm-sublinhadas"
+                },
                 Orientation == RvmOrientation.Vertical ? "rvm-vertical" : "rvm-horizontal");
 
             if (FullWidth && Orientation == RvmOrientation.Horizontal)

@@ -60,6 +60,7 @@ public partial class RvmSwitch : ComponentBase
                 Color switch
                 {
                     RvmColor.Secondary => "rvm-secondary",
+                    RvmColor.Inverse => "rvm-inverse",
                     RvmColor.Info => "rvm-info",
                     RvmColor.Success => "rvm-success",
                     RvmColor.Warning => "rvm-warning",

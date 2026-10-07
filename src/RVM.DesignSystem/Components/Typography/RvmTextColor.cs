@@ -16,5 +16,25 @@ public enum RvmTextColor
     Secondary,
 
     /// <summary>Indisponivel. Nao vale para texto que precisa ser lido.</summary>
-    Disabled
+    Disabled,
+
+    /// <summary>Na cor do papel primario (o token <c>-text</c>, legivel nos dois temas).</summary>
+    Accent,
+
+    /// <summary>Confirmacao.</summary>
+    Success,
+
+    /// <summary>Erro.</summary>
+    Danger,
+
+    /// <summary>Atencao.</summary>
+    Warning,
+
+    /// <summary>Texto claro sobre fundo escuro ou colorido.</summary>
+    Inverse,
+
+    // Aliases do contrato com o RVM.UI (DSGN-017): o mesmo valor, o nome que o RVM.UI usa.
+
+    /// <summary>O mesmo que <see cref="Primary"/>.</summary>
+    Default = Primary
 }

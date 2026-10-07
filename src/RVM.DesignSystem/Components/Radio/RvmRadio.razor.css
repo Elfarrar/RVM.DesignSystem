@@ -70,7 +70,9 @@
 .rvm-primary .rvm-alvo ::deep .rvm-nativo:checked + .rvm-circulo { border-color: var(--rvm-color-primary-text); }
 .rvm-primary .rvm-ponto { background-color: var(--rvm-color-primary-text); }
 .rvm-secondary .rvm-alvo ::deep .rvm-nativo:checked + .rvm-circulo { border-color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-alvo ::deep .rvm-nativo:checked + .rvm-circulo { border-color: var(--rvm-color-inverse-text); }
 .rvm-secondary .rvm-ponto { background-color: var(--rvm-color-secondary-text); }
+.rvm-inverse .rvm-ponto { background-color: var(--rvm-color-inverse-text); }
 .rvm-info .rvm-alvo ::deep .rvm-nativo:checked + .rvm-circulo { border-color: var(--rvm-color-info-text); }
 .rvm-info .rvm-ponto { background-color: var(--rvm-color-info-text); }
 .rvm-success .rvm-alvo ::deep .rvm-nativo:checked + .rvm-circulo { border-color: var(--rvm-color-success-text); }

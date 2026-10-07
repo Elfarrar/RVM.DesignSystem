@@ -70,6 +70,7 @@ public partial class RvmButton : ComponentBase
             {
                 RvmButtonVariant.Outlined => "rvm-contorno",
                 RvmButtonVariant.Text => "rvm-texto",
+                RvmButtonVariant.Soft => "rvm-suave",
                 _ => "rvm-preenchido"
             }, Size switch
             {
@@ -79,6 +80,7 @@ public partial class RvmButton : ComponentBase
             }, Color switch
             {
                 RvmColor.Secondary => "rvm-secondary",
+                RvmColor.Inverse => "rvm-inverse",
                 RvmColor.Info => "rvm-info",
                 RvmColor.Success => "rvm-success",
                 RvmColor.Warning => "rvm-warning",
