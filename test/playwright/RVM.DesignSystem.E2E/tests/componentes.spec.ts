@@ -72,7 +72,8 @@ for (const { rota, titulo } of PAGINAS) {
         await page.goto(rota);
 
         await expect(page.getByRole('heading', { name: titulo, level: 1 })).toBeVisible();
-        await expect(page.getByRole('heading', { name: 'Parametros' })).toBeVisible();
+        // Uma tabela por componente da pagina ("Parametros de RvmTabs", "Parametros de RvmTab"), gerada da biblioteca (DSGN-017).
+        await expect(page.getByRole('heading', { name: /^Parametros de Rvm/ }).first()).toBeVisible();
         await expect(page.getByRole('table').last()).toBeVisible();
 
         // O recorte do kit ao lado do exemplo e criterio do 07-site-de-documentacao: sem ele,
