@@ -976,7 +976,9 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
         // Liga o JS quando o DESENHO aparece, e nao so no primeiro render: o grafico que nasce em Loading, Error ou
         // IsEmpty nao tem area nem camada ainda, e a que volta depois de um estado e outro elemento (achado do review
         // da onda 0, DSGN-017).
-        if (Estado != EstadoDosDados.Conteudo)
+        // Sem desenho (estado) ou com ele ainda por vir (a figura sai depois das series, num segundo render), nao ha o
+        // que ligar: ligar a referencia vazia deixava a roda presa a nada (zoom morto, pego no E2E da onda 0).
+        if (Estado != EstadoDosDados.Conteudo || _area.Id is null || _camada.Id is null)
         {
             return;
         }
@@ -1030,7 +1032,7 @@ public abstract partial class RvmChartBase<TItem> : ComponentBase, IAsyncDisposa
     /// <summary>Liga o ouvinte da roda quando ha zoom e o desliga quando deixa de haver.</summary>
     private async Task AcertarARoda()
     {
-        if (_modulo is null || _acertandoRoda || ZoomLigado == (_roda is not null))
+        if (_modulo is null || _acertandoRoda || _camada.Id is null || ZoomLigado == (_roda is not null))
         {
             return;
         }
