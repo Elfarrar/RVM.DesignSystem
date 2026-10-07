@@ -174,10 +174,30 @@ public class RvmCalendarioDeEventosTests : BunitContext
     }
 
     [Fact]
-    public void Faixa_de_horas_invalida_lanca()
+    public void Faixa_de_horas_invalida_lanca_so_onde_a_grade_de_horas_existe()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            Render<RvmEventCalendar>(p => p.Add(x => x.FirstHour, 10).Add(x => x.LastHour, 8)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Render<RvmEventCalendar>(p => p
+            .Add(x => x.View, RvmCalendarView.Week).Add(x => x.FirstHour, 10).Add(x => x.LastHour, 8)));
+
+        // No mes as horas nem sao usadas: a faixa invalida nao derruba o componente.
+        var mes = Render<RvmEventCalendar>(p => p.Add(x => x.Now, Agora).Add(x => x.FirstHour, 10).Add(x => x.LastHour, 24));
+        Assert.NotEmpty(mes.FindAll("tbody tr"));
+    }
+
+    [Fact]
+    public void Evento_fora_da_faixa_de_horas_vai_para_a_primeira_ou_a_ultima_linha()
+    {
+        var cortado = Render<RvmEventCalendar>(p => p
+            .Add(x => x.Now, Agora)
+            .Add(x => x.View, RvmCalendarView.Day)
+            .Add(x => x.FirstHour, 7)
+            .Add(x => x.LastHour, 12)
+            .Add(x => x.Events, [Evento("Ordenha", Agora.Date.AddHours(5)), Evento("Reuniao", Agora.Date.AddHours(19))]));
+
+        var linhas = cortado.FindAll("tbody tr");
+        Assert.Contains("Ordenha", linhas[0].TextContent);
+        Assert.Contains("05:00 as 06:00", linhas[0].TextContent);
+        Assert.Contains("Reuniao", linhas[^1].TextContent);
     }
 
     // --- RvmEventPill ---

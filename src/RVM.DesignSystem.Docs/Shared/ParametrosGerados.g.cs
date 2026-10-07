@@ -1249,7 +1249,7 @@ internal static class ParametrosGerados
             new("ItemTemplate", "RenderFragment<ValueTuple<object, RenderFragment>>", "obrigatorio", "Como desenhar cada cartao. Recebe o item e os itens de menu \"Mover para X\" ja prontos (`MoveItems`) — coloca-los num `RvmMenu` do cartao e o que faz o quadro funcionar no teclado e no toque."),
             new("ItemTitleSelector", "Func<object, string>?", "—", "O titulo do cartao, usado no aviso de movimento (\"Colher talhao 3 movido para Feito\")."),
             new("Label", "string", "\"Quadro de tarefas\"", "Nome acessivel do quadro. Padrao: \"Quadro de tarefas\"."),
-            new("OnMove", "EventCallback<RvmKanbanMove<object>>", "—", "Avisa que um cartao deve mudar de coluna. O aplicativo devolve `RvmKanbanBoard.Columns` com o cartao no lugar novo. Para recusar, lance: o anuncio ao leitor de tela so sai depois deste retorno."),
+            new("OnMove", "EventCallback<RvmKanbanMove<object>>", "—", "Avisa que um cartao deve mudar de coluna. O aplicativo devolve `RvmKanbanBoard.Columns` com o cartao no lugar novo. Para recusar, lance: o quadro anuncia ao leitor de tela que nao moveu, e a excecao nao derruba a pagina."),
         ],
         ["RvmLabel"] =
         [

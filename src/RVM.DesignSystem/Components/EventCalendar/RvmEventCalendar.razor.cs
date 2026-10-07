@@ -109,7 +109,8 @@ public partial class RvmEventCalendar : ComponentBase
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        if (FirstHour is < 0 or > 23 || LastHour is < 0 or > 23 || LastHour < FirstHour)
+        // So a semana e o dia usam a grade de horas: no mes, uma faixa invalida nao pode derrubar o componente.
+        if (View != RvmCalendarView.Month && (FirstHour is < 0 or > 23 || LastHour is < 0 or > 23 || LastHour < FirstHour))
         {
             throw new ArgumentOutOfRangeException(
                 nameof(FirstHour),
@@ -171,8 +172,12 @@ public partial class RvmEventCalendar : ComponentBase
     private List<RvmCalendarEvent> NoDia(DateOnly dia) =>
         [.. Events.Where(e => DateOnly.FromDateTime(e.Start) == dia).OrderBy(e => e.Start)];
 
+    // Evento antes da primeira hora entra na primeira linha, e depois da ultima, na ultima: cortar compromisso em
+    // silencio e pior (achado do review). O horario escrito no evento continua o real.
     private List<RvmCalendarEvent> NaHora(DateOnly dia, int hora) =>
-        [.. Events.Where(e => DateOnly.FromDateTime(e.Start) == dia && e.Start.Hour == hora).OrderBy(e => e.Start)];
+        [.. Events.Where(e => DateOnly.FromDateTime(e.Start) == dia && LinhaDa(e.Start.Hour) == hora).OrderBy(e => e.Start)];
+
+    private int LinhaDa(int hora) => Math.Clamp(hora, FirstHour, LastHour);
 
     private static string Horario(RvmCalendarEvent e) => $"{e.Start:HH:mm} as {e.EndOrDefault:HH:mm}";
 

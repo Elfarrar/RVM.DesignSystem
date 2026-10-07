@@ -95,6 +95,17 @@ public class RvmKanbanEMapaTests : BunitContext
     }
 
     [Fact]
+    public void Recusa_do_app_por_excecao_anuncia_que_nao_moveu_e_nao_derruba()
+    {
+        var cortado = Quadro(_ => throw new InvalidOperationException("Coluna travada"));
+
+        cortado.FindAll("li")[0].DragStart();
+        cortado.FindAll("section")[1].Drop();
+
+        Assert.Equal("Nao foi possivel mover Calibrar plantadeira para Em andamento.", cortado.Find("[role=status]").TextContent);
+    }
+
+    [Fact]
     public void Soltar_na_propria_coluna_ou_sem_arrastar_nao_move()
     {
         var avisos = 0;

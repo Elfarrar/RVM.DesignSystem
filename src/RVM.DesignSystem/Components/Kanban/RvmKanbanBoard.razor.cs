@@ -36,7 +36,7 @@ public partial class RvmKanbanBoard<TItem> : ComponentBase
 
     /// <summary>
     /// Avisa que um cartao deve mudar de coluna. O aplicativo devolve <see cref="Columns"/> com o cartao no lugar
-    /// novo. Para recusar, lance: o anuncio ao leitor de tela so sai depois deste retorno.
+    /// novo. Para recusar, lance: o quadro anuncia ao leitor de tela que nao moveu, e a excecao nao derruba a pagina.
     /// </summary>
     [Parameter] public EventCallback<RvmKanbanMove<TItem>> OnMove { get; set; }
 
@@ -130,7 +130,18 @@ public partial class RvmKanbanBoard<TItem> : ComponentBase
     private async Task AvisarAsync(TItem item, string origem, RvmKanbanColumn<TItem> destino)
     {
         // Entra no fim da coluna de destino: e onde a area de soltar aparece.
-        await OnMove.InvokeAsync(new RvmKanbanMove<TItem>(item, origem, destino.Id, destino.Items.Count));
+        try
+        {
+            await OnMove.InvokeAsync(new RvmKanbanMove<TItem>(item, origem, destino.Id, destino.Items.Count));
+        }
+        catch (Exception)
+        {
+            // A recusa do app chega como excecao (o contrato). Sai do handler de DOM sem tratamento derrubaria o
+            // circuito no Server: o quadro anuncia que nao moveu e segue (achado do review).
+            _anuncio = $"Nao foi possivel mover {TituloDoItem(item)} para {destino.Title}.";
+            return;
+        }
+
         _anuncio = $"{TituloDoItem(item)} movido para {destino.Title}.";
     }
 }

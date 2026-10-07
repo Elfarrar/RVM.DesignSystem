@@ -17,7 +17,8 @@
                  @ondragover:preventDefault="true"
                  @ondragenter="() => Entrou(coluna.Id)"
                  @ondragleave="() => Saiu(coluna.Id)"
-                 @ondrop="() => SoltarAsync(coluna)">
+                 @ondrop="() => SoltarAsync(coluna)"
+                 @ondrop:preventDefault="true">
             <header class="rvm-cabecalho">
                 <h3 id="@titulo" class="rvm-titulo">
                     @coluna.Title <span class="rvm-contagem">(@coluna.Items.Count)</span>

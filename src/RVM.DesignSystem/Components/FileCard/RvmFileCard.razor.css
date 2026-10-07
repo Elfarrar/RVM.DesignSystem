@@ -93,6 +93,13 @@
     color: var(--rvm-color-text-secondary);
 }
 
+/* Selecionado: o texto do tema sobre o fundo suave do primario da 4.39:1 (axe). O -text do papel e o par medido
+   para esse fundo. */
+.rvm-selecionado .rvm-nome,
+.rvm-selecionado .rvm-meta {
+    color: var(--rvm-color-primary-text);
+}
+
 .rvm-file-card ::deep .rvm-marcar,
 .rvm-file-card ::deep .rvm-menu {
     flex: none;

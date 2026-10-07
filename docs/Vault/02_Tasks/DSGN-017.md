@@ -231,6 +231,14 @@ Pendentes do contrato: **85 → 0**. Grupo "Painel e aplicativos" no site.
 - ⏳ **Pendentes (nao bloqueiam):** `RvmAvatar` corta iniciais em 2 `char` e parte emoji (antigo, fora desta task);
   `RvmEventCard` clicavel tem `div` dentro de `button` (herdado do UI); arrastar do kanban no Firefox pode exigir
   `dataTransfer` (o menu "Mover para" funciona).
+- Review das telas de aplicativo: corrigidos a agenda que sumia com evento fora da faixa de horas (vai para a
+  primeira/ultima linha) e lancava por faixa invalida ate no mes; o kanban cuja recusa por excecao derrubava o
+  circuito (agora anuncia que nao moveu) e soltar arquivo do SO abria o arquivo. Axe: nome do `RvmFileCard`
+  selecionado a 4.39:1 — passa a usar o `-text` do primary.
+- ⏳ **Pendentes do review das telas de aplicativo (nao bloqueiam):** kanban sem `@key` nos cartoes e sem foco
+  devolvido depois de "Mover para"; `RvmChat` com `role="log"` pode reler a conversa inteira ao trocar de contato
+  (recriar o `RvmChat` por conversa); evento que atravessa a meia-noite so aparece no dia do inicio; dia fora do mes
+  na agenda so marcado por cor; `RvmMap` repete marcadores e lista para o leitor; `RvmFileCard` exige `@bind-Selected`.
 - Alphas de `dev` passam a `2.0.0-alpha.N` (`VERSION_PREFIX`).
 
 ## Etapa 3 — RVM.DesignSystem
