@@ -1,0 +1,156 @@
+@page "/componentes/file-card"
+@using RVM.DesignSystem.Components.FileCard
+
+<PageTitle>RvmFileCard — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmFileCard</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Os cartoes de um gerenciador de arquivos. O RvmFileCard mostra um arquivo, uma pasta ou uma imagem, em linha (lista)
+    ou em coluna (grade), com caixa de selecao e menu de tres pontos. O RvmFileTypeCard mostra um arquivo pelo tipo, com o
+    tamanho em PT-BR e o estado do envio.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB e o RvmFileIcon do DS. O icone do
+    arquivo sai da extensao do nome; a caixa de selecao se chama "Selecionar {nome}" e o menu "Mais acoes de {nome}",
+    para cada cartao da lista ter um nome proprio.
+</p>
+
+<BlocoExemplo Titulo="Grade: layout vertical"
+              Descricao="Pasta, arquivo e imagem. Marque a caixa: o cartao selecionado ganha a borda e o fundo suave do primario."
+              Codigo="@CodigoGrade">
+    <div class="grade-de-cartoes">
+        <RvmFileCard Name="Safra 2026" Meta="12 itens" Category="RvmFileCardCategory.Folder" Layout="RvmFileCardLayout.Vertical"
+                     Selectable="true" @bind-Selected="_pasta" MenuItems="@Itens" />
+        <RvmFileCard Name="colheita-talhao-3.xlsx" Meta="1,2 MB" Layout="RvmFileCardLayout.Vertical"
+                     Selectable="true" @bind-Selected="_planilha" MenuItems="@Itens" />
+        <RvmFileCard Name="drone-talhao-7.jpg" Meta="4,8 MB" Category="RvmFileCardCategory.Image" Layout="RvmFileCardLayout.Vertical"
+                     Selectable="true" @bind-Selected="_foto" MenuItems="@Itens" />
+        <RvmFileCard Name="contrato-arrendamento.pdf" Meta="300 KB" Layout="RvmFileCardLayout.Vertical" />
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Lista: layout horizontal"
+              Descricao="O padrao. Sem MenuItems, sem menu; sem Selectable, sem caixa."
+              Codigo="@CodigoLista">
+    <div class="lista-de-cartoes">
+        <RvmFileCard Name="Notas fiscais" Meta="38 itens" Category="RvmFileCardCategory.Folder"
+                     Selectable="true" @bind-Selected="_notas" MenuItems="@Itens" />
+        <RvmFileCard Name="fluxo-de-caixa-outubro.xlsx" Meta="86 KB" Selectable="true" @bind-Selected="_fluxo" MenuItems="@Itens" />
+        <RvmFileCard Name="mapa-de-produtividade.png" Meta="2,1 MB" Category="RvmFileCardCategory.Image" MenuItems="@Itens" />
+        <RvmFileCard Name="ata-da-reuniao.docx" Meta="Editado ontem" />
+    </div>
+    <RvmTypography Color="RvmTextColor.Secondary">Selecionados: @Selecionados</RvmTypography>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmFileCard" />
+
+<h2 class="rvm-text-h5">RvmFileTypeCard</h2>
+
+<BlocoExemplo Titulo="Os quatro estados do envio"
+              Descricao="Sem estado, enviando (com a barra e a porcentagem), enviado e com falha. Com OnRemove, o X nomeado 'Remover {nome}'."
+              Codigo="@CodigoEstados">
+    <div class="lista-de-cartoes">
+        @foreach (var a in _arquivos)
+        {
+            <RvmFileTypeCard @key="a.Nome" Name="@a.Nome" Size="a.Tamanho" Status="a.Estado" Progress="a.Progresso"
+                             OnRemove="() => _arquivos.Remove(a)" />
+        }
+        @if (_arquivos.Count == 0)
+        {
+            <RvmButton Variant="RvmButtonVariant.Outlined" Size="RvmSize.Small" OnClick="Restaurar">Mostrar os arquivos de novo</RvmButton>
+        }
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Com acoes no lugar do X"
+              Descricao="Actions troca o X pelos botoes do app. Icon escolhe o tipo quando o nome nao tem extensao."
+              Codigo="@CodigoAcoes">
+    <div class="lista-de-cartoes">
+        <RvmFileTypeCard Name="Relatorio de safra" Icon="RvmFileIconName.Pdf" Size="2_457_600">
+            <Actions>
+                <RvmIconButton Icon="RvmIconName.Download" Label="Baixar Relatorio de safra" />
+                <RvmIconButton Icon="RvmIconName.Share" Label="Compartilhar Relatorio de safra" />
+            </Actions>
+        </RvmFileTypeCard>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmFileTypeCard" />
+
+@code {
+    private sealed record Arquivo(string Nome, long Tamanho, RvmUploadStatus Estado, int? Progresso);
+
+    private static readonly Arquivo[] Originais =
+    [
+        new("analise-de-solo.pdf", 312_000, RvmUploadStatus.None, null),
+        new("colheita-2026.xlsx", 1_258_291, RvmUploadStatus.Uploading, 64),
+        new("foto-da-lavoura.jpg", 4_980_000, RvmUploadStatus.Uploaded, null),
+        new("contrato-de-venda.docx", 98_304, RvmUploadStatus.Failed, null)
+    ];
+
+    private readonly List<Arquivo> _arquivos = [.. Originais];
+    private bool _pasta;
+    private bool _planilha = true;
+    private bool _foto;
+    private bool _notas;
+    private bool _fluxo;
+
+    private string Selecionados => (_notas, _fluxo) switch
+    {
+        (true, true) => "Notas fiscais e fluxo-de-caixa-outubro.xlsx",
+        (true, false) => "Notas fiscais",
+        (false, true) => "fluxo-de-caixa-outubro.xlsx",
+        _ => "nenhum"
+    };
+
+    private void Restaurar()
+    {
+        _arquivos.Clear();
+        _arquivos.AddRange(Originais);
+    }
+
+    private static readonly RenderFragment Itens = @<text>
+        <RvmMenuItem Icon="RvmIconName.Download">Baixar</RvmMenuItem>
+        <RvmMenuItem Icon="RvmIconName.Pencil">Renomear</RvmMenuItem>
+        <RvmMenuItem Icon="RvmIconName.Trash" Danger="true">Excluir</RvmMenuItem>
+    </text>;
+
+    private const string CodigoGrade = """
+        <RvmFileCard Name="Safra 2026" Meta="12 itens" Category="RvmFileCardCategory.Folder"
+                     Layout="RvmFileCardLayout.Vertical" Selectable="true" @bind-Selected="_pasta">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Download">Baixar</RvmMenuItem>
+                <RvmMenuItem Icon="RvmIconName.Trash" Danger="true">Excluir</RvmMenuItem>
+            </MenuItems>
+        </RvmFileCard>
+        <RvmFileCard Name="drone-talhao-7.jpg" Meta="4,8 MB" Category="RvmFileCardCategory.Image"
+                     Layout="RvmFileCardLayout.Vertical" />
+        """;
+
+    private const string CodigoLista = """
+        <RvmFileCard Name="fluxo-de-caixa-outubro.xlsx" Meta="86 KB" Selectable="true" @bind-Selected="_fluxo">
+            <MenuItems>
+                <RvmMenuItem Icon="RvmIconName.Pencil">Renomear</RvmMenuItem>
+            </MenuItems>
+        </RvmFileCard>
+        <RvmFileCard Name="ata-da-reuniao.docx" Meta="Editado ontem" />
+        """;
+
+    private const string CodigoEstados = """
+        <RvmFileTypeCard Name="analise-de-solo.pdf" Size="312000" OnRemove="Remover" />
+        <RvmFileTypeCard Name="colheita-2026.xlsx" Size="1258291" Status="RvmUploadStatus.Uploading" Progress="64" />
+        <RvmFileTypeCard Name="foto-da-lavoura.jpg" Size="4980000" Status="RvmUploadStatus.Uploaded" />
+        <RvmFileTypeCard Name="contrato-de-venda.docx" Size="98304" Status="RvmUploadStatus.Failed" />
+        """;
+
+    private const string CodigoAcoes = """
+        <RvmFileTypeCard Name="Relatorio de safra" Icon="RvmFileIconName.Pdf" Size="2457600">
+            <Actions>
+                <RvmIconButton Icon="RvmIconName.Download" Label="Baixar Relatorio de safra" />
+                <RvmIconButton Icon="RvmIconName.Share" Label="Compartilhar Relatorio de safra" />
+            </Actions>
+        </RvmFileTypeCard>
+        """;
+}

@@ -1,0 +1,44 @@
+@namespace RVM.DesignSystem.Components.Chat
+
+@* Grupo de mensagens seguidas de uma mesma pessoa (contrato com o RVM.UI, DSGN-017): o avatar no alto, os baloes
+   empilhados e o horario embaixo, como na tela de chat do kit. A direita, a ordem espelha. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <RvmAvatar Src="@AvatarUrl" Name="@Author" Initials="@Iniciais" Size="RvmSize.Medium" Class="rvm-autor" />
+    <div class="rvm-coluna">
+        <div class="rvm-baloes">@ChildContent</div>
+        @if (!string.IsNullOrWhiteSpace(TimeLabel))
+        {
+            @* Texto, e nao <time>: "ha 1 dia" nao tem datetime para dar. *@
+            <p class="rvm-horario rvm-text-caption">@TimeLabel</p>
+        }
+    </div>
+</div>
+
+@code {
+    /// <summary>Quem escreveu. Vira o nome acessivel do avatar (e as iniciais, sem foto).</summary>
+    [Parameter, EditorRequired] public string? Author { get; set; }
+
+    /// <summary>Foto de quem escreveu. Sem ela, as iniciais do <see cref="Author"/>.</summary>
+    [Parameter] public string? AvatarUrl { get; set; }
+
+    /// <summary>Os baloes: <see cref="RvmChatMessage"/>, <see cref="RvmChatFile"/> ou <see cref="RvmChatVoice"/>.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>De que lado o grupo aparece. Padrao: <see cref="RvmChatSide.Left"/>.</summary>
+    [Parameter] public RvmChatSide Side { get; set; } = RvmChatSide.Left;
+
+    /// <summary>Quando, ja escrito ("ha 1 dia", "14:32"). O componente nao formata data.</summary>
+    [Parameter] public string? TimeLabel { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string Iniciais => RvmAvatarGroup.IniciaisDe(Author ?? string.Empty);
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar(Side == RvmChatSide.Right ? "rvm-chat-grupo rvm-direita" : "rvm-chat-grupo rvm-esquerda", Class, AdditionalAttributes);
+}

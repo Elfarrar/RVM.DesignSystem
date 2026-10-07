@@ -1,0 +1,68 @@
+@namespace RVM.DesignSystem.Components.Chat
+
+@* A casca da conversa (contrato com o RVM.UI, DSGN-017), no desenho da tela de chat do kit: cabecalho com quem
+   conversa e as acoes, a area das mensagens no fundo do corpo e o rodape de escrever. A biblioteca nao envia nada:
+   Composer e slot, e quem trata o envio e o app. *@
+<section @attributes="AdditionalAttributes" class="@ClassesDaRaiz" aria-label="@NomeAcessivel">
+    <header class="rvm-cabecalho">
+        <RvmAvatar Src="@AvatarUrl" Name="@Title" Initials="@Iniciais" Size="RvmSize.Medium" />
+        <div class="rvm-titulos">
+            <p class="rvm-titulo rvm-text-subtitle1">@Title</p>
+            @if (!string.IsNullOrWhiteSpace(Subtitle))
+            {
+                <p class="rvm-subtitulo rvm-text-body2">@Subtitle</p>
+            }
+        </div>
+        @if (Actions is not null)
+        {
+            <div class="rvm-acoes">@Actions</div>
+        }
+    </header>
+
+    @* role=log: mensagem nova entra no fim e e anunciada sem tirar o leitor de tela do lugar; "polite" nao interrompe
+       o que ja estava sendo lido. tabindex=0 porque a area rola: sem ele, quem usa so teclado nao le o comeco. *@
+    <div class="rvm-mensagens" role="log" aria-live="polite" aria-label="Mensagens" tabindex="0">
+        <div class="rvm-fio">@ChildContent</div>
+    </div>
+
+    @if (Composer is not null)
+    {
+        <footer class="rvm-rodape">@Composer</footer>
+    }
+</section>
+
+@code {
+    /// <summary>Botoes do canto direito do cabecalho: chamada, busca, menu.</summary>
+    [Parameter] public RenderFragment? Actions { get; set; }
+
+    /// <summary>Foto de quem conversa. Sem ela, as iniciais do <see cref="Title"/>.</summary>
+    [Parameter] public string? AvatarUrl { get; set; }
+
+    /// <summary>Os grupos de mensagem (<see cref="RvmChatGroup"/>), do mais antigo para o mais novo.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>O rodape de escrever (campo e botao de enviar), montado pelo app. Sem ele, sem rodape.</summary>
+    [Parameter] public RenderFragment? Composer { get; set; }
+
+    /// <summary>Nome acessivel da conversa. Sem ele: "Conversa com {Title}".</summary>
+    [Parameter] public string? Label { get; set; }
+
+    /// <summary>Linha de apoio: "online", "visto por ultimo as 14:30", quantos no grupo.</summary>
+    [Parameter] public string? Subtitle { get; set; }
+
+    /// <summary>Nome de quem conversa, ou do grupo. Tambem nomeia a secao.</summary>
+    [Parameter, EditorRequired] public string? Title { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string NomeAcessivel => !string.IsNullOrWhiteSpace(Label) ? Label : $"Conversa com {Title}";
+
+    private string Iniciais => RvmAvatarGroup.IniciaisDe(Title ?? string.Empty);
+
+    private string ClassesDaRaiz => ClassesCss.Juntar("rvm-chat", Class, AdditionalAttributes);
+}

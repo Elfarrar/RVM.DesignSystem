@@ -1,0 +1,153 @@
+@page "/componentes/chat"
+@using RVM.DesignSystem.Components.Chat
+
+<PageTitle>RvmChat — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmChat</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    As pecas de uma tela de conversa: a casca (RvmChat), a conversa na lista lateral (RvmChatContact), o grupo de
+    mensagens de uma pessoa (RvmChatGroup) e os baloes de texto, arquivo e audio (RvmChatMessage, RvmChatFile e
+    RvmChatVoice). A biblioteca nao envia nem toca nada: o compositor e slot, e o audio so avisa o clique.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual da tela de chat do NEATLAB. O lado do balao
+    decide a cor: papel a esquerda, primario a direita. A area das mensagens e um <code>role="log"</code>: mensagem nova
+    e anunciada sem tirar o leitor de tela do lugar.
+</p>
+
+<BlocoExemplo Titulo="Conversa completa"
+              Descricao="Clique num contato para abrir a conversa; escreva e tecle Enter para enviar. O audio alterna entre tocar e pausar."
+              Codigo="@Codigo">
+    <div class="tela-de-chat">
+        <nav class="lista-de-conversas" aria-label="Conversas">
+            <ul>
+                @foreach (var c in _contatos)
+                {
+                    <li @key="c.Nome">
+                        <RvmChatContact Name="@c.Nome" Preview="@c.Previa" TimeLabel="@c.Quando" Online="c.Online"
+                                        Unread="c.NaoLidas" Selected="@(c == _aberto)" OnClick="() => Abrir(c)" />
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        <RvmChat Title="@_aberto.Nome" Subtitle="@(_aberto.Online ? "online" : "visto por ultimo as 11:20")" Class="conversa">
+            <Actions>
+                <RvmIconButton Icon="RvmIconName.Phone" Label="@($"Ligar para {_aberto.Nome}")" />
+                <RvmIconButton Icon="RvmIconName.Search" Label="Procurar na conversa" />
+                <RvmMenu Label="Mais opcoes da conversa" Trigger="RvmMenuTrigger.Icon" AlignEnd="true">
+                    <RvmMenuItem Icon="RvmIconName.Archive">Arquivar</RvmMenuItem>
+                    <RvmMenuItem Icon="RvmIconName.Trash" Danger="true">Apagar a conversa</RvmMenuItem>
+                </RvmMenu>
+            </Actions>
+            <ChildContent>
+                <RvmChatGroup Author="@_aberto.Nome" TimeLabel="08:12">
+                    <RvmChatMessage>Bom dia! Terminei a amostragem de solo do talhao 3.</RvmChatMessage>
+                    <RvmChatFile Name="laudo-solo-talhao-3.pdf" Size="300 KB" Type="RvmFileIconName.Pdf" />
+                </RvmChatGroup>
+                <RvmChatGroup Author="Rafael Veneroso" Side="RvmChatSide.Right" TimeLabel="08:15">
+                    <RvmChatMessage Side="RvmChatSide.Right">Otimo. O fosforo ficou dentro da meta?</RvmChatMessage>
+                </RvmChatGroup>
+                <RvmChatGroup Author="@_aberto.Nome" TimeLabel="08:21">
+                    <RvmChatMessage>Ficou um pouco abaixo. Mandei um audio explicando a recomendacao.</RvmChatMessage>
+                    <RvmChatVoice Duration="0:42" Progress="_progresso" Playing="_tocando" OnToggle="Alternar" />
+                </RvmChatGroup>
+                <RvmChatGroup Author="Rafael Veneroso" Side="RvmChatSide.Right" TimeLabel="@(_enviadas.Count > 0 ? "agora" : "08:30")">
+                    <RvmChatFile Name="orcamento-adubacao.xlsx" Size="48 KB" Type="RvmFileIconName.Xls" Side="RvmChatSide.Right" />
+                    @foreach (var texto in _enviadas)
+                    {
+                        <RvmChatMessage Side="RvmChatSide.Right">@texto</RvmChatMessage>
+                    }
+                </RvmChatGroup>
+            </ChildContent>
+            <Composer>
+                <form class="compositor" @onsubmit="Enviar">
+                    <RvmTextField @bind-Value="_rascunho" Placeholder="Escreva sua mensagem" aria-label="@($"Mensagem para {_aberto.Nome}")"
+                                  Class="campo-da-mensagem" />
+                    <RvmIconButton Icon="RvmIconName.Paperclip" Label="Anexar arquivo" />
+                    <RvmButton Type="RvmButtonType.Submit">Enviar</RvmButton>
+                </form>
+            </Composer>
+        </RvmChat>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Contatos"
+              Descricao="Selecionado pinta o primario e marca aria-current; as nao lidas trocam o horario por um selo, anunciado em texto."
+              Codigo="@CodigoContatos">
+    <ul class="contatos-soltos">
+        <li><RvmChatContact Name="Fazenda Boa Vista" Preview="Carga liberada na balanca" TimeLabel="10 abr" Selected="true" Online="true" /></li>
+        <li><RvmChatContact Name="Cooperativa Agro Sul" Preview="Segue a cotacao da soja de hoje" Unread="3" /></li>
+        <li><RvmChatContact Name="Joao Pereira" Preview="Ok, combinado" TimeLabel="ontem" /></li>
+    </ul>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmChat" />
+<TabelaParametros Componente="RvmChatContact" />
+<TabelaParametros Componente="RvmChatGroup" />
+<TabelaParametros Componente="RvmChatMessage" />
+<TabelaParametros Componente="RvmChatFile" />
+<TabelaParametros Componente="RvmChatVoice" />
+
+@code {
+    private sealed record Contato(string Nome, string Previa, string Quando, bool Online, int NaoLidas);
+
+    private static readonly List<Contato> _contatos =
+    [
+        new("Marina Agronoma", "Mandei um audio explicando", "08:21", true, 0),
+        new("Cooperativa Agro Sul", "Segue a cotacao da soja de hoje", "07:40", false, 3),
+        new("Joao Pereira", "Ok, combinado", "ontem", true, 0),
+        new("Financeiro", "Boleto do insumo vence sexta", "seg", false, 1)
+    ];
+
+    private Contato _aberto = _contatos[0];
+    private readonly List<string> _enviadas = [];
+    private string? _rascunho;
+    private bool _tocando;
+    private double _progresso = 0.35;
+
+    private void Abrir(Contato c) => _aberto = c;
+
+    private void Alternar() => _tocando = !_tocando;
+
+    private void Enviar()
+    {
+        if (string.IsNullOrWhiteSpace(_rascunho)) return;
+        _enviadas.Add(_rascunho.Trim());
+        _rascunho = null;
+    }
+
+    private const string Codigo = """
+        <RvmChat Title="Marina Agronoma" Subtitle="online">
+            <Actions>
+                <RvmIconButton Icon="RvmIconName.Phone" Label="Ligar para Marina Agronoma" />
+            </Actions>
+            <ChildContent>
+                <RvmChatGroup Author="Marina Agronoma" TimeLabel="08:12">
+                    <RvmChatMessage>Bom dia! Terminei a amostragem de solo do talhao 3.</RvmChatMessage>
+                    <RvmChatFile Name="laudo-solo-talhao-3.pdf" Size="300 KB" Type="RvmFileIconName.Pdf" />
+                </RvmChatGroup>
+                <RvmChatGroup Author="Rafael Veneroso" Side="RvmChatSide.Right" TimeLabel="08:15">
+                    <RvmChatMessage Side="RvmChatSide.Right">Otimo. O fosforo ficou dentro da meta?</RvmChatMessage>
+                </RvmChatGroup>
+                <RvmChatGroup Author="Marina Agronoma" TimeLabel="08:21">
+                    <RvmChatVoice Duration="0:42" Progress="_progresso" Playing="_tocando" OnToggle="Alternar" />
+                </RvmChatGroup>
+            </ChildContent>
+            <Composer>
+                <form @onsubmit="Enviar">
+                    <RvmTextField @bind-Value="_rascunho" Placeholder="Escreva sua mensagem" aria-label="Mensagem para Marina Agronoma" />
+                    <RvmButton Type="RvmButtonType.Submit">Enviar</RvmButton>
+                </form>
+            </Composer>
+        </RvmChat>
+        """;
+
+    private const string CodigoContatos = """
+        <RvmChatContact Name="Fazenda Boa Vista" Preview="Carga liberada na balanca" TimeLabel="10 abr"
+                        Selected="true" Online="true" OnClick="Abrir" />
+        <RvmChatContact Name="Cooperativa Agro Sul" Preview="Segue a cotacao da soja de hoje" Unread="3" />
+        """;
+}

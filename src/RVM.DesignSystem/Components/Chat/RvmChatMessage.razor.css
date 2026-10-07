@@ -1,0 +1,22 @@
+/* CSS isolado do RvmChatMessage. So custom properties. O balao do kit: papel com sombra a esquerda, primario com o
+   texto de contraste a direita. */
+
+.rvm-balao {
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: var(--rvm-space-3) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-md);
+    box-shadow: var(--rvm-shadow-1);
+    font-family: var(--rvm-font-family);
+    overflow-wrap: anywhere;
+}
+
+.rvm-esquerda {
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-direita {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}

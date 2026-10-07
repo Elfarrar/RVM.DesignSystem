@@ -1,0 +1,58 @@
+@namespace RVM.DesignSystem.Components.Chat
+
+@* Mensagem de audio (contrato com o RVM.UI, DSGN-017): botao de tocar/pausar, a barra do quanto ja foi ouvido e a
+   duracao, no mesmo balao do texto. A biblioteca nao reproduz nada (som exige JS, e a RCL nao tem): o botao avisa por
+   OnToggle, e o app toca, por exemplo com um <audio> nativo, e devolve Playing e Progress. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <RvmIconButton Icon="@(Playing ? RvmIconName.Pause : RvmIconName.Play)"
+                   Label="@(Playing ? PauseLabel : PlayLabel)"
+                   Variant="RvmButtonVariant.Contained"
+                   Color="@(Side == RvmChatSide.Right ? RvmColor.Inverse : RvmColor.Primary)"
+                   OnClick="() => OnToggle.InvokeAsync()"
+                   Class="rvm-tocar" />
+    <RvmProgressBar Value="@Porcentagem" Size="RvmSize.Small" AriaLabel="@NomeDaBarra"
+                    Surface="@(Side == RvmChatSide.Right ? RvmSurface.Dark : RvmSurface.Light)"
+                    Class="rvm-ouvido" />
+    @if (!string.IsNullOrWhiteSpace(Duration))
+    {
+        <span class="rvm-duracao rvm-text-caption">@Duration</span>
+    }
+</div>
+
+@code {
+    /// <summary>Duracao ja escrita ("0:42"). Tambem entra no nome acessivel da barra.</summary>
+    [Parameter] public string? Duration { get; set; }
+
+    /// <summary>Clique no botao. A biblioteca nao toca nada: ela avisa, e o app alterna <see cref="Playing"/>.</summary>
+    [Parameter] public EventCallback OnToggle { get; set; }
+
+    /// <summary>Nome acessivel do botao tocando. Padrao: "Pausar o audio".</summary>
+    [Parameter] public string PauseLabel { get; set; } = "Pausar o audio";
+
+    /// <summary>Nome acessivel do botao parado. Padrao: "Ouvir o audio".</summary>
+    [Parameter] public string PlayLabel { get; set; } = "Ouvir o audio";
+
+    /// <summary>Se o audio esta tocando: o botao mostra pausa. Quem controla o som e o app.</summary>
+    [Parameter] public bool Playing { get; set; }
+
+    /// <summary>Quanto do audio ja passou, de 0 a 1 (fora disso e limitado).</summary>
+    [Parameter] public double Progress { get; set; }
+
+    /// <summary>De que lado a mensagem aparece; decide a cor. Padrao: <see cref="RvmChatSide.Left"/>.</summary>
+    [Parameter] public RvmChatSide Side { get; set; } = RvmChatSide.Left;
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal double Porcentagem => double.IsNaN(Progress) ? 0 : Math.Clamp(Progress, 0, 1) * 100;
+
+    private string NomeDaBarra
+        => string.IsNullOrWhiteSpace(Duration) ? "Quanto do audio ja foi ouvido" : $"Quanto do audio de {Duration} ja foi ouvido";
+
+    private string ClassesDaRaiz
+        => ClassesCss.Juntar(Side == RvmChatSide.Right ? "rvm-balao rvm-direita" : "rvm-balao rvm-esquerda", Class, AdditionalAttributes);
+}

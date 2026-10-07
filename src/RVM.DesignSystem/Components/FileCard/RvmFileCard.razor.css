@@ -1,0 +1,99 @@
+/* CSS isolado do RvmFileCard. So custom properties. A superficie do cartao do kit (papel, divisor, raio medio);
+   selecionado, a borda e o fundo suave do primario. Checkbox, menu e icones sao componentes filhos: ::deep. */
+
+.rvm-file-card {
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    gap: var(--rvm-space-3);
+    min-width: 0;
+    padding: var(--rvm-space-4);
+    border: 1px solid var(--rvm-color-divider);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-background-paper);
+    font-family: var(--rvm-font-family);
+    transition: border-color var(--rvm-transition-fast), box-shadow var(--rvm-transition-fast);
+}
+
+.rvm-file-card:hover {
+    box-shadow: var(--rvm-shadow-2);
+}
+
+.rvm-selecionado {
+    border-color: var(--rvm-color-primary-main);
+    background-color: var(--rvm-color-primary-soft);
+}
+
+.rvm-horizontal {
+    align-items: center;
+}
+
+.rvm-vertical {
+    flex-direction: column;
+    align-items: center;
+    padding-top: var(--rvm-space-6);
+    text-align: center;
+}
+
+.rvm-vertical.rvm-com-topo {
+    padding-top: var(--rvm-space-2);
+}
+
+.rvm-topo {
+    display: flex;
+    align-self: stretch;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+}
+
+/* Sem a caixa, o menu ainda fica no canto direito. */
+.rvm-topo ::deep .rvm-menu {
+    margin-inline-start: auto;
+}
+
+.rvm-file-card ::deep .rvm-marca {
+    flex: none;
+}
+
+.rvm-imagem {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--rvm-lado);
+    height: var(--rvm-lado);
+    border-radius: var(--rvm-radius-md);
+    background-color: var(--rvm-color-info-soft);
+    color: var(--rvm-color-info-text);
+}
+
+.rvm-textos {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.rvm-nome,
+.rvm-meta {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-nome {
+    color: var(--rvm-color-text-primary);
+}
+
+.rvm-meta {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-file-card ::deep .rvm-marcar,
+.rvm-file-card ::deep .rvm-menu {
+    flex: none;
+}
