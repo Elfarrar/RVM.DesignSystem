@@ -144,8 +144,8 @@
     /// <summary>Maximo de imagens por escolha. Acima dele, mostra um erro em vez de avisar. Padrao: 10.</summary>
     [Parameter] public int MaxFiles { get; set; } = 10;
 
-    /// <summary>Permite escolher varias imagens de uma vez (atributo <c>multiple</c>).</summary>
-    [Parameter] public bool Multiple { get; set; }
+    /// <summary>Permite escolher varias imagens de uma vez (atributo <c>multiple</c>). Padrao: sim, como no RVM.UI.</summary>
+    [Parameter] public bool Multiple { get; set; } = true;
 
     /// <summary>Atributo <c>name</c> do input, para o envio de formulario em SSR estatico (multipart).</summary>
     [Parameter] public string? Name { get; set; }
