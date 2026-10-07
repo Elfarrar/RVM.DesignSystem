@@ -159,6 +159,21 @@ transparente por cima do botao ou da caixa, sem JS; `RvmUploadItem` e `RvmUpload
 
 - Padroes conferidos com o RVM.UI: `MaxFiles` 10, `Accept` `image/*` nas imagens, `Multiple` ligado no MediaUpload.
 - Axe: avatar esmaecido do ProfileImageUpload desabilitado reprovava o contraste — agora so o "Enviar foto" esmaece.
+- Review: 2 P2 corrigidos (Enter da busca de icone enviava o form do consumidor; "Compor cor" fechava sozinho). O P2
+  "reescolher o mesmo arquivo nao dispara" era falso positivo: o `InputFile` do Blazor zera o valor no clique.
+- PR #82 em `dev`.
+
+## Onda 3 — feita em 07/10/2026
+
+Pendentes do contrato: **201 → 158**. Grupo "Feedback e texto" no site: `RvmModal`, `RvmConfirmModal` (+
+`RvmDialogAlign`), `RvmToastProvider` com o servico do RVM.UI (`IRvmToast`, `RvmToastService`, `AddRvmToast()` dentro do
+`AddRvmDesignSystem()`), `RvmSpinner`, `RvmProgressBar` (+ `RvmSurface`, `RvmProgressLabelVariant`), `RvmLabel`,
+`RvmText` (+ `RvmTextVariant`, `RvmFontWeight`), `RvmIconBadge` e `RvmArtisticIconBadge`. Quatro agentes em worktrees.
+
+- ⚠️ **Divergencias de semantica do RVM.UI, de proposito (acessibilidade), API igual:** a confirmacao e `alertdialog`
+  e abre com o foco no Cancelar (no RVM.UI, `dialog` com foco na caixa); aviso de atencao do toast e `role="alert"`
+  (no RVM.UI, `status`). Reverter e uma linha cada, se o Rafael preferir o comportamento antigo.
+- `RvmText`: a Inter do pacote vai so ate 500 — SemiBold e Bold saem sintetizados pelo navegador.
 
 ## Etapa 3 — RVM.DesignSystem
 
