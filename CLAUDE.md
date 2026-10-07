@@ -22,7 +22,13 @@ Guia de desenvolvimento do projeto. Complementa as diretrizes globais
 > `DSGN-013` (eixo duplo em barras, zoom por caixa, exportar `.xlsx` e imprimir) saíram na **`1.3.0`**,
 > a `DSGN-014` (tokens do kit medidos por amostragem de pixel) na **`1.4.0`** e a `DSGN-015` (animação
 > de entrada por tipo de gráfico) na **`1.5.0`**. Em 04/10, a `DSGN-016` (tokens DTCG e `llms.txt` para
-> agentes de IA, no site e no pacote) saiu na **`1.6.0`**. Alphas de `dev` são `1.7.0-alpha.N`.
+> agentes de IA, no site e no pacote) saiu na **`1.6.0`**.
+>
+> **Em 07/10/2026 saiu a `2.0.0` (`DSGN-017`):** o DS cumpre o **contrato de API do RVM.UI** inteiro
+> (`design/contrato-api.json`, lista de pendentes vazia, `ContratoApiTests` no CI) com o visual do NEATLAB —
+> ~165 componentes, tema com destaque e paletas de produto, telas de aplicativo. Alphas de `dev` são
+> `2.1.0-alpha.N`. **O contrato de API com o RVM.UI é o novo congelamento**: componente público fora dele é
+> barrado pelo teste.
 
 ## O visual vem do NEATLAB — e o crédito é obrigatório
 
@@ -42,12 +48,13 @@ tempo tentando extrair path ou `font-family` deles.**
 
 ## Escopo
 
-**Faz:** biblioteca Blazor própria (RCL) no BaGet, ~35 componentes na v1 em quatro ondas · camada de
-tokens + tema claro/escuro · site público de documentação feito com a própria biblioteca ·
-acessibilidade AA como critério de aceite.
+**Faz:** biblioteca Blazor própria (RCL) no BaGet, ~35 componentes na v1 em quatro ondas e, desde a `2.0.0`,
+a API inteira do RVM.UI (`DSGN-017`) · camada de tokens + tema claro/escuro, destaque e paletas · site público
+de documentação feito com a própria biblioteca · acessibilidade AA como critério de aceite.
 
 **Não faz:** MudBlazor ou qualquer biblioteca de terceiros · migrar os apps existentes · backend,
-banco, auth, container · as telas prontas do kit (login, invoice, chat) · editor rico, RTL.
+banco, auth, container · as telas prontas do kit (login, invoice) · editor rico, RTL. As **peças** de
+aplicativo do contrato (chat, agenda, kanban, mapa, cartões) entraram na `2.0.0`; telas montadas, não.
 
 > **Gráfico saiu do "não faz" em 17/09/2026** (`DSGN-010`, decisão do Rafael): oito tipos em SVG próprio,
 > sem biblioteca de terceiros — colunas, barras, histograma, linha, área, dispersão, pizza/rosca e radar.
