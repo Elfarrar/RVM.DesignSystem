@@ -147,6 +147,18 @@ texto por `tools/moldura-do-campo.py` — mudou o campo, regere), `RvmTextArea`,
 - ⏳ **P3 que ficaram** (nao bloqueiam): seta do `RvmNumericField` sem Immediate parte do valor antigo, e nao do texto
   digitado; o Enter no `RvmAutocomplete` nunca envia o formulario (barrado pelo JS mesmo com a lista fechada);
   `Required` so existe no `RvmTextArea` (o contrato nao tem nos outros campos).
+- E2E contra o dev: 306 passaram. No dev, o WASM carrega so o pacote de culturas EFIGS (sem portugues): o pt-BR de
+  reserva ganhou o padrao de moeda do Brasil ("R$ n").
+
+## Onda 2b — feita em 07/10/2026
+
+Pendentes do contrato: **211 → 201**. `RvmColorPicker<TValue>` (radios nativos em bolinhas) e `RvmColorField` (hex,
+paleta com nome `RvmNamedColor`, "Compor cor" num `<details>`), `RvmIconSelector` (janela com busca sem acento e grade
+de botoes com foco itinerante, `MaxVisible` 60), `RvmFileUpload`, `RvmMediaUpload` e `RvmProfileImageUpload` (`InputFile`
+transparente por cima do botao ou da caixa, sem JS; `RvmUploadItem` e `RvmUploadStatus`). Tres agentes em worktrees.
+
+- Padroes conferidos com o RVM.UI: `MaxFiles` 10, `Accept` `image/*` nas imagens, `Multiple` ligado no MediaUpload.
+- Axe: avatar esmaecido do ProfileImageUpload desabilitado reprovava o contraste — agora so o "Enviar foto" esmaece.
 
 ## Etapa 3 — RVM.DesignSystem
 

@@ -68,7 +68,8 @@
     color: var(--rvm-color-error-text);
 }
 
-.rvm-desabilitado .rvm-linha {
+/* So a acao esmaece: o avatar e a foto do usuario, nao um controle, e esmaecido reprovaria o contraste (axe). */
+.rvm-desabilitado .rvm-enviar-foto {
     opacity: 0.6;
 }
 

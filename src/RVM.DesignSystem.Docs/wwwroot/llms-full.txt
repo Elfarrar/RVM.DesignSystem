@@ -510,6 +510,62 @@ Mostra ou esconde um bloco sem perder o que foi digitado.
 | `Expanded` | `bool` | `false` | Aberto. |
 | `Id` | `string?` | — | Id do bloco: o alvo do `aria-controls` do botao que abre. |
 
+### RvmColorField
+
+`@using RVM.DesignSystem.Components.ColorPicker` · exemplos: https://design.rvmit.com.br/componentes/color-field
+
+Cor em hex: paleta com nome e, se permitido, cor composta.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `AllowCustom` | `bool` | `false` | Permite compor uma cor fora da paleta: seletor do navegador e campo do hex. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do campo. |
+| `Colors` | `IReadOnlyList<RvmNamedColor>?` | — | A paleta de cores com nome. Padrao: os seis papeis de cor do tema claro do DS. |
+| `ComposeText` | `string` | `"Compor cor"` | Titulo da area de compor cor. Padrao: "Compor cor". |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `string?` | — |  |
+| `ValueChanged` | `EventCallback<string>` | — |  |
+| `ValueExpression` | `Expression<Func<string>>?` | — |  |
+
+### RvmColorPicker<TValue>
+
+`@using RVM.DesignSystem.Components.ColorPicker` · exemplos: https://design.rvmit.com.br/componentes/color-picker
+
+Escolha de cor entre itens, como bolinhas de radio.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no fieldset. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `ItemColor` | `Func<object, string>?` | — | A cor CSS de cada item (`#RRGGBB`), aplicada inline no fundo da bolinha. |
+| `ItemText` | `Func<object, string>?` | — | O nome de cada item: vira o nome acessivel do radio e a dica ao passar o mouse. Sem ele, `ToString()`. |
+| `Items` | `IEnumerable<object>?` | — | As cores que podem ser escolhidas, na ordem em que aparecem. `Placeholder` e `Shape`, herdados do contrato de campo, nao tem efeito aqui: a paleta nao tem caixa nem texto de exemplo. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `object?` | — |  |
+| `ValueChanged` | `EventCallback<object>` | — |  |
+| `ValueExpression` | `Expression<Func<object>>?` | — |  |
+
 ### RvmColumnChart<TItem>
 
 `@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/column-chart
@@ -789,6 +845,33 @@ Painel expansivel sozinho, que mantem o conteudo montado.
 | `Size` | `RvmSize` | `RvmSize.Medium` | Altura: 56 px (Medium, padrao), 40 px (Small) ou 64 px (Large). |
 | `Variant` | `RvmTextFieldVariant` | `RvmTextFieldVariant.Outlined` | Estilo da caixa. Padrao: contornada. |
 
+### RvmFileUpload
+
+`@using RVM.DesignSystem.Components.Upload` · exemplos: https://design.rvmit.com.br/componentes/file-upload
+
+Envio de arquivos por botao ou caixa de arrastar, com progresso.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Accept` | `string?` | — | Tipos aceitos, para o atributo `accept` ("application/pdf,.docx"). Sem ele, qualquer arquivo. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `ButtonText` | `string` | `"Adicionar arquivo"` | Texto do botao. Padrao: "Adicionar arquivo". |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Container` | `bool` | `false` | Caixa de arrastar e soltar no lugar do botao, com a `RvmFileUpload.Hint` dentro. O input fica por cima da caixa inteira: clicar ou soltar o arquivo em qualquer ponto dela funciona. |
+| `Disabled` | `bool` | `false` | Indisponivel: o input fica desabilitado e o componente esmaece. |
+| `ErrorText` | `string?` | — | Mensagem de erro, em vermelho e ligada ao input por `aria-describedby`. |
+| `Hint` | `string?` | — | Dica. Com `RvmFileUpload.Container`, o texto da caixa (padrao: "Arraste os arquivos aqui ou clique para escolher"); sem ele, texto de apoio abaixo do botao. |
+| `Id` | `string?` | — | Id do input. Sem ele, um id e gerado. |
+| `Items` | `IReadOnlyList<RvmUploadItem>?` | — | Os arquivos ja escolhidos, como cartoes. O app atualiza `Status` e `Progress` durante o envio. |
+| `Label` | `string?` | — | Rotulo acima do botao. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo, a direita do rotulo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo. |
+| `MaxFiles` | `int` | `10` | Maximo de arquivos por escolha. Acima dele, mostra um erro em vez de avisar. Padrao: 10. |
+| `Multiple` | `bool` | `false` | Permite escolher varios arquivos de uma vez (atributo `multiple`). |
+| `Name` | `string?` | — | Atributo `name` do input, para o envio de formulario em SSR estatico (multipart). |
+| `OnFilesSelected` | `EventCallback<IReadOnlyList<IBrowserFile>>` | — | Arquivos escolhidos (ate `RvmFileUpload.MaxFiles`). Ler o conteudo e enviar e com o app. |
+| `OnRemove` | `EventCallback<RvmUploadItem>` | — | Remover um arquivo da lista. Sem ele, os cartoes nao tem o X. |
+
 ### RvmHistogram
 
 `@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/histogram
@@ -867,6 +950,34 @@ Botao so de icone, com nome acessivel obrigatorio.
 | `Size` | `RvmSize` | `RvmSize.Medium` | Lado do botao: 30, 38 (padrao) ou 42 px, as alturas do `RvmButton`. |
 | `Type` | `RvmButtonType` | `RvmButtonType.Button` | O `type` do botao. Padrao: `button`, que nao envia formulario. |
 | `Variant` | `RvmButtonVariant` | `RvmButtonVariant.Text` | Peso visual. Padrao: so o icone (`RvmButtonVariant.Text`). |
+
+### RvmIconSelector
+
+`@using RVM.DesignSystem.Components.IconSelector` · exemplos: https://design.rvmit.com.br/componentes/icon-selector
+
+Seletor de icone do contrato com o RVM.UI (DSGN-017): um circulo com o icone escolhido (ou um "+") e o botao que abre a janela com a busca e a grade de icones. Valor nulo = nenhum icone.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra na raiz do seletor. |
+| `Disabled` | `bool` | `false` | Indisponivel. |
+| `DisplayName` | `string?` | — |  |
+| `ErrorText` | `string?` | — | Erro informado por fora. Dentro de um `EditForm`, a mensagem da validacao ja aparece sozinha. |
+| `HelperText` | `string?` | — | Texto de apoio abaixo do campo. Da lugar ao erro quando ha erro. |
+| `IconText` | `Func<RvmIconName, string>?` | — | O nome do icone para a busca, a dica e o leitor de tela. Sem ele, o nome do enum em palavras ("AltArrowDown" vira "Alt arrow down"). |
+| `Icons` | `IEnumerable<RvmIconName>?` | — | Os icones oferecidos. Sem ele, todo o `RvmIconName`. |
+| `Id` | `string?` | — | Id do controle. Sem ele, um id unico e gerado. |
+| `Label` | `string?` | — | Rotulo do campo. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo, a direita ("Esqueci a senha"). |
+| `MaxVisible` | `int` | `60` | Quantos icones a grade mostra de uma vez (os primeiros que casam com a busca). Padrao: 60. Zero ou menos: todos. |
+| `Name` | `string?` | — | Nome enviado no formulario. Sem ele, vem do `@bind-Value` (necessario em SSR estatico). |
+| `Placeholder` | `string?` | — | Dica dentro do campo vazio. Com ela, o rotulo fica sempre em cima. |
+| `Shape` | `RvmFieldShape` | `RvmFieldShape.Rounded` | Canto da caixa: o do kit ou pilula. |
+| `Value` | `RvmIconName?` | — |  |
+| `ValueChanged` | `EventCallback<RvmIconName?>` | — |  |
+| `ValueExpression` | `Expression<Func<RvmIconName?>>?` | — |  |
 
 ### RvmLineChart<TItem>
 
@@ -998,6 +1109,33 @@ O mascote do contrato com o RVM.UI (DSGN-017): o icone da funcao (erro, carregan
 | `Name` | `RvmMascotName` | obrigatorio | Qual mascote. O nome diz a funcao na interface, nao o personagem. |
 | `Sizes` | `string?` | — | Do contrato com o RVM.UI, onde escolhe o arquivo da ilustracao. Aqui nao ha arquivo: sem efeito. |
 | `Width` | `int` | `160` | Diametro do circulo em pixels. Padrao: 160. |
+
+### RvmMediaUpload
+
+`@using RVM.DesignSystem.Components.Upload` · exemplos: https://design.rvmit.com.br/componentes/media-upload
+
+Envio de imagens com miniaturas, remover e tentar de novo.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Accept` | `string?` | `"image/*"` | Tipos aceitos, para o atributo `accept`. Padrao: "image/*". |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `ButtonText` | `string` | `"Adicionar imagem"` | Texto do quadro de adicionar. Padrao: "Adicionar imagem". |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel: o input fica desabilitado e o componente esmaece. |
+| `ErrorText` | `string?` | — | Mensagem de erro, em vermelho e ligada ao input por `aria-describedby`. |
+| `Hint` | `string?` | — | Texto de apoio abaixo da grade ("PNG ou JPG, ate 5 MB"). |
+| `Id` | `string?` | — | Id do input. Sem ele, um id e gerado. |
+| `Items` | `IReadOnlyList<RvmUploadItem>?` | — | As imagens ja escolhidas, como miniaturas (`PreviewUrl`). O app atualiza `Status` e `Progress`. |
+| `Label` | `string?` | — | Rotulo acima da grade. |
+| `LinkHref` | `string?` | — | Destino do link acima do campo, a direita do rotulo. |
+| `LinkText` | `string?` | — | Texto do link acima do campo. |
+| `MaxFiles` | `int` | `10` | Maximo de imagens por escolha. Acima dele, mostra um erro em vez de avisar. Padrao: 10. |
+| `Multiple` | `bool` | `true` | Permite escolher varias imagens de uma vez (atributo `multiple`). Padrao: sim, como no RVM.UI. |
+| `Name` | `string?` | — | Atributo `name` do input, para o envio de formulario em SSR estatico (multipart). |
+| `OnFilesSelected` | `EventCallback<IReadOnlyList<IBrowserFile>>` | — | Imagens escolhidas (ate `RvmMediaUpload.MaxFiles`). Gerar a miniatura e enviar e com o app. |
+| `OnRemove` | `EventCallback<RvmUploadItem>` | — | Remover uma imagem. Sem ele, as miniaturas nao tem o X. |
+| `OnRetry` | `EventCallback<RvmUploadItem>` | — | Tentar de novo o envio que falhou. Sem ele, a miniatura com falha nao tem o botao. |
 
 ### RvmMenu
 
@@ -1350,6 +1488,27 @@ Pizza e rosca, com percentuais.
 | `Value` | `Func<object, double>?` | obrigatorio | O valor de cada fatia. |
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
+
+### RvmProfileImageUpload
+
+`@using RVM.DesignSystem.Components.Upload` · exemplos: https://design.rvmit.com.br/componentes/profile-image-upload
+
+Foto de perfil: avatar e o botao de enviar.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Accept` | `string?` | `"image/*"` | Tipos aceitos, para o atributo `accept`. Padrao: "image/*". |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos repassados ao elemento raiz. |
+| `AvatarName` | `string?` | — | Nome da pessoa: texto alternativo da foto e, sem foto, as iniciais. Sem nome nem foto, a silhueta. |
+| `ButtonText` | `string` | `"Enviar foto"` | Texto da acao, ao lado do avatar. Padrao: "Enviar foto". |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Disabled` | `bool` | `false` | Indisponivel: o input fica desabilitado e o "Enviar foto" esmaece (o avatar continua legivel). |
+| `ErrorText` | `string?` | — | Mensagem de erro, em vermelho e ligada ao input por `aria-describedby`. |
+| `Id` | `string?` | — | Id do input. Sem ele, um id e gerado. |
+| `Label` | `string?` | — | Rotulo acima do avatar. |
+| `Name` | `string?` | — | Atributo `name` do input, para o envio de formulario em SSR estatico (multipart). |
+| `OnFileSelected` | `EventCallback<IBrowserFile>` | — | A foto escolhida. Enviar e devolver o `RvmProfileImageUpload.Src` novo e com o app. |
+| `Src` | `string?` | — | Endereco da foto atual. Sem ele, as iniciais do `RvmProfileImageUpload.AvatarName` ou a silhueta. |
 
 ### RvmProgress
 
@@ -2146,6 +2305,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `None`, `Up`, `Down`
 - `RvmTypographyVariant` (`RVM.DesignSystem.Components.Typography`): Os 24 estilos da escala tipografica do kit (`06-tokens-e-tematizacao.md`). Cada um vira a classe `rvm-text-*` correspondente, que le tamanho, entrelinha e peso dos tokens.
   Valores: `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `Subtitle1`, `Subtitle2`, `Body1`, `Body2`, `Caption`, `Overline`, `ButtonLarge`, `ButtonMedium`, `ButtonSmall`, `InputLabel`, `Helper`, `Input`, `AvatarInitials`, `Chip`, `Tooltip`, `AlertTitle`, `TableHeader`, `BadgeLabel`
+- `RvmUploadStatus` (`RVM.DesignSystem.Components.Upload`): Em que ponto do envio um arquivo esta. Quem envia e o app; o componente so mostra.
+  Valores: `None`, `Uploading`, `Uploaded`, `Failed`
 
 ## Tipos de apoio
 
@@ -2201,6 +2362,12 @@ Classes e records usados nos parametros dos componentes.
 - `Start`: `DateOnly` — Primeiro dia.
 - `bool Contains(DateOnly dia)`
 
+### RvmNamedColor
+
+`RVM.DesignSystem` · Uma cor com nome, para a paleta do `RvmColorField` (contrato com o RVM.UI, DSGN-017).
+- `Hex`: `string` — A cor no formato `#RRGGBB`.
+- `Name`: `string` — Nome mostrado e lido pelo leitor de tela ("Verde").
+
 ### RvmSnackbarMessage
 
 `RVM.DesignSystem.Components.Snackbar` · Uma mensagem na fila do `RvmSnackbarService`. Serve para fecha-la depois.
@@ -2231,6 +2398,15 @@ Classes e records usados nos parametros dos componentes.
 - `Description`: `string?` — A linha de apoio ("Informe e-mail e senha").
 - `HasError`: `bool` — A etapa tem problema a resolver — a validacao do "com validacao" do catalogo.
 - `Title`: `string` — O nome da etapa ("Dados da conta").
+
+### RvmUploadItem
+
+`RVM.DesignSystem.Components.Upload` · Um arquivo na lista do `RvmFileUpload` ou do `RvmMediaUpload`. A biblioteca nao envia nada: o app recebe os arquivos pelo `OnFilesSelected`, envia e atualiza `RvmUploadItem.Status` e `RvmUploadItem.Progress`.
+- `Name`: `string` — Nome do arquivo, com a extensao ("contrato.pdf"). A extensao escolhe o icone.
+- `PreviewUrl`: `string?` — Endereco da miniatura (uma URL ou um `data:`), usada pelo `RvmMediaUpload`.
+- `Progress`: `int` — Porcentagem enviada, de 0 a 100 (fora disso, a exibicao limita). Vale no `RvmUploadStatus.Uploading`.
+- `Size`: `long` — Tamanho em bytes, mostrado em PT-BR ("1,2 MB").
+- `Status`: `RvmUploadStatus` — Em que ponto do envio o arquivo esta.
 
 ## Tokens
 
