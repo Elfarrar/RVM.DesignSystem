@@ -14,6 +14,10 @@ public class RvmAutocompleteTests : BunitContext
 
     private readonly FakeTimeProvider _relogio = new();
 
+    // A espera continua por sinal (a lista aparecer); o prazo so folga: o padrao de 1 s estourou num runner carregado
+    // do CI, com a continuacao do timer ainda na fila do dispatcher (PR #86, DSGN-017).
+    private static readonly TimeSpan Prazo = TimeSpan.FromSeconds(5);
+
     public RvmAutocompleteTests()
     {
         JSInterop.Mode = JSRuntimeMode.Loose;
@@ -215,7 +219,7 @@ public class RvmAutocompleteTests : BunitContext
         cortado.InvokeAsync(() => pendentes[1].Fonte.SetResult(["Curitiba"]));
         cortado.InvokeAsync(() => pendentes[0].Fonte.SetResult(["Campinas", "Cascavel"]));
 
-        cortado.WaitForAssertion(() => Assert.Equal(["Curitiba"], cortado.FindAll("li").Select(l => l.TextContent.Trim())));
+        cortado.WaitForAssertion(() => Assert.Equal(["Curitiba"], cortado.FindAll("li").Select(l => l.TextContent.Trim())), Prazo);
     }
 
     [Fact]
@@ -232,7 +236,7 @@ public class RvmAutocompleteTests : BunitContext
 
         _relogio.Advance(TimeSpan.FromMilliseconds(100));
 
-        cortado.WaitForAssertion(() => Assert.Equal(3, cortado.FindAll("li").Count));
+        cortado.WaitForAssertion(() => Assert.Equal(3, cortado.FindAll("li").Count), Prazo);
         Assert.Equal(["ca"], termos);
     }
 
@@ -250,7 +254,7 @@ public class RvmAutocompleteTests : BunitContext
         Assert.Equal("false", cortado.Find("input").GetAttribute("aria-expanded"));
 
         cortado.InvokeAsync(() => fonte.SetResult(["Campinas"]));
-        cortado.WaitForAssertion(() => Assert.Single(cortado.FindAll("li[role=option]")));
+        cortado.WaitForAssertion(() => Assert.Single(cortado.FindAll("li[role=option]")), Prazo);
         Assert.Equal("", cortado.Find("[role=status]").TextContent);
     }
 
