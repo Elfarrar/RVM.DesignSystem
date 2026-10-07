@@ -156,6 +156,8 @@ test('zoom: roda aproxima sem rolar a pagina, teclado tambem, e o duplo clique v
     await expect.poll(meses).toBeGreaterThan(0);
     const inteiro = await meses();
     const rolagem = await page.evaluate(() => window.scrollY);
+    // A roda e ligada pelo JS depois do render: rodar antes disso rola a pagina e o teste falha as vezes.
+    await expect(figura.locator('[data-rvm-roda=ligada]')).toHaveCount(1);
     await grafico.hover();
     await page.mouse.wheel(0, -200);
 
