@@ -1,0 +1,84 @@
+/* CSS isolado do RvmEventPill. So custom properties — hex literal aqui quebra o tema escuro.
+   Do referencia-neatlab/Calendar - Month.png: pilula de ~24 px de altura, canto pequeno, fundo suave do papel com o
+   texto no tom forte do mesmo papel. Os pares suave/-text e cheia/-main+-contrast sao os ja medidos no RvmChip. */
+
+.rvm-pilula-evento {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 24px;
+    margin: 0;
+    padding: 0 var(--rvm-space-2);
+    border: none;
+    border-radius: var(--rvm-radius-sm);
+    font-family: var(--rvm-font-family);
+    font-size: var(--rvm-text-caption-size);
+    line-height: var(--rvm-text-caption-line);
+    font-weight: var(--rvm-font-weight-medium);
+    text-align: left;
+}
+
+button.rvm-pilula-evento {
+    cursor: pointer;
+}
+
+/* Hover: uma camada do action-hover por cima do fundo, sem trocar o par de contraste. */
+button.rvm-pilula-evento:hover {
+    background-image: linear-gradient(var(--rvm-color-action-hover), var(--rvm-color-action-hover));
+}
+
+button.rvm-pilula-evento:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-pilula-foto {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-left: calc(var(--rvm-space-1) * -1);
+    border-radius: var(--rvm-radius-circle);
+    object-fit: cover;
+}
+
+.rvm-pilula-titulo {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rvm-so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- Suave (normal) --- */
+.rvm-pilula-evento.rvm-primary { background-color: var(--rvm-color-primary-soft); color: var(--rvm-color-primary-text); }
+.rvm-pilula-evento.rvm-secondary { background-color: var(--rvm-color-secondary-soft); color: var(--rvm-color-secondary-text); }
+.rvm-pilula-evento.rvm-inverse { background-color: var(--rvm-color-inverse-soft); color: var(--rvm-color-inverse-text); }
+.rvm-pilula-evento.rvm-info { background-color: var(--rvm-color-info-soft); color: var(--rvm-color-info-text); }
+.rvm-pilula-evento.rvm-success { background-color: var(--rvm-color-success-soft); color: var(--rvm-color-success-text); }
+.rvm-pilula-evento.rvm-warning { background-color: var(--rvm-color-warning-soft); color: var(--rvm-color-warning-text); }
+.rvm-pilula-evento.rvm-error { background-color: var(--rvm-color-error-soft); color: var(--rvm-color-error-text); }
+
+/* --- Cheia (selecionada) --- */
+.rvm-pilula-evento.rvm-selecionada.rvm-primary { background-color: var(--rvm-color-primary-main); color: var(--rvm-color-primary-contrast); }
+.rvm-pilula-evento.rvm-selecionada.rvm-secondary { background-color: var(--rvm-color-secondary-main); color: var(--rvm-color-secondary-contrast); }
+.rvm-pilula-evento.rvm-selecionada.rvm-inverse { background-color: var(--rvm-color-inverse-main); color: var(--rvm-color-inverse-contrast); }
+.rvm-pilula-evento.rvm-selecionada.rvm-info { background-color: var(--rvm-color-info-main); color: var(--rvm-color-info-contrast); }
+.rvm-pilula-evento.rvm-selecionada.rvm-success { background-color: var(--rvm-color-success-main); color: var(--rvm-color-success-contrast); }
+.rvm-pilula-evento.rvm-selecionada.rvm-warning { background-color: var(--rvm-color-warning-main); color: var(--rvm-color-warning-contrast); }
+.rvm-pilula-evento.rvm-selecionada.rvm-error { background-color: var(--rvm-color-error-main); color: var(--rvm-color-error-contrast); }

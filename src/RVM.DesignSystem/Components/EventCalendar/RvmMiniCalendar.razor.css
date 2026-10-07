@@ -1,0 +1,144 @@
+/* CSS isolado do RvmMiniCalendar. So custom properties — hex literal aqui quebra o tema escuro.
+   O kit nao desenha um mini calendario de agenda: as medidas sao as do RvmCalendar (Date & TIme Picker.png) — 310 px,
+   dia num circulo de 36 px, escolhido no primary, hoje com anel — mais os pontos de marcacao embaixo do numero. */
+
+.rvm-mini-calendario {
+    display: inline-flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 310px;
+    max-width: 100%;
+    padding: var(--rvm-space-3) var(--rvm-space-4) var(--rvm-space-4);
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-mini-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: var(--rvm-space-1);
+    min-height: 36px;
+    margin-bottom: var(--rvm-space-2);
+}
+
+.rvm-mini-titulo {
+    flex: 1;
+    margin: 0;
+    font-size: var(--rvm-text-body1-size);
+    line-height: var(--rvm-text-body1-line);
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-mini-grade {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.rvm-mini-dia-semana {
+    height: 32px;
+    padding: 0;
+    color: var(--rvm-color-text-secondary);
+    font-size: var(--rvm-text-caption-size);
+    font-weight: var(--rvm-font-weight-regular);
+    text-align: center;
+}
+
+.rvm-mini-celula {
+    height: 40px;
+    padding: 0;
+    color: var(--rvm-color-text-primary);
+    text-align: center;
+}
+
+.rvm-mini-dia {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--rvm-radius-circle);
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: var(--rvm-text-body2-size);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+
+.rvm-mini-dia:hover {
+    background-color: var(--rvm-color-action-hover);
+}
+
+.rvm-mini-dia:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: 0;
+}
+
+/* Dia vizinho no secundario (o tom apagado do kit reprova 4.5:1); o dia do mes ganha peso para se distinguir. */
+.rvm-mini-dia:not(.rvm-mini-fora) {
+    font-weight: var(--rvm-font-weight-medium);
+}
+
+.rvm-mini-fora {
+    color: var(--rvm-color-text-secondary);
+}
+
+.rvm-mini-hoje {
+    border-color: var(--rvm-color-primary-text);
+}
+
+.rvm-mini-escolhido,
+.rvm-mini-escolhido:hover {
+    background-color: var(--rvm-color-primary-main);
+    color: var(--rvm-color-primary-contrast);
+}
+
+/* Os pontos: ate tres, de 4 px, no -main do papel; no dia escolhido seguem a cor do texto (contrast). */
+.rvm-mini-pontos {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+.rvm-mini-ponto {
+    width: 4px;
+    height: 4px;
+    border-radius: var(--rvm-radius-circle);
+}
+
+.rvm-primary .rvm-mini-ponto { background-color: var(--rvm-color-primary-main); }
+.rvm-secondary .rvm-mini-ponto { background-color: var(--rvm-color-secondary-main); }
+.rvm-inverse .rvm-mini-ponto { background-color: var(--rvm-color-inverse-main); }
+.rvm-info .rvm-mini-ponto { background-color: var(--rvm-color-info-main); }
+.rvm-success .rvm-mini-ponto { background-color: var(--rvm-color-success-main); }
+.rvm-warning .rvm-mini-ponto { background-color: var(--rvm-color-warning-main); }
+.rvm-error .rvm-mini-ponto { background-color: var(--rvm-color-error-main); }
+
+.rvm-mini-escolhido .rvm-mini-pontos .rvm-mini-ponto {
+    background-color: currentColor;
+}
+
+.rvm-mini-numero {
+    margin-bottom: 2px;
+}
+
+.rvm-mini-simbolo {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    font-size: 0.625rem;
+    line-height: 1;
+}

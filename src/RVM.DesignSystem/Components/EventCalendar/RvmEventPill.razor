@@ -1,0 +1,77 @@
+@namespace RVM.DesignSystem.Components.EventCalendar
+
+@* A pilula do compromisso, como as da agenda do kit (Calendar - Month.png): fundo suave do papel, texto no -text
+   do mesmo papel, canto pequeno. Selecionada, vira cheia (-main com -contrast).
+
+   Clicavel so com OnClick: pilula que nao leva a lugar nenhum nao gasta parada de Tab nem se anuncia como botao. *@
+@if (OnClick.HasDelegate)
+{
+    <button @attributes="AdditionalAttributes" type="button" class="@ClassesDaRaiz" title="@Dica"
+            aria-pressed="@(Selected ? "true" : null)" @ref="_elemento" @onclick="ClicarAsync">
+        @Conteudo
+    </button>
+}
+else
+{
+    <span @attributes="AdditionalAttributes" class="@ClassesDaRaiz" title="@Dica">@Conteudo</span>
+}
+
+@code {
+    private ElementReference _elemento;
+
+    /// <summary>Titulo do compromisso.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+
+    /// <summary>Categoria, por papel. Padrao: <see cref="RvmColor.Accent"/>.</summary>
+    [Parameter] public RvmColor Color { get; set; } = RvmColor.Accent;
+
+    /// <summary>Foto de quem participa. Decorativa: o titulo ja diz do que se trata.</summary>
+    [Parameter] public string? ImageUrl { get; set; }
+
+    /// <summary>Horario, ja escrito. Anunciado junto do titulo, mas escondido na pilula (nao cabe).</summary>
+    [Parameter] public string? TimeLabel { get; set; }
+
+    /// <summary>Selecionada: a pilula fica cheia, e o botao anuncia <c>aria-pressed</c>.</summary>
+    [Parameter] public bool Selected { get; set; }
+
+    /// <summary>Clique. Sem ele a pilula nao e botao.</summary>
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    /// <summary>
+    /// O mesmo clique, entregando o botao da pilula — para quem abre um dialogo a partir dela devolver o foco ao
+    /// fechar. Dispara ANTES do <see cref="OnClick"/>. So existe com <see cref="OnClick"/> ligado.
+    /// </summary>
+    [Parameter] public EventCallback<ElementReference> OnClickElement { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassesDaRaiz => ClassesCss.Juntar(
+        $"rvm-pilula-evento {PapelCss.Classe(Color)}{(Selected ? " rvm-selecionada" : "")}", Class, AdditionalAttributes);
+
+    // O titulo inteiro no passar do mouse: na grade a pilula corta o texto com reticencias.
+    private string Dica => string.IsNullOrWhiteSpace(TimeLabel) ? Title : $"{Title}, {TimeLabel}";
+
+    // A ordem importa: quem trata o clique precisa achar a referencia ja registrada.
+    private async Task ClicarAsync()
+    {
+        await OnClickElement.InvokeAsync(_elemento);
+        await OnClick.InvokeAsync();
+    }
+
+    private RenderFragment Conteudo => @<text>
+        @if (!string.IsNullOrWhiteSpace(ImageUrl))
+        {
+            <img class="rvm-pilula-foto" src="@ImageUrl" alt="" />
+        }
+        <span class="rvm-pilula-titulo">@Title</span>
+        @if (!string.IsNullOrWhiteSpace(TimeLabel))
+        {
+            <span class="rvm-so-leitor">, @TimeLabel</span>
+        }
+    </text>;
+}
