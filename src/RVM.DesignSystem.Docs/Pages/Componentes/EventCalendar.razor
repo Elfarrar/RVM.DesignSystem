@@ -1,0 +1,97 @@
+@page "/componentes/event-calendar"
+@using RVM.DesignSystem.Components.EventCalendar
+
+<PageTitle>RvmEventCalendar — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmEventCalendar</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    A agenda de compromissos em mes, semana ou dia. O cabecalho traz as setas, o titulo do periodo e o botao
+    Hoje; o canto direito recebe o que o app quiser em <code>Actions</code>. No mes, cada dia mostra ate
+    <code>MaxEventsPerDay</code> compromissos e um "+N" com o resto; na semana e no dia, a faixa de horas vai de
+    <code>FirstHour</code> a <code>LastHour</code> e a linha vermelha marca o agora.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB. A agenda nao busca nada: os
+    compromissos chegam em <code>Events</code> (<code>RvmCalendarEvent</code>), e a cor de cada um e a categoria, por
+    papel. As setas mudam o periodo por dentro e avisam por <code>DateChanged</code>; um render do pai nao desfaz a
+    navegacao. Nomes de mes e de dia saem de tabela propria, em PT-BR mesmo no WebAssembly sem ICU.
+</p>
+
+<BlocoExemplo Titulo="Mes"
+              Descricao="Clique num compromisso ou no +N. Os exemplos usam um agora fixo (07/10/2026, 10h30)."
+              Codigo="@CodigoMes">
+    <div class="pilha-exemplos">
+        <RvmEventCalendar Events="Eventos" Now="Agora" MaxEventsPerDay="2"
+                          OnEventClick="e => _aviso = e.Title" OnOverflowClick="AvisarDia">
+            <Actions>
+                <RvmButton Size="RvmSize.Small" StartIcon="RvmIconName.Plus">Novo compromisso</RvmButton>
+            </Actions>
+        </RvmEventCalendar>
+        <RvmTypography Color="RvmTextColor.Secondary">Ultimo clique: @(_aviso ?? "nenhum")</RvmTypography>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Semana"
+              Descricao="Faixa das 6 as 18 horas; a coluna de hoje fica marcada e a linha vermelha mostra o agora."
+              Codigo="@CodigoSemana">
+    <RvmEventCalendar View="RvmCalendarView.Week" Events="Eventos" Now="Agora" FirstHour="6" LastHour="18" />
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Dia"
+              Descricao="O dia em foco, com Date controlado pelo pai e TodayText trocado."
+              Codigo="@CodigoDia">
+    <RvmEventCalendar View="RvmCalendarView.Day" Events="Eventos" Now="Agora" Date="_dia" DateChanged="d => _dia = d"
+                      FirstHour="7" LastHour="17" TodayText="Voltar para hoje" Label="Agenda do dia da fazenda" />
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmEventCalendar" />
+
+@code {
+    private static readonly DateTime Agora = new(2026, 10, 7, 10, 30, 0);
+    private DateOnly? _dia = new DateOnly(2026, 10, 7);
+    private string? _aviso;
+
+    private void AvisarDia(DateOnly dia) => _aviso = $"mais compromissos em {dia:dd/MM}";
+
+    private static readonly IReadOnlyList<RvmCalendarEvent> Eventos =
+    [
+        new() { Title = "Plantio de soja - talhao 3", Start = new(2026, 10, 5, 7, 0, 0), End = new(2026, 10, 5, 12, 0, 0), Color = RvmColor.Success },
+        new() { Title = "Plantio de soja - talhao 4", Start = new(2026, 10, 6, 7, 0, 0), End = new(2026, 10, 6, 12, 0, 0), Color = RvmColor.Success },
+        new() { Title = "Visita tecnica - agronomo", Start = new(2026, 10, 7, 9, 0, 0), End = new(2026, 10, 7, 11, 0, 0), Color = RvmColor.Info },
+        new() { Title = "Calibrar plantadeira", Start = new(2026, 10, 7, 14, 0, 0), Color = RvmColor.Warning },
+        new() { Title = "Reuniao com a cooperativa", Start = new(2026, 10, 7, 16, 0, 0), Color = RvmColor.Primary },
+        new() { Title = "Entrega de sementes", Start = new(2026, 10, 8, 8, 0, 0), Color = RvmColor.Secondary },
+        new() { Title = "Aplicacao de herbicida", Start = new(2026, 10, 9, 6, 0, 0), End = new(2026, 10, 9, 9, 0, 0), Color = RvmColor.Error },
+        new() { Title = "Colheita de milho safrinha", Start = new(2026, 10, 14, 6, 0, 0), End = new(2026, 10, 14, 18, 0, 0), Color = RvmColor.Warning },
+        new() { Title = "Colheita de milho - talhao 7", Start = new(2026, 10, 15, 6, 0, 0), Color = RvmColor.Warning },
+        new() { Title = "Visita tecnica - solo", Start = new(2026, 10, 21, 10, 0, 0), Color = RvmColor.Info },
+        new() { Title = "Vencimento do CPR", Start = new(2026, 10, 30, 9, 0, 0), Color = RvmColor.Error },
+    ];
+
+    private const string CodigoMes = """
+        <RvmEventCalendar Events="Eventos" MaxEventsPerDay="2"
+                          OnEventClick="Abrir" OnOverflowClick="MostrarDia">
+            <Actions>
+                <RvmButton Size="RvmSize.Small" StartIcon="RvmIconName.Plus">Novo compromisso</RvmButton>
+            </Actions>
+        </RvmEventCalendar>
+
+        private IReadOnlyList<RvmCalendarEvent> Eventos =
+        [
+            new() { Title = "Plantio de soja - talhao 3", Start = new(2026, 10, 5, 7, 0, 0), Color = RvmColor.Success },
+            new() { Title = "Visita tecnica - agronomo", Start = new(2026, 10, 7, 9, 0, 0), Color = RvmColor.Info },
+            new() { Title = "Colheita de milho safrinha", Start = new(2026, 10, 14, 6, 0, 0), Color = RvmColor.Warning },
+        ];
+        """;
+
+    private const string CodigoSemana = """
+        <RvmEventCalendar View="RvmCalendarView.Week" Events="Eventos" FirstHour="6" LastHour="18" />
+        """;
+
+    private const string CodigoDia = """
+        <RvmEventCalendar View="RvmCalendarView.Day" Events="Eventos" Date="_dia" DateChanged="d => _dia = d"
+                          FirstHour="7" LastHour="17" TodayText="Voltar para hoje" />
+        """;
+}
