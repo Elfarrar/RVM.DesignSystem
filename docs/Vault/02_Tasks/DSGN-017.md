@@ -241,6 +241,14 @@ Pendentes do contrato: **85 → 0**. Grupo "Painel e aplicativos" no site.
   na agenda so marcado por cor; `RvmMap` repete marcadores e lista para o leitor; `RvmFileCard` exige `@bind-Selected`.
 - Alphas de `dev` passam a `2.0.0-alpha.N` (`VERSION_PREFIX`).
 
+## Publicada — 07/10/2026
+
+Aprovada pelo Rafael pela galeria de capturas do dev. PR #86 (`dev` → `master`), tag **`v2.0.0`**, versao conferida
+no feed pelo workflow, conteudo conferido em `design.rvmit.com.br` e E2E completo contra producao: 432 de 432. Alphas de `dev` em `2.1.0-alpha.N`. O CI do #86
+pegou um teste instavel por prazo (`RvmAutocomplete`, espera da busca): prazo folgado no PR #87.
+
+Falta para fechar o card: **migracao do RVM.TradeBinder** (`TBIN-018`, aberto no repo dele, PR #53 de la).
+
 ## Etapa 3 — RVM.DesignSystem
 
 1. Alinhar os componentes em comum ao contrato (a nomenclatura já é a do DS; entram os acréscimos do UI:
