@@ -80,6 +80,37 @@ com **65**. Faltam no DS **100 componentes**, **399 parâmetros** em 65 componen
    componentes em comum; depois as ondas do card (shell/navegação → formulários → tabelas e listas → feedback →
    restante), cada uma em `dev` com screenshot para aprovação. **2.0.0 só com zero pendentes.**
 
+## Onda 0 — feita em 07/10/2026 (branch `dsgn-017`)
+
+Pendentes do contrato: **1.926 → 241**. O que sobrou sao os 101 componentes novos e os enums deles, mais tres
+itens movidos para as ondas onde fazem sentido: `RvmThemeProvider` (Accent, ColorScheme, Settings, UserTheme, Class
+— entra com o `RvmThemePicker` e o `AddRvmTheme`), `RvmBarChart.Layout` e `RvmPieChart.Palette`/`Total` (entram com
+os graficos radiais, que dividem a mesma API).
+
+- **Contrato no CI**: `design/contrato-api.json` + `ContratoApiTests` (lista de pendentes que so encolhe; toda API
+  publica do DS tem que estar no contrato).
+- **Enums**: aliases do RVM.UI pelo mesmo valor (`Accent`, `Neutral`, `Danger`, `Filled`, `Regular`, `Default`...).
+  Valores novos: papel **`Inverse`** (branco sobre fundo colorido, tokens `--rvm-color-inverse-*`), botao **`Soft`**,
+  abas **`Page`**, cores de texto, ordenacao `None`. ⚠️ Com alias, `Enum.ToString()` e ambiguo: o grafico deixou de
+  montar classe por `ToString()`.
+- **Icones**: 1.228 nomes Solar mapeados para 635 desenhos Tabler (`tools/icones-do-contrato.json`, 163 marcados como
+  aproximacao pelos agentes de mapeamento e revisados por amostra), `Style` cheio onde o Tabler tem (276), `SizePx`.
+  DLL foi a ~990 KB.
+- **`RvmMascot`** (decisao 2) e os estados `Loading`/`Empty`/`Error` em lista, tabela/grade e graficos.
+- **`Class` em todos os componentes** (`ClassesCss`). ⚠️ O Blazor casa parametro sem caixa: `class="x"`, `id="x"` e
+  `name="x"` no markup do consumidor agora caem em `Class`/`Id`/`Name` — os componentes leem os dois caminhos.
+- **Campos**: Id, Name, DisplayName, HelperText/ErrorText, link acima do campo, `Shape` pilula, `Background`,
+  `ItemImage`, `ReadOnly`, `Clearable`, `Alignment`, `Immediate`, icones no `RvmTextField`; `Value` no MultiSelect
+  (mesmo valor que `Values`).
+- **Resto**: Card (Header/Footer/Padding/Variant), ListItem (valor e variacao), Menu (gatilho so icone, posicao),
+  Tabs por valor e contador, AppShell (Sidebar pronta, cortina vira botao com `CloseMenuLabel`), NavItem sem link,
+  NavGroup por rota, Rating compacta, Stepper de bolinhas, Calendar com `TrapFocus`, Dense, Skeleton em linhas.
+- **Site**: tabelas de parametros GERADAS da biblioteca (`Shared/ParametrosGerados.g.cs`, mesma fonte do
+  `llms-full.txt`, regerada com `RVM_ATUALIZAR_IA=1`) — as 43 tabelas escritas a mao foram trocadas. Pagina do
+  `RvmMascot`; exemplos de Soft, Inverse, abas por valor e estados da lista.
+- Invencoes declaradas (o NEATLAB nao desenha): papel Inverse, abas Page, mascotes, link acima do campo, bolinhas do
+  stepper, botao limpar da data.
+
 ## Etapa 3 — RVM.DesignSystem
 
 1. Alinhar os componentes em comum ao contrato (a nomenclatura já é a do DS; entram os acréscimos do UI:
