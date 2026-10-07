@@ -84,9 +84,10 @@ test('snackbar: a mensagem entra na regiao viva e a acao roda', async ({ page })
     await expect(page.getByText('Aplicacao excluida.')).toBeHidden();
 
     await page.getByRole('button', { name: 'Erro', exact: true }).click();
-    await expect(page.getByRole('alert')).toContainText('Nao conseguimos salvar o talhao');
+    // O layout tambem tem a regiao urgente do RvmToastProvider (vazia): filtra pela mensagem, nao pelo papel sozinho.
+    await expect(page.getByRole('alert').filter({ hasText: 'Nao conseguimos salvar o talhao' })).toBeVisible();
     await page.getByRole('button', { name: 'Fechar mensagem' }).click();
-    await expect(page.getByRole('alert')).not.toContainText('Nao conseguimos');
+    await expect(page.getByText('Nao conseguimos salvar o talhao')).toBeHidden();
 });
 
 // O axe de pagina roda com tudo fechado: dialogo, gaveta e mensagens tem cores proprias abertos.

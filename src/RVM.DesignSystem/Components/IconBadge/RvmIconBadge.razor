@@ -1,0 +1,11 @@
+@namespace RVM.DesignSystem.Components.IconBadge
+
+@* Sem Label o badge e enfeite ao lado de um texto que ja diz o mesmo ("Receita"): sai escondido do leitor de tela.
+   Com Label vira imagem com nome. O icone de dentro e sempre aria-hidden — quem fala e a raiz. *@
+<span @attributes="AdditionalAttributes"
+      class="@CssClass"
+      role="@(TemNome ? "img" : null)"
+      aria-label="@(TemNome ? Label : null)"
+      aria-hidden="@(TemNome ? null : "true")">
+    <RvmIcon Name="Icon" Style="IconStyle" SizePx="LadoDoIcone" />
+</span>

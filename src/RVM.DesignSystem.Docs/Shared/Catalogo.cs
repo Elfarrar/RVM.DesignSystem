@@ -95,6 +95,17 @@ public static class Catalogo
             new("componentes/media-upload", "RvmMediaUpload", "Envio de imagens com miniaturas, remover e tentar de novo."),
             new("componentes/profile-image-upload", "RvmProfileImageUpload", "Foto de perfil: avatar e o botao de enviar.")
         ]),
+        new("Feedback e texto",
+        [
+            new("componentes/modal", "RvmModal", "Janela modal com titulo, foco preso, Esc e clique no fundo."),
+            new("componentes/confirm-modal", "RvmConfirmModal", "Confirmacao de acao com icone, descricao e dois botoes."),
+            new("componentes/toast", "RvmToastProvider", "Avisos passageiros disparados pelo servico IRvmToast."),
+            new("componentes/spinner", "RvmSpinner", "Indicador de carregamento com nome para o leitor de tela."),
+            new("componentes/progress-bar", "RvmProgressBar", "Barra de progresso com rotulo, valor e estado sem valor."),
+            new("componentes/label", "RvmLabel", "Etiqueta de texto colorida, suave ou solida."),
+            new("componentes/text", "RvmText", "Texto na escala tipografica do contrato."),
+            new("componentes/icon-badge", "RvmIconBadge", "Icone em fundo colorido, simples ou artistico.")
+        ]),
         new("Navegacao e pagina",
         [
             new("componentes/sidebar", "RvmSidebar", "O menu lateral: marca, navegacao, rodape; branco ou colorido, recolhivel."),

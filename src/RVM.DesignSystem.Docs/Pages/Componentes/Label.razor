@@ -1,0 +1,71 @@
+@page "/componentes/label"
+@using RVM.DesignSystem.Components.Label
+
+<PageTitle>RvmLabel — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmLabel</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Etiqueta de texto com fundo na cor de um papel: o status de uma linha ("Pago", "Em atraso",
+    "Colhido"). E um span, nao o &lt;label&gt; de formulario — para rotulo de campo, use o Label do proprio
+    campo. Nao e clicavel; para filtro ou selecao, use o RvmChip. Os pares de cor passam 4.5:1 nos dois temas.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Suave"
+              Descricao="O padrao: fundo suave do papel, texto na cor do papel."
+              Codigo="@CodigoSuave">
+    <div class="linha-exemplos">
+        <RvmLabel>Em analise</RvmLabel>
+        <RvmLabel Color="RvmColor.Neutral">Rascunho</RvmLabel>
+        <RvmLabel Color="RvmColor.Success">Pago</RvmLabel>
+        <RvmLabel Color="RvmColor.Danger">Em atraso</RvmLabel>
+        <RvmLabel Color="RvmColor.Warning">Vence hoje</RvmLabel>
+        <RvmLabel Color="RvmColor.Info">Colhido</RvmLabel>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Cheia"
+              Descricao="Variant.Solid: fundo cheio, texto no token de contraste do papel."
+              Codigo="@CodigoCheia">
+    <div class="linha-exemplos">
+        <RvmLabel Variant="RvmLabelVariant.Solid">Em analise</RvmLabel>
+        <RvmLabel Variant="RvmLabelVariant.Solid" Color="RvmColor.Neutral">Rascunho</RvmLabel>
+        <RvmLabel Variant="RvmLabelVariant.Solid" Color="RvmColor.Success">Pago</RvmLabel>
+        <RvmLabel Variant="RvmLabelVariant.Solid" Color="RvmColor.Danger">Em atraso</RvmLabel>
+        <RvmLabel Variant="RvmLabelVariant.Solid" Color="RvmColor.Warning">Vence hoje</RvmLabel>
+        <RvmLabel Variant="RvmLabelVariant.Solid" Color="RvmColor.Info">Colhido</RvmLabel>
+    </div>
+</BlocoExemplo>
+
+<BlocoExemplo Titulo="Tamanhos"
+              Descricao="24, 28 (padrao) e 32 px de altura."
+              Codigo="@CodigoTamanhos">
+    <div class="linha-exemplos">
+        <RvmLabel Size="RvmSize.Small" Color="RvmColor.Success">Safra 25/26</RvmLabel>
+        <RvmLabel Color="RvmColor.Success">Safra 25/26</RvmLabel>
+        <RvmLabel Size="RvmSize.Large" Color="RvmColor.Success">Safra 25/26</RvmLabel>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmLabel" />
+
+@code {
+    private const string CodigoSuave = """
+        <RvmLabel>Em analise</RvmLabel>
+        <RvmLabel Color="RvmColor.Success">Pago</RvmLabel>
+        <RvmLabel Color="RvmColor.Danger">Em atraso</RvmLabel>
+        """;
+
+    private const string CodigoCheia = """
+        <RvmLabel Variant="RvmLabelVariant.Solid" Color="RvmColor.Success">Pago</RvmLabel>
+        """;
+
+    private const string CodigoTamanhos = """
+        <RvmLabel Size="RvmSize.Small" Color="RvmColor.Success">Safra 25/26</RvmLabel>
+        <RvmLabel Size="RvmSize.Large" Color="RvmColor.Success">Safra 25/26</RvmLabel>
+        """;
+}

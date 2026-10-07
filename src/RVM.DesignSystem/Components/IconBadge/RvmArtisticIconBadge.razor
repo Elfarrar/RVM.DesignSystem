@@ -1,0 +1,10 @@
+@namespace RVM.DesignSystem.Components.IconBadge
+
+@* Mesma regra do RvmIconBadge: sem Label e enfeite (aria-hidden); com Label, imagem com nome. *@
+<span @attributes="AdditionalAttributes"
+      class="@CssClass"
+      role="@(TemNome ? "img" : null)"
+      aria-label="@(TemNome ? Label : null)"
+      aria-hidden="@(TemNome ? null : "true")">
+    <RvmIcon Name="Icon" Style="RvmIconStyle.BoldDuotone" SizePx="28" />
+</span>

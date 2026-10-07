@@ -1,0 +1,16 @@
+.pilha-progresso {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-5);
+    width: 100%;
+    max-width: 28rem;
+}
+
+.cartao-colorido {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rvm-space-5);
+    padding: var(--rvm-space-5);
+    border-radius: var(--rvm-radius-lg);
+    background-color: var(--rvm-color-primary-main);
+}

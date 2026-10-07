@@ -152,6 +152,21 @@ Linha com o volume preenchido em degrade.
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
+### RvmArtisticIconBadge
+
+`@using RVM.DesignSystem.Components.IconBadge`
+
+A versao de destaque do `RvmIconBadge`: circulo de 56 px com degrade do papel ou brilho na cor dele, para abrir um card ou uma secao. Decorativo por padrao; com `RvmArtisticIconBadge.Label`, vira imagem com nome acessivel.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Accent`. |
+| `Icon` | `RvmIconName` | obrigatorio | Qual icone. Sai cheio (quando o Tabler tem) e com 28 px. |
+| `Label` | `string?` | — | O que o badge significa, para o leitor de tela. Sem ele o badge e decorativo (`aria-hidden`). |
+| `Variant` | `RvmArtisticVariant` | `RvmArtisticVariant.Gradient` | Degrade (padrao) ou brilho. |
+
 ### RvmAutocomplete<TValue>
 
 `@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/autocomplete
@@ -606,6 +621,31 @@ Colunas lado a lado ou empilhadas.
 | `ValueFormat` | `Func<double, string>?` | — | Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`. |
 | `Zoomable` | `bool` | `false` | Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario. |
 
+### RvmConfirmModal
+
+`@using RVM.DesignSystem.Components.Dialog` · exemplos: https://design.rvmit.com.br/componentes/confirm-modal
+
+Pergunta de confirmacao antes de uma acao: icone, titulo, explicacao e os botoes Cancelar e Confirmar. Para acao destrutiva, use `RvmColor.Error`: pinta o icone e o botao de confirmar.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `Align` | `RvmDialogAlign` | `RvmDialogAlign.Center` | Texto centralizado (padrao) ou alinhado a esquerda. |
+| `CancelText` | `string` | `"Cancelar"` | Texto do botao que desiste. Padrao: "Cancelar". |
+| `ChildContent` | `RenderFragment?` | — | Corpo livre, no lugar da `RvmConfirmModal.Description`. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `CloseOnBackdrop` | `bool` | `true` | Clicar no fundo desiste. Padrao: sim. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor do icone e do botao de confirmar. `RvmColor.Error` para acao destrutiva. |
+| `ConfirmText` | `string` | `"Confirmar"` | Texto do botao que confirma. Diga a acao ("Excluir"), nao "OK". Padrao: "Confirmar". |
+| `Description` | `string?` | — | Explicacao abaixo da pergunta. Diga o que a acao faz, nao repita o titulo. |
+| `Icon` | `RvmIconName` | `RvmIconName.DangerTriangle` | Icone do circulo. Padrao: triangulo de alerta. |
+| `OnCancel` | `EventCallback` | — | Desistiu, pelo botao, pelo Esc ou pelo fundo. |
+| `OnConfirm` | `EventCallback` | — | Confirmou. A confirmacao fecha depois de a acao terminar; enquanto isso, os botoes travam. |
+| `Open` | `bool` | `false` | Aberto. Aceita `@bind-Open`. |
+| `OpenChanged` | `EventCallback<bool>` | — | Disparado quando a confirmacao se fecha (confirmou ou desistiu). |
+| `ReturnFocusTo` | `ElementReference?` | — | Quem recebe o foco quando a confirmacao fecha — o botao que a abriu. Sem ele, o foco volta ao elemento que o tinha ao abrir. |
+| `Title` | `string` | obrigatorio | A pergunta. E o nome acessivel do dialogo — sem ela o dialogo nao tem nome. |
+
 ### RvmDataGrid<TItem>
 
 `@using RVM.DesignSystem.Components.Table` · exemplos: https://design.rvmit.com.br/componentes/data-grid
@@ -932,6 +972,23 @@ Um icone do conjunto Tabler, desenhado inline. A cor vem por heranca (`currentCo
 | `Style` | `RvmIconStyle` | `RvmIconStyle.Linear` | Traco (padrao) ou cheio. Ver `RvmIconStyle`. |
 | `Title` | `string?` | — | O que o icone significa, para quem nao o enxerga. **Preencha so quando o icone for a UNICA fonte daquela informacao** — botao de icone sem rotulo, por exemplo. Ao lado de um texto que ja diz a mesma coisa, deixe vazio: o leitor de tela repetiria a informacao. |
 
+### RvmIconBadge
+
+`@using RVM.DesignSystem.Components.IconBadge` · exemplos: https://design.rvmit.com.br/componentes/icon-badge
+
+Um icone num quadrado de cantos arredondados com fundo do papel de cor — o dos cards de estatistica do kit. Decorativo por padrao; com `RvmIconBadge.Label`, vira imagem com nome acessivel.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Accent`. |
+| `Icon` | `RvmIconName` | obrigatorio | Qual icone. |
+| `IconStyle` | `RvmIconStyle` | `RvmIconStyle.BoldDuotone` | Desenho do icone. Padrao: `RvmIconStyle.BoldDuotone` (cheio, quando o Tabler tem). |
+| `Label` | `string?` | — | O que o badge significa, para o leitor de tela. Preencha so quando o badge for a unica fonte da informacao; ao lado de um texto que ja diz o mesmo, deixe vazio e ele fica decorativo. |
+| `Size` | `RvmIconBadgeSize` | `RvmIconBadgeSize.Large` | Lado: 32, 40, 48 (padrao) ou 56 px. |
+| `Variant` | `RvmIconBadgeVariant` | `RvmIconBadgeVariant.Soft` | Suave (padrao), cheio ou fundo cinza neutro. |
+
 ### RvmIconButton
 
 `@using RVM.DesignSystem.Components.IconButton` · exemplos: https://design.rvmit.com.br/componentes/icon-button
@@ -978,6 +1035,21 @@ Seletor de icone do contrato com o RVM.UI (DSGN-017): um circulo com o icone esc
 | `Value` | `RvmIconName?` | — |  |
 | `ValueChanged` | `EventCallback<RvmIconName?>` | — |  |
 | `ValueExpression` | `Expression<Func<RvmIconName?>>?` | — |  |
+
+### RvmLabel
+
+`@using RVM.DesignSystem.Components.Label` · exemplos: https://design.rvmit.com.br/componentes/label
+
+Etiqueta de texto com fundo na cor de um papel — o status de uma linha ("Pago", "Em atraso", "Colhido"). Nao e o `<label>` de formulario: para rotulo de campo, use o `Label` do proprio campo. Do contrato com o RVM.UI (DSGN-017).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `ChildContent` | `RenderFragment?` | — | O texto da etiqueta. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor. Padrao: `RvmColor.Accent`. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Altura de 24, 28 (padrao) ou 32 px. |
+| `Variant` | `RvmLabelVariant` | `RvmLabelVariant.Soft` | Suave (padrao) ou cheia. |
 
 ### RvmLineChart<TItem>
 
@@ -1208,6 +1280,25 @@ Uma acao de `RvmMenu`. Escolher fecha o menu e devolve o foco ao botao.
 | `MovesFocus` | `bool` | `false` | O item LEVA o foco consigo (abre um painel, uma aba ou um dialogo e poe o foco la): ao fechar, o menu NAO devolve o foco ao botao que o abriu. Padrao: devolve, como manda o padrao de menu do WAI-ARIA. |
 | `OnClick` | `EventCallback` | — | O que fazer ao escolher o item. |
 | `Text` | `string` | `""` | Texto da acao, quando nao ha `RvmMenuItem.ChildContent`. |
+
+### RvmModal
+
+`@using RVM.DesignSystem.Components.Dialog` · exemplos: https://design.rvmit.com.br/componentes/modal
+
+Casca de dialogo modal: fundo escurecido, caixa com titulo opcional e conteudo livre. Esc e clique no fundo fecham; o foco entra, fica preso la dentro e volta para quem abriu.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados ao elemento raiz. |
+| `ChildContent` | `RenderFragment?` | — | O conteudo da caixa, inclusive os botoes. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `CloseOnBackdrop` | `bool` | `true` | Clicar no fundo fecha. Padrao: sim. |
+| `CloseOnEscape` | `bool` | `true` | Esc fecha. Padrao: sim. |
+| `Label` | `string?` | — | Nome acessivel quando nao ha `RvmModal.Title` (o topo e desenhado no conteudo). |
+| `Open` | `bool` | `false` | Aberto. Aceita `@bind-Open`. |
+| `OpenChanged` | `EventCallback<bool>` | — | Disparado quando o modal se fecha sozinho (Esc, fundo). |
+| `ReturnFocusTo` | `ElementReference?` | — | Quem recebe o foco quando o modal fecha — normalmente o botao que o abriu. Sem ele, o foco volta ao elemento que o tinha quando o modal abriu. |
+| `Title` | `string?` | — | Titulo no topo da caixa. Tambem e o nome acessivel do modal. |
 
 ### RvmMultiSelect<TValue>
 
@@ -1527,6 +1618,27 @@ Progresso de uma tarefa: com valor (determinado) ou so "esta andando" (indetermi
 | `Value` | `double?` | — | Porcentagem de 0 a 100. Sem valor, o indicador e indeterminado — use quando nao da para saber quanto falta. |
 | `Variant` | `RvmProgressVariant` | `RvmProgressVariant.Linear` | Barra (padrao) ou anel. |
 
+### RvmProgressBar
+
+`@using RVM.DesignSystem.Components.Progress` · exemplos: https://design.rvmit.com.br/componentes/progress-bar
+
+Barra de progresso com rotulo e porcentagem por cima — meta, orcamento, etapa de uma safra. Do contrato com o RVM.UI (DSGN-017). Para "carregando" sem rotulo, use `RvmProgress`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `AriaLabel` | `string?` | — | Nome acessivel quando nao ha `RvmProgressBar.Label` visivel. Um dos dois e obrigatorio. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmColor` | `RvmColor.Primary` | Papel de cor da parte preenchida. Padrao: `RvmColor.Accent`. |
+| `Label` | `string?` | — | Rotulo acima da barra. Tambem e o nome acessivel. |
+| `LabelVariant` | `RvmProgressLabelVariant` | `RvmProgressLabelVariant.Label` | Estilo do rotulo: descricao (padrao) ou valor. |
+| `NoValue` | `bool` | `false` | Valor nao informado: sem preenchimento, trilho tracejado e `RvmProgressBar.NoValueText` no lugar da porcentagem (e para o leitor de tela). `RvmProgressBar.Value` e ignorado. |
+| `NoValueText` | `string` | `"Nao informado"` | Texto do estado sem valor. Padrao: "Nao informado". |
+| `ShowValue` | `bool` | `false` | Mostra a porcentagem a direita do rotulo. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Barra de 4 px com texto pequeno, 8 px (padrao) ou 12 px. |
+| `Surface` | `RvmSurface` | `RvmSurface.Light` | Fundo sobre o qual a barra esta. No `RvmSurface.Dark` (cartao colorido ou escuro), trilho, barra e texto ficam claros: a cor do papel sobre fundo colorido nao garante contraste. |
+| `Value` | `double` | `0` | Progresso de 0 a 100. Fora disso e limitado (calculo que passa de 100 por arredondamento nao derruba a tela); NaN vira 0. Ignorado com `RvmProgressBar.NoValue`. |
+
 ### RvmRadarChart<TItem>
 
 `@using RVM.DesignSystem.Components.Chart` · exemplos: https://design.rvmit.com.br/componentes/radar-chart
@@ -1765,6 +1877,21 @@ Onde as mensagens do `RvmSnackbarService` aparecem. Um por layout, fora de qualq
 | `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
 | `CloseLabel` | `string` | `"Fechar mensagem"` | Nome acessivel do botao de fechar de cada mensagem. Padrao: "Fechar mensagem". |
 
+### RvmSpinner
+
+`@using RVM.DesignSystem.Components.Progress` · exemplos: https://design.rvmit.com.br/componentes/spinner
+
+"Esta carregando", sem previsao: o anel indeterminado com um texto para o leitor de tela (`role="status"`). Do contrato com o RVM.UI (DSGN-017).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `Centered` | `bool` | `false` | Ocupa a linha, centralizado e com respiro em cima e embaixo — o lugar de um carregamento de pagina. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Label` | `string` | `"Carregando"` | O que esta carregando ("Carregando talhoes"). Vai para o leitor de tela sempre, e para a tela com `RvmSpinner.ShowLabel`. |
+| `ShowLabel` | `bool` | `false` | Mostra o texto ao lado do anel. Sem ele, o texto so vai para o leitor de tela. |
+| `Size` | `RvmSize` | `RvmSize.Medium` | Anel de 24, 40 (padrao) ou 56 px — os tamanhos do `RvmProgress` circular. |
+
 ### RvmStepIndicator
 
 `@using RVM.DesignSystem.Components.Stepper` · exemplos: https://design.rvmit.com.br/componentes/step-indicator
@@ -1959,6 +2086,22 @@ Tag em pilula, com remover.
 | `Text` | `string?` | — | O texto da tag. |
 | `Variant` | `RvmTagVariant` | `RvmTagVariant.Soft` | Estilo. Padrao: `RvmTagVariant.Soft`. |
 
+### RvmText
+
+`@using RVM.DesignSystem.Components.Typography` · exemplos: https://design.rvmit.com.br/componentes/text
+
+Texto com os niveis do contrato com o RVM.UI (DSGN-017). Cada `RvmTextVariant` aponta para um estilo da escala do design system (as classes `rvm-text-*`); o `RvmText.Weight` troca so o peso. Para a escala completa, use o `RvmTypography`.
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | — | Atributos extras, repassados a raiz. |
+| `ChildContent` | `RenderFragment?` | — | O texto. |
+| `Class` | `string?` | — | Classe CSS extra no elemento raiz. |
+| `Color` | `RvmTextColor` | `RvmTextColor.Primary` | Papel do texto na hierarquia de leitura. Padrao: `RvmTextColor.Default`. |
+| `Element` | `RvmTextElement` | `RvmTextElement.Auto` | Elemento HTML. `RvmTextElement.Auto` (padrao): Display vira h1 a h4, o resto vira p. |
+| `Variant` | `RvmTextVariant` | `RvmTextVariant.TextM` | Nivel de texto. Padrao: `RvmTextVariant.TextM`. |
+| `Weight` | `RvmFontWeight?` | — | Peso. Sem valor, vale o peso do estilo da escala. |
+
 ### RvmTextArea
 
 `@using RVM.DesignSystem.Components.TextField` · exemplos: https://design.rvmit.com.br/componentes/text-area
@@ -2150,6 +2293,18 @@ Alternada, alinhada, com data.
 | `OppositeContent` | `RenderFragment?` | — | O outro lado da linha — normalmente a data ou a hora ("Opposing" no kit). |
 | `Outlined` | `bool` | `false` | Ponto cheio (padrao) ou so o contorno. |
 
+### RvmToastProvider
+
+`@using RVM.DesignSystem.Components.Toast` · exemplos: https://design.rvmit.com.br/componentes/toast
+
+Onde os avisos do `IRvmToast` aparecem: no canto superior direito, abaixo da barra do topo (o `RvmSnackbarHost` fica no inferior esquerdo). Um por layout, fora de qualquer area que role. Ponteiro ou foco em cima do aviso suspende o fechamento automatico (WCAG 2.2.1).
+
+| Parametro | Tipo | Padrao | Descricao |
+|---|---|---|---|
+| `Class` | `string?` | — | Classe CSS extra na regiao. |
+| `CloseLabel` | `string` | `"Fechar aviso"` | Nome acessivel do botao de fechar de cada aviso. Padrao: "Fechar aviso". |
+| `RegionLabel` | `string` | `"Avisos"` | Nome da regiao para leitor de tela. Padrao: "Avisos". |
+
 ### RvmTooltip
 
 `@using RVM.DesignSystem.Components.Tooltip` · exemplos: https://design.rvmit.com.br/componentes/tooltip
@@ -2203,6 +2358,10 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Standard`, `Filled`
 - `RvmAlertVariant` (`RVM.DesignSystem.Components.Alert`): Os tres estilos da pagina Alert do kit.
   Valores: `Standard`, `Filled`, `Outlined`
+- `RvmAlign` (`RVM.DesignSystem.Components.Table`): Alinhamento do conteudo de uma celula ou coluna da tabela de dados (contrato com o RVM.UI, DSGN-017). Os mesmos tres do `RvmTableAlign`, que a `RvmTable` usa.
+  Valores: `Start`, `Center`, `End`
+- `RvmArtisticVariant` (`RVM.DesignSystem.Components.IconBadge`): Acabamento do `RvmArtisticIconBadge`.
+  Valores: `Gradient`, `Glow`
 - `RvmAvatarShape` (`RVM.DesignSystem.Components.Avatar`): Forma do avatar. As tres estao na pagina Avatar do kit.
   Valores: `Circle`, `Rounded`, `Square`
 - `RvmAvatarVariant` (`RVM.DesignSystem.Components.Avatar`): Preenchimento do avatar de iniciais ou icone. No kit: a linha "Colors" e o `RvmAvatarVariant.Filled`; a linha "Light" e o `RvmAvatarVariant.Soft`.
@@ -2229,6 +2388,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Filled`, `Outlined`, `Soft`
 - `RvmColor` (`RVM.DesignSystem`): Papel semantico de cor. O componente escolhe o PAPEL; que cor sai dele e problema da camada de tokens, e muda com o tema. Componente nunca conhece cor (`05-api-dos-componentes.md`).
   Valores: `Primary`, `Accent`, `Secondary`, `Neutral`, `Info`, `Success`, `Warning`, `Error`, `Danger`, `Inverse`
+- `RvmDialogAlign` (`RVM.DesignSystem.Components.Dialog`): Forma do `RvmConfirmModal`: texto centralizado ou alinhado a esquerda.
+  Valores: `Center`, `Left`
 - `RvmDrawerAnchor` (`RVM.DesignSystem.Components.Drawer`): De que lado da tela a gaveta sai.
   Valores: `Left`, `Right`, `Top`, `Bottom`
 - `RvmDrawerVariant` (`RVM.DesignSystem.Components.Drawer`): Como a gaveta convive com a pagina.
@@ -2237,6 +2398,12 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `White`, `Grey`
 - `RvmFieldShape` (`RVM.DesignSystem`): Canto da caixa do campo (contrato com o RVM.UI, DSGN-017).
   Valores: `Rounded`, `Pill`
+- `RvmFontWeight` (`RVM.DesignSystem.Components.Typography`): Peso da fonte. O valor numerico e o do CSS (`font-weight`).
+  Valores: `Regular`, `Medium`, `SemiBold`, `Bold`
+- `RvmIconBadgeSize` (`RVM.DesignSystem.Components.IconBadge`): Lado do `RvmIconBadge`. O kit desenha o de 40 px nos cards de estatistica.
+  Valores: `Small`, `Medium`, `Large`, `XLarge`
+- `RvmIconBadgeVariant` (`RVM.DesignSystem.Components.IconBadge`): Fundo do `RvmIconBadge`.
+  Valores: `Solid`, `Soft`, `Neutral`
 - `RvmIconName` (`RVM.DesignSystem.Icons`): Os icones disponiveis. Enum, e nao string: nome de icone errado vira erro de compilacao em vez de um quadrado vazio na tela.
   Valores: `AlertCircle`, `AlertTriangle`, `ArrowLeft`, `ArrowRight`, `ArrowUp`, `ArrowDown`, `Bell`, `Calendar`, `Check`, `ChevronDown`, `ChevronLeft`, `ChevronRight`, `ChevronUp`, `CircleCheck`, `Clock`, `Close`, `Copy`, `DotsVertical`, `Download`, `ExternalLink`, `Eye`, `EyeOff`, `File`, `Filter`, `Heart`, `Home`, `InfoCircle`, `Loader`, `Lock`, `Logout`, `Mail`, `Menu`, `Minus`, `Pencil`, `Phone`, `Plus`, `Printer`, `Refresh`, `Search`, `Settings`, `Star`, `Table`, `Trash`, `Upload`, `User`, `Users`, `Accessibility`, `Accumulator`, `Add`, `AddCircle`, `AddSquare`, `AdhesivePlaster`, `AdhesivePlaster2`, `Airbuds`, `AirbudsCase`, `AirbudsCaseCharge`, `AirbudsCaseMinimalistic`, `AirbudsCaseOpen`, `AirbudsCharge`, `AirbudsCheck`, `AirbudsLeft`, `AirbudsRemove`, `AirbudsRight`, `Alarm`, `AlarmAdd`, `AlarmPause`, `AlarmPlay`, `AlarmRemove`, `AlarmSleep`, `AlarmTurnOff`, `Album`, `AlignBottom`, `AlignHorizontaSpacing`, `AlignHorizontalCenter`, `AlignLeft`, `AlignRight`, `AlignTop`, `AlignVerticalCenter`, `AlignVerticalSpacing`, `AltArrowDown`, `AltArrowLeft`, `AltArrowRight`, `AltArrowUp`, `Archive`, `ArchiveDown`, `ArchiveDownNotes`, `ArchiveUp`, `ArchiveUpNotes`, `Archived`, `ArchivedMinimalistic`, `Armchair`, `Armchair2`, `ArrowLeftDown`, `ArrowLeftUp`, `ArrowRightDown`, `ArrowRightUp`, `ArrowToDownLeft`, `ArrowToDownRight`, `ArrowToTopLeft`, `ArrowToTopRight`, `Asteroid`, `Atom`, `AugmentedReality`, `Backpack`, `Backspace`, `Bacteria`, `Bag`, `Bag2`, `Bag3`, `Bag4`, `Bag5`, `BagCheck`, `BagCross`, `BagHeart`, `BagMusic`, `BagMusic2`, `BagSmile`, `Balloon`, `Balls`, `Banknote`, `Banknote2`, `BarChair`, `Basketball`, `Bath`, `BatteryCharge`, `BatteryChargeMinimalistic`, `BatteryFull`, `BatteryFullMinimalistic`, `BatteryHalf`, `BatteryHalfMinimalistic`, `BatteryLow`, `BatteryLowMinimalistic`, `Bed`, `BedEssentionalUi`, `BedsideTable`, `BedsideTable2`, `BedsideTable3`, `BedsideTable4`, `BellBing`, `BellOff`, `BenzeneRing`, `Bicycling`, `BicyclingRound`, `Bill`, `BillCheck`, `BillCross`, `BillList`, `BillList2`, `BlackHole`, `BlackHole2`, `BlackHole3`, `Bluetooth`, `BluetoothCircle`, `BluetoothSquare`, `BluetoothWave`, `Body`, `BodyShape`, `BodyShapeMinimalistic`, `Bolt`, `BoltCircle`, `Bomb`, `Bomb2`, `BombMinimalistic`, `Bone`, `BoneBroken`, `BoneCrack`, `Bones`, `Bonfire`, `Book`, `Book2`, `BookBookmark`, `BookBookmarkMinimalistic`, `BookMinimalistic`, `Bookmark`, `BookmarkCircle`, `BookmarkOpened`, `BookmarkSquare`, `BookmarkSquareMinimalistic`, `Boombox`, `Bottle`, `Bowling`, `Box`, `BoxMinimalistic`, `BranchingPathsDown`, `BranchingPathsUp`, `Broom`, `Bug`, `BugMinimalistic`, `Buildings`, `Buildings2`, `Buildings3`, `Bus`, `Calculator`, `CalculatorMinimalistic`, `CalendarAdd`, `CalendarDate`, `CalendarMark`, `CalendarMinimalistic`, `CalendarSearch`, `CallCancel`, `CallCancelRounded`, `CallChat`, `CallChatRounded`, `CallDropped`, `CallDroppedRounded`, `CallMedicine`, `CallMedicineRounded`, `Camera`, `CameraAdd`, `CameraMinimalistic`, `CameraRotate`, `CameraSquare`, `Card`, `Card2`, `CardRecive`, `CardSearch`, `CardSend`, `CardTransfer`, `Cardholder`, `Cart`, `Cart2`, `Cart3`, `Cart4`, `Cart5`, `CartCheck`, `CartCross`, `CartLarge`, `CartLarge2`, `CartLarge3`, `CartLarge4`, `CartLargeMinimalistic`, `CartPlus`, `Case`, `CaseMinimalistic`, `CaseRound`, `CaseRoundMinimalistic`, `CashOut`, `Cassette`, `Cassette2`, `Cat`, `Chair`, `Chair2`, `Chandelier`, `Chart`, `Chart2`, `ChartSquare`, `ChatDots`, `ChatLine`, `ChatRound`, `ChatRoundCall`, `ChatRoundCheck`, `ChatRoundDots`, `ChatRoundLike`, `ChatRoundLine`, `ChatRoundMoney`, `ChatRoundUnread`, `ChatRoundVideo`, `ChatSquare`, `ChatSquare2`, `ChatSquareArrow`, `ChatSquareCall`, `ChatSquareCheck`, `ChatSquareCode`, `ChatSquareLike`, `ChatUnread`, `CheckCircle`, `CheckRead`, `CheckSquare`, `Checklist`, `ChecklistMinimalistic`, `ChefHatHeart`, `ChefHatMinimalistic`, `ChefHet`, `CircleBottomDown`, `CircleBottomUp`, `CircleTopDown`, `CircleTopUp`, `City`, `Clapperboard`, `ClapperboardEdit`, `ClapperboardOpen`, `ClapperboardOpenPlay`, `ClapperboardPlay`, `ClapperboardText`, `Clipboard`, `ClipboardAdd`, `ClipboardCheck`, `ClipboardHeart`, `ClipboardList`, `ClipboardRemove`, `ClipboardText`, `ClockCircle`, `ClockSquare`, `CloseCircle`, `CloseSquare`, `Closet`, `Closet2`, `Cloud`, `CloudBolt`, `CloudBoltMinimalistic`, `CloudCheck`, `CloudDownload`, `CloudFile`, `CloudMinus`, `CloudPlus`, `CloudRain`, `CloudSnowfall`, `CloudSnowfallMinimalistic`, `CloudStorage`, `CloudStorm`, `CloudSun`, `CloudSunWeather`, `CloudUpload`, `CloudWaterdrop`, `CloudWaterdrops`, `Clouds`, `CloudyMoon`, `CloundCross`, `Code`, `Code2`, `CodeCircle`, `CodeFile`, `CodeScan`, `CodeSquare`, `ColourTuneing`, `Command`, `Compass`, `CompassBig`, `CompassSquare`, `Condicioner`, `Condicioner2`, `Confetti`, `ConfettiMinimalistic`, `ConfoundedCircle`, `ConfoundedSquare`, `Copyright`, `Corkscrew`, `Cosmetic`, `CourseDown`, `CourseUp`, `Cpu`, `CpuBolt`, `CreativeCommons`, `Crop`, `CropMinimalistic`, `Crown`, `CrownLine`, `CrownMinimalistic`, `CrownStar`, `Cup`, `CupEssentionalUi`, `CupFirst`, `CupHot`, `CupMusic`, `CupPaper`, `CupStar`, `Cursor`, `CursorSquare`, `Danger`, `DangerCircle`, `DangerSquare`, `DangerTriangle`, `Database`, `Delivery`, `Devices`, `DiagramDown`, `DiagramUp`, `Dialog`, `Dialog2`, `Diploma`, `DiplomaVerified`, `Diskette`, `Dislike`, `Display`, `Dna`, `Document`, `DocumentAdd`, `DocumentMedicine`, `DocumentNotes`, `DocumentText`, `Documents`, `DocumentsMinimalistic`, `Dollar`, `DollarMinimalistic`, `Donut`, `DonutBitton`, `DoubleAltArrowDown`, `DoubleAltArrowLeft`, `DoubleAltArrowRight`, `DoubleAltArrowUp`, `DownloadMinimalistic`, `DownloadSquare`, `DownloadTwiceSquare`, `Dropper`, `Dropper2`, `Dropper3`, `DropperMinimalistic`, `DropperMinimalistic2`, `Dumbbell`, `DumbbellLarge`, `DumbbellLargeMinimalistic`, `DumbbellSmall`, `Dumbbells`, `Dumbbells2`, `Earth`, `ElectricRefueling`, `EmojiFunnyCircle`, `EmojiFunnySquare`, `EndCall`, `EndCallRounded`, `Eraser`, `EraserCircle`, `EraserSquare`, `Euro`, `Exit`, `Explicit`, `Export`, `ExpressionlessCircle`, `ExpressionlessSquare`, `EyeClosed`, `EyeScan`, `FaceScanCircle`, `FaceScanSquare`, `FacemaskCircle`, `FacemaskSquare`, `Feed`, `FerrisWheel`, `Figma`, `FigmaFile`, `FileCheck`, `FileCorrupted`, `FileDownload`, `FileFavourite`, `FileLeft`, `FileRemove`, `FileRight`, `FileSend`, `FileSmile`, `FileText`, `Filters`, `Fire`, `FireMinimalistic`, `FireSquare`, `Flag`, `Flag2`, `Flame`, `Flashlight`, `FlashlightOn`, `FlipHorizontal`, `FlipVertical`, `FloorLamp`, `FloorLampMinimalistic`, `Fog`, `Folder`, `Folder2`, `FolderAdd`, `FolderCheck`, `FolderCloud`, `FolderError`, `FolderFavouriteBookmark`, `FolderFavouriteStar`, `FolderMove`, `FolderOpen`, `FolderPathConnect`, `FolderSecurity`, `FolderWithFiles`, `Football`, `Forbidden`, `ForbiddenCircle`, `Forward`, `Forward2`, `ForwardArrowsAction`, `Fridge`, `Fuel`, `FullScreen`, `FullScreenCircle`, `FullScreenSquare`, `Gallery`, `GalleryAdd`, `GalleryCheck`, `GalleryCircle`, `GalleryDownload`, `GalleryEdit`, `GalleryFavourite`, `GalleryMinimalistic`, `GalleryRemove`, `GalleryRound`, `GallerySend`, `GalleryWide`, `Gameboy`, `Gamepad`, `GamepadCharge`, `GamepadMinimalistic`, `GamepadNoCharge`, `GamepadOld`, `Garage`, `GasStation`, `Ghost`, `GhostSmile`, `Gift`, `Glasses`, `Global`, `Globus`, `Golf`, `Gps`, `Graph`, `GraphDown`, `GraphDownNew`, `GraphNew`, `GraphNewUp`, `GraphUp`, `HamburgerMenu`, `HandHeart`, `HandMoney`, `HandPills`, `HandShake`, `HandStars`, `Hanger`, `Hanger2`, `Hashtag`, `HashtagChat`, `HashtagCircle`, `HashtagSquare`, `HeadphonesRound`, `HeadphonesRoundSound`, `HeadphonesSquare`, `HeadphonesSquareSound`, `Health`, `HeartAngle`, `HeartBroken`, `HeartLock`, `HeartPulse`, `HeartPulse2`, `HeartShine`, `HeartUnlock`, `Hearts`, `Help`, `HighDefinition`, `HighQuality`, `Hiking`, `HikingMinimalistic`, `HikingRound`, `History`, `History2`, `History3`, `Hive`, `Home2`, `HomeAdd`, `HomeAddAngle`, `HomeAngle`, `HomeAngle2`, `HomeBuildingInfrastructure`, `HomeSmile`, `HomeSmileAngle`, `HomeWifi`, `HomeWifiAngle`, `Hospital`, `Hourglass`, `HourglassLine`, `Import`, `Inbox`, `InboxArchive`, `InboxIn`, `InboxLine`, `InboxOut`, `InboxUnread`, `Incognito`, `IncomingCall`, `IncomingCallRounded`, `Infinity`, `InfoSquare`, `Iphone`, `JarOfPills`, `JarOfPills2`, `Key`, `KeyMinimalistic`, `KeyMinimalistic2`, `KeyMinimalisticSquare`, `KeyMinimalisticSquare2`, `KeyMinimalisticSquare3`, `KeySquare`, `KeySquare2`, `Keyboard`, `KickScooter`, `Ladle`, `Lamp`, `Layers`, `LayersMinimalistic`, `Leaf`, `Letter`, `LetterOpened`, `LetterUnread`, `Library`, `Lightbulb`, `LightbulbBolt`, `LightbulbMinimalistic`, `Lightning`, `Like`, `Link`, `LinkBroken`, `LinkBrokenMinimalistic`, `LinkCircle`, `LinkMinimalistic`, `LinkMinimalistic2`, `LinkRound`, `LinkRoundAngle`, `LinkSquare`, `List`, `ListArrowDown`, `ListArrowDownMinimalistic`, `ListArrowUp`, `ListArrowUpMinimalistic`, `ListCheck`, `ListCheckMinimalistic`, `ListCross`, `ListCrossMinimalistic`, `ListDown`, `ListHeart`, `ListHeartMinimalistic`, `ListUp`, `ListUpMinimalistic`, `ListUpMinimalisticList`, `LockKeyhole`, `LockKeyholeMinimalistic`, `LockKeyholeMinimalisticUnlocked`, `LockKeyholeUnlocked`, `LockPassword`, `LockPasswordUnlocked`, `LockUnlocked`, `Login`, `Login2`, `Login3`, `Logout2`, `Logout3`, `MagicStick`, `MagicStick2`, `MagicStick3`, `Magnet`, `MagnetWave`, `Magnifer`, `MagniferBug`, `MagniferBugRounded`, `MagniferMinimalistic`, `MagniferRounded`, `MagniferZoomIn`, `MagniferZoomInMinimalistic`, `MagniferZoomInRounded`, `MagniferZoomOut`, `MagniferZoomOutMinimalistic`, `MagniferZoomOutRounded`, `MagnifierBugMinimalistic`, `Mailbox`, `Map`, `MapArrowDown`, `MapArrowLeft`, `MapArrowRight`, `MapArrowSquare`, `MapArrowUp`, `MapPoint`, `MapPointAdd`, `MapPointFavourite`, `MapPointHospital`, `MapPointRemove`, `MapPointRotate`, `MapPointSchool`, `MapPointSearch`, `MapPointWave`, `MaskHapply`, `MaskSad`, `Masks`, `Maximize`, `MaximizeSquare`, `MaximizeSquare2`, `MaximizeSquare3`, `MaximizeSquareMinimalistic`, `MedalRibbon`, `MedalRibbonStar`, `MedalRibbonsStar`, `MedalStar`, `MedalStarCircle`, `MedalStarSquare`, `MedicalKit`, `Meditation`, `MeditationRound`, `Men`, `MentionCircle`, `MentionSquare`, `MenuDots`, `MenuDots2`, `MenuDotsCircle`, `MenuDotsCircle2`, `MenuDotsSquare`, `MenuDotsSquare2`, `Microphone`, `Microphone2`, `Microphone3`, `MicrophoneLarge`, `Minimize`, `MinimizeSquare`, `MinimizeSquare2`, `MinimizeSquare3`, `MinimizeSquareMinimalistic`, `MinusCircle`, `MinusSquare`, `Mirror`, `MirrorEssentionalUi`, `MirrorLeft`, `MirrorRight`, `MoneyBag`, `Monitor`, `MonitorCamera`, `MonitorSmartphone`, `Moon`, `MoonFog`, `MoonSleep`, `MoonStars`, `Mouse`, `MouseCircle`, `MouseMinimalistic`, `MultipleForwardLeft`, `MultipleForwardRight`, `MusicLibrary`, `MusicLibrary2`, `MusicNote`, `MusicNote2`, `MusicNote3`, `MusicNote4`, `MusicNoteSlider`, `MusicNoteSlider2`, `MusicNotes`, `Muted`, `N4k`, `Notebook`, `Notebook2`, `Notebook2ElectronicDevices`, `NotebookBookmark`, `NotebookElectronicDevices`, `NotebookMinimalistic`, `NotebookMinimalisticElectronicDevices`, `NotebookNotes`, `NotebookSquare`, `Notes`, `NotesMinimalistic`, `NotificationLinesRemove`, `NotificationRemove`, `NotificationUnread`, `NotificationUnreadLines`, `ObjectScan`, `OutgoingCall`, `OutgoingCallRounded`, `OvenMitts`, `OvenMittsMinimalistic`, `PaintRoller`, `Palette`, `PaletteRound`, `Panorama`, `PaperBin`, `Paperclip`, `Paperclip2`, `PaperclipRounded`, `PaperclipRounded2`, `ParagraphSpacing`, `Passport`, `PassportMinimalistic`, `Password`, `PasswordMinimalistic`, `PasswordMinimalisticInput`, `Pause`, `PauseCircle`, `Paw`, `Pen`, `Pen2`, `PenNewRound`, `PenNewSquare`, `PeopleNearby`, `Perfume`, `PhoneCalling`, `PhoneCallingRounded`, `PhoneRounded`, `PieChart`, `PieChart2`, `PieChart3`, `Pill`, `Pills`, `Pills2`, `Pills3`, `Pin`, `PinCircle`, `PinList`, `Pip`, `Pip2`, `Pipette`, `Plain`, `Plain2`, `Plain3`, `Planet`, `Planet2`, `Planet3`, `Planet4`, `Plate`, `Play`, `PlayCircle`, `PlayStream`, `PlaybackSpeed`, `Playlist`, `Playlist2`, `PlaylistMinimalistic`, `PlaylistMinimalistic2`, `PlaylistMinimalistic3`, `PlugCircle`, `PlusMinus`, `Podcast`, `PointOnMap`, `PointOnMapPerspective`, `PostsCarouselHorizontal`, `PostsCarouselVertical`, `Power`, `PresentationGraph`, `Printer2`, `PrinterMinimalistic`, `Programming`, `Projector`, `Property`, `Pulse`, `Pulse2`, `QrCode`, `QuestionCircle`, `QuestionSquare`, `QuitFullScreen`, `QuitFullScreenCircle`, `QuitFullScreenSquare`, `QuitPip`, `Radar`, `Radar2`, `RadialBlur`, `Radio`, `RadioMinimalistic`, `Ranking`, `ReciveSquare`, `ReciveTwiceSquare`, `Record`, `RecordCall`, `RecordCircle`, `RecordCircleCall`, `RecordSquare`, `RecordVideoAudioSound`, `Reel`, `Reel2`, `RefreshCircle`, `RefreshCircle2`, `RefreshSquare`, `RefreshSquare2`, `RemoteController`, `RemoteController2`, `RemoteControllerMinimalistic`, `RemoveFolder`, `Reorder`, `ReorderArrowsAction`, `Repeat`, `RepeatOne`, `RepeatOneMinimalistic`, `Reply`, `Reply2`, `Restart`, `Revote`, `Rewind10SecondsBack`, `Rewind10SecondsForward`, `Rewind15SecondsBack`, `Rewind15SecondsForward`, `Rewind5SecondsBack`, `Rewind5SecondsForward`, `RewindBack`, `RewindBackCircle`, `RewindForward`, `RewindForwardCircle`, `Rocket`, `Rocket2`, `RollingPin`, `RoundAltArrowDown`, `RoundAltArrowLeft`, `RoundAltArrowRight`, `RoundAltArrowUp`, `RoundArrowDown`, `RoundArrowLeft`, `RoundArrowLeftDown`, `RoundArrowLeftUp`, `RoundArrowRight`, `RoundArrowRightDown`, `RoundArrowRightUp`, `RoundArrowUp`, `RoundDoubleAltArrowDown`, `RoundDoubleAltArrowLeft`, `RoundDoubleAltArrowRight`, `RoundDoubleAltArrowUp`, `RoundGraph`, `RoundSortHorizontal`, `RoundSortVertical`, `RoundTransferDiagonal`, `RoundTransferHorizontal`, `RoundTransferVertical`, `Route`, `Routing`, `Routing2`, `Routing3`, `Ruble`, `Rugby`, `Ruler`, `RulerAngular`, `RulerCrossPen`, `RulerPen`, `Running`, `Running2`, `RunningRound`, `SadCircle`, `SadSquare`, `Safe2`, `SafeCircle`, `SafeSquare`, `Sale`, `SaleSquare`, `Satellite`, `Scale`, `Scanner`, `Scanner2`, `Scissors`, `ScissorsSquare`, `Scooter`, `ScreenShare`, `Screencast`, `Screencast2`, `SdCard`, `SendSquare`, `SendTwiceSquare`, `Server`, `Server2`, `ServerMinimalistic`, `ServerPath`, `ServerSquare`, `ServerSquareCloud`, `ServerSquareUpdate`, `SettingsMinimalistic`, `Share`, `ShareCircle`, `Shield`, `ShieldCheck`, `ShieldCross`, `ShieldKeyhole`, `ShieldKeyholeMinimalistic`, `ShieldMinimalistic`, `ShieldMinus`, `ShieldNetwork`, `ShieldPlus`, `ShieldStar`, `ShieldUp`, `ShieldUser`, `ShieldWarning`, `ShockAbsorber`, `Shop`, `Shop2`, `ShopMinimalistic`, `Shuffle`, `SidebarCode`, `SidebarMinimalistic`, `Siderbar`, `Signpost`, `Signpost2`, `SimCard`, `SimCardMinimalistic`, `SimCards`, `Siren`, `SirenRounded`, `Skateboard`, `Skateboarding`, `SkateboardingRound`, `SkipNext`, `SkipPrevious`, `Skirt`, `SlashCircle`, `SlashSquare`, `Sledgehammer`, `SleepingCircle`, `SleepingSquare`, `SliderHorizontal`, `SliderMinimalisticHorizontal`, `SliderVertical`, `SliderVerticalMinimalistic`, `SmartHome`, `SmartHomeAngle`, `SmartSpeaker`, `SmartSpeaker2`, `SmartSpeakerMinimalistic`, `SmartVacuumCleaner`, `SmartVacuumCleaner2`, `Smartphone`, `Smartphone2`, `SmartphoneRotate2`, `SmartphoneRotateAngle`, `SmartphoneRotateOrientation`, `SmartphoneUpdate`, `SmartphoneVibration`, `SmileCircle`, `SmileSquare`, `Snowflake`, `Socket`, `Sofa`, `Sofa2`, `Sofa3`, `Sort`, `SortByAlphabet`, `SortByTime`, `SortEssentionalUi`, `SortFromBottomToTop`, `SortFromTopToBottom`, `SortHorizontal`, `SortVertical`, `Soundwave`, `SoundwaveVideoAudioSound`, `SoundwaveVideoAudioSound2`, `Speaker`, `SpeakerMinimalistic`, `SpecialEffects`, `SpedometerLow`, `SpedometerMax`, `SpedometerMiddle`, `SquareAcademicCap`, `SquareAcademicCap2`, `SquareAltArrowDown`, `SquareAltArrowLeft`, `SquareAltArrowRight`, `SquareAltArrowUp`, `SquareArrowDown`, `SquareArrowLeft`, `SquareArrowLeftDown`, `SquareArrowLeftUp`, `SquareArrowRight`, `SquareArrowRightDown`, `SquareArrowRightUp`, `SquareArrowUp`, `SquareBottomDown`, `SquareBottomUp`, `SquareDoubleAltArrowDown`, `SquareDoubleAltArrowLeft`, `SquareDoubleAltArrowRight`, `SquareDoubleAltArrowUp`, `SquareForward`, `SquareShareLine`, `SquareSortHorizontal`, `SquareSortVertical`, `SquareTopDown`, `SquareTopUp`, `SquareTransferHorizontal`, `SquareTransferVertical`, `SsdRound`, `SsdSquare`, `StarAngle`, `StarAstronomy`, `StarCircle`, `StarFall`, `StarFall2`, `StarFallMinimalistic`, `StarFallMinimalistic2`, `StarRainbow`, `StarRing`, `StarRings`, `StarShine`, `Stars`, `StarsAstronomy`, `StarsLine`, `StarsMinimalistic`, `Station`, `StationMinimalistic`, `Stethoscope`, `StickerCircle`, `StickerSmileCircle`, `StickerSmileCircle2`, `StickerSmileSquare`, `StickerSquare`, `Stop`, `StopCircle`, `Stopwatch`, `StopwatchPause`, `StopwatchPlay`, `Stream`, `Streets`, `StreetsMapPoint`, `StreetsNavigation`, `Stretching`, `StretchingRound`, `Structure`, `Subtitles`, `Suitcase`, `SuitcaseLines`, `SuitcaseTag`, `Sun`, `Sun2`, `SunFog`, `Sunrise`, `Sunset`, `Suspension`, `SuspensionBolt`, `SuspensionCross`, `Swimming`, `Syringe`, `TShirt`, `Tablet`, `Tag`, `TagHorizontal`, `TagPrice`, `Target`, `TeaCup`, `Telescope`, `Temperature`, `Tennis`, `Tennis2`, `TestTube`, `TestTubeMinimalistic`, `Text`, `TextBold`, `TextBoldCircle`, `TextBoldSquare`, `TextCircle`, `TextCross`, `TextCrossCircle`, `TextCrossSquare`, `TextField`, `TextFieldFocus`, `TextItalic`, `TextItalicCircle`, `TextItalicSquare`, `TextSelection`, `TextSquare`, `TextSquare2`, `TextUnderline`, `TextUnderlineCircle`, `TextUnderlineCross`, `Thermometer`, `ThreeSquares`, `TickerStar`, `Ticket`, `TicketSale`, `ToPip`, `Tornado`, `TornadoSmall`, `Traffic`, `TrafficEconomy`, `Tram`, `TransferHorizontal`, `TransferVertical`, `Translation`, `Translation2`, `Transmission`, `TransmissionCircle`, `TransmissionSquare`, `TrashBin`, `TrashBin2`, `TrashBinMinimalistic`, `TrashBinMinimalistic2`, `Treadmill`, `TreadmillRound`, `Trellis`, `Tuning`, `Tuning2`, `Tuning3`, `Tuning4`, `TuningSquare`, `TuningSquare2`, `Turntable`, `TurntableMinimalistic`, `TurntableMusicNote`, `Tv`, `Ufo`, `Ufo2`, `Ufo3`, `Umbrella`, `UndoLeft`, `UndoLeftRound`, `UndoLeftRoundSquare`, `UndoLeftSquare`, `UndoRight`, `UndoRightRound`, `UndoRightRoundArrowsAction`, `UndoRightSquare`, `Unread`, `UploadMinimalistic`, `UploadSquare`, `UploadTrack`, `UploadTrack2`, `UploadTwiceSquare`, `Usb`, `UsbCircle`, `UsbElectronicDevices`, `UsbSquare`, `UserBlock`, `UserBlockRounded`, `UserCheck`, `UserCheckRounded`, `UserCircle`, `UserCross`, `UserCrossRounded`, `UserHandUp`, `UserHands`, `UserHeart`, `UserHeartRounded`, `UserId`, `UserMinus`, `UserMinusRounded`, `UserPlus`, `UserPlusRounded`, `UserRounded`, `UserSpeak`, `UserSpeakRounded`, `UsersGroupRounded`, `UsersGroupTwoRounded`, `VerifiedCheck`, `VideoFrame`, `VideoFrame2`, `VideoFrameCut`, `VideoFrameCut2`, `VideoFramePlayHorizontal`, `VideoFramePlayVertical`, `VideoFrameReplace`, `VideoLibrary`, `Videocamera`, `VideocameraAdd`, `VideocameraRecord`, `VinylRecord`, `Virus`, `Volleyball`, `Volleyball2`, `Volume`, `VolumeCross`, `VolumeKnob`, `VolumeLoud`, `VolumeSmall`, `WadOfMoney`, `Walking`, `WalkingRound`, `Wallet`, `Wallet2`, `WalletMoney`, `Wallpaper`, `WashingMachine`, `WashingMachineMinimalistic`, `WatchRound`, `WatchSquare`, `WatchSquareMinimalistic`, `WatchSquareMinimalisticCharge`, `Water`, `WaterSun`, `Waterdrop`, `Waterdrops`, `Weigher`, `Wheel`, `WheelAngle`, `Whisk`, `WiFiRouter`, `WiFiRouterMinimalistic`, `WiFiRouterRound`, `Widget`, `Widget2`, `Widget3`, `Widget4`, `Widget5`, `Widget6`, `WidgetAdd`, `Wind`, `WindowFrame`, `Wineglass`, `WineglassTriangle`, `Winrar`, `WirelessCharge`, `Women`, `Xxx`, `ZipFile`
 - `RvmIconStyle` (`RVM.DesignSystem.Icons`): Estilo do desenho do icone (contrato com o RVM.UI, DSGN-017). O Tabler tem traco e cheio: `RvmIconStyle.Bold` e `RvmIconStyle.BoldDuotone` saem cheios onde o Tabler desenha a versao cheia; o resto sai no traco.
@@ -2245,6 +2412,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Text`, `Email`, `Password`, `Number`, `Tel`, `Url`, `Search`
 - `RvmLabelPosition` (`RVM.DesignSystem`): De que lado do controle fica o rotulo (caixa de marcar, chave, opcao).
   Valores: `End`, `Start`
+- `RvmLabelVariant` (`RVM.DesignSystem.Components.Label`): Preenchimento da etiqueta.
+  Valores: `Soft`, `Solid`
 - `RvmListItemLayout` (`RVM.DesignSystem.Components.Lists`): Forma do `RvmListItem` (contrato com o RVM.UI, DSGN-017). Muda a hierarquia de cor do texto.
   Valores: `TwoColumn`, `OneColumn`
 - `RvmMascotName` (`RVM.DesignSystem.Icons`): Os mascotes do contrato com o RVM.UI (DSGN-017). O nome diz a FUNCAO na interface (erro, carregando, vazio), nao o personagem. No Design System nao ha ilustracao: cada um vira um icone Tabler grande num circulo de fundo suave, no estilo NEATLAB — invencao declarada. Ver `RvmMascot`.
@@ -2263,6 +2432,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Text`, `Outlined`
 - `RvmPopupAlignment` (`RVM.DesignSystem`): Onde a janela de um campo abre, em relacao a ele.
   Valores: `Start`, `End`, `Stretch`
+- `RvmProgressLabelVariant` (`RVM.DesignSystem.Components.Progress`): Estilo do rotulo acima da barra de progresso.
+  Valores: `Amount`, `Label`
 - `RvmProgressVariant` (`RVM.DesignSystem.Components.Progress`): Forma do indicador de progresso.
   Valores: `Linear`, `Circular`
 - `RvmRatingDisplay` (`RVM.DesignSystem.Components.Rating`): Forma da nota so mostrada (contrato com o RVM.UI, DSGN-017). Editavel, e sempre a de estrelas.
@@ -2277,6 +2448,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Ascending`, `Descending`, `None`
 - `RvmStepperLabelPlacement` (`RVM.DesignSystem.Components.Stepper`): Onde o texto de cada etapa fica em relacao ao marcador.
   Valores: `End`, `Bottom`
+- `RvmSurface` (`RVM.DesignSystem.Components.Progress`): Superficie sobre a qual o componente esta: fundo claro ou escuro/colorido.
+  Valores: `Light`, `Dark`
 - `RvmTableAlign` (`RVM.DesignSystem.Components.Table`): Alinhamento do conteudo de uma coluna.
   Valores: `Start`, `Center`, `End`
 - `RvmTabsVariant` (`RVM.DesignSystem.Components.Tabs`): Estilo das abas — as duas linhas da pagina Tabs do kit.
@@ -2289,6 +2462,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `Auto`, `H1`, `H2`, `H3`, `H4`, `H5`, `H6`, `P`, `Span`, `Div`, `Label`
 - `RvmTextFieldVariant` (`RVM.DesignSystem.Components.TextField`): Os tres estilos da pagina Text Field do kit.
   Valores: `Outlined`, `Filled`, `Standard`
+- `RvmTextVariant` (`RVM.DesignSystem.Components.Typography`): Nivel de texto do contrato com o RVM.UI (DSGN-017). Cada nivel aponta para um estilo da escala do design system (`RvmTypographyVariant`); a tabela de correspondencia esta na pagina do RvmText.
+  Valores: `DisplayXl`, `DisplayL`, `DisplayM`, `DisplayS`, `TextXl`, `TextL`, `TextM`, `TextS`, `TextXs`
 - `RvmTheme` (`RVM.DesignSystem.Theming`): Os dois temas do design system. Enum, nunca string magica: o valor entra em atributo HTML e em armazenamento local, e um typo em string so apareceria na tela do usuario.
   Valores: `Light`, `Dark`
 - `RvmTimeClockView` (`RVM.DesignSystem.Components.TimePicker`): O que o mostrador do relogio esta escolhendo.
@@ -2297,6 +2472,8 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
   Valores: `List`, `Clock`
 - `RvmTimelinePosition` (`RVM.DesignSystem.Components.Timeline`): De que lado da linha fica o conteudo principal.
   Valores: `Right`, `Left`, `Alternate`
+- `RvmToastSeverity` (`RVM.DesignSystem.Components.Toast`): Gravidade do aviso. Decide o icone, a duracao padrao e se o leitor de tela interrompe.
+  Valores: `Info`, `Success`, `Warning`, `Error`
 - `RvmTooltipPlacement` (`RVM.DesignSystem.Components.Tooltip`): De que lado do conteudo a dica aparece.
   Valores: `Top`, `Bottom`, `Left`, `Right`
 - `RvmTooltipTrigger` (`RVM.DesignSystem.Components.Tooltip`): Icone do gatilho padrao do `RvmTooltip`, usado quando nao ha `ChildContent`.
@@ -2311,6 +2488,17 @@ Texto na escala tipografica do design system. Escolhe o ESTILO pelo `RvmTypograp
 ## Tipos de apoio
 
 Classes e records usados nos parametros dos componentes.
+
+### IRvmToast
+
+`RVM.DesignSystem.Components.Toast` · Avisos passageiros (toast). Injete, chame `IRvmToast.Show` (ou os atalhos de `RvmToastExtensions`) e ponha um `RvmToastProvider` no layout.
+- `Messages`: `IReadOnlyList<RvmToastMessage>` — Avisos na tela agora, do mais antigo ao mais novo.
+- `void Clear()`
+- `void Dismiss(Guid id)`
+- `void Pause(Guid id)`
+- `void Resume(Guid id)`
+- `Guid Show(string text, RvmToastAction action, RvmToastSeverity severity, string title, TimeSpan? duration)`
+- `Guid Show(string text, RvmToastSeverity severity, string title, TimeSpan? duration)`
 
 ### RvmAvatarItem
 
@@ -2398,6 +2586,35 @@ Classes e records usados nos parametros dos componentes.
 - `Description`: `string?` — A linha de apoio ("Informe e-mail e senha").
 - `HasError`: `bool` — A etapa tem problema a resolver — a validacao do "com validacao" do catalogo.
 - `Title`: `string` — O nome da etapa ("Dados da conta").
+
+### RvmToastAction
+
+`RVM.DesignSystem.Components.Toast` · Acao de um aviso: um botao com `Label` que, clicado, roda `OnClick` e fecha o aviso.
+- `Label`: `string` — Texto do botao: o verbo do que acontece ("Desfazer", "Abrir agora").
+- `OnClick`: `Func<Task>` — O que o botao faz. O aviso fecha quando termina, tenha dado certo ou nao.
+
+### RvmToastMessage
+
+`RVM.DesignSystem.Components.Toast` · Um aviso na fila do `IRvmToast`.
+- `Action`: `RvmToastAction?` — Botao de acao opcional dentro do aviso ("Desfazer"). `null`: aviso sem acao.
+- `Duration`: `TimeSpan` — Tempo na tela. `TimeSpan.Zero` deixa o aviso ate a pessoa fechar.
+- `Id`: `Guid` — Identificador, para fechar por codigo.
+- `Severity`: `RvmToastSeverity` — Gravidade.
+- `Text`: `string` — Texto do aviso: o que aconteceu e, se houver, o que fazer.
+- `Title`: `string?` — Titulo opcional, acima do texto.
+
+### RvmToastService
+
+`RVM.DesignSystem.Components.Toast` · Fila de avisos com fechamento automatico. Registrado por `AddRvmToast()`.
+- `Messages`: `IReadOnlyList<RvmToastMessage>`
+- `void Clear()`
+- `TimeSpan DefaultDuration(RvmToastSeverity severity)`
+- `void Dismiss(Guid id)`
+- `void Dispose()`
+- `void Pause(Guid id)`
+- `void Resume(Guid id)`
+- `Guid Show(string text, RvmToastAction action, RvmToastSeverity severity, string title, TimeSpan? duration)`
+- `Guid Show(string text, RvmToastSeverity severity, string title, TimeSpan? duration)`
 
 ### RvmUploadItem
 

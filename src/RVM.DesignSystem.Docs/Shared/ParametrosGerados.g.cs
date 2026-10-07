@@ -98,6 +98,15 @@ internal static class ParametrosGerados
             new("ValueFormat", "Func<double, string>?", "—", "Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`."),
             new("Zoomable", "bool", "false", "Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario."),
         ],
+        ["RvmArtisticIconBadge"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor. Padrao: `RvmColor.Accent`."),
+            new("Icon", "RvmIconName", "obrigatorio", "Qual icone. Sai cheio (quando o Tabler tem) e com 28 px."),
+            new("Label", "string?", "—", "O que o badge significa, para o leitor de tela. Sem ele o badge e decorativo (`aria-hidden`)."),
+            new("Variant", "RvmArtisticVariant", "RvmArtisticVariant.Gradient", "Degrade (padrao) ou brilho."),
+        ],
         ["RvmAutocomplete"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz."),
@@ -438,6 +447,25 @@ internal static class ParametrosGerados
             new("ValueFormat", "Func<double, string>?", "—", "Formato dos valores no eixo e na dica. Padrao: `RvmChartFormat.Compact`."),
             new("Zoomable", "bool", "false", "Deixa aproximar e arrastar o grafico: roda do mouse no eixo X (com Shift, no Y), arrasto para deslocar, duplo clique para voltar e, no teclado, `+`, `-`, `0` e Ctrl+setas. Padrao: nao — a roda do mouse pertence a pagina ate o consumidor decidir o contrario."),
         ],
+        ["RvmConfirmModal"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("Align", "RvmDialogAlign", "RvmDialogAlign.Center", "Texto centralizado (padrao) ou alinhado a esquerda."),
+            new("CancelText", "string", "\"Cancelar\"", "Texto do botao que desiste. Padrao: \"Cancelar\"."),
+            new("ChildContent", "RenderFragment?", "—", "Corpo livre, no lugar da `RvmConfirmModal.Description`."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("CloseOnBackdrop", "bool", "true", "Clicar no fundo desiste. Padrao: sim."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor do icone e do botao de confirmar. `RvmColor.Error` para acao destrutiva."),
+            new("ConfirmText", "string", "\"Confirmar\"", "Texto do botao que confirma. Diga a acao (\"Excluir\"), nao \"OK\". Padrao: \"Confirmar\"."),
+            new("Description", "string?", "—", "Explicacao abaixo da pergunta. Diga o que a acao faz, nao repita o titulo."),
+            new("Icon", "RvmIconName", "RvmIconName.DangerTriangle", "Icone do circulo. Padrao: triangulo de alerta."),
+            new("OnCancel", "EventCallback", "—", "Desistiu, pelo botao, pelo Esc ou pelo fundo."),
+            new("OnConfirm", "EventCallback", "—", "Confirmou. A confirmacao fecha depois de a acao terminar; enquanto isso, os botoes travam."),
+            new("Open", "bool", "false", "Aberto. Aceita `@bind-Open`."),
+            new("OpenChanged", "EventCallback<bool>", "—", "Disparado quando a confirmacao se fecha (confirmou ou desistiu)."),
+            new("ReturnFocusTo", "ElementReference?", "—", "Quem recebe o foco quando a confirmacao fecha — o botao que a abriu. Sem ele, o foco volta ao elemento que o tinha ao abrir."),
+            new("Title", "string", "obrigatorio", "A pergunta. E o nome acessivel do dialogo — sem ela o dialogo nao tem nome."),
+        ],
         ["RvmDataGrid"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
@@ -688,6 +716,17 @@ internal static class ParametrosGerados
             new("Style", "RvmIconStyle", "RvmIconStyle.Linear", "Traco (padrao) ou cheio. Ver `RvmIconStyle`."),
             new("Title", "string?", "—", "O que o icone significa, para quem nao o enxerga. Preencha so quando o icone for a UNICA fonte daquela informacao — botao de icone sem rotulo, por exemplo. Ao lado de um texto que ja diz a mesma coisa, deixe vazio: o leitor de tela repetiria a informacao."),
         ],
+        ["RvmIconBadge"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos HTML extras (`class`, `style`, `id`, `aria-*`...), repassados ao elemento raiz."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor. Padrao: `RvmColor.Accent`."),
+            new("Icon", "RvmIconName", "obrigatorio", "Qual icone."),
+            new("IconStyle", "RvmIconStyle", "RvmIconStyle.BoldDuotone", "Desenho do icone. Padrao: `RvmIconStyle.BoldDuotone` (cheio, quando o Tabler tem)."),
+            new("Label", "string?", "—", "O que o badge significa, para o leitor de tela. Preencha so quando o badge for a unica fonte da informacao; ao lado de um texto que ja diz o mesmo, deixe vazio e ele fica decorativo."),
+            new("Size", "RvmIconBadgeSize", "RvmIconBadgeSize.Large", "Lado: 32, 40, 48 (padrao) ou 56 px."),
+            new("Variant", "RvmIconBadgeVariant", "RvmIconBadgeVariant.Soft", "Suave (padrao), cheio ou fundo cinza neutro."),
+        ],
         ["RvmIconButton"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos repassados ao elemento raiz."),
@@ -722,6 +761,15 @@ internal static class ParametrosGerados
             new("Value", "RvmIconName?", "—", ""),
             new("ValueChanged", "EventCallback<RvmIconName?>", "—", ""),
             new("ValueExpression", "Expression<Func<RvmIconName?>>?", "—", ""),
+        ],
+        ["RvmLabel"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O texto da etiqueta."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor. Padrao: `RvmColor.Accent`."),
+            new("Size", "RvmSize", "RvmSize.Medium", "Altura de 24, 28 (padrao) ou 32 px."),
+            new("Variant", "RvmLabelVariant", "RvmLabelVariant.Soft", "Suave (padrao) ou cheia."),
         ],
         ["RvmLineChart"] =
         [
@@ -894,6 +942,19 @@ internal static class ParametrosGerados
             new("MovesFocus", "bool", "false", "O item LEVA o foco consigo (abre um painel, uma aba ou um dialogo e poe o foco la): ao fechar, o menu NAO devolve o foco ao botao que o abriu. Padrao: devolve, como manda o padrao de menu do WAI-ARIA."),
             new("OnClick", "EventCallback", "—", "O que fazer ao escolher o item."),
             new("Text", "string", "\"\"", "Texto da acao, quando nao ha `RvmMenuItem.ChildContent`."),
+        ],
+        ["RvmModal"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados ao elemento raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O conteudo da caixa, inclusive os botoes."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("CloseOnBackdrop", "bool", "true", "Clicar no fundo fecha. Padrao: sim."),
+            new("CloseOnEscape", "bool", "true", "Esc fecha. Padrao: sim."),
+            new("Label", "string?", "—", "Nome acessivel quando nao ha `RvmModal.Title` (o topo e desenhado no conteudo)."),
+            new("Open", "bool", "false", "Aberto. Aceita `@bind-Open`."),
+            new("OpenChanged", "EventCallback<bool>", "—", "Disparado quando o modal se fecha sozinho (Esc, fundo)."),
+            new("ReturnFocusTo", "ElementReference?", "—", "Quem recebe o foco quando o modal fecha — normalmente o botao que o abriu. Sem ele, o foco volta ao elemento que o tinha quando o modal abriu."),
+            new("Title", "string?", "—", "Titulo no topo da caixa. Tambem e o nome acessivel do modal."),
         ],
         ["RvmMultiSelect"] =
         [
@@ -1135,6 +1196,21 @@ internal static class ParametrosGerados
             new("Value", "double?", "—", "Porcentagem de 0 a 100. Sem valor, o indicador e indeterminado — use quando nao da para saber quanto falta."),
             new("Variant", "RvmProgressVariant", "RvmProgressVariant.Linear", "Barra (padrao) ou anel."),
         ],
+        ["RvmProgressBar"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a raiz."),
+            new("AriaLabel", "string?", "—", "Nome acessivel quando nao ha `RvmProgressBar.Label` visivel. Um dos dois e obrigatorio."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmColor", "RvmColor.Primary", "Papel de cor da parte preenchida. Padrao: `RvmColor.Accent`."),
+            new("Label", "string?", "—", "Rotulo acima da barra. Tambem e o nome acessivel."),
+            new("LabelVariant", "RvmProgressLabelVariant", "RvmProgressLabelVariant.Label", "Estilo do rotulo: descricao (padrao) ou valor."),
+            new("NoValue", "bool", "false", "Valor nao informado: sem preenchimento, trilho tracejado e `RvmProgressBar.NoValueText` no lugar da porcentagem (e para o leitor de tela). `RvmProgressBar.Value` e ignorado."),
+            new("NoValueText", "string", "\"Nao informado\"", "Texto do estado sem valor. Padrao: \"Nao informado\"."),
+            new("ShowValue", "bool", "false", "Mostra a porcentagem a direita do rotulo."),
+            new("Size", "RvmSize", "RvmSize.Medium", "Barra de 4 px com texto pequeno, 8 px (padrao) ou 12 px."),
+            new("Surface", "RvmSurface", "RvmSurface.Light", "Fundo sobre o qual a barra esta. No `RvmSurface.Dark` (cartao colorido ou escuro), trilho, barra e texto ficam claros: a cor do papel sobre fundo colorido nao garante contraste."),
+            new("Value", "double", "0", "Progresso de 0 a 100. Fora disso e limitado (calculo que passa de 100 por arredondamento nao derruba a tela); NaN vira 0. Ignorado com `RvmProgressBar.NoValue`."),
+        ],
         ["RvmRadarChart"] =
         [
             new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a figura."),
@@ -1319,6 +1395,15 @@ internal static class ParametrosGerados
             new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
             new("CloseLabel", "string", "\"Fechar mensagem\"", "Nome acessivel do botao de fechar de cada mensagem. Padrao: \"Fechar mensagem\"."),
         ],
+        ["RvmSpinner"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a raiz."),
+            new("Centered", "bool", "false", "Ocupa a linha, centralizado e com respiro em cima e embaixo — o lugar de um carregamento de pagina."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Label", "string", "\"Carregando\"", "O que esta carregando (\"Carregando talhoes\"). Vai para o leitor de tela sempre, e para a tela com `RvmSpinner.ShowLabel`."),
+            new("ShowLabel", "bool", "false", "Mostra o texto ao lado do anel. Sem ele, o texto so vai para o leitor de tela."),
+            new("Size", "RvmSize", "RvmSize.Medium", "Anel de 24, 40 (padrao) ou 56 px — os tamanhos do `RvmProgress` circular."),
+        ],
         ["RvmStepIndicator"] =
         [
             new("Active", "bool", "false", "Passo atual: circulo cheio na cor primaria."),
@@ -1458,6 +1543,16 @@ internal static class ParametrosGerados
             new("OnRemove", "EventCallback", "—", "Chamado ao remover. Com alguem escutando, aparece o botao de remover (\"Remover {Text}\")."),
             new("Text", "string?", "—", "O texto da tag."),
             new("Variant", "RvmTagVariant", "RvmTagVariant.Soft", "Estilo. Padrao: `RvmTagVariant.Soft`."),
+        ],
+        ["RvmText"] =
+        [
+            new("AdditionalAttributes", "IReadOnlyDictionary<string, object>?", "—", "Atributos extras, repassados a raiz."),
+            new("ChildContent", "RenderFragment?", "—", "O texto."),
+            new("Class", "string?", "—", "Classe CSS extra no elemento raiz."),
+            new("Color", "RvmTextColor", "RvmTextColor.Primary", "Papel do texto na hierarquia de leitura. Padrao: `RvmTextColor.Default`."),
+            new("Element", "RvmTextElement", "RvmTextElement.Auto", "Elemento HTML. `RvmTextElement.Auto` (padrao): Display vira h1 a h4, o resto vira p."),
+            new("Variant", "RvmTextVariant", "RvmTextVariant.TextM", "Nivel de texto. Padrao: `RvmTextVariant.TextM`."),
+            new("Weight", "RvmFontWeight?", "—", "Peso. Sem valor, vale o peso do estilo da escala."),
         ],
         ["RvmTextArea"] =
         [
@@ -1603,6 +1698,12 @@ internal static class ParametrosGerados
             new("Color", "RvmColor?", "—", "Papel de cor do ponto. Sem valor, o ponto e neutro (\"Standard\" no kit)."),
             new("OppositeContent", "RenderFragment?", "—", "O outro lado da linha — normalmente a data ou a hora (\"Opposing\" no kit)."),
             new("Outlined", "bool", "false", "Ponto cheio (padrao) ou so o contorno."),
+        ],
+        ["RvmToastProvider"] =
+        [
+            new("Class", "string?", "—", "Classe CSS extra na regiao."),
+            new("CloseLabel", "string", "\"Fechar aviso\"", "Nome acessivel do botao de fechar de cada aviso. Padrao: \"Fechar aviso\"."),
+            new("RegionLabel", "string", "\"Avisos\"", "Nome da regiao para leitor de tela. Padrao: \"Avisos\"."),
         ],
         ["RvmTooltip"] =
         [
