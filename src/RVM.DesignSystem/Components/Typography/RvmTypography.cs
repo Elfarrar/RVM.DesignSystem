@@ -117,7 +117,10 @@ public class RvmTypography : ComponentBase
         _ => "badge"
     };
 
-    private string? TokenDeCor => Color switch
+    private string? TokenDeCor => CorDoTexto(Color);
+
+    /// <summary>O token de cor de cada papel de texto; <c>null</c> herda. Compartilhado com o <see cref="RvmText"/>.</summary>
+    internal static string? CorDoTexto(RvmTextColor cor) => cor switch
     {
         RvmTextColor.Primary => "var(--rvm-color-text-primary)",
         RvmTextColor.Secondary => "var(--rvm-color-text-secondary)",

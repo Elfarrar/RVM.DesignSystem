@@ -1,0 +1,105 @@
+@page "/componentes/text"
+
+<PageTitle>RvmText — RVM Design System</PageTitle>
+
+<h1 class="rvm-text-h4">RvmText</h1>
+
+<p class="rvm-text-body1 site-apoio">
+    Texto com os nove niveis do RVM.UI. Cada nivel aponta para um estilo da escala do design system (a
+    tabela abaixo), entao tamanho e entrelinha vem dos mesmos tokens do RvmTypography. Weight troca so o
+    peso; Element escolhe a tag sem mudar o visual.
+</p>
+
+<p class="rvm-text-body2 site-apoio">
+    Do contrato de API com o RVM.UI (DSGN-017): a mesma API, com o visual do NEATLAB.
+</p>
+
+<BlocoExemplo Titulo="Os niveis"
+              Descricao="Cada linha e um Variant, renderizado como span para nao baguncar os titulos desta pagina."
+              Codigo="@CodigoNiveis">
+    <div class="escala">
+        @foreach (var v in Enum.GetValues<RvmTextVariant>())
+        {
+            <div class="linha-escala">
+                <span class="rvm-text-caption site-apoio">@v</span>
+                <RvmText Variant="v" Element="RvmTextElement.Span">Saldo da safra</RvmText>
+            </div>
+        }
+    </div>
+</BlocoExemplo>
+
+<section aria-labelledby="correspondencia">
+    <h2 id="correspondencia" class="rvm-text-h6">Correspondencia com a escala do DS</h2>
+    <p class="rvm-text-body2 site-apoio">
+        O RVM.UI media em pixel do kit (32, 28, 24...); o DS tem a escala do tema (96, 60, 48...). Os niveis
+        foram casados mantendo a ordem: cada um continua maior que o seguinte, e o texto padrao (TextM) e o
+        14/20 dos dois lados. Sem Weight, vale o peso do estilo do DS.
+    </p>
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th scope="col" class="rvm-text-table-header">RvmTextVariant</th>
+                <th scope="col" class="rvm-text-table-header">No RVM.UI</th>
+                <th scope="col" class="rvm-text-table-header">Classe do DS</th>
+                <th scope="col" class="rvm-text-table-header">No DS (tamanho/entrelinha/peso)</th>
+                <th scope="col" class="rvm-text-table-header">Tag com Element Auto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (nivel, ui, classe, ds, tag) in Correspondencia)
+            {
+                <tr>
+                    <td class="rvm-text-body2"><code>@nivel</code></td>
+                    <td class="rvm-text-body2">@ui</td>
+                    <td class="rvm-text-body2"><code>@classe</code></td>
+                    <td class="rvm-text-body2">@ds</td>
+                    <td class="rvm-text-body2"><code>@tag</code></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<BlocoExemplo Titulo="Peso, cor e elemento"
+              Descricao="Weight sobrepoe o peso do estilo. A Inter do pacote vai ate 500: SemiBold e Bold saem com negrito sintetizado pelo navegador."
+              Codigo="@CodigoPesos">
+    <div class="lista-vertical">
+        <RvmText Weight="RvmFontWeight.Regular">Regular — receita de outubro</RvmText>
+        <RvmText Weight="RvmFontWeight.Medium">Medium — receita de outubro</RvmText>
+        <RvmText Weight="RvmFontWeight.SemiBold">SemiBold — receita de outubro</RvmText>
+        <RvmText Weight="RvmFontWeight.Bold">Bold — receita de outubro</RvmText>
+        <RvmText Color="RvmTextColor.Secondary" Variant="RvmTextVariant.TextS">Atualizado ha 5 minutos</RvmText>
+        <RvmText Color="RvmTextColor.Success" Weight="RvmFontWeight.Medium">+ R$ 3.250,00</RvmText>
+        <RvmText Color="RvmTextColor.Danger" Weight="RvmFontWeight.Medium">- R$ 1.120,00</RvmText>
+        <RvmText Variant="RvmTextVariant.DisplayS" Element="RvmTextElement.H2">Resumo do talhao 7</RvmText>
+    </div>
+</BlocoExemplo>
+
+<TabelaParametros Componente="RvmText" />
+
+@code {
+    private static readonly (string Nivel, string Ui, string Classe, string Ds, string Tag)[] Correspondencia =
+    [
+        ("DisplayXl", "32/32", "rvm-text-h3", "48/56/400", "h1"),
+        ("DisplayL", "28/36", "rvm-text-h4", "34/42/400", "h2"),
+        ("DisplayM", "24/32", "rvm-text-h5", "24/32/400", "h3"),
+        ("DisplayS", "20/30", "rvm-text-h6", "20/32/500", "h4"),
+        ("TextXl", "18/28", "rvm-text-subtitle1", "16/28/400", "p"),
+        ("TextL", "16/24", "rvm-text-input", "16/24/400", "p"),
+        ("TextM", "14/20", "rvm-text-body2", "14/20/400", "p"),
+        ("TextS", "12/18", "rvm-text-caption", "12/20/400", "p"),
+        ("TextXs", "10/14", "rvm-text-tooltip", "10/14/500", "p"),
+    ];
+
+    private const string CodigoNiveis = """
+        <RvmText Variant="RvmTextVariant.DisplayM">Saldo da safra</RvmText>
+        <RvmText>Texto padrao (TextM)</RvmText>
+        <RvmText Variant="RvmTextVariant.TextS" Color="RvmTextColor.Secondary">Legenda</RvmText>
+        """;
+
+    private const string CodigoPesos = """
+        <RvmText Weight="RvmFontWeight.SemiBold">Receita de outubro</RvmText>
+        <RvmText Color="RvmTextColor.Success" Weight="RvmFontWeight.Medium">+ R$ 3.250,00</RvmText>
+        <RvmText Variant="RvmTextVariant.DisplayS" Element="RvmTextElement.H2">Resumo do talhao 7</RvmText>
+        """;
+}
