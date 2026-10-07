@@ -1,0 +1,53 @@
+@namespace RVM.DesignSystem.Components.Filter
+@using RVM.DesignSystem.Components.Badge
+@using RVM.DesignSystem.Components.Button
+@using RVM.DesignSystem.Components.IconButton
+@using RVM.DesignSystem.Icons
+
+@* Botao "Filtros" com o contador de ativos, que abre um painel nao modal (role="dialog") com os grupos e os botoes
+   Limpar e Aplicar. Mesmo esquema do RvmMenu: fechado, o painel nao existe no DOM; clicar fora fecha por uma camada
+   transparente, sem ouvir o documento por JS; Esc fecha e devolve o foco ao botao. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <RvmButton @ref="_botao"
+               id="@IdDoBotao"
+               Variant="RvmButtonVariant.Outlined"
+               Color="@(Count > 0 || _aberto ? RvmColor.Primary : RvmColor.Secondary)"
+               StartIcon="RvmIconName.Filter"
+               Disabled="Disabled"
+               aria-label="@RotuloDoBotao"
+               aria-haspopup="dialog"
+               aria-expanded="@(_aberto ? "true" : "false")"
+               aria-controls="@(_aberto ? IdDoPainel : null)"
+               OnClick="AlternarAsync">
+        @Label
+        @if (Count > 0)
+        {
+            <RvmBadge Count="Count" Color="RvmColor.Error" Class="rvm-filtro-contador" aria-hidden="true" />
+        }
+    </RvmButton>
+
+    @if (_aberto)
+    {
+        <div class="rvm-fundo" @onclick="() => FecharAsync(devolverFoco: false)"></div>
+
+        <div @ref="_painel"
+             id="@IdDoPainel"
+             role="dialog"
+             aria-modal="false"
+             aria-labelledby="@IdDoTitulo"
+             tabindex="-1"
+             class="@ClassesDoPainel"
+             @onkeydown="AoTeclarAsync">
+            <div class="rvm-filtro-cabecalho">
+                <span id="@IdDoTitulo" class="rvm-filtro-titulo">@Title</span>
+                <RvmIconButton Icon="RvmIconName.Close" Label="Fechar os filtros" Size="RvmSize.Small"
+                               OnClick="() => FecharAsync(devolverFoco: true)" />
+            </div>
+            <div class="rvm-filtro-corpo">@ChildContent</div>
+            <div class="rvm-filtro-rodape">
+                <RvmButton Variant="RvmButtonVariant.Outlined" Color="RvmColor.Secondary" OnClick="LimparAsync">@ClearText</RvmButton>
+                <RvmButton OnClick="AplicarAsync">@ApplyText</RvmButton>
+            </div>
+        </div>
+    }
+</div>

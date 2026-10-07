@@ -1,0 +1,84 @@
+/* CSS isolado do RvmFilter. So custom properties — hex literal aqui quebra o tema escuro.
+   O painel segue a superficie do RvmMenu (papel, raio pequeno, sombra 3), mais largo, com cabecalho e rodape
+   separados por divisor como os cartoes do kit. */
+
+.rvm-filtro {
+    position: relative;
+    display: inline-block;
+}
+
+.rvm-filtro ::deep .rvm-filtro-contador {
+    margin-inline-start: var(--rvm-space-1);
+}
+
+.rvm-fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 1299;
+}
+
+.rvm-filtro-painel {
+    position: absolute;
+    top: calc(100% + var(--rvm-space-1));
+    left: 0;
+    z-index: 1300;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: min(360px, calc(100vw - var(--rvm-space-8)));
+    max-height: 70vh;
+    border-radius: var(--rvm-radius-sm);
+    background-color: var(--rvm-color-background-paper);
+    color: var(--rvm-color-text-primary);
+    box-shadow: var(--rvm-shadow-3);
+    font-family: var(--rvm-font-family);
+}
+
+.rvm-filtro-painel:focus-visible {
+    outline: var(--rvm-focus-ring-width) solid var(--rvm-focus-ring-color);
+    outline-offset: var(--rvm-focus-ring-offset);
+}
+
+.rvm-fim {
+    left: auto;
+    right: 0;
+}
+
+.rvm-centro {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.rvm-acima {
+    top: auto;
+    bottom: calc(100% + var(--rvm-space-1));
+}
+
+.rvm-filtro-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-3) var(--rvm-space-3) var(--rvm-space-3) var(--rvm-space-5);
+    border-bottom: 1px solid var(--rvm-color-divider);
+}
+
+.rvm-filtro-titulo {
+    font-size: var(--rvm-text-h6-size);
+    line-height: var(--rvm-text-h6-line);
+    font-weight: var(--rvm-text-h6-weight);
+}
+
+.rvm-filtro-corpo {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.rvm-filtro-rodape {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--rvm-space-3);
+    padding: var(--rvm-space-4) var(--rvm-space-5);
+    border-top: 1px solid var(--rvm-color-divider);
+}

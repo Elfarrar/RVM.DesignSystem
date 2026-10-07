@@ -1,0 +1,85 @@
+@namespace RVM.DesignSystem.Components.Filter
+@using RVM.DesignSystem.Components.Collapse
+@using RVM.DesignSystem.Components.Icon
+@using RVM.DesignSystem.Icons
+
+@* Secao recolhivel do painel de filtros: o botao fica dentro de um h3 (padrao "Accordion" do APG) e aponta o
+   corpo. O corpo e um RvmCollapse: fechado, continua montado (hidden), entao aria-controls sempre aponta um
+   elemento que existe. Com Scroll, o corpo tem altura maxima e entra na tabulacao para o teclado rolar. *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz">
+    <h3 class="rvm-grupo-cabecalho">
+        <button type="button"
+                id="@IdDoBotao"
+                class="rvm-grupo-gatilho"
+                aria-expanded="@(_aberto ? "true" : "false")"
+                aria-controls="@IdDoCorpo"
+                @onclick="AlternarAsync">
+            <span class="rvm-grupo-titulo">@Title</span>
+            <span class="rvm-grupo-marca" aria-hidden="true">
+                <RvmIcon Name="@(_aberto ? RvmIconName.Minus : RvmIconName.Plus)" Size="RvmSize.Small" />
+            </span>
+        </button>
+    </h3>
+    <RvmCollapse Id="@IdDoCorpo" Expanded="_aberto"
+                 Class="@(Scroll ? "rvm-grupo-corpo rvm-rolagem" : "rvm-grupo-corpo")"
+                 role="group" aria-labelledby="@IdDoBotao" tabindex="@(Scroll ? "0" : null)">
+        @ChildContent
+    </RvmCollapse>
+</div>
+
+@code {
+    private static int _proximoId;
+    private readonly string _idBase = $"rvm-grupo-filtro-{Interlocked.Increment(ref _proximoId)}";
+    private bool _aberto;
+    private bool _ultimoDoPai;
+
+    /// <summary>Titulo do grupo, que e o texto do botao que abre e fecha.</summary>
+    [Parameter] public string Title { get; set; } = "";
+
+    /// <summary>O conteudo do grupo: opcoes (checkbox, radio), campos, faixa de valores.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Aberto. O estado interno so segue este valor quando ele muda.</summary>
+    [Parameter] public bool Open { get; set; }
+
+    /// <summary>Avisa a abertura e o fechamento.</summary>
+    [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+
+    /// <summary>Corpo com altura maxima e rolagem, para listas longas de opcoes.</summary>
+    [Parameter] public bool Scroll { get; set; }
+
+    /// <summary>Id do botao. Sem ele, um id unico e gerado.</summary>
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>Classe CSS extra no elemento raiz.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Atributos extras, repassados ao elemento raiz.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal string IdDoBotao => string.IsNullOrWhiteSpace(Id) ? _idBase : Id;
+
+    internal string IdDoCorpo => $"{IdDoBotao}-corpo";
+
+    internal string ClassesDaRaiz
+        => ClassesCss.Juntar(_aberto ? "rvm-grupo-filtro rvm-aberto" : "rvm-grupo-filtro", Class, AdditionalAttributes);
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (Open == _ultimoDoPai)
+        {
+            return;
+        }
+
+        _ultimoDoPai = Open;
+        _aberto = Open;
+    }
+
+    private async Task AlternarAsync()
+    {
+        _aberto = !_aberto;
+        await OpenChanged.InvokeAsync(_aberto);
+    }
+}
