@@ -3,13 +3,16 @@
 @using RVM.DesignSystem.Components.Icon
 @using RVM.DesignSystem.Components.IconButton
 @using RVM.DesignSystem.Components.Menu
+@using Microsoft.JSInterop
 @using RVM.DesignSystem.Icons
 
 @* Os widgets do topo do kit (sino, bandeira, perfil): um gatilho que abre um painel. Painel nao modal
    (role="dialog"), que so existe no DOM aberto — o estado inicial nao depende de JS. Abrir leva o foco ao painel;
    Esc e o X fecham e devolvem o foco ao gatilho; clique fora fecha por uma camada transparente por baixo do
    painel, a mesma receita do RvmMenu (sem ouvir o documento por JS). *@
-<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz" @onkeydown="AoTeclarAsync">
+@* Aberto, o teclado nao sobe: o Esc que fecha o painel nao pode fechar tambem o RvmDialog em volta. Fechado,
+   sobe normalmente (o Esc no gatilho continua fechando o dialogo). *@
+<div @attributes="AdditionalAttributes" class="@ClassesDaRaiz" @onkeydown="AoTeclarAsync" @onkeydown:stopPropagation="_aberto">
     <button type="button" id="@IdDoGatilho" class="@ClassesDoGatilho"
             aria-haspopup="dialog" aria-expanded="@(_aberto ? "true" : "false")" aria-controls="@(_aberto ? IdDoPainel : null)"
             aria-label="@NomeAcessivel" title="@(Variant == RvmWidgetVariant.Icon ? Label : null)"
@@ -142,7 +145,12 @@
         get
         {
             var nome = Variant == RvmWidgetVariant.Card && !string.IsNullOrWhiteSpace(Title) ? $"{Title}, {Label}" : Label;
-            return Badge is > 0 ? $"{nome}, {Badge} novos" : nome;
+            return Badge switch
+            {
+                1 => $"{nome}, 1 novo",
+                > 1 => $"{nome}, {Badge} novos",
+                _ => nome
+            };
         }
     }
 
@@ -211,12 +219,24 @@
         if (_focarPainel && _aberto)
         {
             _focarPainel = false;
-            await _painel.FocusAsync();
+            await FocarAsync(_painel);
         }
         else if (_focarGatilho)
         {
             _focarGatilho = false;
-            await _gatilho.FocusAsync();
+            await FocarAsync(_gatilho);
+        }
+    }
+
+    private static async Task FocarAsync(ElementReference elemento)
+    {
+        try
+        {
+            await elemento.FocusAsync();
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            // Sem JS, ou o circuito caiu: o painel abre e fecha do mesmo jeito, so o foco nao e movido.
         }
     }
 }

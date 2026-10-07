@@ -1,5 +1,6 @@
 @namespace RVM.DesignSystem.Components.Activity
 @using RVM.DesignSystem.Components.Button
+@using Microsoft.JSInterop
 @using RVM.DesignSystem.Icons
 
 @* Um aviso da lista do painel de notificacoes (Notification Dropdown-3 do kit): linhas separadas por divisor.
@@ -78,6 +79,13 @@
     {
         if (!_focarDepois) return;
         _focarDepois = false;
-        await _raiz.FocusAsync();
+        try
+        {
+            await _raiz.FocusAsync();
+        }
+        catch (Exception e) when (e is JSException or JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            // Sem JS, ou o circuito caiu: o aviso so nao recebe o foco.
+        }
     }
 }
