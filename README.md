@@ -14,9 +14,14 @@ pacote NuGet, com site público de documentação construído com a própria bib
 
 ## Estado
 
-**Esqueleto no ar, catálogo vazio** (16/09/2026). O site de desenvolvimento responde em
-`design.dev.rvmtech.com.br` e o pacote `0.1.0-alpha.*` sai a cada push em `dev`. Os componentes
-começam na `DSGN-002`, depois da camada de tokens.
+**Versão `2.0.0`** (07/10/2026): mais de 150 componentes `Rvm*` — formulário, navegação, dados,
+oito gráficos em SVG próprio, cartões de painel, agenda, chat, arquivos, kanban e mapa —, tema claro e
+escuro com destaque trocável e telas de exemplo. Documentação em produção em
+[design.rvmit.com.br](https://design.rvmit.com.br) e a de desenvolvimento em
+[design.dev.rvmtech.com.br](https://design.dev.rvmtech.com.br).
+
+O pacote sai num feed NuGet **privado** do ecossistema — **não está no nuget.org**. Tags `vX.Y.Z` são
+estáveis; cada push em `dev` gera um `2.1.0-alpha.*`.
 
 ## Documentação
 
