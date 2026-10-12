@@ -35,6 +35,22 @@ major. Antes disso, a versão é `0.x` e pode mexer em API sem cerimônia.
 é do Rafael, projeto a projeto. Os apps em MudBlazor (ERPAgro, ObraEmDia, Fiscal, Propostinha)
 **não migram** — adoção nunca é retroativa.
 
+## Estimativa
+
+| Fase | Tasks estimadas | Quebrada em issues | Concluída |
+|---|--:|---|---|
+| Fase 0: bootstrap | 1 | sim | sim |
+| Onda 1: tokens + 9 componentes | 2 | sim | sim |
+| Onda 2: formulário e navegação | 1 | sim | sim |
+| Onda 3: feedback e sobreposição | 1 | sim | sim |
+| Onda 4: dados e shell | 1 | sim | sim |
+| `1.0.0` | 1 | sim | sim |
+
+Premissas (08/10/2026, MAES-52): task = um PR (meio a um dia de agente). Cada linha vem dos cards `DSGN-001`
+(bootstrap), `DSGN-002` (tokens) e `DSGN-003` (onda 1), `DSGN-004`, `DSGN-005`, `DSGN-006` (ondas 2 a 4) e
+`DSGN-007` (`1.0.0`), todos concluídos. Os cards `DSGN-008..018` (site, gráficos, paridade de API, tour) vieram
+depois e não pertencem a nenhuma fase do roadmap; `DSGN-017` e `DSGN-018` seguem abertos como cards.
+
 ## Pendências que mudam o modelo de dados
 
 Não há banco, então nada bloqueia migration. O que **bloqueia decisão de token** — e por isso mora
