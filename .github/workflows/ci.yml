@@ -39,16 +39,17 @@ jobs:
             --results-directory ./coverage \
             --logger "console;verbosity=normal"
 
+      # Sem `| head`: o runner da forja roda com pipefail e o head fechando o pipe da 141 (SIGPIPE).
       - name: Portao de cobertura (>= 80% da biblioteca)
         run: |
           set -e
-          arquivo=$(find ./coverage -name 'coverage.cobertura.xml' | head -1)
+          arquivo=$(find ./coverage -name 'coverage.cobertura.xml' -print -quit)
           if [ -z "$arquivo" ]; then
             echo "::error::Nenhum relatorio de cobertura foi gerado."
             exit 1
           fi
-          validas=$(grep -o 'lines-valid="[0-9]*"' "$arquivo" | head -1 | grep -o '[0-9]*')
-          taxa=$(grep -o 'line-rate="[0-9.]*"' "$arquivo" | head -1 | sed 's/.*"\(.*\)"/\1/')
+          validas=$(grep -o 'lines-valid="[0-9]*"' "$arquivo" | awk 'NR==1' | grep -o '[0-9]*')
+          taxa=$(grep -o 'line-rate="[0-9.]*"' "$arquivo" | awk 'NR==1' | sed 's/.*"\(.*\)"/\1/')
           if [ "${validas:-0}" -eq 0 ]; then
             # A biblioteca ainda nao tem linha executavel: o esqueleto da DSGN-001 e so empacotamento.
             # A partir da DSGN-002 (tokens + componentes) este caminho deixa de acontecer sozinho.
