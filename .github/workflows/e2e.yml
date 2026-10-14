@@ -3,7 +3,7 @@ name: E2E
 # Playwright + axe sobre o SITE PUBLICADO (nao ha servidor local para subir). Por isso mora em
 # test/playwright/: o padrao do ecossistema pula caminhos com "playwright" ao rodar test/**/*.csproj.
 
-# ⚠️ `workflow_run` e `schedule` so disparam a partir do arquivo que esta no branch PADRAO (master).
+# ⚠️ `workflow_run` e `schedule` so disparam a partir do arquivo que esta no branch PADRAO (prd).
 # Enquanto os workflows nao chegarem la, estes dois gatilhos ficam inertes e o E2E depois do deploy
 # de dev roda por `gh workflow run e2e.yml --ref dev`. Nao e configuracao errada — e regra do GitHub.
 
@@ -24,7 +24,7 @@ jobs:
   # Guarda do padrao § 12: spec ou config alterado no PR nao pode reintroduzir o que deixou o E2E
   # do ERPAgro em 5-11 min. Roda so em PR, onde da para barrar antes de entrar.
   guarda:
-    if: github.event_name == 'pull_request'
+    if: github.server_url != 'https://github.com' && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
 
   testar:
     # Em PR so roda a guarda: nao ha site novo publicado para testar.
-    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    if: github.server_url != 'https://github.com' && github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     env:
       BASE_URL: https://design.dev.rvmtech.com.br
@@ -80,7 +80,7 @@ jobs:
         run: npx playwright test ${{ github.event_name == 'workflow_run' && '--grep @smoke' || '' }}
 
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3   # a v4 nao roda no Gitea (GHESNotSupportedError)
         with:
           name: playwright-report
           path: test/playwright/RVM.DesignSystem.E2E/playwright-report
