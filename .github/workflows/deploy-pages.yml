@@ -1,11 +1,11 @@
 name: Deploy producao (GitHub Pages)
 
-# Prod = GitHub Pages em design.rvmit.com.br. Sobe so de master, e master so recebe merge com
+# Prod = GitHub Pages em design.rvmit.com.br. Sobe so de prd, e prd so recebe merge com
 # sinal verde explicito do Rafael (CLAUDE.md § Workflow).
 
 on:
   push:
-    branches: [master]
+    branches: [prd]
   workflow_dispatch:
 
 permissions:
@@ -19,6 +19,8 @@ concurrency:
 
 jobs:
   publicar:
+    # Pages so existe no GitHub: ele recebe a prd pelo espelho da forja (14/10/2026) e publica daqui.
+    if: github.server_url == 'https://github.com'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
