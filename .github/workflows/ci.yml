@@ -82,7 +82,7 @@ jobs:
           echo "As tres armadilhas estao cobertas."
 
       - name: Guardar o site publicado
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3   # a v4 nao roda no Gitea (GHESNotSupportedError)
         with:
           name: site
           path: ./publicado/wwwroot
