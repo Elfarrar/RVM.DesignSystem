@@ -119,7 +119,7 @@ Sem o item 5 a entrega está incompleta.
 |---|---|---|---|
 | Dev | `design.dev.rvmtech.com.br` | `dev` | Rivendell — estático por `rsync` |
 | Demo | — | — | **não existe, de propósito** |
-| Prod | `design.rvmit.com.br` | `master` | GitHub Pages |
+| Prod | `design.rvmit.com.br` | `prd` | GitHub Pages |
 
 ⚠️ **Os dois domínios foram apagados em 16/09** (CNAME, registro A, vhost, certificado). O bootstrap
 recria. Zonas de antes: `/opt/dns-<zona>-pre-design-20260916.json` na Rivendell.
@@ -127,6 +127,11 @@ recria. Zonas de antes: `/opt/dns-<zona>-pre-design-20260916.json` na Rivendell.
 ⚠️ **Verificação de deploy é por CONTEÚDO, não por status.** O `try_files` do Nginx e o `404.html`
 do Pages devolvem 200 para qualquer caminho — build quebrado responde 200 alegremente. Procurar a
 string `RVM Design System`. Monitor no Uptime-Kuma: tipo `keyword`, **vinculado ao canal de e-mail**.
+
+✅ **Repo na forja** (`forja:Elfarrar/RVM.DesignSystem.git`) desde 14/10/2026: CI, E2E, deploy dev e publish no
+BaGet rodam lá. O GitHub público `Elfarrar/RVM.DesignSystem` recebe a `prd` (e as tags `v*`) pelo espelho
+(`/opt/espelhar-prd.sh`, 15 min) e só roda o `deploy-pages.yml`; cada workflow tem `if: github.server_url` que
+separa os dois lados. Nada se empurra no GitHub direto.
 
 ⛔ **Os cinco workflows são PRÓPRIOS, em `ubuntu-latest`** — repositório público não consegue chamar
 reusable de repositório privado, e o `RVM.Actions` é privado: o run morre em **0 s, zero jobs, sem
@@ -145,9 +150,9 @@ na frente com um erro que não aponta a causa. **Sempre por stdin.**
 
 ## Segredos
 
-| Segredo | Onde mora | Secret no GitHub |
+| Segredo | Onde mora | Secret na forja |
 |---|---|---|
-| SSH da Rivendell | `RVM.Infra/docs/ACESSOS.md` | `DEV_VPS_HOST/PORT/USER/SSH_KEY_B64/DEPLOY_PATH` |
+| SSH da Rivendell | `RVM.Infra/docs/ACESSOS.md` | `DEV_VPS_HOST/PORT/USER/SSH_KEY_B64/DEPLOY_PATH` (chave `forja-deploy-designsystem-dev`, privada só no secret) |
 | API key do BaGet | `ACESSOS-E-SENHAS.md` global | `BAGET_API_KEY` |
 | URL do feed | `ACESSOS-E-SENHAS.md` global | `BAGET_FEED_URL` |
 
@@ -163,9 +168,9 @@ backup do BaGet.
 
 ## Workflow
 
-Card `DSGN-NNN` → branch `dsgn-NNN` de `master` → commits isolados (`git add <arquivos>`, nunca
-`-A`) → testes ≥ 80% → E2E → review → `dev` → validação do Rafael **pelo screenshot** → `master` só
-com sinal verde explícito dele. Não há `demo`: de `dev` direto para `master`.
+Card `DSGN-NNN` → branch `dsgn-NNN` de `prd` → commits isolados (`git add <arquivos>`, nunca
+`-A`) → testes ≥ 80% → E2E → review → `dev` → validação do Rafael **pelo screenshot** → `prd` só
+com sinal verde explícito dele. Não há `stg`: de `dev` direto para `prd`.
 
 ## Decisões que não se reabrem sem o Rafael
 

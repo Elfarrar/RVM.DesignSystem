@@ -24,6 +24,8 @@ env:
 
 jobs:
   publicar:
+    # Roda na forja (origem desde 14/10/2026); o GitHub so recebe a prd pelo espelho e nao repete.
+    if: github.server_url != 'https://github.com'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
